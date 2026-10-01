@@ -40127,13 +40127,154 @@
   "reviewer": "flapjack-ds9 source comparison (bead flapjack-pxn.18.5.11.1.24): HOL Resume evaluate_apply_colour[StoreConsts] case of word_allocProofScript.sml:2024-2061, i.e. the HOL theorem with prog fixed to the StoreConsts constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Uses the shared applyColourPost/applyColourLocals/getLive/getWrites carriers and the tagged apply_colour StoreConsts clause; get_var transport uses the tagged strong_locals_rel_get_var and the two live-scoped inserts use the tagged strong_locals_rel_insert, matching HOL Resume evaluate_apply_colour[StoreConsts]. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
   "inherits_reals_as_rational_cuts": true
 },
-  {
-    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
-    "hol_name": "wShareInst_def",
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeSharedMemory.lean",
-    "lean_name": "wShareInstNative",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison2026-10-01 beadof5g: all eight wShareInst clauses186-223 compared individually. Load/Load8/Load16/Load32 stage address via wReg1, ordered native wStackLoad and destination wRegWrite1 spill; Store/Store8/Store16/Store32 stage address via wReg1 then value via wReg2, concatenate loads in source order and emit matching ShMemOp with source register/address/offset unchanged. Unlike wInst, shared-memory16 cases are explicitly handled by source. HolMemop aliases reviewed eight-constructor WordMemOp; HolAddr width and HolProg width use reviewed same positive-word-width native payloads, faithful MlString program carrier. words_as_type_indexed_bitvec authorizes only BitVec width/NeZero translation. All-input toGeneric_wShareInstNative kernel theorem transports to accepted generic helper without memory-evaluation/result/success or bounds premise. No production alias adjustment/default or behavior change; actualcomp/production route remains parent25 OPEN. Coordinator review pending."
-  }
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wShareInst_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeSharedMemory.lean",
+  "lean_name": "wShareInstNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison2026-10-01 beadof5g: all eight wShareInst clauses186-223 compared individually. Load/Load8/Load16/Load32 stage address via wReg1, ordered native wStackLoad and destination wRegWrite1 spill; Store/Store8/Store16/Store32 stage address via wReg1 then value via wReg2, concatenate loads in source order and emit matching ShMemOp with source register/address/offset unchanged. Unlike wInst, shared-memory16 cases are explicitly handled by source. HolMemop aliases reviewed eight-constructor WordMemOp; HolAddr width and HolProg width use reviewed same positive-word-width native payloads, faithful MlString program carrier. words_as_type_indexed_bitvec authorizes only BitVec width/NeZero translation. All-input toGeneric_wShareInstNative kernel theorem transports to accepted generic helper without memory-evaluation/result/success or bounds premise. No production alias adjustment/default or behavior change; actualcomp/production route remains parent25 OPEN. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "machine_result",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/State.lean",
+  "lean_name": "MachineResult",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.2) vs targetSemScript.sml:14-17: HOL machine_result = Halt outcome | Error | TimeOut; Lean MachineResult preserves constructor order and arity (nullary Error/TimeOut, Halt carrying the reviewed HolOutcome from ffiScript.sml:83). No word-carrier field, so no qualifier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "machine_config",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/State.lean",
+  "lean_name": "MachineConfig",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.2) vs targetSemScript.sml:18-45: all 16 fields in HOL order; ('a word) set rendered as BitVec width -> Prop, word8 as BitVec 8, ffiname as HolFfiName, addr as HolAddr; ffi_interfer/next_interfer/ccache_interfer arrow shapes preserved; target embeds HolAsmTarget. word rendering qualified."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "code_loaded_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Machine.lean",
+  "lean_name": "codeLoaded",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.4). Source comparison with targetSemScript.sml:238-243 code_loaded_def: read_bytearray (mc.target.get_pc ms) (LENGTH bytes) (\\a. if a IN mc.prog_addresses then SOME (mc.target.get_byte ms a) else NONE) = SOME bytes. Lean renders 'a word as BitVec width ([NeZero width]), word8 as BitVec 8, and reads via the reviewed tagged readBytearrayWordHOL; the HOL 'a word set prog_addresses is rendered as BitVec width -> Prop (carriers' reviewed translation) decided classically inside the definition, with no extra binder."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "target_configured_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Machine.lean",
+  "lean_name": "targetConfigured",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.4). Source comparison with targetSemScript.sml:247-261 target_configured_def: ~t.failed /\\ t.be = config.big_endian /\\ t.align = config.code_alignment /\\ t.mem_domain = mc_conf.prog_addresses /\\ (case link_reg of NONE => T | SOME r => t.lr = r). Lean conjunct-for-conjunct over AsmState width and MachineConfig width state projection (asm_config = reviewed AsmConfigExact); bool negation rendered t.failed = false; mem_domain = prog_addresses compares the Prop-valued domain renderings."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "get_reg_value_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Machine.lean",
+  "lean_name": "getRegValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.4). Source comparison with targetSemScript.sml:263-266 get_reg_value_def: get_reg_value NONE w f = w /\\ get_reg_value (SOME v) _ f = f v. HOL leaves both types fully generic: v : key is applied to f : key -> value, so the Lean port quantifies {key value : Type} over (Option key, value, key -> value). No word-carrier difference, so no representation qualifier applies."
+},
+{
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "asm_write_bytearray_def",
+  "lean_path": "Flapjack/Misc/AsmWriteBytearray.lean",
+  "lean_name": "asmWriteBytearrayHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w51v) vs miscScript.sml:3758-3760: HOL asm_write_bytearray a [] m = m and asm_write_bytearray a (x::xs) m = (a =+ x) (asm_write_bytearray (a+1w) xs m); Lean asmWriteBytearrayHOL {width} [NeZero width] (address) (bytes) (memory : BitVec width -> BitVec 8) has the same two clauses with 'a word as BitVec width and word8 as BitVec 8; structural recursion on bytes; no extra premise."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "post_ffi_asm_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/PostAsm.lean",
+  "lean_name": "postFfiAsmHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w51v) vs targetSemScript.sml:395-408: HOL post_ffi_asm mc_conf t1 new_bytes ms' = t1 with regs := (if MEM a callee_saved_regs \\/ ~(a < reg_count) \\/ MEM a avoid_regs then t1.regs a else get_reg ms' a), fp_regs := get_fp_reg ms', mem := asm_write_bytearray (t1.regs ptr2_reg) new_bytes t1.mem, pc := t1.regs link_reg. Lean postFfiAsmHOL preserves the same guard (List.contains for MEM, decide for the Nat bound), the same get_reg/get_fp_reg sources, asmWriteBytearrayHOL for mem and the link-register pc; over exact MachineConfig/HolAsmTarget/AsmState with BitVec-width words."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "post_ccache_asm_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/PostAsm.lean",
+  "lean_name": "postCcacheAsmHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w51v) vs targetSemScript.sml:410-423: HOL post_ccache_asm mc_conf t1 ms' = t1 with regs := (if MEM a callee_saved_regs \\/ a = ptr_reg \\/ ~(a < reg_count) \\/ MEM a avoid_regs then t1.regs a else get_reg ms' a), fp_regs := get_fp_reg ms', pc := t1.regs link_reg (memory untouched). Lean postCcacheAsmHOL has the same guard including the ptr_reg preservation and leaves mem unchanged; over exact carriers with BitVec-width words."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "read_ffi_bytearray_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/FfiReads.lean",
+  "lean_name": "readFfiBytearrayHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (bead flapjack-bkw2) against targetSemScript.sml:60-68: read_bytearray (mc.target.get_reg ms ptr_reg) (w2n (mc.target.get_reg ms len_reg)) (\\a. if a IN mc.prog_addresses then SOME (mc.target.get_byte ms a) else NONE). Lean renderBytearrayWordHOL (byteWidth:=8) over BitVec width/BitVec 8 with the same program-address restriction."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "read_ffi_bytearrays_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/FfiReads.lean",
+  "lean_name": "readFfiBytearraysHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (bead flapjack-bkw2) against targetSemScript.sml:70-74: the pair (read_ffi_bytearray mc mc.ptr_reg mc.len_reg ms, read_ffi_bytearray mc mc.ptr2_reg mc.len2_reg ms). Lean pair of readFfiBytearrayHOL at ptrReg/lenReg and ptr2Reg/len2Reg."
+},
+{
+  "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+  "hol_name": "target",
+  "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Target.lean",
+  "lean_name": "HolAsmTarget",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.2) vs asmPropsScript.sml:44-56: HOL target record fields config/next/get_pc/get_reg/get_fp_reg/get_byte/state_ok/proj in order; Lean HolAsmTarget preserves them over AsmConfigExact, BitVec width ([NeZero width]), BitVec 64 for word64, and polymorphic state/projection. word rendering qualified."
+},
+{
+  "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+  "hol_name": "asm_state",
+  "lean_path": "Flapjack/Compiler/Encoders/AsmSem/State.lean",
+  "lean_name": "AsmState",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.3) vs asmSemScript.sml:12-23: all 9 record fields in HOL order (regs/fp_regs/mem/mem_domain/pc/lr/align/be/failed); word as BitVec width, word8 as BitVec 8, word64 as BitVec 64, reg as Nat, set as BitVec width -> Prop. word rendering qualified."
+},
+{
+  "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+  "hol_name": "target_state_rel_def",
+  "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Target.lean",
+  "lean_name": "targetStateRel",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.3) vs asmPropsScript.sml:58-64: target_state_rel t s ms with all five conjuncts (state_ok, get_pc=pc, mem_domain memory agreement, reg_count/avoid_regs register agreement, fp_reg_count fp agreement); argument order t s ms preserved; MEM i avoid_regs rendered as avoidRegs.contains i = false. word rendering qualified."
+},
+{
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "bytes_in_memory_def",
+  "lean_path": "Flapjack/Misc/BytesInMemory.lean",
+  "lean_name": "bytesInMemoryHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pbmi) against miscScript.sml:4176-4180: bytes_in_memory a [] m dm <=> T and bytes_in_memory a (x::xs) m dm <=> (m a = x) /\\ a IN dm /\\ bytes_in_memory (a+1w) xs m dm, verbatim; word8 -> BitVec 8 and 'a word -> BitVec width under [NeZero width]; the address domain renders as a predicate BitVec width -> Prop as in the reviewed machine_config carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "apply_oracle_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/EncodedBytes.lean",
+  "lean_name": "applyOracleHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pbmi) against targetSemScript.sml:46-48: apply_oracle oracle x = (oracle 0 x, shift_seq 1 oracle), verbatim; fully polymorphic in the oracle's input and output types, so no word carrier and no qualifier; shift_seq is the reviewed tagged holShiftSeq (miscScript.sml:132-134)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "encoded_bytes_in_mem_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/EncodedBytes.lean",
+  "lean_name": "encodedBytesInMemHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pbmi) against targetSemScript.sml:52-57: encoded_bytes_in_mem c pc m md <=> ?i k. k * (2 ** c.code_alignment) < LENGTH (c.encode i) /\\ bytes_in_memory pc (DROP (k * (2 ** c.code_alignment)) (c.encode i)) m md, verbatim; 2 ** code_alignment -> 2 ^ codeAlignment, DROP -> List.drop, encode : 'a asm -> word8 list -> HolAsm width -> List (BitVec 8), words qualifier for the BitVec width/8 carriers; bytes_in_memory is the tagged bytesInMemoryHOL."
+}
 ]
