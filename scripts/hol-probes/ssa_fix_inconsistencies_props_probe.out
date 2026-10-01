@@ -1,0 +1,9 @@
+fip_full=⊢ ∀prio ssaL ssaR na a b na' ssaU. fix_inconsistencies prio ssaL ssaR na = (a,b,na',ssaU) ⇒ is_alloc_var na ∧ ssa_map_ok na ssaL ∧ ssa_map_ok na ssaR ⇒ na ≤ na' ∧ is_alloc_var na' ∧ ssa_map_ok na' ssaU
+fip_type_prio=:(unit + unit) option
+fip_type_ssaL=:num sptree$num_map
+fip_type_ssaR=:num sptree$num_map
+fip_type_na=:num
+fip_type_a=:α prog
+fip_type_b=:α prog
+fip_type_nextOut=:num
+fip_type_ssaU=:num sptree$num_map

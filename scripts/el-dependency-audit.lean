@@ -3,20 +3,23 @@ Reproducible audit: list every constant defined in a `Flapjack.*` module -- in
 any namespace, including `_private.*` helpers and auxiliary declarations --
 whose type or value (theorem proof terms and opaque bodies included, via
 `value? (allowOpaque := true)`) transitively mentions the untagged total HOL
-`EL` rendering (`holEl`, `holHd`, `holHdNil`).
+`EL`/`HD` renderings (`holEl`, `holHd`, `holHdNil`).
 
 Reachability is a reverse-graph fixed point: the dependency edges of every
 Flapjack-module constant are inverted and searched breadth-first from the held
 renderings, so cycles and non-`Flapjack`-prefixed names cannot cut a path.
 Constants of non-Flapjack modules (Lean core, Std, Mathlib) cannot mention the
 held renderings and are not traversed. Each hit is intersected with the
-`@[hol]` tags (`HolRef.all`); a tagged hit is reported with a witness path and
-is an error.
+`@[hol]` tags (`HolRef.all`). Since bead flapjack-pxn.18.5.15.3.38.1 tagged
+`holHd`/`holEl` against the pinned HOL submodule, a tagged hit is permitted
+only case by case: its `docs/HOL-THEOREM-MAP.json` row (matched on HOL path and
+declaration name) must have a `reviewed_*` status and a reviewer note that names
+the rendering it was compared against (`holEl` or `holHd`). Any other tagged hit
+is reported with a witness path and is an error. This is a bookkeeping check
+for the re-tag review, not a proof of HOL correspondence.
 
 Run: `lake lean scripts/el-dependency-audit.lean`
 
-Every reported constant must be untagged (provisional) while the HOL
-`listScript` provenance review (bead flapjack-pxn.18.5.15.3.38.1) is open.
 -/
 import Flapjack
 open Lean Elab Command Flapjack
@@ -57,21 +60,42 @@ elab "#el_dependency_audit" : command => do
         seen := seen.insert m
         parent := parent.insert m n
         queue := queue.push m
-  let tagged : NameSet := (HolRef.all env).foldl (fun s (n, _) => s.insert n) {}
+  let tagged : Std.HashMap Name HolRef :=
+    (HolRef.all env).foldl (fun s (n, r) => s.insert n r) {}
+  -- manifest rows that record an EL/HD review, keyed by (HOL path, HOL name)
+  let raw ← IO.FS.readFile "docs/HOL-THEOREM-MAP.json"
+  let json ← match Json.parse raw with
+    | .ok j => pure j
+    | .error e => throwError "cannot parse docs/HOL-THEOREM-MAP.json: {e}"
+  let rows ← match json.getArr? with
+    | .ok a => pure a
+    | .error e => throwError "docs/HOL-THEOREM-MAP.json is not an array: {e}"
+  let mut elReviewed : Std.HashSet (String × String) := {}
+  for row in rows do
+    let str (k : String) : String := (row.getObjValAs? String k).toOption.getD ""
+    let note := str "reviewer"
+    if (str "statement_status").startsWith "reviewed_" &&
+        ((note.splitOn "holEl").length > 1 || (note.splitOn "holHd").length > 1) then
+      elReviewed := elReviewed.insert (str "hol_path", str "hol_name")
   let hits := (queue.filter (fun n => !held.contains n)).qsort
     (fun a b => a.toString < b.toString)
   let mut bad : Nat := 0
+  let mut reviewed : Nat := 0
   for n in hits do
-    if tagged.contains n then
+    if let some r := tagged.get? n then
+      if elReviewed.contains (r.path, r.name) then
+        reviewed := reviewed + 1
+        logInfo m!"EL-dependent (tagged, EL-reviewed): {n} = {r.path} {r.name}"
+        continue
       bad := bad + 1
       let mut path : Array Name := #[n]
       let mut cur := n
       while parent.contains cur do
         cur := parent.get! cur
         path := path.push cur
-      logError m!"TAGGED EL-dependent: {n} via {path.toList}"
+      logError m!"TAGGED EL-dependent without an EL-review manifest note: {n} via {path.toList}"
     else
       logInfo m!"EL-dependent (untagged): {n}"
-  logInfo m!"total EL-dependent constants: {hits.size} of {nodes} Flapjack-module constants; {tagged.size} tagged declarations checked; {bad} tagged hits"
+  logInfo m!"total EL-dependent constants: {hits.size} of {nodes} Flapjack-module constants; {tagged.size} tagged declarations checked; {reviewed} tagged hits EL-reviewed; {bad} unreviewed tagged hits"
 
 #el_dependency_audit

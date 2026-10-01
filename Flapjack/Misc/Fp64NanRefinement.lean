@@ -26,9 +26,14 @@ lives here, so there is no `@[hol]` tag):
   "equal, or both quiet NaNs with possibly different payloads", used to state
   the executable agreement without claiming bit-equality on NaN results.
 
-The relation is deliberately weak on NaN payloads; it is the exact statement
-the executed `wordSem` FP connection (bead `flapjack-h29l.10`) needs, and it
-does not presuppose any target run or result.
+The relation states arithmetic-result agreement without presupposing a target
+run. It does not establish whole WordSem observational agreement: the literal
+`FPMovToReg` clause at `wordSemScript.sml:889-896` exposes all 64 bits, or
+both 32-bit halves, through integer registers. Distinct related quiet NaNs can
+therefore yield distinct integer observations. The counterexamples below pin
+this limitation; an observation-safe choice/refinement policy remains a
+prerequisite of the executable evaluator connection (bead `flapjack-s7o5`).
+They do not assert that HOL's chosen NaN differs from the canonical value.
 -/
 
 namespace Flapjack
@@ -94,5 +99,29 @@ theorem holFloatSomeQnan_refines_defaultQuietNanFloat (fpOp : HolFpOp 52 11) :
 /-- `fp64Refines` holds for `defaultQuietNan` against itself. -/
 theorem defaultQuietNan_refines_self : fp64Refines defaultQuietNan defaultQuietNan :=
   Or.inl rfl
+
+/-- Flapjack-specific counterexample to bitcast preservation by `fp64Refines`.
+There is no HOL theorem being ported here. The two concrete quiet NaNs satisfy
+our arithmetic-result relation, while the RV64 `FPMovToReg` word conversion
+and its other-width low-half extraction distinguish their payloads. This does
+not determine the value selected by HOL's unspecified quiet-NaN choice. -/
+theorem fp64Refines_distinctBitcastCounterexample :
+    fp64Refines (0x7FF8000000000001 : BitVec 64) defaultQuietNan ∧
+    (0x7FF8000000000001 : BitVec 64).setWidth 64 ≠ defaultQuietNan.setWidth 64 ∧
+    (0x7FF8000000000001 : BitVec 64).extractLsb 31 0 ≠
+      defaultQuietNan.extractLsb 31 0 := by
+  constructor
+  · apply Or.inr
+    decide +kernel
+  · decide +kernel
+
+/-- Flapjack-specific impossibility result: the arithmetic NaN relation alone
+cannot imply equality of all RV64 bitcast observations. Whole-evaluator
+routing needs a justified observation policy beyond this relation. -/
+theorem fp64Refines_not_preserveBitcast :
+    ¬ (∀ a b : BitVec 64, fp64Refines a b → a.setWidth 64 = b.setWidth 64) := by
+  intro h
+  exact fp64Refines_distinctBitcastCounterexample.2.1
+    (h _ _ fp64Refines_distinctBitcastCounterexample.1)
 
 end Flapjack
