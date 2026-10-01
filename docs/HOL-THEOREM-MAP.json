@@ -41283,6 +41283,14 @@
   "reviewer": "Source comparison wordLangScript252-300, exact prog/exp/inst/cutsets carriers at14-68 and asm85-134: all constructor clauses and defaults retained over WordLangProgHOL(BitVec width), native MlString, canonical Spt Unit cut sets and fixed Temp5 store names. Positivewidth words_as_type_indexed_bitvec. Move MAP FST++MAP SND, guarded Call return/handler recursion and argument/value/both-cutset maxima, If reg/imm branches, Loop entry/body/exit maxima and every frame operand match source; destination and labels ignored exactly where source ignores them. Uses accepted exact maxVarInstHOL/maxVarExpHOL/cutsetsMaxHOL/max3HOL plus standard natural MAX_LIST. No wf/domain/callback/targetresult/success premise; nested structural-size termination kernel checked. Fresh37 direct original rows cover all source constructors, Call guard and32/64 FP instruction transfer, kernel replay. Full native wrappers, executed production route and correctness remainOPEN."
 },
 {
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/PmovFinal.lean",
+  "lean_name": "pmov_final",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "pmov_final",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.13: literal655-663 originalforallstate exists emitted actualpmovstate=([],[],emitted). Unconditional, no wf/windmill/algorithmrelation/assumedterminalresult; original Option/List statecarrier and all histories retained. Generated functional induction of actualreviewedpmov: terminalclause preserves history, nonterminalclause inherits existential at actualfstepstate. Source-decreasing termination alreadypart of revieweddefinition, no fuel restriction. Original terminal/self/chain/cycle/scratch/duplicate/active observations freshly captured; malformed inputs included because theoremunconditional. This proves shape only, not semantic or deterministicSteps correctness."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "evaluate_apply_colour",
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Install.lean",
