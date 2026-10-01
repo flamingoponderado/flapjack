@@ -3970,3 +3970,20 @@ Structural size termination retains complete Call tuple equalities. The captured
 exported theorem is not a new literal replay of its original proof. These
 regressions do not prove HOL-to-Lean equivalence or whole compiler semantics.
 Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_shmemop_probeScript.sml`.
+
+### Full native program-list no-shared-memory preservation
+
+`word_to_stack_no_shmemop_programs_probeScript.sml` freshly captures the
+original exported `compile_word_to_stack_no_share_inst` theorem, all eight
+input/output carrier types, and sixteen actual source/compiled-target
+predicate pairs. Widths 1/32/64/80 and both performance flags cover empty and
+multiple-row lists, duplicate Boolean identifiers, nonzero bitmap state,
+bitmap-changing Alloc/StoreConsts, frame arithmetic boundaries, rejected
+shared operations, and an ignored tail-call handler. The latter retains a
+false source predicate and true target predicate, consistent with implication.
+`Flapjack/Test/WordToStackNoShmemopProgramsParity.lean` checks the pairs in the
+kernel and applies the full generic-identifier theorem and actual compiler
+projections. Captures are regression evidence, not a new proof replay or a
+HOL-to-Lean equivalence proof. Whole compiler semantic correctness remains open.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_programs_probeScript.sml`.
