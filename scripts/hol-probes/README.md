@@ -2603,3 +2603,12 @@ Cases include invalid initial bounds, width one, repeated identifiers, and
 independent Bool identifiers. The general prefix/accounting proofs retain
 the original compiler output equations and initial-length bound; finite
 snapshots are not a cross-language equivalence proof.
+
+`bytes_in_mem_probe.out` captures eleven fresh original miscTheory observations:
+generic Nat/Bool payloads, width-two 3-to-0 wraparound, domain/excluded-set
+failures at either position, empty-list guards, and off/hit-region updates.
+All eleven rows are kernel-replayed by `BytesInMemParity`. The companion
+`bytes_in_mem_type.sml` queries the actual polymorphic beta carrier. Regenerate
+read-only with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=bytes_in_mem_probeScript.sml scripts/hol-probes/regenerate.sh`.
+Finite observations do not establish cross-language equivalence.

@@ -42987,5 +42987,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.17): original num_pcs_def680-686, asm_fetch_aux_APPEND1 at7258, APPEND2 at7290 and MEM at10849. Exact native LabSem.asmFetchAux evaluator and classifier over HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Count clauses retain empty code/empty section/label skip/nonlabel successor; fetch proofs retain original PC inequality, plus-count offset and existential membership witness, with no assumed fetch or extra guards. Nested list induction only supplies source structural induction hypotheses. Word dimension alone translates to positive BitVec width/NeZero. Proof-only declarations; no executed compiler behavior changed. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BytesInMem.lean",
+    "lean_name": "bytesInMemHOL",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "bytes_in_mem_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.18): actual miscTheory constant type queried by bytes_in_mem_type.sml confirms generic beta list/memory values. miscScript4249-4255 domain and excluded-set guards plus equality and wrapped increment retained. Original lab_to_targetProof APPEND1214 retains iff/conjunction and n2w(length xs) offset; UPDATE1223 retains every in-range wrapped address inequality and functional-update conclusion. Only positive word dimension translates to BitVec width/NeZero; generic universe-zero Value and lists retained. Fresh original11-row boundary oracle bytes_in_mem_probe.out, all11 kernel replays BytesInMemParity. No HOL-to-Lean equivalence or production/compiler correctness claimed; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Memory.lean",
+    "lean_name": "bytesInMem_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "bytes_in_mem_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.18): actual miscTheory constant type queried by bytes_in_mem_type.sml confirms generic beta list/memory values. miscScript4249-4255 domain and excluded-set guards plus equality and wrapped increment retained. Original lab_to_targetProof APPEND1214 retains iff/conjunction and n2w(length xs) offset; UPDATE1223 retains every in-range wrapped address inequality and functional-update conclusion. Only positive word dimension translates to BitVec width/NeZero; generic universe-zero Value and lists retained. Fresh original11-row boundary oracle bytes_in_mem_probe.out, all11 kernel replays BytesInMemParity. No HOL-to-Lean equivalence or production/compiler correctness claimed; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Memory.lean",
+    "lean_name": "bytesInMem_update",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "bytes_in_mem_UPDATE",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.18): actual miscTheory constant type queried by bytes_in_mem_type.sml confirms generic beta list/memory values. miscScript4249-4255 domain and excluded-set guards plus equality and wrapped increment retained. Original lab_to_targetProof APPEND1214 retains iff/conjunction and n2w(length xs) offset; UPDATE1223 retains every in-range wrapped address inequality and functional-update conclusion. Only positive word dimension translates to BitVec width/NeZero; generic universe-zero Value and lists retained. Fresh original11-row boundary oracle bytes_in_mem_probe.out, all11 kernel replays BytesInMemParity. No HOL-to-Lean equivalence or production/compiler correctness claimed; coordinator source review pending."
   }
 ]
