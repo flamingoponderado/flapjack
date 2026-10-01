@@ -3616,3 +3616,7 @@ run_probe loop_to_word_label_handlers_probeScript.sml loop_to_word_label_handler
 run_probe lab_validity_native_probeScript.sml lab_validity_native_probe.out \
   line_ok_asm_skip line_ok_asm_cbw line_ok_label line_ok_labasm_halt line_ok_asm_badreg all_enc_ok_one_ok all_enc_ok_one_bad cbw_to_asm_store8 cbw_to_asm_sharemem sec_ok_one_ok sec_ok_one_bad sec_ok_empty all_enc_ok_two_ok all_enc_ok_empty native_cbw_width1_huge native_shared_width80 native_cbw_definition native_line_definition native_section_definition \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_to_lab_nonrecursive_validity_probeScript.sml stack_to_lab_nonrecursive_validity_probe.out \
+  native_flatten_full_source_proof native_cbw_application native_shared_application \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"

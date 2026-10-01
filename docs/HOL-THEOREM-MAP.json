@@ -47913,5 +47913,284 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol completed source/body/carrier comparison (2026-10-01; bead npxw), source lines1252-1255: exact config and native Section carrier, ignores section identifier and requires EVERY(line_ok_pre c) over the section line list, expressed as universal list membership. No encoded-cache, section-number or target-validity assumption. The all_enc_ok_pre spelling is a source overload with no declaration to tag; its separate Lean helper is deliberately untagged. Sole qualifier records positive-width BitVec/[NeZero width] word-dimension translation. Original config line/section/conversion oracle freshly re-evaluated; generic kernel fixtures preserve arbitrary native payloads and ignored caches."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreInst",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Inst constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Raise constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Return constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreCodeBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, CodeBufferWrite constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreSharedMemory",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, SharedMemory constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreTick",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Tick constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreHalt",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Halt constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreBreak",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Break constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreContinue",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Continue constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreRawCall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, RawCall constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreJumpLower",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, JumpLower constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreFfi",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Ffi constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreLocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, LocValue constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Install constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Skip constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreGet",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Get constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreSet",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Set constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreOpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, OpCurrHeap constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, Alloc constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreStoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, StoreConsts constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreDataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, DataBufferWrite constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreStackAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, StackAlloc constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, StackFree constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreStackStore",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, StackStore constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreStackStoreAny",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, StackStoreAny constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreStackLoad",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, StackLoad constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreStackLoadAny",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, StackLoadAny constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreStackGetSize",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, StackGetSize constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreStackSetSize",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, StackSetSize constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreBitmapLoad",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, BitmapLoad constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/Encoding/Nonrecursive.lean",
+    "lean_name": "flattenLineOkPreTailCall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_line_ok_pre",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/statement/carrier comparison (2026-10-01; bead u7yh), original local flatten_line_ok_pre3629-3661, TailCall constructor specialization. Retains arbitrary tail/section/counter/continuation/break lists and actual output app_list/flag/counter/config variables; the three original byte_offset_ok c0, stack_asm_ok c p and flatten-result equality premises are preserved, with the same EVERY(line_ok_pre c)(append ls) conclusion. No extra validity, simulation, poststate or target-evaluation premise and no subprogram IH for this nonrecursive case. Native HolProg/HolInst/HolAsm/HolAddr/LabLineHOL/AsmConfigExact and exact MlString carriers reviewed against original constructors; sole qualifier is positive-width BitVec/[NeZero width]. All sixteen original wildcard constructors yield the actual empty app_list; tail Call retains arbitrary ignored handler and both direct/indirect targets. Shared memory covers all eight operators; Cbw uses the original zero-byte-offset premise and original register reversal. LabAsm jump/FFI/label lines are accepted exactly as original line_ok_pre, not a strengthened target validity check. Complete literal original local HOL statement/proof freshly kernel-replayed; all31case proofs and generic arbitrary-carrier applications kernel-checked. This is only the named constructor case; recursive cases and assembled theorem remain separate work."
   }
 ]
