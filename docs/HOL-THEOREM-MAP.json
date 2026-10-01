@@ -39309,5 +39309,13 @@
   "hol_name": "path_change_start",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.10: source64-72: universally quantified prefix/replacement/last, exact conjunction path(SNOC last prefix) and FST last=FST replacement implies path(SNOC replacement prefix). SNOC rendered prefix++singleton; all fields/carriers preserved, no fresh destination/NoRead/wf/target-path premise. Structural list induction matches source empty/single/multiple cases. Required wf_step141-149 and thereby dsteps_steps/full scheduler theorem. Ten fresh original T/F path/windmill observations and generic kernel applications cover premise boundaries; wf_step remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/EnvironmentChange.lean",
+  "lean_name": "parsem_change_env",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_change_env",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.11: source255-265 exact conjunction (notMEM key MAP FST moves implies first key=second key) and MAP(first o SND)moves=MAP(second o SND)moves implies pointwise parsem equality. Generic pair/List and function environments retained. No windmill, destination uniqueness, globally equal inputs or target evaluation premise added. Function-update codec lemma proves result by induction, preserving repeated destination last-write behavior. Direct prerequisite of step_sem cycle case; full scheduler correctness remains open."
 }
 ]

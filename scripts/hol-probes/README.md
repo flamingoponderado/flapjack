@@ -2046,3 +2046,12 @@ broken-prefix failures, and fresh/repeated destinations with repeated sources
 are replayed in the kernel by `ParmovePathParity.lean`. Generic source-shaped
 path_change_start/windmill_cons applications retain the original premises.
 Full wf preservation and scheduler correctness remain open.
+
+### ParMove environment-change observations
+
+`parmove_environment_probeScript.sml` evaluates eight direct original HOL rows.
+Repeated destinations with equal source maps overwrite differing input values;
+untouched values differ when the conditional premise is absent, and changed
+source values break equality. Empty and snapshot observations are included.
+`ParmoveEnvironmentParity.lean` replays the rows and applies the exact lemma
+with its original conjunction. Full scheduler preservation remains open.
