@@ -38515,5 +38515,37 @@
   "lean_name": "checkClashTree",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c literal source1019-1080 comparison 2026-10-01 bead11.4.1: exact four-constructor carrier List Nat and NumSet/Spt Unit; sequential deletion, ALL_DISTINCT as Pairwise inequality, existing-name skip and new-colour collision failure, Delta discarded write result, independent Branch inputs and reverse Seq traversal. Existing exact Spt operations; no representation qualifier or extra premise. Proof-side only; production migration bead11.4.2 remains open."
+},
+{
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "insert_notEmpty",
+  "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
+  "lean_name": "sptInsertNotEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead11.4.4.1: source127 unconditional nonempty insertion for all keys/payloads/trees; Bool false renders source negation of isEmpty. Exact existing Spt/List/Nat carriers, no representation qualifier."
+},
+{
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "wf_insert",
+  "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
+  "lean_name": "sptWfInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead11.4.4.1: source132 all keys/payloads/trees, only original wf premise; preserves wf of literal Spt insertion. Exact existing Spt/List/Nat carriers, no representation qualifier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "wf_insert_swap",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSetInsertion.lean",
+  "lean_name": "wfInsertSwap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead11.4.4.1: source2608 unit numeric insertion full tree commutation; retains wf premise although proof uses stronger existing Spt swap. Exact existing Spt/List/Nat carriers, no representation qualifier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "numset_list_insert_swap",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSetInsertion.lean",
+  "lean_name": "numsetListInsertSwap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead11.4.4.1: source2620 forall list/head/live, original wf premise and conjunction of result wf plus full literal tree equality; no target relation or lookup-only weakening. Exact existing Spt/List/Nat carriers, no representation qualifier."
 }
 ]
