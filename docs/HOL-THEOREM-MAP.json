@@ -43808,6 +43808,24 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison 2026-10-01: full local theorem4529-4559 quantifies arbitrary names, canonical Spt Nat input/output maps and natural counters; sole actual list_next_var_rename equality premise. All three original conclusions retained: ALL_DISTINCT output, exact MAP(4*x+next) COUNT_LIST length, nextOut=next+4*length. Lean List.Nodup/List.range are literal list/count-list correspondence. No distinct input, wf, map invariant, freshness, bound or successful pass premise. Proof inducts actual reviewed renamer, establishes output shape privately then scoped arithmetic injection gives Nodup. Fresh original literal complete local proof replay plus eight exact-input full observations (selected map lookups included),17 kernel fixtures including duplicate keys, malformed tree, collision, zero/odd/huge counter. No representation qualifier or executed change; coordinator acceptance pending."
   },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ForbiddenOperations.lean",
+    "lean_name": "noInstall",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "no_install_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .3.47.1: full literal StackProps1175-1195 on actual reviewed34-constructor HolProg carrier, exact shared positive word dimension/asm payloads/MlString. Call return and handler options traversed independently, including handler with return NONE; Seq/If conjunction, Loop recursion, Install alone False, every other constructor True. Tuple payloads and all ignored fields unchanged; no wf/label/ownership/frame/performance or extra premise. Only positive type-indexed HOL words translated to BitVec width with NeZero. Fresh original46 fully concrete predicate-pair equality observations allT, all34 constructors plus12 recursive/optional-continuation boundaries; identical kernel fixtures plus arbitrarywidth/payload application and width1. Runtime unchanged. Regression evidence is not HOL-to-Lean equivalence; full compiler preservation chain .47 and coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ForbiddenOperations.lean",
+    "lean_name": "noShmemop",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "no_shmemop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .3.47.1: full literal StackProps1175-1195 on actual reviewed34-constructor HolProg carrier, exact shared positive word dimension/asm payloads/MlString. Call return and handler options traversed independently, including handler with return NONE; Seq/If conjunction, Loop recursion, ShMemOp alone False, every other constructor True. Tuple payloads and all ignored fields unchanged; no wf/label/ownership/frame/performance or extra premise. Only positive type-indexed HOL words translated to BitVec width with NeZero. Fresh original46 fully concrete predicate-pair equality observations allT, all34 constructors plus12 recursive/optional-continuation boundaries; identical kernel fixtures plus arbitrarywidth/payload application and width1. Runtime unchanged. Regression evidence is not HOL-to-Lean equivalence; full compiler preservation chain .47 and coordinator acceptance pending."
+  },
 {
   "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
   "hol_name": "merge_moves_def",

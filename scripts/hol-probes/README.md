@@ -3124,3 +3124,15 @@ duplicate names, overwritten keys, a malformed initial tree, zero and odd
 counters, and unbounded naturals. `SSAListRenameArithmeticParity` checks17
 kernel examples against identical inputs and the complete theorem. Select
 `HOL_PROBE_ONLY=list_next_var_rename_lemma1_probeScript.sml` to regenerate.
+### Native StackProps forbidden operations
+
+`stackprops_forbidden_operations_probeScript.sml` records 46 original predicate
+pairs for `no_install` and `no_shmemop`: all 34 constructors and 12 nested
+Call/Seq/If/Loop boundaries. Both optional Call bodies are inspected independently,
+including a forbidden handler when the return field is NONE. Every equality
+observation resolves T and is kernel-replayed by
+`StackPropsForbiddenOperationsParity`, with additional arbitrary positive-width
+and payload applications. The definitions use the reviewed native `HolProg`
+carrier and preserve the literal source clauses. These are regression checks,
+not cross-language equivalence or full compiler preservation acceptance.
+Selector: `HOL_PROBE_ONLY=stackprops_forbidden_operations_probeScript.sml`.
