@@ -9,6 +9,8 @@ import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Append
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
 import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
 import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
+import Flapjack.Compiler.Backend.WordAlloc.GetForced
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
 import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompilePrefix

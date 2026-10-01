@@ -42366,5 +42366,50 @@
     "lean_name": "checkClashTreeInj",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.7) against reg_allocProofScript.sml:3152-3205: !ct f g live flive glive. INJ g UNIV UNIV /\\ domain glive = IMAGE g (domain flive) ==> case check_clash_tree f ct live flive of NONE => check_clash_tree (g o f) ct live glive = NONE | SOME (liveout,fliveout) => ?gliveout. check_clash_tree (g o f) ct live glive = SOME (liveout,gliveout) /\\ domain gliveout = IMAGE g (domain fliveout); induction on ct as HOL, Delta via the composition check_partial_col_INJ with domain_numset_list_delete and injective image of difference, Set/Branch fixed via check_col_INJ."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_forced_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/GetForced.lean",
+    "lean_name": "getForced",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocScript.sml:1466-1513, clause by clause: Inst AddCarry r1 r2 r3 r4 adds (if r1=r3 then [] else [(r1,r3)]) ++ (if r1=r4 then [] else [(r1,r4)]) ++ acc when c.ISA = MIPS \\/ RISC_V else acc; AddOverflow/SubOverflow add the (r1,r3) pair under the same guard; LongMul adds (r1,r2) on ARMv7, else (r1,r3),(r1,r4) on ARMv8 \\/ RISC_V \\/ Ag32, else acc; FPMovToReg r1 r2 d and FPMovFromReg d r1 r2 add [(r1,r2)] when dimindex(:'a) = 32 (width = 32) /\\ r1 <> r2; other Inst acc; MustTerminate and Loop recurse on the body; Seq s1 s2 = get_forced c s1 (get_forced c s2 acc); If e2 e3 likewise; Call (SOME (v,cutset,ret_handler,l1,l2)) folds the handler prog (if SOME) after ret_handler, NONE handler only ret_handler; all other programs including Call NONE return acc. List order and guards literal; ISA constructors as AsmArchitecture. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_forced_tail_split",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/GetForced.lean",
+    "lean_name": "getForcedTailSplit",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocProofScript.sml:3311-3318: !c p ls ls'. get_forced c p (ls++ls') = get_forced c p ls ++ ls'; proof by get_forced_ind as HOL. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "EVERY_get_forced",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/GetForced.lean",
+    "lean_name": "everyGetForced",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocProofScript.sml:3320-3326: EVERY P (get_forced c p ls) <=> EVERY P (get_forced c p []) /\\ EVERY P ls, free P c p ls explicit, P : num # num -> bool as Prop predicate, EVERY P l as forall x in l, P x. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_forced_pairwise_distinct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/GetForced.lean",
+    "lean_name": "getForcedPairwiseDistinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocProofScript.sml:3328-3335: !c prog ls. EVERY (\\(x,y). x <> y) ls ==> EVERY (\\(x,y). x <> y) (get_forced c prog ls); paired lambda as projections x.1 <> x.2. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_forced_in_get_clash_tree",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/GetForced.lean",
+    "lean_name": "getForcedInGetClashTree",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocProofScript.sml:3337-3375: !prog lt c. EVERY (\\(x,y). in_clash_tree (get_clash_tree prog lt) x /\\ in_clash_tree (get_clash_tree prog lt) y) (get_forced c prog []); reviewed inClashTree/getClashTree; the untagged generalized-accumulator lemma getForcedInClashTreeAcc replaces HOL's EVERY_get_forced rewriting inside the get_forced_ind proof. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
+    "words_as_type_indexed_bitvec": true
   }
 ]
