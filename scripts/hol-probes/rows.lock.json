@@ -31,6 +31,12 @@
       "sha256": "fb00053f44698704d47ad72155116e228341abdc8a31fca36f84735d31fe6183"
     },
     {
+      "bytes": 356,
+      "out": "asmprops_pc_coverage_probe.out",
+      "rows": 13,
+      "sha256": "814f36970d25cf9562097638bda0f1bd91a023c11996586e3c567aeb306c129a"
+    },
+    {
       "bytes": 1640,
       "out": "asmsem_arithmetic_probe.out",
       "rows": 52,
@@ -41,6 +47,12 @@
       "out": "backend_common_word_shift_probe.out",
       "rows": 7,
       "sha256": "dbfa8ad0165adfd7bcad992839f37f39c4b4b51bbb0bc9805a40e24529197422"
+    },
+    {
+      "bytes": 209,
+      "out": "backendprops_nonzero_labels_probe.out",
+      "rows": 15,
+      "sha256": "79dbfaff328f99645e594adf91217ba216d2da03e230f88c3b46a1308bf1c014"
     },
     {
       "bytes": 665,
@@ -4529,12 +4541,6 @@
       "out": "wrap_rt_probe.out",
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
-    },
-    {
-      "bytes": 209,
-      "out": "backendprops_nonzero_labels_probe.out",
-      "rows": 15,
-      "sha256": "79dbfaff328f99645e594adf91217ba216d2da03e230f88c3b46a1308bf1c014"
     }
   ],
   "version": 1

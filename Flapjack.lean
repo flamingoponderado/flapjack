@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
 import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
 import Flapjack.Compiler.Backend.BackendProps
 

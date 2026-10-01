@@ -2842,3 +2842,15 @@ carry and signed overflow, and widths 1, 8, 32, and 64. Original DIV_0/MOD_0
 simplifications expose zero-divisor quotient/remainder results. These probes
 are regression evidence, not cross-language equivalence or full asm evaluation
 acceptance. CakeML/HOL remains read-only.
+
+### Native asmProps stride PC coverage
+
+`asmprops_pc_coverage_probeScript.sml` evaluates loaded original
+`asmPropsTheory.all_pcs` at 13 length/stride/wrap boundaries and emits direct
+membership observations. `Flapjack.Test.AsmPropsPcCoverageParity` kernel-replays
+all rows. Cases include zero length, partial/exact stride lengths, repeated
+wrapped PCs at width 1, strides equal to or larger than word dimension, and
+32/64-bit wrapping. `AsmProps.PcCoverage` separately proves the complete
+original recursive characterization and byte-memory domain subset theorem,
+with no added length/alignment/uniqueness premise. Probes remain regression
+evidence, not cross-language equivalence or full encoder acceptance.
