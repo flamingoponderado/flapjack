@@ -41746,5 +41746,13 @@
   "lean_name": "mergeStackSets",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c: source1727-1731 literal ordered inter/difference/union composition; generic initial domain payload and ignored fixed component, generic common branch payloads; no wf premise. Eight fresh original full-tree equality rows paired kernel fixtures, including malformed trees and Bool payloads."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Correct.lean",
+  "lean_name": "parmove_correct",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parmove_correct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source672-694: whole generic theorem, original windmill premise only; all environments and real-register eqenv conclusion, actual parmove/parsem. Derives terminal emitted list, deterministic RTC, initial wf from some-lifted unique destinations and real fields, primitive RTC and final semantic consequence; no assumed output/simulation premise. Seven universal original theorem applications and matching Lean kernel applications, Bool carriers included. Full compiler theorem remains separate."
 }
 ]

@@ -2910,3 +2910,7 @@ run_probe word_to_stack_insert_prefix_probeScript.sml word_to_stack_insert_prefi
 run_probe word_alloc_merge_stack_sets_probeScript.sml word_alloc_merge_stack_sets_probe.out \
   mss_empty mss_retained_right mss_new_left_bias mss_new_right mss_removed mss_fixed_left_bias mss_raw mss_generic \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe parmove_correct_probeScript.sml parmove_correct_probe.out \
+  pc_empty pc_self pc_chain pc_cycle pc_fanout pc_order pc_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
