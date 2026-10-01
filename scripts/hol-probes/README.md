@@ -1,3 +1,22 @@
+`ssa_map_ok_probe.out` simplifies the literal original SSA map predicate and lookup clauses for five empty/valid/bound/physical/malformed-tree cases; `Flapjack/Test/SSAMapParity.lean` kernel-replays those quantified predicates. The full original definition is printed.
+
+`ssa_setup_probe.out` captures four original word_alloc definitions and nine direct EVAL rows for empty, duplicate, malformed-tree, arbitrary-start renaming and native setup widths 1/32/64/80, plus independent 1-to-80 and 80-to-1 input/output dimensions and the full original inferred function type. `Flapjack/Test/SSASetupParity.lean` kernel-replays identical inputs and observations. Regenerate with `HOL_PROBE_ONLY=ssa_setup_probeScript.sml`.
+`word_to_stack_selector_domain_probe.out` records thirteen complete original
+`inst_select riscv_config 23` program trees across assignment, Set, Load,
+Store, shared Store8, Seq/If/Loop/MustTerminate and optional Call bodies.
+`WordToStackSelectorDomainParity` kernel-checks twelve matches and explicitly
+records positive-offset Store as false: the production source-shaped Store is
+not original Mem/Addr, the existing open `flapjack-pxn.10` integration gap.
+The exact production counter-tree remains beside the unchanged original oracle.
+`ProductionSelectorDomain` proves structural support equality and actual partial
+codec acceptance/rejection equality for the executed selector and its own-
+temporary wrapper, using accepted atom/address closure. It is untagged carrier
+infrastructure, not universal HOL selector semantics, pre-SSA/source image
+closure, native ABI/configuration correspondence, or executed native routing.
+Kernel sentinels preserve five-register AddCarry rejection in Seq, Loop and
+both Call bodies while accepting the original four-register operation; generic
+applications include positive widths1/80 and unbounded natural temporaries.
+
 `parmove_fstep_map_inj_probe.out` records the complete original
 `fstep_MAP_INJ` statement and eight pairs of complete original output trees.
 The Nat-to-Bool renaming collapses registers outside the state support while
@@ -3195,3 +3214,38 @@ The native transition inherits the existing IEEE real-rendering assurance limit
 (SOUNDNESS item8); fixed raw arithmetic NaN payload agreement is not asserted.
 Probes remain regression evidence, not complete cross-language IEEE equivalence
 or whole ASM/compiler routing acceptance.
+
+### Generic native ASM assertions
+
+`asmprops_assertions_probeScript.sml` evaluates original `asmPropsTheory`
+`asserts`/`asserts2` using its exported `asserts_eval` numeral equations
+(the recursive `asserts_def` is marked `nocompute`) and `asserts2_def`.
+Its sixteen concrete rows check zero-count behavior, terminal `next 0`,
+descending noncommutative update order and reversed GENLIST prefixes,
+weakening context bounds, Bool states and independent Nat-state/Bool-
+intermediate iteration, count-dependent interference and failed predicates.
+`AsmPropsAssertionsParity.lean` kernel-replays the same inputs. Fresh
+original full-type queries retain both independent carriers; the definition
+ports have no word specialization. These rows are regression evidence,
+not HOL-to-Lean equivalence or complete encoder correctness. The full
+iteration/weakening theorem chain is a separate dependency.
+`word_alloc_max_var_max_probe.out` captures the complete exported theorem and46
+fresh original maximum/at-bound/strict-below triples across native constructors,
+recursive Call/Loop bodies, ignored fields, non-wellformed cutsets and widths
+1/32/64/80. `WordAllocMaxVarMaxParity` checks93 kernel examples against these
+inputs and the full premise-free theorem. Run this capture alone with
+`HOL_PROBE_ONLY=word_alloc_max_var_max_probeScript.sml`.
+### Whole-program Word-to-Stack code labels
+
+`word_to_stack_program_code_labels_probeScript.sml` evaluates seven actual
+original `compile_word_to_stack` outputs: target/source/owned-handler label
+unions, complete frame lists, bitmap cursor and original EVERY guard. Duplicate
+keys, spilled locals, owned and wrong-owner handlers, dropped tail handlers and
+bitmap threading are covered. Finite list unions are evaluated as FOLDR UNION
+EMPTY, the list form of BIGUNION; a separate original parser check confirms the
+theorem's INSERT/UNION grouping. All eight captures resolve T and the seven
+output claims are kernel-replayed in `WordToStackProgramCodeLabelsParity`,
+alongside a nonvacuous full theorem application with arbitrary configuration,
+register count and bitmap input. These are regression checks, not a
+HOL-to-Lean equivalence proof or whole compiler correctness acceptance.
+Selector: `HOL_PROBE_ONLY=word_to_stack_program_code_labels_probeScript.sml`.

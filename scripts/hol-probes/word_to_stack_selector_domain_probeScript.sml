@@ -1,0 +1,18 @@
+load "bossLib"; load "preamble"; load "word_instTheory"; load "riscv_targetTheory";
+open HolKernel Parse bossLib preamble word_instTheory riscv_targetTheory;
+val _ = Globals.linewidth := 1000;
+fun out label p = (print (label ^ "=");
+  print_term (rhs (concl (EVAL ``inst_select riscv_config 23 ^p``))); print "\n");
+val _ = out "selector_program_skip" ``(Skip:64 wordLang$prog)``;
+val _ = out "selector_program_seq" ``(Seq (Assign 2 (Const 7w)) Tick:64 wordLang$prog)``;
+val _ = out "selector_program_set" ``(Set (Temp 1w) (Var 18):64 wordLang$prog)``;
+val _ = out "selector_program_load" ``(Assign 2 (Load (Var 18)):64 wordLang$prog)``;
+val _ = out "selector_program_store" ``(Store (Var 18) 10:64 wordLang$prog)``;
+val _ = out "selector_program_store_offset" ``(Store (Op Add [Var 18;Const 7w]) 10:64 wordLang$prog)``;
+val _ = out "selector_program_share" ``(ShareInst Store8 10 (Op Add [Var 18;Const 7w]):64 wordLang$prog)``;
+val _ = out "selector_program_if" ``(If Equal 1 (Imm 0w) (Assign 2 (Const 7w)) Tick:64 wordLang$prog)``;
+val _ = out "selector_program_loop" ``(Loop LN (Assign 2 (Const 7w)) LN:64 wordLang$prog)``;
+val _ = out "selector_program_must" ``(MustTerminate (Assign 2 (Const 7w)):64 wordLang$prog)``;
+val _ = out "selector_program_tail_handler" ``(Call NONE (SOME 7) [] (SOME(1,Assign 3 (Const 9w),5,6)):64 wordLang$prog)``;
+val _ = out "selector_program_return" ``(Call (SOME([], (LN,LN),Assign 2 (Const 7w),3,4)) (SOME 7) [] NONE:64 wordLang$prog)``;
+val _ = out "selector_program_both" ``(Call (SOME([], (LN,LN),Seq (Assign 2 (Const 7w)) Tick,3,4)) (SOME 7) [] (SOME(1,Seq (Assign 3 (Const 9w)) Tick,5,6)):64 wordLang$prog)``;
