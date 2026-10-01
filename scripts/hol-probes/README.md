@@ -1,3 +1,22 @@
+`word_to_stack_write_bitmap_type.sml` queries the original HOL constant type
+(`α sptree$num_map -> num -> num -> β word list`) from the prebuilt
+`word_to_stackTheory`; run `HOL/bin/hol run <absolute script path>` from the
+original `cakeml/compiler/backend` theory directory. The payload is generic;
+only wLive specializes it to unit cutsets. `word_to_stack_write_bitmap_probe`
+also captures `wb_payload_nat` and `wb_payload_bool`, replayed by
+`WordToStackLiveBitmapParity`. Existing unit bitmap rows are preserved.
+
+`loop_sem_store_narrow_probe.out` captures sixteen direct original Loop
+Store32/StoreByte `evaluate_def` observations at width64 (clauses325-337).
+It registers the original recursive theorem with the HOL compset, without a
+surrogate evaluator. Rows cover 64-to-32/8 narrowing, both endian placements,
+upper-half Store32, alignment/domain/type/memory errors, unchanged other memory
+and clock. Every guard in `Flapjack.Test.LoopStoreNarrowParity` cites its row;
+missing production memory totalizes to the original Loc0 0 sentinel. These are
+adapter checks, not full runtime hook-bundle wiring. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=loop_sem_store_narrow_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `stacksem_loop_recursive_probe.out` contains eleven fresh direct original
 `stackSem$evaluate (Loop body, state)` observations (stackSemScript.sml:833-837).
 The original evaluator performs all recursive re-entry. The Lean replay
@@ -1879,3 +1898,25 @@ logical-register/address, two-register arithmetic, and FP alias failures.
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stack_props_inst_name_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.StackPropsInstructionNames` kernel-replays all ten rows.
+
+`word_alloc_get_live_probe.out` contains three fresh direct original full-program
+liveness observations: StoreConsts deletes registers1/2 while adding3/4 and
+retaining9; an out-of-range Break returns LN; Return inserts repeated value2
+as a set entry. The StoreConsts row distinguishes the earlier compiled clause
+from the shadowed duplicate source row. `WordAllocProgramLivenessParity`
+kernel-replays the identical inputs. Regenerate using the byte-identical built
+original tree with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_get_live_probeScript.sml scripts/hol-probes/regenerate.sh`.
+These observations supplement clause review; they do not establish whole-pass
+correctness or the pending production liveness route.
+
+`word_alloc_get_writes_inst_probe.out` captures seven direct original
+`get_writes_inst_def` observations (word_allocScript.sml681-703). Full-tree
+equalities cover Const, AddCarry, LongDiv, the literal Load16 catchall,
+FPMovToReg at64/32, and the FPMovFromReg catchall. The identical inputs and
+outputs are kernel replayed by `Flapjack.Test.WordAllocInstructionWritesParity`.
+These regression rows do not establish cross-language equivalence or complete
+the production route. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_get_writes_inst_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
