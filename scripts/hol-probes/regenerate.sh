@@ -3113,3 +3113,7 @@ run_probe word_alloc_canonize_moves_probeScript.sml word_alloc_canonize_moves_pr
 run_probe word_copy_codec_domain_probeScript.sml word_copy_codec_domain_probe.out \
   copy_carry copy_load16 copy_store16 copy_seq_alias copy_if copy_loop copy_must copy_both \
   "$cake_dir/compiler/backend/word_copyScript.sml" "$cake_dir/compiler/backend"
+
+run_probe reg_alloc_sorted_mem_probeScript.sml reg_alloc_sorted_mem_probe.out \
+  sorted_mem_empty sorted_mem_singleton sorted_mem_above sorted_mem_middle sorted_mem_gap sorted_mem_below sorted_mem_tail sorted_mem_duplicate sorted_mem_unsorted_stop sorted_mem_unsorted_continue sorted_mem_zero sorted_mem_large \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"

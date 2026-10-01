@@ -42722,5 +42722,13 @@
     "hol_name": "run_ira_state_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.4.1): literal define_run_declarations factory reg_allocScript1466-1468 and ml_monadBaseLib467-538. All twelve native State fields preserved; adj_ls/node_tag/degrees/coalesced/move_related become Nat x element initialization pairs. FST is independent replication length, SND is replicated value; seven remaining fields unchanged. Runner accepts arbitrary MonadBase.M State value exception, reconstructs the exact State with five List.replicate calls and returns run result without consistency/success premises. Native List/Nat/Bool/Tag carriers and independent Type0 result/exception match source. Eight fresh original HOL EVAL observations including inconsistent dim, zero lengths and failure replay kernel-checked. Production IRC route and remaining public wrappers stay open on parent. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortedMem.lean",
+    "lean_name": "sortedMem",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "sorted_mem_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead.11.5.10.5.8.6.25: literal reg_allocScript193-199 arbitrary Nat key and List Nat. Empty false; head equality true; x>head false before recursion; otherwise recursive tail. No descending-order, membership, uniqueness or range premise. Nat equality/order and Bool/List constructors retained exactly. Twelve fresh original EVAL equations replay identical inputs by kernel rfl, including unsorted early-stop rejection, unsorted continuing match, duplicates, zero, tail, and 80-bit key. Native definition is proof-side prerequisite; production wrapper replacement tracked separately, no executed allocator correspondence claimed. Coordinator review pending."
   }
 ]
