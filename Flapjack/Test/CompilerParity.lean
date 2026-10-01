@@ -532,6 +532,7 @@ import Flapjack.Test.WordLangFullInstOkLessParity
 import Flapjack.Test.WordLangCallArgParity
 import Flapjack.Test.RegAllocVarParity
 import Flapjack.Test.WordLangNotCreatedParity
+import Flapjack.Test.WordConvsNoInstallDefParity
 import Flapjack.Test.StackSemLoopControlParity
 import Flapjack.Test.StackSemLeafTransfersParity
 import Flapjack.Test.StackSemRegisterTransfersParity

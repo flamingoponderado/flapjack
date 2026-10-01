@@ -3177,3 +3177,19 @@ all four move operand forms, register/spill branches, bitmap insertion, arbitrar
 frame arithmetic and word widths 64/1. This is helper preservation only; the
 `copy_ret` wrapper and full compiler preservation remain tracked on bead47.2.
 Original observations and kernel checks do not establish cross-language equivalence.
+
+### Full WordConvs no-install equations
+
+`word_convs_no_install_def_probeScript.sml` projects all 26 clauses of the
+original exported `no_install_def`, matches each complete constructor input,
+and checks assumption-free exact clause applications before evaluating the pair
+(actual predicate value, original clause conclusion). Three additional width-one
+Call rows complete all four return/handler combinations. `WordConvsNoInstallDefParity`
+projects the same clauses from the entire Lean conjunction at identical inputs;
+Install and recursive failing bodies remain false, every original clause true.
+The existing canonical `noInstallSubprogsHOL` predicate is reused. Normalized
+Install comparisons simplify by constructor disjointness, so the ShareInst
+clause requires no choice of HOL ARB. All source shared inputs remain in the
+full theorem; the only qualifier translates positive type-indexed word dimensions.
+These regression observations do not establish compiler correctness or replace
+source-level HOL/Lean correspondence review.
