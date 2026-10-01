@@ -3084,3 +3084,16 @@ original full-type queries retain both independent carriers; the definition
 ports have no word specialization. These rows are regression evidence,
 not HOL-to-Lean equivalence or complete encoder correctness. The full
 iteration/weakening theorem chain is a separate dependency.
+
+### Full generic ASM assertion iteration
+
+`asmprops_assertions_iteration_probeScript.sml` applies all six original
+`asmPropsTheory` iteration/weakening theorems. It matches each complete
+conclusion, instantiates remaining source variables, proves every original
+premise, checks the resulting theorem has no hypotheses and exactly the
+requested conclusion, then evaluates that conclusion. All six rows are `T`;
+`AsmPropsAssertionsIterationParity.lean` applies the corresponding full Lean
+theorems to the same inputs. Weakening/interference fixtures change functions
+above the original count bound, and the intermediate carrier remains Bool
+while states are Nat. These regressions do not establish cross-language
+equivalence or complete encoder correctness.

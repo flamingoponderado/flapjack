@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
 import Flapjack.Compiler.Backend.WordAlloc.SSASetup
 import Flapjack.Compiler.Encoders.AsmProps.Assertions

@@ -1,3 +1,4 @@
+import Flapjack.Test.AsmPropsAssertionsIterationParity
 import Flapjack.Test.SSAMapParity
 import Flapjack.Test.SSASetupParity
 import Flapjack.Test.AsmPropsAssertionsParity
@@ -1547,6 +1548,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
     Flapjack.Test.AsmPropsPcCoverageParity.runChecks,
+    Flapjack.Test.AsmPropsAssertionsIterationParity.runChecks,
     Flapjack.Test.AsmPropsAssertionsParity.runChecks,
     Flapjack.Test.AsmSemFpUpdatesParity.runChecks,
     Flapjack.Test.AsmSemArithmeticParity.runChecks,
