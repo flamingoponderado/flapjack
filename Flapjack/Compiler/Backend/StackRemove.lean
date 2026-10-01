@@ -39,28 +39,32 @@ def bytesInWord (width : Nat) : BitVec width := BitVec.ofNat width (width / 8)
 
 /-- HOL `is_SOME_Word` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml:144-146`),
 width-indexed: HOL's `word_loc` payload is the actual `'a word`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "is_SOME_Word_def"]
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "is_SOME_Word_def"
+  (words_as_type_indexed_bitvec)]
 def isSomeWord {width : Nat} [NeZero width] : Option (WordLoc (BitVec width)) → Bool
   | some (.word _) => true
   | _ => false
 
 /-- HOL `read_mem` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml:2739-2742`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "read_mem_def"]
-def readMem {width : Nat} (address : BitVec width)
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "read_mem_def"
+  (words_as_type_indexed_bitvec)]
+def readMem {width : Nat} [NeZero width] (address : BitVec width)
     (memory : BitVec width → WordLoc (BitVec width)) : Nat → List (WordLoc (BitVec width))
   | 0 => []
   | n + 1 => memory address :: readMem (address + bytesInWord width) memory n
 
 /-- HOL `addresses` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml:2745-2748`).
 HOL sets are predicates, so the Lean carrier is `BitVec width → Prop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "addresses_def"]
-def addresses {width : Nat} (address : BitVec width) : Nat → (BitVec width → Prop)
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "addresses_def"
+  (words_as_type_indexed_bitvec)]
+def addresses {width : Nat} [NeZero width] (address : BitVec width) : Nat → (BitVec width → Prop)
   | 0 => fun _ => False
   | n + 1 => fun x => x = address ∨ addresses (address + bytesInWord width) n x
 
 /-- HOL `LENGTH_read_mem`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "LENGTH_read_mem"]
-theorem length_readMem {width : Nat} (n : Nat) (address : BitVec width)
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "LENGTH_read_mem"
+  (words_as_type_indexed_bitvec)]
+theorem length_readMem {width : Nat} [NeZero width] (n : Nat) (address : BitVec width)
     (memory : BitVec width → WordLoc (BitVec width)) :
     (readMem address memory n).length = n := by
   induction n generalizing address with
@@ -68,8 +72,9 @@ theorem length_readMem {width : Nat} (n : Nat) (address : BitVec width)
   | succ n ih => simp only [readMem, List.length_cons, ih]
 
 /-- HOL `IN_addresses`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "IN_addresses"]
-theorem mem_addresses {width : Nat} (n : Nat) (address x : BitVec width) :
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "IN_addresses"
+  (words_as_type_indexed_bitvec)]
+theorem mem_addresses {width : Nat} [NeZero width] (n : Nat) (address x : BitVec width) :
     addresses address n x ↔
       ∃ i, i < n ∧ x = address + BitVec.ofNat width i * bytesInWord width := by
   induction n generalizing address with
@@ -95,6 +100,16 @@ theorem mem_addresses {width : Nat} (n : Nat) (address x : BitVec width) :
             simp only [BitVec.one_mul, BitVec.add_mul]
             ac_rfl
 
+/-- HOL `addresses_thm` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml:2770-2773`):
+the address set is exactly the range `{a + n2w i * bytes_in_word | i < n}`. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "addresses_thm"
+  (words_as_type_indexed_bitvec)]
+theorem addresses_eq_set {width : Nat} [NeZero width] (n : Nat) (address : BitVec width) :
+    addresses address n =
+      (fun x => ∃ i, i < n ∧ x = address + BitVec.ofNat width i * bytesInWord width) := by
+  funext x
+  exact propext (mem_addresses n address x)
+
 /-! ## Value helpers from the `stack_remove` compiler script
 
 `cakeml/compiler/backend/stack_removeScript.sml` drives the stack operations
@@ -110,7 +125,8 @@ def maxStackAlloc : Nat := 255
 /-- HOL `word_offset` (`stack_removeScript.sml:20-22`):
 `word_offset n = n2w (dimindex (:'a) DIV 8 * n)`. HOL word dimensions are
 nonzero (`dimindex (:'a) > 0`), so the exact carrier requires `[NeZero width]`. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "word_offset_def"]
+@[hol "cakeml/compiler/backend/stack_removeScript.sml" "word_offset_def"
+  (words_as_type_indexed_bitvec)]
 def wordOffset {width : Nat} [NeZero width] (n : Nat) : BitVec width :=
   BitVec.ofNat width ((width / 8) * n)
 
@@ -167,7 +183,8 @@ parity test; a kernel-checked bridge between the two carriers already exists via
 /-- HOL `left_shift_inst` (`cakeml/compiler/backend/stackLangScript.sml:80`):
 `λr v. Inst (Arith (Shift Lsl r r (Imm (n2w v))))`, over the exact shared-word
 `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "left_shift_inst"]
+@[hol "cakeml/compiler/backend/stackLangScript.sml" "left_shift_inst"
+  (words_as_type_indexed_bitvec)]
 def leftShiftInst {width : Nat} [NeZero width] (register value : Nat) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .inst (.arith (.shift .lsl register register (.imm (BitVec.ofNat width value))))
@@ -175,14 +192,16 @@ def leftShiftInst {width : Nat} [NeZero width] (register value : Nat) :
 /-- HOL `right_shift_inst` (`cakeml/compiler/backend/stackLangScript.sml:81`):
 `λr v. Inst (Arith (Shift Lsr r r (Imm (n2w v))))`, over the exact shared-word
 `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "right_shift_inst"]
+@[hol "cakeml/compiler/backend/stackLangScript.sml" "right_shift_inst"
+  (words_as_type_indexed_bitvec)]
 def rightShiftInst {width : Nat} [NeZero width] (register value : Nat) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .inst (.arith (.shift .lsr register register (.imm (BitVec.ofNat width value))))
 
 /-- HOL `const_inst` (`cakeml/compiler/backend/stackLangScript.sml:82`):
 `λr w. Inst (Const r w)`, over the exact shared-word `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "const_inst"]
+@[hol "cakeml/compiler/backend/stackLangScript.sml" "const_inst"
+  (words_as_type_indexed_bitvec)]
 def constInst {width : Nat} [NeZero width] (register : Nat) (value : BitVec width) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .inst (.const register value)
@@ -190,7 +209,8 @@ def constInst {width : Nat} [NeZero width] (register : Nat) (value : BitVec widt
 /-- HOL `load_inst` (`cakeml/compiler/backend/stackLangScript.sml:83`):
 `λr a. Inst (Mem Load r (Addr a 0w))`, over the exact shared-word
 `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "load_inst"]
+@[hol "cakeml/compiler/backend/stackLangScript.sml" "load_inst"
+  (words_as_type_indexed_bitvec)]
 def loadInst {width : Nat} [NeZero width] (register address : Nat) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .inst (.mem .load register (.addr address 0))
@@ -198,7 +218,8 @@ def loadInst {width : Nat} [NeZero width] (register address : Nat) :
 /-- HOL `store_inst` (`cakeml/compiler/backend/stackLangScript.sml:84`):
 `λr a. Inst (Mem Store r (Addr a 0w))`, over the exact shared-word
 `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "store_inst"]
+@[hol "cakeml/compiler/backend/stackLangScript.sml" "store_inst"
+  (words_as_type_indexed_bitvec)]
 def storeInst {width : Nat} [NeZero width] (register address : Nat) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .inst (.mem .store register (.addr address 0))
@@ -206,7 +227,8 @@ def storeInst {width : Nat} [NeZero width] (register address : Nat) :
 /-- HOL `halt_inst` (`cakeml/compiler/backend/stack_removeScript.sml:58-60`):
 `halt_inst w = Seq (const_inst 1 w) (Halt 1)`, over the exact shared-word
 `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "halt_inst_def"]
+@[hol "cakeml/compiler/backend/stack_removeScript.sml" "halt_inst_def"
+  (words_as_type_indexed_bitvec)]
 def haltInst {width : Nat} [NeZero width] (value : BitVec width) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .seq (.inst (.const 1 value)) (.halt 1)
