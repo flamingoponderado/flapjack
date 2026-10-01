@@ -40979,5 +40979,19 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.5): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Call case of evaluate_ind: same binder s, the HOL case-split conclusion rendered by the untagged stackSwapPost, and as premises exactly the four Call induction hypotheses of the tagged Lean evaluate_ind (text copied verbatim with P := stackSwapPost): the return handler at set_vars n ys s1 after a Result and pop_env, the exception handler at set_var n' y s2 after an Exception, the returning callee at call_env args1 ss (push_env envs handler (dec_clock s)), and the tail callee at call_env args1 ss (dec_clock s). No extra premise. Proof follows HOL (wordPropsScript.sml:2879-3233) on the rebound evaluate_def: get_vars/find_code/cut_envs/clock do not read the stack; push_env and call_env commute with a value-equal stack (s_val_eq_stack_size, s_val_eq_length; untagged pushEnv_withStack/callEnv_withStack); tail calls pass bad_fun_return (untagged stackSwapRel_badRet); Result pops a frame equal by s_val_and_key_eq, with push_env_pop_env_s_key_eq and the restored handler (untagged pushEnv_popEnv_handler), then the return-handler IH via stackSwapRel_seqTail; Exception without handler uses LASTN past the handler-free pushed frame (untagged lastN_cons, LASTN_LENGTH_cond), with handler the whole pushed stack is the LASTN frame, lss' = lss by key/value reassembly, then the handler IH. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap.lean",
+    "lean_name": "evaluateStackSwap",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.6): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) itself: binders !c s, conclusion the HOL case expression over evaluate (c,s) rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack/locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses and transported run; otherwise s_key_eq, handler and transported run), no premise. Proof is HOL's: ho_match_mp_tac evaluate_ind (the tagged Lean evaluate_ind, rebound without fix_clock) applied to the 26 tagged per-constructor evaluateStackSwap_<Case> theorems, whose premises are exactly the corresponding evaluate_ind clause hypotheses. Axioms: propext, Classical.choice, Quot.sound. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
   }
 ]
