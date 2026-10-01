@@ -1528,10 +1528,26 @@ def wordSsaLimitVar (_parameters : List Nat) (program : WordProg α) : Nat :=
   let maximum := wordProgCakeMaxVar program
   maximum + (4 - maximum % 4) + 1
 
+/-- Production initial-counter boundary. The caller supplies the complete
+program's limit; this is Flapjack infrastructure, not a HOL theorem port. -/
+def wordSsaSetupParametersFromLimit (limit : Nat) (parameters : List Nat) :
+    WordSsaState × List Nat :=
+  wordSsaFreshList
+    { current := [], next := limit } parameters
+
 def wordSsaSetupParameters (parameters : List Nat) (program : WordProg α) :
     WordSsaState × List Nat :=
   wordSsaFreshList
     { current := [], next := wordSsaLimitVar parameters program } parameters
+
+/-- Run the actual renamer from a caller-supplied program limit. Flapjack
+production infrastructure; it neither computes nor assumes a simulation. -/
+def wordSsaRenameFunctionFromLimit [OfNat α 0] (limit : Nat)
+    (parameters : List Nat) (program : WordProg α) :
+    WordSsaState × List Nat × WordProg α :=
+  let (state, renamedParameters) := wordSsaSetupParametersFromLimit limit parameters
+  let (state, program) := wordSsaRenameProgram state program
+  (state, renamedParameters, program)
 
 def wordSsaRenameFunction [OfNat α 0] (parameters : List Nat) (program : WordProg α) :
     WordSsaState × List Nat × WordProg α :=
@@ -1547,6 +1563,15 @@ def wordSsaRenameFunction [OfNat α 0] (parameters : List Nat) (program : WordPr
 def wordSsaEntryMove (parameters renamedParameters : List Nat) :
     WordProg α :=
   .move 1 (renamedParameters.zip parameters)
+
+/-- The actual entry move and renamer with an explicit initial limit.
+Flapjack production infrastructure with no separate HOL original. -/
+def wordSsaRenameFunctionWithEntryFromLimit [OfNat α 0] (limit : Nat)
+    (parameters : List Nat) (program : WordProg α) :
+    WordSsaState × List Nat × WordProg α :=
+  let (state, renamedParameters, program) :=
+    wordSsaRenameFunctionFromLimit limit parameters program
+  (state, renamedParameters, .seq (wordSsaEntryMove parameters renamedParameters) program)
 
 def wordSsaRenameFunctionWithEntry [OfNat α 0] (parameters : List Nat) (program : WordProg α) :
     WordSsaState × List Nat × WordProg α :=
@@ -1583,9 +1608,28 @@ def wordSsaRenameFunctionWithEntryAndDeadMoves [OfNat α 0] (parameters : List N
 def wordSsaAbiParameters (count : Nat) : List Nat :=
   (List.range count).map (fun index => 2 * index)
 
+/-- Full production SSA with its program limit supplied by the caller.
+This boundary permits a fixed-width caller to use native `limitVar` on the
+complete program; it does not itself establish codec success or native routing.
+Flapjack infrastructure, not a HOL theorem port. -/
+def wordFullSsaCcTransFromLimit [OfNat α 0] (limit parameterCount : Nat)
+    (program : WordProg α) : WordSsaState × List Nat × WordProg α :=
+  wordSsaRenameFunctionWithEntryFromLimit limit
+    (wordSsaAbiParameters parameterCount) program
+
 def wordFullSsaCcTrans [OfNat α 0] (parameterCount : Nat) (program : WordProg α) :
     WordSsaState × List Nat × WordProg α :=
   wordSsaRenameFunctionWithEntry (wordSsaAbiParameters parameterCount) program
+
+/-- Unconditional equality for the complete executed SSA result, including
+state, renamed formals and entry/body. Flapjack infrastructure; no HOL original. -/
+theorem wordFullSsaCcTrans_fromLimit [OfNat α 0]
+    (parameterCount : Nat) (program : WordProg α) :
+    wordFullSsaCcTrans parameterCount program =
+      wordFullSsaCcTransFromLimit
+        (wordSsaLimitVar (wordSsaAbiParameters parameterCount) program)
+        parameterCount program := by
+  rfl
 
 theorem wordFullSsaCcTrans_eq_named_entry [OfNat α 0]
     (parameterCount : Nat) (program : WordProg α) :

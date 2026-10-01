@@ -1,0 +1,12 @@
+ns_lookup_dead=F
+ns_lookup_live=T
+ns_var=T
+ns_const=T
+ns_op_dead=F
+ns_op_live=T
+ns_op_empty=T
+ns_load=T
+ns_load_dead=F
+ns_shift_left_dead=F
+ns_shift_right_dead=F
+ns_shift_live=T

@@ -58,7 +58,7 @@ example : inputs.map (fun program => (wordLangProgToHOL program).map maxVarHOL) 
   rw [← sourceRows, List.map_map]
   apply List.map_congr_left
   intro program member
-  rw [wordProgCakeMaxVar_codec program ((List.all_eq_true.mp supportedInputs) program member)]
+  rw [wordProgCakeMaxVar_codec program]
   exact mappedConstant _ _ ((List.all_eq_true.mp encodedInputs) program member)
 
 example : (wordLangProgToHOL
@@ -73,9 +73,26 @@ example : maxVarHOL (.inst (.mem .load16 3 (.addr 17 99)) : WordLangProgHOL (Bit
   simp [maxVarHOL, maxVarInstHOL]
 
 example {width : Nat} [NeZero width] (program : WordProg (BitVec width))
-    (supported : RiscV.allocatorMemorySupported program = true) :
+    :
     (wordLangProgToHOL program).map maxVarHOL =
       (wordLangProgToHOL program).map (fun _ => wordProgCakeMaxVar program) :=
-  wordProgCakeMaxVar_codec program supported
+  wordProgCakeMaxVar_codec program
+
+-- Fresh word_program_max_unrestricted_probe.out: exact native inputs with
+-- ordinary 16-bit memory, rejected by the allocator memory guard but accepted
+-- by the carrier codec. The theorem does not assume that guard.
+private def unrestrictedInputs : List (WordProg (BitVec 64)) :=
+  [.seq .tick (.inst (.memOffset .load16 7 19 3)),
+   .call none none [2,6] (some (999,.inst (.memOffset .load16 1000 2000 3),3,4)),
+   .call (some ([11],([13,13],[]),.inst (.memOffset .load16 99 100 3),3,4))
+     none [2,6] (some (17,.inst (.memOffset .store16 1000 2000 3),5,6)),
+   .loop [29,29] (.inst (.memOffset .load16 1000 2000 3)) [31,31]]
+
+example : unrestrictedInputs.map wordProgCakeMaxVar = [0,6,17,31] := by decide +kernel
+example : unrestrictedInputs.map (wordSsaLimitVar []) = [5,9,21,33] := by decide +kernel
+example : unrestrictedInputs.map (fun program => (wordLangProgToHOL program).map maxVarHOL) =
+    [some 0,some 6,some 17,some 31] := by decide +kernel
+example : unrestrictedInputs.all (fun program => (wordLangProgToHOL program).isSome) = true := by decide +kernel
+example : unrestrictedInputs.map RiscV.allocatorMemorySupported = [false,false,false,false] := by decide +kernel
 
 end Flapjack.Test.WordToStackProgramMaximumParity

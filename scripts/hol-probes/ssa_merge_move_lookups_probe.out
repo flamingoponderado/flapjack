@@ -1,0 +1,16 @@
+frame3_full_source_replay=⊢ ∀ls na ssaL ssaR.
+    (let
+       (moveL,moveR,na',ssaL',ssaR') = merge_moves ls ssaL ssaR na
+     in
+       ∀x. ¬MEM x ls ∨ x ∉ domain (inter ssaL ssaR) ⇒
+           lookup x ssaL' = lookup x ssaL ∧ lookup x ssaR' = lookup x ssaR)
+frame3_empty=⊢ let
+    (moveL,moveR,na',ssaL',ssaR') = merge_moves [] LN LN 8
+  in
+    ∀x. ¬MEM x [] ∨ x ∉ domain (inter LN LN) ⇒
+        lookup x ssaL' = lookup x LN ∧ lookup x ssaR' = lookup x LN
+frame3_absent=T
+frame3_outside=T
+frame3_absent_result=([(8,1)],[(8,3)],12,⦕ 0 ↦ 8 ⦖,⦕ 0 ↦ 8 ⦖)
+frame3_outside_result=([],[],8,LN,⦕ 0 ↦ 3 ⦖)
+frame3_common_guard=F
