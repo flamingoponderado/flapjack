@@ -123,6 +123,10 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.PushPopEnv
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.PermuteSwap
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
@@ -147,6 +151,7 @@ import Flapjack.Compiler.Backend.WordAlloc.InstructionWrites
 import Flapjack.Compiler.Backend.WordAlloc.ProgramWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
@@ -185,6 +190,7 @@ import Flapjack.Misc.ShiftSeq
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Compiler.Backend.RegAlloc
+import Flapjack.Compiler.Backend.RegAlloc.ClashTree
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog
@@ -196,6 +202,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
 import Flapjack.Compiler.Backend.WordToStackRegFormat
+import Flapjack.Compiler.Backend.Parmove
+import Flapjack.Compiler.Backend.Parmove.Semantics
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.StackNames
