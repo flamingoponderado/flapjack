@@ -1,0 +1,27 @@
+gh_empty_even=([],NONE)
+
+gh_empty_odd=([],SOME LN)
+
+gh_move_even=([(3,4,2)],NONE)
+
+gh_move_odd=([(42,2,4)],SOME ⦕ 2 ↦ 10; 4 ↦ 10 ⦖)
+
+gh_duplicates=([(84,2,4)],SOME ⦕ 2 ↦ 20; 4 ↦ 20 ⦖)
+
+gh_self_call=([(42,2,4)],SOME ⦕ 2 ↦ 2; 4 ↦ 2 ⦖)
+
+gh_other_call=([(42,2,4)],SOME ⦕ 2 ↦ 10; 4 ↦ 10 ⦖)
+
+gh_get_cost=([],SOME ⦕ 5 ↦ 20 ⦖)
+
+gh_large_even=([(3,4,2)],NONE)
+
+gh_large_odd=([(42,2,4)],SOME ⦕ 2 ↦ 10; 4 ↦ 10 ⦖)
+
+gh_move_structure=T
+
+gh_dup_structure=T
+
+gh_self_structure=T
+
+gh_get_structure=T

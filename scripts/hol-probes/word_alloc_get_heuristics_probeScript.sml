@@ -1,0 +1,17 @@
+load "bossLib"; load "preamble"; load "word_allocTheory";
+open bossLib HolKernel Parse preamble word_allocTheory;
+fun observe label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = observe "gh_empty_even" ``get_heuristics 0 7 (Skip : 64 wordLang$prog)``;
+val _ = observe "gh_empty_odd" ``get_heuristics 1 7 (Skip : 64 wordLang$prog)``;
+val _ = observe "gh_move_even" ``get_heuristics 2 7 (Move 3 [(4,2)] : 64 wordLang$prog)``;
+val _ = observe "gh_move_odd" ``get_heuristics 3 7 (Move 3 [(4,2)] : 64 wordLang$prog)``;
+val _ = observe "gh_duplicates" ``get_heuristics 1 7 (Move 3 [(4,2);(2,4)] : 64 wordLang$prog)``;
+val _ = observe "gh_self_call" ``get_heuristics 1 7 (Seq (Move 3 [(4,2)]) (Call NONE (SOME 7) [] NONE) : 64 wordLang$prog)``;
+val _ = observe "gh_other_call" ``get_heuristics 1 7 (Seq (Move 3 [(4,2)]) (Call NONE (SOME 8) [] NONE) : 64 wordLang$prog)``;
+val _ = observe "gh_get_cost" ``get_heuristics 1 7 (Get 5 NextFree : 64 wordLang$prog)``;
+val _ = observe "gh_large_even" ``get_heuristics 1208925819614629174706176 7 (Move 3 [(4,2)] : 16 wordLang$prog)``;
+val _ = observe "gh_large_odd" ``get_heuristics 1208925819614629174706177 7 (Move 3 [(4,2)] : 16 wordLang$prog)``;
+val _ = observe "gh_move_structure" ``get_heuristics 3 7 (Move 3 [(4,2)] : 64 wordLang$prog) = ([(42,2,4)],SOME (insert 4 10 (insert 2 10 LN)))``;
+val _ = observe "gh_dup_structure" ``get_heuristics 1 7 (Move 3 [(4,2);(2,4)] : 64 wordLang$prog) = ([(84,2,4)],SOME (insert 4 20 (insert 2 20 LN)))``;
+val _ = observe "gh_self_structure" ``get_heuristics 1 7 (Seq (Move 3 [(4,2)]) (Call NONE (SOME 7) [] NONE) : 64 wordLang$prog) = ([(42,2,4)],SOME (insert 4 2 (insert 2 2 LN)))``;
+val _ = observe "gh_get_structure" ``get_heuristics 1 7 (Get 5 NextFree : 64 wordLang$prog) = ([],SOME (insert 5 20 LN))``;

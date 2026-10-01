@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
+import Flapjack.Compiler.Backend.RegAlloc.SortMoves
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
 import Flapjack.RiscV.AllocatorMemoryInvariant
 import Flapjack.RiscV.CakeAllocatorCore
@@ -1410,11 +1411,37 @@ def cakeSortN {α : Type u} (negate : Bool) (ord : α → α → Bool) :
 def cakeSort {α : Type u} (ord : α → α → Bool) (items : List α) : List α :=
   cakeSortN false ord items.length items
 
+/-- Flapjack-only equality between the former generic sort helper and the
+reviewed library rendering. No independent HOL theorem is claimed. -/
+private theorem cakeMergeTail_eq_literal {α : Type} (negate : Bool)
+    (ord : α → α → Bool) (left right acc : List α) :
+    cakeMergeTail negate ord left right acc =
+      Basis.Pure.MlList.mergeTail negate ord left right acc := by
+  fun_induction cakeMergeTail negate ord left right acc <;>
+    simp_all [Basis.Pure.MlList.mergeTail]
+
+/-- Flapjack-only equality, including arbitrary length arguments and lists;
+no ordering premise or supplied output is assumed. -/
+private theorem cakeSortN_eq_literal {α : Type} (negate : Bool)
+    (ord : α → α → Bool) (n : Nat) (items : List α) :
+    cakeSortN negate ord n items =
+      Basis.Pure.MlList.mergesortNTail negate ord n items := by
+  fun_induction cakeSortN negate ord n items <;>
+    simp_all [Basis.Pure.MlList.mergesortNTail,
+      cakeSort2Tail, cakeSort3Tail, Basis.Pure.MlList.sort2Tail,
+      Basis.Pure.MlList.sort3Tail, cakeMergeTail_eq_literal] <;> rfl
+
 /-! `sort_moves` (`reg_allocScript.sml:343-346`) uses Cake's generic `sort`
     with a strict priority comparison. -/
 def cakeSortMoves (moves : List (Nat × (Nat × Nat))) :
     List (Nat × (Nat × Nat)) :=
-  cakeSort (fun a b => a.1 > b.1) moves
+  Flapjack.RegAlloc.sortMoves moves
+
+/-- Flapjack-only unconditional replay of the former production sort equation. -/
+theorem cakeSortMoves_eq_legacy (moves : List (Nat × (Nat × Nat))) :
+    cakeSortMoves moves = cakeSort (fun a b => a.1 > b.1) moves := by
+  simp [cakeSortMoves, Flapjack.RegAlloc.sortMoves, Basis.Pure.MlList.sort,
+    Basis.Pure.MlList.mergesortTail, cakeSort, cakeSortN_eq_literal]
 
 /-- `move_related_sub`: a node flagged by `reset_move_related`. -/
 def cakeMoveRelatedSub (state : CakeRaState) (v : Nat) : Bool :=
@@ -1602,17 +1629,28 @@ def cakeAddUnavailMovesWl (ls : List (Nat × (Nat × Nat)))
     (state : CakeRaState) : CakeRaState :=
   { state with unavailMovesWl := ls ++ state.unavailMovesWl }
 
-/-- `smerge` (`reg_allocScript.sml:349-358`): stable merge of two
-    descending priority-sorted move lists; ties take the left list. -/
-def cakeSMerge : List (Nat × (Nat × Nat)) → List (Nat × (Nat × Nat)) →
+/-- Former production equations retained privately for kernel replay; this
+Flapjack-only helper is not executed or claimed as a HOL theorem. -/
+private def cakeSMergeLegacy : List (Nat × (Nat × Nat)) → List (Nat × (Nat × Nat)) →
     List (Nat × (Nat × Nat))
   | [], ms => ms
   | ms, [] => ms
   | (p1, m1) :: ms1, (p2, m2) :: ms2 =>
-      if p1 >= p2 then (p1, m1) :: cakeSMerge ms1 ((p2, m2) :: ms2)
-      else (p2, m2) :: cakeSMerge ((p1, m1) :: ms1) ms2
+      if p1 >= p2 then (p1, m1) :: cakeSMergeLegacy ms1 ((p2, m2) :: ms2)
+      else (p2, m2) :: cakeSMergeLegacy ((p1, m1) :: ms1) ms2
 termination_by ms1 ms2 => sizeOf ms1 + sizeOf ms2
 decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial
+
+/-- Execute the reviewed priority merge, including unsorted inputs and ties. -/
+def cakeSMerge (xs ys : List (Nat × (Nat × Nat))) :
+    List (Nat × (Nat × Nat)) := Flapjack.RegAlloc.smerge xs ys
+
+/-- Flapjack-only unconditional equality to the former recursive helper. -/
+theorem cakeSMerge_eq_legacy (xs ys : List (Nat × (Nat × Nat))) :
+    cakeSMerge xs ys = cakeSMergeLegacy xs ys := by
+  unfold cakeSMerge
+  fun_induction cakeSMergeLegacy xs ys <;>
+    simp_all [Flapjack.RegAlloc.smerge] <;> omega
 
 /-- `revive_moves` (`reg_allocScript.sml:363-375`). -/
 def cakeReviveMoves (vs : List Nat) (state : CakeRaState) : CakeRaState :=
