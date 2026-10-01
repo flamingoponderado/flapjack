@@ -1,5 +1,6 @@
 import Flapjack.Test.ParmoveWfStepsParity
 import Flapjack.Test.ParmoveNoReadParity
+import Flapjack.Test.LabSemFpUpdatesParity
 import Flapjack.Test.LabSemArithmeticParity
 import Flapjack.Test.ParmoveStepsParity
 import Flapjack.Test.ParmovePermutationParity
