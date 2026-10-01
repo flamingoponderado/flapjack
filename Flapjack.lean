@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.ProductionLimitVar
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarInst
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarExp
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
