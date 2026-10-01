@@ -1,3 +1,5 @@
+import Flapjack.Test.CanonizeSortParity
+import Flapjack.Test.HeuProgParity
 import Flapjack.Test.RegAllocRemapParity
 import Flapjack.Test.HeuCallParity
 import Flapjack.Test.HeuMaxParity

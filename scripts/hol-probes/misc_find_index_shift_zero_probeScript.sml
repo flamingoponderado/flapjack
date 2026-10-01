@@ -1,0 +1,12 @@
+load "bossLib"; load "preamble"; load "miscTheory"; open bossLib HolKernel Parse preamble miscTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val _ = observe "fiz_empty" ``find_index (7:num) [] 4 = OPTION_MAP (λi. i + 4) (find_index (7:num) [] 0)``;
+val _ = observe "fiz_head" ``find_index (7:num) [7;2;7] 9 = OPTION_MAP (λi. i + 9) (find_index (7:num) [7;2;7] 0)``;
+val _ = observe "fiz_middle" ``find_index (7:num) [2;7;7] 9 = OPTION_MAP (λi. i + 9) (find_index (7:num) [2;7;7] 0)``;
+val _ = observe "fiz_last" ``find_index (7:num) [2;3;7] 9 = OPTION_MAP (λi. i + 9) (find_index (7:num) [2;3;7] 0)``;
+val _ = observe "fiz_absent" ``find_index (8:num) [2;3;7] 9 = OPTION_MAP (λi. i + 9) (find_index (8:num) [2;3;7] 0)``;
+val _ = observe "fiz_zero" ``find_index (7:num) [2;7;7] 0 = OPTION_MAP (λi. i + 0) (find_index (7:num) [2;7;7] 0)``;
+val _ = observe "fiz_large_offset" ``find_index (7:num) [2;7;7] 18446744073709551616 = OPTION_MAP (λi. i + 18446744073709551616) (find_index (7:num) [2;7;7] 0)``;
+val _ = observe "fiz_large_value" ``find_index (18446744073709551617:num) [2;18446744073709551617;7] 4 = OPTION_MAP (λi. i + 4) (find_index (18446744073709551617:num) [2;18446744073709551617;7] 0)``;
+val _ = observe "fiz_bool" ``find_index (T:bool) [F;T;T] 9 = OPTION_MAP (λi. i + 9) (find_index (T:bool) [F;T;T] 0)``;
+val _ = observe "fiz_bool_absent" ``find_index (T:bool) [F;F] 9 = OPTION_MAP (λi. i + 9) (find_index (T:bool) [F;F] 0)``;
