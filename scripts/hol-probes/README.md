@@ -3338,3 +3338,10 @@ hypotheses; `EQT_INTRO` renders its proved conclusion as T. The three local
 replays are captured separately and are not claimed exported HOL DB theorems.
 `SSARegisterFlipParity` kernel-checks identical tuples and fourteen full public
 theorem applications, without a bounded-register or additional class premise.
+
+`ssa_locals_insert_probe.out` replays both literal original fresh SSA/local
+insertion proofs and captures their fully generic locals/value types. Two
+concrete original theorem applications match `SSALocalsInsertParity`: insertion
+from empty trees and insertion preserving an existing mapped source key/value.
+These are checked theorem applications rather than a claim that the original
+simplifier decides the quantified relation after insertion.

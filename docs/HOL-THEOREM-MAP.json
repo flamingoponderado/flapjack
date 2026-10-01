@@ -44131,5 +44131,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-sol-a compared5186-5193 and fresh original inferred types: st:(alpha,beta,gamma) state; cst:(alpha,delta,epsilon) state. Positive indexed word dimension shared, all four ignored code/FFI types independently generic Type0. Actual reviewed native WordSem state carriers preserved, no state parameters replaced by maps; only locals Spt field traversed, no finite-map field used. Original relation AND domain equality AND pointwise lookup equality, identical swapped locals-relation conclusion, no extra premise. Native accepted locals predicate supplies guarded THE correspondence. Full original literal proof srw_tac replay PASS, independent inferred state carrier types captured. Generic kernel fixture applies actual theorem at arbitrary states/maps/width. No executable change.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_insert",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsInsert.lean",
+    "lean_name": "ssaLocalsRelInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source5639-5665 full comparison: original arbitrary Nat next/name/native Spt Nat map, same generic alpha payload for both locals trees and inserted value; fresh original inferred types confirm generic alpha rather than fixed words. Exactly original locals relation AND map validity AND name<next; conclusion inserts name->next into SSA/name->value into source/next->value into target and raises bound by4. No well-formedness, domain, class, success or desired-result premise added. Old target preservation follows original strict mapped-register bound; allocated old source-key bound retained, new source-key bound follows name<next. Adjacent original set_var theorem also takes trees, not state parameters, and has identical statement. Accepted locals selector independence handles only guarded THE(SOME). Literal original tactic proof replay and nonvacuous kernel/original cases; no executable behavior change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_set_var",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsInsert.lean",
+    "lean_name": "ssaLocalsRelSetVar",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source5611-5637 full comparison: original arbitrary Nat next/name/native Spt Nat map, same generic alpha payload for both locals trees and inserted value; fresh original inferred types confirm generic alpha rather than fixed words. Exactly original locals relation AND map validity AND name<next; conclusion inserts name->next into SSA/name->value into source/next->value into target and raises bound by4. No well-formedness, domain, class, success or desired-result premise added. Old target preservation follows original strict mapped-register bound; allocated old source-key bound retained, new source-key bound follows name<next. Adjacent original set_var theorem also takes trees, not state parameters, and has identical statement. Accepted locals selector independence handles only guarded THE(SOME). Literal original tactic proof replay and nonvacuous kernel/original cases; no executable behavior change."
   }
 ]
