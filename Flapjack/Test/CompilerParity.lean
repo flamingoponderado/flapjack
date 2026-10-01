@@ -1,6 +1,8 @@
 import Flapjack.Test.SSAMapStepParity
 import Flapjack.Test.SSALocalsInsertParity
 import Flapjack.Test.WordConvsPredicateEquationsParity
+import Flapjack.Test.SSAMergeMoveLookupsParity
+import Flapjack.Test.LoopToWordLabelHandlersParity
 import Flapjack.Test.WordConvsPredicateEquationsParity
 import Flapjack.Test.SSAMapStepParity
 import Flapjack.Test.SSALocalsInsertParity

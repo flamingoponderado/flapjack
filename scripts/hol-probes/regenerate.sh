@@ -3504,6 +3504,9 @@ run_probe word_to_stack_no_shmemop_call_core_probeScript.sml word_to_stack_no_sh
   cc_ret_zero cc_ret_one cc_ret_many cc_ret_width1 cc_prefix_1 cc_suffix_1 cc_prefix_32 cc_suffix_32 cc_prefix_64 cc_suffix_64 cc_prefix_80 cc_suffix_80 \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
+run_probe word_program_max_unrestricted_probeScript.sml word_program_max_unrestricted_probe.out \
+  seq16_max seq16_limit tail16_max tail16_limit both16_max both16_limit loop16_max loop16_limit \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
 run_probe ssa_locals_swap_probeScript.sml ssa_locals_swap_probe.out \
   sw_type_ssaL sw_type_cst sw_type_st sw_type_ssaR sw_type_na sw_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3570,10 +3573,17 @@ run_probe ssa_physical_state_updates_probeScript.sml ssa_physical_state_updates_
   ph_set_full ph_set_type_st ph_set_type_cst ph_list_full ph_list_type_st ph_list_type_cst \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe ssa_merge_move_lookups_probeScript.sml ssa_merge_move_lookups_probe.out \
+  frame3_full_source_replay frame3_empty frame3_absent frame3_outside frame3_absent_result frame3_outside_result frame3_common_guard \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe loop_to_word_label_handlers_probeScript.sml loop_to_word_label_handlers_probe.out \
+  comp_l_invariant_source_replay good_handlers_comp_source_replay loop_to_word_good_handlers_source_replay loop_to_word_comp_SND_LE_source_replay lh_nested64_result lh_nested64_owner lh_nested64_counter lh_nested64_handlers lh_nested1_result lh_nested1_owner lh_nested1_counter lh_nested1_handlers lh_nested80_result lh_nested80_owner lh_nested80_counter lh_nested80_handlers lh_ignored_tail_result lh_ignored_tail_owner lh_ignored_tail_counter lh_ignored_tail_handlers lh_program_result lh_program_handlers lh_wrong_owner \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
 run_probe ssa_rename_property_wrappers_probeScript.sml ssa_rename_property_wrappers_probe.out \
   rw_core_full rw_move_full rw_move_type rw_single_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
-
 run_probe ssa_option_lookup_subset_probeScript.sml ssa_option_lookup_subset_probe.out \
   os_full os_type_ssa os_type_cst_locs os_type_ls \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

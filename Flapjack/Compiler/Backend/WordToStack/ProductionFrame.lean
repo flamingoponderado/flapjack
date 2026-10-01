@@ -38,12 +38,7 @@ theorem retainedAllocator_nativeFrame {width : Nat} [NeZero width]
     (wordLangProgToHOL output.colouredProgram).map
       (fun _ => if output.allocation.nextSpill = 0 then 0
         else output.allocation.nextSpill + 1) := by
-  have supported := cakeAllocateWordFunctionAfterDeadWithColour_output_supported
-    label parameters program output allocated
-  have colouredSupported : allocatorMemorySupported output.colouredProgram = true := by
-    simpa [CakeAllocationWithColour.colouredProgram,
-      allocatorMemorySupported_wordApplyColour] using supported
-  have maximum := wordProgCakeMaxVar_codec output.colouredProgram colouredSupported
+  have maximum := wordProgCakeMaxVar_codec output.colouredProgram
   have occupancy := cakeAllocateWordFunctionAfterDeadWithColour_frame
     label parameters program output allocated
   cases encoded : wordLangProgToHOL output.colouredProgram with

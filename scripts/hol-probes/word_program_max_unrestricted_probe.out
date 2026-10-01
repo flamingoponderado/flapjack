@@ -1,0 +1,8 @@
+seq16_max=0
+seq16_limit=5
+tail16_max=6
+tail16_limit=9
+both16_max=17
+both16_limit=21
+loop16_max=31
+loop16_limit=33

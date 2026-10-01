@@ -22,3 +22,7 @@ root = "Flapjack.CompileMain"
 [[lean_exe]]
 name = "flapjack-debug"
 root = "Flapjack.DebugMain"
+
+[[lean_exe]]
+name = "flapjack-limit-var-bench"
+root = "Flapjack.LimitVarBenchMain"
