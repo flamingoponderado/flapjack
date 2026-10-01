@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabSem.Arithmetic
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate
 import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
@@ -703,4 +704,3 @@ elab "#emit_hol_type_hashes" : command => do
         liftIO <| IO.println (Json.mkObj fields).compress
 
 #emit_hol_type_hashes
-import Flapjack.Compiler.Backend.LabSem.Arithmetic
