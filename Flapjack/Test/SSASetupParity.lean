@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSASetup
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
 namespace Flapjack.Test.SSASetupParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 -- Kernel regressions replay the same inputs and observations as the original probe.
@@ -45,4 +45,9 @@ example : (setupSSA (outputWidth := 80) 3 5
 example : (setupSSA (outputWidth := 1) 3 101
     (.assign 999 (.var 999) : WordLangProgHOL (BitVec 80))).1 =
     (.move 1 [(101,0),(105,2),(109,4)] : WordLangProgHOL (BitVec 1)) := by rfl
+-- The full infrastructure theorem applies to every count, without a bound.
+example (count : Nat) : (evenList count).Nodup := evenListNodup count
+example : (evenList 0).Nodup := evenListNodup 0
+example : (evenList 1).Nodup := evenListNodup 1
+example : (evenList 5).Nodup := evenListNodup 5
 end Flapjack.Test.SSASetupParity
