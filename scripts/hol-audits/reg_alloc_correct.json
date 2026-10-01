@@ -1,0 +1,2631 @@
+{
+  "target": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml:3460-3490",
+  "bead": "flapjack-pxn.18.5.11.5.10",
+  "status": "incomplete verified frontier; theorem remains blocked",
+  "verified_frontier": [
+    "native carriers .10.1",
+    "state_exn and external monadic core .10.2",
+    "list_remap/mk_bij .10.3",
+    "generated initialization runner/public wrappers .10.4",
+    "do_reg_alloc_correct3235-3453 proof frontier .10.5"
+  ],
+  "reused": [
+    "11.5.6 sp_default",
+    "11.5.7 in_clash_tree and checker injection"
+  ],
+  "limitations": "Local lexical candidates are not semantic proof dependencies; generated accessor bundles, implicit simp facts and graph/heuristic/assignment/extraction proof prerequisites still require source review and individual splitting.",
+  "local_lexical_candidates": [
+    {
+      "kind": "Datatype",
+      "name": "tag",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 41,
+      "end": 43,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "add_freeze_wl_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 290,
+      "end": 296,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "add_simp_wl_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 274,
+      "end": 280,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "add_spill_wl_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 282,
+      "end": 288,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "add_unavail_moves_wl_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 309,
+      "end": 315,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "assign_Atemp_tag_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 896,
+      "end": 919,
+      "citations": [
+        "remove_colours_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "assign_Atemps_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 923,
+      "end": 935,
+      "citations": [
+        "assign_Atemp_tag_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "assign_Stemp_tag_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 959,
+      "end": 980,
+      "citations": [
+        "st_ex_MAP_def",
+        "tag_col_def",
+        "unbound_colour_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "assign_Stemps_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 984,
+      "end": 991,
+      "citations": [
+        "assign_Stemp_tag_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "bg_ok_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 524,
+      "end": 554,
+      "citations": [
+        "considered_var_def",
+        "deg_or_inf_def",
+        "sorted_mem_def",
+        "st_ex_FILTER_def",
+        "st_ex_MAP_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "biased_pref_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1369,
+      "end": 1382,
+      "citations": [
+        "coalesce_root_def",
+        "first_match_col_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "canonize_move_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 609,
+      "end": 620,
+      "citations": [
+        "is_Fixed_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "check_clash_tree_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1055,
+      "end": 1081,
+      "citations": [
+        "check_col_def",
+        "check_partial_col_def",
+        "numset_list_delete_def"
+      ],
+      "mapped": true
+    },
+    {
+      "kind": "Definition",
+      "name": "check_col_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1034,
+      "end": 1040,
+      "citations": [],
+      "mapped": true
+    },
+    {
+      "kind": "Definition",
+      "name": "check_partial_col_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1042,
+      "end": 1051,
+      "citations": [],
+      "mapped": true
+    },
+    {
+      "kind": "Definition",
+      "name": "clique_insert_edge_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 223,
+      "end": 230,
+      "citations": [
+        "list_insert_edge_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "coalesce_parent_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 589,
+      "end": 607,
+      "citations": [
+        "coalesced_sub",
+        "is_Fixed_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "coalesce_root_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1353,
+      "end": 1366,
+      "citations": [
+        "coalesced_sub",
+        "is_Fixed_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "colouring_satisfactory_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1236,
+      "end": 1241,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "considered_var_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 506,
+      "end": 513,
+      "citations": [
+        "is_Atemp_def",
+        "is_Fixed_k_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "consistency_ok_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 565,
+      "end": 582,
+      "citations": [
+        "is_Fixed_def",
+        "move_related_sub",
+        "sorted_mem_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "dec_deg_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 252,
+      "end": 258,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "dec_degree_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 260,
+      "end": 272,
+      "citations": [
+        "dec_deg_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "deg_or_inf_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 516,
+      "end": 522,
+      "citations": [
+        "is_Fixed_k_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "do_alloc1_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1288,
+      "end": 1297,
+      "citations": [
+        "init_alloc1_heu_def",
+        "rpt_do_step_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "do_coalesce_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 668,
+      "end": 690,
+      "citations": [
+        "add_unavail_moves_wl_def",
+        "bg_ok_def",
+        "consistency_ok_def",
+        "do_coalesce_real_def",
+        "respill_def",
+        "st_ex_FIRST_def",
+        "unspill_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "do_coalesce_real_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 457,
+      "end": 472,
+      "citations": [
+        "dec_deg_def",
+        "inc_deg_def",
+        "is_Fixed_def",
+        "list_insert_edge_def",
+        "push_stack_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "do_freeze_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 750,
+      "end": 765,
+      "citations": [
+        "dec_degree_def",
+        "push_stack_def",
+        "unspill_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "do_prefreeze_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 726,
+      "end": 746,
+      "citations": [
+        "add_simp_wl_def",
+        "consistency_ok_def",
+        "do_simplify_def",
+        "is_not_coalesced_def",
+        "move_related_sub",
+        "reset_move_related_def",
+        "st_ex_FILTER_def",
+        "st_ex_PARTITION_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "do_reg_alloc_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1449,
+      "end": 1462,
+      "citations": [
+        "assign_Atemps_def",
+        "assign_Stemps_def",
+        "biased_pref_def",
+        "do_alloc1_def",
+        "extract_color_def",
+        "full_consistency_ok_def",
+        "init_ra_state_def",
+        "moves_to_sp_def",
+        "neg_biased_pref_def",
+        "resort_moves_def",
+        "sp_default_def",
+        "st_ex_FILTER_def",
+        "update_move_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "do_simplify_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 400,
+      "end": 415,
+      "citations": [
+        "dec_degree_def",
+        "push_stack_def",
+        "st_ex_FOREACH_def",
+        "unspill_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "do_spill_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 809,
+      "end": 829,
+      "citations": [
+        "dec_degree_def",
+        "push_stack_def",
+        "safe_div_def",
+        "st_ex_list_MAX_deg_def",
+        "st_ex_list_MIN_cost_def",
+        "unspill_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "do_step_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 831,
+      "end": 858,
+      "citations": [
+        "do_coalesce_def",
+        "do_freeze_def",
+        "do_prefreeze_def",
+        "do_simplify_def",
+        "do_spill_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "do_upd_coalesce_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1251,
+      "end": 1254,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "extend_clique_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 235,
+      "end": 246,
+      "citations": [
+        "list_insert_edge_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "extend_graph_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1224,
+      "end": 1231,
+      "citations": [
+        "insert_edge_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "extract_color_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1306,
+      "end": 1317,
+      "citations": [
+        "extract_tag_def",
+        "st_ex_MAP_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "extract_tag_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1299,
+      "end": 1303,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "first_match_col_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 994,
+      "end": 1004,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "full_consistency_ok_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1385,
+      "end": 1407,
+      "citations": [
+        "is_Atemp_def",
+        "is_Fixed_k_def",
+        "sorted_mem_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "good_neg_pref_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 575,
+      "end": 584,
+      "citations": [
+        "good_ra_state_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "good_pref_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 73,
+      "end": 82,
+      "citations": [
+        "good_ra_state_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "good_ra_state_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 40,
+      "end": 56,
+      "citations": [
+        "undirected_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "has_edge_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 20,
+      "end": 25,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "hide_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1010,
+      "end": 1012,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "in_clash_tree_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 770,
+      "end": 780,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "inc_deg_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 418,
+      "end": 424,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "init_alloc1_heu_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1257,
+      "end": 1286,
+      "citations": [
+        "considered_var_def",
+        "do_upd_coalesce_def",
+        "is_Atemp_def",
+        "move_related_sub",
+        "reset_move_related_def",
+        "sort_moves_def",
+        "split_degree_def",
+        "st_ex_FILTER_def",
+        "st_ex_FOREACH_def",
+        "st_ex_PARTITION_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "init_ra_state_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1241,
+      "end": 1248,
+      "citations": [
+        "extend_graph_def",
+        "mk_graph_def",
+        "mk_tags_def",
+        "sp_default_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "insert_edge_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 201,
+      "end": 211,
+      "citations": [
+        "sorted_insert_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "is_Atemp_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 490,
+      "end": 496,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "is_Fixed_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 449,
+      "end": 455,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "is_Fixed_k_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 498,
+      "end": 504,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "is_alloc_var_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1138,
+      "end": 1140,
+      "citations": [],
+      "mapped": true
+    },
+    {
+      "kind": "Definition",
+      "name": "is_clique_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 983,
+      "end": 987,
+      "citations": [
+        "has_edge_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "is_not_coalesced_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 322,
+      "end": 328,
+      "citations": [
+        "coalesced_sub"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "is_phy_var_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1135,
+      "end": 1137,
+      "citations": [],
+      "mapped": true
+    },
+    {
+      "kind": "Definition",
+      "name": "is_stack_var_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1132,
+      "end": 1134,
+      "citations": [],
+      "mapped": true
+    },
+    {
+      "kind": "Definition",
+      "name": "is_subgraph_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 989,
+      "end": 993,
+      "citations": [
+        "has_edge_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "list_insert_edge_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 214,
+      "end": 221,
+      "citations": [
+        "insert_edge_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "list_remap_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1096,
+      "end": 1103,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "mk_bij_aux_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1105,
+      "end": 1117,
+      "citations": [
+        "list_remap_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "mk_bij_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1119,
+      "end": 1123,
+      "citations": [
+        "mk_bij_aux_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "mk_graph_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1179,
+      "end": 1217,
+      "citations": [
+        "clique_insert_edge_def",
+        "extend_clique_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "mk_tags_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1159,
+      "end": 1176,
+      "citations": [
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "moves_to_sp_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1333,
+      "end": 1338,
+      "citations": [
+        "undir_move_insert_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "neg_biased_pref_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1434,
+      "end": 1446,
+      "citations": [
+        "neg_first_match_col_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "neg_first_match_col_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1420,
+      "end": 1432,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "no_clash_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 59,
+      "end": 67,
+      "citations": [
+        "has_edge_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "numset_list_delete_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1028,
+      "end": 1031,
+      "citations": [],
+      "mapped": true
+    },
+    {
+      "kind": "Definition",
+      "name": "pri_move_insert_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1319,
+      "end": 1326,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "push_stack_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 299,
+      "end": 307,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "reg_alloc_aux_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1473,
+      "end": 1488,
+      "citations": [
+        "do_reg_alloc_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "reg_alloc_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1490,
+      "end": 1493,
+      "citations": [
+        "mk_bij_def",
+        "reg_alloc_aux_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "remove_colours_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 874,
+      "end": 891,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "reset_move_related_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 708,
+      "end": 724,
+      "citations": [
+        "is_Fixed_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "resort_moves_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1341,
+      "end": 1344,
+      "citations": [
+        "sort_moves_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "respill_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 650,
+      "end": 666,
+      "citations": [
+        "add_spill_wl_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "revive_moves_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 363,
+      "end": 377,
+      "citations": [
+        "smerge_def",
+        "sort_moves_def",
+        "sorted_mem_def",
+        "st_ex_MAP_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "rpt_do_step_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 860,
+      "end": 867,
+      "citations": [
+        "do_step_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "safe_div_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 774,
+      "end": 776,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "smerge_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 349,
+      "end": 358,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "sort_moves_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 343,
+      "end": 346,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "sorted_insert_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 185,
+      "end": 191,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "sorted_mem_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 193,
+      "end": 199,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "sp_default_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1219,
+      "end": 1222,
+      "citations": [
+        "is_phy_var_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "sp_inverts_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 783,
+      "end": 788,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "split_degree_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 330,
+      "end": 340,
+      "citations": [
+        "is_not_coalesced_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "st_ex_FILTER_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 170,
+      "end": 180,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "st_ex_FIRST_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 628,
+      "end": 648,
+      "citations": [
+        "canonize_move_def",
+        "coalesce_parent_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "st_ex_FOREACH_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 139,
+      "end": 146,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "st_ex_MAP_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 148,
+      "end": 156,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "st_ex_PARTITION_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 158,
+      "end": 168,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "st_ex_list_MAX_deg_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 794,
+      "end": 807,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "st_ex_list_MIN_cost_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 778,
+      "end": 792,
+      "citations": [
+        "safe_div_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "tag_col_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 939,
+      "end": 942,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "unbound_colour_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 947,
+      "end": 956,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "undir_move_insert_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1328,
+      "end": 1331,
+      "citations": [
+        "pri_move_insert_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "undirected_def",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 27,
+      "end": 32,
+      "citations": [
+        "has_edge_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "unspill_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 379,
+      "end": 392,
+      "citations": [
+        "add_freeze_wl_def",
+        "add_simp_wl_def",
+        "move_related_sub",
+        "revive_moves_def",
+        "split_degree_def",
+        "st_ex_PARTITION_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Definition",
+      "name": "update_move_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1409,
+      "end": 1417,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "ALL_DISTINCT_set_INJ",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1493,
+      "end": 1501,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "GT_TRANS",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1014,
+      "end": 1018,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "GT_sorted_eq",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1020,
+      "end": 1025,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "IMAGE_DIFF",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1503,
+      "end": 1510,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "INJ_COMPOSE_IMAGE",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1296,
+      "end": 1305,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "INJ_less",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1244,
+      "end": 1251,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "MEM_MAP_IMAGE",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1520,
+      "end": 1524,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "MEM_smerge",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2175,
+      "end": 2182,
+      "citations": [
+        "smerge_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "SORTED_HEAD_LT",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 537,
+      "end": 548,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "TWOxDIV2",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2031,
+      "end": 2036,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "UNION_DIFF_3",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1534,
+      "end": 1539,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "adj_ls_accessor",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 125,
+      "end": 126,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "assign_Atemp_tag_correct",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 402,
+      "end": 446,
+      "citations": [
+        "assign_Atemp_tag_def",
+        "good_pref_def",
+        "good_ra_state_def",
+        "no_clash_LUPDATE_Fixed",
+        "no_clash_LUPDATE_Stemp",
+        "no_clash_def",
+        "remove_colours_succeeds",
+        "remove_colours_success"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "assign_Atemps_FOREACH_lem",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 448,
+      "end": 488,
+      "citations": [
+        "assign_Atemp_tag_correct",
+        "assign_Atemp_tag_def",
+        "good_pref_def",
+        "good_ra_state_def",
+        "no_clash_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "assign_Atemps_correct",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 490,
+      "end": 535,
+      "citations": [
+        "assign_Atemps_FOREACH_lem",
+        "assign_Atemps_def",
+        "good_pref_def",
+        "good_ra_state_def",
+        "no_clash_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "assign_Stemp_tag_correct",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 586,
+      "end": 645,
+      "citations": [
+        "assign_Stemp_tag_def",
+        "good_neg_pref_def",
+        "good_ra_state_def",
+        "no_clash_LUPDATE_Fixed",
+        "no_clash_def",
+        "st_ex_MAP_node_tag_sub",
+        "tag_col_def",
+        "unbound_colour_correct",
+        "unbound_colour_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "assign_Stemps_FOREACH_lem",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 648,
+      "end": 685,
+      "citations": [
+        "assign_Stemp_tag_correct",
+        "assign_Stemp_tag_def",
+        "good_neg_pref_def",
+        "good_ra_state_def",
+        "no_clash_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "assign_Stemps_correct",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 687,
+      "end": 716,
+      "citations": [
+        "assign_Stemps_FOREACH_lem",
+        "assign_Stemps_def",
+        "good_neg_pref_def",
+        "good_ra_state_def",
+        "no_clash_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "bg_ok_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2384,
+      "end": 2437,
+      "citations": [
+        "bg_ok_def",
+        "good_ra_state_def",
+        "st_ex_FILTER_considered_var",
+        "st_ex_FILTER_def",
+        "st_ex_MAP_deg_or_inf"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "canonize_move_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2484,
+      "end": 2493,
+      "citations": [
+        "canonize_move_def",
+        "good_ra_state_def",
+        "is_Fixed_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "case_eq_thms",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 95,
+      "end": 99,
+      "citations": [
+        "tag"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "check_clash_tree_domain",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1552,
+      "end": 1562,
+      "citations": [
+        "case_eq_thms",
+        "check_clash_tree_def",
+        "check_col_def",
+        "check_partial_col_domain",
+        "domain_difference",
+        "domain_numset_list_delete",
+        "in_clash_tree_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "check_clash_tree_same_dom",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 3052,
+      "end": 3092,
+      "citations": [
+        "check_clash_tree_def",
+        "check_clash_tree_domain",
+        "check_col_def",
+        "check_partial_col_same_dom",
+        "domain_difference",
+        "in_clash_tree_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "check_partial_col_domain",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1541,
+      "end": 1550,
+      "citations": [
+        "check_partial_col_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "check_partial_col_same_dom",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 3043,
+      "end": 3050,
+      "citations": [
+        "check_partial_col_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "check_partial_col_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1253,
+      "end": 1294,
+      "citations": [
+        "INJ_less",
+        "check_partial_col_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "clique_insert_edge_succeeds",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1168,
+      "end": 1194,
+      "citations": [
+        "clique_insert_edge_def",
+        "good_ra_state_def",
+        "is_clique_def",
+        "is_subgraph_def",
+        "is_subgraph_trans",
+        "list_insert_edge_succeeds"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "coalesce_parent_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2439,
+      "end": 2482,
+      "citations": [
+        "coalesce_parent_def",
+        "good_ra_state_def",
+        "is_Fixed_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "coalesce_root_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 735,
+      "end": 751,
+      "citations": [
+        "coalesce_root_def",
+        "good_ra_state_def",
+        "is_Fixed_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "coalesced_sub",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 171,
+      "end": 179,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "colouring_satisfactory_cliques",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1307,
+      "end": 1325,
+      "citations": [
+        "colouring_satisfactory_def",
+        "has_edge_def",
+        "is_clique_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "colouring_satisfactory_subgraph",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1483,
+      "end": 1491,
+      "citations": [
+        "colouring_satisfactory_def",
+        "has_edge_def",
+        "is_subgraph_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "consistency_ok_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2301,
+      "end": 2318,
+      "citations": [
+        "consistency_ok_def",
+        "good_ra_state_def",
+        "is_Fixed_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "convention_partitions",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 1142,
+      "end": 1156,
+      "citations": [
+        "is_alloc_var_def",
+        "is_phy_var_def",
+        "is_stack_var_def"
+      ],
+      "mapped": true
+    },
+    {
+      "kind": "Theorem",
+      "name": "dec_deg_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2139,
+      "end": 2152,
+      "citations": [
+        "dec_deg_def",
+        "degrees_accessor",
+        "good_ra_state_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "dec_degree_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2154,
+      "end": 2173,
+      "citations": [
+        "dec_deg_success",
+        "dec_degree_def",
+        "good_ra_state_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "degrees_accessor",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 129,
+      "end": 130,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "do_alloc1_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2918,
+      "end": 3022,
+      "citations": [
+        "considered_var_def",
+        "do_alloc1_def",
+        "do_upd_coalesce_def",
+        "good_ra_state_def",
+        "init_alloc1_heu_def",
+        "is_Atemp_def",
+        "is_subgraph_def",
+        "reset_move_related_success",
+        "rpt_do_step_def",
+        "rpt_do_step_success",
+        "sort_moves_def",
+        "st_ex_FILTER_considered_var",
+        "st_ex_FILTER_def",
+        "st_ex_FOREACH_def",
+        "st_ex_PARTITION_move_related_sub",
+        "st_ex_PARTITION_split_degree"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "do_coalesce_real_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2549,
+      "end": 2604,
+      "citations": [
+        "dec_deg_success",
+        "do_coalesce_real_def",
+        "good_ra_state_def",
+        "inc_deg_def",
+        "is_Fixed_def",
+        "is_subgraph_def",
+        "list_insert_edge_succeeds",
+        "push_stack_success",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "do_coalesce_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2606,
+      "end": 2643,
+      "citations": [
+        "do_coalesce_def",
+        "do_coalesce_real_success",
+        "good_ra_state_def",
+        "is_subgraph_def",
+        "is_subgraph_refl",
+        "is_subgraph_trans",
+        "respill_def",
+        "st_ex_FIRST_consistency_ok_bg_ok",
+        "unspill_success"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "do_freeze_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2727,
+      "end": 2755,
+      "citations": [
+        "dec_degree_success",
+        "do_freeze_def",
+        "good_ra_state_def",
+        "is_subgraph_def",
+        "push_stack_success",
+        "st_ex_FOREACH_def",
+        "unspill_def",
+        "unspill_success"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "do_prefreeze_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2684,
+      "end": 2724,
+      "citations": [
+        "add_simp_wl_def",
+        "do_prefreeze_def",
+        "do_simplify_success",
+        "good_ra_state_def",
+        "is_subgraph_def",
+        "reset_move_related_success",
+        "st_ex_FILTER_consistency_ok",
+        "st_ex_FILTER_is_not_coalesced",
+        "st_ex_PARTITION_move_related_sub"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "do_reg_alloc_correct",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 3235,
+      "end": 3453,
+      "citations": [
+        "TWOxDIV2",
+        "adj_ls_accessor",
+        "assign_Atemps_correct",
+        "assign_Atemps_def",
+        "assign_Stemps_correct",
+        "biased_pref_def",
+        "check_clash_tree_def",
+        "check_clash_tree_same_dom",
+        "colouring_satisfactory_def",
+        "colouring_satisfactory_subgraph",
+        "degrees_accessor",
+        "do_alloc1_success",
+        "do_reg_alloc_def",
+        "extend_graph_succeeds",
+        "extract_color_succeeds",
+        "extract_tag_def",
+        "good_neg_pref_neg_biased_pref",
+        "good_pref_biased_pref",
+        "good_ra_state_def",
+        "has_edge_def",
+        "in_clash_tree_def",
+        "init_ra_state_def",
+        "is_clique_def",
+        "is_phy_var_def",
+        "is_stack_var_def",
+        "is_subgraph_def",
+        "is_subgraph_trans",
+        "mk_bij_aux_bij",
+        "mk_bij_aux_def",
+        "mk_bij_aux_domain",
+        "mk_bij_aux_wf",
+        "mk_bij_def",
+        "mk_graph_check_clash_tree",
+        "mk_graph_succeeds",
+        "mk_tags_succeeds",
+        "neg_biased_pref_def",
+        "no_clash_colouring_satisfactory",
+        "no_clash_def",
+        "node_tag_accessor",
+        "sp_default_def",
+        "sp_inverts_def",
+        "st_ex_FILTER_full_consistency_ok",
+        "undirected_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "do_simplify_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2262,
+      "end": 2283,
+      "citations": [
+        "dec_degree_success",
+        "do_simplify_def",
+        "good_ra_state_def",
+        "is_subgraph_def",
+        "is_subgraph_refl",
+        "push_stack_success",
+        "unspill_def",
+        "unspill_success"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "do_spill_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2790,
+      "end": 2837,
+      "citations": [
+        "dec_degree_def",
+        "dec_degree_success",
+        "degrees_accessor",
+        "do_spill_def",
+        "good_ra_state_def",
+        "is_subgraph_def",
+        "push_stack_success",
+        "st_ex_FOREACH_def",
+        "st_ex_list_MAX_deg_success",
+        "st_ex_list_MIN_cost_def",
+        "st_ex_list_MIN_cost_success",
+        "unspill_def",
+        "unspill_success"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "do_step_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2839,
+      "end": 2860,
+      "citations": [
+        "do_coalesce_success",
+        "do_freeze_success",
+        "do_prefreeze_success",
+        "do_simplify_success",
+        "do_spill_success",
+        "do_step_def",
+        "good_ra_state_def",
+        "is_subgraph_def",
+        "is_subgraph_trans"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "domain_difference",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1526,
+      "end": 1532,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "domain_eq_IMAGE",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1327,
+      "end": 1332,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "domain_numset_list_delete",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1354,
+      "end": 1362,
+      "citations": [
+        "numset_list_delete_def"
+      ],
+      "mapped": true
+    },
+    {
+      "kind": "Theorem",
+      "name": "extend_clique_succeeds",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1196,
+      "end": 1231,
+      "citations": [
+        "extend_clique_def",
+        "good_ra_state_def",
+        "is_clique_def",
+        "is_subgraph_def",
+        "list_insert_edge_succeeds"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "extend_graph_succeeds",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1924,
+      "end": 1949,
+      "citations": [
+        "extend_graph_def",
+        "good_ra_state_def",
+        "has_edge_def",
+        "insert_edge_succeeds"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "extract_color_st_ex_MAP_lem",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2038,
+      "end": 2046,
+      "citations": [
+        "extract_tag_def",
+        "st_ex_MAP_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "extract_color_succeeds",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2048,
+      "end": 2066,
+      "citations": [
+        "extract_color_def",
+        "extract_color_st_ex_MAP_lem",
+        "extract_tag_def",
+        "good_ra_state_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "first_match_col_correct",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 721,
+      "end": 733,
+      "citations": [
+        "first_match_col_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "full_consistency_ok_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2879,
+      "end": 2891,
+      "citations": [
+        "full_consistency_ok_def",
+        "good_ra_state_def",
+        "is_Atemp_def",
+        "is_Fixed_k_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "good_neg_pref_neg_biased_pref",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 3221,
+      "end": 3232,
+      "citations": [
+        "good_neg_pref_def",
+        "good_ra_state_def",
+        "neg_biased_pref_def",
+        "neg_first_match_col_correct",
+        "neg_first_match_col_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "good_pref_biased_pref",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 753,
+      "end": 766,
+      "citations": [
+        "biased_pref_def",
+        "coalesce_root_success",
+        "first_match_col_correct",
+        "first_match_col_def",
+        "good_pref_def",
+        "good_ra_state_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "insert_edge_succeeds",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1099,
+      "end": 1138,
+      "citations": [
+        "good_ra_state_def",
+        "has_edge_def",
+        "insert_edge_def",
+        "sorted_insert_correct",
+        "undirected_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "is_clique_FILTER",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1334,
+      "end": 1344,
+      "citations": [
+        "is_clique_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "is_clique_subgraph",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1346,
+      "end": 1352,
+      "citations": [
+        "is_clique_def",
+        "is_subgraph_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "is_not_coalesced_succeeds",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2075,
+      "end": 2081,
+      "citations": [
+        "good_ra_state_def",
+        "is_not_coalesced_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "is_subgraph_refl",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 995,
+      "end": 999,
+      "citations": [
+        "is_subgraph_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "is_subgraph_trans",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1001,
+      "end": 1007,
+      "citations": [
+        "is_subgraph_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "list_insert_edge_succeeds",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1140,
+      "end": 1163,
+      "citations": [
+        "good_ra_state_def",
+        "has_edge_def",
+        "insert_edge_succeeds",
+        "list_insert_edge_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "list_remap_bij",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 814,
+      "end": 835,
+      "citations": [
+        "list_remap_def",
+        "sp_inverts_def",
+        "sp_inverts_insert"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "list_remap_domain",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 802,
+      "end": 812,
+      "citations": [
+        "list_remap_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "list_remap_wf",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 921,
+      "end": 933,
+      "citations": [
+        "list_remap_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "mk_bij_aux_bij",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 879,
+      "end": 919,
+      "citations": [
+        "list_remap_bij",
+        "list_remap_def",
+        "mk_bij_aux_def",
+        "sp_inverts_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "mk_bij_aux_domain",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 837,
+      "end": 877,
+      "citations": [
+        "in_clash_tree_def",
+        "list_remap_def",
+        "list_remap_domain",
+        "mk_bij_aux_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "mk_bij_aux_wf",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 935,
+      "end": 973,
+      "citations": [
+        "list_remap_def",
+        "list_remap_wf",
+        "mk_bij_aux_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "mk_graph_check_clash_tree",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1565,
+      "end": 1920,
+      "citations": [
+        "ALL_DISTINCT_set_INJ",
+        "IMAGE_DIFF",
+        "INJ_COMPOSE_IMAGE",
+        "INJ_less",
+        "MEM_MAP_IMAGE",
+        "UNION_DIFF_3",
+        "case_eq_thms",
+        "check_clash_tree_def",
+        "check_clash_tree_domain",
+        "check_col_def",
+        "check_partial_col_domain",
+        "check_partial_col_success",
+        "clique_insert_edge_succeeds",
+        "colouring_satisfactory_cliques",
+        "colouring_satisfactory_def",
+        "colouring_satisfactory_subgraph",
+        "domain_difference",
+        "domain_eq_IMAGE",
+        "domain_numset_list_delete",
+        "extend_clique_def",
+        "extend_clique_succeeds",
+        "good_ra_state_def",
+        "in_clash_tree_def",
+        "is_clique_FILTER",
+        "is_clique_def",
+        "is_clique_subgraph",
+        "mk_graph_def",
+        "mk_graph_succeeds",
+        "set_FILTER"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "mk_graph_succeeds",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1365,
+      "end": 1481,
+      "citations": [
+        "INJ_less",
+        "clique_insert_edge_def",
+        "clique_insert_edge_succeeds",
+        "extend_clique_def",
+        "extend_clique_succeeds",
+        "good_ra_state_def",
+        "in_clash_tree_def",
+        "is_clique_FILTER",
+        "is_clique_def",
+        "is_clique_subgraph",
+        "is_subgraph_def",
+        "is_subgraph_trans",
+        "mk_graph_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "mk_tags_st_ex_FOREACH_lem",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1953,
+      "end": 2007,
+      "citations": [
+        "convention_partitions",
+        "good_ra_state_def",
+        "is_alloc_var_def",
+        "is_phy_var_def",
+        "is_stack_var_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "mk_tags_succeeds",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2009,
+      "end": 2028,
+      "citations": [
+        "good_ra_state_def",
+        "is_phy_var_def",
+        "is_stack_var_def",
+        "mk_tags_def",
+        "mk_tags_st_ex_FOREACH_lem"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "move_related_sub",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 181,
+      "end": 189,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "neg_first_match_col_correct",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 3207,
+      "end": 3219,
+      "citations": [
+        "neg_first_match_col_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "no_clash_LUPDATE_Fixed",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 354,
+      "end": 387,
+      "citations": [
+        "has_edge_def",
+        "no_clash_def",
+        "undirected_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "no_clash_LUPDATE_Stemp",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 342,
+      "end": 352,
+      "citations": [
+        "no_clash_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "no_clash_colouring_satisfactory",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 3024,
+      "end": 3041,
+      "citations": [
+        "colouring_satisfactory_def",
+        "extract_tag_def",
+        "has_edge_def",
+        "no_clash_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "node_tag_accessor",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "line": 127,
+      "end": 128,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "push_stack_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2239,
+      "end": 2260,
+      "citations": [
+        "good_ra_state_def",
+        "push_stack_def",
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "reg_alloc_correct",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 3460,
+      "end": 3490,
+      "citations": [
+        "check_clash_tree_def",
+        "do_reg_alloc_correct",
+        "do_reg_alloc_def",
+        "in_clash_tree_def",
+        "is_phy_var_def",
+        "is_stack_var_def",
+        "mk_bij_def",
+        "reg_alloc_aux_def",
+        "reg_alloc_def",
+        "sp_default_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "remove_colours_succeeds",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 389,
+      "end": 400,
+      "citations": [
+        "remove_colours_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "remove_colours_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 308,
+      "end": 340,
+      "citations": [
+        "case_eq_thms",
+        "remove_colours_def",
+        "tag_case_st"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "reset_move_related_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2658,
+      "end": 2682,
+      "citations": [
+        "good_ra_state_def",
+        "is_Fixed_def",
+        "reset_move_related_def",
+        "st_ex_FOREACH_def",
+        "st_ex_FOREACH_update_move_related"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "revive_moves_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2184,
+      "end": 2204,
+      "citations": [
+        "MEM_smerge",
+        "revive_moves_def",
+        "sort_moves_def",
+        "st_ex_MAP_adj_ls_sub"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "rpt_do_step_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2863,
+      "end": 2877,
+      "citations": [
+        "do_step_success",
+        "good_ra_state_def",
+        "is_subgraph_def",
+        "is_subgraph_trans",
+        "rpt_do_step_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "set_FILTER",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1512,
+      "end": 1518,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "sorted_insert_correct",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1074,
+      "end": 1085,
+      "citations": [
+        "hide_def",
+        "sorted_insert_correct_lem",
+        "sorted_insert_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "sorted_insert_correct_lem",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 1027,
+      "end": 1072,
+      "citations": [
+        "GT_TRANS",
+        "GT_sorted_eq",
+        "hide_def",
+        "sorted_insert_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "sp_inverts_insert",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 790,
+      "end": 800,
+      "citations": [
+        "sp_inverts_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_FILTER_considered_var",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2350,
+      "end": 2362,
+      "citations": [
+        "considered_var_def",
+        "good_ra_state_def",
+        "is_Atemp_def",
+        "is_Fixed_k_def",
+        "st_ex_FILTER_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_FILTER_consistency_ok",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2320,
+      "end": 2347,
+      "citations": [
+        "consistency_ok_def",
+        "consistency_ok_success",
+        "good_ra_state_def",
+        "is_Fixed_def",
+        "st_ex_FILTER_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_FILTER_full_consistency_ok",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2893,
+      "end": 2916,
+      "citations": [
+        "full_consistency_ok_def",
+        "full_consistency_ok_success",
+        "good_ra_state_def",
+        "is_Fixed_def",
+        "st_ex_FILTER_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_FILTER_is_not_coalesced",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2286,
+      "end": 2299,
+      "citations": [
+        "good_ra_state_def",
+        "is_not_coalesced_def",
+        "st_ex_FILTER_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_FIRST_consistency_ok_bg_ok",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2495,
+      "end": 2547,
+      "citations": [
+        "bg_ok_def",
+        "bg_ok_success",
+        "canonize_move_success",
+        "coalesce_parent_success",
+        "consistency_ok_def",
+        "consistency_ok_success",
+        "good_ra_state_def",
+        "st_ex_FIRST_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_FOREACH_update_move_related",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2645,
+      "end": 2656,
+      "citations": [
+        "st_ex_FOREACH_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_MAP_adj_ls_sub",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 277,
+      "end": 283,
+      "citations": [
+        "st_ex_MAP_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_MAP_deg_or_inf",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2364,
+      "end": 2382,
+      "citations": [
+        "deg_or_inf_def",
+        "good_ra_state_def",
+        "is_Fixed_k_def",
+        "st_ex_MAP_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_MAP_node_tag_sub",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 269,
+      "end": 275,
+      "citations": [
+        "st_ex_MAP_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_PARTITION_move_related_sub",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2118,
+      "end": 2135,
+      "citations": [
+        "move_related_sub",
+        "st_ex_PARTITION_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_PARTITION_split_degree",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2085,
+      "end": 2116,
+      "citations": [
+        "degrees_accessor",
+        "good_ra_state_def",
+        "is_not_coalesced_succeeds",
+        "split_degree_def",
+        "st_ex_PARTITION_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_list_MAX_deg_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2774,
+      "end": 2788,
+      "citations": [
+        "degrees_accessor",
+        "good_ra_state_def",
+        "st_ex_list_MAX_deg_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "st_ex_list_MIN_cost_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2758,
+      "end": 2772,
+      "citations": [
+        "degrees_accessor",
+        "good_ra_state_def",
+        "st_ex_list_MIN_cost_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "tag_case_st",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 100,
+      "end": 105,
+      "citations": [],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "unbound_colour_correct",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 551,
+      "end": 569,
+      "citations": [
+        "SORTED_HEAD_LT",
+        "unbound_colour_def"
+      ],
+      "mapped": false
+    },
+    {
+      "kind": "Theorem",
+      "name": "unspill_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "line": 2206,
+      "end": 2237,
+      "citations": [
+        "add_simp_wl_def",
+        "good_ra_state_def",
+        "is_subgraph_def",
+        "is_subgraph_refl",
+        "revive_moves_success",
+        "st_ex_PARTITION_move_related_sub",
+        "st_ex_PARTITION_split_degree",
+        "unspill_def"
+      ],
+      "mapped": false
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import Flapjack.Test.HeuMaxParity
 import Flapjack.Test.WordToStackBitmapMixedParity
+import Flapjack.Test.RegAllocCarriers
 import Flapjack.Test.HeuInstParity
 import Flapjack.Test.SptMapParity
 import Flapjack.Test.WordAllocCheckerAssemblyParity
