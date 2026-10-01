@@ -1,0 +1,27 @@
+rd_move_partial=(Move0 [(1,2)],[3; 2],[])
+rd_move_dead=(Skip,[3; 1],[NextFree])
+rd_inst_dead=(Skip,[3; 1],[])
+rd_inst_live=(Inst (Arith (Binop Add 1 2 (Reg 4))),[3; 4; 2],[])
+rd_get_dead=(Skip,[3; 1],[NextFree])
+rd_get_live=(Get 3 NextFree,[1],[EndOfHeap])
+rd_curr_heap=(OpCurrHeap Add 3 7,[7; 1],[NextFree])
+rd_locvalue_dead=(Skip,[3; 1],[])
+rd_set_dead_store=(Skip,[3; 1],[NextFree])
+rd_set_live_store=(Set NextFree (Var 6),[3; 1; 6],[NextFree])
+rd_set_exp=(Set NextFree (Op Add [Var 6; Var 7]),[7; 3; 1; 6],[])
+rd_seq_drop=(Move0 [(1,2)],[3; 2],[])
+rd_seq_both=(Seq (Move0 [(3,8)]) (Move0 [(1,3)]),[8],[])
+rd_must=(MustTerminate Skip,[3; 1],[])
+rd_if_dead=(Skip,[3; 1; 8; 4],[NextFree])
+rd_if_imm=(If Less 4 (Imm 2w) (Set NextFree (Var 9)) (Move0 [(1,2)]),[3; 1; 9; 4; 2],[])
+rd_call_ret=(Call (SOME ([2],(⦕ 7 ⦖,LN),Skip,1,2)) (SOME 9) [4] (SOME (11,Skip,3,4)),
+ [7; 4],[])
+rd_call_tail=(Call NONE (SOME 9) [4; 2] NONE,[4; 2],[])
+rd_alloc=(Alloc 2 (LN,⦕ 8 ⦖),[8; 2],[])
+rd_loop=(Loop ⦕ 2 ⦖ (Move0 [(2,2)]) ⦕ 9 ⦖,[2],[])
+rd_break=(Break 0,[7],[])
+rd_continue_missing=(Continue 3,[],[])
+rd_catchall=(Tick,[3; 1],[NextFree])
+rd_prog=Skip
+lsr_agree=T
+lsr_differ=F

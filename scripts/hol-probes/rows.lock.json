@@ -4057,6 +4057,12 @@
       "sha256": "24f25a6713937f41a3a065af0fbf87f310f8858fbbcba3dbce2030e1e2a367de"
     },
     {
+      "bytes": 1179,
+      "out": "word_alloc_remove_dead_probe.out",
+      "rows": 26,
+      "sha256": "6abc381f185f50edf55a0a6bfe04467f0718def338437ac375394806d6ebedae"
+    },
+    {
       "bytes": 117,
       "out": "word_alloc_remove_temp_stack_probe.out",
       "rows": 8,

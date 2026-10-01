@@ -45892,5 +45892,35 @@
     "lean_name": "resortMoves",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.11.1): reg_allocScript.sml:1341-1343 resort_moves acc = map (λls. MAP SND (sort_moves ls)) acc. Lean: the reviewed sptMap of (sortMoves ls).map Prod.snd, using the accepted reg_alloc sortMoves; original type (num # α) list num_map -> α list num_map, {α : Type}. Executed cakeResortMovesSp over node arrays is not claimed here. Original EVAL rows in scripts/hol-probes/reg_alloc_move_table_probe.out kernel-replayed in Flapjack.Test.RegAllocMoveTableParity. No extra premise. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "remove_dead_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/RemoveDead.lean",
+    "lean_name": "removeDead",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.1) against word_allocScript.sml:891-1001, all 19 clauses in HOL order with the final catchall (prog, get_live prog live lt, nlive): Move FILTER (lookup x live = SOME ()) / Skip if empty / FOLDR delete live (MAP FST ls) then numset_list_insert (MAP SND ls); Inst via remove_dead_inst/get_live_inst; Get/OpCurrHeap (CurrHeap filtered)/LocValue dead-register Skip; Set (Var r) store-dead Skip else insert r and cons store, other Set via get_live with []; Seq right-then-left with Skip elision; MustTerminate; If both branches, union, Reg/Imm liveset, FILTER (MEM s e3_nlive) e2_nlive, both-Skip elision; returning Call (cutset union args, handler body FST, (live_set,[])); Call NONE/Alloc/Raise/Return/Break/Continue get_live with []; Loop with (names,exit_names)::lt, body FST, (names,[]). HOL type alpha prog -> num_set -> store_name list -> (num_set # num_set) list -> alpha prog # num_set # store_name list (fresh type_of). Sole carrier translation words_as_type_indexed_bitvec ('a prog -> WordLangProgHOL (BitVec width), [NeZero width]); store_name list as List WordStoreHOL; HOL `s = Skip` decided by matching .skip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "remove_dead_prog_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/RemoveDead.lean",
+    "lean_name": "removeDeadProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.1) against word_allocScript.sml:1004-1006: remove_dead_prog prog = FST (remove_dead prog LN [] []). Sole carrier translation words_as_type_indexed_bitvec ('a prog -> WordLangProgHOL (BitVec width), [NeZero width]); store_name list as List WordStoreHOL; HOL `s = Skip` decided by matching .skip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "live_store_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "liveStoreRel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "sstore",
+      "tstore"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.1) against word_allocProofScript.sml:3492-3497 (HOL type 'a list -> ('a |-> 'b) -> ('a |-> 'b) -> bool): live_store_rel nlive sstore tstore <=> !n. n NOTIN set nlive ==> FLOOKUP sstore n = FLOOKUP tstore n; source fmap_as_finite_support_relation: the two standalone HOL finite maps are the canonical HolFiniteMapExact carrier (bare entries sstore, tstore), FLOOKUP as .lookup, set nlive membership as list membership; polymorphic alpha beta."
   }
 ]
