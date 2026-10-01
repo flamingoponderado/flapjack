@@ -1,8 +1,11 @@
 import Flapjack.Test.SptUnionAlgebraParity
 import Flapjack.Test.WordAllocEvenColourParity
 import Flapjack.Test.TargetSemMappedMemoryParity
+import Flapjack.Test.WordAllocTotalColourParity
+import Flapjack.Test.ParmoveSourceWrapperParity
 import Flapjack.Test.WordToStackNativeConfigParity
 import Flapjack.Test.ParmoveDStepsParity
+import Flapjack.Test.WordAllocEvenLocalsParity
 import Flapjack.Test.ParmoveDStepStepParity
 
 import Flapjack.Test.WordToStackCompileKeysParity

@@ -1,0 +1,6 @@
+wa_even_empty=T
+wa_even_zero=T
+wa_even_even_holes=T
+wa_even_odd=F
+wa_even_mixed=F
+wa_even_overwrite=T

@@ -1,6 +1,9 @@
 import Flapjack.Misc.Sptree.UnionAlgebra
 import Flapjack.Compiler.Backend.WordAlloc.EvenColour
 import Flapjack.Compiler.Backend.Semantics.TargetSem.MappedMemory
+import Flapjack.Compiler.Backend.WordAlloc.TotalColour
+import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals
 import Flapjack.Compiler.Backend.Parmove.DStepStep
 
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
