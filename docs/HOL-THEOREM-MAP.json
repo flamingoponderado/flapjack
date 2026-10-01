@@ -41077,5 +41077,21 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.3: HOL evaluate_apply_colour Inst memory1291-1373 and wordSem inst_def776-821, Store32 constructor case. Same st/cst/f/live/lt quantifiers, original colouring_ok/state-equality/live-scoped-locals premises and full existential applyColourPost; no subprogram/IH or target-evaluation/success premise. Actual native inst/evaluate unfolded. Address remains Op Add [Var base;Const offset], transported by accepted apply_colour_exp_lemma with singleton read scope derived from get_live_inst. Ordinary Load/Store preserve arbitrary WordLoc payloads; narrow8/32 keep zero resize/truncation, actual memory/domain/endian helper and Loc failures. Unsupported Load16/Store16 retain unconditional source Error, not shared-memory behavior. State relation supplies identical memory/domain/endian fields, so actual helper outcomes coincide; successful loads use original scoped writes-union-live injectivity and delete relation; stores preserve locals and exact same updated memory. All other failures discharge original source Error disjunction. Canonical imported fpRegs/store carrier and actual broad roundtrip witness. Inherited reals_as_rational_cuts from wordSem evaluate/inst, SOUNDNESS item8; no direct real rendering. Remaining FP/Skip/full Inst assembly stays open. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepSem/RemoveSelfEmitLast.lean",
+  "lean_name": "step_sem_removeSelf",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.2: Genuine RemoveSelf, first constructor of original step_sem370. Concrete constructor states instantiate Step, full original input wf and arbitrary environment/emitted history retained, exact eqenv every real register conclusion. EmitLast retains only original constructor NoRead condition; RemoveSelf adds no side condition. Generic Option register/List/function carriers unchanged. RemoveSelf follows reviewed parsem_perm/cons/untouched; EmitLast follows parsem_perm/NoRead plus reverse and seqsem_append. Sixteen fresh original sem values kernel-paired with source-premise guards, nonempty emitted histories and snapshot reads; duplicate-destination and violated-NoRead pairs differ outside their original premises. Other cases and full scheduler remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepSem/RemoveSelfEmitLast.lean",
+  "lean_name": "step_sem_emitLast",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.2: Genuine EmitLast, sixth constructor of original step_sem370. Concrete constructor states instantiate Step, full original input wf and arbitrary environment/emitted history retained, exact eqenv every real register conclusion. EmitLast retains only original constructor NoRead condition; RemoveSelf adds no side condition. Generic Option register/List/function carriers unchanged. RemoveSelf follows reviewed parsem_perm/cons/untouched; EmitLast follows parsem_perm/NoRead plus reverse and seqsem_append. Sixteen fresh original sem values kernel-paired with source-premise guards, nonempty emitted histories and snapshot reads; duplicate-destination and violated-NoRead pairs differ outside their original premises. Other cases and full scheduler remain open."
 }
 ]
