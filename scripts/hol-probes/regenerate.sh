@@ -3390,3 +3390,11 @@ run_probe word_to_stack_no_shmemop_helpers_probeScript.sml word_to_stack_no_shme
 run_probe word_to_stack_handler_frame_carriers_probeScript.sml word_to_stack_handler_frame_carriers_probe.out \
   hcf_push_type hcf_pop_type hcf_push_64_F hcf_pop_64_F_skip hcf_pop_64_F_forbidden hcf_push_64_T hcf_pop_64_T_skip hcf_pop_64_T_forbidden hcf_push_1_F hcf_pop_1_F_skip hcf_pop_1_F_forbidden hcf_push_1_T hcf_pop_1_T_skip hcf_pop_1_T_forbidden \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_map_extend_probeScript.sml ssa_map_extend_probe.out \
+  se_empty_alloc se_empty_stack se_existing se_overwrite se_invalid se_huge_alloc se_huge_stack se_physical_premise se_at_bound_premise se_full_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_register_flip_probeScript.sml ssa_register_flip_probe.out \
+  rf_residue_0 rf_equalities_0 rf_residue_1 rf_equalities_1 rf_residue_2 rf_equalities_2 rf_residue_3 rf_equalities_3 rf_residue_4 rf_equalities_4 rf_residue_5 rf_equalities_5 rf_residue_6 rf_equalities_6 rf_residue_7 rf_equalities_7 rf_alloc_application_0 rf_alloc_application_1 rf_alloc_application_2 rf_stack_application_0 rf_stack_application_1 rf_stack_application_2 rf_is_alloc_var_flip_source_replay rf_is_stack_var_flip_source_replay rf_flip_rw_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

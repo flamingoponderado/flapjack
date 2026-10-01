@@ -3292,3 +3292,36 @@ Two native erasure certificates prove that changing unused fields and their
 carriers leaves complete helper outputs unchanged. This does not establish
 cross-language equivalence, instrumentation correctness, or pass simulation.
 Selector: `HOL_PROBE_ONLY=word_to_stack_handler_frame_carriers_probeScript.sml`.
+`word_alloc_limit_var_probe.out` records the full original definition/type and
+twelve native-program maximum/limit/class/strict-bound observations. Inputs
+cover all four residues, zero/multiples, widths1/32/64/80, unbounded naturals,
+returning Call bodies, ignored tail handlers and ignored Load16 fields.
+`WordAllocLimitVarParity` checks thirteen kernel examples against identical
+inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
+The executed upstream maximum/limit route remains tracked on .30.1.2.1.
+
+### SSA map extension
+
+`ssa_map_extend_probeScript.sml` replays the literal local
+`ssa_map_ok_extend` statement and proof (word_allocProof4624-4634). Seven
+applications cover empty maps in both nonphysical classes, an existing binding,
+an overwrite, a malformed tree, and large natural keys/values. Each original
+premise is independently proved; the resulting theorem must have no hypotheses
+and exactly the requested map-bound conclusion. `EQT_INTRO` renders that proved
+conclusion as T; these are theorem applications rather than direct EVAL of a
+symbolic universally quantified lookup predicate. Two further rows EVAL/simplify
+the physical-register and at-bound false premises. The complete local theorem
+is printed separately and is not claimed to be an exported HOL DB theorem.
+
+### SSA register-class conversion
+
+`ssa_register_flip_probeScript.sml` replays all three complete local source
+proofs: `is_alloc_var_flip`, `is_stack_var_flip`, and `flip_rw`. Eight direct
+original predicate tuples cover all four residues, both nonphysical classes
+after further increments, and large natural indices. The probe applies each
+implication three times, discharging its premise by original EVAL, and applies
+the unconditional two-equality theorem to all eight inputs. Each result has no
+hypotheses; `EQT_INTRO` renders its proved conclusion as T. The three local
+replays are captured separately and are not claimed exported HOL DB theorems.
+`SSARegisterFlipParity` kernel-checks identical tuples and fourteen full public
+theorem applications, without a bounded-register or additional class premise.

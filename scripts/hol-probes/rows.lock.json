@@ -3391,6 +3391,12 @@
       "sha256": "6dd57ee5c171ed3a5f0c2b346cbf85ba68409ed6320b180b19a4cca89291b7f0"
     },
     {
+      "bytes": 279,
+      "out": "ssa_map_extend_probe.out",
+      "rows": 10,
+      "sha256": "97397673593a41e1bab5522b22b8aa1917a762dc953af30ac6667d622be8940c"
+    },
+    {
       "bytes": 178,
       "out": "ssa_map_ok_probe.out",
       "rows": 6,
@@ -3407,6 +3413,12 @@
       "out": "ssa_register_class_probe.out",
       "rows": 10,
       "sha256": "d1a7a95b4d2e730a6518608c3b3c4ebd742d43c32fa47f5325741f87b16995a4"
+    },
+    {
+      "bytes": 790,
+      "out": "ssa_register_flip_probe.out",
+      "rows": 25,
+      "sha256": "6f7a989504063c08b420dccce972f3dfdb6ba7d6986920ce68374727a85bb729"
     },
     {
       "bytes": 459,

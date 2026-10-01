@@ -1,5 +1,7 @@
 import Flapjack.Test.WordAllocLimitVarParity
 import Flapjack.Test.SSARenamePropertiesParity
+import Flapjack.Test.SSARegisterFlipParity
+import Flapjack.Test.SSAMapExtendParity
 import Flapjack.Test.SSAListRenameArithmeticParity
 import Flapjack.Test.AsmPropsAssertionsIterationParity
 import Flapjack.Test.WordAllocMaxVarMaxParity
