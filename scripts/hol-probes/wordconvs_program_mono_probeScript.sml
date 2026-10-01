@@ -1,0 +1,16 @@
+load "preamble";
+load "wordConvsTheory";
+open bossLib HolKernel Parse preamble wordLangTheory wordConvsTheory sptreeTheory;
+fun out label q = (print(label ^ "=");print_term(rconc(EVAL q));print "\n");
+val _ = out "pm_skip" ``let p = (Skip:1 wordLang$prog) in (every_var (\x. x <= 0) p,every_var (\x. x <= 1) p)``;
+val _ = out "pm_moves" ``let p = (Move 99 [(1,3);(3,2)]:32 wordLang$prog) in (every_var (\x. x <= 3) p,every_var (\x. x <= 9) p)``;
+val _ = out "pm_inst" ``let p = (Inst (Const 7 123w):64 wordLang$prog) in (every_var (\x. x <= 7) p,every_var (\x. x <= 8) p)``;
+val _ = out "pm_assign" ``let p = (Assign 4 (Load (Var 8)):80 wordLang$prog) in (every_var (\x. x <= 8) p,every_var (\x. x <= 99) p)``;
+val _ = out "pm_seq" ``let p = (Seq (Set CurrHeap (Var 5)) (Store (Var 9) 3):64 wordLang$prog) in (every_var (\x. x <= 9) p,every_var (\x. x <= 99) p)``;
+val _ = out "pm_alloc" ``let p = (Alloc 0 (LS (),LN):1 wordLang$prog) in (every_var (\x. x <= 0) p,every_var (\x. x <= 1) p)``;
+val _ = out "pm_loop" ``let p = (Loop (LS ()) (MustTerminate (Return 2 [1;3])) (LS ()):32 wordLang$prog) in (every_var (\x. x <= 3) p,every_var (\x. x <= 7) p)``;
+val _ = out "pm_call_none" ``let p = (Call NONE (SOME 999) [2] (SOME (999,Assign 999 (Var 999),999,999)):64 wordLang$prog) in (every_var (\x. x <= 2) p,every_var (\x. x <= 4) p)``;
+val _ = out "pm_call_return" ``let p = (Call (SOME ([1;2],(LS (),LN),Assign 3 (Var 4),999,999)) NONE [2] NONE:80 wordLang$prog) in (every_var (\x. x <= 4) p,every_var (\x. x <= 8) p)``;
+val _ = out "pm_call_handler" ``let p = (Call (SOME ([1],(LN,LS ()),Assign 3 (Var 4),999,999)) (SOME 999) [2] (SOME (5,Assign 6 (Var 7),999,999)):64 wordLang$prog) in (every_var (\x. x <= 7) p,every_var (\x. x <= 9) p)``;
+val _ = out "pm_guard_needed" ``let p = (Assign 7 (Var 7):64 wordLang$prog) in (every_var (\x. x <= 7) p,every_var (\x. x <= 3) p)``;
+val _ = (print "pm_original_theorem=";print_thm(DB.fetch "wordConvs" "every_var_mono");print "\n");

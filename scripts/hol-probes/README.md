@@ -1,3 +1,9 @@
+`wordconvs_program_mono_probe.out` prints the complete original `every_var_mono`
+and eleven same-input predicate pairs replayed by `WordConvsProgramMonoParity`.
+These include Call NONE ignoring its populated handler, returning Calls with and
+without handlers, loop cut sets, and a false implication sentinel. Regenerate with
+`HOL_PROBE_ONLY=wordconvs_program_mono_probeScript.sml` against the read-only original tree.
+
 `wordconvs_name_mono_probe.out` prints the complete original theorem and
 five matching cut-set/predicate fixtures in `WordConvsNameMonoParity`, including
 a non-well-formed tree and a failed implication sentinel. Regenerate with
