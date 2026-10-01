@@ -205,9 +205,10 @@ reads through its `rep` function with the same downward-closed `none` property
 (`CakeLazyListRepresents`); this section records that correspondence and the
 fact that `cakeLprefix` matches `HolLList.lprefix (fromList events)` of the
 related representation. These declarations
-remain untagged: HOL `llist`/`LPREFIX`/`fromList` live in the external HOL
-list library `hol4/src/coalgebras/llistScript.sml`, and the mapping of the
-`FfiEvent` carrier still awaits review (tracked by `flapjack-pxn.18.5.15.10.1`). -/
+remain untagged as local representation/transport infrastructure: there is no
+independently reviewed exact HOL declaration with these statements, and the
+mapping of the `FfiEvent` carrier still awaits review (tracked by
+`flapjack-pxn.18.5.15.10.1`). -/
 
 /-- The reviewed representation relation: a `CakeLazyList` represents a HOL
     `llist` when both read the same values at every index. -/
@@ -263,8 +264,9 @@ theorem cakeLazyListRepresents_iff_eq (t : CakeLazyList α) (ll : HolLList α) :
 
 /-- Flapjack representation fact: `cakeLprefix xs t` holds exactly when
     `HolLList.fromList xs` is an `lprefix` of the related lazy list.  Untagged
-    (the HOL `llist` source is outside the cakeml submodule); whether the
-    external `LPREFIX`/`extend_with_resource_limit` correspondence holds is the
+    local representation/transport infrastructure (no independently reviewed
+    exact HOL declaration for this statement); whether the external
+    `LPREFIX`/`extend_with_resource_limit` correspondence holds is the
     follow-up review tracked by `flapjack-pxn.18.5.15.10.1`. -/
 theorem cakeLprefix_iff_lprefix {xs : List α} {t : CakeLazyList α} :
     cakeLprefix xs t ↔ HolLList.lprefix (HolLList.fromList xs) t.toHolLList := by

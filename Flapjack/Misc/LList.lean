@@ -210,8 +210,9 @@ theorem lprefix_fromList (xs ys : List α) :
 
 /-- Flapjack representation fact about the local `HolLList.fromList`:
     `(fromList l).rep n = l[n]?`, i.e. `fromList` reads the list and is absent
-    beyond its end.  Untagged infrastructure (the HOL `llist` library is
-    outside the cakeml submodule, so there is no taggable original). -/
+    beyond its end.  Untagged local representation/transport infrastructure:
+    there is no independently reviewed exact HOL declaration with this
+    statement to cite. -/
 theorem fromList_rep (l : List α) (n : Nat) : (fromList l).rep n = l[n]? := by
   induction l generalizing n with
   | nil => rfl
