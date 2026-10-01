@@ -2968,6 +2968,9 @@ run_probe reg_alloc_in_clash_tree_probeScript.sml reg_alloc_in_clash_tree_probe.
 run_probe reg_alloc_invariants_probeScript.sml reg_alloc_invariants_probe.out \
   he_hit he_miss he_y_oob he_x_oob he_large und_sym und_asym grs_ok grs_unsorted grs_bad_move grs_bad_length nc_ok nc_clash nc_atemp nc_self spi_ok spi_bad spi_insert clq_ok clq_bad sub_ok sub_bad hide_num cs_ok cs_bad cs_self_loop gp_first gp_outside gnp_none gnp_low \
   "$cake_dir/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "$cake_dir/compiler/backend/reg_alloc/proofs"
+run_probe reg_alloc_mk_bij_lemmas_probeScript.sml reg_alloc_mk_bij_lemmas_probe.out \
+  mbl_remap_keys mbl_remap_wf mbl_remap_inverse mbl_tree_keys mbl_tree_wf mbl_large \
+  "$cake_dir/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "$cake_dir/compiler/backend/reg_alloc/proofs"
 run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
   gf_addcarry_riscv gf_addcarry_mips gf_addcarry_self gf_addcarry_x86 gf_addovf_riscv gf_addovf_armv8 gf_subovf_mips gf_subovf_self gf_longmul_armv7 gf_longmul_armv7_self gf_longmul_riscv gf_longmul_ag32 gf_longmul_x86 gf_fptoreg_32 gf_fptoreg_32_self gf_fptoreg_64 gf_fpfromreg_32 gf_fpfromreg_64 gf_other_inst gf_seq gf_if gf_must gf_loop gf_call_return gf_call_both gf_call_tail gf_skip gf_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

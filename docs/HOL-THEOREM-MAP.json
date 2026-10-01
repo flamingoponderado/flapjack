@@ -42721,5 +42721,37 @@
     "lean_name": "colouringSatisfactory",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:1236-1241 (HOL type (num -> a) -> num list list -> bool): !x. x < LENGTH adjls ==> (!y. y < LENGTH adjls /\\ MEM y (EL x adjls) ==> col x = col y ==> x = y). HOL EL is rendered by the untagged holEl (l.getD n (hdNil _)), equal to l[n] in range and to the opaque unspecified HOL HD [] beyond it (TL [] = [] in listScript), so out-of-range reads are unspecified exactly as in HOL; HOL bool as Prop."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "list_remap_domain",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/MkBij.lean",
+    "lean_name": "listRemapDomain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.4) against reg_allocProofScript.sml:802-812: !ls ta fa n ta' fa' n'. list_remap ls (ta,fa,n) = (ta',fa',n') ==> domain ta' = domain ta UNION set ls. HOL set equality domain t = S as the predicate equality sptDomain t = S over the accepted listRemap/mkBijAux (Remap.lean), free variables explicit in HOL order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "mk_bij_aux_domain",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/MkBij.lean",
+    "lean_name": "mkBijAuxDomain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.4) against reg_allocProofScript.sml:837-877: !ct ta fa n ta' fa' n'. mk_bij_aux ct (ta,fa,n) = (ta',fa',n') ==> domain ta' = domain ta UNION {x | in_clash_tree ct x}; reviewed inClashTree. HOL set equality domain t = S as the predicate equality sptDomain t = S over the accepted listRemap/mkBijAux (Remap.lean), free variables explicit in HOL order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "list_remap_wf",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/MkBij.lean",
+    "lean_name": "listRemapWf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.4) against reg_allocProofScript.sml:921-933: !l ta fa n ta' fa' n'. list_remap l (ta,fa,n) = (ta',fa',n') /\\ wf ta /\\ wf fa ==> wf ta' /\\ wf fa'; wf as sptWf = true."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "mk_bij_aux_wf",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/MkBij.lean",
+    "lean_name": "mkBijAuxWf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.4) against reg_allocProofScript.sml:935-982: !ct ta fa n ta' fa' n'. mk_bij_aux ct (ta,fa,n) = (ta',fa',n') /\\ wf ta /\\ wf fa ==> Abbrev (wf ta' /\\ wf fa'); markerTheory Abbrev x = x, so the conclusion is the plain conjunction; wf as sptWf = true."
   }
 ]
