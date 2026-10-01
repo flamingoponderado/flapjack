@@ -48527,5 +48527,14 @@
     "hol_name": "evaluate_remove_dead_prog",
     "lean_name": "evaluateRemoveDeadProg",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.4): HOL evaluate_remove_dead_prog (word_allocProofScript.sml:4473-4502): quantifiers prog st rst res, premises flat_exp_conventions, evaluate and res <> SOME Error, conclusion exists t' with evaluate (remove_dead_prog prog, st) = (res, rst with locals := t') and the HOL case on res (T for NONE/Break/Continue, rst.locals = t' otherwise); proof as HOL via evaluate_remove_dead from LN [] [] with reflexive relations and rst.store = tstore' (live_store_rel_NIL / case). No extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "pre_alloc_conventions_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "preAllocConventionsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.7): literal HOL wordConvsScript.sml:425-429 pre_alloc_conventions p = every_stack_var is_stack_var p /\\ call_arg_convention p over the exact WordLangProgHOL carrier with the reviewed everyStackVarHOL/callArgConventionHOL and is_stack_var (isStackVar); HOL boolean conjunction as &&, no changed clauses or hypotheses; positive BitVec/NeZero is the only carrier translation. The four original pre-allocation rows of word_convs_alloc_conventions_probe.out are replayed over the exact carrier (Flapjack/Test/WordConvsPreAllocExactParity.lean)."
   }
 ]
