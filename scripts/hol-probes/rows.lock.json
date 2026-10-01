@@ -3511,6 +3511,12 @@
       "sha256": "0951919b9c2820704747f40b352ab0cf70ab9bb1ee3a2535536992f1814929e6"
     },
     {
+      "bytes": 250,
+      "out": "stackprops_label_safety_probe.out",
+      "rows": 10,
+      "sha256": "fc85cce61b21a596486ae2cb9283bdc70df9c55a6440d3f463cb67ff4e405c97"
+    },
+    {
       "bytes": 744,
       "out": "stacksem_allocation_probe.out",
       "rows": 19,
