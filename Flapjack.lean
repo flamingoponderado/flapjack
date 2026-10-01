@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckPartialCol
 import Flapjack.Misc.Sptree.InsertUnchanged
+import Flapjack.Compiler.Backend.LabSem.Classifier
 import Flapjack.Compiler.Encoders.AsmSem
 import Flapjack.Compiler.Backend.LabSem.State
 import Flapjack.SemanticsProps.Implements
