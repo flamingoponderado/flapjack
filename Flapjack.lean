@@ -1,3 +1,6 @@
+import Flapjack.Compiler.Backend.LabToTarget.LineLength
+import Flapjack.Compiler.Backend.LabToTarget.SectionLength
+import Flapjack.Byte
 import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
