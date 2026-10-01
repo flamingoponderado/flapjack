@@ -14,6 +14,9 @@ Kernel sentinels preserve five-register AddCarry rejection in Seq, Loop and
 both Call bodies while accepting the original four-register operation; generic
 applications include positive widths1/80 and unbounded natural temporaries.
 
+`ssa_map_ok_probe.out` simplifies the literal original SSA map predicate and lookup clauses for five empty/valid/bound/physical/malformed-tree cases; `Flapjack/Test/SSAMapParity.lean` kernel-replays those quantified predicates. The full original definition is printed.
+
+`ssa_setup_probe.out` captures four original word_alloc definitions and nine direct EVAL rows for empty, duplicate, malformed-tree, arbitrary-start renaming and native setup widths 1/32/64/80, plus independent 1-to-80 and 80-to-1 input/output dimensions and the full original inferred function type. `Flapjack/Test/SSASetupParity.lean` kernel-replays identical inputs and observations. Regenerate with `HOL_PROBE_ONLY=ssa_setup_probeScript.sml`.
 `parmove_fstep_map_inj_probe.out` records the complete original
 `fstep_MAP_INJ` statement and eight pairs of complete original output trees.
 The Nat-to-Bool renaming collapses registers outside the state support while

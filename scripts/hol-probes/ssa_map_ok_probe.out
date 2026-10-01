@@ -1,0 +1,7 @@
+sm_empty=T
+sm_valid=T
+sm_at_bound=F
+sm_physical=F
+sm_invalid=T
+sm_definition=⊢ ∀na ssa.
+    ssa_map_ok na ssa ⇔ ∀x y. lookup x ssa = SOME y ⇒ ¬is_phy_var y ∧ y < na
