@@ -12,6 +12,7 @@ import Flapjack.Compiler.Backend.LabToTarget.Memory
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Pmov
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
 import Flapjack.Compiler.Backend.Parmove.InjOnState
+import Flapjack.Compiler.Backend.Parmove.InjOnState.Step
 import Flapjack.Compiler.Backend.LabToTarget.Fetch
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem

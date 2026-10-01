@@ -43325,5 +43325,13 @@
     "lean_name": "computeLabelsAlt",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.8): source comparison against cakeml/compiler/backend/lab_to_targetScript.sml:76-83 compute_labels_alt_def. Literal clause order: nil returns labs; Section k lines cons computes (newPos,secLabs)=section_labels pos lines [] then recurses on rest with insert k (fromAList ((0,pos)::secLabs)) labs (sptInsert/sptFromAList). Fully polymorphic in the Line parameters; no word carrier is named."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "step_inj_on_state",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/InjOnState/Step.lean",
+    "lean_name": "stepInjOnState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w1a4.13): HOL parmoveScript.sml:1098 `!s1 s2. s1 ▷ s2 ==> inj_on_state f s1 ==> inj_on_state f s2` over arbitrary option payloads. Lean keeps the same carrier `Option α -> Option β` and the same Step/injOnState premises and conclusion; no word, finite-map or list representation qualifier applies, and no target-result, safety or global-injectivity premise is added."
   }
 ]
