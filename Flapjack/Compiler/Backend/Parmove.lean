@@ -3,7 +3,8 @@ import Lean.Elab.Tactic.Omega
 
 /-! Deterministic parallel-move scheduling, counterpart of
 `compiler/backend/reg_alloc/parmoveScript.sml`. `none` is the temporary register.
-The recursive scheduler and its semantic correctness are separate open ports. -/
+The scheduler uses the original decreasing measure; its semantic correctness
+and executed compiler wiring remain separate open ports. -/
 
 namespace Flapjack.Compiler.Backend.Parmove
 
@@ -112,5 +113,28 @@ theorem fstep_decreases {α : Type} [DecidableEq α]
           | cons head tail =>
               simp only
               split <;> simp [measure, frontLast_length]
+
+/-- Literal HOL scheduler recursion. The final state is preserved, including its
+emitted moves; all other states recurse through the reviewed deterministic step.
+No fuel limit or well-formedness restriction is added. -/
+@[hol "cakeml/compiler/backend/reg_alloc/parmoveScript.sml" "pmov_def"]
+def pmov {α : Type} [DecidableEq α] (state : State α) : State α :=
+  if _finished : state.1 = [] ∧ state.2.1 = [] then state
+  else pmov (fstep state)
+termination_by measure state
+decreasing_by
+  rcases state with ⟨pending, active, emitted⟩
+  apply fstep_decreases
+  by_cases hp : pending = []
+  · right
+    intro ha
+    exact _finished ⟨hp, ha⟩
+  · exact Or.inl hp
+
+/-- HOL's wrapper lifts registers to SOME, schedules, and reverses the emitted
+moves. NONE denotes the temporary register in the result. -/
+@[hol "cakeml/compiler/backend/reg_alloc/parmoveScript.sml" "parmove_def"]
+def parmove {α : Type} [DecidableEq α] (moves : List (α × α)) : List (Move α) :=
+  (pmov (moves.map (fun move => (some move.1, some move.2)), [], [])).2.2.reverse
 
 end Flapjack.Compiler.Backend.Parmove
