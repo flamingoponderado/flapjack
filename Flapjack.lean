@@ -1,5 +1,16 @@
+import Flapjack.Pancake.WordConvs.PredicateEquations
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectLeft
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapStep
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabelSafety
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
+import Flapjack.Compiler.Backend.WordAlloc.ProductionLimitVar
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarInst
+import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarExp
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabelSafety
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalInsert
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
@@ -9,7 +20,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveFrame
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Arithmetic
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.MoveHead
-import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarExp
 import Flapjack.Compiler.Backend.WordAlloc.LimitVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
@@ -59,6 +69,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCallCore
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopReturn
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopInstructions
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Pancake.WordConvs.LabelSafety
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
@@ -828,6 +840,7 @@ import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
 import Flapjack.Pancake.WordConvs
 import Flapjack.Pancake.WordConvs.WfCutsets
 import Flapjack.Pancake.WordConvs.NotCreated
+import Flapjack.Pancake.WordConvs.NoInstall
 import Flapjack.Pancake.PanToCrep
 import Flapjack.CrepeCompileExpVariables
 import Flapjack.CompileParamVarsBounds
@@ -975,6 +988,7 @@ import Flapjack.RiscV.CorrectnessColour
 import Flapjack.RiscV.CorrectnessSsaColour
 import Flapjack.RiscV.AllocatorDriver
 import Flapjack.RiscV.CakeRegAlloc
+import Flapjack.RiscV.CakeSsaSetupRoute
 import Flapjack.RiscV.WordToStack
 import Flapjack.RiscV.LongDivRuntime
 import Flapjack.RiscV.CorrectnessColourConditional
@@ -1178,10 +1192,29 @@ import Flapjack.Compiler.Backend.RegAlloc.StateFilter
 import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
 import Flapjack.Compiler.Backend.RegAlloc.TagColour
 import Flapjack.Compiler.Backend.RegAlloc.MoveTable
+import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
+import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
+import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.ConsideredVarFilter
+import Flapjack.Compiler.Backend.RegAlloc.Worklists
+import Flapjack.Misc.LookupAny
+import Flapjack.Compiler.Backend.RegAlloc.Coalesce
+import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
+import Flapjack.Compiler.Backend.RegAlloc.MovePrep
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.ClashTreeDomain
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedForeach
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
 import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMergeMoves
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
+import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
+import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
+import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
+import Flapjack.Compiler.Backend.WordAlloc.FullSSA
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside

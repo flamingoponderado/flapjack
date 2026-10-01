@@ -1,0 +1,16 @@
+load "preamble"; load "wordLangTheory"; load "word_allocTheory"; load "loop_to_wordTheory";
+open HolKernel Parse bossLib preamble wordLangTheory word_allocTheory loop_to_wordTheory;
+val _ = Globals.linewidth := 1000;
+fun out label term = (print(label ^ "="); print_term(rconc(EVAL term)); print "\n");
+val seq16 = ``Seq Tick (Inst (Mem Load16 7 (Addr 19 3w))) : 64 wordLang$prog``;
+val tail16 = ``Call NONE NONE [2;6] (SOME (999,Inst (Mem Load16 1000 (Addr 2000 3w)),3,4)) : 64 wordLang$prog``;
+val both16 = ``Call (SOME ([11],(toNumSet [13;13],LN),Inst (Mem Load16 99 (Addr 100 3w)),3,4)) NONE [2;6] (SOME (17,Inst (Mem Store16 1000 (Addr 2000 3w)),5,6)) : 64 wordLang$prog``;
+val loop16 = ``Loop (toNumSet [29;29]) (Inst (Mem Load16 1000 (Addr 2000 3w))) (toNumSet [31;31]) : 64 wordLang$prog``;
+val _ = out "seq16_max" ``max_var ^seq16``;
+val _ = out "seq16_limit" ``limit_var ^seq16``;
+val _ = out "tail16_max" ``max_var ^tail16``;
+val _ = out "tail16_limit" ``limit_var ^tail16``;
+val _ = out "both16_max" ``max_var ^both16``;
+val _ = out "both16_limit" ``limit_var ^both16``;
+val _ = out "loop16_max" ``max_var ^loop16``;
+val _ = out "loop16_limit" ``limit_var ^loop16``;

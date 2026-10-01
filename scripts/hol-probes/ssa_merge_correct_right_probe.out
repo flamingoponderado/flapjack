@@ -1,0 +1,8 @@
+mr_full=⊢ ∀ls na ssaL ssaR stR cstR pri. is_alloc_var na ∧ ALL_DISTINCT ls ∧ ssa_map_ok na ssaR ⇒ (let (moveL,moveR,na',ssaL',ssaR') = merge_moves ls ssaL ssaR na in ssa_locals_rel na ssaR stR.locals cstR.locals ⇒ (let (resR,rcstR) = evaluate (Move pri moveR,cstR) in resR = NONE ∧ (∀x. ¬MEM x ls ⇒ lookup x ssaR' = lookup x ssaR) ∧ (∀x y. x < na ∧ lookup x cstR.locals = SOME y ⇒ lookup x rcstR.locals = SOME y) ∧ ssa_locals_rel na' ssaR' stR.locals rcstR.locals ∧ word_state_eq_rel cstR rcstR))
+mr_type_ls=:num list
+mr_type_na=:num
+mr_type_ssaL=:num sptree$num_map
+mr_type_ssaR=:num sptree$num_map
+mr_type_stR=:(α, β, γ) state
+mr_type_cstR=:(α, δ, ε) state
+mr_type_pri=:num

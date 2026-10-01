@@ -1,3 +1,7 @@
+import Flapjack.Test.WordConvsPredicateEquationsParity
+import Flapjack.Test.SSAMapStepParity
+import Flapjack.Test.SSALocalsInsertParity
+import Flapjack.Test.WordToStackCodeLabelSafetyParity
 import Flapjack.Test.WordMaxInstRouteParity
 import Flapjack.Test.SSALocalsPhysicalInsertParity
 import Flapjack.Test.SSAMapPreservationParity
@@ -39,6 +43,7 @@ import Flapjack.Test.LabToTargetSectionLookupParity
 import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.WordToStackNoInstallHelpersParity
+import Flapjack.Test.WordToStackCopyRetNoInstallParity
 import Flapjack.Test.WordToStackCopyRetCarriersParity
 import Flapjack.Test.WordToStackCompCodeLabelsParity
 import Flapjack.Test.WordToStackProgramCodeLabelsParity
@@ -48,6 +53,8 @@ import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.WordConvsLabelSafetyParity
 import Flapjack.Test.WordToStackNoShmemopHelpersParity
 import Flapjack.Test.WordToStackNoShmemopCallCoreParity
+import Flapjack.Test.WordToStackNoShmemopReturnParity
+import Flapjack.Test.WordToStackNoShmemopInstructionsParity
 import Flapjack.Test.WordToStackHandlerFrameCarriersParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity
@@ -70,6 +77,12 @@ import Flapjack.Test.WordToStackSsaCodecParity
 import Flapjack.Test.RegAllocSortedMemParity
 import Flapjack.Test.RegAllocListHelpersParity
 import Flapjack.Test.RegAllocMoveTableParity
+import Flapjack.Test.RegAllocGraphConstructionParity
+import Flapjack.Test.RegAllocSplitDegreeParity
+import Flapjack.Test.RegAllocConsideredVarParity
+import Flapjack.Test.RegAllocWorklistsParity
+import Flapjack.Test.RegAllocCoalesceParity
+import Flapjack.Test.RegAllocMovePrepParity
 import Flapjack.Test.RegAllocSortMovesRouteParity
 import Flapjack.Test.ParmovePreservesMovesStepParity
 import Flapjack.Test.ParmoveAllDistinctStepsParity
@@ -565,6 +578,7 @@ import Flapjack.Test.WordLangFullInstOkLessParity
 import Flapjack.Test.WordLangCallArgParity
 import Flapjack.Test.RegAllocVarParity
 import Flapjack.Test.WordLangNotCreatedParity
+import Flapjack.Test.WordConvsNoInstallDefParity
 import Flapjack.Test.StackSemLoopControlParity
 import Flapjack.Test.StackSemLeafTransfersParity
 import Flapjack.Test.StackSemRegisterTransfersParity
@@ -781,6 +795,11 @@ import Flapjack.Test.PanSimpProgBridgeParity
 import Flapjack.Test.RegAllocStateForeachParity
 import Flapjack.Test.SSARenameLookupParity
 import Flapjack.Test.SSAMergeMovesParity
+import Flapjack.Test.WordAllocFixInconsistenciesParity
+import Flapjack.Test.WordAllocSSATransInstParity
+import Flapjack.Test.WordAllocSSAHelpersParity
+import Flapjack.Test.WordAllocSSACcTransParity
+import Flapjack.Test.WordAllocFullSSAParity
 import Flapjack.Test.SSAMergeMovesRouteParity
 
 

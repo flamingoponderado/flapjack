@@ -1,4 +1,5 @@
 import Flapjack.RiscV.Heuristics
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
 
 /-!
 # Spill costs and canonical move priorities
@@ -112,26 +113,37 @@ def wordInsertPriorityMove (move : WordMove) : List WordMove → List WordMove
 def wordSortPriorityMoves (moves : List WordMove) : List WordMove :=
   cakeSortTail (fun left right => wordPriorityMoveBefore left right) moves
 
-def wordCanonicalizeMovesAux (current : WordMove) (count : Nat) :
-    List WordMove → List WordCanonicalMove → List WordCanonicalMove
-  | [], result =>
-      { count := count, maxPriority := current.priority,
-        left := current.left, right := current.right } :: result
-  | move :: moves, result =>
-      if current.left = move.left && current.right = move.right then
-        wordCanonicalizeMovesAux
-          { current with priority := max current.priority move.priority }
-          (count + 1) moves result
-      else
-        wordCanonicalizeMovesAux move 1 moves
-          ({ count := count, maxPriority := current.priority,
-             left := current.left, right := current.right } :: result)
+/-- Adapter from the executed move record to the HOL `(priority, (x, y))`
+triple consumed by `canonize_moves`. -/
+def wordMoveToTriple (move : WordMove) : Nat × (Nat × Nat) :=
+  (move.priority, (move.left, move.right))
 
+/-- Adapter from a HOL `canonize_moves` result `(count, priority, (x, y))`
+back to the executed canonical-move record. -/
+def wordCanonicalMoveOfTriple : Nat × Nat × (Nat × Nat) → WordCanonicalMove
+  | (count, maxPriority, (left, right)) =>
+      { count := count, maxPriority := maxPriority, left := left, right := right }
+
+/-- `canonize_moves` (`word_allocScript.sml:1650-1662`) as executed: the
+reviewed native `WordAlloc.canonizeMoves` on the moves' triples, read back in
+the same list order. Field-for-field adapters only; no separate grouping or
+sorting implementation remains on this route. -/
 def wordCanonicalizeMoves (moves : List WordMove) : List WordCanonicalMove :=
-  match wordSortPriorityMoves (moves.map wordCanonicalPriorityMove) with
-  | [] => []
-  | move :: moves =>
-      wordCanonicalizeMovesAux move 1 moves []
+  (WordAlloc.canonizeMoves (moves.map wordMoveToTriple)).map wordCanonicalMoveOfTriple
+
+/-- Flapjack API correspondence, with no separate HOL original: the executed
+canonicalization is exactly the reviewed definition under the adapters. -/
+theorem wordCanonicalizeMoves_eq_canonizeMoves (moves : List WordMove) :
+    (wordCanonicalizeMoves moves).map
+        (fun m => (m.count, m.maxPriority, (m.left, m.right))) =
+      WordAlloc.canonizeMoves (moves.map wordMoveToTriple) := by
+  unfold wordCanonicalizeMoves
+  rw [List.map_map]
+  conv => rhs; rw [← List.map_id (WordAlloc.canonizeMoves _)]
+  apply List.map_congr_left
+  intro x _
+  obtain ⟨c, p, l, r⟩ := x
+  rfl
 
 def wordCoalesceMoveCost (spillCosts : NatInfoMap Nat)
     (move : WordCanonicalMove) : WordMove :=

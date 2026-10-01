@@ -1,0 +1,12 @@
+fi_full=⊢ ssa_locals_rel na ssa stloc cstloc ∧ ssa_map_ok na ssa ∧ n < na ⇒
+  ssa_locals_rel (na + 4) (insert n na ssa) (insert n w stloc)
+    (insert na w cstloc)
+fi_source_type=:α sptree$num_map
+fi_target_type=:α sptree$num_map
+fi_value_type=:α
+fi_set_var_full=⊢ ssa_locals_rel na ssa stl cstl ∧ ssa_map_ok na ssa ∧ n < na ⇒
+  ssa_locals_rel (na + 4) (insert n na ssa) (insert n w stl)
+    (insert na w cstl)
+fi_empty=⊢ ssa_locals_rel (1 + 4) (insert 0 1 LN) (insert 0 F LN) (insert 1 F LN)
+fi_preserve=⊢ ssa_locals_rel (8 + 4) (insert 0 8 (fromAList [(1,5)]))
+    (insert 0 F (fromAList [(1,T)])) (insert 8 F (fromAList [(5,T)]))

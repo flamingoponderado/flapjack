@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarInst
 import Flapjack.Compiler.Backend.WordToStack.ProductionExpressionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
@@ -38,22 +39,19 @@ private theorem max3Maximum (a b c : Nat) : max3HOL a b c = max a (max b c) := b
   split <;> split <;> omega
 
 /-- Flapjack-only encoder-image specialization of the reviewed instruction
-correspondence. The memory premise is the actual existing guard. -/
+correspondence. This uses the real encoder equation without a memory guard. -/
 private theorem instructionMaximum {width : Nat} [NeZero width]
     (instruction : WordInst (BitVec width))
-    (supported : RiscV.allocatorMemorySupported (.inst instruction) = true)
     (native : WordLangInst (BitVec width))
     (encoded : wordLangInstToHOL instruction = some native) :
     wordInstCakeMaxVar instruction = maxVarInstHOL native := by
-  have same := wordInstCakeMaxVar_codec instruction supported
-  simpa only [encoded, Option.map_some, Option.some.injEq] using same.symm
+  exact RiscV.wordInstCakeMaxVar_corresponds instruction native encoded
 
 /-- Internal encoder-image proof used to establish the public Option result.
 This assumes only the actual encoder equation, never the target maximum or
 evaluation. It is Flapjack carrier infrastructure, not a HOL theorem port. -/
 private theorem encodedMaximum {width : Nat} [NeZero width]
     (program : WordProg (BitVec width))
-    (supported : RiscV.allocatorMemorySupported program = true)
     (native : WordLangProgHOL (BitVec width))
     (encoded : wordLangProgToHOL program = some native) :
     wordProgCakeMaxVar program = maxVarHOL native := by
@@ -63,7 +61,7 @@ private theorem encodedMaximum {width : Nat} [NeZero width]
       Option.some.injEq] at encoded
   all_goals try subst native
   all_goals
-    try simp_all [maxVarHOL, RiscV.allocatorMemorySupported,
+    try simp_all [maxVarHOL,
       moveMaximum, foldNames, maxList,
       wordCutsetsCakeMaxVar_eq_cutsetsMaxHOL, wordExpCakeMaxVar_eq_maxVarExpHOL]
   case case18 =>
@@ -86,20 +84,19 @@ private theorem encodedMaximum {width : Nat} [NeZero width]
   all_goals omega
 
 /-- Full production program maximum correspondence through the actual
-partial native codec under the allocator's existing checked memory guard.
+partial native codec for every program, without a memory-guard premise.
 No successful-codec, desired-maximum, target-evaluation or compiler-success
 premise is assumed. When five-register AddCarry is codec-rejected, both mapped expressions are
 none; no maximum correspondence is asserted for that case. This is Flapjack-only carrier correspondence; source-to-SSA codec image,
 native frame/config integration and executed routing remain separate work. -/
 theorem wordProgCakeMaxVar_codec {width : Nat} [NeZero width]
-    (program : WordProg (BitVec width))
-    (supported : RiscV.allocatorMemorySupported program = true) :
+    (program : WordProg (BitVec width)) :
     (wordLangProgToHOL program).map maxVarHOL =
       (wordLangProgToHOL program).map (fun _ => wordProgCakeMaxVar program) := by
   cases encoded : wordLangProgToHOL program with
   | none => rfl
   | some native =>
       simp only [Option.map_some]
-      exact congrArg some (encodedMaximum program supported native encoded).symm
+      exact congrArg some (encodedMaximum program native encoded).symm
 
 end Flapjack

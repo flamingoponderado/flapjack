@@ -1,3 +1,12 @@
+ssa_map_bounds_probe.out captures nine complete original map-validity pairs and a kernel replay of the full original local bound-monotonicity proof. Cases include empty/malformed trees, equal/raised/rejected bounds, physical registers, unbounded natural values and overwritten entries. SSAMapBoundsParity replays the same predicates and applies the full theorem to arbitrary maps/bounds. Recursive insertion is unfolded once before predicate simplification to avoid expanding dead recursive branches.
+`word_program_max_unrestricted_probe.out` captures eight fresh whole-program
+maximum and limit results across Seq, tail Call handler, returning Call with
+handler, and Loop containing ordinary 16-bit memory. The existing program
+maximum codec theorem now holds without the memory guard. Kernel fixtures check
+all four original maxima/limits, actual codec acceptance and unchanged guard
+rejection; the earlier 32 constructor rows and five-register rejection remain.
+This is carrier correspondence, not an executed native limit route.
+
 `word_max_inst_route_probe.out` records seven fresh original instruction maxima
 and program limits. HOL max_var_inst leaves Mem Load16/Store16 to the zero
 fallback, unlike its explicit Load/Store/Load8/Store8/Load32/Store32 clauses.
@@ -2946,6 +2955,88 @@ the finite fixtures do not prove cross-assistant equivalence.
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
 
+`word_alloc_full_ssa_probe` captures 5 original EVAL results of
+`full_ssa_cc_trans` at 64-bit words (limit, entry move, renamed body), replayed
+in `WordAllocFullSSAParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_full_ssa_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_ssa_cc_trans_probe` captures 31 original EVAL results of
+`ssa_cc_trans` over 64-bit programs covering every clause family (moves,
+StoreConsts, instructions, expressions, If merges, cutset restarts for
+Alloc/Install/FFI/Call with returns and handlers, ShareInst, Loop/Break/
+Continue), replayed by definitional equality in `WordAllocSSACcTransParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_ssa_cc_trans_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_ssa_helpers_probe` captures 12 original EVAL results of
+`list_next_var_rename_move`, `force_rename`, `mk_prio`, `ssa_reconcile` and
+`loop_setup` at 64-bit words, replayed by definitional equality in
+`WordAllocSSAHelpersParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_ssa_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_ssa_trans_inst_probe` captures 28 original EVAL results of
+`ssa_cc_trans_inst` (every clause, fixed-register moves, the Load16/FP catchall
+and both `dimindex` branches at 64 and 32 bits) and `ssa_cc_trans_exp`,
+replayed by definitional equality in `WordAllocSSATransInstParity`. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_ssa_trans_inst_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_fix_inconsistencies_probe` captures 12 original EVAL results of
+`option_lookup`, `priority`, `fake_move`, `fake_moves` and
+`fix_inconsistencies` at 64-bit words (raw sparse trees), replayed by
+definitional equality in `WordAllocFixInconsistenciesParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_fix_inconsistencies_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_move_prep_probe` captures 13 original EVAL results of
+`extract_color` (raw sparse result), `coalesce_root`, `full_consistency_ok`
+(each rejecting check and an accepted pair) and `update_move`, kernel-replayed
+in `RegAllocMovePrepParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_move_prep_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_coalesce_probe` captures 29 original EVAL results of misc
+`lookup_any` and reg_alloc `inc_deg`, `consistency_ok`, `coalesce_parent`
+(including path compression), `canonize_move`, `st_ex_FIRST`,
+`reset_move_related`, `st_ex_list_MAX_deg` and `st_ex_list_MIN_cost`, with full
+`ra_state` results, kernel-replayed in `RegAllocCoalesceParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_coalesce_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_worklist_probe` captures 18 original EVAL results of `dec_deg`,
+`dec_degree`, `add_simp_wl`, `add_spill_wl`, `add_freeze_wl`,
+`add_unavail_moves_wl`, `push_stack` and `respill` with full `ra_state`
+results (truncated decrement, duplicate neighbours, out-of-dimension no-op,
+partial updates before `Subscript`), kernel-replayed in
+`RegAllocWorklistsParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_worklist_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_considered_var_probe` captures 20 original EVAL results of
+`is_Fixed`, `is_Atemp`, `is_Fixed_k`, `considered_var` and `deg_or_inf`
+(tag kinds, `k` boundaries, out-of-array failures, state preservation),
+kernel-replayed in `RegAllocConsideredVarParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_considered_var_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_split_degree_probe` captures 12 original EVAL results of
+`is_not_coalesced` and `split_degree` (coalesce targets, degree comparisons,
+the `v ≥ d` short-circuit, an out-of-array failure and state preservation),
+kernel-replayed in `RegAllocSplitDegreeParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_split_degree_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_graph_construction_probe` captures 20 original EVAL results of
+`insert_edge`, `list_insert_edge`, `clique_insert_edge`, `extend_clique`,
+`mk_tags`, `mk_graph` (Delta/Set/Branch NONE/Branch SOME/Seq), `extend_graph`
+(Bool endpoints) and `init_ra_state` over literal `ra_state` records, with
+full result states including `Subscript` failures and their partial updates.
+`RegAllocGraphConstructionParity` kernel-replays every row. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_graph_construction_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_move_table_probe` captures the original types and 25 EVAL results
 of `tag_col`, `extract_tag`, `unbound_colour` (gaps, duplicates, unsorted
 inputs, large naturals), `pri_move_insert`, `undir_move_insert`, `moves_to_sp`
@@ -3339,6 +3430,13 @@ returning Call bodies, ignored tail handlers and ignored Load16 fields.
 inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
 The executed upstream maximum/limit route remains tracked on .30.1.2.1.
 
+`ssa_locals_bounds_probe.out` replays the literal original local
+`ssa_locals_rel_more` proof (5195–5203), preserving its generic locals payload
+and original conjunction. Existing `ssa_locals_rel_probe.out` observations and
+`SSALocalsParity` fixtures cover nonvacuous, rejected, boundary and malformed
+relations; that fixture additionally applies the complete bound theorem at
+arbitrary payload, trees and counters.
+
 `ssa_locals_swap_probe.out` captures the complete literal local SSA map-swap
 proof and inferred free-variable types. Source and target states share only
 the word dimension; their code and FFI carriers are independent. The generic
@@ -3467,6 +3565,13 @@ hypotheses; `EQT_INTRO` renders its proved conclusion as T. The three local
 replays are captured separately and are not claimed exported HOL DB theorems.
 `SSARegisterFlipParity` kernel-checks identical tuples and fourteen full public
 theorem applications, without a bounded-register or additional class premise.
+
+`ssa_locals_insert_probe.out` replays both literal original fresh SSA/local
+insertion proofs and captures their fully generic locals/value types. Two
+concrete original theorem applications match `SSALocalsInsertParity`: insertion
+from empty trees and insertion preserving an existing mapped source key/value.
+These are checked theorem applications rather than a claim that the original
+simplifier decides the quantified relation after insertion.
 `ssa_locals_bounds_probe.out` replays the literal original local
 `ssa_locals_rel_more` proof (5195–5203), preserving its generic locals payload
 and original conjunction. Existing `ssa_locals_rel_probe.out` observations and
@@ -3485,6 +3590,10 @@ applies all three full public theorems with arbitrary inputs and positive width.
 These regressions do not establish cross-language equivalence or instrumentation
 evaluation correctness. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_call_core_probeScript.sml`.
 
+`ssa_map_step_probe.out` replays the original local plus-two bound proof
+using a freshly replayed original local monotonicity proof. Its six complete
+predicate pairs are kernel matched in `SSAMapStepParity`, including the
+rejected-bound/physical cases, malformed tree and unbounded natural values.
 ### SSA map intersection and insertion
 
 `ssa_map_preservation_probeScript.sml` replays the complete literal local proofs
@@ -3519,3 +3628,97 @@ keys, malformed trees and unbounded natural registers.
 only the original allocation-class premise and all four result conjuncts.
 Malformed/physical-counter observation rows test the definition; they do not
 claim that the allocation premise holds. No exported local theorem is claimed.
+
+ssa_merge_correct_right_probe.out replays the complete original local merge_moves_correctR proof and its literal local prerequisites, then records all original inferred state/carrier types. CorrectRight proves the same five-conjunct native statement in Lean; no executable change or cross-language equivalence claim.
+
+ssa_merge_correct_left_probe.out replays the full original local merge_moves_correctL proof and its literal prerequisites, recording the complete statement and seven inferred types. CorrectLeft proves all five native evaluator conclusions with original hypotheses. No executable change or cross-language equivalence claim.
+### Full WordConvs no-install equations
+
+`word_convs_no_install_def_probeScript.sml` projects all 26 clauses of the
+original exported `no_install_def`, matches each complete constructor input,
+and checks assumption-free exact clause applications before evaluating the pair
+(actual predicate value, original clause conclusion). Three additional width-one
+Call rows complete all four return/handler combinations. `WordConvsNoInstallDefParity`
+projects the same clauses from the entire Lean conjunction at identical inputs;
+Install and recursive failing bodies remain false, every original clause true.
+The existing canonical `noInstallSubprogsHOL` predicate is reused. Normalized
+Install comparisons simplify by constructor disjointness, so the ShareInst
+clause requires no choice of HOL ARB. All source shared inputs remain in the
+full theorem; the only qualifier translates positive type-indexed word dimensions.
+These regression observations do not establish compiler correctness or replace
+source-level HOL/Lean correspondence review.
+
+### Full generic-frame copy-ret no-install theorem
+
+`word_to_stack_copy_ret_no_install_probeScript.sml` evaluates eight original
+full `copy_ret_no_install` iff instances together with actual output predicates.
+The original theorem is local; this capture evaluates original definitions and
+does not claim an exported theorem application. Independent generic frame tails
+and return-list types, widths 64/1/16, zero/nonzero counts, both flags and unsafe
+Install/handler/loop continuations are replayed by
+`WordToStackCopyRetNoInstallParity`. The unrestricted native theorem retains the
+full source iff without a continuation-safety assumption.
+
+### Full incremental compiler code-label safety
+
+`word_to_stack_code_label_safety_probeScript.sml` evaluates ten original full
+compiler source/target safety pairs, including duplicate keys, spilling, owned
+and wrong-owner returning handlers, a dropped tail-handler source reference,
+threaded bitmap output and width-one words with an infinite external set.
+Missing references and wrong handler ownership give `(F,F)`; the dropped
+tail-handler reference gives `(F,T)`. Each row proves the stated pair by
+evaluating original definitions, without claiming an exported theorem
+application. `WordToStackCodeLabelSafetyParity` kernel-replays identical inputs
+and applies the unrestricted full theorem with arbitrary configuration, register
+count and bitmap state. These observations do not establish cross-language
+equivalence or complete the full compiler correctness goal.
+
+### Generic WordConvs code-label row carriers
+
+`word_convs_code_label_carriers_probeScript.sml` freshly checks the original
+`good_code_labels_def` with Bool, Unit, List Bool and Option Bool second row
+fields, at widths 64/1/16. `WordConvsLabelSafetyParity` replays the four cases
+and quantifies the independent generic field carrier. The original full-type
+query revealed that fixing this ignored field to Nat specialized the predicate;
+its existing canonical Lean definition now preserves the generic carrier.
+The actual compiler theorem still uses Nat there, as required by its original
+compiler type. No clauses or executed compiler behavior change.
+
+### Full WordConvs forbidden-constructor equation group
+
+`word_convs_no_alloc_def_probeScript.sml`, `word_convs_no_mt_def_probeScript.sml`
+and `word_convs_no_share_inst_def_probeScript.sml` each instantiate all 26
+original exported clauses and three further Call option combinations at width
+one. Every row records actual predicate truth and the original clause
+conclusion. Failing recursive/rejected constructor values remain false;
+all original clause conclusions are true. `WordConvsPredicateEquationsParity`
+replays the 87 observations through complete conjunction projections, preserving
+both optional Call bodies. The public theorems retain all original shared
+binders and simplify only constant constructor inequalities/self-equalities;
+no ARB representative or extra premise is introduced. The canonical reviewed
+predicates are reused. This supporting group does not establish full compiler
+preservation or cross-language equivalence.
+### Native return wrapper no-shared-memory preservation
+
+`word_to_stack_no_shmemop_return_probeScript.sml` evaluates sixteen original
+predicate pairs with safe and forbidden continuations, zero/nonzero return
+counts, both flags, widths1/32/64/80, a String frame tail and independent Bool
+return list. Each pair is checked against its explicit true/true or false/false
+result. `WordToStackNoShmemopReturnParity` kernel-checks the identical inputs
+and applies the full theorem at arbitrary independent carriers and positive
+width. These regressions do not establish cross-language equivalence.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_return_probeScript.sml`.
+
+### Native compiler instruction no-shared-memory case
+
+`word_to_stack_no_shmemop_inst_probeScript.sml` checks all source instruction
+subconstructors and extra width1/32/80 FP moves. Forty-two original EVAL
+observations jointly check the source no-share guard, actual compiled target
+no-shared-memory predicate and unchanged full bitmap pair. The samples include
+zero/large registers, zero/nonzero frames, both perf flags, width64/non64 FP
+moves and unhandled Load16/Store16. `WordToStackNoShmemopInstructionsParity`
+replays identical observations through the actual kernel-checked compiler
+equations and applies the original-shaped Inst case at arbitrary inputs.
+These regressions do not establish cross-language equivalence or full compiler
+preservation. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_inst_probeScript.sml`.
+ssa_physical_state_updates_probe.out freshly replays the literal physical-target setVar and list-insert locals-relation proofs and records their independent source/target code/FFI types. SSALocalsPhysicalStateUpdates retains every original premise including list length, using native Spt locals. No executable change or cross-language equivalence claim.

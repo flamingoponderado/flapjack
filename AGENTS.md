@@ -54,7 +54,10 @@ instead.
 This section coordinates internal fleet agents. External contributors may open
 their own focused PRs and do not need access to the fleet's bead database.
 
-Keep the CakeML/HOL submodule read-only. Put HOL probes and captured oracle
+Initialize both reference submodules in your own checkout with
+`git submodule update --init -- cakeml HOL`; use their committed revisions,
+not an unrelated local HOL installation. Keep both submodules read-only.
+Put HOL probes and captured oracle
 outputs on the Flapjack side under `scripts/hol-probes/`; follow that directory's
 README and `docs/PARITY-TESTING.md` for the detailed procedure.
 
@@ -62,12 +65,21 @@ Before closing a porting bead backed by a HOL probe, regenerate its captured
 outputs from the original CakeML/HOL source. Probes provide regression evidence,
 not a HOL-to-Lean equivalence proof.
 
-Claim a commit-sized bead before starting work. Record the pushed branch and
+Prefer a whole HOL script or a large coherent section as an agent work area,
+with different agents owning distant areas. Keep declaration-level beads and
+real dependency edges underneath it for traceability; they are not necessarily
+separate reporting events. Split an oversized script along its own theorem
+groups. Agree on ownership before crossing into another agent's area, and
+change areas only between tasks, without interrupting ongoing work.
+
+Claim a ready bead before starting work. Record the pushed branch and
 commit, verification results, or exact blocked reason on the bead. Keep
 dependency beads open until their own acceptance criteria are met.
 
-Batch routine coordinator messages: roughly ten meaningful content commits is
-a useful reporting interval, not a quota. Keep pushing your own branch and
+Report a completed file or substantial coherent section as soon as its checks
+are finished, even if it took fewer than ten commits. For smaller scattered
+work, roughly ten meaningful content commits is a useful reporting interval,
+not a quota. Keep pushing your own branch and
 updating individual beads throughout the batch; do not wait to publish work.
 Send one summary with the branch/head, covered beads, and actual checks instead
 of a message for every commit or small task. Report urgent blockers, conflicts,
@@ -81,7 +93,7 @@ Use your fleet agent name as the assignee (not a generic tool name). If an
 assignment conflicts with a new message, stop and ask the coordinator which
 case to keep before editing.
 
-Use `bd ready` to choose the next unblocked, commit-sized task. The shared bead
+Use `bd ready` to choose the next unblocked task within your assigned area. The shared bead
 database is the source of truth for current priorities; do not hard-code a
 temporary strategic focus here or claim a blocked parent merely because it is
 high priority. The coordinator keeps bead priorities aligned with the current
@@ -99,7 +111,7 @@ the RISC-V result. Give every missing HOL declaration a bead; split a large
 declaration into commit-sized children along its HOL cases or prerequisites.
 Before adding a blocking edge, check the HOL proof or definition to confirm it
 really needs that prerequisite. Do not serialize independent ports merely to
-make a tidy-looking chain. Assign P1 work only from unblocked, commit-sized
+make a tidy-looking chain. Assign P1 work only from unblocked
 leaves; leave blocked parents unassigned and record the exact frontier there.
 
 Agents leave completed slices open, record readiness on their beads, and include
