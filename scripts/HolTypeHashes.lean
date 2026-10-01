@@ -178,6 +178,8 @@ import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.WordToStack
+import Flapjack.Pancake.WordLang.OccurrencesExact
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.LabSem
@@ -655,6 +657,3 @@ elab "#emit_hol_type_hashes" : command => do
         liftIO <| IO.println (Json.mkObj fields).compress
 
 #emit_hol_type_hashes
-
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
-import Flapjack.Pancake.WordLang.OccurrencesExact
