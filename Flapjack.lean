@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.WordToStack.ProductionThreeToTwoDomain
+import Flapjack.Compiler.Backend.RegAlloc.Initialization
+import Flapjack.RiscV.WordCopyCodecDomain
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
 import Flapjack.Translator.Monadic.MonadBase.ArrayLength
 import Flapjack.Compiler.Backend.RegAlloc.StateMap
@@ -6,7 +8,6 @@ import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
 import Flapjack.Misc.FindIndex.Append
 import Flapjack.Compiler.Backend.RegAlloc.Exceptions
-import Flapjack.RiscV.WordCopyCodecDomain
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
