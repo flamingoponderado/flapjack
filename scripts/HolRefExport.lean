@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
+import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls
 import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
@@ -450,8 +452,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsMove
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsAllocation
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsLoopControl
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds

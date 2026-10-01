@@ -101,6 +101,14 @@ run_probe() {
   done
 }
 
+run_probe lab_to_target_padding_similarity_probeScript.sml lab_to_target_padding_similarity_probe.out \
+  ps_add ps_add_types ps_section ps_section_types ps_code ps_code_types ps_add_value ps_section_value ps_empty_nop ps_acc_value ps_label_only ps_code_similar \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe asmprops_arithmetic_preservation_probeScript.sml asmprops_arithmetic_preservation_probe.out \
+  ap_upd_pc_simps ap_upd_pc_simps_types ap_binop_upd_consts ap_binop_upd_consts_types ap_arith_upd_consts ap_arith_upd_consts_types ap_add ap_shift_fail ap_div_zero ap_longmul ap_longdiv_zero ap_carry ap_addoverflow ap_suboverflow ap_pc \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
+
 run_probe stacksem_fp_case_types_probeScript.sml stacksem_fp_case_types_probe.out \
   fpc_inst fpc_constructor fpc_lookup fpc_update fpc_general_lookup fpc_general_update fpc_all_payloads \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -3906,6 +3914,9 @@ run_probe ssa_cc_trans_props_allocation_probeScript.sml ssa_cc_trans_props_alloc
   spa_ffi_type_numset spa_ffi_type_ssa spa_ffi_type_na spa_ffi_type_lt spa_ffi_type_progOut spa_ffi_type_ssaOut spa_ffi_type_naOut \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe ssa_force_rename_generic_probeScript.sml ssa_force_rename_generic_probe.out \
+  fr_definition fr_lookup_force_rename_aux fr_lookup_force_rename fr_domain_force_rename fr_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe ssa_cc_trans_props_loop_control_probeScript.sml ssa_cc_trans_props_loop_control_probe.out \
   spl_full spl_type_names spl_type_body spl_type_exit_names spl_type_ssa spl_type_na spl_type_lt spl_type_progOut \
@@ -3919,10 +3930,7 @@ run_probe ssa_cc_trans_props_calls_probeScript.sml ssa_cc_trans_props_calls_prob
   spt_full spt_type_dest spt_type_args spt_type_h spt_type_ssa spt_type_na spt_type_lt spt_type_progPrime spt_type_ssaPrime spt_type_naPrime spr_full spr_type_ret spr_type_numset spr_type_ret_handler spr_type_l1 spr_type_l2 spr_type_dest spr_type_args spr_type_h spr_type_ssa spr_type_na spr_type_lt spr_type_progPrime spr_type_ssaPrime spr_type_naPrime spr_type_all_names spr_type_ls spr_type_stack_mov spr_type_stack_set spr_type_names spr_type_conv_args spr_type_move_args spr_type_ssa_cut spr_type_ret_mov spr_type_ssaPrimePrime spr_type_naPrimePrime spr_type_retPrime spr_type_ssa_2_p spr_type_na_2_p spr_type_ren_ret_handler spr_type_ssa_2 spr_type_na_2 spr_type_regs spr_type_mov_ret_handler spr_type_v spr_type_n spr_type_v2 spr_type_hPrime spr_type_v4 spr_type_l1PrimePrime spr_type_l2Prime spr_type_nPrime spr_type_ssa_3_p spr_type_na_3_p \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-run_probe ssa_force_rename_generic_probeScript.sml ssa_force_rename_generic_probe.out \
-  fr_definition fr_lookup_force_rename_aux fr_lookup_force_rename fr_domain_force_rename fr_type \
-  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
-
 run_probe ssa_cc_trans_props_primitives_probeScript.sml ssa_cc_trans_props_primitives_probe.out \
   spp_case_0 spp_case_2 spp_case_3 spp_case_4 spp_case_5 spp_case_6 spp_case_11 spp_case_12 spp_case_13 spp_case_14 spp_case_15 spp_case_16 spp_case_18 spp_case_19 spp_case_23 spp_0_type_ssa spp_0_type_na spp_0_type_lt spp_0_type_progOut spp_0_type_ssaOut spp_0_type_naOut spp_2_type_a spp_2_type_b spp_2_type_c spp_2_type_d spp_2_type_ws spp_3_type_i spp_4_type_num spp_4_type_exp spp_5_type_num spp_5_type_store spp_6_type_exp spp_6_type_num spp_11_type_num spp_12_type_b spp_12_type_dst spp_12_type_src spp_13_type_num spp_13_type_nums spp_15_type_n spp_15_type_exp spp_16_type_r spp_16_type_l1 spp_18_type_r1 spp_18_type_r2 spp_19_type_r1 spp_19_type_r2 spp_23_type_op spp_23_type_v spp_23_type_exp \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
