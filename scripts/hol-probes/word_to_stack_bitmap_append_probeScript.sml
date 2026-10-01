@@ -1,0 +1,12 @@
+load "bossLib"; load "preamble"; load "word_to_stackProofTheory";
+open HolKernel Parse bossLib preamble word_to_stackProofTheory;
+fun print_eval label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = print_eval "rb_terminal" ``stackSem$read_bitmap ([13w]:8 word list) = SOME [T;F;T]``;
+val _ = print_eval "rb_terminal_append" ``stackSem$read_bitmap (([13w]:8 word list) ++ [0w;5w]) = SOME [T;F;T]``;
+val _ = print_eval "rb_cont" ``stackSem$read_bitmap ([129w;13w]:8 word list) = SOME [T;F;F;F;F;F;F;T;F;T]``;
+val _ = print_eval "rb_cont_append" ``stackSem$read_bitmap (([129w;13w]:8 word list) ++ [7w]) = SOME [T;F;F;F;F;F;F;T;F;T]``;
+val _ = print_eval "frb_word" ``stackSem$full_read_bitmap ([13w]:8 word list) (wordLang$Word 1w : 8 wordLang$word_loc) = SOME [T;F;T]``;
+val _ = print_eval "frb_word_append" ``stackSem$full_read_bitmap (([13w]:8 word list) ++ [99w]) (wordLang$Word 1w : 8 wordLang$word_loc) = SOME [T;F;T]``;
+val _ = print_eval "frb_cont" ``stackSem$full_read_bitmap ([129w;13w]:8 word list) (wordLang$Word 1w : 8 wordLang$word_loc) = SOME [T;F;F;F;F;F;F;T;F;T]``;
+val _ = print_eval "frb_cont_append" ``stackSem$full_read_bitmap (([129w;13w]:8 word list) ++ [7w]) (wordLang$Word 1w : 8 wordLang$word_loc) = SOME [T;F;F;F;F;F;F;T;F;T]``;
+val _ = print_eval "frb_loc" ``stackSem$full_read_bitmap ([13w]:8 word list) (wordLang$Loc 0 0 : 8 wordLang$word_loc) = NONE``;

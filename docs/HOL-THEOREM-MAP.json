@@ -38743,5 +38743,23 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): word_allocProofScript.sml:892-904: s_key_eq (push_env (x',x'') o0 s).stack (StackFrame n' bb l opt::ls) /\\ env_to_list x'' s.permute = (ll,res) ==> MAP FST ll = MAP FST l /\\ set (MAP FST bb) = domain x'; set as membership predicate. WordSem finite maps via fmap_as_finite_support, positive width via words_as_type_indexed_bitvec."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapAppend.lean",
+    "lean_name": "readBitmapAppendExtra",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "read_bitmap_append_extra",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison 2026-10-01, bead flapjack-pxn.18.5.15.3.39: compared word_to_stackProofScript.sml:744-754 read_bitmap_append_extra clause by clause. HOL fixes l1, l2 and bits and concludes read_bitmap l1 = SOME bits ==> read_bitmap (l1 ++ l2) = SOME bits. Lean states the identical implication over the already reviewed exact carrier Flapjack.StackSem.readBitmap (Flapjack/Compiler/Backend/Semantics/StackSem/WordBitmap.lean, tagged read_bitmap_def): the same empty->NONE base, the same word_msb continuation clause that propagates the recursive NONE and prepends GENLIST bit projections (List.range/map), and the same terminal clause; List.append is the HOL ++ and Option.some is SOME. No premise is added and the conclusion is unchanged. The only carrier difference is HOL's type-indexed 'a word/dimindex(:'a) rendered as positive-width BitVec width with [NeZero width], exactly the standard translation recorded for readBitmap and authorized by (words_as_type_indexed_bitvec); the theorem itself introduces no new carrier. Probe rows rb_terminal/rb_terminal_append/rb_cont/rb_cont_append in scripts/hol-probes/word_to_stack_bitmap_append_probe.out pin the concrete read_bitmap decodes and their appended variants and are kernel-replayed in Flapjack.Test.WordToStackBitmapAppendParity. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapAppend.lean",
+    "lean_name": "fullReadBitmapAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "full_read_bitmap_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison 2026-10-01, bead flapjack-pxn.18.5.15.3.39: compared word_to_stackProofScript.sml:757-766 full_read_bitmap_append clause by clause. HOL fixes bitmaps, w, bits and more_bitmaps and concludes full_read_bitmap bitmaps w = SOME bits ==> full_read_bitmap (bitmaps ++ more_bitmaps) w = SOME bits. The proof is the Word/Loc case split of the reviewed full_read_bitmap_def (stackSemScript.sml:310-314): Word 0w and Loc fall to NONE (vacuously satisfying the implication) and Word w with w <> 0w drops w2n(w-1w) bitmap words before read_bitmap. Lean states the same implication over the already reviewed exact carrier Flapjack.StackSem.fullReadBitmap (Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean, tagged full_read_bitmap_def), reusing readBitmapAppendExtra for the recursive reader and the standard List.drop_append_of_le_length to keep the reached prefix fixed. No premise is added and the conclusion is unchanged. The existing reviewed carrier exposes independent positive bitmapWidth/width (HOL's single 'a is generalized there), so the Lean statement names both, each as a positive-width BitVec/WordLocW with its own [NeZero]; this is exactly the carrier already reviewed for fullReadBitmap and the only qualified difference is the standard type-indexed-word translation recorded by (words_as_type_indexed_bitvec). Probe rows frb_word/frb_word_append/frb_cont/frb_cont_append/frb_loc in scripts/hol-probes/word_to_stack_bitmap_append_probe.out pin the concrete descriptor decodes and the appended variants and are kernel-replayed in Flapjack.Test.WordToStackBitmapAppendParity. Coordinator source review pending."
   }
 ]

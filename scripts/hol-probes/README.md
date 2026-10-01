@@ -1976,6 +1976,17 @@ HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/re
 - `word_to_stack_abs_stack_probeScript.sml`: original abstraction success and failure branches.
 
 - `word_to_stack_index_list_probeScript.sml`: descending indices and physical-name division.
+
+`word_to_stack_bitmap_append_probe.out` records nine original `read_bitmap` and
+`full_read_bitmap` observations on a terminal bitmap word (`13w`), a
+continuation-then-terminal pair (`129w,13w`), and the same inputs with extra
+bitmap words appended, plus the non-`Word` descriptor. The append rows are the
+premise-true instances used to review the exact ports
+`readBitmapAppendExtra` and `fullReadBitmapAppend`; the exact kernel replay is
+`Flapjack.Test.WordToStackBitmapAppendParity`. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_bitmap_append_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 ### Parallel-move state semantics
 
 `parmove_semantics_probeScript.sml` captures twelve direct original
