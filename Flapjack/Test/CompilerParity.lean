@@ -49,6 +49,7 @@ import Flapjack.Test.WordConvsLabelSafetyParity
 import Flapjack.Test.WordToStackNoShmemopHelpersParity
 import Flapjack.Test.WordToStackNoShmemopCallCoreParity
 import Flapjack.Test.WordToStackNoShmemopReturnParity
+import Flapjack.Test.WordToStackNoShmemopInstructionsParity
 import Flapjack.Test.WordToStackHandlerFrameCarriersParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity
