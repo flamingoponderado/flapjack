@@ -3223,6 +3223,10 @@ returning Call bodies, ignored tail handlers and ignored Load16 fields.
 inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
 The executed upstream maximum/limit route remains tracked on .30.1.2.1.
 
+`ssa_locals_swap_probe.out` captures the complete literal local SSA map-swap
+proof and inferred free-variable types. Source and target states share only
+the word dimension; their code and FFI carriers are independent. The generic
+`SSALocalsParity` fixture applies the actual theorem at arbitrary native states.
 ### SSA renaming properties
 
 `ssa_rename_properties_probeScript.sml` replays the complete local
