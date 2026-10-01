@@ -48575,5 +48575,80 @@
     "hol_name": "evaluate_remove_dead_prog",
     "lean_name": "evaluateRemoveDeadProg",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.4): HOL evaluate_remove_dead_prog (word_allocProofScript.sml:4473-4502): quantifiers prog st rst res, premises flat_exp_conventions, evaluate and res <> SOME Error, conclusion exists t' with evaluate (remove_dead_prog prog, st) = (res, rst with locals := t') and the HOL case on res (T for NONE/Break/Continue, rst.locals = t' otherwise); proof as HOL via evaluate_remove_dead from LN [] [] with reflexive relations and rst.store = tstore' (live_store_rel_NIL / case). No extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_moves_frame",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMoveFrames.lean",
+    "lean_name": "fakeMovesFrame",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:4917-4946 ∀ls na ssaL ssaR. is_alloc_var na ⇒ let (...) = fake_moves prio ls ssaL ssaR na in is_alloc_var na' ∧ na ≤ na' ∧ (ssa_map_ok na ssaL ⇒ ssa_map_ok na' ssaL') ∧ (ssa_map_ok na ssaR ⇒ ssa_map_ok na' ssaR'), prio free (explicit argument). Lean: over the delivered fakeMoves, accepted isAllocVar/ssaMapOK and ssaMapOKExtend. The program carrier of fake_moves is WordLangProgHOL (BitVec width) with [NeZero width] (words_as_type_indexed_bitvec). HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_moves_frame2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMoveFrames.lean",
+    "lean_name": "fakeMovesFrame2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:4948-4966 domain ssaL' = domain ssaL ∪ (set ls ∩ (domain ssaR ∪ domain ssaL)) ∧ domain ssaR' = domain ssaR ∪ (set ls ∩ (domain ssaR ∪ domain ssaL)) ∧ ∀x. MEM x ls ∧ x ∉ domain (inter ssaL ssaR) ⇒ lookup x ssaL' = lookup x ssaR'. Lean: domain equalities as predicate equalities; proof uses fake_moves_frame3 for the head key. The program carrier of fake_moves is WordLangProgHOL (BitVec width) with [NeZero width] (words_as_type_indexed_bitvec). HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_moves_frame3",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMoveFrames.lean",
+    "lean_name": "fakeMovesFrame3",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:4968-4993 ∀x. ¬MEM x ls ∨ x ∈ domain (inter ssaL ssaR) ⇒ lookup x ssaL' = lookup x ssaL ∧ lookup x ssaR' = lookup x ssaR. The program carrier of fake_moves is WordLangProgHOL (BitVec width) with [NeZero width] (words_as_type_indexed_bitvec). HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_map_ok_force_rename",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMoveFrames.lean",
+    "lean_name": "ssaMapOKForceRename",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:5935-5949 ∀ls ssa. ssa_map_ok na ssa ∧ EVERY (λx. SND x < na ∧ ¬is_phy_var (SND x)) ls ⇒ ssa_map_ok na (force_rename ls ssa), na free. Lean: EVERY as bounded ∀; via accepted ssa_map_ok_insert. HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "lookup_force_rename_aux",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMoveFrames.lean",
+    "lean_name": "lookupForceRenameAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:6347-6362 ∀ls ssa. lookup x (force_rename (REVERSE ls) ssa) = case ALOOKUP ls x of NONE => lookup x ssa | SOME y => SOME y, x free. Lean: ALOOKUP as the HOL-library rendering holAlookup, REVERSE as List.reverse. HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "lookup_force_rename",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMoveFrames.lean",
+    "lean_name": "lookupForceRename",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:6364-6371 lookup x (force_rename ls ssa) = case ALOOKUP (REVERSE ls) x of NONE => lookup x ssa | SOME y => SOME y. HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "domain_force_rename",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMoveFrames.lean",
+    "lean_name": "domainForceRename",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:6373-6381 domain (force_rename ls ssa) = domain ssa ∪ set (MAP FST ls). HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side."
+  },
+  {
+    "hol_path": "HOL/src/list/src/listScript.sml",
+    "hol_name": "HD",
+    "lean_path": "Flapjack/Misc/ListEl.lean",
+    "lean_name": "holHd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.3.38.1), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: listScript.sml:128-130 Definition HD: HD (h::t) = h, the only clause, so HD [] is unspecified; type 'a list -> 'a. Lean: the h::t clause and, for [], the opaque holHdNil (no Lean proof can learn anything about it, matching HOL). HOL types are inhabited; Lean requires [Nonempty α] for the opaque value. Original type confirmed by type_of; original in-range EVAL rows (scripts/hol-probes/hol_list_el_probe.out) kernel-replayed in Flapjack.Test.HolListElParity. No extra premise."
+  },
+  {
+    "hol_path": "HOL/src/list/src/listScript.sml",
+    "hol_name": "EL_def",
+    "lean_path": "Flapjack/Misc/ListEl.lean",
+    "lean_name": "holEl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.3.38.1), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: listScript.sml:225-228 EL 0 l = HD l /\\ EL (SUC n) l = EL n (TL l); type num -> 'a list -> 'a. Lean: same two clauses over holHd and List.tail (HOL TL_DEF 132-135: TL [] = [], TL (h::t) = t, i.e. List.tail). Original type confirmed by type_of; original in-range EVAL rows (scripts/hol-probes/hol_list_el_probe.out) kernel-replayed in Flapjack.Test.HolListElParity. No extra premise."
   }
 ]

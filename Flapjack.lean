@@ -1239,6 +1239,7 @@ import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
 import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
 import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
 import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside

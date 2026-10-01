@@ -11,7 +11,12 @@ development carries
 naming the HOL source file (repository-relative, inside the `cakeml`
 submodule) and the exact HOL declaration name (`Theorem`, `Triviality`,
 `Definition`, `Datatype`, ...). When a script declares the same name twice,
-append its source line, e.g. `@[hol "...Script.sml" "name" 123]`. The
+append its source line, e.g. `@[hol "...Script.sml" "name" 123]`. HOL4
+library declarations are cited inside the pinned upstream `HOL` submodule, e.g.
+`@[hol "HOL/src/list/src/listScript.sml" "EL_def"]`; `scripts/check-hol-refs.py`
+accepts such a path only when the recorded gitlink, the checkout and the cited
+blob are all the pinned commit. The older per-file `hol4/` snapshots remain
+accepted during migration. The
 experimental `list_as_array` qualifier records HOL list fields represented by
 Lean arrays, e.g. `@[hol "...Script.sml" "dec_deg_def"
 (list_as_array := [degrees])]`. It does not authorize a qualified tag until a
@@ -297,13 +302,16 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (wordDimensionAsWidth : Option String := none)
     (realsAsRationalCuts : Bool := false) : CoreM HolRef := do
   unless (path.startsWith "cakeml/" && path.endsWith ".sml" ||
+      -- Pinned upstream HOL submodule; `scripts/check-hol-refs.py` verifies the
+      -- gitlink, checkout commit and blob of every cited `HOL/...` file.
+      path.startsWith "HOL/" && path.endsWith ".sml" ||
       path == "hol4/src/finite_maps/sptreeScript.sml" ||
       path == "hol4/src/coretypes/optionScript.sml" ||
       path == "hol4/src/coalgebras/llistScript.sml" ||
       path == "hol4/src/n-bit/fcpScript.sml" ||
       path == "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml") &&
       (path.splitOn "/").all (fun part => part != "" && part != "." && part != "..") do
-    throwError "@[hol]: path must be a safe `cakeml/...Script.sml` file or a pinned HOL4 snapshot, got {path}"
+    throwError "@[hol]: path must be a safe `cakeml/...Script.sml` or `HOL/...Script.sml` file or a pinned HOL4 snapshot, got {path}"
   if name.isEmpty || name.any Char.isWhitespace then
     throwError "@[hol]: declaration name must be a single HOL identifier, got {repr name}"
   if listAsArray.toList.eraseDups.length != listAsArray.size then
