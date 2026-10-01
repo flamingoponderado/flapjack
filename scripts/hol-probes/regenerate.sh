@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe stacksem_fp_conversion_types_probeScript.sml stacksem_fp_conversion_types_probe.out \
+  fp_inst_type fp_get_type fp_set_type fp_sqrt_type fp_to_int_type fp_from_int_type fp_oracle_type \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe word_to_stack_copy_ret_no_install_probeScript.sml word_to_stack_copy_ret_no_install_probe.out \
   crni_zero_bad crni_plain_good crni_handler_bad crni_perf_good crni_perf_bad crni_option_tail_handler crni_empty_list_loop crni_exact_count_zero \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

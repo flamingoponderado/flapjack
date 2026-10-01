@@ -14,9 +14,12 @@ not a port of the whole inst_def. The comparison cases follow HOL `inst_def`
 arithmetic cases follow `:563-587`, with the `FPFma` fused multiply-add
 permutation of `fpSem$fpfma` (`cakeml/semantics/fpSemScript.sml:60-62`); the
 conversions follow `FPSqrt` `:558-562`, `FPToInt` `:605-623` and `FPFromInt`
-`:624-636`, with `FPSqrt` rendered through the faithful real-sqrt
+`:624-636`, with `FPSqrt` rendered through the Lean real-sqrt
 `holFp64SqrtReal` (`Flapjack/Misc/BinaryIeeeSqrt/RoundAgreement.lean`, proven
-equal to the rational-cut `holFp64Sqrt` by `holFp64Sqrt_tiesToEven_agreement`).
+equal to the rational-cut `holFp64Sqrt` by `holFp64Sqrt_agreement`).
+This is a Lean rendering comparison; it does not prove HOL-to-Lean
+equivalence. The conversion renderings retain the documented
+`reals_as_rational_cuts` assumption.
 Whole evaluator routing remains separate. -/
 namespace Flapjack.StackSemFpRegisterInstructions
 open StackSemStateOps Compiler.Encoders.Asm
@@ -38,7 +41,7 @@ end FiniteSupport
 /-- HOL `inst_def` FPSqrt constructor case
 (`cakeml/compiler/backend/semantics/stackSemScript.sml:558-562`), split along
 HOL's own case structure. Reads the source FP register and, when present,
-writes the faithful real-sqrt rendering `holFp64SqrtReal` at round-ties-to-even
+writes the Lean real-sqrt rendering `holFp64SqrtReal` at round-ties-to-even
 into the destination; a missing source yields the inner HOL instruction failure.
 The stated result is exactly the clause's `Option state` value, with no extra
 dispatcher `some`. -/

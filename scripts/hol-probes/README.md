@@ -3777,3 +3777,9 @@ ssa_physical_state_updates_probe.out freshly replays the literal physical-target
 ### Loop-to-Word label threading and handler ownership
 
 `loop_to_word_label_handlers_probeScript.sml` replays all four full literal source proofs: function-label preservation, next-label monotonicity, handler ownership for comp, and per-function ownership for compile_prog. Actual theorem applications use original compiler equalities supplied by EVAL; no extra guard or target evaluation assumption. Complete nested outputs at widths 1/64/80 show return labels, exception labels, both continuations and final counter; the tail case ignores its source handlers. A duplicate-owner compiled list and false-owner sentinel are retained. Matching generic-width kernel fixtures apply the public theorems and check the complete nested output.
+
+`stacksem_fp_conversion_types_probeScript.sml` captures seven original full
+types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
+three machine-IEEE operations and the generic compile-oracle projection. The
+state parameters and fixed word64 FP register carrier are retained; this is
+source-shape evidence, not a HOL-to-Lean equivalence proof.
