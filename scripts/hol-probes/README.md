@@ -2100,3 +2100,4 @@ the states and kernel-checks generic one-step/RTC theorem applications plus
 a start/emit chain. These observations support state-shape review; the full
 universally quantified preservation proofs are independently kernel-checked.
 Full scheduler semantic correctness remains open.
+`labsem_memory_probeScript.sml` captures 46 original ordinary-memory observations across all eight mem_op cases: retained failed Load/Store writes, narrow type/alignment/aligned-domain checks, endian and resizing, unsupported16 operations, address wrap, sticky failure, and one-/eight-bit dimensions. `LabSemMemoryParity` replays them with targeted simplification and kernel computation. The original unused `is_Loc` classifies `semanticPrimitives.v` (Loc Bool/Nat), not `wordLang.word_loc`, and is tracked separately on `flapjack-og0v`; it is absent from these memory operations.
