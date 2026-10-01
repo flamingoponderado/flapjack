@@ -894,6 +894,7 @@ import Flapjack.Compiler.Backend.Parmove.Invariants.Path
 import Flapjack.Compiler.Backend.Parmove.EnvironmentChange
 import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
 import Flapjack.Compiler.Backend.Parmove.Permutation
+import Flapjack.Compiler.Backend.Parmove.Steps
 import Flapjack.RiscV.CakeAllocatorBitsBridge
 import Flapjack.StackAlloc
 import Flapjack.StackAlloc.Runtime

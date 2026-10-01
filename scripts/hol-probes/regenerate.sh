@@ -2746,7 +2746,6 @@ run_probe parmove_path_probeScript.sml parmove_path_probe.out \
   pv_empty pv_single pv_chain pv_cycle pv_changed_dest pv_bad_prefix pv_windmill_empty pv_windmill_fresh pv_windmill_repeated pv_windmill_sources \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
-
 run_probe parmove_environment_probeScript.sml parmove_environment_probe.out \
   pe_first_written pe_second_written pe_first_untouched pe_second_untouched \
   pe_source_boundary pe_source_maps pe_empty pe_snapshot \
@@ -2756,4 +2755,8 @@ run_probe labsem_arithmetic_probeScript.sml labsem_arithmetic_probe.out lab_arit
 
 run_probe parmove_permutation_probeScript.sml parmove_permutation_probe.out \
   pp_first_one pp_second_one pp_first_three pp_second_three pp_first_four pp_second_four pp_duplicate_first pp_duplicate_second pp_swap pp_empty \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_steps_probeScript.sml parmove_steps_probe.out \
+  ps_remove ps_start ps_extend ps_save ps_emit_head ps_emit_last \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
