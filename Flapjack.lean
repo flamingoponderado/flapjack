@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
 import Flapjack.Compiler.Backend.Parmove.PmovDsteps
 import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
