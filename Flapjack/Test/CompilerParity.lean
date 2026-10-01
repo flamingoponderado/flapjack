@@ -1,3 +1,5 @@
+import Flapjack.Test.BackendPropsNonzeroLabelsParity
+
 import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
