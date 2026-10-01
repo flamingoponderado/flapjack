@@ -8,6 +8,9 @@ import Flapjack.Test.FindIndexBoundsParity
 import Flapjack.Test.ParmoveTempAppendParity
 import Flapjack.Test.WordAllocShareCheckerParity
 import Flapjack.Test.WordAllocGetPrefsParity
+import Flapjack.Test.SpDefaultParity
+import Flapjack.Test.InClashTreeParity
+import Flapjack.Test.GetForcedParity
 import Flapjack.Test.WordAllocStackOnlyParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
