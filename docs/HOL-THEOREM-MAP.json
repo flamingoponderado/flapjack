@@ -44204,5 +44204,14 @@
     "lean_name": "mergeMovesFrame",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison2026-10-01 .30.7: original4636-4665 full arbitrary List Nat, counter Nat and both native Spt Nat maps; only original allocation-class premise. Same tail-first mergeMoves five-product with all four conjuncts: final allocation class, original-to-final bound and independent mapOK preservation implications on each side. No distinctness, wellformedness, initial mapOK strengthened premise, map relation or supplied target-result assumption. Native malformed trees and unbounded Nat retained. Original proof uses accepted ssa_map_ok_extend and convention class; Lean tail induction uses accepted isAllocVarAdd and ssaMapOKExtend with kernel arithmetic deriving nonphysicality. Literal original complete local theorem proof and ten same-input full result observations replayed freshly; imported existing kernel tuples plus full arbitrary-input actual theorem application. No executed compiler change or full SSA correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopReturn.lean",
+    "lean_name": "copyRetNoShmemop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .48.2.4: full original copy_ret_no_shmemop12213-12219. Arbitrary perf/handler Boolean flags, Nat register/frame count, independently polymorphic unused third frame field and return-value list elements, and full native continuation retained. Original iff between Boolean predicates is equality of the corresponding Bool results, retaining false continuations without an added safety premise. Return-count zero/nonzero clauses, handler offset, descending auxiliary copy, and SeqStackFree match the original definitions. Only the standard positive HOL word dimension is represented by BitVec width with NeZero. No bounds, successful evaluation, target safety, or simulation assumptions. Sixteen fresh original predicate pair observations cover widths1/32/64/80, both flags, truncated subtraction and zero/nonzero return counts, independent String frame tail and Bool return list, and safe/forbidden continuations. Identical kernel fixtures and arbitrary-carrier theorem application checked. These regressions do not prove cross-language equivalence; whole compiler preservation remains open."
   }
 ]

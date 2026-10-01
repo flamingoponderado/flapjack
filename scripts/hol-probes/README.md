@@ -3411,3 +3411,14 @@ keys, malformed trees and unbounded natural registers.
 only the original allocation-class premise and all four result conjuncts.
 Malformed/physical-counter observation rows test the definition; they do not
 claim that the allocation premise holds. No exported local theorem is claimed.
+
+### Native return wrapper no-shared-memory preservation
+
+`word_to_stack_no_shmemop_return_probeScript.sml` evaluates sixteen original
+predicate pairs with safe and forbidden continuations, zero/nonzero return
+counts, both flags, widths1/32/64/80, a String frame tail and independent Bool
+return list. Each pair is checked against its explicit true/true or false/false
+result. `WordToStackNoShmemopReturnParity` kernel-checks the identical inputs
+and applies the full theorem at arbitrary independent carriers and positive
+width. These regressions do not establish cross-language equivalence.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_return_probeScript.sml`.
