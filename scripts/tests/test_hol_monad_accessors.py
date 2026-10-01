@@ -78,10 +78,28 @@ class MonadAccessorTest(unittest.TestCase):
             RECORD + ACCESS + SELECT + MANIP.replace(';', ''),
             RECORD + ACCESS + SELECT + MANIP.replace('[items_accessors]', '(make ())'),
             RECORD + ACCESS + 'local\n' + SELECT + 'in\nend;\n' + MANIP,
+            RECORD + ACCESS + 'val el = other;\n' + SELECT + MANIP,
+            RECORD + ACCESS + 'fun el k l = other;\n' + SELECT + MANIP,
+            RECORD + ACCESS + 'val (el, other) = make;\n' + SELECT + MANIP,
+            RECORD + ACCESS + SELECT + 'val el = other;\n' + MANIP,
+            RECORD + ACCESS + 'val accessors = other;\n' + SELECT + MANIP,
+            RECORD + ACCESS + SELECT + MANIP.replace('[items_accessors]', '[items_accessors, items_accessors]'),
         ]
         for source in bad:
             with self.subTest(source=source):
                 self.assertEqual(RECOGNIZE(source)[1:], [])
+
+    def test_generator_must_precede_selection(self):
+        # An earlier non-generator binding is what the selection reads; a later
+        # generator call with the same name must not lend it provenance.
+        for source in [
+            RECORD + 'val accessors = other;\n' + SELECT + MANIP + ACCESS,
+            RECORD + SELECT + MANIP + ACCESS,
+            RECORD + 'val accessors = other;\n' + SELECT + ACCESS + MANIP,
+        ]:
+            with self.subTest(source=source):
+                generated = [name for names, _, _ in RECOGNIZE(source) for name in names]
+                self.assertFalse(set(ARRAY) & set(generated))
 
     def test_checker_and_index_share_span(self):
         with tempfile.TemporaryDirectory() as directory:

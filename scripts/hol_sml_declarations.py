@@ -255,7 +255,9 @@ def monad_accessor_declarations(text: str) -> list[tuple[tuple[str, ...], int, i
     generates `get_F_def` and `set_F_def` for every record field `F`, in order.
     A top-level `val _ = define_MFarray_manip_funs [A1, ...] SUB UPD;` call,
     whose every `Ai` is bound exactly once at top level by `val Ai = el K ACC;`
-    for such an `ACC` with `1 <= K <= #fields`, generates `F_length_def`,
+    for such an `ACC` with `1 <= K <= #fields`, made after that generator call
+    with no rebinding of `ACC` in between and no top-level rebinding of `el`
+    before the manip call, generates `F_length_def`,
     `F_sub_def` and `update_F_def` for each selected field `F`. Both
     factories follow `cakeml/translator/monadic/monad_base/ml_monadBaseLib.sml`.
     This records source provenance only, not elaboration or type equivalence.
@@ -266,7 +268,8 @@ def monad_accessor_declarations(text: str) -> list[tuple[tuple[str, ...], int, i
     masked = _mask_modern_blocks(text, comment_masked)
     nested = _nested_positions(masked)
     result: list[tuple[tuple[str, ...], int, int]] = []
-    access: dict[str, list[str]] = {}
+    # accessor-list binding -> (record fields, offset of its generator call)
+    access: dict[str, tuple[list[str], int]] = {}
 
     def line(offset: int) -> int:
         return text.count('\n', 0, offset) + 1
@@ -293,7 +296,7 @@ def monad_accessor_declarations(text: str) -> list[tuple[tuple[str, ...], int, i
             continue
         names = tuple(prefix + field + '_def' for field in fields for prefix in ('get_', 'set_'))
         end = close + re.match(r'\s*;', text[close:]).end()
-        access[match['acc']] = fields
+        access[match['acc']] = (fields, match.start())
         result.append((names, line(match.start()), line(end)))
 
     manip = re.compile(
@@ -302,6 +305,10 @@ def monad_accessor_declarations(text: str) -> list[tuple[tuple[str, ...], int, i
         re.MULTILINE)
     for match in manip.finditer(masked):
         if match.start() in nested or shadowed('define_MFarray_manip_funs', match.start()):
+            continue
+        # The selector must be the Pervasive `el`: any top-level rebinding
+        # before the manip call disqualifies every selection.
+        if shadowed('el', match.start()):
             continue
         items = [item.strip() for item in match['items'].split(',')]
         selected = []
@@ -315,15 +322,20 @@ def monad_accessor_declarations(text: str) -> list[tuple[tuple[str, ...], int, i
                 masked[:match.start()], re.MULTILINE) if b.start() not in nested]
             if len(binding) != 1 or binding[0]['acc'] not in access:
                 break
-            if _top_level_bindings(masked, nested, binding[0]['acc'], match.start()) != 1:
+            fields, generator = access[binding[0]['acc']]
+            # Chronology: the generator call precedes the selection, and the
+            # generator is the only top-level binding of the accessor list in
+            # force at the selection.
+            if not generator < binding[0].start():
                 break
-            fields = access[binding[0]['acc']]
+            if _top_level_bindings(masked, nested, binding[0]['acc'], binding[0].start()) != 1:
+                break
             k = int(binding[0]['k'])
             if not 1 <= k <= len(fields):
                 break
             selected.append(fields[k - 1])
         else:
-            if selected:
+            if selected and len(set(selected)) == len(selected):
                 names = tuple(name for field in selected
                               for name in (field + '_length_def', field + '_sub_def',
                                            'update_' + field + '_def'))
