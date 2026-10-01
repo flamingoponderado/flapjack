@@ -2345,3 +2345,11 @@ flattened length. `WordToStackCompilePrefixParity` applies the full original
 output-equation theorem to the same actual compiler outputs in the real Lake
 test driver. These observations are regression evidence, not a cross-prover
 equivalence or whole-compiler correctness proof.
+
+`word_alloc_return_checker_probeScript.sml` freshly observes seven returning
+Call equations without an exception handler: empty sets, nonempty cutsets,
+duplicate arguments/return variables, Tick and table-routed Break return
+programs, and independently rejected return-set/argument-set colour collisions.
+`WordAllocReturnCheckerParity` kernel-replays the same inputs through the actual
+CompilerParity driver and instantiates the universal original-motive theorem.
+These finite observations do not prove cross-prover or whole-allocator equivalence.

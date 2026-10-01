@@ -42123,5 +42123,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and ShareInst3146-3232: Load32 case retains original six premises and five conclusions through accepted clashTreeGoal/clashTreeConcl. Exact WordLangProgHOL positive-width BitVec carrier; no subprogramIH or addedpremise. Delta checker via accepted deltaConcl; stores no writes and read-list includes value register, live equality from unit singleton/union algebra. Loads singleton destination write, expression reads, deleted incoming live wf derived from original wf live. No bounds/evaluation/poststate assumptions. words_as_type_indexed_bitvec only carrier translation; mainreviewpending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/ReturnNoHandler.lean",
+    "lean_name": "clashTreeColouringOk_ReturnNoHandler",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and returningCall NONE handler3237-3252: exact WordLangProgHOL positive-width BitVec, full original six premises/five conclusions through accepted motive. Universally quantified returnvariables/cutsets/returnprogram/labels/destination/arguments. Only returnprogram IH, checker right-first body outcome internally destructured, fixed return/argument sets injection/image from checkColInj, wf from source cutsets and actual listinsert/union. Unit union commutativity identifies source colouring cutset order. No targetevaluation/postcode/output/domain assumptions added. words_as_type_indexed_bitvec is sole carrier translation. Coordinator review pending."
   }
 ]

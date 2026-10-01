@@ -2954,3 +2954,7 @@ run_probe word_to_stack_comp_prefix_probeScript.sml word_to_stack_comp_prefix_pr
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
   sc_store sc_store8 sc_store16 sc_store32 sc_load sc_load8 sc_load16 sc_load32 \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_return_checker_probeScript.sml word_alloc_return_checker_probe.out \
+  rc_empty rc_cuts rc_duplicate_args rc_return_tick rc_return_break rc_return_collision rc_args_collision \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
