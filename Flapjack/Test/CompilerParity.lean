@@ -1,11 +1,19 @@
+import Flapjack.Test.WordConvsCodeLabelsParity
+import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.StackPropsCodeLabelsParity
 import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.RegAllocSortedMemParity
+import Flapjack.Test.RegAllocListHelpersParity
 import Flapjack.Test.RegAllocSortMovesRouteParity
 import Flapjack.Test.ParmovePreservesMovesStepParity
 import Flapjack.Test.ParmoveAllDistinctStepsParity
 import Flapjack.Test.RegAllocSortMovesParity
 import Flapjack.Test.ProductionThreeToTwoDomain
+import Flapjack.Test.RegAllocStatePartitionParity
+import Flapjack.Test.ParmoveMapStateParity
+import Flapjack.Test.ParmoveTempStepsParity
+import Flapjack.Test.ParmoveStateToListParity
+import Flapjack.Test.ParmoveAllDistinctStepParity
 import Flapjack.Test.RegAllocInitializationParity
 import Flapjack.Test.WordCopyCodecDomainParity
 import Flapjack.Test.CanonizeMovesParity
@@ -14,10 +22,6 @@ import Flapjack.Test.RegAllocStateMapParity
 import Flapjack.Test.MonadListPrimitivesParity
 import Flapjack.Test.CanonizeSortParity
 import Flapjack.Test.FindIndexAppendParity
-import Flapjack.Test.ParmoveMapStateParity
-import Flapjack.Test.ParmoveTempStepsParity
-import Flapjack.Test.ParmoveStateToListParity
-import Flapjack.Test.ParmoveAllDistinctStepParity
 import Flapjack.Test.HeuProgParity
 import Flapjack.Test.WordToStackProgramMaximumParity
 import Flapjack.Test.WordToStackColourDomainParity
@@ -82,12 +86,10 @@ import Flapjack.Test.WordToStackNativeConfigParity
 import Flapjack.Test.ParmoveDStepsParity
 import Flapjack.Test.WordAllocEvenLocalsParity
 import Flapjack.Test.ParmoveDStepStepParity
-
 import Flapjack.Test.WordToStackCompileKeysParity
 import Flapjack.Test.ParmoveDstepsClosureParity
 import Flapjack.Test.ParmoveSplitSourceParity
 import Flapjack.Test.ParmoveStepsCorrectParity
-
 import Flapjack.Test.ParmoveDestinationParity
 import Flapjack.Test.ParmoveSourceParity
 import Flapjack.Test.ParmoveFinalParity
@@ -120,7 +122,6 @@ import Flapjack.Test.ParmoveInvariantsParity
 import Flapjack.Test.WordToStackAbsStackLengthsParity
 import Flapjack.Test.WordToStackAbsStackPrefixParity
 import Flapjack.Test.WordToStackMapFstParity
-
 import Flapjack.Test.WordToStackBitmapAppendParity
 import Flapjack.Test.WordToStackIndexListParity
 import Flapjack.Test.WordToStackAbsStackParity
@@ -702,6 +703,10 @@ import Flapjack.Test.PanToCrepMakeVmapParity
 import Flapjack.Test.PanLangGeneratedSizeParity
 import Flapjack.Test.CrepLangGeneratedSizeParity
 import Flapjack.Test.PanSimpProgBridgeParity
+import Flapjack.Test.RegAllocStateForeachParity
+
+
+
 
 /-!
 # Pancake/RISC-V compiler parity tests

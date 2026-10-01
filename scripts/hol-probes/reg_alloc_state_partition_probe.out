@@ -1,0 +1,24 @@
+sp_type=:(α -> β -> (bool, γ) exc # β) ->
+α list -> α list -> α list -> β -> (α list # α list, γ) exc # β
+sp_empty=T
+sp_singleton_true=T
+sp_singleton_false=T
+sp_all_true=T
+sp_all_false=T
+sp_mixed=T
+sp_reverse=T
+sp_duplicates=T
+sp_large=T
+sp_fail_empty=T
+sp_fail_first=T
+sp_fail_middle=T
+sp_fail_last=T
+sp_fail_duplicate=T
+sp_state_predicate=T
+sp_state_failure=T
+sp_bool_value=T
+sp_bool_state=T
+sp_list_state=T
+sp_list_error=T
+sp_tuple_state=T
+sp_empty_always_failure=T

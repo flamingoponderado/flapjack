@@ -1,0 +1,16 @@
+load "preamble";
+load "wordConvsTheory";
+open bossLib HolKernel Parse preamble wordConvsTheory;
+fun out label q = (print (label ^ "="); print_term (rconc (EVAL q)); print "\n");
+val _ = out "wl_skip" ``get_code_labels (wordLang$Skip : 64 wordLang$prog) = {}``;
+val _ = out "wl_location" ``get_code_labels (wordLang$LocValue 2 9 : 64 wordLang$prog) = {9}``;
+val _ = out "wl_direct_tail" ``get_code_labels (wordLang$Call NONE (SOME 8) [] NONE : 64 wordLang$prog) = {8}``;
+val _ = out "wl_indirect_tail" ``get_code_labels (wordLang$Call NONE NONE [] NONE : 64 wordLang$prog) = {}``;
+val _ = out "wl_tail_handler" ``get_code_labels (wordLang$Call NONE NONE [] (SOME (1,wordLang$LocValue 2 9,7,5)) : 64 wordLang$prog) = {9}``;
+val _ = out "wl_both_bodies" ``get_code_labels (wordLang$Call (SOME ([],(LN,LN),wordLang$LocValue 2 3,4,5)) (SOME 8) [] (SOME (1,wordLang$LocValue 2 9,7,5)) : 64 wordLang$prog) = {8;3;9}``;
+val _ = out "wl_metadata_omitted" ``get_code_labels (wordLang$Call (SOME ([],(LN,LN),wordLang$Skip,4,5)) NONE [] (SOME (1,wordLang$Skip,7,6)) : 64 wordLang$prog) = {}``;
+val _ = out "wl_return_only" ``get_code_labels (wordLang$Call (SOME ([],(LN,LN),wordLang$LocValue 2 3,4,5)) NONE [] NONE : 64 wordLang$prog) = {3}``;
+val _ = out "wl_duplicate" ``get_code_labels (wordLang$Seq (wordLang$LocValue 2 9) (wordLang$LocValue 3 9) : 64 wordLang$prog) = {9}``;
+val _ = out "wl_if" ``get_code_labels (wordLang$If Equal 0 (Reg 1) (wordLang$LocValue 2 3) (wordLang$LocValue 2 9) : 64 wordLang$prog) = {3;9}``;
+val _ = out "wl_loop" ``get_code_labels (wordLang$Loop LN (wordLang$LocValue 2 9) LN : 64 wordLang$prog) = {9}``;
+val _ = out "wl_must" ``get_code_labels (wordLang$MustTerminate (wordLang$LocValue 2 9) : 64 wordLang$prog) = {9}``;

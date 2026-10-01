@@ -2662,6 +2662,7 @@ distinctness, generic three-list flattening, and RTC scratch safety respectively
 renaming statements/types as an audit aid, not a port or equivalence proof.
 Its capture omits blank separator lines between printed HOL clauses.
 
+- `parmove_all_distinct_steps_probeScript.sml`: four full destination predicates for zero-step scratch and start/save states. Lean fixtures additionally certify the RTC trace; HOL observations alone do not establish it.
 `stackprops_code_labels_probe.out` contains fifteen fresh direct original
 `stackProps$get_code_labels` and `stack_get_handler_labels` complete-set
 observations, replayed by `Flapjack.Test.StackPropsCodeLabelsParity` at the
@@ -2683,6 +2684,15 @@ the finite fixtures do not prove cross-assistant equivalence.
 `reg_alloc_sorted_mem_probe` captures twelve original early-stop membership
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
+
+`reg_alloc_list_helpers_probe` captures the original types and 23 EVAL results
+of `st_ex_FILTER` (accumulator order, state threading, state-dependent
+predicates, failure at every position, independent Bool carriers, large
+naturals) and `sorted_insert` (accumulator, duplicates, front/middle/end,
+unsorted inputs). `RegAllocListHelpersParity` kernel-replays every row and the
+executed `cakeSortedInsert`'s definitional equality with the literal
+definition. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_list_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 - `parmove_preserves_moves_step_probeScript.sml`: ten original non-self destination predicates before/after Save, including scratch destination. Lean fixtures certify the steps and witness changes; observations do not prove transition or cross-assistant equivalence.
 `word_to_stack_program_bitmaps_probe` captures ten original single-program
@@ -2706,3 +2716,55 @@ Lean fixture replays them. `parmove_all_distinct_steps_probe` captures four
 destination-distinctness observations; Lean also applies the full RTC theorem
 to zero-step and concrete two-step traces. These fixtures do not establish
 cross-language equivalence or whole allocator correctness.
+
+`wordconvs_code_labels_probe.out` contains twelve fresh direct original
+`wordConvs$get_code_labels` complete-set observations, replayed at identical
+width64 inputs by `Flapjack.Test.WordConvsCodeLabelsParity`. Cases cover direct
+and indirect Calls, both populated bodies, populated handlers with no return,
+excluded continuation metadata, duplicate labels, Seq/If/Loop/MustTerminate
+and LocValue. These regressions do not establish compiler label correctness or
+cross-language equivalence. Regenerate against read-only prebuilt theories with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=wordconvs_code_labels_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+- `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
+### Register allocator phase closure audit
+
+`reg_alloc_phase_closure_probeScript.sml` captures 29 exported original HOL
+definition equations for the five `do_step` phases and their nested helpers.
+These are statement captures, not Boolean behavioral parity or Lean theorem
+replays. The five success results are local HOL lemmas and were reviewed in
+`reg_alloc/proofs/reg_allocProofScript.sml:2075-2838`; no DB export or completed
+port is claimed for them. `reg_alloc_phase_closure_audit.json` records the
+source-confirmed helper frontier and shared bead IDs under `.10.5.8.6`.
+
+The five phase children remain blocked on genuine helpers. Important retained
+details include unspill's two partitions and update order, coalescing's parent
+compression even on rejected moves, prefreeze's stateful unavailable-worklist
+update, strict spill selector comparisons/tie accumulation, and the full
+success existential with good-state/subgraph/dimension/node-tag conclusions.
+Native `CakeRegAlloc` helpers are not thereby reviewed as literal state-monad
+ports. No source implementation or executed compiler route changes here.
+
+### Native state-exception partition
+
+`reg_alloc_state_partition_probeScript.sml` captures the original generic
+`st_ex_PARTITION` type and 22 Boolean equalities over full result/state pairs.
+`RegAllocStatePartitionParity.lean` replays the same inputs and outputs in the
+Lean kernel. Fixtures cover prepend accumulators, duplicates, reversed input,
+large Nat values, state-dependent decisions, all failure positions and
+independent Bool/list/product state and exception carriers. The generic empty
+case is also checked by `rfl`. Finite parity observations support the literal
+source comparison; they do not prove cross-prover equivalence or execute a
+production allocator replacement. Native phase proofs and production routing
+remain separate work.
+
+## Native state-exception iteration
+
+`reg_alloc_state_foreach_probeScript.sml` captures the generic original
+`st_ex_FOREACH` type and eleven direct observations. `RegAllocStateForeachParity`
+replays order, discarded success values, failure-state retention and tail skipping,
+including independent Boolean callback results and List/Boolean states. These finite
+rows do not establish full allocator correctness or production routing. Regenerate
+with `HOL_PROBE_ONLY=reg_alloc_state_foreach_probeScript.sml` and the read-only
+original CakeML reg_alloc theory directory.

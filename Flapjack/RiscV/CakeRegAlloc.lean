@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.RegAlloc.SortMoves
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
 import Flapjack.RiscV.AllocatorMemoryInvariant
 import Flapjack.RiscV.CakeAllocatorCore
 import Flapjack.RiscV.Allocator
@@ -1024,13 +1025,48 @@ def CakeRaState.empty (n : Nat) : CakeRaState :=
     availMovesWl := [], unavailMovesWl := [], stack := [] }
 
 /-- `sorted_insert` (`reg_allocScript.sml:184-189`): insert into a
-    descending adjacency list, skipping duplicates. -/
-def cakeSortedInsert (x : Nat) : List Nat → List Nat
-  | [] => [x]
-  | y :: ys =>
+    descending adjacency list, skipping duplicates. The executed helper is the
+    reviewed literal definition started, as in HOL's `insert_edge`, with an
+    empty accumulator. -/
+def cakeSortedInsert (x : Nat) (ys : List Nat) : List Nat :=
+  Flapjack.RegAlloc.sortedInsert x [] ys
+
+/-- Flapjack API correspondence, with no separate HOL original: the literal
+accumulator form is the reversed accumulator in front of the insertion into
+the remaining list. Holds for every list, sorted or not. -/
+theorem sortedInsert_eq_reverse_append (x : Nat) :
+    ∀ (acc ys : List Nat),
+      Flapjack.RegAlloc.sortedInsert x acc ys = acc.reverse ++ cakeSortedInsert x ys := by
+  intro acc ys
+  induction ys generalizing acc with
+  | nil => simp [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert]
+  | cons y ys ih =>
+      unfold cakeSortedInsert
+      by_cases hxy : x = y
+      · simp [Flapjack.RegAlloc.sortedInsert, hxy]
+      · by_cases hgt : x > y
+        · simp [Flapjack.RegAlloc.sortedInsert, hxy, hgt]
+        · simp only [Flapjack.RegAlloc.sortedInsert, hxy, hgt, if_false]
+          rw [ih (y :: acc), ih [y]]
+          simp
+
+/-- The executed insertion's recursive equations (the previous Flapjack
+recursion), derived from the literal definition. -/
+theorem cakeSortedInsert_nil (x : Nat) : cakeSortedInsert x [] = [x] := by
+  simp [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert]
+
+theorem cakeSortedInsert_cons (x y : Nat) (ys : List Nat) :
+    cakeSortedInsert x (y :: ys) =
       if x = y then y :: ys
       else if x > y then x :: y :: ys
-      else y :: cakeSortedInsert x ys
+      else y :: cakeSortedInsert x ys := by
+  have h := sortedInsert_eq_reverse_append x [y] ys
+  by_cases hxy : x = y
+  · simp [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert, hxy]
+  · by_cases hgt : x > y
+    · simp [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert, hxy, hgt]
+    · simp only [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert, hxy, hgt, if_false] at h ⊢
+      simpa using h
 
 /-- `sorted_mem` (`reg_allocScript.sml:193-198`): membership in a descending
     adjacency list, stopping as soon as the list passes the sought key.  The

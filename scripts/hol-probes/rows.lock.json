@@ -2971,6 +2971,12 @@
       "sha256": "4bc370c35b075500a3dd7b42d7d7e83cd3172e01c1648fa511ba4f116bcc8d79"
     },
     {
+      "bytes": 121,
+      "out": "parmove_preserves_moves_steps_probe.out",
+      "rows": 6,
+      "sha256": "91ce20e9527c47c7bf16436e94de6959d386866fa41b8d2b354d1d3072a4aee7"
+    },
+    {
       "bytes": 288,
       "out": "parmove_remove_last_probe.out",
       "rows": 16,
@@ -3121,10 +3127,22 @@
       "sha256": "1a397bef1acd7f3b708a3228d38a208609d40146932df94f8e4c4e375fea1869"
     },
     {
+      "bytes": 842,
+      "out": "reg_alloc_list_helpers_probe.out",
+      "rows": 25,
+      "sha256": "fe9c520907502007e7d1763ef41ab50bc37385e5697fc92666dbaf53b925a793"
+    },
+    {
       "bytes": 258,
       "out": "reg_alloc_mk_bij_probe.out",
       "rows": 12,
       "sha256": "b7e9c9c4909dc012f2c85516433cd7f367f106375d48aa788b3de726c16f85c8"
+    },
+    {
+      "bytes": 18608,
+      "out": "reg_alloc_phase_closure_probe.out",
+      "rows": 29,
+      "sha256": "d4a15acdfbf2afcb75f4c65afa496e1a0cc598ea4e93fc4ea9cdcee6abc007d5"
     },
     {
       "bytes": 983,
@@ -3151,10 +3169,22 @@
       "sha256": "de123ad8f6d9bb266bcbe293233e5836185c6a35940a8c076c0297e41748d217"
     },
     {
+      "bytes": 245,
+      "out": "reg_alloc_state_foreach_probe.out",
+      "rows": 12,
+      "sha256": "07ca4cfea6ba7128862d3373320f185b41e118888a39a0bc81a11aa431f6114b"
+    },
+    {
       "bytes": 380,
       "out": "reg_alloc_state_map_probe.out",
       "rows": 20,
       "sha256": "6106364f2dde6ee7bad3fbeb2c11290957ac48f344f9c31cdd9ac079bc879d38"
+    },
+    {
+      "bytes": 481,
+      "out": "reg_alloc_state_partition_probe.out",
+      "rows": 23,
+      "sha256": "f77d83c8eb6624a79f956be3ade756841ba28b04cebf492636d49a890cdd1cec"
     },
     {
       "bytes": 131,
@@ -4409,6 +4439,12 @@
       "out": "word_to_stack_wshareinst_probe.out",
       "rows": 8,
       "sha256": "20f9ac3ebbddbe0fa0ee2f2a3ed87844803c7fce44d2c8e742efacc6bbfd64b5"
+    },
+    {
+      "bytes": 177,
+      "out": "wordconvs_code_labels_probe.out",
+      "rows": 12,
+      "sha256": "7e554eb4c4f85794408a9035532af0edf01084a1d290160025fa0690211c9acf"
     },
     {
       "bytes": 82,
