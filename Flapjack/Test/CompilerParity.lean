@@ -1,3 +1,4 @@
+import Flapjack.Test.CanonizeSortParity
 import Flapjack.Test.HeuProgParity
 import Flapjack.Test.WordToStackProgramMaximumParity
 import Flapjack.Test.WordToStackColourDomainParity

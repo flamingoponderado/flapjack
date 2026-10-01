@@ -2471,6 +2471,7 @@ are covered. Payload-only map retains raw structure and no wf premise is added.
 Finite observations do not establish cross-prover equivalence or executed
 allocator routing. Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_call_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_to_stack_full_read_bitmap_mixed_probeScript.sml` captures six original universal success-preservation applications at independently chosen bitmap/descriptor widths (8/1, 8/16, 1/32, 16/8, offset 8/32 and same-width 8/8), plus four actual success/zero/location guard equalities. Matching kernel applications include arbitrary independent positive widths. This repairs full_read_bitmap_append type generality; its proof and executed fullReadBitmap definition are unchanged.
 `word_to_stack_cutset_maximum_probe` captures twelve original cutset maxima, including duplicate/root keys, reordered and overlapping lists, sparse names and naturals above 2^80. Kernel fixtures replay the same inputs and apply the unconditional full list-to-Spt maximum correspondence. The production frame and compiler route remain separate dependency-linked work.
 
 `word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
@@ -2483,6 +2484,7 @@ names, raw nodes, large names/counters and arbitrary initial maps are covered.
 These finite observations do not establish general cross-prover equivalence or
 production allocator routing. Regenerate read-only with
 `HOL_PROBE_ONLY=reg_alloc_remap_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_to_stack_cutset_maximum_probe` captures twelve original cutset maxima, including duplicate/root keys, reordered and overlapping lists, sparse names and naturals above 2^80. Kernel fixtures replay the same inputs and apply the unconditional full list-to-Spt maximum correspondence. The production frame and compiler route remain separate dependency-linked work.
 
 `word_alloc_heu_prog_probe.out` captures fifty-two fresh original program
 heuristic observations, replayed by `HeuProgParity` in the kernel. Every
@@ -2514,3 +2516,14 @@ cycle save, prior-written scratch reads/save, and Boolean registers. Matching
 `Flapjack/Test/ParmoveTempStepParity.lean` checks source wf/safety and derives
 target safety via the actual Step constructor and full ported theorem.
 RTC/pmov and full Move correctness remain separate open obligations.
+`word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
+
+`word_alloc_canonize_sort_probe.out` captures seventeen fresh original mllist
+sort observations on the exact inline x/y/priority comparator, replayed by
+`CanonizeSortParity`. Empty/base/recursive sizes, duplicates, coordinate
+precedence, unnormalized reversed pairs and unbounded names/priorities are
+covered. This reuses the existing native MlList sorter; it neither expands
+external-source checker trust nor completes normalization/grouping or executed
+allocator routing. Source revision/span digest are beside `canonizeMoveLess`.
+Regenerate read-only with
+`HOL_PROBE_ONLY=word_alloc_canonize_sort_probeScript.sml scripts/hol-probes/regenerate.sh`.

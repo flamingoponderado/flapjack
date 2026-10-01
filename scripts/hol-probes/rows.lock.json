@@ -3554,6 +3554,12 @@
       "sha256": "f59faa5d285c06d2662aad30f01d669059c9b66074a74bd781568853e94e2b0e"
     },
     {
+      "bytes": 204,
+      "out": "word_alloc_canonize_sort_probe.out",
+      "rows": 17,
+      "sha256": "0e8e3023bfa424a84659114a87a0cf06fdad2cc9f08d1715195f30fb041c19b4"
+    },
+    {
       "bytes": 71,
       "out": "word_alloc_checker_assembly_probe.out",
       "rows": 5,

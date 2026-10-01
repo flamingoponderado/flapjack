@@ -3080,3 +3080,7 @@ run_probe word_to_stack_colour_domain_probeScript.sml word_to_stack_colour_domai
 run_probe word_to_stack_program_maximum_probeScript.sml word_to_stack_program_maximum_probe.out \
   pm_skip pm_tick pm_move pm_assign pm_inst pm_get pm_store pm_set pm_seq pm_if_reg pm_if_imm pm_loop pm_must pm_break pm_continue pm_raise pm_loc pm_return pm_return_initial pm_tail_handler pm_return_call pm_both_call pm_alloc pm_constants pm_heap pm_install pm_code_write pm_data_write pm_ffi pm_shared16 pm_large pm_tail_empty \
   "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"
+
+run_probe word_alloc_canonize_sort_probeScript.sml word_alloc_canonize_sort_probe.out \
+  cs_empty cs_one cs_two cs_three cs_four cs_five cs_odd cs_even cs_dups cs_priority cs_x_first cs_y_second cs_reversed_coords cs_large cs_zeros cs_descending cs_ascending \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
