@@ -1,0 +1,14 @@
+im_const=T
+im_bin_reg=T
+im_bin_imm=T
+im_shift_reg=T
+im_shift_imm=T
+im_div=T
+im_carry=T
+im_mul=T
+im_longdiv=T
+im_load=T
+im_store8=T
+im_large=T
+im_load16=T
+im_store16=T
