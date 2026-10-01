@@ -41475,5 +41475,14 @@
   "hol_name": "dstep_step",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison (2026-10-01), original503-516: generic Option register, three List state, actual least DStep and primitive Step RTC, original sole wf premise. Five cases single primitive step; cycle Save followed by EmitHead derives r != NONE from wf real destinations, no extra assumption. Fresh six wf and nine semantic cycle observations replayed in kernel; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompileKeys.lean",
+  "lean_name": "mapFstCompileWordToStack",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "MAP_FST_compile_word_to_stack",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a: full source5609-5616 compared binder by binder; generic identifier beta independent of positive word width, actual accepted native compile_word_to_stack, right-associated output remainder (frame list and bitmap pair), sole source compiler-output equality premise and whole MAP FST equality conclusion. Exact List/AppList/native HolProg/AsmConfig carriers; words_as_type_indexed_bitvec only translates the source dimension, no added frame/uniqueness/success premise. Induction on actual recursive wrapper threads its real bitmap result. Seven freshly regenerated original key-list equations kernel paired; production/compiler correctness parent remains open."
 }
 ]
