@@ -1,65 +1,47 @@
 import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
-import Flapjack.HolRef
 
-/-! Exact append stability of the Word-to-Stack bitmap readers. Appending words
-past the end of a successful `read_bitmap`/`full_read_bitmap` decode does not
-change the decoded bits, matching the HOL `word_to_stackProofScript.sml`
-theorems `read_bitmap_append_extra` and `full_read_bitmap_append`. -/
 namespace Flapjack.WordToStackProofs
-
 open Flapjack.StackSem
 
-/-- Appending extra words to a bitmap list that already decodes successfully
-does not change the decoded bits. -/
+/-- A successful bitmap terminates before any subsequently appended words. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "read_bitmap_append_extra"
   (words_as_type_indexed_bitvec)]
 theorem readBitmapAppendExtra {width : Nat} [NeZero width]
-    (l1 l2 : List (BitVec width)) (bits : List Bool) :
-    readBitmap l1 = some bits → readBitmap (l1 ++ l2) = some bits := by
+    (l1 l2 : List (BitVec width)) (bits : List Bool)
+    (h : readBitmap l1 = some bits) : readBitmap (l1 ++ l2) = some bits := by
   induction l1 generalizing bits with
-  | nil => simp [readBitmap]
-  | cons word ws ih =>
-    intro h
-    simp only [readBitmap, List.cons_append] at h ⊢
-    by_cases hmsb : word.msb
-    · simp only [if_pos hmsb] at h ⊢
-      cases hw : readBitmap ws with
-      | none => rw [hw] at h; simp at h
-      | some rest =>
-        rw [hw] at h
-        have hws := ih rest hw
-        rw [hws]
-        exact h
-    · simp only [if_neg hmsb] at h ⊢
-      exact h
+  | nil => simp [readBitmap] at h
+  | cons word words ih =>
+      cases hm : word.msb with
+      | false => simpa [readBitmap, hm] using h
+      | true =>
+          cases hr : readBitmap words with
+          | none => simp [readBitmap, hm, hr] at h
+          | some tailBits =>
+              have ht := ih tailBits hr
+              simpa [readBitmap, hm, ht, hr] using h
 
-/-- Appending extra bitmap words does not change a successful descriptor
-decode. -/
+/-- Appending bitmap words preserves a successful one-based descriptor lookup. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "full_read_bitmap_append"
   (words_as_type_indexed_bitvec)]
-theorem fullReadBitmapAppend {bitmapWidth : Nat} {width : Nat} [NeZero bitmapWidth]
-    [NeZero width]
-    (bitmaps moreBitmaps : List (BitVec bitmapWidth)) (w : WordLocW width) (bits : List Bool) :
-    fullReadBitmap bitmaps w = some bits →
-      fullReadBitmap (bitmaps ++ moreBitmaps) w = some bits := by
-  intro h
+theorem fullReadBitmapAppend {width : Nat} [NeZero width]
+    (bitmaps : List (BitVec width)) (w : WordLocW width) (bits : List Bool)
+    (moreBitmaps : List (BitVec width)) (h : fullReadBitmap bitmaps w = some bits) :
+    fullReadBitmap (bitmaps ++ moreBitmaps) w = some bits := by
   cases w with
+  | loc a b => simp [fullReadBitmap] at h
   | word word =>
-    by_cases hw : word = 0
-    · simp [fullReadBitmap, hw] at h
-    · simp only [fullReadBitmap, if_neg hw] at h ⊢
-      have hnil : bitmaps.drop (word - 1).toNat ≠ [] := by
-        intro hl
-        rw [hl] at h
-        simp [readBitmap] at h
-      have hn : (word - 1).toNat ≤ bitmaps.length := by
-        by_cases hle : (word - 1).toNat ≤ bitmaps.length
-        · exact hle
-        · have hlen : bitmaps.length ≤ (word - 1).toNat := by omega
-          exact absurd (List.drop_eq_nil_of_le hlen) hnil
-      rw [List.drop_append_of_le_length hn]
-      exact readBitmapAppendExtra _ _ _ h
-  | loc block offset =>
-    simp [fullReadBitmap] at h
+      by_cases hz : word = 0
+      · simp [fullReadBitmap, hz] at h
+      · simp only [fullReadBitmap, if_neg hz] at h ⊢
+        have hb : (word - 1).toNat ≤ bitmaps.length := by
+          by_cases hb : (word - 1).toNat ≤ bitmaps.length
+          · exact hb
+          · have he : bitmaps.drop (word - 1).toNat = [] :=
+              List.drop_eq_nil_iff.mpr (by omega)
+            rw [he] at h
+            simp only [readBitmap, reduceCtorEq] at h
+        rw [List.drop_append_of_le_length hb]
+        exact readBitmapAppendExtra _ _ _ h
 
 end Flapjack.WordToStackProofs

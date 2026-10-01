@@ -1,9 +1,4 @@
-rb_terminal=T
-rb_terminal_append=T
-rb_cont=T
-rb_cont_append=T
-frb_word=T
-frb_word_append=T
-frb_cont=T
-frb_cont_append=T
-frb_loc=T
+ba_terminal=T
+ba_continuation=T
+ba_full_one=T
+ba_full_two=T

@@ -32,6 +32,16 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`reg_alloc_clash_tree_probe.out` captures eight direct original register
+allocator checker observations: repeated deletion, duplicate colours,
+existing-name skips, partial collisions, Delta's discarded write result,
+right-first Seq traversal, Branch merging and fixed-set collisions.
+`Flapjack.Test.RegAllocClashTreeParity` kernel-replays the identical inputs and
+full output trees. These finite regressions do not prove allocator soundness
+or wire the checker into the executed compiler. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_clash_tree_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `stacksem_call_indirect_probe.out` captures ten direct original `stackSem$evaluate`
 Call INR observations (find_code645-651, returning Call861-892): indirect and
 returning success, link/target alias rejection before update, tail alias success,
@@ -1975,18 +1985,9 @@ HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/re
 
 - `word_to_stack_abs_stack_probeScript.sml`: original abstraction success and failure branches.
 
-- `word_to_stack_index_list_probeScript.sml`: descending indices and physical-name division.
+- `word_to_stack_index_list_probeScript.sml`: descending indices, value/key projections, guarded first/last lookup, and physical-name division.
 
-`word_to_stack_bitmap_append_probe.out` records nine original `read_bitmap` and
-`full_read_bitmap` observations on a terminal bitmap word (`13w`), a
-continuation-then-terminal pair (`129w,13w`), and the same inputs with extra
-bitmap words appended, plus the non-`Word` descriptor. The append rows are the
-premise-true instances used to review the exact ports
-`readBitmapAppendExtra` and `fullReadBitmapAppend`; the exact kernel replay is
-`Flapjack.Test.WordToStackBitmapAppendParity`. Regenerate read-only with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
-HOL_PROBE_ONLY=word_to_stack_bitmap_append_probeScript.sml scripts/hol-probes/regenerate.sh`.
-
+- `word_to_stack_bitmap_append_probeScript.sml`: successful bitmap decoding remains unchanged after appending words.
 ### Parallel-move state semantics
 
 `parmove_semantics_probeScript.sml` captures twelve direct original
@@ -1998,3 +1999,11 @@ and eqenv ignores only NONE. The two eqenv rows use the original
 `ParmoveSemanticsParity.lean` checks every captured observation; no windmill
 premise is imposed on repeated destinations. Full scheduler correctness and
 production wiring remain open.
+
+### Literal parallel-move scheduler
+
+`parmove_scheduler_probeScript.sml` captures nine original pmov/parmove outputs:
+final emitted suffix, temporary self-move, empty/self/single moves, chain, swap,
+three-cycle and repeated destinations. `ParmoveFstepParity.lean` replays them.
+The recursion uses the original measure, not fuel. Full semantic correctness
+and the executed Word-to-Stack wrapper remain open.

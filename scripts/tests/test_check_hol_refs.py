@@ -2782,6 +2782,57 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         )
 
 
+class QualifiedWordsCarrierResolutionTest(unittest.TestCase):
+    def _run(self, carrier="Flapjack.Source.State", *, source_positive=True,
+             source_word=True, local_shadow=False):
+        positive = " [NeZero width]" if source_positive else ""
+        payload = "BitVec width" if source_word else "Nat"
+        source = ("namespace Flapjack\nnamespace Source\nsection CarrierScope\n"
+                  f"structure State (width : Nat){positive} where\n"
+                  f"  word : {payload}\nend CarrierScope\nend Source\nend Flapjack\n")
+        target = ("namespace Flapjack.Target\n"
+                  "structure State (width : Nat) [NeZero width] where\n"
+                  "  clock : Nat\nend Flapjack.Target\n")
+        shadow = ("namespace Flapjack.Source\n"
+                  "structure State (width : Nat) [NeZero width] where\n"
+                  "  word : BitVec width\nend Flapjack.Source\n") if local_shadow else ""
+        declaration = ("def checkCarrier {width : Nat} [NeZero width]\n"
+                       f"    (state : {carrier} width) : Nat := width")
+        consumer = ("import Flapjack.Carriers.A\nimport Flapjack.Carriers.B\n"
+                    + shadow + declaration + "\n")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for module, text in [("Flapjack/Carriers/A.lean", source),
+                                 ("Flapjack/Carriers/B.lean", target),
+                                 ("Flapjack/Consumer.lean", consumer)]:
+                path = root / module
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(text, encoding="utf-8")
+            return CHECKER["words_as_type_indexed_bitvec_errors"](
+                declaration, "checkCarrier", module="Flapjack.Consumer",
+                root=str(root), lines=consumer.splitlines())
+
+    def test_selects_source_namespace_not_module_filename(self):
+        self.assertEqual(self._run(), [])
+
+    def test_bare_same_named_imports_remain_ambiguous(self):
+        errors = self._run("State")
+        self.assertTrue(any("ambiguous same-named owners" in e for e in errors), errors)
+
+    def test_qualified_owner_without_word_cannot_borrow_other_payload(self):
+        self.assertTrue(self._run("Flapjack.Target.State"))
+
+    def test_qualified_owner_without_positivity_cannot_borrow_other_header(self):
+        self.assertTrue(self._run(source_positive=False))
+
+    def test_qualified_owner_with_no_word_remains_ineligible(self):
+        self.assertTrue(self._run(source_word=False))
+
+    def test_same_full_name_local_shadow_remains_ambiguous(self):
+        errors = self._run(local_shadow=True)
+        self.assertTrue(any("ambiguous same-named owners" in e for e in errors), errors)
+
+
 class RealCrepPropsWordCarrierResolutionTest(unittest.TestCase):
     """The real CrepProps imports must resolve the exact state carrier."""
 
