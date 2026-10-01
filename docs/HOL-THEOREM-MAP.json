@@ -43708,5 +43708,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ProgramCodeLabels.lean",
+    "lean_name": "compileWordToStackCodeLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_code_labels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .26.15: full original11814-11844. Arbitrary assembler config, perf, register count, complete Nat-owner/argument/program list, AppList bitmap input and complete compiled bodies/frame-list/bitmap residual equation retained. Only original EVERY good_handlers and perf=F premises. Literal target BIGUNION IMAGE getter over body list, two inserted stub pairs, image(n -> (n,0)) of source BIGUNION and compiled owned-handler BIGUNION; original parser grouping separately checked T. Per-row actual compileProgNative frame sizing derives from accepted full comp label theorem, followed by actual compileWordToStackNative row induction; no key uniqueness, frame/bitmap bound, target subset/evaluation, successful-pass, simulation or HD/EL premise. Only positive type-indexed HOL word dimension translated to BitVec width with NeZero. Private packaging/set-membership lemmas are Flapjack-specific infrastructure. Seven freshly regenerated original actual whole-list set/frame/cursor/guard observations plus parsed-group sentinel all T; identical-input kernel fixture includes duplicate keys, spilled locals, owned/wrong-owner handlers, dropped tail handlers and bitmap threading. Full public theorem applied to a nonempty returning handler row with arbitrary config/registers/bitmap input. Regression evidence is not cross-language equivalence. Coordinator review/acceptance pending."
   }
 ]
