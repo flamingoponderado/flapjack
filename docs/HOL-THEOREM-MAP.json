@@ -38114,6 +38114,24 @@
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.14) against word_allocScript.sml apply_colour_def, clause by clause over the tagged WordLangProgHOL carrier: Skip; Move keeps literal ZIP (MAP (f o FST) ls, MAP (f o SND) ls); Inst via tagged apply_colour_inst; Assign/Store/Set/ShareInst via tagged apply_colour_exp; Get renames dest only; Call renames returned vars, cut sets via apply_nummaps_key, return handler, args, handler exception var and handler body, labels/dest unchanged; Seq/MustTerminate/If (apply_colour_imm) recursive; Install/FFI/Alloc cut sets via apply_nummaps_key; CodeBufferWrite/DataBufferWrite/LocValue/StoreConsts/Raise/Return/OpCurrHeap rename register fields only (FFI name, labels, constants, store names unchanged); Tick; Loop via apply_nummap_key on both live sets; catchall Break/Continue unchanged. Positive BitVec width is the sole carrier translation. Six original HOL EVAL rows (scripts/hol-probes/apply_colour_probe.out) replayed by Flapjack.Test.WordAllocApplyColourExactParity. Proof-side exact definition; executed allocator still uses wordApplyColour (production routing separate)."
 },
 {
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/LiveBitmap.lean",
+  "lean_name": "writeBitmapExact",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "write_bitmap_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01, bead15.3.24: Source240-244: Original HOL kernel type probe confirms alpha sptree$num_map -> num -> num -> beta word list; live is arbitrary-payload Spt alpha (not restricted to Unit); sptToAList enumeration, MAP pair keys with truncating ((frame-1)-(r DIV2-k)), GENLIST membership plus true, word_list width-1. No wf or extra bounds; BitVec positive width records only word translation. Existing seven HOL captured bitmap rows replayed on Spt. Full comp/compile_prog/pass proof and production routing remain open; coordinator acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/LiveBitmap.lean",
+  "lean_name": "wLiveExact",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wLive_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01, bead15.3.24: Source252-258: full cutsets=Spt Unit pair and (k,f,fprime) triple retained. f=0 leaves bitmaps unchanged; otherwise exact write_bitmap of SND live, insert_bitmap, Const k (n2w(i+1)), StackStore k0. Shared-word ProgM uses exact MlString constructor carrier, untouched here. No dropped inputs/convenience domain-list signature or extra hypotheses. Full comp/compile_prog/pass proof and production routing remain open; coordinator acceptance pending."
+},
+{
   "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
   "hol_name": "get_writes_inst_def",
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/InstructionWrites.lean",

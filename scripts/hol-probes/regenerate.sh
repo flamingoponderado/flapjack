@@ -625,7 +625,7 @@ run_probe word_to_stack_chunk_to_bitmap_probeScript.sml word_to_stack_chunk_to_b
   cbm_empty cwb_split8 "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
 run_probe word_to_stack_write_bitmap_probeScript.sml word_to_stack_write_bitmap_probe.out \
-  wb_empty wb_order_eq "$cake_dir/compiler/backend/word_to_stackScript.sml" \
+  wb_empty wb_single wb_two wb_offset wb_boundary wb_order_a wb_order_b wb_order_eq wb_payload_nat wb_payload_bool "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
 run_probe word_to_stack_insert_bitmap_probeScript.sml word_to_stack_insert_bitmap_probe.out \
   ib_empty ib_new_len "$cake_dir/compiler/backend/word_to_stackScript.sml" \
@@ -1659,6 +1659,9 @@ run_probe loop_sem_find_code_probeScript.sml loop_sem_find_code_probe.out \
   find_code_label_first find_code_dup_first "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_primop_probeScript.sml loop_sem_primop_probe.out \
   valid_no_carry invalid_nonword "$cake_dir/pancake/semantics/loopSemScript.sml"
+run_probe loop_sem_store_narrow_probeScript.sml loop_sem_store_narrow_probe.out \
+  store32_narrow store32_big store32_upper store32_unaligned store32_domain store32_memory_loc store32_address_loc store32_value_loc store32_other storeByte_narrow storeByte_big storeByte_domain storeByte_memory_loc storeByte_address_loc storeByte_value_loc storeByte_clock \
+  "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_mem_store_probeScript.sml loop_sem_mem_store_probe.out \
   mem_store_hit mem_store_other "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_mem_load_probeScript.sml loop_sem_mem_load_probe.out \
