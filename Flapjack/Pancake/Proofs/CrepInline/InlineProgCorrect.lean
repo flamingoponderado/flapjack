@@ -22,8 +22,14 @@ namespace CrepInlineCallCase
 
 open CrepInlineCanonical CrepInlineExact
 
-/-- Local support: the `inline_prog_correct` predicate for every program and
-    state, by the lexicographic (clock, size) induction. -/
+/-- Flapjack induction infrastructure: establish the curried `crepInlineGoal`
+for every program and state by lexicographic (clock, size) induction. The public
+`inline_prog_correct` below instantiates this predicate with the original
+arguments and premises. This helper stays visible because
+`CrepInline/StateRelImpSemantics.lean` also supplies it as the non-inlined Call
+callee motive. It has no separately named HOL declaration, so it is untagged;
+the exact HOL result is recorded on `inline_prog_correct`, while the original
+HOL `evaluate_ind` port remains a separate obligation. -/
 theorem inlineMotive {width : Nat} [NeZero width] {σ : Type} :
     ∀ (p : CrepProgHOL width) (s : CrepSemHOLState width σ), crepInlineGoal p s := by
   refine evalCrepSemHOLProgExact_inductLex (motive := crepInlineGoal) ?_
