@@ -16,7 +16,13 @@ example : sectionLabels 0 ([.label 1 9 0] : List Line8) acc = (0,[(9,0),(99,7)])
 example : sectionLabels 4 ([.label 1 2 1,.label 1 2 2] : List Line8) acc = (7,[(2,7),(2,5),(99,7)]) := by decide +kernel
 example : (sectionLabels 37 mixed [(0,900),(4,0),(4,999)]).1 = secLength mixed 37 := by decide +kernel
 
+example : secLength ([] : List Line8) (5+7) = secLength (width := 8) [] 5 + 7 := by decide +kernel
+example : secLength mixed (17+9) = secLength mixed 17 + 9 := by decide +kernel
+example : secLength mixed (17+9) = 40 := by decide +kernel
+example : secLength ([.label 1 2 0,.asm (.asmi (.inst .skip)) [] 0] : List Line8) (3+4) = 7 := by decide +kernel
+example : secLength ([.asm (.asmi (.inst .skip)) [] 100] : List Line8) (2+6) = 108 := by decide +kernel
+
 def runChecks : IO Bool := do
-  IO.println "PASS original section_labels_sec_length (8 kernel replays)"
+  IO.println "PASS original section_labels_sec_length/sec_length_add (13 kernel replays)"
   pure true
 end Flapjack.Test.LabToTargetSectionLengthParity

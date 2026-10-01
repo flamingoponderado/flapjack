@@ -3063,7 +3063,8 @@ run_probe lab_to_target_line_len_probeScript.sml lab_to_target_line_len_probe.ou
 run_probe lab_to_target_section_length_probeScript.sml lab_to_target_section_length_probe.out \
   SectionLengthEmpty SectionLengthMixed SectionLengthMixedPosition SectionLengthMixedLabels \
   SectionLengthZeroLabel SectionLengthZeroLenLabel SectionLengthDuplicateLabels \
-  SectionLengthArbitraryAccumulator \
+  SectionLengthArbitraryAccumulator SecLengthAddEmpty SecLengthAddMixed SecLengthAddMixedValue \
+  SecLengthAddZeroAnnotation SecLengthAddEmptyBytesAnnotation \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe byte_word_to_bytes_aux_probeScript.sml byte_word_to_bytes_aux_probe.out \
   ByteAuxLE16Cycle ByteAuxBE16Cycle ByteAuxLE32Cycle ByteAuxBE32Cycle \

@@ -50641,5 +50641,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c literal source comparison3127-3131: all three Label/Asm/LabAsm clauses return the recorded Nat length unchanged. Same native Line carrier with fixed word8 bytes and MlString; sole translation positive type-indexed word dimension with NeZero. No assumptions, validation or encoded byte length substitution. Five original/kernel rows include arbitrary annotations inconsistent with actual bytes, zero/empty encoded bytes and widths8/64."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionLength.lean",
+    "lean_name": "secLengthAdd",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_length_add",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison3135-3140: forall native lines ls and natural offsets n/m, sec_length ls(n+m)=sec_length ls n+m unconditionally. Same constructor payloads/fixed byte8/MlString and positive generic word translation. No annotation/byte consistency premise or length bound. Canonical reviewed secLength, list induction and addition transport only. Five original/kernel rows extend the existing section probe without removing its8 sentinel rows; empty/mixed/zero annotations and empty bytes with length100 retain original recorded lengths."
   }
 ]
