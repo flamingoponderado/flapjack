@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.LinearScan.Proofs.LiveTree
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
 import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
 import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
+import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
 
 /-!
 # linear_scan proofs
@@ -20,6 +21,8 @@ order:
   `check_intervals_check_live_tree` and `get_intervals_ct_eq`.
 * `RegExchange`: `linear_scanProofScript.sml:2020-2402`, the generated
   array accessor equations and `apply_reg_exchange_correct`.
+* `Bijection`: `linear_scanProofScript.sml:4997-5204`, the register
+  bijection invariants.
 
 The top-level `linear_scan_reg_alloc_correct` is not yet ported.
 -/

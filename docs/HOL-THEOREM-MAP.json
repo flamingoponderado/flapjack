@@ -44162,5 +44162,93 @@
     "lean_name": "lsId",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.10), linear_scanProofScript.sml id_def. HOL statement: id x = x Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); HOL EL is the untagged Flapjack holEl (HD [] opaque, so EL past the end is unspecified exactly as in HOL; under a bound it is l[n]); LUPDATE t n l is l.set n t; ALL_DISTINCT is List.Nodup; HOL id is the tagged proof-script lsId; o is function composition. Over the tagged linear_scan definitions and the accepted MonadBase core; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "good_bijection_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Bijection.lean",
+    "lean_name": "goodBijectionState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.15), linear_scanProofScript.sml good_bijection_state_def. HOL statement: good_bijection_state st regset = ( regset = domain st.bij /\\ ( sp_inverts st.bij st.invbij /\\ sp_inverts st.invbij st.bij ) /\\ ( (!r. r IN regset ==> (is_stack_var r <=> is_stack_var (the 0 (lookup r st.bij)))) /\\ (!r. r IN regset ==> (is_alloc_var r <=> is_alloc_var (the 0 (lookup r st.bij)))) /\\ (!r. r IN regset /\\ is_phy_var r ==> r = (the 0 (lookup r st.bij))) ) /\\ (!r. r IN domain st.invbij /\\ is_stack_var r ==> r < st.nstack) /\\ (!r. r IN domain st.invbij /\\ is_alloc_var r ==> r < st.nalloc) /\\ ( is_stack_var st.nstack /\\ is_alloc_var st.nalloc ) /\\ (!r. the 0 (lookup r st.bij) <= st.nmax) ) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); HOL num set is Nat -> Prop (IN as application, INSERT as fun y => y = x \\/ s y, UNION pointwise disjunction, EMPTY the false predicate); is_phy_var/is_stack_var/is_alloc_var are the reviewed Bool predicates; misc the is miscThe; sptree foldi is the tagged generic sptFoldiGen; in_clash_tree is the reviewed RegAlloc.inClashTree; sp_inverts is the tagged RegAlloc.spInverts. No EL. Over the tagged linear_scan definitions and the accepted MonadBase core; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "convention_partitions_or",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Bijection.lean",
+    "lean_name": "conventionPartitionsOr",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.15), linear_scanProofScript.sml convention_partitions_or. HOL statement: !r. ( is_phy_var r /\\ ~is_stack_var r /\\ ~is_alloc_var r) \\/ (~is_phy_var r /\\  is_stack_var r /\\ ~is_alloc_var r) \\/ (~is_phy_var r /\\ ~is_stack_var r /\\  is_alloc_var r) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); HOL num set is Nat -> Prop (IN as application, INSERT as fun y => y = x \\/ s y, UNION pointwise disjunction, EMPTY the false predicate); is_phy_var/is_stack_var/is_alloc_var are the reviewed Bool predicates; misc the is miscThe; sptree foldi is the tagged generic sptFoldiGen; in_clash_tree is the reviewed RegAlloc.inClashTree; sp_inverts is the tagged RegAlloc.spInverts. No EL. Over the tagged linear_scan definitions and the accepted MonadBase core; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_bijection_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Bijection.lean",
+    "lean_name": "findBijectionInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.15), linear_scanProofScript.sml find_bijection_invariants. HOL statement: !st r regset. good_bijection_state st regset ==> good_bijection_state (find_bijection_step st r) (r INSERT regset) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); HOL num set is Nat -> Prop (IN as application, INSERT as fun y => y = x \\/ s y, UNION pointwise disjunction, EMPTY the false predicate); is_phy_var/is_stack_var/is_alloc_var are the reviewed Bool predicates; misc the is miscThe; sptree foldi is the tagged generic sptFoldiGen; in_clash_tree is the reviewed RegAlloc.inClashTree; sp_inverts is the tagged RegAlloc.spInverts. No EL. Over the tagged linear_scan definitions and the accepted MonadBase core; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "FOLDL_find_bijection_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Bijection.lean",
+    "lean_name": "foldlFindBijectionInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.15), linear_scanProofScript.sml FOLDL_find_bijection_invariants. HOL statement: !st l regset. good_bijection_state st regset ==> good_bijection_state (FOLDL find_bijection_step st l) (set l UNION regset) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); HOL num set is Nat -> Prop (IN as application, INSERT as fun y => y = x \\/ s y, UNION pointwise disjunction, EMPTY the false predicate); is_phy_var/is_stack_var/is_alloc_var are the reviewed Bool predicates; misc the is miscThe; sptree foldi is the tagged generic sptFoldiGen; in_clash_tree is the reviewed RegAlloc.inClashTree; sp_inverts is the tagged RegAlloc.spInverts. No EL. Over the tagged linear_scan definitions and the accepted MonadBase core; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "foldi_find_bijection_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Bijection.lean",
+    "lean_name": "foldiFindBijectionInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.15), linear_scanProofScript.sml foldi_find_bijection_invariants. HOL statement: !st s regset. good_bijection_state st regset ==> good_bijection_state (foldi (\\r v acc. find_bijection_step acc r) 0 st s) (domain s UNION regset) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); HOL num set is Nat -> Prop (IN as application, INSERT as fun y => y = x \\/ s y, UNION pointwise disjunction, EMPTY the false predicate); is_phy_var/is_stack_var/is_alloc_var are the reviewed Bool predicates; misc the is miscThe; sptree foldi is the tagged generic sptFoldiGen; in_clash_tree is the reviewed RegAlloc.inClashTree; sp_inverts is the tagged RegAlloc.spInverts. No EL. Over the tagged linear_scan definitions and the accepted MonadBase core; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "in_clash_tree_set_eq",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Bijection.lean",
+    "lean_name": "inClashTreeSetEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.15), linear_scanProofScript.sml in_clash_tree_set_eq. HOL statement: (!w r. in_clash_tree (Delta w r) = set w UNION set r) /\\ (!names. in_clash_tree (Set names) = domain names) /\\ (!name_opt t1 t2. in_clash_tree (Branch name_opt t1 t2) = case name_opt of | SOME names => domain names UNION in_clash_tree t1 UNION in_clash_tree t2 | NONE => in_clash_tree t1 UNION in_clash_tree t2 ) /\\ (!t1 t2. in_clash_tree (Seq t1 t2) = in_clash_tree t1 UNION in_clash_tree t2) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); HOL num set is Nat -> Prop (IN as application, INSERT as fun y => y = x \\/ s y, UNION pointwise disjunction, EMPTY the false predicate); is_phy_var/is_stack_var/is_alloc_var are the reviewed Bool predicates; misc the is miscThe; sptree foldi is the tagged generic sptFoldiGen; in_clash_tree is the reviewed RegAlloc.inClashTree; sp_inverts is the tagged RegAlloc.spInverts. No EL. Over the tagged linear_scan definitions and the accepted MonadBase core; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_bijection_clash_tree_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Bijection.lean",
+    "lean_name": "findBijectionClashTreeInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.15), linear_scanProofScript.sml find_bijection_clash_tree_invariants. HOL statement: !st ct regset. good_bijection_state st regset ==> good_bijection_state (find_bijection_clash_tree st ct) (in_clash_tree ct UNION regset) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); HOL num set is Nat -> Prop (IN as application, INSERT as fun y => y = x \\/ s y, UNION pointwise disjunction, EMPTY the false predicate); is_phy_var/is_stack_var/is_alloc_var are the reviewed Bool predicates; misc the is miscThe; sptree foldi is the tagged generic sptFoldiGen; in_clash_tree is the reviewed RegAlloc.inClashTree; sp_inverts is the tagged RegAlloc.spInverts. No EL. Over the tagged linear_scan definitions and the accepted MonadBase core; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_bijection_init_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Bijection.lean",
+    "lean_name": "findBijectionInitInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.15), linear_scanProofScript.sml find_bijection_init_invariants. HOL statement: good_bijection_state find_bijection_init EMPTY Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); HOL num set is Nat -> Prop (IN as application, INSERT as fun y => y = x \\/ s y, UNION pointwise disjunction, EMPTY the false predicate); is_phy_var/is_stack_var/is_alloc_var are the reviewed Bool predicates; misc the is miscThe; sptree foldi is the tagged generic sptFoldiGen; in_clash_tree is the reviewed RegAlloc.inClashTree; sp_inverts is the tagged RegAlloc.spInverts. No EL. Over the tagged linear_scan definitions and the accepted MonadBase core; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "sp_inverts_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/SpInverts.lean",
+    "lean_name": "spInverts",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-9lbn), reg_allocProofScript.sml:783-788: sp_inverts f g <=> !m fm. lookup m f = SOME fm ==> lookup fm g = SOME m; num num_map carriers (types fixed by the lookup equations) as Spt Nat. Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "sp_inverts_insert",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/SpInverts.lean",
+    "lean_name": "spInvertsInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-9lbn), reg_allocProofScript.sml:790-800: sp_inverts f g /\\ x NOTIN domain f /\\ y NOTIN domain g ==> sp_inverts (insert x y f) (insert y x g), free f g x y quantified first, NOTIN domain as the negated sptDomain predicate. Kernel-checked; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "foldi_FOLDR_toAList",
+    "lean_path": "Flapjack/Misc/Sptree/Foldi.lean",
+    "lean_name": "sptFoldiGenFoldrToAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.15), pinned hol4 sptreeScript.sml:1100-1104: !f a t. foldi f 0 a t = FOLDR (UNCURRY f) a (toAList t); foldi is the tagged generic sptFoldiGen, toAList sptToAList, UNCURRY f p = f (FST p) (SND p) as fun p acc => f p.1 p.2 acc, FOLDR List.foldr; generic Type0 payload/accumulator. Kernel-checked; coordinator source acceptance pending."
   }
 ]
