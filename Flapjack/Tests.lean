@@ -1,3 +1,4 @@
+import Flapjack.Test.WordLangMaxVarParity
 import Flapjack.Test.WordLangCutsetsMaxParity
 import Flapjack.Test.WordLangMaxVarInstParity
 import Flapjack.Test.WordToStackNativeCompileParity
