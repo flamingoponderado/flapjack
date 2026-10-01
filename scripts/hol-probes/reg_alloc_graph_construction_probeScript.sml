@@ -1,0 +1,34 @@
+(* Original reg_alloc interference-graph construction over a literal ra_state.
+   CakeML remains read-only; sparse trees print raw. *)
+load "bossLib";
+load "preamble";
+load "reg_allocTheory";
+open bossLib HolKernel Parse preamble reg_allocTheory;
+val _ = Globals.linewidth := 1000;
+val _ = Parse.temp_remove_user_printer ("sptreepp.sptreepp", ``x : 'a spt``);
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+fun st n = ``<| adj_ls := REPLICATE ^n []; node_tag := REPLICATE ^n Atemp; degrees := REPLICATE ^n 0; dim := ^n;
+   simp_wl := []; spill_wl := []; freeze_wl := []; avail_moves_wl := []; unavail_moves_wl := [];
+   coalesced := REPLICATE ^n 0; move_related := REPLICATE ^n F; stack := [] |>``;
+val s4 = st ``4n``;
+val s3 = st ``3n``;
+val _ = observe "ie_basic" ``insert_edge 0 2 ^s4``;
+val _ = observe "ie_self" ``insert_edge 1 1 ^s4``;
+val _ = observe "ie_oob" ``insert_edge 0 7 ^s4``;
+val _ = observe "ie_oob_first" ``insert_edge 9 0 ^s4``;
+val _ = observe "lie_basic" ``list_insert_edge 3 [0;1;3] ^s4``;
+val _ = observe "lie_fail_mid" ``list_insert_edge 0 [1;8;2] ^s4``;
+val _ = observe "cie_basic" ``clique_insert_edge [0;1;2] ^s4``;
+val _ = observe "ec_basic" ``extend_clique [2;0;3;2] [0;1] ^s4``;
+val _ = observe "ec_fail" ``extend_clique [1;5] [0] ^s4``;
+val _ = observe "mt_basic" ``mk_tags 4 (insert 5 () LN) (\i. if i = 0 then 5 else if i = 1 then 9 else if i = 2 then 3 else 4n) ^s4``;
+val _ = observe "mt_oob" ``mk_tags 2 LN (\i. i * 4 + 1) (^s4 with node_tag := [Stemp])``;
+val _ = observe "mg_delta" ``mk_graph (\x. x) (Delta [0;1] [2]) [3] ^s4``;
+val _ = observe "mg_set" ``mk_graph (\x. x DIV 2) (Set (insert 2 () (insert 6 () LN))) [] ^s4``;
+val _ = observe "mg_branch_none" ``mk_graph (\x. x) (Branch NONE (Delta [] [0;1]) (Delta [] [2])) [] ^s4``;
+val _ = observe "mg_branch_some" ``mk_graph (\x. x) (Branch (SOME (insert 3 () LN)) (Delta [] [0]) (Delta [] [1])) [2] ^s4``;
+val _ = observe "mg_seq" ``mk_graph (\x. x) (Seq (Delta [0] [1]) (Delta [1] [2;3])) [] ^s4``;
+val _ = observe "mg_fail" ``mk_graph (\x. x) (Delta [0] [9]) [1] ^s4``;
+val _ = observe "eg_basic" ``extend_graph (\b. if b then 1n else 3n) [(T,F);(F,F)] ^s4``;
+val _ = observe "eg_fail" ``extend_graph (\x:num. x) [(0,1);(2,6)] ^s4``;
+val _ = observe "ira_basic" ``init_ra_state (Seq (Delta [5] [1]) (Set (insert 1 () (insert 3 () LN)))) [(5,3)] (insert 1 () LN) (insert 1 0 (insert 3 2 (insert 5 1 LN)), insert 0 1 (insert 1 5 (insert 2 3 LN)), 3) ^s3``;

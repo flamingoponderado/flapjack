@@ -1,0 +1,31 @@
+(* Original reg_alloc is_Fixed, is_Atemp, is_Fixed_k, considered_var and
+   deg_or_inf over a literal ra_state. CakeML remains read-only. *)
+load "bossLib";
+load "preamble";
+load "reg_allocTheory";
+open bossLib HolKernel Parse preamble reg_allocTheory;
+val _ = Globals.linewidth := 1000;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val s = ``<| adj_ls := [[];[];[];[]]; node_tag := [Fixed 1; Atemp; Stemp; Fixed 7]; degrees := [4;5;6;9]; dim := 4;
+   simp_wl := []; spill_wl := []; freeze_wl := []; avail_moves_wl := []; unavail_moves_wl := [];
+   coalesced := [0;1;2;3]; move_related := [F;F;F;F]; stack := [] |>``;
+val _ = observe "if_fixed" ``FST (is_Fixed 0 ^s)``;
+val _ = observe "if_atemp" ``FST (is_Fixed 1 ^s)``;
+val _ = observe "if_oob" ``FST (is_Fixed 4 ^s)``;
+val _ = observe "ia_atemp" ``FST (is_Atemp 1 ^s)``;
+val _ = observe "ia_stemp" ``FST (is_Atemp 2 ^s)``;
+val _ = observe "ia_fixed" ``FST (is_Atemp 0 ^s)``;
+val _ = observe "ifk_below" ``FST (is_Fixed_k 3 0 ^s)``;
+val _ = observe "ifk_above" ``FST (is_Fixed_k 3 3 ^s)``;
+val _ = observe "ifk_equal" ``FST (is_Fixed_k 7 3 ^s)``;
+val _ = observe "ifk_stemp" ``FST (is_Fixed_k 3 2 ^s)``;
+val _ = observe "cv_atemp" ``FST (considered_var 3 1 ^s)``;
+val _ = observe "cv_fixed_low" ``FST (considered_var 3 0 ^s)``;
+val _ = observe "cv_fixed_high" ``FST (considered_var 3 3 ^s)``;
+val _ = observe "cv_stemp" ``FST (considered_var 3 2 ^s)``;
+val _ = observe "cv_oob" ``FST (considered_var 3 9 ^s)``;
+val _ = observe "doi_fixed_low" ``FST (deg_or_inf 3 0 ^s)``;
+val _ = observe "doi_fixed_high" ``FST (deg_or_inf 3 3 ^s)``;
+val _ = observe "doi_atemp" ``FST (deg_or_inf 3 1 ^s)``;
+val _ = observe "doi_oob" ``FST (deg_or_inf 3 4 ^s)``;
+val _ = observe "doi_state" ``SND (deg_or_inf 3 1 ^s) = ^s``;
