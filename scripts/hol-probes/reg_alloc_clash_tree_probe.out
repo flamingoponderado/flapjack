@@ -1,0 +1,8 @@
+delete_names=T
+col_collision=T
+partial_existing=T
+partial_collision=T
+delta_discard_writes=T
+seq_right_first=T
+branch_merge=T
+branch_fixed_collision=T

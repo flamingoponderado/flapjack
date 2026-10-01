@@ -149,6 +149,7 @@ import Flapjack.Compiler.Backend.WordAlloc.InstructionWrites
 import Flapjack.Compiler.Backend.WordAlloc.ProgramWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
@@ -183,6 +184,7 @@ import Flapjack.Misc.ShiftSeq
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Compiler.Backend.RegAlloc
+import Flapjack.Compiler.Backend.RegAlloc.ClashTree
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog

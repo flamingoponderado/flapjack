@@ -163,6 +163,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProgramWrites
 import Flapjack.Compiler.Backend.WordAlloc.Colour
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.HolRef
 import Flapjack.AstHOL
@@ -830,6 +831,7 @@ import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.MlStringBridge
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Compiler.Backend.RegAlloc
+import Flapjack.Compiler.Backend.RegAlloc.ClashTree
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
 import Flapjack.Misc.LList
