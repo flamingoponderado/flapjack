@@ -493,14 +493,6 @@ namespace Flapjack.RiscV.CakeRegAlloc
 open Flapjack
 open Flapjack.RiscV
 
-/-! The source-shaped allocator boundary: full SSA is performed first, then
-Cake's dead-program pass feeds the clash tree and IRC allocator.
-
-Ordinary load16/store16 instructions are unsupported by the reviewed allocator
-routes. Reject them recursively at entry, before each liveness-based dead pass,
-and before graph construction/colouring. Checks preserve every accepted tree;
-failure returns `none`, with no deletion or opcode substitution. This checked
-safety boundary does not prove universal source-to-boundary closure. -/
 /-- Flapjack-only executed allocation result. Retain the real IRC colouring
 so the native Word-to-Stack route can consume coloured Word names without
 reconstructing them from locations. There is no separate HOL declaration
@@ -523,6 +515,14 @@ This is a production-carrier operation, not a HOL compiler correctness claim. -/
 def CakeAllocationWithColour.colouredProgram (result : CakeAllocationWithColour α) : WordProg α :=
   wordApplyColour (CakeAlloc.totalColour result.colouring) result.program
 
+/-- The source-shaped allocator boundary: full SSA is performed first, then
+Cake's dead-program pass feeds the clash tree and IRC allocator.
+
+Ordinary load16/store16 instructions are unsupported by the reviewed allocator
+routes. Reject them recursively at entry, before each liveness-based dead pass,
+and before graph construction/colouring. Checks preserve every accepted tree;
+failure returns `none`, with no deletion or opcode substitution. This checked
+safety boundary does not prove universal source-to-boundary closure. -/
 def cakeAllocateWordFunctionAfterDeadWithColour [OfNat α 0] [WordCseHash α] (currentFunction : Nat)
     (parameters : List Nat) (program : WordProg α) [BEq α] :
     Option (CakeAllocationWithColour α) :=
