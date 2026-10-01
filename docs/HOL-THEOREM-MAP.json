@@ -43779,24 +43779,8 @@
 
 
 
-  {
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "section_labels_def",
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
-    "lean_name": "sectionLabels",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-ds10 source comparison lab_to_targetScript.sml:62-74. HOL section_labels : num -> α line list -> (num # num) list -> num # (num # num) list is polymorphic in the single word dimension of the native α line; ported over the canonical native shared-width line (fixed HolCmp/HolMemop/HolAsm/HolAddr/HolRegImm and native MlString) with [NeZero width], hence words_as_type_indexed_bitvec. Clauses/position arithmetic literal.",
-    "words_as_type_indexed_bitvec": true
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "compute_labels_alt_def",
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
-    "lean_name": "computeLabelsAlt",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-ds10 source comparison lab_to_targetScript.sml:76-83. HOL compute_labels_alt : num -> α sec list -> num sptree$num_map sptree$num_map ... polymorphic in the single word dimension of native α sec; ported over canonical native shared-width section with [NeZero width], words_as_type_indexed_bitvec. Fold/sptInsert/sptFromAList literal.",
-    "words_as_type_indexed_bitvec": true
-  },
+
+
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
     "hol_name": "step_inj_on_state",

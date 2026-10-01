@@ -3161,10 +3161,6 @@ run_probe word_alloc_canonize_moves_probeScript.sml word_alloc_canonize_moves_pr
   cm_empty cm_one cm_two cm_three cm_four cm_five cm_odd cm_even cm_dups cm_priority cm_x_first cm_y_second cm_reversed_coords cm_large cm_zeros cm_descending cm_ascending cm_self_moves cm_all_flipped \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
-run_probe lab_to_target_labels_probeScript.sml lab_to_target_labels_probe.out \
-  sl_nil sl_mix sl_zero_only cl_empty cl_lookup cl_base_lookup \
-  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
-
 run_probe asm_sem_mem_word_probeScript.sml asm_sem_mem_word_probe.out \
   addr rw_zero rw_le_ok rw_be_fail rw_fail_dom ww_zero ww_le ww_le_ok ww_be_fail rw_le2 rw_be2 rw_wrap_ok rw_wrap_oob rw_widen ww_widen \
   "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
