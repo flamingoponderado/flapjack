@@ -1,0 +1,10 @@
+pu_fresh=12
+pu_snapshot=11
+pu_untouched=17
+pu_later_destination=12
+pu_freshness_boundary=13
+pu_empty=11
+pu_self=11
+pu_swap=11
+pu_eq_forward=T
+pu_eq_reverse=T

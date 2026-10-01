@@ -39247,188 +39247,415 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3.2): labSemScript47 is_Label true exactly Label, false on other two constructors. Canonical actual LabLang Line payloads use HolAsm/HolMemop/HolAddr and HolCmp/HolRegImm/MlString with BitVec at one positive NeZero width; fixed encoded bytes BitVec8 retained. The former generic isLabel quantified arbitrary payload Types, including an arbitrary Word, which is not the source carrier even when ignored; its unqualified tag/map/pin are removed while the generic function signature/body stay unchanged as explicitly documented Flapjack-only utility. Native three-case classifier is exact under word-dimension translation. Unconditional kernel isLabelHOL_eq_generic compares actual native instances, no added hypothesis. Native navigation/evaluator consumption remains linked on b4v0.3/b4v0; no executed compiler change or performance exception."
 },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_frame_key_eq_trans",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sFrameKeyEqTrans",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1889-1894 s_frame_key_eq_trans: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_key_eq_trans",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sKeyEqTrans",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1898-1903 s_key_eq_trans: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_frame_val_eq_trans",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sFrameValEqTrans",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1907-1912 s_frame_val_eq_trans: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_val_eq_trans",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sValEqTrans",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1916-1921 s_val_eq_trans: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_frame_key_eq_sym",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sFrameKeyEqSym",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1927-1932 s_frame_key_eq_sym: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_key_eq_sym",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sKeyEqSym",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1936-1944 s_key_eq_sym: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_frame_val_eq_sym",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sFrameValEqSym",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1947-1952 s_frame_val_eq_sym: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_val_eq_sym",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sValEqSym",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1955-1963 s_val_eq_sym: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_val_eq_length",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sValEqLength",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2145-2150 s_val_eq_length: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_key_eq_length",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sKeyEqLength",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2152-2157 s_key_eq_length: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "dec_stack_stack_key_eq",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "decStackStackKeyEq",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1993-2000 dec_stack_stack_key_eq: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_val_eq_enc_stack",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sValEqEncStack",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2004-2009 s_val_eq_enc_stack: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "s_val_eq_dec_stack",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "sValEqDecStack",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2020-2033 s_val_eq_dec_stack: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "gc_s_key_eq",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "gcSKeyEq",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "fpRegs",
-      "store"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2004-2009: !s x. gc s = SOME x ==> s_key_eq s.stack x.stack, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "gc_s_val_eq",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "gcSValEq",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "fpRegs",
-      "store"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2037-2049: !s x st y. s_val_eq s.stack st /\\ gc s = SOME y ==> ?z. gc (s with stack := st) = SOME (y with stack := z) /\\ s_val_eq y.stack z /\\ s_key_eq z st; HOL's unused binder x retained as _x, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "gc_s_val_eq_word_state",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "gcSValEqWordState",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "fpRegs",
-      "store"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2053-2067: !s tlocs tstack y. s_val_eq s.stack tstack /\\ gc s = SOME y ==> ?zlocs zstack. gc (s with <|stack := tstack; locals := tlocs|>) = SOME (y with <|stack := zstack; locals := zlocs|>) /\\ s_val_eq y.stack zstack /\\ s_key_eq zstack tstack, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "gc_s_val_eq_gen",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "gcSValEqGen",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "fpRegs",
-      "store"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2083-2113: all nine premises (gc_fun, memory, mdomain, store equal, s_val_eq stacks, stack_size/stack_max/stack_limit equal, gc s = SOME s') and all eight conclusions, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "push_env_pop_env_s_key_eq",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
-    "lean_name": "pushEnvPopEnvSKeyEq",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "fpRegs",
-      "store"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2115-2133: !x b s t. s_key_eq (push_env x b s).stack t.stack ==> ?n l ls opt. t.stack = StackFrame n (toAList (FST x)) l opt :: ls /\\ ?y. pop_env t = SOME y /\\ y.locals = union (fromAList l) (fromAList (toAList (FST x))) /\\ domain (SND x) UNION domain (FST x) = domain y.locals /\\ s_key_eq s.stack y.stack; set equality as predicate equality, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
-  },
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ReadsLiveExpressions.lean",
+  "lean_name": "getReadsExpGetLiveExp",
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "get_reads_exp_get_live_exp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.4.7), original2698-2716: universally quantified exact wordLang expression, no hypotheses, entire set(get_reads_exp) = domain(get_live_exp). All six constructors; Op FLAT/MAP read membership agrees with right-fold Spt union domain, Shift combines both operands. HOL word dimension translated to positive BitVec width with NeZero. Source clause arity/store/operator carriers unchanged. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Seq.lean",
+  "lean_name": "evaluateApplyColour_Seq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.1), original theorem1105-1130 and Resume Seq1811-1831: original st/cst/f/live/lt three premises and full existential permutation/error/result/state/locals conclusion at Seq. Only genuine first/second subprogram IHs applyColourGoal added. Error and early non-NONE branches reuse first oracle; NONE branch obtains second oracle then exact wordProps permute_swap_lemma combines source choices. Exact rebound evaluator removes fix_clock via proved clock bound; raw production evaluator unchanged. Qualified canonical fpRegs/store and positive-width words, imported owning carrier with same-module roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator as in existing leaf cases, SOUNDNESS item8. Coordinator review pending.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/UpdateLemmas.lean",
+  "lean_name": "parsem_cons",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.9: source171-183: exact not-MEM destination in MAP FST tail premise implies full environment function equality; head reads original rho y and updates parsem tail rho at x. Snapshot values retained, arbitrary key/value carriers, propositional DecidableEq only computes equality. Generic codec commutation proof is separate untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/UpdateLemmas.lean",
+  "lean_name": "parsem_untouched",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_untouched",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.9: source244-254: forall rho/moves/x, exact original conjunction windmill moves and fresh destination implies pointwise original environment equality. Original windmill premise retained even though untagged generic UPDATE_LIST codec fact needs only freshness. No target run/equality premise."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/UpdateLemmas.lean",
+  "lean_name": "eqenv_sym",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "eqenv_sym",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.9: source364-368: exact implication eqenv first second -> eqenv second first, generic Option-key and value carriers. IS_SOME guard retained; temporary ignored in both directions. Needed directly in fullparmove_correct692; no stronger relation assumed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_frame_key_eq_trans",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sFrameKeyEqTrans",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1889-1894 s_frame_key_eq_trans: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_key_eq_trans",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sKeyEqTrans",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1898-1903 s_key_eq_trans: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_frame_val_eq_trans",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sFrameValEqTrans",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1907-1912 s_frame_val_eq_trans: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_val_eq_trans",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sValEqTrans",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1916-1921 s_val_eq_trans: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_frame_key_eq_sym",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sFrameKeyEqSym",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1927-1932 s_frame_key_eq_sym: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_key_eq_sym",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sKeyEqSym",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1936-1944 s_key_eq_sym: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_frame_val_eq_sym",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sFrameValEqSym",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1947-1952 s_frame_val_eq_sym: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_val_eq_sym",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sValEqSym",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1955-1963 s_val_eq_sym: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_val_eq_length",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sValEqLength",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2145-2150 s_val_eq_length: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_key_eq_length",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sKeyEqLength",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2152-2157 s_key_eq_length: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "dec_stack_stack_key_eq",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "decStackStackKeyEq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:1993-2000 dec_stack_stack_key_eq: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_val_eq_enc_stack",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sValEqEncStack",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2004-2009 s_val_eq_enc_stack: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "s_val_eq_dec_stack",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "sValEqDecStack",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2020-2033 s_val_eq_dec_stack: same universally quantified variables (unused HOL binders retained), premises and conclusion over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/enc_stack/dec_stack/push_env/pop_env renderings; HOL sets as predicates (domain union pointwise). Positive BitVec width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "gc_s_key_eq",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "gcSKeyEq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2004-2009: !s x. gc s = SOME x ==> s_key_eq s.stack x.stack, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "gc_s_val_eq",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "gcSValEq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2037-2049: !s x st y. s_val_eq s.stack st /\\ gc s = SOME y ==> ?z. gc (s with stack := st) = SOME (y with stack := z) /\\ s_val_eq y.stack z /\\ s_key_eq z st; HOL's unused binder x retained as _x, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "gc_s_val_eq_word_state",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "gcSValEqWordState",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2053-2067: !s tlocs tstack y. s_val_eq s.stack tstack /\\ gc s = SOME y ==> ?zlocs zstack. gc (s with <|stack := tstack; locals := tlocs|>) = SOME (y with <|stack := zstack; locals := zlocs|>) /\\ s_val_eq y.stack zstack /\\ s_key_eq zstack tstack, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "gc_s_val_eq_gen",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "gcSValEqGen",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2083-2113: all nine premises (gc_fun, memory, mdomain, store equal, s_val_eq stacks, stack_size/stack_max/stack_limit equal, gc s = SOME s') and all eight conclusions, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "push_env_pop_env_s_key_eq",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackSwap.lean",
+  "lean_name": "pushEnvPopEnvSKeyEq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2115-2133: !x b s t. s_key_eq (push_env x b s).stack t.stack ==> ?n l ls opt. t.stack = StackFrame n (toAList (FST x)) l opt :: ls /\\ ?y. pop_env t = SOME y /\\ y.locals = union (fromAList l) (fromAList (toAList (FST x))) /\\ domain (SND x) UNION domain (FST x) = domain y.locals /\\ s_key_eq s.stack y.stack; set equality as predicate equality, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "updPc",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "upd_pc_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "updReg",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "upd_reg_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "updMem",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "upd_mem_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "assertState",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "assert_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "regImm",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "reg_imm_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "updFpReg",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "upd_fp_reg_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "readFpReg",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "read_fp_reg_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "decClock",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "dec_clock_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "incPc",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "inc_pc_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabProps/SectionEnd.lean",
+  "lean_name": "secEndsWithLabelNative",
+  "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+  "hol_name": "sec_ends_with_label_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source review 2026-10-01, bead1u9a: original labPropsScript81-84 nonempty list AND is_Label LAST over native Section/Line, actual ASM/cbw/Memop/Addr/Cmp/RegImm/MlString/fixed8 encoded bytes, shared positive polymorphic word width. Reverse-head [] False/cons classifier cases are exactly nonempty/final element; unspecified LAST [] is irrelevant under the nonempty conjunct. Uses reviewed native isLabelHOL, no changed evaluator or extra premises. Universal untagged compatibility proves restriction of broad local predicate is equivalent, whose false exact tag/map/pin main withdrew. Existing original five lab_props_sec_ends_label_probe.out rows kernel replayed against native definitions in LabSectionEndParity. Generic clients remain local infrastructure; only standard positive HOL word carrier translation qualified. Native navigation/state chain and full correctness remain open; coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Navigation.lean",
+  "lean_name": "asmFetchAux",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "asm_fetch_aux_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3): literal labSem49-64/327-365/401-427 navigation on accepted native State and actual HolAsm/HolRegImm/HolAddr/MlString/BitVec LabLang carriers. Fetch skips labels without consuming position and skips empty sections; code length counts each nonlabel once, ignoring encoding lengths. loc_to_pc preserves first-match order, matching section entry even when empty for label0, positive label payload matching independent of section header, and offset increment only for nonlabels. next_label returns original Loc payload; get_lab_after skips current instruction then seeks first next label including next sections; failure stays NONE. All recursion follows original section/line equations; auxiliary size counts sections and lines only for Lean termination. Full asm_fetch_IMP proved for arbitrary source state/line from literal equations, no added bound/success/IH premise. Exact total functions, no flattened alternate evaluator. Positive word dimension qualifier names actual imported native word/state owners; no String/Array/fmap differences. Direct original HOL23 observations fully reduced=T, matching kernel replay; full evaluator/production route remains b4v0 open. Resumed direct source comparison 2026-10-01 after native classifier acceptance: all classifier consumers now use reviewed concrete isLabelHOL rather than broad generic utility. Canonical State/checker/native classifier prerequisites CLOSED. Original23 observations freshly revalidated. Full asm_fetch_IMP retains only original source-fetch premise; structural proof has no extra bound or simulation assumption. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Navigation.lean",
+  "lean_name": "asmFetch",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "asm_fetch_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3): literal labSem49-64/327-365/401-427 navigation on accepted native State and actual HolAsm/HolRegImm/HolAddr/MlString/BitVec LabLang carriers. Fetch skips labels without consuming position and skips empty sections; code length counts each nonlabel once, ignoring encoding lengths. loc_to_pc preserves first-match order, matching section entry even when empty for label0, positive label payload matching independent of section header, and offset increment only for nonlabels. next_label returns original Loc payload; get_lab_after skips current instruction then seeks first next label including next sections; failure stays NONE. All recursion follows original section/line equations; auxiliary size counts sections and lines only for Lean termination. Full asm_fetch_IMP proved for arbitrary source state/line from literal equations, no added bound/success/IH premise. Exact total functions, no flattened alternate evaluator. Positive word dimension qualifier names actual imported native word/state owners; no String/Array/fmap differences. Direct original HOL23 observations fully reduced=T, matching kernel replay; full evaluator/production route remains b4v0 open. Resumed direct source comparison 2026-10-01 after native classifier acceptance: all classifier consumers now use reviewed concrete isLabelHOL rather than broad generic utility. Canonical State/checker/native classifier prerequisites CLOSED. Original23 observations freshly revalidated. Full asm_fetch_IMP retains only original source-fetch premise; structural proof has no extra bound or simulation assumption. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Navigation.lean",
+  "lean_name": "asmCodeLength",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "asm_code_length_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3): literal labSem49-64/327-365/401-427 navigation on accepted native State and actual HolAsm/HolRegImm/HolAddr/MlString/BitVec LabLang carriers. Fetch skips labels without consuming position and skips empty sections; code length counts each nonlabel once, ignoring encoding lengths. loc_to_pc preserves first-match order, matching section entry even when empty for label0, positive label payload matching independent of section header, and offset increment only for nonlabels. next_label returns original Loc payload; get_lab_after skips current instruction then seeks first next label including next sections; failure stays NONE. All recursion follows original section/line equations; auxiliary size counts sections and lines only for Lean termination. Full asm_fetch_IMP proved for arbitrary source state/line from literal equations, no added bound/success/IH premise. Exact total functions, no flattened alternate evaluator. Positive word dimension qualifier names actual imported native word/state owners; no String/Array/fmap differences. Direct original HOL23 observations fully reduced=T, matching kernel replay; full evaluator/production route remains b4v0 open. Resumed direct source comparison 2026-10-01 after native classifier acceptance: all classifier consumers now use reviewed concrete isLabelHOL rather than broad generic utility. Canonical State/checker/native classifier prerequisites CLOSED. Original23 observations freshly revalidated. Full asm_fetch_IMP retains only original source-fetch premise; structural proof has no extra bound or simulation assumption. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Navigation.lean",
+  "lean_name": "labToLoc",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "lab_to_loc_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3): literal labSem49-64/327-365/401-427 navigation on accepted native State and actual HolAsm/HolRegImm/HolAddr/MlString/BitVec LabLang carriers. Fetch skips labels without consuming position and skips empty sections; code length counts each nonlabel once, ignoring encoding lengths. loc_to_pc preserves first-match order, matching section entry even when empty for label0, positive label payload matching independent of section header, and offset increment only for nonlabels. next_label returns original Loc payload; get_lab_after skips current instruction then seeks first next label including next sections; failure stays NONE. All recursion follows original section/line equations; auxiliary size counts sections and lines only for Lean termination. Full asm_fetch_IMP proved for arbitrary source state/line from literal equations, no added bound/success/IH premise. Exact total functions, no flattened alternate evaluator. Positive word dimension qualifier names actual imported native word/state owners; no String/Array/fmap differences. Direct original HOL23 observations fully reduced=T, matching kernel replay; full evaluator/production route remains b4v0 open. Resumed direct source comparison 2026-10-01 after native classifier acceptance: all classifier consumers now use reviewed concrete isLabelHOL rather than broad generic utility. Canonical State/checker/native classifier prerequisites CLOSED. Original23 observations freshly revalidated. Full asm_fetch_IMP retains only original source-fetch premise; structural proof has no extra bound or simulation assumption. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Navigation.lean",
+  "lean_name": "locToPc",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "loc_to_pc_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3): literal labSem49-64/327-365/401-427 navigation on accepted native State and actual HolAsm/HolRegImm/HolAddr/MlString/BitVec LabLang carriers. Fetch skips labels without consuming position and skips empty sections; code length counts each nonlabel once, ignoring encoding lengths. loc_to_pc preserves first-match order, matching section entry even when empty for label0, positive label payload matching independent of section header, and offset increment only for nonlabels. next_label returns original Loc payload; get_lab_after skips current instruction then seeks first next label including next sections; failure stays NONE. All recursion follows original section/line equations; auxiliary size counts sections and lines only for Lean termination. Full asm_fetch_IMP proved for arbitrary source state/line from literal equations, no added bound/success/IH premise. Exact total functions, no flattened alternate evaluator. Positive word dimension qualifier names actual imported native word/state owners; no String/Array/fmap differences. Direct original HOL23 observations fully reduced=T, matching kernel replay; full evaluator/production route remains b4v0 open. Resumed direct source comparison 2026-10-01 after native classifier acceptance: all classifier consumers now use reviewed concrete isLabelHOL rather than broad generic utility. Canonical State/checker/native classifier prerequisites CLOSED. Original23 observations freshly revalidated. Full asm_fetch_IMP retains only original source-fetch premise; structural proof has no extra bound or simulation assumption. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Navigation.lean",
+  "lean_name": "getPcValue",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "get_pc_value_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3): literal labSem49-64/327-365/401-427 navigation on accepted native State and actual HolAsm/HolRegImm/HolAddr/MlString/BitVec LabLang carriers. Fetch skips labels without consuming position and skips empty sections; code length counts each nonlabel once, ignoring encoding lengths. loc_to_pc preserves first-match order, matching section entry even when empty for label0, positive label payload matching independent of section header, and offset increment only for nonlabels. next_label returns original Loc payload; get_lab_after skips current instruction then seeks first next label including next sections; failure stays NONE. All recursion follows original section/line equations; auxiliary size counts sections and lines only for Lean termination. Full asm_fetch_IMP proved for arbitrary source state/line from literal equations, no added bound/success/IH premise. Exact total functions, no flattened alternate evaluator. Positive word dimension qualifier names actual imported native word/state owners; no String/Array/fmap differences. Direct original HOL23 observations fully reduced=T, matching kernel replay; full evaluator/production route remains b4v0 open. Resumed direct source comparison 2026-10-01 after native classifier acceptance: all classifier consumers now use reviewed concrete isLabelHOL rather than broad generic utility. Canonical State/checker/native classifier prerequisites CLOSED. Original23 observations freshly revalidated. Full asm_fetch_IMP retains only original source-fetch premise; structural proof has no extra bound or simulation assumption. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Navigation.lean",
+  "lean_name": "nextLabel",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "next_label_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3): literal labSem49-64/327-365/401-427 navigation on accepted native State and actual HolAsm/HolRegImm/HolAddr/MlString/BitVec LabLang carriers. Fetch skips labels without consuming position and skips empty sections; code length counts each nonlabel once, ignoring encoding lengths. loc_to_pc preserves first-match order, matching section entry even when empty for label0, positive label payload matching independent of section header, and offset increment only for nonlabels. next_label returns original Loc payload; get_lab_after skips current instruction then seeks first next label including next sections; failure stays NONE. All recursion follows original section/line equations; auxiliary size counts sections and lines only for Lean termination. Full asm_fetch_IMP proved for arbitrary source state/line from literal equations, no added bound/success/IH premise. Exact total functions, no flattened alternate evaluator. Positive word dimension qualifier names actual imported native word/state owners; no String/Array/fmap differences. Direct original HOL23 observations fully reduced=T, matching kernel replay; full evaluator/production route remains b4v0 open. Resumed direct source comparison 2026-10-01 after native classifier acceptance: all classifier consumers now use reviewed concrete isLabelHOL rather than broad generic utility. Canonical State/checker/native classifier prerequisites CLOSED. Original23 observations freshly revalidated. Full asm_fetch_IMP retains only original source-fetch premise; structural proof has no extra bound or simulation assumption. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Navigation.lean",
+  "lean_name": "getLabAfter",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "get_lab_after_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3): literal labSem49-64/327-365/401-427 navigation on accepted native State and actual HolAsm/HolRegImm/HolAddr/MlString/BitVec LabLang carriers. Fetch skips labels without consuming position and skips empty sections; code length counts each nonlabel once, ignoring encoding lengths. loc_to_pc preserves first-match order, matching section entry even when empty for label0, positive label payload matching independent of section header, and offset increment only for nonlabels. next_label returns original Loc payload; get_lab_after skips current instruction then seeks first next label including next sections; failure stays NONE. All recursion follows original section/line equations; auxiliary size counts sections and lines only for Lean termination. Full asm_fetch_IMP proved for arbitrary source state/line from literal equations, no added bound/success/IH premise. Exact total functions, no flattened alternate evaluator. Positive word dimension qualifier names actual imported native word/state owners; no String/Array/fmap differences. Direct original HOL23 observations fully reduced=T, matching kernel replay; full evaluator/production route remains b4v0 open. Resumed direct source comparison 2026-10-01 after native classifier acceptance: all classifier consumers now use reviewed concrete isLabelHOL rather than broad generic utility. Canonical State/checker/native classifier prerequisites CLOSED. Original23 observations freshly revalidated. Full asm_fetch_IMP retains only original source-fetch premise; structural proof has no extra bound or simulation assumption. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Navigation.lean",
+  "lean_name": "getRetLoc",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "get_ret_Loc_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3): literal labSem49-64/327-365/401-427 navigation on accepted native State and actual HolAsm/HolRegImm/HolAddr/MlString/BitVec LabLang carriers. Fetch skips labels without consuming position and skips empty sections; code length counts each nonlabel once, ignoring encoding lengths. loc_to_pc preserves first-match order, matching section entry even when empty for label0, positive label payload matching independent of section header, and offset increment only for nonlabels. next_label returns original Loc payload; get_lab_after skips current instruction then seeks first next label including next sections; failure stays NONE. All recursion follows original section/line equations; auxiliary size counts sections and lines only for Lean termination. Full asm_fetch_IMP proved for arbitrary source state/line from literal equations, no added bound/success/IH premise. Exact total functions, no flattened alternate evaluator. Positive word dimension qualifier names actual imported native word/state owners; no String/Array/fmap differences. Direct original HOL23 observations fully reduced=T, matching kernel replay; full evaluator/production route remains b4v0 open. Resumed direct source comparison 2026-10-01 after native classifier acceptance: all classifier consumers now use reviewed concrete isLabelHOL rather than broad generic utility. Canonical State/checker/native classifier prerequisites CLOSED. Original23 observations freshly revalidated. Full asm_fetch_IMP retains only original source-fetch premise; structural proof has no extra bound or simulation assumption. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Navigation.lean",
+  "lean_name": "asmFetchImp",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "asm_fetch_IMP",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3): literal labSem49-64/327-365/401-427 navigation on accepted native State and actual HolAsm/HolRegImm/HolAddr/MlString/BitVec LabLang carriers. Fetch skips labels without consuming position and skips empty sections; code length counts each nonlabel once, ignoring encoding lengths. loc_to_pc preserves first-match order, matching section entry even when empty for label0, positive label payload matching independent of section header, and offset increment only for nonlabels. next_label returns original Loc payload; get_lab_after skips current instruction then seeks first next label including next sections; failure stays NONE. All recursion follows original section/line equations; auxiliary size counts sections and lines only for Lean termination. Full asm_fetch_IMP proved for arbitrary source state/line from literal equations, no added bound/success/IH premise. Exact total functions, no flattened alternate evaluator. Positive word dimension qualifier names actual imported native word/state owners; no String/Array/fmap differences. Direct original HOL23 observations fully reduced=T, matching kernel replay; full evaluator/production route remains b4v0 open. Resumed direct source comparison 2026-10-01 after native classifier acceptance: all classifier consumers now use reviewed concrete isLabelHOL rather than broad generic utility. Canonical State/checker/native classifier prerequisites CLOSED. Original23 observations freshly revalidated. Full asm_fetch_IMP retains only original source-fetch premise; structural proof has no extra bound or simulation assumption. Coordinator source acceptance pending."
+},
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "evaluate_apply_colour",
