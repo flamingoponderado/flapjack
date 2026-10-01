@@ -46,6 +46,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
 import Flapjack.Compiler.Backend.Semantics.StackSem.FpInstructions
+import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
 import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Pancake.CrepInline.Pass
