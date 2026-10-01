@@ -41228,5 +41228,19 @@
   "hol_name": "step_sem",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.4: genuine fifth step_sem case source412-438, full original wf and both constructor pending NoRead/endpoint inequality retained, arbitrary history/env and original eqenv conclusion. Path/destination uniqueness derives tail NoRead; reviewed permutation and parsem_NoRead then reverse/seqsem_append establish equality. No target evaluation, agreement, result or extra no-read premise. Option/List/function/value carriers unchanged. Coordinator acceptance pending; full assembly remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Inst.lean",
+  "lean_name": "evaluateApplyColour_Inst",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Codex source review against evaluate_apply_colour1105-1130 specialized to Inst and its Resume1225-1391: all five instruction families are exhausted, including eight arithmetic and eight memory constructors and generic full sixteen-case FP theorem. Same original colouring_ok, word_state_eq_rel, strong_locals_rel premises; exact existential permutation/error-disjunction/result/state/live/loop-table locals postcondition through reviewed applyColourPost. No target evaluation, success, validity, distinctness or proof-hook premise; no subprogram IH because Inst has no subprograms. Each literal constructor theorem was source-reviewed and integrated before assembly. Canonical imported WordSemStateFiniteExact fpRegs/store roundtrip witness; Spt locals/code unqualified as original trees; positive-width word/host translation. Inherits reviewed FP dependency reals_as_rational_cuts assumption in docs/SOUNDNESS item8; no direct real primitive rendering or new qualification. Full program evaluate_apply_colour assembly remains open."
 }
 ]
