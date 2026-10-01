@@ -8,13 +8,14 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallCompiler
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrograms
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop
 import Flapjack.Compiler.Backend.LabProps.Native
 import Flapjack.Compiler.Backend.StackToLab.Native
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrograms
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve

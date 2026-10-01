@@ -49441,5 +49441,14 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 completed source/statement/carrier comparison2026-10-01 bead7ia9: actual imported StackSemStateFiniteExact width C F preserves original generic independent machine/compile/FFI state type, faithful WordLangExpHOL expression and WordLocW carriers; positive-width BitVec translation only. Canonical regs/fpRegs/store fields with same-module codec forwarding the actual imported owner. No evaluator, callback, supplied successful transition or added premise; full original quantifiers and Option-map shape retained. Six original statement/fulltype rows freshly captured and22 clocked original observations independently kernel replayed. Original316-320 states exact OPTION_MAP clock update commutation. Uses the proved unconditional complete expression theorem and actual register update; success and failure both covered, no result assumed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstallCompiler.lean",
+    "lean_name": "compNoInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_install",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead47.3: complete original12029-12127 and comp_def453-555, all26 constructors and3 Call alternatives. Arbitrary original config/perf/full source program/input bitmap/full Nat frame/output-residual pair retained; only original wordConvs no_install guard, actual compiler equality and perf=false hypotheses. Exact target no_install conclusion. All child IH internally discharged by source-size recursion including full tuple equalities and exact left-to-right bitmap threading; no public IH, target safety/evaluation/simulation, bounds, config validity, conversion or HD/EL premises. Accepted canonical source/target predicates and all8 no-install helpers reused; source WordLangInst lowers through exact HolInst codec, positive words/faithful MlString/Spt/config/AppList carriers reviewed. Private dispatch/shared lowering calculations have no separate HOL original. Shared-memory operations are allowed by no_install and rejected Install source guards retained. Sole word qualifier translates positive HOL dimension to BitVec width/NeZero. Fresh original exported theorem/all7 carrier types and39 actual pairs (26 constructor rows plus12 deep width1/32/64/80 cases and ignored-Install handler sentinel) kernel replayed, with2 full arbitrary-program theorem applications. Proof-only syntax preservation, not target semantics or whole compiler correctness."
   }
 ]

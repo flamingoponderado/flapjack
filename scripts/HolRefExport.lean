@@ -1,6 +1,10 @@
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallCompiler
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrograms
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop
 import Flapjack.Compiler.Backend.LabProps.Native
 import Flapjack.Compiler.Backend.StackToLab.Native
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
@@ -36,8 +40,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
 
 
 import Flapjack
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrograms
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
@@ -103,8 +105,6 @@ import Flapjack.Compiler.Backend.WordAlloc.FullSSA
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesProps
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds

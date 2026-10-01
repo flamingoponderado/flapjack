@@ -4118,3 +4118,17 @@ The new kernel replay covers domain failure, Loc rejection, missing operands,
 operator lists, wraparound, shift bounds and successful/failed assignment.
 The full recursive theorem imposes no success, size or clock bound. These
 captures provide regression evidence, not HOL-to-Lean equivalence.
+### Full native compiler no-install preservation
+
+`word_to_stack_comp_no_install_probeScript.sml` freshly captures original
+exported `comp_no_install`, seven input/output types and 39 actual predicate
+pairs: all26 source constructors, 12 deep nested/conditional/call cases over
+widths1/32/64/80, and a false-source/true-target ignored Install handler.
+The source false-performance premise is retained. Shared operations are
+allowed by no-install; rejected Install and ignored-handler cases preserve
+implication direction. `Flapjack/Test/WordToStackCompNoInstallParity.lean`
+checks the observations and two complete arbitrary-program applications.
+Captures are regression evidence, not a new original proof replay or a
+HOL-to-Lean equivalence proof. Whole compiler semantic correctness is open.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_install_probeScript.sml`.
