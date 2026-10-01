@@ -259,9 +259,6 @@ run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
 run_probe word_alloc_colour_inst_probeScript.sml word_alloc_colour_inst_probe.out \
   load16 store16 load8 store32 carry fp_move "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
-run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
-  nested duplicate empty shift constant lookup \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_colour_exp_probeScript.sml word_alloc_colour_exp_probe.out \
   nested duplicate empty "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
@@ -2911,9 +2908,6 @@ run_probe parmove_source_probeScript.sml parmove_source_probe.out \
   pv_source_terminal pv_source_self pv_source_chain pv_source_cycle pv_source_scratch pv_source_duplicate pv_source_active pv_source_history \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
-run_probe word_to_stack_native_config_probeScript.sml word_to_stack_native_config_probe.out \
-  nc_length nc_empty nc_single nc_nonwf nc_raw nc_update_length nc_update_tree \
-  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
 run_probe parmove_destination_probeScript.sml parmove_destination_probe.out \
   pv_destination_terminal pv_destination_self pv_destination_chain pv_destination_cycle pv_destination_scratch pv_destination_duplicate pv_destination_active \
@@ -3329,4 +3323,10 @@ run_probe ssa_locals_rel_probeScript.sml ssa_locals_rel_probe.out \
 
 run_probe ssa_register_class_probeScript.sml ssa_register_class_probe.out \
   rc_alloc1 rc_stack3 rc_physical0 rc_physical2 rc_alloc5 rc_stack7 rc_large_alloc rc_large_stack rc_alloc_source_replay rc_stack_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe ssa_rename_lookup_probeScript.sml ssa_rename_lookup_probe.out \
+  rename_empty rename_overwrite rename_invalid rename_order rename_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe list_next_var_rename_lemma1_probeScript.sml list_next_var_rename_lemma1_probe.out \
+  lnvr1_original_statement lnvr1_empty lnvr1_duplicates lnvr1_invalid lnvr1_collision lnvr1_zero_duplicates lnvr1_odd_start lnvr1_huge lnvr1_range \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

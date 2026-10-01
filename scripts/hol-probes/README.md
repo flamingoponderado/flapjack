@@ -3074,6 +3074,11 @@ The native transition inherits the existing IEEE real-rendering assurance limit
 Probes remain regression evidence, not complete cross-language IEEE equivalence
 or whole ASM/compiler routing acceptance.
 
+SSA renaming lookup regressions: `ssa_rename_lookup_probeScript.sml` runs original
+`list_next_var_rename` and THE lookups for empty, overwritten, malformed-tree,
+reordered and unbounded-Nat inputs. `SSARenameLookupParity.lean` kernel-replays
+all five captures and applies the full four-conjunct theorem with arbitrary
+initial tree/start. Captures are regression evidence, not a cross-prover proof.
 ### Generic native ASM assertions
 
 `asmprops_assertions_probeScript.sml` evaluates original `asmPropsTheory`
@@ -3108,3 +3113,11 @@ alongside a nonvacuous full theorem application with arbitrary configuration,
 register count and bitmap input. These are regression checks, not a
 HOL-to-Lean equivalence proof or whole compiler correctness acceptance.
 Selector: `HOL_PROBE_ONLY=word_to_stack_program_code_labels_probeScript.sml`.
+
+`list_next_var_rename_lemma1_probe.out` records a fresh replay of the complete
+local original theorem and proof, plus eight full renaming observations with
+selected map lookups and all three arithmetic conclusions. Cases include
+duplicate names, overwritten keys, a malformed initial tree, zero and odd
+counters, and unbounded naturals. `SSAListRenameArithmeticParity` checks17
+kernel examples against identical inputs and the complete theorem. Select
+`HOL_PROBE_ONLY=list_next_var_rename_lemma1_probeScript.sml` to regenerate.
