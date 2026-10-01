@@ -30,9 +30,9 @@ order:
 * `IntervalMonad`: `linear_scanProofScript.sml:5206-5469`, the interval monad
   against `get_intervals_ct` and live-tree registers.
 
-Declarations whose statements use HOL `EL` are kernel-checked but untagged
-provisional ports until the HOL `listScript` provenance review
-(bead flapjack-pxn.18.5.15.3.38.1).
+Declarations whose statements use HOL `EL` render it by the exact tagged
+`holEl` (`Flapjack.Misc.ListEl`); each was re-tagged after its own statement
+review.
 
 The top-level `linear_scan_reg_alloc_correct` is not yet ported.
 -/
