@@ -2693,6 +2693,10 @@ run_probe target_sem_encoded_bytes_probeScript.sml target_sem_encoded_bytes_prob
   encoded_drop encoded_guard_true encoded_guard_strict encoded_bytes_match \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe misc_asm_write_bytearray_probeScript.sml misc_asm_write_bytearray_probe.out \
+  wa_empty wa_wrap0 wa_wrap1 wa_wrap255 \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe word_lang_occurrences_exact_probeScript.sml word_lang_occurrences_exact_probe.out \
   name_empty name_even name_odd var_move_even var_move_odd var_loop_live stack_loop_live stack_alloc_odd var_call_none stack_call_none var_call_some stack_call_some \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
