@@ -3668,3 +3668,18 @@ replays identical observations through the actual kernel-checked compiler
 equations and applies the original-shaped Inst case at arbitrary inputs.
 These regressions do not establish cross-language equivalence or full compiler
 preservation. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_inst_probeScript.sml`.
+
+### Native compiler flat-effect no-shared-memory cases
+
+`word_to_stack_no_shmemop_flat_probeScript.sml` captures fifty-four original
+source-guard/actual-target-predicate observations for twelve flat-effect cases
+over widths1/32/64/80, both perf flags and zero/nonzero/large frames. Samples
+include move cycles/repeated sources, malformed cutsets, bitmap-producing live
+and constant paths, exact byte-backed FFI names and all Set expression branches.
+`WordToStackNoShmemopFlatEffectsParity` replays the identical inputs through
+actual compiler equations: fifty direct kernel predicate reductions and four
+Move observations using accepted preservation for arbitrary scheduled lists.
+The latter do not claim direct reduction of the scheduler. Twelve generic
+public case applications keep the original guard and compilation equality.
+These regressions do not establish cross-language equivalence or the complete
+compiler theorem. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_flat_probeScript.sml`.

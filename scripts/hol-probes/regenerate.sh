@@ -3535,3 +3535,7 @@ run_probe word_to_stack_no_shmemop_return_probeScript.sml word_to_stack_no_shmem
 run_probe word_to_stack_no_shmemop_inst_probeScript.sml word_to_stack_no_shmemop_inst_probe.out \
   ci_skip ci_const ci_binop_imm ci_binop_reg ci_shift_imm ci_shift_reg ci_div ci_long_mul ci_long_div ci_carry ci_add_overflow ci_sub_overflow ci_load ci_load8 ci_load16 ci_load32 ci_store ci_store8 ci_store16 ci_store32 ci_fpless ci_fplessequal ci_fpequal ci_fpabs ci_fpneg ci_fpsqrt ci_fpadd ci_fpsub ci_fpmul ci_fpdiv ci_fpfma ci_fpmov ci_fpmovtoreg ci_fpmovfromreg ci_fptoint ci_fpfromint ci_fpmovtoreg1 ci_fpmovfromreg1 ci_fpmovtoreg32 ci_fpmovfromreg32 ci_fpmovtoreg80 ci_fpmovfromreg80 \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_no_shmemop_flat_probeScript.sml word_to_stack_no_shmemop_flat_probe.out \
+  fe_move_1 fe_return_1 fe_heap_1 fe_set_1 fe_get_1 fe_alloc_1 fe_consts_1 fe_loc_1 fe_install_1 fe_code_1 fe_data_1 fe_ffi_1 fe_move_32 fe_return_32 fe_heap_32 fe_set_32 fe_get_32 fe_alloc_32 fe_consts_32 fe_loc_32 fe_install_32 fe_code_32 fe_data_32 fe_ffi_32 fe_move_64 fe_return_64 fe_heap_64 fe_set_64 fe_get_64 fe_alloc_64 fe_consts_64 fe_loc_64 fe_install_64 fe_code_64 fe_data_64 fe_ffi_64 fe_move_80 fe_return_80 fe_heap_80 fe_set_80 fe_get_80 fe_alloc_80 fe_consts_80 fe_loc_80 fe_install_80 fe_code_80 fe_data_80 fe_ffi_80 fe_set_bitmap fe_set_const fe_set_lookup fe_set_load fe_set_op fe_set_shift \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
