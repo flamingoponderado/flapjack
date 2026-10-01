@@ -2,6 +2,7 @@ import Flapjack.Test.WordToStackRegisterLabelsParity
 import Flapjack.Test.WordToStackCompileLookupParity
 import Flapjack.Test.WordAllocGetHeuristicsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
+import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.StackPropsCodeLabelsParity
 import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.RegAllocSortedMemParity
