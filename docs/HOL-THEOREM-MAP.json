@@ -44114,5 +44114,13 @@
     "lean_name": "ssaMapOKInsert",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c full original5916-5933: native Nat left registers/keys/bound, independently polymorphic right Spt payload confirmed by original inferred binder types (alpha num_map). Intersection keeps left payload and only assumes original left ssa_map_ok; insertion original conjunction mapOK/value below bound/nonphysical retained, no freshness, injectivity, wellformedness or target-result premise. Native lookup_inter and insertion laws cover arbitrary trees including malformed shapes and overwrites. Both complete original local proof texts replayed literally, thirteen real applications with independently discharged original premises and empty hypotheses/exact conclusions; EQT_INTRO prints proven T, not direct EVAL of symbolic predicate. Two false guard EVALs and thirteen identical kernel applications. No executed compiler behavior change; both source comparisons are complete. The larger full SSA correctness proof remains incomplete."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_ignore_insert",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsPhysicalInsert.lean",
+    "lean_name": "ssaLocalsRelIgnoreInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c compared full literal5573-5587: arbitrary generic payload alpha, Nat SSA map/source and target locals/next/physical key/inserted value; original conjunction ssa_map_ok AND ssa_locals_rel AND is_phy_var only. Complete unchanged relation conclusion after target insertion, both clauses retained. Map invariant excludes physical keys from every successful SSA image; guarded THE uses selector independence already reviewed with SSALocals. No freshness, injectivity, wellformedness, word-width, target-result or new trust assumption. Original complete local proof replay with original wordSemTheory environment, eight real theorem applications with independently proved full premises/empty hypotheses/exact conclusions rendered T by EQT_INTRO, two false guard EVAL sentinels, full inferred generic binder types. Eight kernel theorem applications over Bool/Nat payloads cover empty, live, overwrites, branching, malformed and huge keys. Actual fullSSA consumers7911/9644-9646. Source comparison complete; full SSA proof still incomplete, no executable compiler change."
   }
 ]

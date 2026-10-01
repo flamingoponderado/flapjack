@@ -3402,3 +3402,7 @@ run_probe ssa_register_flip_probeScript.sml ssa_register_flip_probe.out \
 run_probe ssa_map_preservation_probeScript.sml ssa_map_preservation_probe.out \
   mi_empty mi_retain_alloc mi_retain_stack mi_drop mi_invalid mi_branch mi_huge ms_empty ms_stack ms_overwrite ms_extend ms_invalid ms_huge ms_physical_guard ms_bound_guard ssa_map_ok_inter_source_replay ssa_map_ok_insert_source_replay mi_original_types \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_physical_insert_probeScript.sml ssa_locals_physical_insert_probe.out \
+  pi_empty pi_empty_existing pi_live pi_overwrite pi_branch pi_invalid pi_huge pi_generic_nat pi_nonphysical_guard pi_invalid_map_guard pi_full_source_replay pi_original_types \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

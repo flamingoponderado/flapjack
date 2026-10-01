@@ -3385,6 +3385,12 @@
       "sha256": "567c10eaf56c07243856c191b60a982c5c554900a977305b11f33afbaf699349"
     },
     {
+      "bytes": 463,
+      "out": "ssa_locals_physical_insert_probe.out",
+      "rows": 12,
+      "sha256": "18f2a5f0bf59d9ce9247f71f55c4482d187640ffc5b3eb694dfd190deb8d2d5b"
+    },
+    {
       "bytes": 526,
       "out": "ssa_locals_rel_probe.out",
       "rows": 10,

@@ -3337,3 +3337,16 @@ claimed direct evaluations of a symbolic universally quantified map predicate.
 Two false original guard evaluations are separate sentinels. Matching kernel
 applications cover empty, preserved/dropped, overwritten, malformed, branching
 and large-number maps; they are regressions, not a cross-language proof.
+
+### SSA locals physical-register writes
+
+`ssa_locals_physical_insert_probeScript.sml` replays the complete literal
+`ssa_locals_rel_ignore_insert` local proof at word_allocProof 5573–5587 in its
+original theory environment. Eight actual theorem applications discharge the
+whole original premise, check empty hypotheses and the exact conclusion, then
+render that proved relation as `T` via `EQT_INTRO`. Two false guards are direct
+original simplifications; the complete statement and inferred generic payload
+types are captured separately. The kernel fixture applies the full theorem to
+the identical Bool/Nat inputs, including overwritten physical keys, malformed
+trees and an unbounded natural key. These regressions are not a cross-language
+proof or completion of the full SSA correctness theorem.
