@@ -23,7 +23,7 @@ private def frontend (source : String) : Except String (List (Nat × Nat × Word
   pure (panToWordCompileProg loops)
 
 private def prepare (body : WordProg (RiscV.Word 64)) : WordProg (RiscV.Word 64) :=
-  wordFfiDiscoveryBody body
+  wordBeforeSsaAllocatorBody body
 
 @[noinline] private def direct (program : WordProg (RiscV.Word 64)) : Option Nat :=
   some (wordSsaLimitVar [] program)

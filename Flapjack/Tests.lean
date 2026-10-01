@@ -1,3 +1,11 @@
+import Flapjack.Test.LabValidityNativeParity
+import Flapjack.Test.StackToLabNativeParity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
@@ -157,6 +165,7 @@ import Flapjack.Test.PipelineDiagnostics
 import Flapjack.Test.FullSsa
 import Flapjack.Test.ProductionAllocationLimit
 import Flapjack.Test.LoopToWordSourceCodec
+import Flapjack.Test.ProductionPreSsaCodec
 import Flapjack.Test.PanValueMemoryFfi
 import Flapjack.Test.PanValueAcceleratorFfi
 import Flapjack.Test.PanValueFfiClockMemoryFfi
