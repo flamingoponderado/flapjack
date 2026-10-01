@@ -1,9 +1,16 @@
+<<<<<<< HEAD
 import Flapjack.Test.LabToTargetEncodingSimilarityParity
 import Flapjack.Test.LabToTargetPaddingSimilarityParity
 import Flapjack.Test.AsmPropsArithmeticPreservationParity
+=======
+import Flapjack.Test.LabToTargetLineLenParity
+import Flapjack.Test.LabToTargetSectionLengthParity
+import Flapjack.Test.ByteWordToBytesAuxParity
+>>>>>>> origin/fleet-integration-post-1195-stack
 import Flapjack.Test.StackPropsInstructionConstantsParity
 import Flapjack.Test.LabToTargetPaddingLengthParity
 import Flapjack.Test.LabToTargetMapLemmasParity
+import Flapjack.Test.SSAForceRenameGeneric
 import Flapjack.Test.LabToTargetEncodingParity
 import Flapjack.Test.LabToTargetLabelsParity
 import Flapjack.Test.LabToTargetPositionsParity
@@ -654,6 +661,7 @@ import Flapjack.Test.WordSemShMemParity
 import Flapjack.Test.MachineIeeeCompareParity
 import Flapjack.Test.BinaryIeeeRoundParity
 import Flapjack.Test.BinaryIeeeSqrtRoundAgreementParity
+import Flapjack.Test.BinaryIeeeSqrtRealCarrierParity
 import Flapjack.Test.MachineIeeeArithSpecialParity
 import Flapjack.Test.FpSemOpsParity
 import Flapjack.Test.Fp64NanRefinementParity
@@ -1203,6 +1211,9 @@ def checkBool (name : String) (condition : Bool) : IO Bool := do
 
 def main : IO Unit := do
   let results ← [
+    Flapjack.Test.LabToTargetLineLenParity.runChecks,
+    Flapjack.Test.LabToTargetSectionLengthParity.runChecks,
+    Flapjack.Test.ByteWordToBytesAuxParity.runChecks,
     Flapjack.Test.LabToTargetPaddingLengthParity.runChecks,
     Flapjack.Test.LabToTargetMapLemmasParity.runChecks,
     Flapjack.Test.LabToTargetEncodingParity.runChecks,
@@ -1508,6 +1519,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.MachineIeeeCompareParity.runChecks,
     Flapjack.Test.BinaryIeeeRoundParity.runChecks,
     Flapjack.Test.BinaryIeeeSqrtRoundAgreementParity.runChecks,
+    Flapjack.Test.BinaryIeeeSqrtRealCarrierParity.runChecks,
     Flapjack.Test.MachineIeeeArithSpecialParity.runChecks,
     Flapjack.Test.FpSemOpsParity.runChecks,
     Flapjack.Test.Fp64NanRefinementParity.runChecks,
