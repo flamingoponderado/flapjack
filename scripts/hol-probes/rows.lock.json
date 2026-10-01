@@ -2851,6 +2851,12 @@
       "sha256": "4465f2ee1875419aae57bedee302781a1fd096e48580545143f7c0ccb6fd570f"
     },
     {
+      "bytes": 392,
+      "out": "parmove_all_distinct_wrapper_probe.out",
+      "rows": 8,
+      "sha256": "786a50219bca99176fa3856460ae34c2b8599978645f43c9e1d7987a0469f730"
+    },
+    {
       "bytes": 76,
       "out": "parmove_correct_probe.out",
       "rows": 7,
@@ -3899,6 +3905,12 @@
       "out": "word_alloc_loop_checker_probe.out",
       "rows": 7,
       "sha256": "95c0fd22077891c7d510c9afdbe86a6795254605d16cf11e8cc345859c72e624"
+    },
+    {
+      "bytes": 176,
+      "out": "word_alloc_max3_eq_probe.out",
+      "rows": 10,
+      "sha256": "7c389c7b1508bd1d4d55f25dc190e53a5750625d4949a0dfdd7999ebd68049e1"
     },
     {
       "bytes": 287,

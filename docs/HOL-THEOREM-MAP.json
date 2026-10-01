@@ -43463,6 +43463,22 @@
     "reviewer": "flapjack-luna-a source comparison 2026-10-01 .18.5.15.2.30.1.1.6: full original13-22/exported DB.fetch universal theorem. Arbitrary Bool predicates P/Q, original pointwise implication AND every_var_inst P inst imply every_var_inst Q inst. Explicit positive-width WordLangInst BitVec carrier compared constructor-for-constructor with original asm arithmetic/memory/FP and wordLang98-133, including width64 transfer and Load16/Store16 catchalls; no independent payload specialization. words_as_type_indexed_bitvec retains shared original word dimension and NeZero positivity. All native constructors checked, immediate implication internally derived; no extra bound, target evaluation or successful pass premise. Original14positive predicate pairs and non64 negative guard kernel replayed. Proof axioms propext only. Coordinator acceptance pending."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "max3_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Maximum/Max3.lean",
+    "lean_name": "max3Eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-01 bead .30.1.1.3: literal local theorem10237-10241 forall natural x y z max3 x y z=MAX x(MAX y z), no premises. Lean max3HOL is reviewed literal miscScript641-644 same nested > branches; Nat.max matches HOL natural MAX. Universal equation proved by branch cases and omega. Local theorem not DB.fetch available; fresh original full proof replay from temporary cwd with canonical in-memory CAKEMLDIR registration passed, plus nine original EVAL branches/ties/large-Nat observations kernel-replayed in WordAllocMax3Parity. CakeML source untouched. No production implementation change; acceptance pending coordinator."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/AllDistinct/Parmove.lean",
+    "lean_name": "allDistinctParmove",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "ALL_DISTINCT_parmove",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-01 w1a4.5: literal1003-1021 sole ALL_DISTINCT(MAP FST mvs) premise and ALL_DISTINCT(FILTER IS_SOME(MAP FST(parmove mvs))) conclusion. Arbitrary register carrier with accepted scheduler DecidableEq dictionary, no source bound/scratch-safety/target-evaluation premise. Actual tagged parmove lifts each pair to SOME, runs pmov with empty active/emitted lists and reverses emitted moves. Proof derives wf_init and lifted distinctness from sole premise, applies accepted allDistinctPmov then projects emitted-list distinctness and reverses it; no final-state fact assumed. Fresh original DB.fetch complete exported theorem and six full scheduler outputs plus duplicate-destination (F,F) boundary from temporary cwd/canonical in-memory HOLpath loader, no CakeML writes. Fourteen kernel fixtures replay outputs/nonvacuous theorem applications/boundary/Bool carrier. Proof-only port, no executable compiler change; coordinator acceptance pending."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
     "lean_name": "updPc",
     "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
