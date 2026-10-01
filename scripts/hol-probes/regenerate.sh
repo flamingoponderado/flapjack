@@ -3156,6 +3156,10 @@ run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe reg_alloc_move_table_probeScript.sml reg_alloc_move_table_probe.out \
+  tc_type uc_type et_type pmi_type umi_type mts_type rm_type tc_fixed tc_atemp tc_stemp et_fixed et_atemp et_stemp uc_empty uc_gap uc_below uc_dup uc_run uc_unsorted uc_unsorted_miss uc_large pmi_empty pmi_existing pmi_bool umi_empty umi_self mts_empty mts_three mts_bool rm_three rm_ties rm_empty_list \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe reg_alloc_list_helpers_probeScript.sml reg_alloc_list_helpers_probe.out \
   fi_type si_type fi_empty fi_mixed fi_all_true fi_all_false fi_duplicates fi_state_pred fi_fail_first fi_fail_middle fi_fail_last fi_bool_value fi_large si_empty si_empty_acc si_middle si_dup si_end si_front si_acc si_acc_dup si_unsorted si_unsorted_dup_later si_zero si_large \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"

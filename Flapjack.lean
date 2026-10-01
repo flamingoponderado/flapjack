@@ -1084,6 +1084,8 @@ import Flapjack.FfiBridge
 import Flapjack.Compiler.Backend.RegAlloc.StateForeach
 import Flapjack.Compiler.Backend.RegAlloc.StateFilter
 import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
+import Flapjack.Compiler.Backend.RegAlloc.TagColour
+import Flapjack.Compiler.Backend.RegAlloc.MoveTable
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside

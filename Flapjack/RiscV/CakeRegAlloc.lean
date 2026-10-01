@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.RegAlloc.SortMoves
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
 import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
+import Flapjack.Compiler.Backend.RegAlloc.TagColour
 import Flapjack.RiscV.AllocatorMemoryInvariant
 import Flapjack.RiscV.CakeAllocatorCore
 import Flapjack.RiscV.Allocator
@@ -2240,13 +2241,23 @@ def cakeBiasedPref (state : CakeRaState) (mtable : CakeNodeMap (List Nat))
     cakeFirstMatchCol state ks (v :: vs)
   else none
 
-/-- `unbound_colour` (`reg_allocScript.sml:946-960`). -/
-def cakeUnboundColour (col : Nat) : List Nat → Nat
-  | [] => col
-  | x :: xs =>
+/-- `unbound_colour` (`reg_allocScript.sml:946-960`): the executed helper is
+the reviewed literal definition. -/
+def cakeUnboundColour (col : Nat) (xs : List Nat) : Nat :=
+  Flapjack.RegAlloc.unboundColour col xs
+
+/-- The executed helper's recursive equations (the previous Flapjack
+recursion, with `col = x` for HOL's `x = col`), derived from the literal
+definition. -/
+theorem cakeUnboundColour_nil (col : Nat) : cakeUnboundColour col [] = col := by
+  simp [cakeUnboundColour, Flapjack.RegAlloc.unboundColour]
+
+theorem cakeUnboundColour_cons (col x : Nat) (xs : List Nat) :
+    cakeUnboundColour col (x :: xs) =
       if col < x then col
       else if col = x then cakeUnboundColour (col + 1) xs
-      else cakeUnboundColour col xs
+      else cakeUnboundColour col xs := by
+  simp only [cakeUnboundColour, Flapjack.RegAlloc.unboundColour, eq_comm]
 
 /-! Cake's `unbound_colour` proof: a sorted forbidden-colour list never
     forces the negative preference below `k` or back onto a forbidden colour. -/
@@ -2257,7 +2268,7 @@ theorem cakeUnboundColour_correct
       cakeUnboundColour col colours ∉ colours := by
   induction colours generalizing col with
   | nil =>
-      simp [cakeUnboundColour]
+      simp [cakeUnboundColour_nil]
   | cons head tail ih =>
       simp only [List.pairwise_cons] at hsorted
       by_cases hlt : col < head
@@ -2266,14 +2277,14 @@ theorem cakeUnboundColour_correct
           intro hmem
           have hheadTail := hsorted.1 col hmem
           omega
-        simp [cakeUnboundColour, hlt, hnotHead, hnotTail]
+        simp [cakeUnboundColour_cons, hlt, hnotHead, hnotTail]
       · by_cases heq : col = head
         · have h := ih (col := col + 1) hsorted.2
           subst col
           have hnotHead : cakeUnboundColour (head + 1) tail ≠ head := by
             intro hsame
             omega
-          rw [cakeUnboundColour]
+          rw [cakeUnboundColour_cons]
           simp only [Nat.lt_irrefl, ↓reduceIte]
           constructor
           · omega
@@ -2284,7 +2295,7 @@ theorem cakeUnboundColour_correct
           have hnotHead : cakeUnboundColour col tail ≠ head := by
             intro hsame
             omega
-          rw [cakeUnboundColour]
+          rw [cakeUnboundColour_cons]
           simp only [hlt, ↓reduceIte, heq]
           exact ⟨h.1, by
             simp only [List.mem_cons, not_or]

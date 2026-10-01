@@ -2685,6 +2685,15 @@ the finite fixtures do not prove cross-assistant equivalence.
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
 
+`reg_alloc_move_table_probe` captures the original types and 25 EVAL results
+of `tag_col`, `extract_tag`, `unbound_colour` (gaps, duplicates, unsorted
+inputs, large naturals), `pri_move_insert`, `undir_move_insert`, `moves_to_sp`
+and `resort_moves` (raw sparse trees, Bool payloads, equal priorities).
+`RegAllocMoveTableParity` kernel-replays every row and the executed
+`cakeUnboundColour`'s definitional equality with the literal definition.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_move_table_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_list_helpers_probe` captures the original types and 23 EVAL results
 of `st_ex_FILTER` (accumulator order, state threading, state-dependent
 predicates, failure at every position, independent Bool carriers, large

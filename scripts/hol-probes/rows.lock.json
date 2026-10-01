@@ -3139,6 +3139,12 @@
       "sha256": "b7e9c9c4909dc012f2c85516433cd7f367f106375d48aa788b3de726c16f85c8"
     },
     {
+      "bytes": 1084,
+      "out": "reg_alloc_move_table_probe.out",
+      "rows": 32,
+      "sha256": "7dc4d5e3a1279d269034e6a48d42dbbeaea6559396b1e67241ddd419a528a2b2"
+    },
+    {
       "bytes": 18608,
       "out": "reg_alloc_phase_closure_probe.out",
       "rows": 29,
