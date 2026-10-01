@@ -42790,5 +42790,317 @@
     "lean_name": "sptDomainFromAList",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), pinned hol4 sptreeScript.sml 1491-1499: !ls. domain (fromAList ls) = set (MAP FST ls); Lean sptFromAList is fromAList's insert-from-the-head recursion. Exact Spt carrier, HOL sets as predicates, no wf premise. Kernel-checked; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_number_property_strong_monotone_weak",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "checkNumberPropertyStrongMonotoneWeak",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml check_number_property_strong_monotone_weak. HOL statement: !P Q lt n live. (!n' live'. P n' live' ==> Q n' live') /\\ check_number_property_strong P lt n live ==> check_number_property_strong Q lt n live Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_number_property_strong_monotone",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "checkNumberPropertyStrongMonotone",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml check_number_property_strong_monotone. HOL statement: !P Q lt n live. (!n' live'. (n - size_of_live_tree lt) <= n' /\\ P n' live' ==> Q n' live') /\\ check_number_property_strong P lt n live ==> check_number_property_strong Q lt n live Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_number_property_strong_end",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "checkNumberPropertyStrongEnd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml check_number_property_strong_end. HOL statement: !P lt n live. check_number_property_strong P lt n live ==> P (n - size_of_live_tree lt) (get_live_backward lt live) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_number_property_monotone_weak",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "checkNumberPropertyMonotoneWeak",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml check_number_property_monotone_weak. HOL statement: !P Q lt n live. (!n' live'. P n' live' ==> Q n' live') /\\ check_number_property P lt n live ==> check_number_property Q lt n live Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "lookup_numset_list_add_if",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "lookupNumsetListAddIf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml lookup_numset_list_add_if. HOL statement: !r l v s. lookup r (numset_list_add_if l v s P) = if MEM r l then case lookup r s of | (SOME vr) => if P v vr then SOME v else SOME vr | NONE => SOME v else lookup r s Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "lookup_numset_list_add_if_lt",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "lookupNumsetListAddIfLt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml lookup_numset_list_add_if_lt. HOL statement: !r l v s. lookup r (numset_list_add_if_lt l v s) = if MEM r l then case lookup r s of | (SOME vr) => if v <= vr then SOME v else SOME vr | NONE => SOME v else lookup r s Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "lookup_numset_list_add_if_gt",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "lookupNumsetListAddIfGt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml lookup_numset_list_add_if_gt. HOL statement: !r l v s. lookup r (numset_list_add_if_gt l v s) = if MEM r l then case lookup r s of | (SOME vr) => if vr <= v then SOME v else SOME vr | NONE => SOME v else lookup r s Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "domain_numset_list_add_if",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "domainNumsetListAddIf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml domain_numset_list_add_if. HOL statement: !l v s P. domain (numset_list_add_if l v s P) = set l UNION domain s Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "domain_numset_list_add_if_lt",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "domainNumsetListAddIfLt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml domain_numset_list_add_if_lt. HOL statement: !l v s. domain (numset_list_add_if_lt l v s) = set l UNION domain s Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "domain_numset_list_add_if_gt",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "domainNumsetListAddIfGt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml domain_numset_list_add_if_gt. HOL statement: !l v s. domain (numset_list_add_if_gt l v s) = set l UNION domain s Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "lookup_numset_list_delete",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "lookupNumsetListDelete",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml lookup_numset_list_delete. HOL statement: !l s x. lookup x (numset_list_delete l s) = if MEM x l then NONE else lookup x s Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_nout",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsNout",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_nout. HOL statement: !lt n_in beg_in end_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals lt n_in beg_in end_in ==> n_out = n_in - (size_of_live_tree lt) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_nout",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveNout",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_nout. HOL statement: !lt n_in beg_in end_in n_out beg_out end_out live. (n_out, beg_out, end_out) = get_intervals_withlive lt n_in beg_in end_in live ==> n_out = n_in - (size_of_live_tree lt) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_intend_augment",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsIntendAugment",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_intend_augment. HOL statement: !lt n_in beg_in end_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals lt n_in beg_in end_in ==> !r v. lookup r end_in = SOME v ==> (?v'. lookup r end_out = SOME v' /\\ v <= v') Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_number_property_intend",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "checkNumberPropertyIntend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml check_number_property_intend. HOL statement: !end_out lt n_in live_in. check_number_property (\\n (live : num_set). !r. r IN domain live ==> ?v. lookup r end_out = SOME v /\\ n+1 <= v) lt n_in live_in ==> !r. r IN domain (get_live_backward lt live_in) ==> ?v. lookup r end_out = SOME v /\\ n_in-(size_of_live_tree lt) <= v Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_live_less_end",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsLiveLessEnd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_live_less_end. HOL statement: !lt n_in beg_in end_in live_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals lt n_in beg_in end_in /\\ (!r. r IN domain live_in ==> ?v. lookup r end_in = SOME v /\\ n_in <= v) ==> check_number_property (\\n (live : num_set). !r. r IN domain live ==> ?v. lookup r end_out = SOME v /\\ n+1 <= v) lt n_in live_in Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_intbeg_reduce",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveIntbegReduce",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_intbeg_reduce. HOL statement: !lt n_in beg_in end_in n_out beg_out end_out live. (n_out, beg_out, end_out) = get_intervals_withlive lt n_in beg_in end_in live /\\ (!r v. lookup r beg_in = SOME v ==> n_in <= v) ==> (!r. option_CASE (lookup r beg_out) n_out (\\x.x) <= option_CASE (lookup r beg_in) n_in (\\x.x)) /\\ (!r v. lookup r beg_out = SOME v ==> n_out <= v) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_intbeg_nout",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveIntbegNout",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_intbeg_nout. HOL statement: !lt n_in beg_in end_in n_out beg_out end_out live. (n_out, beg_out, end_out) = get_intervals_withlive lt n_in beg_in end_in live /\\ (!r v. lookup r beg_in = SOME v ==> n_in <= v) ==> (!r v. lookup r beg_out = SOME v ==> n_out <= v) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_intbeg_nout",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsIntbegNout",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_intbeg_nout. HOL statement: !lt n_in beg_in end_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals lt n_in beg_in end_in /\\ (!r v. lookup r beg_in = SOME v ==> n_in <= v) ==> (!r v. lookup r beg_out = SOME v ==> n_out <= v) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_live_intbeg",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveLiveIntbeg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_live_intbeg. HOL statement: !lt n_in beg_in end_in live n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals_withlive lt n_in beg_in end_in live /\\ (!r. r IN domain live ==> r NOTIN domain beg_in) ==> (!r. r IN domain (get_live_backward lt live) ==> r NOTIN domain beg_out) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_n_eq_get_intervals_n",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveNEqGetIntervalsN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_n_eq_get_intervals_n. HOL statement: !lt n beg end beg' end' n1 beg1 end1 n2 beg2 end2 live. (n1, beg1, end1) = get_intervals lt n beg end /\\ (n2, beg2, end2) = get_intervals_withlive lt n beg' end' live ==> n1 = n2 Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_end_eq_get_intervals_end",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveEndEqGetIntervalsEnd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_end_eq_get_intervals_end. HOL statement: !lt n beg beg' end n1 beg1 end1 n2 beg2 end2 live. (n1, beg1, end1) = get_intervals lt n beg end /\\ (n2, beg2, end2) = get_intervals_withlive lt n beg' end live ==> end1 = end2 Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_beg_subset_registers",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsBegSubsetRegisters",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_beg_subset_registers. HOL statement: !lt n_in beg_in end_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals lt n_in beg_in end_in ==> domain beg_out SUBSET (domain beg_in UNION (live_tree_registers lt)) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_beg_lipschitz",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveBegLipschitz",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_beg_lipschitz. HOL statement: !lt n1 beg1 end1 live n2 beg2 end2 (s : int num_map) nout1 begout1 endout1 nout2 begout2 endout2. (nout1, begout1, endout1) = get_intervals_withlive lt n1 beg1 end1 live /\\ (nout2, begout2, endout2) = get_intervals_withlive lt n2 beg2 end2 live /\\ domain beg2 SUBSET domain beg1 UNION domain s ==> domain begout2 SUBSET domain begout1 UNION domain s Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_live_tree_registers_subset_endout",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveLiveTreeRegistersSubsetEndout",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_live_tree_registers_subset_endout. HOL statement: !lt n_in beg_in end_in live_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals_withlive lt n_in beg_in end_in live_in ==> domain end_in UNION live_tree_registers lt SUBSET domain end_out Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_beg_subset_get_intervals_beg",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveBegSubsetGetIntervalsBeg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_beg_subset_get_intervals_beg. HOL statement: !lt n beg_in1 beg_in2 end n1 beg_out1 end1 n2 beg_out2 end2 live. (n1, beg_out1, end1) = get_intervals_withlive lt n beg_in1 end live /\\ (n2, beg_out2, end2) = get_intervals lt n beg_in2 end /\\ domain beg_in1 SUBSET domain beg_in2 ==> domain beg_out1 SUBSET domain beg_out2 Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_registers_subset_beg",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveRegistersSubsetBeg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_registers_subset_beg. HOL statement: !lt n_in beg_in end_in n_out beg_out end_out live_in. domain end_in SUBSET domain beg_in UNION domain live_in /\\ (n_out, beg_out, end_out) = get_intervals_withlive lt n_in beg_in end_in live_in ==> domain end_out SUBSET domain beg_out UNION domain (get_live_backward lt live_in) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_end_increase",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsEndIncrease",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_end_increase. HOL statement: !lt n_in beg_in end_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals lt n_in beg_in end_in ==> domain end_in SUBSET domain end_out Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_intbeg_reduce",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsIntbegReduce",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_intbeg_reduce. HOL statement: !lt n_in beg_in end_in n_out beg_out end_out live. (n_out, beg_out, end_out) = get_intervals lt n_in beg_in end_in /\\ (!r v. lookup r beg_in = SOME v ==> n_in <= v) ==> (!r. option_CASE (lookup r beg_out) n_out (\\x.x) <= option_CASE (lookup r beg_in) n_in (\\x.x)) /\\ (!r v. lookup r beg_out = SOME v ==> n_out <= v) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_startlive_prop_monotone",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "checkStartlivePropMonotone",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml check_startlive_prop_monotone. HOL statement: !lt beg ndef end beg' ndef' end' n_in. (!r. option_CASE (lookup r beg') ndef' (\\x.x) <= option_CASE (lookup r beg) ndef (\\x.x)) /\\ (!r v. lookup r end = SOME v ==> (?v'. lookup r end' = SOME v' /\\ v <= v')) /\\ check_startlive_prop lt n_in beg end ndef ==> check_startlive_prop lt n_in beg' end' ndef' Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_startlive_prop_augment_ndef",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "checkStartlivePropAugmentNdef",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml check_startlive_prop_augment_ndef. HOL statement: !lt n_in beg_out end_out ndef. check_startlive_prop lt n_in beg_out end_out ndef /\\ ndef  <= ndef' /\\ ndef' <= n_in - size_of_live_tree lt==> check_startlive_prop lt n_in beg_out end_out ndef' Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_check_startlive_prop",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsCheckStartliveProp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_check_startlive_prop. HOL statement: !lt n_in beg_in end_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals lt n_in beg_in end_in /\\ (!r v. lookup r beg_in = SOME v ==> n_in <= v) ==> check_startlive_prop lt n_in beg_out end_out n_out Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_beg_less_live",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveBegLessLive",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_beg_less_live. HOL statement: !lt n_in beg_in end_in live_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals_withlive lt n_in beg_in end_in live_in /\\ (!r v. lookup r beg_in = SOME v ==> n_in <= v) /\\ (!r. r IN domain live_in ==> r NOTIN domain beg_in) ==> check_number_property_strong (\\n (live : num_set). !r. r IN domain live ==> option_CASE (lookup r beg_out) n_out (\\x.x) <= n) lt n_in live_in Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_beg_eq_get_intervals_beg_when_some",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveBegEqGetIntervalsBegWhenSome",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_beg_eq_get_intervals_beg_when_some. HOL statement: !lt n beg beg' end n1 beg1 end1 n2 beg2 end2 live. (n1, beg1, end1) = get_intervals lt n beg end /\\ (n2, beg2, end2) = get_intervals_withlive lt n beg' end live /\\ (!r v. lookup r beg = SOME v ==> n <= v) /\\ (!r v. lookup r beg' = SOME v ==> n <= v) /\\ (!r v1 v2. lookup r beg = SOME v1 /\\ lookup r beg' = SOME v2 ==> v1 = v2) ==> !r v1 v2. lookup r beg1 = SOME v1 /\\ lookup r beg2 = SOME v2 ==> v1 = v2 Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_domain_eq_live_tree_registers",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsDomainEqLiveTreeRegisters",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_domain_eq_live_tree_registers. HOL statement: !lt n beg end. (n, beg, end) = get_intervals (fix_domination lt) 0 LN LN ==> domain beg = live_tree_registers (fix_domination lt) /\\ domain end = live_tree_registers (fix_domination lt) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_domain_eq_live_tree_registers",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveDomainEqLiveTreeRegisters",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_domain_eq_live_tree_registers. HOL statement: !lt n beg end. (n, beg, end) = get_intervals_withlive (fix_domination lt) 0 LN LN LN ==> domain beg = live_tree_registers (fix_domination lt) /\\ domain end = live_tree_registers (fix_domination lt) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_withlive_beg_eq_get_intervals_beg",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsWithliveBegEqGetIntervalsBeg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_withlive_beg_eq_get_intervals_beg. HOL statement: !lt n beg end n' beg' end'. (n, beg, end) = get_intervals_withlive (fix_domination lt) 0 LN LN LN /\\ (n', beg', end') = get_intervals (fix_domination lt) 0 LN LN ==> !(r:num). lookup r beg = lookup r beg' Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_number_property_subset_endout",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "checkNumberPropertySubsetEndout",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml check_number_property_subset_endout. HOL statement: !lt n_in beg_in end_in live_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals lt n_in beg_in end_in /\\ domain live_in SUBSET domain end_in ==> check_number_property_strong (\\n (live:num_set). domain live SUBSET domain end_out) lt n_in live_in Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_beg_less_live",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/Intervals.lean",
+    "lean_name": "getIntervalsBegLessLive",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_beg_less_live. HOL statement: !lt live_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals (fix_domination lt) 0 LN LN ==> check_number_property_strong (\\n (live : num_set). !r. r IN domain live ==> option_CASE (lookup r beg_out) n_out (\\x.x) <= n) (fix_domination lt) 0 LN Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
   }
 ]

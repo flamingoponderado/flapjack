@@ -311,7 +311,8 @@ theorem branchDomain :
   rw [sptMemMapFstToAList, sptDomainDifference]
   by_cases h1 : sptDomain live1 x <;> simp [h1]
 
-private theorem branchDomainIff (live1 live2 : NumSet) (x : Nat) :
+/-- Pointwise form of `branch_domain` (Flapjack helper, no HOL original). -/
+theorem branchDomainIff (live1 live2 : NumSet) (x : Nat) :
     (x ∈ (sptToAList (sptDifference live2 live1)).map Prod.fst ∨ sptDomain live1 x) ↔
       (sptDomain live1 x ∨ sptDomain live2 x) := by
   rw [sptMemMapFstToAList, sptDomainDifference]
