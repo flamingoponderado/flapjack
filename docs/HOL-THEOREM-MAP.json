@@ -43773,5 +43773,21 @@
     "lean_name": "ssaLocalsRel",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c source4510-4518 and full exported type: arbitrary Nat bound, Spt Nat renaming map and generic shared alpha-valued Spt source/target. Both full forall clauses: mapped target domain, source-domain membership, THE mapped lookup equality, alloc-variable strict bound. Actual reviewed native Spt lookup/domain and isAllocVar. No wf/injectivity/bound/success premise added. Lean local selector uses getD0 ONLY under source-domain conjunct; kernel ssaLocalsRel_selectorIndependent proves entire relation independent of any selector agreeing on SOME, with no relation assumption. HOL option THE_DEF176-179 constrains only SOME; no equality about THE NONE claimed. Eight fresh original source-clause simplified Bool-valued relation observations (T,T,F,F,F,F,T,T) and full original type/definition prints, identical kernel fixtures. Proof predicate has no executed compiler definition route. Coordinator whole source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "is_alloc_var_add",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARegisterClass.lean",
+    "lean_name": "isAllocVarAdd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c exact source5708-5724: arbitrary Nat next, only original allocation/stack predicate premise, same predicate at next+4. Reuses reviewed native isAllocVar/isStackVar MOD4 residues1/3, no bound/wf/distinct/word-width or SSA-state premise. Actual source use list_next_var_rename_props5768/5776 tracked6->7. Eight fresh direct original predicate observations incl physical-register and large Nat boundaries, six kernel theorem applications. The original local proofs are replayed literally in the Flapjack-side HOL probe and separately labeled source_replay, not claimed exported DB theorems. No executable behavior change. Coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "is_stack_var_add",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARegisterClass.lean",
+    "lean_name": "isStackVarAdd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c exact source5708-5724: arbitrary Nat next, only original allocation/stack predicate premise, same predicate at next+4. Reuses reviewed native isAllocVar/isStackVar MOD4 residues1/3, no bound/wf/distinct/word-width or SSA-state premise. Actual source use list_next_var_rename_props5768/5776 tracked6->7. Eight fresh direct original predicate observations incl physical-register and large Nat boundaries, six kernel theorem applications. The original local proofs are replayed literally in the Flapjack-side HOL probe and separately labeled source_replay, not claimed exported DB theorems. No executable behavior change. Coordinator acceptance pending."
   }
 ]
