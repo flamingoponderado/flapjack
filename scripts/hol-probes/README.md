@@ -3119,3 +3119,11 @@ duplicate names, overwritten keys, a malformed initial tree, zero and odd
 counters, and unbounded naturals. `SSAListRenameArithmeticParity` checks17
 kernel examples against identical inputs and the complete theorem. Select
 `HOL_PROBE_ONLY=list_next_var_rename_lemma1_probeScript.sml` to regenerate.
+
+`word_alloc_limit_var_probe.out` records the full original definition/type and
+twelve native-program maximum/limit/class/strict-bound observations. Inputs
+cover all four residues, zero/multiples, widths1/32/64/80, unbounded naturals,
+returning Call bodies, ignored tail handlers and ignored Load16 fields.
+`WordAllocLimitVarParity` checks thirteen kernel examples against identical
+inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
+The executed upstream maximum/limit route remains tracked on .30.1.2.1.
