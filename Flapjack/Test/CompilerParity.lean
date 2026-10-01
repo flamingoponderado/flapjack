@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackBitmapMixedParity
 import Flapjack.Test.ParmoveIndependenceParity
 import Flapjack.Test.WordAllocOracleColourParity
 import Flapjack.Test.WordAllocReturnCheckerParity
