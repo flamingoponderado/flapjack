@@ -2152,3 +2152,10 @@ agree. A deliberately invalid pending `NONE` source yields 99 versus 27 and
 fails `wf`; no equivalence is claimed for it. Lean checks all observations and
 the input invariants. Save's generic theorem proves the original real-register
 equivalence from the full source `wf`, with no extra agreement premise.
+
+`wordlang_max_var_inst_probeScript.sml` captures 26 direct original
+`max_var_inst` equations, covering every arithmetic and memory clause, integer
+FP comparison results, both 32/64-bit transfer branches, and the FP default.
+`WordLangMaxVarInstParity.lean` replays these finite observations in the kernel.
+They support regression review, not a cross-prover equivalence proof or
+production compiler routing claim.
