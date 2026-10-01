@@ -34,6 +34,34 @@ protected theorem actualProof : True := by trivial
         self.assertEqual(names, {"actualProof"})
 
 
+class CoordinatorPendingReviewNoteTest(unittest.TestCase):
+    def test_rejects_new_reviewed_rows_with_pending_coordinator_note(self):
+        error = MAP["reviewed_note_pending_error"](
+            ("Flapjack/Example.lean", "newPort"),
+            "reviewed_exact",
+            "source comparison complete; coordinator review pending",
+        )
+        self.assertIsNotNone(error)
+        self.assertIn("reviewed statement status cannot retain", error)
+
+    def test_allows_only_the_explicit_legacy_bead_allowlist(self):
+        key = next(iter(MAP["PENDING_REVIEW_NOTE_ALLOWLIST"]))
+        self.assertIsNone(
+            MAP["reviewed_note_pending_error"](
+                key, "reviewed_exact", "source comparison; Coordinator review required"
+            )
+        )
+
+    def test_pending_statement_review_is_not_a_reviewed_status(self):
+        self.assertIsNone(
+            MAP["reviewed_note_pending_error"](
+                ("Flapjack/Example.lean", "unreviewed"),
+                "pending_statement_review",
+                "coordinator review pending",
+            )
+        )
+
+
 class HeterogeneousFmapQualifierInventoryTest(unittest.TestCase):
     def test_combined_heterogeneous_words_status_is_accepted_only_with_both_tags(self):
         record = {

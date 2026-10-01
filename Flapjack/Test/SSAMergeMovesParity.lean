@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
 namespace Flapjack.Test.SSAMergeMovesParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 -- Complete results match original merge_moves, including both resulting trees.
@@ -22,4 +22,12 @@ example : mergeMoves [0,4] (.bn .ln .ln) (sptFromAList [(0,7),(4,9)]) 0 =
 example : mergeMoves [0] (.ls 18446744073709551616) (.ls 3) 18446744073709551616 =
   ([(18446744073709551616,18446744073709551616)],[(18446744073709551616,3)],
    18446744073709551620,.ls 18446744073709551616,.ls 18446744073709551616) := by decide +kernel
+-- Actual full unconditional theorem application, with arbitrary native inputs.
+example (names : List Nat) (next : Nat) (leftMap rightMap : Spt Nat) :
+    let result := mergeMoves names leftMap rightMap next
+    next ≤ result.2.2.1 ∧
+    (∀ dest ∈ result.1.map Prod.fst, dest < result.2.2.1 ∧ dest ≥ next) ∧
+    (∀ dest ∈ result.2.1.map Prod.fst, dest < result.2.2.1 ∧ dest ≥ next) :=
+  mergeMovesFst names next leftMap rightMap
+
 end Flapjack.Test.SSAMergeMovesParity

@@ -33,4 +33,15 @@ example (names : List Nat) (ssa : Spt Nat) (next : Nat) (distinct : names.Nodup)
       names.map (fun key => (sptLookup key (listNextVarRename names ssa next).2.1).getD 999) :=
   listNextVarRenameSelectorIndependent names ssa next distinct (fun value => value.getD 999)
     (fun _ => rfl)
+-- Result-equality specialization retains arbitrary outputs and all four conclusions.
+example (names outputNames : List Nat) (ssa outputMap : Spt Nat)
+    (next outputNext : Nat)
+    (result : listNextVarRename names ssa next = (outputNames, outputMap, outputNext))
+    (distinct : names.Nodup) :
+    outputNames = names.map (fun key => (sptLookup key outputMap).getD 0) ∧
+    sptDomain outputMap = (fun key => sptDomain ssa key ∨ key ∈ names) ∧
+    (∀ key, key ∉ names → sptLookup key outputMap = sptLookup key ssa) ∧
+    (∀ key, key ∈ names → ∃ value, sptLookup key outputMap = some value) :=
+  listNextVarRenameLemma2Prime names ssa next outputNames outputMap outputNext result distinct
+
 end Flapjack.Test.SSARenameLookupParity
