@@ -38329,5 +38329,45 @@
   "lean_name": "injImageDiffSingle",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.21: literal70-77: INJ on s UNION singleton n only; full equality IMAGE f s DIFF singleton(f n) = IMAGE f (s DIFF singleton n), original reverse orientation retained. HOL polymorphic sets/functions rendered as predicates and functions at generic Type carriers. No word/map carrier translation, strengthened premise, target run, or weakened membership-only result. Source prerequisites of full allocator simulation/clash-tree soundness; executable compiler unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "clash_tree",
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ClashTree.lean",
+  "lean_name": "ClashTree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal source1019-1080 comparison 2026-10-01 bead11.4.1: exact four-constructor carrier List Nat and NumSet/Spt Unit; sequential deletion, ALL_DISTINCT as Pairwise inequality, existing-name skip and new-colour collision failure, Delta discarded write result, independent Branch inputs and reverse Seq traversal. Existing exact Spt operations; no representation qualifier or extra premise. Proof-side only; production migration bead11.4.2 remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "numset_list_delete_def",
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ClashTree.lean",
+  "lean_name": "numsetListDelete",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal source1019-1080 comparison 2026-10-01 bead11.4.1: exact four-constructor carrier List Nat and NumSet/Spt Unit; sequential deletion, ALL_DISTINCT as Pairwise inequality, existing-name skip and new-colour collision failure, Delta discarded write result, independent Branch inputs and reverse Seq traversal. Existing exact Spt operations; no representation qualifier or extra premise. Proof-side only; production migration bead11.4.2 remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "check_col_def",
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ClashTree.lean",
+  "lean_name": "checkCol",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal source1019-1080 comparison 2026-10-01 bead11.4.1: exact four-constructor carrier List Nat and NumSet/Spt Unit; sequential deletion, ALL_DISTINCT as Pairwise inequality, existing-name skip and new-colour collision failure, Delta discarded write result, independent Branch inputs and reverse Seq traversal. Existing exact Spt operations; no representation qualifier or extra premise. Proof-side only; production migration bead11.4.2 remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "check_partial_col_def",
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ClashTree.lean",
+  "lean_name": "checkPartialCol",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal source1019-1080 comparison 2026-10-01 bead11.4.1: exact four-constructor carrier List Nat and NumSet/Spt Unit; sequential deletion, ALL_DISTINCT as Pairwise inequality, existing-name skip and new-colour collision failure, Delta discarded write result, independent Branch inputs and reverse Seq traversal. Existing exact Spt operations; no representation qualifier or extra premise. Proof-side only; production migration bead11.4.2 remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "check_clash_tree_def",
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ClashTree.lean",
+  "lean_name": "checkClashTree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal source1019-1080 comparison 2026-10-01 bead11.4.1: exact four-constructor carrier List Nat and NumSet/Spt Unit; sequential deletion, ALL_DISTINCT as Pairwise inequality, existing-name skip and new-colour collision failure, Delta discarded write result, independent Branch inputs and reverse Seq traversal. Existing exact Spt operations; no representation qualifier or extra premise. Proof-side only; production migration bead11.4.2 remains open."
 }
 ]

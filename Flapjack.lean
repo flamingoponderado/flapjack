@@ -825,6 +825,7 @@ import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.MlStringBridge
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Compiler.Backend.RegAlloc
+import Flapjack.Compiler.Backend.RegAlloc.ClashTree
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
 import Flapjack.Misc.LList

@@ -1,3 +1,4 @@
+import Flapjack.Test.RegAllocClashTreeParity
 import Flapjack.Test.WordConvsPostAllocExactParity
 import Flapjack.Test.PanGlobalsBlockAlignmentParity
 import Flapjack.Test.StackSemLocValueParity
