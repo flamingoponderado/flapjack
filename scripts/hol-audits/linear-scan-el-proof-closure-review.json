@@ -4,7 +4,7 @@
   "candidate_sha": "8d74461ad0d406d75936f3dbb681ddf9c43566c3",
   "peer_audit_repair_sha": "0f9c0c0b2b8307faaefd610a906331b2ad16bc6e",
   "peer_merge_head": "09dcc091b58ec2ee239e7ac5d6e60f211ba65375",
-  "status": "Independent historical proof-closure PASS; immutable generality source follow-up PASS at161c881ea; exact terminal gate evidence and unified integration acceptance pending",
+  "status": "Exact161c independent full type/proof closure PASS; source repair PASS; final isolated test/pins/warnings running, overall allocator source acceptance remains coordinator scope",
   "coverage": {
     "candidate_tags": 208,
     "expected_candidate_tags": 208,
@@ -120,6 +120,34 @@
         "artifact": "scripts/hol-audits/linear-scan-161c-evidence/ra_types.out",
         "sha256": "f75210beda7b10c945a5688d62e0f7b906f0fdefd9e591697ee7b88bcf02c1dd"
       }
-    ]
+    ],
+    "independent_repaired_closure": {
+      "sha": "161c881ea61c6e21ead4fc6bd3eaa8f37fc953d9",
+      "exit": 0,
+      "candidate_tags": 208,
+      "expected_candidate_tags": 208,
+      "pinned_tags": 2578,
+      "expected_pinned_tags": 2578,
+      "actual_tagged_roots": 2623,
+      "all_namespace_constants": 431069,
+      "type_and_proof_edges": 12220931,
+      "held_closures_including_three_seeds": 60,
+      "tagged_held_closures": 0,
+      "graph_ms": 105715,
+      "root_build_jobs": 2951,
+      "restored_source_checked_build_jobs": 2943,
+      "restored_local_oleans": 1441,
+      "command": "lake lean /tmp/sol-review161-full-proof-closure.lean",
+      "artifact_directory": "scripts/hol-audits/linear-scan-161c-evidence",
+      "source_provenance": "Separate exact detached source checkout161c; Lake checked all imports against that source, sanctioned restore, no OLean copies or peer build changes.",
+      "independent_references": 2578,
+      "independent_mapping": 4681,
+      "independent_probes": [
+        739,
+        734
+      ],
+      "independent_native_allowlist": "PASS",
+      "test_pins_warnings": "running session47182"
+    }
   }
 }
