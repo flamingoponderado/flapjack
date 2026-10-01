@@ -1,3 +1,5 @@
+`ssa_locals_rel_probe.out` simplifies the original whole generic relation with literal lookup/domain/THE clauses: eight Bool-valued success/missing-map/missing-target/wrong-value/allocation-bound/malformed-tree observations. `Flapjack/Test/SSALocalsParity.lean` replays identical inputs in the kernel; the full original definition and generic inferred type are captured.
+
 `ssa_map_ok_probe.out` simplifies the literal original SSA map predicate and lookup clauses for five empty/valid/bound/physical/malformed-tree cases; `Flapjack/Test/SSAMapParity.lean` kernel-replays those quantified predicates. The full original definition is printed.
 
 `ssa_setup_probe.out` captures four original word_alloc definitions and nine direct EVAL rows for empty, duplicate, malformed-tree, arbitrary-start renaming and native setup widths 1/32/64/80, plus independent 1-to-80 and 80-to-1 input/output dimensions and the full original inferred function type. `Flapjack/Test/SSASetupParity.lean` kernel-replays identical inputs and observations. Regenerate with `HOL_PROBE_ONLY=ssa_setup_probeScript.sml`.
@@ -3070,6 +3072,11 @@ The native transition inherits the existing IEEE real-rendering assurance limit
 Probes remain regression evidence, not complete cross-language IEEE equivalence
 or whole ASM/compiler routing acceptance.
 
+SSA renaming lookup regressions: `ssa_rename_lookup_probeScript.sml` runs original
+`list_next_var_rename` and THE lookups for empty, overwritten, malformed-tree,
+reordered and unbounded-Nat inputs. `SSARenameLookupParity.lean` kernel-replays
+all five captures and applies the full four-conjunct theorem with arbitrary
+initial tree/start. Captures are regression evidence, not a cross-prover proof.
 ### Generic native ASM assertions
 
 `asmprops_assertions_probeScript.sml` evaluates original `asmPropsTheory`
@@ -3104,6 +3111,14 @@ alongside a nonvacuous full theorem application with arbitrary configuration,
 register count and bitmap input. These are regression checks, not a
 HOL-to-Lean equivalence proof or whole compiler correctness acceptance.
 Selector: `HOL_PROBE_ONLY=word_to_stack_program_code_labels_probeScript.sml`.
+
+`list_next_var_rename_lemma1_probe.out` records a fresh replay of the complete
+local original theorem and proof, plus eight full renaming observations with
+selected map lookups and all three arithmetic conclusions. Cases include
+duplicate names, overwritten keys, a malformed initial tree, zero and odd
+counters, and unbounded naturals. `SSAListRenameArithmeticParity` checks17
+kernel examples against identical inputs and the complete theorem. Select
+`HOL_PROBE_ONLY=list_next_var_rename_lemma1_probeScript.sml` to regenerate.
 
 ### Full generic ASM assertion iteration
 

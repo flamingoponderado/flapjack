@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
 import Flapjack.Compiler.Backend.WordAlloc.SSASetup
 import Flapjack.Compiler.Encoders.AsmProps.Assertions
@@ -780,6 +782,7 @@ import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Pancake.PanStructs
 import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
 
 
 
