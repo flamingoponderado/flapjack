@@ -1,3 +1,4 @@
+import Flapjack.Test.LoopToWordLabelHandlersParity
 import Flapjack.Test.SSAMergeMoveLookupsParity
 import Flapjack.Test.WordMaxInstRouteParity
 import Flapjack.Test.SSALocalsPhysicalInsertParity

@@ -1,3 +1,4 @@
+import Flapjack.Pancake.LoopToWord.Proofs.LabelHandlers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarInst

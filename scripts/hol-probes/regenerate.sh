@@ -3435,3 +3435,7 @@ run_probe ssa_merge_frame_probeScript.sml ssa_merge_frame_probe.out \
 run_probe ssa_merge_move_lookups_probeScript.sml ssa_merge_move_lookups_probe.out \
   frame3_full_source_replay frame3_empty frame3_absent frame3_outside frame3_absent_result frame3_outside_result frame3_common_guard \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe loop_to_word_label_handlers_probeScript.sml loop_to_word_label_handlers_probe.out \
+  comp_l_invariant_source_replay good_handlers_comp_source_replay loop_to_word_good_handlers_source_replay loop_to_word_comp_SND_LE_source_replay lh_nested64_result lh_nested64_owner lh_nested64_counter lh_nested64_handlers lh_nested1_result lh_nested1_owner lh_nested1_counter lh_nested1_handlers lh_nested80_result lh_nested80_owner lh_nested80_counter lh_nested80_handlers lh_ignored_tail_result lh_ignored_tail_owner lh_ignored_tail_counter lh_ignored_tail_handlers lh_program_result lh_program_handlers lh_wrong_owner \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
