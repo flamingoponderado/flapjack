@@ -1,6 +1,7 @@
-import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Fetch
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+import Flapjack.Compiler.Backend.StackProps.CodeLabels
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Steps
 import Flapjack.Compiler.Backend.RegAlloc.SortMoves
@@ -73,12 +74,10 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep
-
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
 import Flapjack.Compiler.Backend.Parmove.PmovDsteps
 import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
-
 import Flapjack.Compiler.Backend.Parmove.DestinationMembership
 import Flapjack.Compiler.Backend.Parmove.FstepDstep
 import Flapjack.Compiler.Backend.Parmove.SourceMembership
@@ -993,9 +992,6 @@ import Flapjack.Test.LoopExactAssignedVarsParity
 import Flapjack.Test.LoopPropsCutSetsParity
 import Flapjack.Test.LoopPropsCompSyntaxOkParity
 import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
-/- The context-aware Crep-to-Loop correctness file is being updated alongside
-   the faithful `findLoopVar` lowering and is intentionally not in this
-   umbrella until its old identity-map assumptions are repaired. -/
 import Flapjack.LoopSemantics
 import Flapjack.MemOp
 import Flapjack.Word
@@ -1068,6 +1064,12 @@ import Flapjack.RiscV.LabDiagnostics
 import Flapjack.RiscV.WordDiagnostics
 import Flapjack.FfiHOL
 import Flapjack.FfiBridge
+import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+
+
+/- The context-aware Crep-to-Loop correctness file is being updated alongside
+   the faithful `findLoopVar` lowering and is intentionally not in this
+   umbrella until its old identity-map assumptions are repaired. -/
 
 /-!
 # Flapjack in Lean

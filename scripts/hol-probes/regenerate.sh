@@ -3127,6 +3127,9 @@ run_probe parmove_temp_steps_probeScript.sml parmove_temp_steps_probe.out \
   ptr_remove ptr_start ptr_extend ptr_save_cycle ptr_emit_head ptr_emit_last ptr_save_none ptr_emit_scratch ptr_bool ptr_refl_empty ptr_refl_scratch ptr_cycle_three \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe stackprops_code_labels_probeScript.sml stackprops_code_labels_probe.out \
+  sl_skip sl_jump sl_raw sl_location sl_store_none sl_store_some sl_direct_tail sl_indirect_tail_handler sl_direct_tail_handler sl_return_owner sl_return_other_owner sl_return_no_handler sl_sequence_duplicate sl_if_loop sl_nested_handlers \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3147,9 +3150,14 @@ run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_
   adrtc_scratch adrtc_first adrtc_middle adrtc_last \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe parmove_preserves_moves_step_probeScript.sml parmove_preserves_moves_step_probe.out \
+  preserve_4_before preserve_4_after preserve_6_before preserve_6_after preserve_1_before preserve_1_after preserve_8_before preserve_8_after preserve_scratch_before preserve_scratch_after \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe reg_alloc_phase_closure_probeScript.sml reg_alloc_phase_closure_probe.out \
   ra_phase_do_simplify ra_phase_do_coalesce ra_phase_do_prefreeze ra_phase_do_freeze ra_phase_do_spill ra_phase_dec_deg ra_phase_dec_degree ra_phase_push_stack ra_phase_is_not_coalesced ra_phase_split_degree ra_phase_sort_moves ra_phase_smerge ra_phase_revive_moves ra_phase_unspill ra_phase_inc_deg ra_phase_is_Fixed ra_phase_is_Atemp ra_phase_is_Fixed_k ra_phase_considered_var ra_phase_deg_or_inf ra_phase_bg_ok ra_phase_consistency_ok ra_phase_coalesce_parent ra_phase_canonize_move ra_phase_st_ex_FIRST ra_phase_respill ra_phase_reset_move_related ra_phase_st_ex_list_MIN_cost ra_phase_st_ex_list_MAX_deg \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 
 run_probe reg_alloc_state_partition_probeScript.sml reg_alloc_state_partition_probe.out \
   sp_type sp_empty sp_singleton_true sp_singleton_false sp_all_true sp_all_false sp_mixed sp_reverse sp_duplicates sp_large sp_fail_empty sp_fail_first sp_fail_middle sp_fail_last sp_fail_duplicate sp_state_predicate sp_state_failure sp_bool_value sp_bool_state sp_list_state sp_list_error sp_tuple_state sp_empty_always_failure \

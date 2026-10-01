@@ -1,6 +1,7 @@
-import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Fetch
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+import Flapjack.Compiler.Backend.StackProps.CodeLabels
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Steps
@@ -72,12 +73,10 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep
-
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
 import Flapjack.Compiler.Backend.Parmove.PmovDsteps
 import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
-
 import Flapjack.Compiler.Backend.Parmove.DestinationMembership
 import Flapjack.Compiler.Backend.Parmove.FstepDstep
 import Flapjack.Compiler.Backend.Parmove.SourceMembership
@@ -733,6 +732,9 @@ import Flapjack.Pancake.WordConvs.NotCreated
 import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Pancake.PanStructs
+import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+
+
 
 open Lean Elab Command Flapjack
 
