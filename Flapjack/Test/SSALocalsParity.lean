@@ -1,4 +1,5 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
 namespace Flapjack.Test.SSALocalsParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 -- Same arbitrary-tree/generic-Bool inputs as the original source-clause probe.
@@ -26,4 +27,17 @@ example : ssaLocalsRel 2 (sptFromAList [(1,5)]) (sptFromAList [(1,true)]) (sptFr
 example : ssaLocalsRel 0 (.bn .ln .ln) (.ln : Spt Bool) (.bn .ln .ln) := by
   simp [ssaLocalsRel, ssaLocalsRelWith, sptMem_iff_lookup,
     sptLookup, isAllocVar]
+example {α : Type} (next nextOut : Nat) (ssa : Spt Nat) (source target : Spt α)
+    (h : ssaLocalsRel next ssa source target) (bound : next ≤ nextOut) :
+    ssaLocalsRel nextOut ssa source target :=
+  ssaLocalsRelMore next ssa source target nextOut ⟨h, bound⟩
+example {width : Nat} [NeZero width] {C₁ F₁ C₂ F₂ : Type}
+    (next : Nat) (left right : Spt Nat)
+    (source : WordSemStateFiniteExact width C₁ F₁)
+    (target : WordSemStateFiniteExact width C₂ F₂)
+    (h : ssaLocalsRel next right source.locals target.locals)
+    (domains : sptDomain left = sptDomain right)
+    (lookups : ∀ key, sptLookup key left = sptLookup key right) :
+    ssaLocalsRel next left source.locals target.locals :=
+  ssaEqRelSwap next left right source target ⟨h, domains, lookups⟩
 end Flapjack.Test.SSALocalsParity

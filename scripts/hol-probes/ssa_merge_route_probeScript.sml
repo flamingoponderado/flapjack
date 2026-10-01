@@ -1,0 +1,13 @@
+load "preamble"; load "word_allocTheory";
+open HolKernel Parse bossLib preamble word_allocTheory sptreeTheory;
+val _ = Globals.linewidth := 1000;
+fun out label names left right next = (print(label ^ "=");
+ print_term(rconc(EVAL ``let (lm,rm,n,l,r) = merge_moves ^names (fromAList ^left) (fromAList ^right) ^next in (lm,rm,n,toAList l,toAList r)``)); print "\n");
+val _ = out "route_empty" ``[]:num list`` ``[(1,7);(1,99)]:(num#num) list`` ``[(1,9)]:(num#num) list`` ``5:num``;
+val _ = out "route_missing" ``[1]:num list`` ``[]:(num#num) list`` ``[(1,9)]:(num#num) list`` ``5:num``;
+val _ = out "route_equal" ``[1]:num list`` ``[(1,7)]:(num#num) list`` ``[(1,7)]:(num#num) list`` ``5:num``;
+val _ = out "route_unequal" ``[1]:num list`` ``[(1,7)]:(num#num) list`` ``[(1,9)]:(num#num) list`` ``5:num``;
+val _ = out "route_tail" ``[0;2]:num list`` ``[(0,7);(2,11)]:(num#num) list`` ``[(0,9);(2,13)]:(num#num) list`` ``5:num``;
+val _ = out "route_duplicate_names" ``[1;1]:num list`` ``[(1,7)]:(num#num) list`` ``[(1,9)]:(num#num) list`` ``5:num``;
+val _ = out "route_duplicate_maps" ``[1]:num list`` ``[(1,7);(1,9)]:(num#num) list`` ``[(1,7);(1,11)]:(num#num) list`` ``5:num``;
+val _ = out "route_big" ``[0]:num list`` ``[(0,18446744073709551616)]:(num#num) list`` ``[(0,3)]:(num#num) list`` ``18446744073709551616:num``;

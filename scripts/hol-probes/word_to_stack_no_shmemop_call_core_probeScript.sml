@@ -1,0 +1,17 @@
+load "preamble";
+load "word_to_stackTheory";
+load "stackPropsTheory";
+open bossLib HolKernel Parse preamble word_to_stackTheory stackPropsTheory;
+fun out label q = (print (label ^ "="); print_term (rconc (EVAL q)); print "\n");
+val _ = out "cc_ret_zero" ``no_shmemop (copy_ret_aux 0 0 0 : 64 stackLang$prog) = T``;
+val _ = out "cc_ret_one" ``no_shmemop (copy_ret_aux 2 3 1 : 64 stackLang$prog) = T``;
+val _ = out "cc_ret_many" ``no_shmemop (copy_ret_aux 7 999 4 : 32 stackLang$prog) = T``;
+val _ = out "cc_ret_width1" ``no_shmemop (copy_ret_aux 999 0 5 : 1 stackLang$prog) = T``;
+val _ = out "cc_prefix_1" ``no_shmemop (perf_call_prefix 999 7 0 : 1 stackLang$prog) = T``;
+val _ = out "cc_suffix_1" ``no_shmemop (perf_call_suffix : 1 stackLang$prog) = T``;
+val _ = out "cc_prefix_32" ``no_shmemop (perf_call_prefix 999 7 0 : 32 stackLang$prog) = T``;
+val _ = out "cc_suffix_32" ``no_shmemop (perf_call_suffix : 32 stackLang$prog) = T``;
+val _ = out "cc_prefix_64" ``no_shmemop (perf_call_prefix 999 7 0 : 64 stackLang$prog) = T``;
+val _ = out "cc_suffix_64" ``no_shmemop (perf_call_suffix : 64 stackLang$prog) = T``;
+val _ = out "cc_prefix_80" ``no_shmemop (perf_call_prefix 999 7 0 : 80 stackLang$prog) = T``;
+val _ = out "cc_suffix_80" ``no_shmemop (perf_call_suffix : 80 stackLang$prog) = T``;

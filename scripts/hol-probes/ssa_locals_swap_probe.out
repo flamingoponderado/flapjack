@@ -1,0 +1,8 @@
+sw_type_ssaL=:num sptree$num_map
+sw_type_cst=:(α, δ, ε) state
+sw_type_st=:(α, β, γ) state
+sw_type_ssaR=:num sptree$num_map
+sw_type_na=:num
+sw_full=⊢ ssa_locals_rel na ssaR st.locals cst.locals ∧ domain ssaL = domain ssaR ∧
+  (∀x. lookup x ssaL = lookup x ssaR) ⇒
+  ssa_locals_rel na ssaL st.locals cst.locals

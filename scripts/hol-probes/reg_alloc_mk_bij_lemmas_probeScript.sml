@@ -1,0 +1,11 @@
+load "bossLib";
+load "preamble";
+load "reg_allocProofTheory";
+open bossLib HolKernel Parse preamble reg_allocTheory reg_allocProofTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val _ = observe "mbl_remap_keys" ``case list_remap [5;3;5] (insert 3 7 LN, insert 7 3 LN, 8) of (ta,fa,n) => (MAP FST (toAList ta), MAP FST (toAList fa), n)``;
+val _ = observe "mbl_remap_wf" ``case list_remap [5;3;5] (insert 3 7 LN, insert 7 3 LN, 8) of (ta,fa,n) => (wf ta, wf fa)``;
+val _ = observe "mbl_remap_inverse" ``case list_remap [5;3;5] (insert 3 0 LN, insert 0 3 LN, 1) of (ta,fa,n) => (toAList ta, toAList fa, n)``;
+val _ = observe "mbl_tree_keys" ``case mk_bij (Seq (Delta [4] [2;4]) (Branch (SOME (insert 9 () LN)) (Delta [] [1]) (Set (insert 2 () LN)))) of (ta,fa,n) => (toAList ta, toAList fa, n)``;
+val _ = observe "mbl_tree_wf" ``case mk_bij (Seq (Delta [4] [2;4]) (Branch (SOME (insert 9 () LN)) (Delta [] [1]) (Set (insert 2 () LN)))) of (ta,fa,n) => (wf ta, wf fa)``;
+val _ = observe "mbl_large" ``case mk_bij (Delta [36893488147419103232] []) of (ta,fa,n) => (toAList ta, toAList fa, n)``;

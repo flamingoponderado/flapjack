@@ -4,8 +4,8 @@ import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
 namespace Flapjack.WordAlloc
 
 /-- Literal normalization, native mllist sorting and counting from HOL.
-The grouping helper emits groups in reverse sorted order. This analysis
-definition does not yet replace the executed allocator's canonicalization. -/
+The grouping helper emits groups in reverse sorted order. The executed
+allocator calls this definition through its checked move-list adapter. -/
 @[hol "cakeml/compiler/backend/word_allocScript.sml" "canonize_moves_def"]
 def canonizeMoves (moves : List (Nat × (Nat × Nat))) :
     List (Nat × Nat × (Nat × Nat)) :=

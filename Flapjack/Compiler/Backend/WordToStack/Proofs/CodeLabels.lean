@@ -53,11 +53,12 @@ theorem getCodeHandlerLabelsCopyRetAux {width : Nat} [NeZero width]
   | zero => simp [copyRetAuxNative, getCodeLabels, stackGetHandlerLabels]
   | succ n ih => simpa [copyRetAuxNative, listSeq, getCodeLabels, stackGetHandlerLabels] using ih
 
-/-- Complete source conjunction for arbitrary return-list payloads and both flags. -/
+/-- Complete source conjunction for arbitrary return-list payloads, independent
+unused frame-tail carriers and both flags. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "get_code_handler_labels_copy_ret" (words_as_type_indexed_bitvec)]
-theorem getCodeHandlerLabelsCopyRet {width : Nat} [NeZero width] {β : Type}
-    (perf b : Bool) (kf : Nat × Nat × Nat) (vs : List β)
+theorem getCodeHandlerLabelsCopyRet {width : Nat} [NeZero width] {β γ : Type}
+    (perf b : Bool) (kf : Nat × Nat × γ) (vs : List β)
     (kont : HolProg width) (owner : Nat) :
     getCodeLabels (copyRetNative perf b kf vs kont) = getCodeLabels kont ∧
     stackGetHandlerLabels owner (copyRetNative perf b kf vs kont) =
