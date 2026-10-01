@@ -101,6 +101,12 @@ run_probe() {
   done
 }
 
+run_probe lab_to_target_section_lookup_probeScript.sml lab_to_target_section_lookup_probe.out \
+  section_entry section_label5 section_label7 section_missing preceding_entry preceding_label5 empty_tail_entry empty_tail_missing \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe target_props_interference_probeScript.sml target_props_interference_probe.out \
+  shift_zero shift_three shift_composition shift_ffi_unchanged shift_target_unchanged region_empty region_safe_before_wrap region_wrap_hits_entry \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe bytes_in_mem_probeScript.sml bytes_in_mem_probe.out \
   empty_ignores_guards nat_wrap excluded_head excluded_tail domain_head domain_tail wrong_value bool_payload update_off_region update_hit_region append_wrapped \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
@@ -3191,6 +3197,10 @@ run_probe parmove_preserves_moves_step_probeScript.sml parmove_preserves_moves_s
 run_probe parmove_preserves_moves_steps_probeScript.sml parmove_preserves_moves_steps_probe.out \
   rtc_real_before rtc_real_after rtc_scratch_before rtc_scratch_after rtc_changed_source rtc_old_source_absent \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe backendprops_nonzero_labels_probeScript.sml backendprops_nonzero_labels_probe.out \
+  nz_empty nz_zero nz_first_zero nz_mixed nz_duplicate nz_large nz_subset nz_subset_left nz_left_union nz_right_union nz_mono nz_bigunion nz_univ_kept nz_univ_zero nz_false_premise \
+  "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe reg_alloc_phase_closure_probeScript.sml reg_alloc_phase_closure_probe.out \
   ra_phase_do_simplify ra_phase_do_coalesce ra_phase_do_prefreeze ra_phase_do_freeze ra_phase_do_spill ra_phase_dec_deg ra_phase_dec_degree ra_phase_push_stack ra_phase_is_not_coalesced ra_phase_split_degree ra_phase_sort_moves ra_phase_smerge ra_phase_revive_moves ra_phase_unspill ra_phase_inc_deg ra_phase_is_Fixed ra_phase_is_Atemp ra_phase_is_Fixed_k ra_phase_considered_var ra_phase_deg_or_inf ra_phase_bg_ok ra_phase_consistency_ok ra_phase_coalesce_parent ra_phase_canonize_move ra_phase_st_ex_FIRST ra_phase_respill ra_phase_reset_move_related ra_phase_st_ex_list_MIN_cost ra_phase_st_ex_list_MAX_deg \
