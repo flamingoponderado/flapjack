@@ -3085,6 +3085,12 @@
       "sha256": "3852b3f4916d853750298109c8af0bd0d2b7c5dbf3d0eac4067d4762abf12459"
     },
     {
+      "bytes": 265,
+      "out": "reg_alloc_sorted_mem_probe.out",
+      "rows": 12,
+      "sha256": "de123ad8f6d9bb266bcbe293233e5836185c6a35940a8c076c0297e41748d217"
+    },
+    {
       "bytes": 380,
       "out": "reg_alloc_state_map_probe.out",
       "rows": 20,
@@ -4265,6 +4271,12 @@
       "out": "word_to_stack_perf_slots_probe.out",
       "rows": 4,
       "sha256": "d6c2bfb8f25cdccff2b90bedbdcc4602dbdd8e5019e7c96aced56c04dcedbb8d"
+    },
+    {
+      "bytes": 336,
+      "out": "word_to_stack_program_bitmaps_probe.out",
+      "rows": 10,
+      "sha256": "8765182f39ccdb4a95f8cea1b64beaf2fa8acd8e53f4fc02f35699e632a5889b"
     },
     {
       "bytes": 392,

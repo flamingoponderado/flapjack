@@ -2592,3 +2592,14 @@ Its capture omits blank separator lines between printed HOL clauses.
 endpoints through all three lists, including independent Nat-to-Bool carriers
 and noninjective maps. `ParmoveMapStateParity` replays the same inputs in Lean;
 the finite fixtures do not prove cross-assistant equivalence.
+
+`reg_alloc_sorted_mem_probe` captures twelve original early-stop membership
+equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
+the same cases and the executed wrapper's equation for arbitrary keys/lists.
+
+`word_to_stack_program_bitmaps_probe` captures ten original single-program
+and list-compiler bitmap snapshots, replayed in `WordToStackProgramBitmapsParity`.
+Cases include invalid initial bounds, width one, repeated identifiers, and
+independent Bool identifiers. The general prefix/accounting proofs retain
+the original compiler output equations and initial-length bound; finite
+snapshots are not a cross-language equivalence proof.

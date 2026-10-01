@@ -1,3 +1,4 @@
+import Flapjack.Test.RegAllocSortedMemParity
 import Flapjack.Test.RegAllocInitializationParity
 import Flapjack.Test.WordCopyCodecDomainParity
 import Flapjack.Test.CanonizeMovesParity
@@ -31,6 +32,7 @@ import Flapjack.Test.WordToStackHandlerValGeneralityParity
 import Flapjack.Test.WordToStackAbsStackGeneralityParity
 import Flapjack.Test.WordToStackExpressionMaximumParity
 import Flapjack.Test.WordToStackCompLengthParity
+import Flapjack.Test.WordToStackProgramBitmapsParity
 import Flapjack.Test.WordAllocCheckerAssemblyParity
 import Flapjack.Test.SptMapiParity
 import Flapjack.Test.ParmoveIndependenceParity
