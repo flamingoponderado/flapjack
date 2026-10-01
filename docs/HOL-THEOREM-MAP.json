@@ -38436,6 +38436,15 @@
   "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.17.1: literal1009-1023, all13 compiled clauses, exact WordLangProgHOL positive BitVec/NeZero and NumSet Spt Unit. Move inserts MAP FST in literal head-after-tail order; Inst calls accepted getWritesInst; Assign/Get/LocValue/Install/OpCurrHeap write only source destination. StoreConsts inserts a outside b outside c outside d. ShareInst Load/Load8/Load16/Load32 write destination; every other program gives LN, with no recursive traversal or extra premise. Source carrier arity/field types reused from reviewed program liveness; no finite-map/array/name substitution. Seven fresh direct original HOL full-tree observations kernel replayed, including instruction Load16 versus shared Load16, shared store, compound Seq fallback. Production route17.2 and inventory17 stay OPEN separately; full colouring/allocation theorem not claimed."
 },
 {
+  "lean_path": "Flapjack/Compiler/Encoders/AsmSem.lean",
+  "lean_name": "wordShift",
+  "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+  "hol_name": "word_shift_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.2.1.1): asmSemScript68-73 four clauses Lsl logical left, Lsr logical right, Asr sign-extending right, Ror rotate-right. Native positive BitVec width/NeZero, arbitrary Nat amount unchanged. No option/error or masked amount; total HOL shifts retain oversize zero/sign-fill and modulo-width rotation. This is the exact operation called by labSem arith_upd104, whose separate assertion and failed-state update must be retained by parent b4v0.2.1; not backend_common word_shift constant nor wordLang option word_sh. Future native Lab evaluator must use this definition, full evaluator/runtime parent b4v0 remains open."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "INJ_UNION",
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ScopedInjection.lean",

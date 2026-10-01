@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Encoders.AsmSem
 import Flapjack.Compiler.Backend.LabSem.State
 import Flapjack.SemanticsProps.Implements
 import Flapjack.Pancake.Proofs.PanSimp.SeqAssocExact
