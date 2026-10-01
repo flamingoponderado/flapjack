@@ -2716,6 +2716,7 @@ run_probe reg_alloc_clash_tree_probeScript.sml reg_alloc_clash_tree_probe.out \
 
 run_probe word_to_stack_map_fst_probeScript.sml word_to_stack_map_fst_probe.out \
   mf_empty mf_keys mf_collision mf_values \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_bitmap_append_probeScript.sml word_to_stack_bitmap_append_probe.out \
   ba_terminal ba_continuation ba_full_one ba_full_two \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
