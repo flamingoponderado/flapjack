@@ -32,6 +32,16 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`reg_alloc_clash_tree_probe.out` captures eight direct original register
+allocator checker observations: repeated deletion, duplicate colours,
+existing-name skips, partial collisions, Delta's discarded write result,
+right-first Seq traversal, Branch merging and fixed-set collisions.
+`Flapjack.Test.RegAllocClashTreeParity` kernel-replays the identical inputs and
+full output trees. These finite regressions do not prove allocator soundness
+or wire the checker into the executed compiler. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_clash_tree_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `stacksem_call_indirect_probe.out` captures ten direct original `stackSem$evaluate`
 Call INR observations (find_code645-651, returning Call861-892): indirect and
 returning success, link/target alias rejection before update, tail alias success,
@@ -1910,6 +1920,15 @@ HOL_PROBE_ONLY=word_alloc_get_live_probeScript.sml scripts/hol-probes/regenerate
 These observations supplement clause review; they do not establish whole-pass
 correctness or the pending production liveness route.
 
+### Parallel-move deterministic step
+
+`parmove_fstep_probeScript.sml` directly evaluates original `parmove$fstep`
+(parmoveScript.sml:526-546) at option-number registers. Ten equalities cover
+every branch, first matching source, cycle save order, and temporary-register
+cases without a well-formedness assumption. The output is replayed by
+`Flapjack/Test/ParmoveFstepParity.lean`; complete pmov semantics and executed
+compiler wiring are separate open tasks.
+
 `word_alloc_get_writes_inst_probe.out` captures seven direct original
 `get_writes_inst_def` observations (word_allocScript.sml681-703). Full-tree
 equalities cover Const, AddCarry, LongDiv, the literal Load16 catchall,
@@ -1920,6 +1939,19 @@ the production route. Regenerate read-only with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_get_writes_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_get_writes_probe.out` records seven direct original
+`get_writes_def` observations (word_allocScript.sml1009-1023). Identical
+full-tree inputs/outputs are kernel replayed in
+`Flapjack.Test.WordAllocProgramWritesParity`: duplicate Move destinations,
+StoreConsts insert order, instruction/shared Load16 distinction, shared-store
+fallback, compound Seq fallback, and Install's first destination only.
+These rows are regression evidence; the executed compiler route and allocator
+correctness remain open. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_get_writes_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `word_to_stack_stack_size_rel_probe.out` records six original frame-size relation
 observations (absent/present maximum, failed bound, absent local/frame sizes,
 and frame guard) from `word_to_stackProofTheory`. The exact kernel replay is
@@ -1934,3 +1966,21 @@ Loop live-set scope and Call handlers under NONE/SOME returns.
 predicates and kernel-replays each row. Regenerate read-only with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+- `word_to_stack_frames_probeScript.sml`: original `handler_val`,
+  `is_handler_frame`, and `sorted_env` rows for exact stack-frame predicates.
+
+- `word_to_stack_abs_stack_probeScript.sml`: original abstraction success and failure branches.
+
+- `word_to_stack_index_list_probeScript.sml`: descending indices and physical-name division.
+### Parallel-move state semantics
+
+`parmove_semantics_probeScript.sml` captures twelve direct original
+windmill/parsem/seqsem/sem/eqenv observations. Function updates use original
+`UPDATE_LIST_THM` precedence (last repeated destination wins); parallel sources
+are snapshotted, sequential sources are updated, emitted moves are reversed,
+and eqenv ignores only NONE. The two eqenv rows use the original
+`eqenv_def` and `FORALL_OPTION` simplification; the other rows use EVAL.
+`ParmoveSemanticsParity.lean` checks every captured observation; no windmill
+premise is imposed on repeated destinations. Full scheduler correctness and
+production wiring remain open.
