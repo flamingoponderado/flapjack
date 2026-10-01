@@ -3300,6 +3300,10 @@ run_probe word_alloc_fix_inconsistencies_probeScript.sml word_alloc_fix_inconsis
   ol_hit ol_miss pr_none pr_inl pr_inr fm fms_empty fms_left_only fms_right_only fms_both fi_equal fi_mixed \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe hol_list_el_probeScript.sml hol_list_el_probe.out \
+  hd_type el_type hd_cons hd_bool el_zero el_last el_nested el_large \
+  "$repo_dir/HOL/src/list/src/listScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe reg_alloc_move_prep_probeScript.sml reg_alloc_move_prep_probe.out \
   ec_basic ec_oob cr_self cr_chain cr_fixed fco_same fco_out_dim fco_adjacent fco_fixed_atemp fco_fixed_high fco_ok um_order um_keep \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3654,6 +3658,10 @@ run_probe loop_to_word_program_names_probeScript.sml loop_to_word_program_names_
 run_probe lab_validity_native_probeScript.sml lab_validity_native_probe.out \
   line_ok_asm_skip line_ok_asm_cbw line_ok_label line_ok_labasm_halt line_ok_asm_badreg all_enc_ok_one_ok all_enc_ok_one_bad cbw_to_asm_store8 cbw_to_asm_sharemem sec_ok_one_ok sec_ok_one_bad sec_ok_empty all_enc_ok_two_ok all_enc_ok_empty native_cbw_width1_huge native_shared_width80 native_cbw_definition native_line_definition native_section_definition \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_to_lab_nonrecursive_validity_probeScript.sml stack_to_lab_nonrecursive_validity_probe.out \
+  native_flatten_full_source_proof native_cbw_application native_shared_application \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_no_shmemop_tail_probeScript.sml word_to_stack_no_shmemop_tail_probe.out \
   tc_direct0_1 tc_directmany_1 tc_indirect0_1 tc_indirectsmall_1 tc_indirectlarge_1 tc_direct0_32 tc_directmany_32 tc_indirect0_32 tc_indirectsmall_32 tc_indirectlarge_32 tc_direct0_64 tc_directmany_64 tc_indirect0_64 tc_indirectsmall_64 tc_indirectlarge_64 tc_direct0_80 tc_directmany_80 tc_indirect0_80 tc_indirectsmall_80 tc_indirectlarge_80 tc_ignored_safe tc_ignored_shared \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
@@ -3674,3 +3682,20 @@ run_probe word_to_stack_no_shmemop_primitives_probeScript.sml word_to_stack_no_s
 run_probe word_to_stack_scheduler_route_probeScript.sml word_to_stack_scheduler_route_probe.out \
   sr_order_empty sr_order_swap sr_order_duplicate sr_none_slot sr_spill_cycle sr_spill_zero_frame \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+run_probe ssa_get_set_vars_probeScript.sml ssa_get_set_vars_probe.out \
+  get_vars_list_insert_eq_gen_full get_vars_set_vars_eq_full \
+  gvi_type_st gvi_type_ls gvi_type_x gvi_type_locs gvi_type_a gvi_type_b \
+  gsv_type_cst gsv_type_ls gsv_type_x \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_list_rename_probeScript.sml ssa_locals_list_rename_probe.out \
+  lr_full lr_type_xs lr_type_ssa lr_type_na lr_type_stloc lr_type_cstloc \
+  lr_type_ys lr_type_ssaOut lr_type_naOut lr_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_setup_props_probeScript.sml ssa_setup_props_probe.out \
+  setup_full setup_type_lim setup_type_n setup_type_st setup_type_prog \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

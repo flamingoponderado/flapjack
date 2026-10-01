@@ -37,6 +37,7 @@ import os
 import hashlib
 import json
 import re
+import subprocess
 import runpy
 import sys
 from functools import lru_cache
@@ -81,6 +82,56 @@ EXTERNAL_HOL_FILES = frozenset({
 })
 EXTERNAL_HOL_REPOSITORY = "https://github.com/HOL-Theorem-Prover/HOL"
 
+# Pinned upstream HOL submodule (``HOL/``).  Tags may cite ``HOL/<path>.sml``
+# only when the superproject records exactly this gitlink, the checkout is at
+# that commit, the cited file is a tracked blob of it, and the working-tree
+# bytes are that blob.  The commit is the same revision as ``hol4/SOURCES.json``.
+HOL_SUBMODULE_PATH = "HOL"
+HOL_SUBMODULE_COMMIT = "a390cbabd3a4521bab4ee20281e3e42933a8a3ae"
+HOL_SUBMODULE_URLS = frozenset({
+    "https://github.com/HOL-Theorem-Prover/HOL",
+    "https://github.com/HOL-Theorem-Prover/HOL.git",
+})
+
+
+def _git(root: Path, *args: str) -> str | None:
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(root), *args], capture_output=True, check=False
+        )
+    except OSError:
+        return None
+    if result.returncode != 0:
+        return None
+    return result.stdout.decode("utf-8", errors="replace").strip()
+
+
+def hol_submodule_source_error(root: Path, path: str) -> str | None:
+    """Validate a ``HOL/<rel>.sml`` citation against the pinned submodule."""
+    relative = path[len(HOL_SUBMODULE_PATH) + 1:]
+    url = _git(root, "config", "-f", ".gitmodules", "--get",
+               f"submodule.{HOL_SUBMODULE_PATH}.url")
+    module_path = _git(root, "config", "-f", ".gitmodules", "--get",
+                       f"submodule.{HOL_SUBMODULE_PATH}.path")
+    if url not in HOL_SUBMODULE_URLS or module_path != HOL_SUBMODULE_PATH:
+        return "HOL submodule is not declared with the upstream URL in .gitmodules"
+    stage = _git(root, "ls-files", "--stage", "--", HOL_SUBMODULE_PATH)
+    if not stage or stage.split()[:2] != ["160000", HOL_SUBMODULE_COMMIT]:
+        return "superproject HOL gitlink is not the pinned commit"
+    module = root / HOL_SUBMODULE_PATH
+    if _git(module, "rev-parse", "HEAD") != HOL_SUBMODULE_COMMIT:
+        return "HOL submodule checkout is not at the pinned commit (run git submodule update --init -- HOL)"
+    blob = _git(module, "rev-parse", "--verify", "--quiet",
+                f"{HOL_SUBMODULE_COMMIT}:{relative}")
+    if not blob or _git(module, "cat-file", "-t", blob) != "blob":
+        return "cited file is not tracked at the pinned HOL commit"
+    target = module / relative
+    if (not target.is_file() or target.is_symlink()
+            or _git(module, "hash-object", "--", relative) != blob):
+        return "HOL submodule working-tree file differs from the pinned blob"
+    return None
+
+
 
 def hol_source_error(root: Path, path: str) -> str | None:
     """Validate a repository-relative source, including external byte pins."""
@@ -89,6 +140,8 @@ def hol_source_error(root: Path, path: str) -> str | None:
         return "invalid repository-relative HOL source path"
     if path.startswith("cakeml/"):
         return None
+    if path.startswith(HOL_SUBMODULE_PATH + "/"):
+        return hol_submodule_source_error(root, path)
     if path not in EXTERNAL_HOL_PATHS:
         return "HOL source is not a supported pinned external path"
     try:

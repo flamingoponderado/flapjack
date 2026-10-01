@@ -1,4 +1,6 @@
 import Flapjack.Test.ProductionScheduler
+import Flapjack.Test.StackToLabRecursiveValidityParity
+import Flapjack.Test.StackToLabNonrecursiveValidityParity
 import Flapjack.Test.LabValidityNativeParity
 import Flapjack.Test.StackToLabNativeParity
 import Flapjack.Test.WordToStackNoShmemopPrimitivesParity
@@ -236,6 +238,7 @@ import Flapjack.Test.RegAllocClashTreeParity
 import Flapjack.Test.LinearScanPureDefsParity
 import Flapjack.Test.LinearScanPurePropsParity
 import Flapjack.Test.MonadArraysParity
+import Flapjack.Test.HolListElParity
 import Flapjack.Test.LinearScanMonadParity
 import Flapjack.Test.LinearScanTopParity
 import Flapjack.Test.LinearScanGenericTypesParity
