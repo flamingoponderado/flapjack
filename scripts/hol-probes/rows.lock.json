@@ -3379,6 +3379,12 @@
       "sha256": "f80fb6e485ddbe0a0af427f7a4e48f1f59fb20ff8990b41098bfe1f2d0053215"
     },
     {
+      "bytes": 1639,
+      "out": "ssa_merge_moves_probe.out",
+      "rows": 12,
+      "sha256": "8a679f3532e055edfaae58707eb08c29354875db7badf7fe49eac32d689db3c4"
+    },
+    {
       "bytes": 459,
       "out": "ssa_rename_lookup_probe.out",
       "rows": 5,

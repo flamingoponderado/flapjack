@@ -739,6 +739,7 @@ import Flapjack.Test.CrepLangGeneratedSizeParity
 import Flapjack.Test.PanSimpProgBridgeParity
 import Flapjack.Test.RegAllocStateForeachParity
 import Flapjack.Test.SSARenameLookupParity
+import Flapjack.Test.SSAMergeMovesParity
 
 
 
