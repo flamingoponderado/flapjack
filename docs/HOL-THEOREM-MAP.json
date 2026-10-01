@@ -38875,5 +38875,13 @@
   "lean_name": "sptWfDelete",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c literal pinned source154-159 comparison 2026-10-01 bead11.4.6: forall generic payload Spt tree and Nat key, sole original wf tree premise gives wf of literal sptDelete. All four tree cases with exact mk_BN/mk_BS collapsing and key arithmetic; no additional nonempty/canonicality hypothesis. Private constructor-wf facts only factor the source unfolding proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "check_col_INJ",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CheckCol.lean",
+  "lean_name": "checkColInj",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal source2592-2606 comparison 2026-10-01 bead11.4.5: same sole successful check_col premise on existing exact NumSet/Spt Unit checker, all three source conclusions q=input tree, scoped INJ on domain q with UNIV range tautology discharged, and full predicate equality domain r = IMAGE f domain q. No added wf/global injection/target evaluation assumption. ALL_DISTINCT is exact Pairwise inequality; unconditional toAList/lookup bridge and full fromAList/numeric-insert equality used only inside kernel proof. No representation qualifier or executable evaluator change."
 }
 ]
