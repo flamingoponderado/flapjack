@@ -1,0 +1,13 @@
+iv_empty_path=T
+iv_single_path=T
+iv_chain_path=T
+iv_bad_path=F
+iv_empty_wf=T
+iv_pending_wf=T
+iv_repeated=F
+iv_pending_dest=F
+iv_pending_source=F
+iv_active_last_temp=T
+iv_active_front_temp=F
+iv_active_dest=F
+iv_active_path=F

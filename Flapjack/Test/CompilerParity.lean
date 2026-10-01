@@ -1,6 +1,7 @@
 import Flapjack.Test.WordToStackAbsStackLengthsParity
 import Flapjack.Test.WordToStackAbsStackPrefixParity
 import Flapjack.Test.WordToStackMapFstParity
+import Flapjack.Test.ParmoveInvariantsParity
 
 import Flapjack.Test.WordToStackBitmapAppendParity
 import Flapjack.Test.WordToStackIndexListParity
