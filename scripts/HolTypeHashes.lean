@@ -180,6 +180,7 @@ import Flapjack.Compiler.Backend.StackLang.Prog
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
@@ -521,6 +522,7 @@ import Flapjack.Pancake.Semantics.PanSem.StateSimpExact
 import Flapjack.Pancake.Semantics.PanSem.StateDefsExact
 import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
 import Flapjack.Pancake.WordLang
+import Flapjack.Pancake.WordLang.OccurrencesExact
 import Flapjack.Pancake.WordConvs
 import Flapjack.Pancake.WordConvs.NotCreated
 import Flapjack.RiscV.CorrectnessEncoding
