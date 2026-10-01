@@ -3968,3 +3968,7 @@ run_probe ssa_cc_trans_props_primitives_probeScript.sml ssa_cc_trans_props_primi
 run_probe ssa_cc_trans_props_control_probeScript.sml ssa_cc_trans_props_control_probe.out \
   spc_case_7 spc_case_8 spc_case_9 spc_7_type_s1 spc_7_type_s2 spc_7_type_ssa spc_7_type_na spc_7_type_lt spc_7_type_progOut spc_7_type_ssaOut spc_7_type_naOut spc_8_type_s1 spc_9_type_cmp spc_9_type_r1 spc_9_type_ri spc_9_type_e2 spc_9_type_e3 spc_9_type_r1P spc_9_type_riP spc_9_type_e2P spc_9_type_ssa2 spc_9_type_na2 \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_probeScript.sml ssa_cc_trans_props_probe.out \
+  ssa_props_full ssa_props_type_prog ssa_props_type_ssa ssa_props_type_na ssa_props_type_lt ssa_props_type_progOut ssa_props_type_ssaOut ssa_props_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

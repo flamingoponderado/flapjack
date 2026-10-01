@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls

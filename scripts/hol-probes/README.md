@@ -4262,6 +4262,9 @@ Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_top_probeScript.sml`.
 - `ssa_cc_trans_props_loop_control_probeScript.sml` specializes the original functional induction rule to the full native program invariant and replays literal Resume Loop/Break/Continue tactics. Three full clauses and29 carrier captures retain Loop setup binders/guards and its actual-context body IH.
 `lab_to_target_padding_length_probeScript.sml` exports original `LENGTH_pad_bytes` (lab_to_targetProofScript.sml:3195) and six direct `pad_bytes` EVAL observations over natural-number and Boolean lists: extension, multi-element nop truncation, exact fit, zero length, Boolean payloads, and the empty-nop sentinel outside the theorem premise. The full original premise remains nonempty nop and bytes length at most the requested length. `Flapjack.Test.LabToTargetPaddingLengthParity` kernel-replays all six concrete rows and exercises the public arbitrary-carrier theorem. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_padding_length_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 
+### SSA Call allocation/map invariant
+
+`ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
 `lab_to_target_padding_similarity_probeScript.sml` captures the complete
 original add-nop, section-padding and code-padding similarity statements and
 full quantified types. Its local add-nop theorem replays the original statement
@@ -4304,6 +4307,10 @@ arbitrary accumulator; no full compiler or cross-language equivalence is claimed
 
 `ssa_cc_trans_props_primitives_probe.out` captures the original 15 nonrecursive primitive invariant statements and actual constructor types. It replays the literal StoreConsts, instruction, expression tactic, CBW/DBW and ShareInst proofs after the original compiler simplification, including original instruction/extension/allocation prerequisites. The Lean cases derive all three invariants from only the original compiler equality and map/allocation premise.
 `ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
+
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
 ## Native Word CSE instruction keys
 
 `word_cse_instruction_keys_probeScript.sml` regenerates all ten original
@@ -4356,3 +4363,6 @@ prerequisite, not the entire CSE invariant/pass or compiler theorem.
 ### SSA recursive control invariants
 
 `ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
+### Complete SSA program invariant
+
+`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
