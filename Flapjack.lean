@@ -1004,6 +1004,7 @@ import Flapjack.Compiler.Backend.LabToTarget.Positions
 import Flapjack.Compiler.Backend.LabToTarget.SecondPass
 import Flapjack.Compiler.Backend.LabToTarget.Padding
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
+import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
 import Flapjack.Compiler.Backend.StackNames
 import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels

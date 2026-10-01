@@ -3530,20 +3530,39 @@ def hol_declaration_lines(
         )
         sml_val = re.compile(r"^val\s+([A-Za-z0-9_']+)\s*=")
         # HOL ``Datatype:`` blocks put the declared type name on the next
-        # line(s) (``name = ...``) and terminate with a top-level ``End``.
+        # line(s) (``name = ...``) and terminate with a top-level ``End``.  A
+        # type name may also sit on its own line with the ``=`` beginning the
+        # following line (for example ``shmem_info_num``), so a bare name is
+        # remembered and indexed once its ``=`` line is seen.
         datatype_header = re.compile(r"^Datatype\s*:?\s*$")
         datatype_name = re.compile(r"^\s*([A-Za-z0-9_']+)\s*=")
+        datatype_bare_name = re.compile(r"^\s*([A-Za-z0-9_']+)\s*$")
+        datatype_equals = re.compile(r"^\s*=")
         datatype_end = re.compile(r"^End\b")
         in_datatype = False
+        pending_datatype_name: tuple[str, int] | None = None
         with path.open(encoding="utf-8", errors="replace") as handle:
             for number, line in enumerate(handle, start=1):
                 if in_datatype:
                     if datatype_end.match(line):
                         in_datatype = False
+                        pending_datatype_name = None
                     else:
                         match = datatype_name.match(line)
                         if match:
                             names.setdefault(match.group(1), []).append(number)
+                            pending_datatype_name = None
+                        elif (
+                            pending_datatype_name is not None
+                            and datatype_equals.match(line)
+                        ):
+                            name, name_line = pending_datatype_name
+                            names.setdefault(name, []).append(name_line)
+                            pending_datatype_name = None
+                        else:
+                            bare = datatype_bare_name.match(line)
+                            if bare:
+                                pending_datatype_name = (bare.group(1), number)
                     continue
                 if datatype_header.match(line):
                     in_datatype = True

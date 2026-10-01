@@ -42910,5 +42910,47 @@
     "hol_name": "lookup_any_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.10): literal miscScript.sml:344-350, lookup_any x sp d is lookup x sp with default d on NONE. Lean sptLookup key tree is the exact HOL sptree lookup over the Spt carrier and Option.getD returns the default exactly on none; no bound, wf, or finite-map substitute premise. HOL key equality is Nat equality and the element type stays generic; the standard decidable equality for the generic element type is used only where HOL list/equality is rendered in the sibling find_index_def port. Direct original HOL EVAL rows and same-input kernel replay in Flapjack/Test/MiscLookupAnyFindIndexParity.lean. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "ShmemInfoNum",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "shmem_info_num",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:349-357, the Datatype `shmem_info_num = <| entry_pc: num; nbytes: word8; addr_reg: num; addr_off: num; reg: num; exit_pc: num |>`. Lean structure ShmemInfoNum has fields entryPc:Nat, nbytes:BitVec 8, addrReg:Nat, addrOff:Nat, reg:Nat, exitPc:Nat in the same order; the fixed HOL `word8` is the literal `BitVec 8` (not HOL's type-indexed `'a word`), so no words qualifier applies and the declaration is reviewed_exact. Replayed as the GetShmemInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "listAddIfFresh",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "list_add_if_fresh_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:372, both clauses `list_add_if_fresh e [] = [e]` and `list_add_if_fresh e (f::r) = if e = f then f::r else f::list_add_if_fresh e r`. The HOL type is fully polymorphic `'a -> 'a list -> 'a list`, so it carries no type-indexed word and no qualifier; HOL `=` is rendered by the standard decidable equality `[DecidableEq alpha]`. Replayed as the ListAddIfFresh* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "findFfiNames",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "find_ffi_names_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:378, all three clauses in HOL order. `[] => []`; `Section k [] :: rest => find_ffi_names rest`; `Section k (x::xs) :: rest => case x of LabAsm (CallFFI s) _ _ _ => list_add_if_fresh (ExtCall s) (find_ffi_names (Section k xs :: rest)) | _ => find_ffi_names (Section k xs :: rest)`. The linked Line/Section carrier's only type-indexed word is the position field, translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the FFI name is the reviewed exact `HolFfiName` (`ExtCall s = .extCall MlString`) and HOL `=` on it is the derived `DecidableEq HolFfiName`. No added hypothesis, dropped clause, or reordered branch. Replayed as the FindFfiNames* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "getMemopInfo",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_memop_info_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:388, all eight clauses. `Load`/`Load32`/`Load16`/`Load8` map to `MappedRead` with byte sizes `0w`/`4w`/`2w`/`1w`, and `Store`/`Store32`/`Store16`/`Store8` map to `MappedWrite` with the same sizes. The result pair is the reviewed `HolShmemOp` (`MappedRead`/`MappedWrite`) with the fixed HOL `word8`, rendered as the literal `BitVec 8`; since the byte size is not HOL's type-indexed `'a word`, no words qualifier applies and the declaration is reviewed_exact. Replayed as the GetMemopInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "getShmemInfo",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_shmem_info_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:401, all six clauses in HOL order. `[] => (ffi_names, shmem_info)`; `Section k [] :: rest` skips the empty section; `Section k (Label _ _ _ :: xs) :: rest` skips the label without advancing `pos`; `Section k (Asm (ShareMem m r ad) bytes _ :: xs) :: rest` binds `(name,nb) = get_memop_info m` and recurses at `pos + LENGTH bytes` appending `SharedMem name` and the record `<|entry_pc:=pos; nbytes:=nb; addr_reg:=(case ad of Addr r off => r); addr_off:=(case ad of Addr r off => w2n off); reg:=r; exit_pc:=pos+LENGTH bytes|>`; the `LabAsm _ _ bytes _` and other `Asm _ bytes _` clauses recurse at `pos + LENGTH bytes` recording nothing. HOL `LENGTH` is `.length` and `w2n` is `.toNat`; the record is the exact `ShmemInfoNum` and the FFI name is `HolFfiName`. The linked Line/Section carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the fixed `word8` byte sizes stay literal. No added hypothesis, dropped clause, or changed position advance. Replayed as the GetShmemInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
   }
 ]
