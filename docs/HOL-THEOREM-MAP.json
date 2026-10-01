@@ -44171,5 +44171,14 @@
   "lean_name": "mergeMovesFrame",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol source comparison2026-10-01 .30.7: original4636-4665 full arbitrary List Nat, counter Nat and both native Spt Nat maps; only original allocation-class premise. Same tail-first mergeMoves five-product with all four conjuncts: final allocation class, original-to-final bound and independent mapOK preservation implications on each side. No distinctness, wellformedness, initial mapOK strengthened premise, map relation or supplied target-result assumption. Native malformed trees and unbounded Nat retained. Original proof uses accepted ssa_map_ok_extend and convention class; Lean tail induction uses accepted isAllocVarAdd and ssaMapOKExtend with kernel arithmetic deriving nonphysicality. Literal original complete local theorem proof and ten same-input full result observations replayed freshly; imported existing kernel tuples plus full arbitrary-input actual theorem application. No executed compiler change or full SSA correctness claim."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "limit_var_props",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/LimitVar/Properties.lean",
+  "lean_name": "limitVarProps",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison2026-10-01 bead30.1: full local word_allocProof10299-10335, arbitrary original program and Nat limit with only original limit_var program = limit premise; both allocation-class and complete every_var strict-bound conclusions retained. Native faithful WordLangProgHOL/BitVec positive width with NeZero discharges original HOL dimension positivity; all original constructor carriers and return-dependent Call handler occurrence traversal retained. Native maxVarMax and everyVarMono with unconditional source-local arithmetic establish bound for every occurrence, no successful compiler assumption, simplified evaluator or supplied desired bound. Literal original whole local theorem proof freshly re-elaborated using original exported max_var_max/every_var_mono; twelve original full program limit/class/occurrence tuples exactly match imported kernel fixtures, generic fixture applies actual full theorem at arbitrary programs and limits. Word qualifier permits only type-indexed positive word carrier translation; no additional map/list/name/FP behavior qualification or theorem premise. No executed compiler change and not full SSA correctness."
 }
 ]
