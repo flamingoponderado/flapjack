@@ -1,3 +1,4 @@
+import Flapjack.Test.PanToWordGoodCodeParity
 import Flapjack.Test.WordAllocLimitVarParity
 import Flapjack.Test.SSAListRenameArithmeticParity
 import Flapjack.Test.AsmPropsAssertionsIterationParity
@@ -1584,7 +1585,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetMapLemmasParity.runChecks,
     Flapjack.Test.LabToTargetShmemInfoParity.runChecks,
     Flapjack.Test.LabToTargetCompileParity.runChecks,
-    Flapjack.Test.MiscLookupAnyFindIndexParity.runChecks
+    Flapjack.Test.MiscLookupAnyFindIndexParity.runChecks,
+    Flapjack.Test.PanToWordGoodCodeParity.runChecks
     ].mapM id
   unless results.all id do
     IO.Process.exit 1

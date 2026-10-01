@@ -15407,6 +15407,24 @@
     "reviewer": "flapjack-luna-c (direct source comparison, 2026-09-26; pan_to_wordProofScript.sml:1018-1025): HOL universally quantifies a list of PanLang programs and states exps_of (panLang$nested_seq es) = FLAT (MAP exps_of es). Lean quantifies List (ProgHOL width), uses the exact nestedSeqHOL and expsOfHOL ports, and states the same flattened mapped list. [NeZero width] represents HOL's positive word dimension; no extra hypothesis or representation qualifier is added. This theorem is the named proof consumer of expsOfHOL requested by bead flapjack-p12."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "good_panops_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "goodPanopsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "fs9 source comparison (bead flapjack-cnum): HOL pan_to_wordProofScript.sml:1108-1113 good_panops (Function fi) = EVERY (every_exp (\\x. !op es. x = Panop op es ==> LENGTH es = 2)) (exps_of fi.body); good_panops (Decl sh v exp) = every_exp (...) exp; good_panops _ = T. Lean goodPanopsHOL matches clause-for-clause over the exact DeclHOL width / FunDeclHOL width / ExpHOL width carriers, rendering EVERY as the reviewed exact everyExpListHOL, every_exp as everyExpHOL, exps_of as expsOfHOL, and the predicate as a computable Bool (Panop arity two, else true). Positive width-indexed carrier only, so the words qualifier records the translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pancake_good_code_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget.lean",
+    "lean_name": "pancakeGoodCodeHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "fs9 source comparison (bead flapjack-cnum): HOL pan_to_wordProofScript.sml:21 pancake_good_code pan_code = EVERY good_panops pan_code. Lean pancakeGoodCodeHOL code = code.all goodPanopsHOL over the exact width-indexed DeclHOL width list carrier; same shape, no extra hypothesis; words qualifier records only the width-indexed carrier translation."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
