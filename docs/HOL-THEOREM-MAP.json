@@ -42342,5 +42342,22 @@
   "hol_name": "parsem_MAP_INJ",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c literal284-314: arbitrary independent source-register alpha,target-register gamma,value beta; original windmill distinct destinations, injection only on set(MAP FST ms++MAP SND ms) into UNIV, and destination membership x; actual renamed parsem at f x equals original parsem under r composed f at x. Bounded forall list-membership formulation exactly INJ domain, no global-injection/target-result/simulation premise. Propositional DecidableEq supplies actual function-update computation. Literal induction/fresh destination/parsem_cons, injectivity restricted to tail for IH. Eight original value/value/equality tuples matched kernel fixtures: chains,cycles,sharedsources,self,large key, Nat->Bool renaming noninjective outside listed domain, explicit colliding-domain negative sentinel; generic universal theorem application retains independent carriers. Full h32p family acceptance remains coordinator-owned."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+  "lean_name": "sptMap",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "map_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.5.4.1): source1545-1550 four constructor equations. LN is retained; LS payload applies f; BN recurses on both children without mk_BN normalization; BS recurses on both children and applies f to root payload without mk_BS normalization. Independent polymorphic input/output payloads use universe-0 alpha/beta, source Spt constructors retained exactly, no wf or shape premise. Unlike mapi, raw empty internal nodes remain internal. Ten fresh original sptree$map equality observations and identical kernel tree replay cover all constructors, nested malformed trees, Bool/Nat changes and ignored-to-Unit payload. This definition supplies the real add_call map prerequisite; executed allocator migration and full correctness remain open. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuInst.lean",
+  "lean_name": "getHeuInst",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_heu_inst_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.5.1): literal source1306-1374 full get_heu_inst_def. Skip/catchall retain input; Const lhs_const; Binop/Shift Reg read r2 then r3 then write r1, Imm reads r2 then writes r1; Div reads r2/r3 then lhsr1; AddCarry reads r2/r3/r4 then writes r1/r4; Add/SubOverflow reads r2/r3 then writes r1/r4; LongMul reads r3/r4 then writes r1/r2; LongDiv reads r3/r4/r5 then writes r1/r2. Nested source update order and positional payloads preserved, even though legacy WordLangArith field labels for carry differ from source role names. Six Mem cases ignore address base/offset and count only lhs_mem or rhs_mem; Mem16 falls through. FP comparisons count integer lhs; FP moves ALWAYS count both integer registers, including width64; all eleven other FP constructors unchanged. Reviewed native WordLangInst(BitVec width) matches asm129-134, WordLangArith85-95 and WordLangFp98-121 positional constructors; independent machine word dimension translated by words_as_type_indexed_bitvec with positive width/NeZero, no width restriction added. Source HeuData Nat five-product/Spt carrier and accepted five helper bodies preserved. Fifty fresh original equality observations with explicit numeric expected trees, identical kernel driver replay cover every counted clause, all FP catchalls, aliased operands, ignored addresses, widths1/32/64/128, large natural counters, untouched keys and raw-tree updates/catchalls. Pure native analysis helper; production migration/full get_heu and allocator correctness remain open. Coordinator review pending."
 }
 ]

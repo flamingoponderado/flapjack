@@ -3021,3 +3021,11 @@ run_probe parmove_seqsem_unchanged_probeScript.sml parmove_seqsem_unchanged_prob
 run_probe parmove_parsem_map_inj_probeScript.sml parmove_parsem_map_inj_probe.out \
   pi_one pi_chain pi_cycle pi_shared_source pi_self pi_high pi_mixed pi_collision \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe spt_map_probeScript.sml spt_map_probe.out \
+  sm_empty sm_leaf sm_children sm_root sm_raw_bn sm_raw_bs sm_raw_nested sm_bool_nat sm_nat_bool sm_unit_raw \
+  "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_heu_inst_probeScript.sml word_alloc_heu_inst_probe.out \
+  hi_skip hi_const hi_binreg hi_shiftreg hi_div hi_binimm hi_shiftimm hi_carry hi_addoverflow hi_suboverflow hi_longmul hi_longdiv hi_load hi_load32 hi_load8 hi_store hi_store32 hi_store8 hi_fpless hi_fplessequal hi_fpequal hi_to_1 hi_from_1 hi_to_32 hi_from_32 hi_to_64 hi_from_64 hi_to_128 hi_from_128 hi_bin_alias hi_carry_alias hi_longdiv_alias hi_to_alias hi_from_alias hi_existing hi_large hi_const_raw hi_load16_raw hi_store16_raw hi_fpabs_raw hi_fpneg_raw hi_fpsqrt_raw hi_fpadd_raw hi_fpsub_raw hi_fpmul_raw hi_fpdiv_raw hi_fpfma_raw hi_fpmov_raw hi_fptoint_raw hi_fpfromint_raw \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
