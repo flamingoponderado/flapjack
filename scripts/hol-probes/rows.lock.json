@@ -31,6 +31,12 @@
       "sha256": "fb00053f44698704d47ad72155116e228341abdc8a31fca36f84735d31fe6183"
     },
     {
+      "bytes": 138,
+      "out": "asmprops_assertions_iteration_probe.out",
+      "rows": 6,
+      "sha256": "d9cb3107a1be1904e98d2b2b31551d5b116778e8669d11cdf5fe0962e2b82452"
+    },
+    {
       "bytes": 374,
       "out": "asmprops_assertions_probe.out",
       "rows": 16,
@@ -1187,6 +1193,12 @@
       "out": "labsem_updates_probe.out",
       "rows": 17,
       "sha256": "108420ae230afe5e78fd47c5a8c02b5c4e545d949ac847be75aef2df8ab86039"
+    },
+    {
+      "bytes": 985,
+      "out": "list_next_var_rename_lemma1_probe.out",
+      "rows": 9,
+      "sha256": "c9790cbf4f3cc71fbed4ef5081511a37d24c63f04d5c05a6bc92eb04c8136429"
     },
     {
       "bytes": 2466,
@@ -3373,10 +3385,34 @@
       "sha256": "567c10eaf56c07243856c191b60a982c5c554900a977305b11f33afbaf699349"
     },
     {
+      "bytes": 526,
+      "out": "ssa_locals_rel_probe.out",
+      "rows": 10,
+      "sha256": "6dd57ee5c171ed3a5f0c2b346cbf85ba68409ed6320b180b19a4cca89291b7f0"
+    },
+    {
       "bytes": 178,
       "out": "ssa_map_ok_probe.out",
       "rows": 6,
       "sha256": "f80fb6e485ddbe0a0af427f7a4e48f1f59fb20ff8990b41098bfe1f2d0053215"
+    },
+    {
+      "bytes": 1639,
+      "out": "ssa_merge_moves_probe.out",
+      "rows": 12,
+      "sha256": "8a679f3532e055edfaae58707eb08c29354875db7badf7fe49eac32d689db3c4"
+    },
+    {
+      "bytes": 328,
+      "out": "ssa_register_class_probe.out",
+      "rows": 10,
+      "sha256": "d1a7a95b4d2e730a6518608c3b3c4ebd742d43c32fa47f5325741f87b16995a4"
+    },
+    {
+      "bytes": 459,
+      "out": "ssa_rename_lookup_probe.out",
+      "rows": 5,
+      "sha256": "6704452ea7c732755f87ac6f2165c881f28f13210e1d0471ce238a0dd1211ce7"
     },
     {
       "bytes": 1401,
@@ -3533,6 +3569,12 @@
       "out": "stackprops_code_labels_probe.out",
       "rows": 15,
       "sha256": "0951919b9c2820704747f40b352ab0cf70ab9bb1ee3a2535536992f1814929e6"
+    },
+    {
+      "bytes": 852,
+      "out": "stackprops_forbidden_operations_probe.out",
+      "rows": 46,
+      "sha256": "718e64268abb7c05d330507ff019f684e9f6d44c5c0f53f2ca65ac3cf8ca78e7"
     },
     {
       "bytes": 250,

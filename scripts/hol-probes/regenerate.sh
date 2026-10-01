@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe asmprops_assertions_iteration_probeScript.sml asmprops_assertions_iteration_probe.out \
+  assert_theorem_fold assert_theorem_less assert_theorem_weaken assert_theorem_change assert_theorem_first assert_theorem_every \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
+
 run_probe asmprops_assertions_probeScript.sml asmprops_assertions_probe.out \
   assert_zero_skip_p assert_zero_runs_next assert_order_ok assert_order_bad assert_count_fold assert_prefixes assert_weaken_bound assert_state_bool assert2_zero assert2_mixed_ok assert2_mixed_bad assert2_changed_above assert2_first_pair assert2_constant_ok assert2_every_pairs assert2_first_bad \
   "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
@@ -259,9 +263,6 @@ run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
 run_probe word_alloc_colour_inst_probeScript.sml word_alloc_colour_inst_probe.out \
   load16 store16 load8 store32 carry fp_move "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
-run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
-  nested duplicate empty shift constant lookup \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_colour_exp_probeScript.sml word_alloc_colour_exp_probe.out \
   nested duplicate empty "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
@@ -2921,9 +2922,6 @@ run_probe parmove_source_probeScript.sml parmove_source_probe.out \
   pv_source_terminal pv_source_self pv_source_chain pv_source_cycle pv_source_scratch pv_source_duplicate pv_source_active pv_source_history \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
-run_probe word_to_stack_native_config_probeScript.sml word_to_stack_native_config_probe.out \
-  nc_length nc_empty nc_single nc_nonwf nc_raw nc_update_length nc_update_tree \
-  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
 run_probe parmove_destination_probeScript.sml parmove_destination_probe.out \
   pv_destination_terminal pv_destination_self pv_destination_chain pv_destination_cycle pv_destination_scratch pv_destination_duplicate pv_destination_active \
@@ -3332,3 +3330,24 @@ run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
 run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
   sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_rel_probeScript.sml ssa_locals_rel_probe.out \
+  sl_empty sl_valid sl_missing_map sl_missing_target sl_wrong_value sl_bound sl_bound_ok sl_invalid sl_definition sl_original_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_register_class_probeScript.sml ssa_register_class_probe.out \
+  rc_alloc1 rc_stack3 rc_physical0 rc_physical2 rc_alloc5 rc_stack7 rc_large_alloc rc_large_stack rc_alloc_source_replay rc_stack_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe ssa_rename_lookup_probeScript.sml ssa_rename_lookup_probe.out \
+  rename_empty rename_overwrite rename_invalid rename_order rename_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_merge_moves_probeScript.sml ssa_merge_moves_probe.out \
+  merge_empty merge_missing_both merge_missing_left merge_missing_right merge_equal merge_unequal merge_tail_order merge_duplicate merge_invalid merge_big merge_definition merge_original_type \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe list_next_var_rename_lemma1_probeScript.sml list_next_var_rename_lemma1_probe.out \
+  lnvr1_original_statement lnvr1_empty lnvr1_duplicates lnvr1_invalid lnvr1_collision lnvr1_zero_duplicates lnvr1_odd_start lnvr1_huge lnvr1_range \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stackprops_forbidden_operations_probeScript.sml stackprops_forbidden_operations_probe.out \
+  forbid_skip forbid_inst forbid_get forbid_set forbid_heap forbid_call_empty forbid_seq forbid_if forbid_loop forbid_jump forbid_alloc forbid_store_consts forbid_raise forbid_return forbid_break forbid_continue forbid_ffi forbid_tick forbid_loc forbid_install forbid_shmem forbid_code_write forbid_data_write forbid_raw_call forbid_stack_alloc forbid_stack_free forbid_stack_store forbid_stack_store_any forbid_stack_load forbid_stack_load_any forbid_stack_get_size forbid_stack_set_size forbid_bitmap_load forbid_halt forbid_call_handler_install forbid_call_handler_shmem forbid_call_return_install forbid_call_return_shmem forbid_call_both forbid_call_safe forbid_seq_left forbid_seq_right forbid_if_left forbid_if_right forbid_loop_install forbid_loop_shmem \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
