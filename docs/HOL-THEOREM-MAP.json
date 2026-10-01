@@ -14001,6 +14001,15 @@
     "reviewer": "flapjack-deepseek-three (source comparison): HOL wShareInst (word_to_stackScript.sml:186-224) is polymorphic in the stack word type `'a` and has the load forms wShareInst Load/Load8/Load16/Load32 v (Addr ad offset) kf = let (l,n2) = wReg1 ad kf in wStackLoad l (wRegWrite1 (\\r. ShMemOp <op> r (Addr n2 offset)) v kf) and the store forms wShareInst Store/Store8/Store16/Store32 v (Addr ad offset) kf = let (l1,n2) = wReg1 ad kf; let (l2,n1) = wReg2 v kf in wStackLoad (l1 ++ l2) (ShMemOp <op> n1 (Addr n2 offset)). Lean wShareInst {alpha} : WordMemOp -> Nat -> WordLangAddr alpha -> Nat x Nat x Nat -> ProgM alpha matches all eight clauses over the exact shared-word carrier ProgM alpha (single word type, faithful MlString FFI). Direct HOL rows ws_load..ws_store32=T in scripts/hol-probes/word_to_stack_wshareinst_probe.out, reproduced by wShareInstParityGuard and rfl examples in Flapjack/Test/WordToStackBitsParity.lean."
   },
   {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "wInst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "wInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-deepseek-three (source comparison): HOL wInst (word_to_stackScript.sml:88-175) is polymorphic in the stack word type and mirrors the asm instruction forms: Const -> wRegWrite1 (fun n. Inst (Const n c)); Arith Binop/Shift with Imm/Reg -> wReg1/wReg2 staging plus wRegWrite1; Div/AddCarry/AddOverflow/SubOverflow -> wReg1/wReg2 plus wRegWrite1; LongMul -> Inst (Arith (LongMul 3 0 0 2)); LongDiv -> wReg1 plus Inst (Arith (LongDiv 0 3 3 0 n5)); Mem Load/Store/Load8/Store8/Load32/Store32 -> wReg1/wReg2 plus wStackLoad/wRegWrite1 (Load16/Store16 intentionally fall to the Skip catch-all); FP FPLess/FPLessEqual/FPEqual -> wRegWrite1; FPMovToReg/FPMovFromReg are gated on dimindex(:'a) = 64; the remaining FP forms pass through as Inst (FP f); and wInst _ kf = Inst Skip. Lean wInst {width} [NeZero width] : WordLangInst (BitVec width) -> Nat x Nat x Nat -> ProgM (BitVec width) mirrors every clause with dimindex(:'a) = 64 read as width = 64 over the width-indexed exact carrier ProgM (BitVec width). Direct HOL rows wi_const..wi_skip=T in scripts/hol-probes/word_to_stack_winst_probe.out, reproduced by wInstParityGuard in Flapjack/Test/WordToStackBitsParity.lean. Re-reviewed flapjack-luna-b 2026-10-01 bead15.3.25.2 after ordinary merge of peer branch: current WordLangInst constructor arities and ProgM shared word carrier match asmScript/stackLangScript; source clauses88-185 retain staging order, extra carry register, fixed LongMul/LongDiv destinations, FP64 split and catchall. NeZero width is retained; word translation is qualified. Fourteen original64-bit rows cover representative cases, not every constructor or non64 FP branch. No production caller claim; full compiler25 remains open. Coordinator acceptance pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
@@ -38140,6 +38149,14 @@
   "reviewer": "flapjack-luna-b source comparison 2026-10-01, bead15.3.24: Source252-258: full cutsets=Spt Unit pair and (k,f,fprime) triple retained. f=0 leaves bitmaps unchanged; otherwise exact write_bitmap of SND live, insert_bitmap, Const k (n2w(i+1)), StackStore k0. Shared-word ProgM uses exact MlString constructor carrier, untouched here. No dropped inputs/convenience domain-list signature or extra hypotheses. Full comp/compile_prog/pass proof and production routing remain open; coordinator acceptance pending."
 },
 {
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "fstep_def",
+  "lean_path": "Flapjack/Compiler/Backend/Parmove.lean",
+  "lean_name": "fstep",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead15.3.25.3: parmoveScript.sml526-546 generic three lists of (option alpha, option alpha) pairs, NONE temporary. Same final state, self-move discard/start, first pending source equal to active destination retained in suffix then removed and prepended to active; singleton emits; longer path FRONT/LAST cycle detection saves last source to NONE and emits (d,s),(NONE,d) in that order; noncycle pops head. splitSource specializes listTheory splitAtPki (listScript.sml3996) to its index-independent predicate; first-match order preserved and prefix/suffix reconstruction proved. frontLast is total nonempty FRONT/LAST with reconstruction and length proofs; no default, wf premise or dropped invalid state. DecidableEq only computes propositional equality, no BEq assumption. Literal termination measure2*length pending+length active proved decreasing for every unfinished state. Ten direct original HOL num-option EVAL rows cover every branch, first matching source, long cycle and NONE cases, replayed in Lean. pmov/parmove semantics and production wMove/compiler remain open. Coordinator review pending."
+},
+{
   "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
   "hol_name": "get_writes_inst_def",
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/InstructionWrites.lean",
@@ -38272,6 +38289,70 @@
   "hol_name": "extend_with_resource_limit_not_fail",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "windmill_def",
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+  "lean_name": "windmill",
+  "statement_status": "reviewed_exact",
+  "reviewer": "47: ALL_DISTINCT(MAP FST moves) is List.Nodup of destination projection; no source restriction. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_def",
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+  "lean_name": "parsem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "161: snapshot every rho(source) before head-before-tail function updates; original UPDATE_LIST_THM confirms last repeated destination wins. MAP pairs is the source ZIP(MAP FST,MAP(rho o SND)) at equal lengths. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "seqsem_def",
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+  "lean_name": "seqsem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "318: same nil identity and head update followed by recursive tail, each source read from updated rho. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "sem_def",
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+  "lean_name": "sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "340: generic alpha register keys and beta values retained (original kernel type probed); parsem(pending++active)(seqsem(REVERSE emitted)rho). Not restricted to option registers. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "eqenv_def",
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+  "lean_name": "eqenv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "358: forall option register r, IS_SOME r implies rho1 r=rho2 r; only NONE ignored. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "seqsem_append",
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+  "lean_name": "seqsem_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "326: same two universally bound move lists, function equality seqsem(first++second)=seqsem second o seqsem first; no side premises; induction proof. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "sem_init",
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+  "lean_name": "sem_init",
+  "statement_status": "reviewed_exact",
+  "reviewer": "344: sem(pending,[],[])=parsem pending, generic keys/values and function equality; no premise. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "sem_final",
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+  "lean_name": "sem_final",
+  "statement_status": "reviewed_exact",
+  "reviewer": "350: sem([],[],emitted)=seqsem(REVERSE emitted), generic keys/values and function equality; no premise. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",

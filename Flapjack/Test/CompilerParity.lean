@@ -1,6 +1,8 @@
 import Flapjack.Test.WordToStackIndexListParity
 import Flapjack.Test.WordToStackAbsStackParity
 import Flapjack.Test.WordToStackFramesParity
+import Flapjack.Test.ParmoveSemanticsParity
+import Flapjack.Test.ParmoveFstepParity
 import Flapjack.Test.WordConvsPostAllocExactParity
 import Flapjack.Test.PanGlobalsBlockAlignmentParity
 import Flapjack.Test.StackSemLocValueParity

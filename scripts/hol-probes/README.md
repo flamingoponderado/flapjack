@@ -1910,6 +1910,15 @@ HOL_PROBE_ONLY=word_alloc_get_live_probeScript.sml scripts/hol-probes/regenerate
 These observations supplement clause review; they do not establish whole-pass
 correctness or the pending production liveness route.
 
+### Parallel-move deterministic step
+
+`parmove_fstep_probeScript.sml` directly evaluates original `parmove$fstep`
+(parmoveScript.sml:526-546) at option-number registers. Ten equalities cover
+every branch, first matching source, cycle save order, and temporary-register
+cases without a well-formedness assumption. The output is replayed by
+`Flapjack/Test/ParmoveFstepParity.lean`; complete pmov semantics and executed
+compiler wiring are separate open tasks.
+
 `word_alloc_get_writes_inst_probe.out` captures seven direct original
 `get_writes_inst_def` observations (word_allocScript.sml681-703). Full-tree
 equalities cover Const, AddCarry, LongDiv, the literal Load16 catchall,
@@ -1954,3 +1963,14 @@ HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/re
 - `word_to_stack_abs_stack_probeScript.sml`: original abstraction success and failure branches.
 
 - `word_to_stack_index_list_probeScript.sml`: descending indices and physical-name division.
+### Parallel-move state semantics
+
+`parmove_semantics_probeScript.sml` captures twelve direct original
+windmill/parsem/seqsem/sem/eqenv observations. Function updates use original
+`UPDATE_LIST_THM` precedence (last repeated destination wins); parallel sources
+are snapshotted, sequential sources are updated, emitted moves are reversed,
+and eqenv ignores only NONE. The two eqenv rows use the original
+`eqenv_def` and `FORALL_OPTION` simplification; the other rows use EVAL.
+`ParmoveSemanticsParity.lean` checks every captured observation; no windmill
+premise is imposed on repeated destinations. Full scheduler correctness and
+production wiring remain open.
