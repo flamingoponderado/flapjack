@@ -38885,5 +38885,21 @@
   "hol_name": "EL_index_list2",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.41: literal projections346/353 and lookup330/338. Polymorphic List and Nat quantifiers match; COUNT_LIST translated List.range, reverse keys plus k; original i<LENGTH xs guards both EL accesses, bounded Lean indexing adds no premise and indexed-list bound derives from lengthIndexList. Same truncated Nat subtraction in both spellings. No unguarded HD/default, word or finite-map carrier difference. Structural induction proves all four; original projection/first/last lookup rows replay in kernel. Full state relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MapFst.lean",
+  "lean_name": "mapFst",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "MAP_FST_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.42: literal MAP_FST_def782 maps pair first components, retaining list order and arbitrary second components; MAP_SND_MAP_FST786 universally quantifies list and arbitrary key function, unconditional value-projection equality. Polymorphic pair/List carriers match constructor-for-constructor, no injectivity, bound, word, finite-map or evaluator premise. Kernel map-composition simplification and fresh original empty/descendingkeys/collision/value rows replayed. Source uses1506/1667/1693/1862/1930 support stack relation proof; full pass correctness separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MapFst.lean",
+  "lean_name": "mapSndMapFst",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "MAP_SND_MAP_FST",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.42: literal MAP_FST_def782 maps pair first components, retaining list order and arbitrary second components; MAP_SND_MAP_FST786 universally quantifies list and arbitrary key function, unconditional value-projection equality. Polymorphic pair/List carriers match constructor-for-constructor, no injectivity, bound, word, finite-map or evaluator premise. Kernel map-composition simplification and fresh original empty/descendingkeys/collision/value rows replayed. Source uses1506/1667/1693/1862/1930 support stack relation proof; full pass correctness separate."
 }
 ]

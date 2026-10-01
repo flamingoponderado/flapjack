@@ -2710,3 +2710,7 @@ run_probe parmove_semantics_probeScript.sml parmove_semantics_probe.out \
 run_probe reg_alloc_clash_tree_probeScript.sml reg_alloc_clash_tree_probe.out \
   delete_names col_collision partial_existing partial_collision delta_discard_writes seq_right_first branch_merge branch_fixed_collision \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_map_fst_probeScript.sml word_to_stack_map_fst_probe.out \
+  mf_empty mf_keys mf_collision mf_values \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
