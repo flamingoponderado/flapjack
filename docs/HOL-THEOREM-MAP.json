@@ -38444,6 +38444,66 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.2.1.1): asmSemScript68-73 four clauses Lsl logical left, Lsr logical right, Asr sign-extending right, Ror rotate-right. Native positive BitVec width/NeZero, arbitrary Nat amount unchanged. No option/error or masked amount; total HOL shifts retain oversize zero/sign-fill and modulo-width rotation. This is the exact operation called by labSem arith_upd104, whose separate assertion and failed-state update must be retained by parent b4v0.2.1; not backend_common word_shift constant nor wordLang option word_sh. Future native Lab evaluator must use this definition, full evaluator/runtime parent b4v0 remains open."
 },
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Frames.lean",
+  "lean_name": "handlerVal",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "handler_val_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.35: literal handler_val799-806, is_handler_frame809-812, sorted_env842-844. Exact positive-width WordLocW and WordSemStackFrame source186-191, list/product/Option constructor shape preserved. handler_val base1 and ordinary1/handler4 headers plus frame length; handler discriminator only final Option field. sorted_env inspects GC cutset only and descending adjacent keys: original HOL sortingScript SORTED_DEF564-567 compares adjacent pairs, implemented by zip with tail and List.all; empty/singleton vacuous. No compiler/evaluation/relation premises or finite-map translation. Fresh original9rows/kernel replay; full stack relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Frames.lean",
+  "lean_name": "isHandlerFrame",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "is_handler_frame_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.35: literal handler_val799-806, is_handler_frame809-812, sorted_env842-844. Exact positive-width WordLocW and WordSemStackFrame source186-191, list/product/Option constructor shape preserved. handler_val base1 and ordinary1/handler4 headers plus frame length; handler discriminator only final Option field. sorted_env inspects GC cutset only and descending adjacent keys: original HOL sortingScript SORTED_DEF564-567 compares adjacent pairs, implemented by zip with tail and List.all; empty/singleton vacuous. No compiler/evaluation/relation premises or finite-map translation. Fresh original9rows/kernel replay; full stack relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Frames.lean",
+  "lean_name": "sortedEnv",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "sorted_env_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.35: literal handler_val799-806, is_handler_frame809-812, sorted_env842-844. Exact positive-width WordLocW and WordSemStackFrame source186-191, list/product/Option constructor shape preserved. handler_val base1 and ordinary1/handler4 headers plus frame length; handler discriminator only final Option field. sorted_env inspects GC cutset only and descending adjacent keys: original HOL sortingScript SORTED_DEF564-567 compares adjacent pairs, implemented by zip with tail and List.all; empty/singleton vacuous. No compiler/evaluation/relation premises or finite-map translation. Fresh original9rows/kernel replay; full stack relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstraction.lean",
+  "lean_name": "absStack",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "abs_stack_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.36: literal HOL700-742. Faithful WordSemStackFrame and WordLocW at one same positive BitVec/NeZero width, List/Option/product arities match. Base requires frames/lens empty and exactly singleton Word0. Ordinary branch uses reviewed fullReadBitmap, rejects unequal bit lengths and insufficient stack, takes/drops len then propagates recursive Option. Handler branch additionally requires Word1 marker and loc/hv/bitmap header, returning SOME pair without adding source-handler value conditions. Fallback NONE for all shape mismatches, recursion decreases source frames without fuel. No extra success/compiler/relation premises; source ignores size/locals consistently. Fresh original11equations and kernel replay cover base, ordinary and handler success plus bitmap/length/short/missing-sentinel/marker/header/lens errors; full stack_rel remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexList.lean",
+  "lean_name": "indexList",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "index_list_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.37: literal index_list319-322 recurses on polymorphic List, uses n+length tail, retains order and fixed starting n; LENGTH_index_list325-329 universally quantifies list and Nat with unconditional identical length equality proved by induction; adjust_names792-794 is Nat division by2. No word/fmap/array carrier difference, extra premise or runtime approximation. Fresh original5rows and kernel replay cover empty/singleton/descending indices/even+odd division. Needed stack_rel_aux815 indexing; full state relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexList.lean",
+  "lean_name": "lengthIndexList",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "LENGTH_index_list",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.37: literal index_list319-322 recurses on polymorphic List, uses n+length tail, retains order and fixed starting n; LENGTH_index_list325-329 universally quantifies list and Nat with unconditional identical length equality proved by induction; adjust_names792-794 is Nat division by2. No word/fmap/array carrier difference, extra premise or runtime approximation. Fresh original5rows and kernel replay cover empty/singleton/descending indices/even+odd division. Needed stack_rel_aux815 indexing; full state relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexList.lean",
+  "lean_name": "adjustNames",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "adjust_names_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.37: literal index_list319-322 recurses on polymorphic List, uses n+length tail, retains order and fixed starting n; LENGTH_index_list325-329 universally quantifies list and Nat with unconditional identical length equality proved by induction; adjust_names792-794 is Nat division by2. No word/fmap/array carrier difference, extra premise or runtime approximation. Fresh original5rows and kernel replay cover empty/singleton/descending indices/even+odd division. Needed stack_rel_aux815 indexing; full state relation remains separate."
+},
   {
     "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
     "hol_name": "machine_result",

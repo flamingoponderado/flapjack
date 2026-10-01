@@ -1947,3 +1947,10 @@ Loop live-set scope and Call handlers under NONE/SOME returns.
 predicates and kernel-replays each row. Regenerate read-only with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+- `word_to_stack_frames_probeScript.sml`: original `handler_val`,
+  `is_handler_frame`, and `sorted_env` rows for exact stack-frame predicates.
+
+- `word_to_stack_abs_stack_probeScript.sml`: original abstraction success and failure branches.
+
+- `word_to_stack_index_list_probeScript.sml`: descending indices and physical-name division.
