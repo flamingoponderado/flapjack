@@ -3619,3 +3619,15 @@ run_probe word_to_stack_no_shmemop_flat_probeScript.sml word_to_stack_no_shmemop
 run_probe word_to_stack_no_shmemop_recursive_probeScript.sml word_to_stack_no_shmemop_recursive_probe.out \
   rc_must_1 rc_loop_1 rc_seq_1 rc_reg_1 rc_imm_yes_1 rc_imm_no_1 rc_must_32 rc_loop_32 rc_seq_32 rc_reg_32 rc_imm_yes_32 rc_imm_no_32 rc_must_64 rc_loop_64 rc_seq_64 rc_reg_64 rc_imm_yes_64 rc_imm_no_64 rc_must_80 rc_loop_80 rc_seq_80 rc_reg_80 rc_imm_yes_80 rc_imm_no_80 rc_must_shared rc_must_invalid rc_must_ignored_handler rc_loop_shared rc_loop_invalid rc_loop_ignored_handler rc_seq_shared rc_seq_invalid rc_seq_ignored_handler rc_reg_shared rc_reg_invalid rc_reg_ignored_handler rc_imm_yes_shared rc_imm_yes_invalid rc_imm_yes_ignored_handler rc_imm_no_shared rc_imm_no_invalid rc_imm_no_ignored_handler \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_rename_property_wrappers_probeScript.sml ssa_rename_property_wrappers_probe.out \
+  rw_core_full rw_move_full rw_move_type rw_single_full \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe ssa_option_lookup_subset_probeScript.sml ssa_option_lookup_subset_probe.out \
+  os_full os_type_ssa os_type_cst_locs os_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_rename_move_preserve_weak_probeScript.sml ssa_rename_move_preserve_weak_probe.out \
+  rmw_full rmw_type_st rmw_type_cst rmw_type_ssa rmw_type_na rmw_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

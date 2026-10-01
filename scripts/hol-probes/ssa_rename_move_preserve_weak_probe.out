@@ -1,0 +1,6 @@
+rmw_full=⊢ ∀st ssa na ls cst. ssa_locals_rel na ssa st.locals cst.locals ∧ set ls ⊆ domain ssa ∧ ALL_DISTINCT ls ∧ ssa_map_ok na ssa ∧ word_state_eq_rel st cst ⇒ (let (mov,ssa',na') = list_next_var_rename_move ssa na ls; (res,rcst) = evaluate (mov,cst) in res = NONE ∧ ssa_locals_rel na' ssa' st.locals rcst.locals ∧ word_state_eq_rel st rcst)
+rmw_type_st=:(α, β, γ) state
+rmw_type_cst=:(α, β, γ) state
+rmw_type_ssa=:num sptree$num_map
+rmw_type_na=:num
+rmw_type_ls=:num list

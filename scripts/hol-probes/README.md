@@ -3684,6 +3684,7 @@ its existing canonical Lean definition now preserves the generic carrier.
 The actual compiler theorem still uses Nat there, as required by its original
 compiler type. No clauses or executed compiler behavior change.
 
+ssa_physical_state_updates_probe.out freshly replays the literal physical-target setVar and list-insert locals-relation proofs and records their independent source/target code/FFI types. SSALocalsPhysicalStateUpdates retains every original premise including list length, using native Spt locals. No executable change or cross-language equivalence claim.
 ### Full WordConvs forbidden-constructor equation group
 
 `word_convs_no_alloc_def_probeScript.sml`, `word_convs_no_mt_def_probeScript.sml`
@@ -3752,8 +3753,10 @@ including arbitrary exact MlString pass-through. HOL's locally overloaded
 `++` remains left-associative, so the generic callback bridge's right-associated
 tree is not a definition-exact substitute. Production routing remains tracked
 on fleet bead `flapjack-52bq.1`.
+ssa_rename_property_wrappers_probe.out replays original class-add, full core renaming and both property wrapper proofs, recording original polymorphic Move program type. SSARenamePropertyWrappers retains all original producer equalities, hypotheses and four conclusions on native producers. No executable change or cross-language equivalence claim.
 ssa_physical_state_updates_probe.out freshly replays the literal physical-target setVar and list-insert locals-relation proofs and records their independent source/target code/FFI types. SSALocalsPhysicalStateUpdates retains every original premise including list length, using native Spt locals. No executable change or cross-language equivalence claim.
 
+ssa_option_lookup_subset_probe.out replays the full original subset-helper proof and three inferred native map/list types. SSAOptionLookupSubset retains the two original domain premises and complete mapped-name domain conclusion, with generic locals payload. Proof-only regression evidence, not cross-language equivalence.
 ### SSA merge unchanged lookups
 
 `ssa_merge_move_lookups_probeScript.sml` replays the complete literal original local frame2 and frame3 proofs, specializes frame3 to empty maps, applies it under independently proved guards for an absent-list key and an outside-intersection key, captures both whole merge results, and checks the false guard for a changed common key. Lean `mergeMovesFrame3` retains the full original guard and both lookup equalities for arbitrary native trees.
@@ -3791,3 +3794,5 @@ legitimate source-subprogram induction hypotheses. The accepted full source
 guard equations are reused. These regressions do not establish cross-language
 equivalence or complete the compiler theorem. Selector:
 `HOL_PROBE_ONLY=word_to_stack_no_shmemop_recursive_probeScript.sml`.
+
+`ssa_rename_move_preserve_weak_probe.out` freshly replays the full original move-renaming preservation proof plus its literal local prerequisites and five original inferred carriers; both states share all three type dimensions. No successful target evaluation or post-state relation is assumed.
