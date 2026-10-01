@@ -4071,3 +4071,5 @@ oracle value. The Lean ports retain independent opaque completions indexed by
 width and both Loc fields; their Word equations and Word-guarded agreement
 are kernel checked in `WordSem.Accessors` and `WordSemAccessorsParity`.
 These regressions do not establish a concrete meaning for unspecified Locs.
+
+- `ssa_cc_trans_inst_props_probeScript.sml` replays literal instruction allocation/map properties with original local map-extension and allocation-add proofs, capturing the full theorem and six argument carriers.

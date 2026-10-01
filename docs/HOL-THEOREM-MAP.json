@@ -49381,5 +49381,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-q8y7: compared word_allocProofScript.sml5838-5856 and replayed literal original proof plus literal ssa_map_ok_extend/merge_moves_frame/fake_moves_frame prerequisites. Full capture quantifies prio/ssaL/ssaR/na/a/b/naOut/ssaU and eight types confirm unit-sum option priority, exact num Spt maps, natural counters and same alpha program carriers. Lean retains actual native fixInconsistencies output equality, original isAllocVar and both input ssaMapOK premises, and all three monotonicity/allocation/output-map conclusions. No evaluator, target-result or post-state assumption. Native merge/fake frames supply the original proof composition; tree maps remain reviewed Spt and are not finite-map-qualified. Only HOL positive word dimension translates to BitVec width with NeZero discharge."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_inst_props",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAInstructionProps.lean",
+  "lean_name": "ssaCcTransInstProps",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-yfm2: compared word_allocProofScript.sml5817-5833, replayed literal theorem proof with literal local ssa_map_ok_extend/is_alloc_var_add prerequisites, and captured six original argument carriers. Retains forall instruction/ssa/next/output/ssaOut/nextOut, actual native ssa_cc_trans_inst output equality, original ssa_map_ok and is_alloc_var conjunction, and all three counter monotonicity/allocation/output-map conclusions. Reviewed original asm inst, arith, reg_imm, addr, memop and FP constructors against native carriers; input and output share positive BitVec width with NeZero, including exact dimindex=64 FP branches and both register-equality branches of FPMovFromReg. SSA tree maps use reviewed Spt, not finite-map translation; priority/move sequence and all one/two-name insertions remain native. Proof case splits all instructions and discharges only the original fresh insert allocation/bounds; no added executable/evaluation or output-validity premise."
 }
 ]

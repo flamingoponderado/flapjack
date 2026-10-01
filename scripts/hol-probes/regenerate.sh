@@ -3756,3 +3756,8 @@ run_probe ssa_fix_inconsistencies_props_probeScript.sml ssa_fix_inconsistencies_
   fip_full fip_type_prio fip_type_ssaL fip_type_ssaR fip_type_na fip_type_a fip_type_b fip_type_nextOut fip_type_ssaU \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_inst_props_probeScript.sml ssa_cc_trans_inst_props_probe.out \
+  sip_full sip_type_i sip_type_ssa sip_type_na sip_type_iOut sip_type_ssaOut sip_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
