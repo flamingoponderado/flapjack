@@ -4225,6 +4225,12 @@
       "sha256": "b30f4c2b3a480cb89f3ad2876b18403ba0bc312fd52ef27afc7048fd2675ccea"
     },
     {
+      "bytes": 219,
+      "out": "word_to_stack_code_labels_probe.out",
+      "rows": 14,
+      "sha256": "967d322d14992cc6185bcdc8c6faecac30b9c0a499b25fffc9473f737b966b97"
+    },
+    {
       "bytes": 151,
       "out": "word_to_stack_colour_domain_probe.out",
       "rows": 13,

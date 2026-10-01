@@ -1,0 +1,14 @@
+lh_load_empty=T
+lh_load_many=T
+lh_move_zero=T
+lh_move_many=T
+lh_aux_zero=T
+lh_aux_many=T
+lh_ret_zero=T
+lh_ret_plain=T
+lh_ret_handler=T
+lh_ret_perf=T
+lh_ret_width_one=T
+lh_live_zero=T
+lh_live_frame=T
+lh_live_width_one=T
