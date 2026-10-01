@@ -3110,3 +3110,6 @@ run_probe word_copy_codec_domain_probeScript.sml word_copy_codec_domain_probe.ou
 run_probe word_to_stack_program_bitmaps_probeScript.sml word_to_stack_program_bitmaps_probe.out \
   pb_single_skip pb_single_zero_frame pb_single_alloc pb_single_seq pb_single_invalid_bound pb_single_width_one pb_rows_empty pb_rows_repeat_id pb_rows_mixed pb_rows_bool \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+run_probe reg_alloc_initialization_probeScript.sml reg_alloc_initialization_probe.out \
+  ira_adj ira_tag ira_degrees ira_coalesced ira_move_related ira_preserved ira_failure ira_zero \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
