@@ -1,0 +1,10 @@
+load "preamble";
+load "word_allocProofTheory";
+open bossLib HolKernel Parse preamble word_allocProofTheory sptreeTheory reg_allocTheory;
+fun out label q = (print(label ^ "=");print_term(rconc(SIMP_CONV (srw_ss()) [ssa_map_ok_def,lookup_def,is_phy_var_def] q));print "\n");
+val _ = out "sm_empty" ``ssa_map_ok 0 (LN:num num_map)``;
+val _ = out "sm_valid" ``ssa_map_ok 8 (LS 7)``;
+val _ = out "sm_at_bound" ``ssa_map_ok 7 (LS 7)``;
+val _ = out "sm_physical" ``ssa_map_ok 100 (LS 2)``;
+val _ = out "sm_invalid" ``ssa_map_ok 0 (BN LN LN:num num_map)``;
+val _ = (print "sm_definition=";print_thm(DB.fetch "word_allocProof" "ssa_map_ok_def");print "\n");

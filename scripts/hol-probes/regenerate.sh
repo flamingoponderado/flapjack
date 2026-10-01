@@ -790,6 +790,11 @@ run_probe word_to_stack_retained_frame_probeScript.sml word_to_stack_retained_fr
 run_probe word_to_stack_allocator_stages_probeScript.sml word_to_stack_allocator_stages_probe.out \
   allocator_stages_skip allocator_stages_tick allocator_stages_raise allocator_stages_tail_call \
   "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_selector_domain_probeScript.sml word_to_stack_selector_domain_probe.out \
+  selector_program_skip selector_program_seq selector_program_set selector_program_load \
+  selector_program_store selector_program_store_offset selector_program_share selector_program_if \
+  selector_program_loop selector_program_must selector_program_tail_handler selector_program_return selector_program_both \
+  "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
 run_probe word_to_stack_selector_prelude_probeScript.sml word_to_stack_selector_prelude_probe.out \
   selector_prelude_const selector_prelude_var selector_prelude_lookup selector_prelude_load \
   selector_prelude_add selector_prelude_shift selector_prelude_shift_oob selector_prelude_heap \
@@ -3302,3 +3307,11 @@ run_probe stackprops_label_safety_probeScript.sml stackprops_label_safety_probe.
 run_probe parmove_step_map_inj_probeScript.sml parmove_step_map_inj_probe.out \
   smi_original_statement smi_remove_self smi_start smi_extend smi_save smi_emit_head smi_emit_last smi_scoped_collapse smi_scoped_injectivity \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
+  ss_even ss_empty ss_duplicates ss_invalid ss_one ss_setup0 ss_setup1 ss_setup3 ss_setup80 even_list_def next_var_rename_def list_next_var_rename_def setup_ssa_def ss_setup_1_to_80 ss_setup_80_to_1 ss_setup_original_type \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
+  sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
