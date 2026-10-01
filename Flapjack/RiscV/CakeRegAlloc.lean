@@ -1,5 +1,5 @@
-import Flapjack.Compiler.Backend.RegAlloc.SortMoves
 import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
+import Flapjack.Compiler.Backend.RegAlloc.SortMoves
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
 import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
 import Flapjack.Compiler.Backend.RegAlloc.TagColour
