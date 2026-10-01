@@ -1,3 +1,4 @@
+import Flapjack.Test.WordConvsPostAllocExactParity
 import Flapjack.Test.PanGlobalsBlockAlignmentParity
 import Flapjack.Test.StackSemLocValueParity
 import Flapjack.Test.StackPropsProgramValidity
@@ -1351,6 +1352,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CrepLangGeneratedSizeParity.runChecks,
     Flapjack.Test.PanSimpProgBridgeParity.runChecks,
     Flapjack.Test.CrepSemTotalExtCallParity.runChecks,
+    Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
     ].mapM id
   unless results.all id do
