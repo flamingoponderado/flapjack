@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Parmove.DStepStep
 import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
 
