@@ -1,3 +1,13 @@
+`word_convs_every_var_inst_mono_probe.out` captures the complete exported original
+monotonicity theorem and 15 actual instruction predicate pairs: fourteen valid
+implication applications plus a rejecting non-64 FP second register. Kernel
+fixtures replay the inputs and prove the original pointwise/source premises
+internally. Widths1/8/32/64/80, immediate/register arithmetic, memory and ignored
+16-bit/FP operands are covered. Regression observations do not establish
+cross-prover equivalence. Regenerate with
+`HOL_PROBE_ONLY=word_convs_every_var_inst_mono_probeScript.sml` from the
+read-only prebuilt CakeML semantics theory directory.
+
 `parmove_preserves_moves_parmove_probe.out` contains six direct original scheduler
 observations for shared sources, a cycle, Bool registers, emitted order, self moves
 and empty input. `ParmovePreservesMovesParmoveParity` replays the rows and applies
