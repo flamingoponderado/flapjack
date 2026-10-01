@@ -2699,6 +2699,22 @@ HOL_PROBE_ONLY=word_to_stack_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
 - `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
+
+### BackendProps nonzero label sets
+
+`backendprops_nonzero_labels_probeScript.sml` kernel-checks fifteen assertions
+from the original definition in `backendPropsTheory`, using standard HOL set
+laws without supplying the six restriction theorems. `BackendPropsNonzeroLabelsParity`
+replays identical sets, including zero/nonzero entries, label zero with a
+nonzero entry, duplicates, naturals larger than 64 bits, non-vacuous subset
+and union theorem applications, overlapping/empty set families, and two
+membership checks in the infinite `UNIV` set. The final two observations are
+`F`: a zero entry is excluded, and a deliberately false subset premise is
+rejected. These regressions do not prove cross-language equivalence.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=backendprops_nonzero_labels_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 ### Register allocator phase closure audit
 
 `reg_alloc_phase_closure_probeScript.sml` captures 29 exported original HOL

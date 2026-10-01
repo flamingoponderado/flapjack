@@ -1,0 +1,15 @@
+nz_empty=T
+nz_zero=T
+nz_first_zero=T
+nz_mixed=T
+nz_duplicate=T
+nz_large=T
+nz_subset=T
+nz_subset_left=T
+nz_left_union=T
+nz_right_union=T
+nz_mono=T
+nz_bigunion=T
+nz_univ_kept=T
+nz_univ_zero=F
+nz_false_premise=F
