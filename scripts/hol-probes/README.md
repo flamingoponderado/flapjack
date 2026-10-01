@@ -1,3 +1,9 @@
+`wordconvs_program_mono_probe.out` prints the complete original `every_var_mono`
+and eleven same-input predicate pairs replayed by `WordConvsProgramMonoParity`.
+These include Call NONE ignoring its populated handler, returning Calls with and
+without handlers, loop cut sets, and a false implication sentinel. Regenerate with
+`HOL_PROBE_ONLY=wordconvs_program_mono_probeScript.sml` against the read-only original tree.
+
 `wordconvs_name_mono_probe.out` prints the complete original theorem and
 five matching cut-set/predicate fixtures in `WordConvsNameMonoParity`, including
 a non-well-formed tree and a failed implication sentinel. Regenerate with
@@ -2982,3 +2988,14 @@ while its no-read conclusion remains true. `ParmoveScratchOrderWrapperParity`
 replays all eight observations and the full generic theorem with seven valid
 applications. This is a proof-only wrapper port; the executed scheduler is unchanged.
 Selector: `HOL_PROBE_ONLY=parmove_scratch_order_wrapper_probeScript.sml`.
+
+`parmove_step_map_inj_probe.out` freshly fetches the complete exported
+`step_MAP_INJ` theorem and records the complete mapped source/target states of
+all six primitive rules under an Option Bool-to-Option Nat renaming. The final
+sentinel maps every present natural to `SOME F`: it collapses 4 and 5, but the
+original prover verifies `inj_on_state` on the singleton endpoint support 3.
+`ParmoveStepMapInjParity` replays these states and all six genuine theorem
+applications, the scoped sentinel and an arbitrary carrier identity application.
+No global injectivity or decidable equality premise is introduced; this proof-only
+port leaves the executed scheduler unchanged.
+Selector: `HOL_PROBE_ONLY=parmove_step_map_inj_probeScript.sml`.
