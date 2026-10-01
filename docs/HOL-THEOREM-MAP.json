@@ -44811,5 +44811,381 @@
     "hol_name": "steps_preserves_moves",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a source comparison 2026-10-01 beadw1a4.8: original1039-1048 free destination x explicit as Option alpha; initial existential non-self source conjunct primitive-step RTC implies same final existential. Arbitrary raw Option alpha pair-list State, stateToList concatenation and canonical ReflTransGen Step retained, lambdas beta-reduced. No wf, scratch safety, equality instance, target output or intermediate-invariant premise. Refl/tail induction lifts accepted whole stepPreservesMoves. Certified zero-step and two-step Start/Save kernel fixtures expose changing source and scratch destination; fresh original predicates/output witness equations are regression evidence only. Coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_adj_ls_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getAdjLs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_adj_ls_def; fresh HOL print_thm: get_adj_ls = (\\state. (M_success state.adj_ls, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_adj_ls_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setAdjLs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_adj_ls_def; fresh HOL print_thm: !x. set_adj_ls x = (\\state. (M_success (), state with adj_ls := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_node_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getNodeTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_node_tag_def; fresh HOL print_thm: get_node_tag = (\\state. (M_success state.node_tag, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_node_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setNodeTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_node_tag_def; fresh HOL print_thm: !x. set_node_tag x = (\\state. (M_success (), state with node_tag := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_degrees_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getDegrees",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_degrees_def; fresh HOL print_thm: get_degrees = (\\state. (M_success state.degrees, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_degrees_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setDegrees",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_degrees_def; fresh HOL print_thm: !x. set_degrees x = (\\state. (M_success (), state with degrees := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_dim_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getDim",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_dim_def; fresh HOL print_thm: get_dim = (\\state. (M_success state.dim, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_dim_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setDim",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_dim_def; fresh HOL print_thm: !x. set_dim x = (\\state. (M_success (), state with dim := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_simp_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getSimpWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_simp_wl_def; fresh HOL print_thm: get_simp_wl = (\\state. (M_success state.simp_wl, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_simp_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setSimpWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_simp_wl_def; fresh HOL print_thm: !x. set_simp_wl x = (\\state. (M_success (), state with simp_wl := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_spill_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getSpillWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_spill_wl_def; fresh HOL print_thm: get_spill_wl = (\\state. (M_success state.spill_wl, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_spill_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setSpillWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_spill_wl_def; fresh HOL print_thm: !x. set_spill_wl x = (\\state. (M_success (), state with spill_wl := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_freeze_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getFreezeWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_freeze_wl_def; fresh HOL print_thm: get_freeze_wl = (\\state. (M_success state.freeze_wl, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_freeze_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setFreezeWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_freeze_wl_def; fresh HOL print_thm: !x. set_freeze_wl x = (\\state. (M_success (), state with freeze_wl := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_avail_moves_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getAvailMovesWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_avail_moves_wl_def; fresh HOL print_thm: get_avail_moves_wl = (\\state. (M_success state.avail_moves_wl, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_avail_moves_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setAvailMovesWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_avail_moves_wl_def; fresh HOL print_thm: !x. set_avail_moves_wl x = (\\state. (M_success (), state with avail_moves_wl := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_unavail_moves_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getUnavailMovesWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_unavail_moves_wl_def; fresh HOL print_thm: get_unavail_moves_wl = (\\state. (M_success state.unavail_moves_wl, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_unavail_moves_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setUnavailMovesWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_unavail_moves_wl_def; fresh HOL print_thm: !x. set_unavail_moves_wl x = (\\state. (M_success (), state with unavail_moves_wl := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_coalesced_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getCoalesced",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_coalesced_def; fresh HOL print_thm: get_coalesced = (\\state. (M_success state.coalesced, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_coalesced_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setCoalesced",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_coalesced_def; fresh HOL print_thm: !x. set_coalesced x = (\\state. (M_success (), state with coalesced := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_move_related_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getMoveRelated",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_move_related_def; fresh HOL print_thm: get_move_related = (\\state. (M_success state.move_related, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_move_related_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setMoveRelated",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_move_related_def; fresh HOL print_thm: !x. set_move_related x = (\\state. (M_success (), state with move_related := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "get_stack_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "getStack",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs ``:ra_state`` generated get_stack_def; fresh HOL print_thm: get_stack = (\\state. (M_success state.stack, state)) at type ra_state -> (_, 'c) exc # ra_state; Lean field projection on the reviewed Carriers.State, exception type an implicit Type binder as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "set_stack_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "setStack",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:83 define_monad_access_funs generated set_stack_def; fresh HOL print_thm: !x. set_stack x = (\\state. (M_success (), state with stack := x)); Lean structure update, exception type implicit as HOL's free 'c. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "adj_ls_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "adjLsLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated adj_ls_length_def; fresh HOL print_thm: adj_ls_length = Marray_length (\\state. state.adj_ls), exception type polymorphic; canonical arrayLength (Marray_length_def). Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "adj_ls_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "adjLsSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated adj_ls_sub_def; fresh HOL print_thm: adj_ls_sub = Marray_sub (\\state. state.adj_ls) Subscript; canonical arraySub (Marray_sub_def) with the reviewed state_exn Subscript. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "update_adj_ls_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "updateAdjLs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated update_adj_ls_def; fresh HOL print_thm: update_adj_ls = Marray_update (\\state. state.adj_ls) (\\x state. state with adj_ls := x) Subscript; canonical arrayUpdate (Marray_update_def). Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "node_tag_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "nodeTagLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated node_tag_length_def; fresh HOL print_thm: node_tag_length = Marray_length (\\state. state.node_tag), exception type polymorphic; canonical arrayLength (Marray_length_def). Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "node_tag_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "nodeTagSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated node_tag_sub_def; fresh HOL print_thm: node_tag_sub = Marray_sub (\\state. state.node_tag) Subscript; canonical arraySub (Marray_sub_def) with the reviewed state_exn Subscript. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "update_node_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "updateNodeTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated update_node_tag_def; fresh HOL print_thm: update_node_tag = Marray_update (\\state. state.node_tag) (\\x state. state with node_tag := x) Subscript; canonical arrayUpdate (Marray_update_def). Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "degrees_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "degreesLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated degrees_length_def; fresh HOL print_thm: degrees_length = Marray_length (\\state. state.degrees), exception type polymorphic; canonical arrayLength (Marray_length_def). Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "degrees_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "degreesSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated degrees_sub_def; fresh HOL print_thm: degrees_sub = Marray_sub (\\state. state.degrees) Subscript; canonical arraySub (Marray_sub_def) with the reviewed state_exn Subscript. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "update_degrees_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "updateDegrees",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated update_degrees_def; fresh HOL print_thm: update_degrees = Marray_update (\\state. state.degrees) (\\x state. state with degrees := x) Subscript; canonical arrayUpdate (Marray_update_def). Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "coalesced_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "coalescedLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated coalesced_length_def; fresh HOL print_thm: coalesced_length = Marray_length (\\state. state.coalesced), exception type polymorphic; canonical arrayLength (Marray_length_def). Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "coalesced_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "coalescedSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated coalesced_sub_def; fresh HOL print_thm: coalesced_sub = Marray_sub (\\state. state.coalesced) Subscript; canonical arraySub (Marray_sub_def) with the reviewed state_exn Subscript. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "update_coalesced_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "updateCoalesced",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated update_coalesced_def; fresh HOL print_thm: update_coalesced = Marray_update (\\state. state.coalesced) (\\x state. state with coalesced := x) Subscript; canonical arrayUpdate (Marray_update_def). Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "move_related_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "moveRelatedLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated move_related_length_def; fresh HOL print_thm: move_related_length = Marray_length (\\state. state.move_related), exception type polymorphic; canonical arrayLength (Marray_length_def). Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "move_related_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "moveRelatedSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated move_related_sub_def; fresh HOL print_thm: move_related_sub = Marray_sub (\\state. state.move_related) Subscript; canonical arraySub (Marray_sub_def) with the reviewed state_exn Subscript. Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "update_move_related_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Accessors.lean",
+    "lean_name": "updateMoveRelated",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocScript.sml:113-115 define_MFarray_manip_funs generated update_move_related_def; fresh HOL print_thm: update_move_related = Marray_update (\\state. state.move_related) (\\x state. state with move_related := x) Subscript; canonical arrayUpdate (Marray_update_def). Name provenance via the bounded monad_accessor_declarations recognizer (.10.5.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "tag_case_st",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "tagCaseSt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocProofScript.sml:100-105: !t. (tag_CASE t a b c) f = tag_CASE t (\\n. a n f) (b f) (c f); tag_CASE as a Lean match in constructor order Fixed/Atemp/Stemp; free a b c f explicit, polymorphic. No HOL EL; free n t s explicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "list_case_st",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "listCaseSt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocProofScript.sml:107-112: !t. (list_CASE t a b) f = list_CASE t (a f) (\\x y. b x y f); list_CASE as a Lean match; free a b f explicit, polymorphic. No HOL EL; free n t s explicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "Mupdate_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "mupdateEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocProofScript.sml:192-205: !e x n ls. Mupdate e x n ls = if n < LENGTH ls then M_success (LUPDATE x n ls) else M_failure e; LUPDATE x n l as l.set n x over the canonical mUpdate (Mupdate_def). No HOL EL; free n t s explicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "update_adj_ls_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "updateAdjLsEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocProofScript.sml:207-216: update_adj_ls n t s = if n < LENGTH s.adj_ls then (M_success (), s with adj_ls := LUPDATE t n s.adj_ls) else (M_failure Subscript, s). No HOL EL; free n t s explicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "update_node_tag_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "updateNodeTagEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocProofScript.sml:218-227: update_node_tag analogue over node_tag. No HOL EL; free n t s explicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "update_degrees_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "updateDegreesEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocProofScript.sml:229-238: update_degrees analogue over degrees. No HOL EL; free n t s explicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "update_coalesced_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "updateCoalescedEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocProofScript.sml:240-249: update_coalesced analogue over coalesced. No HOL EL; free n t s explicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "update_move_related_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "updateMoveRelatedEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocProofScript.sml:251-260: update_move_related analogue over move_related. No HOL EL; free n t s explicit."
   }
 ]
