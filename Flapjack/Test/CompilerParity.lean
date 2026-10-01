@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveUpdateLemmasParity
 import Flapjack.Test.ParmoveInvariantsParity
 
 import Flapjack.Test.WordToStackBitmapAppendParity

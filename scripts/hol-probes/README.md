@@ -2024,3 +2024,12 @@ rows for exact DIV2/parmove/format_var/wMoveAux composition. All formatting
 branches, register and spill swaps, odd indices and DIV2 collision, truncated
 offsets and fprime are replayed by `literalWMoveParityGuard` in the normal
 compiler parity suite. Production comp/compile wiring remains open.
+
+### Parallel-move update lemmas
+
+`parmove_updates_probeScript.sml` captures eight original parallel environment
+lookups and two temporary-insensitive equivalence directions. Fresh insertion,
+snapshot sources, untouched/empty/self/swap cases and repeated-destination
+freshness failure are replayed by `ParmoveUpdateLemmasParity.lean`, alongside
+generic freshness/windmill theorem applications. Full step invariance and
+`parmove_correct` remain open.
