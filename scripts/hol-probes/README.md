@@ -2185,6 +2185,7 @@ suppression, returning and exceptional continuations, both Loop cut sets,
 and 32/64-bit instruction transfer branches. `WordLangMaxVarParity.lean`
 kernel-replays the same inputs. These finite rows support source review;
 they do not establish a cross-prover equivalence or production route.
+
 `parmove_final_probeScript.sml` freshly captures seven full original pmov
 results: terminal history preservation, self move, dependency chain, cycle,
 scratch-register inputs, duplicate destinations and nonempty active/history.
