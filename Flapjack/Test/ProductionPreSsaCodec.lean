@@ -39,4 +39,14 @@ example : supportsCodec
     (.inst (.arith (.addCarry 1 2 3 4 5)) : WordProg (BitVec 64)) = false := by
   simp [supportsCodec]
 
+-- Every actual source input executes the native branch, without a supplied
+-- encoding-success, compilation-success or successful allocation premise.
+example {width : Nat} [NeZero width] (name : Nat) (parameters wordParameters : List Nat)
+    (body : LoopProg (BitVec width)) :
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedLimit name wordParameters
+        (wordBeforeSsaAllocatorBody (loopToWordCompFuncRouted name parameters body)) =
+      CakeRegAlloc.cakeAllocateWordFunctionAfterDeadNativeLimit name wordParameters
+        (wordBeforeSsaAllocatorBody (loopToWordCompFuncRouted name parameters body)) :=
+  sourceAllocatorInput_usesNativeLimit name parameters body wordParameters
+
 end Flapjack.Test.ProductionPreSsaCodec
