@@ -2515,3 +2515,5 @@ cycle save, prior-written scratch reads/save, and Boolean registers. Matching
 `Flapjack/Test/ParmoveTempStepParity.lean` checks source wf/safety and derives
 target safety via the actual Step constructor and full ported theorem.
 RTC/pmov and full Move correctness remain separate open obligations.
+
+`word_to_stack_dead_codec_probe` captures thirteen fresh original whole-program dead-code output equations: dead moves/constants/loads, retained ordinary 16-bit memory and stores, observable shared loads, sequence and If pruning, loops, MustTerminate, unchanged tail-call handlers and both transformed returning Call continuations. Kernel fixtures replay the same complete output trees. Separate production-only five-register AddCarry sentinels check deletion, live retention and nested handler rejection; that constructor has no HOL counterpart. The full arbitrary-backward-state theorem and executed wrapper prove one-way actual codec acceptance closure, not equality, since deletion can remove a rejected primitive. Subsequent optimizations and the native compiler route remain open.

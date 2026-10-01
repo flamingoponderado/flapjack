@@ -3088,3 +3088,7 @@ run_probe misc_find_index_shift_zero_probeScript.sml misc_find_index_shift_zero_
 run_probe parmove_temp_step_probeScript.sml parmove_temp_step_probe.out \
   pts_remove pts_start pts_extend pts_save_cycle pts_emit_head pts_emit_last pts_save_none pts_emit_scratch pts_bool \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_dead_codec_probeScript.sml word_to_stack_dead_codec_probe.out \
+  dc_skip dc_move dc_const dc_load dc_load16 dc_store dc_share dc_seq dc_if dc_loop dc_must dc_tail_handler dc_return_handler \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
