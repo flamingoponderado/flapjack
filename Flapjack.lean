@@ -1198,6 +1198,7 @@ import Flapjack.Compiler.Backend.LabToTarget.Labels
 import Flapjack.Compiler.Backend.LabToTarget.Positions
 import Flapjack.Compiler.Backend.LabToTarget.SecondPass
 import Flapjack.Compiler.Backend.LabToTarget.Padding
+import Flapjack.Compiler.Backend.LabToTarget.PaddingLength
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
 import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
 import Flapjack.Compiler.Backend.LabToTarget.Compile

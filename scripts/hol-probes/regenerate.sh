@@ -3057,6 +3057,10 @@ run_probe lab_to_target_removelabels_probeScript.sml lab_to_target_removelabels_
   LineBytesLabAsm ProgToBytesEmpty ProgToBytesConcrete RemoveLabelsLoopZero \
   RemoveLabelsLoopOne RemoveLabelsZero \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_padding_length_probeScript.sml lab_to_target_padding_length_probe.out \
+  OriginalLengthPadBytes PadLengthExtend PadLengthMultiNop PadLengthExact PadLengthZero \
+  PadLengthGenericBool PadLengthEmptyNopOutsidePremise \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_maplemmas_probeScript.sml lab_to_target_maplemmas_probe.out \
   PadCodeMapEmptyEq PadCodeMapConcreteEq PadCodeMapConcreteLhs PadCodeMapConcreteRhs \
   ProgToBytesMapEmptyEq ProgToBytesMapConcreteEq ProgToBytesMapConcreteLhs \
