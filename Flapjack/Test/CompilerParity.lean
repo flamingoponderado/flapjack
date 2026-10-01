@@ -1,5 +1,7 @@
 import Flapjack.Test.ParmoveParseSemMapInjParity
 import Flapjack.Test.ParmoveSeqsemUnchangedParity
+import Flapjack.Test.WordAllocCheckerAssemblyParity
+import Flapjack.Test.SptMapiParity
 import Flapjack.Test.WordAllocOracleColourParity
 import Flapjack.Test.WordAllocReturnCheckerParity
 import Flapjack.Test.HeuCountersParity

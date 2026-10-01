@@ -2965,10 +2965,31 @@ run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_prob
   sc_store sc_store8 sc_store16 sc_store32 sc_load sc_load8 sc_load16 sc_load32 \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe word_alloc_return_checker_probeScript.sml word_alloc_return_checker_probe.out \
+  rc_empty rc_cuts rc_duplicate_args rc_return_tick rc_return_break rc_return_collision rc_args_collision \
+run_probe word_alloc_loop_checker_probeScript.sml word_alloc_loop_checker_probe.out \
+  lc_break_absent lc_continue_absent lc_break_present lc_continue_present lc_loop_skip lc_loop_continue lc_break_collision \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+
+run_probe word_alloc_coalesce_cost_probeScript.sml word_alloc_coalesce_cost_probe.out \
+  cc_absent cc_left cc_right cc_both cc_same cc_zero cc_large cc_raw \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
 
 run_probe word_alloc_spillcost_probeScript.sml word_alloc_spillcost_probe.out \
   spill_zero spill_call_tail spill_call_nontail spill_left_register spill_left_memory spill_right_register spill_right_memory spill_asymmetric_tail spill_asymmetric_nontail spill_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_oracle_colour_probeScript.sml word_alloc_oracle_colour_probe.out \
+  oc_none oc_empty oc_physical_bad oc_checker_collision oc_forced_collision oc_forced_distinct oc_rename oc_stack_equal oc_stack_below oc_raw_map \
+run_probe word_alloc_return_checker_probeScript.sml word_alloc_return_checker_probe.out \
+  rc_empty rc_cuts rc_duplicate_args rc_return_tick rc_return_break rc_return_collision rc_args_collision \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe spt_mapi_probeScript.sml spt_mapi_probe.out \
+  mi_empty mi_leaf mi_children mi_root mi_nested mi_raw_bn mi_raw_bs mi_raw_nested mi_index3 mi_index6 mi_bool_nat mi_nat_bool \
+  "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_return_checker_probeScript.sml word_alloc_return_checker_probe.out \
   rc_empty rc_cuts rc_duplicate_args rc_return_tick rc_return_break rc_return_collision rc_args_collision \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
@@ -2999,3 +3020,7 @@ run_probe parmove_seqsem_unchanged_probeScript.sml parmove_seqsem_unchanged_prob
 run_probe parmove_parsem_map_inj_probeScript.sml parmove_parsem_map_inj_probe.out \
   pi_one pi_chain pi_cycle pi_shared_source pi_self pi_high pi_mixed pi_collision \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembly_probe.out \
+  ca_control ca_return ca_handler ca_tail_ignored ca_collision \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

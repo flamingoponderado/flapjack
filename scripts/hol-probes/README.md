@@ -2391,6 +2391,13 @@ This is finite regression evidence, not whole-allocator correctness; the
 executed allocator route remains separate work.
 
 `parmove_seqsem_unchanged_probeScript.sml` captures eight original sequential-evaluator value/equality tuples: empty, chain, cycle, repeated destinations, source-only observed register, written-key negative sentinel, self update, and Bool registers with Nat values. Matching kernel fixtures instantiate the unrestricted preservation theorem. These tests do not establish whole allocator equivalence.
+`spt_mapi_probe.out` contains twelve direct original `mapi0_def`/`mapi_def`
+observations, kernel-replayed as exact trees in `SptMapiParity`. Cases cover
+left/right key order, nested nodes, smart-constructor normalization of raw
+malformed trees, nonzero starting indices and Bool/Nat payload changes.
+These finite observations do not establish cross-prover equivalence or route
+the executed allocator. Regenerate read-only with
+`HOL_PROBE_ONLY=spt_mapi_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `parmove_temp_mixed_probeScript.sml` checks four literal scratch-safety clauses with independent bool destination and num source carriers. `ParmoveTempAppendParity` kernel-replays these rows and applies the append theorem to arbitrary independent carriers; existing same-carrier sentinels remain registered.
 
 
@@ -2398,3 +2405,11 @@ executed allocator route remains separate work.
 
 `parmove_parsem_map_inj_probeScript.sml` captures eight original renamed/original value/equality tuples, including cycles, shared sources, large register IDs, independent Nat-to-Bool register carriers, and a failing domain-injectivity sentinel. Matching kernel fixtures retain arbitrary-carrier theorem application. Finite observations do not prove whole allocator equivalence.
 `word_alloc_get_prefs_probeScript.sml` captures seventeen original full-list preference equalities, with nonempty accumulators, duplicates/self moves, branch and sequential ordering, both returning handlers, tail-handler exclusion, loops, nested wrappers, ignored constructors and priority/register naturals exceeding 2^64. Matching actual CompilerParity fixtures reduce in the kernel. Native allocator assembly and production routing remain separate.
+`word_alloc_checker_assembly_probe.out` observes five mixed original checker
+equations, kernel-replayed by `WordAllocCheckerAssemblyParity`. Nested control
+(Seq/MustTerminate/If/Loop/Break/Continue), returning and handled calls, a tail
+call with an ignored malformed handler, and collision rejection are covered.
+The full theorem is assembled universally from reviewed constructor cases;
+these finite observations do not establish cross-prover equivalence or route
+the executed allocator. Regenerate with
+`HOL_PROBE_ONLY=word_alloc_checker_assembly_probeScript.sml scripts/hol-probes/regenerate.sh`.
