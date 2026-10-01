@@ -2068,3 +2068,25 @@ swap, and empty examples are included. Repeated destinations give 13 versus 12
 under reversal, showing why the original windmill premise cannot be removed.
 `ParmovePermutationParity.lean` replays all values and checks the full-function
 lemma with a genuine list permutation. Full scheduler correctness remains open.
+
+### ParMove generated relation witnesses
+
+`parmove_steps_probeScript.sml` proves one concrete instance of each of the
+six original `step_rules` conjuncts in HOL. A T row is emitted only after
+`prove` returns a theorem with exactly the requested conclusion; these are
+kernel-derived positive witnesses, not EVAL or production compiler parity.
+`ParmoveStepsParity.lean` checks the same six rules and standard RTC reflexivity
+and a start/emit two-step chain. Rules, leastness, and exhaustive cases were
+also compared against the actual generated HOL theorem conclusions.
+Well-formedness and semantic preservation are separate unfinished proofs.
+
+
+### ParMove no-read observations
+
+`parmove_noread_probeScript.sml` captures eight direct original HOL values.
+Paired observations include repeated writes, untouched keys, and self moves.
+When the tail reads the changed destination, the two sides give 11 versus 12,
+showing the no-read premise is necessary. `ParmoveNoReadParity.lean` replays
+all rows and checks the full-function lemma with the original sole premise.
+The source function update is expressed as the equivalent conditional.
+Full scheduler semantic preservation remains open.

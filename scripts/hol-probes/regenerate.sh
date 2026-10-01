@@ -2681,6 +2681,14 @@ run_probe word_alloc_get_writes_inst_probeScript.sml word_alloc_get_writes_inst_
   writes_const writes_add_carry writes_long_div writes_load16_catchall writes_fp_move64 writes_fp_move32 writes_fp_from_reg_catchall \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe word_alloc_get_delta_inst_probeScript.sml word_alloc_get_delta_inst_probe.out \
+  gdi_skip gdi_const gdi_binop_reg gdi_binop_imm gdi_shift_reg gdi_shift_imm gdi_div gdi_addcarry gdi_addoverflow gdi_suboverflow gdi_longmul gdi_longdiv gdi_load gdi_store gdi_load32 gdi_store32 gdi_load8 gdi_store8 gdi_fpless gdi_fpmovtoreg64 gdi_fpmovtoreg32 gdi_fpmovfromreg64 gdi_fpmovfromreg32 gdi_fpneg_catchall \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_get_clash_tree_probeScript.sml word_alloc_get_clash_tree_probe.out \
+  gct_skip gct_move gct_inst gct_assign gct_get gct_store gct_seq gct_if_reg gct_if_imm gct_mustterminate gct_alloc gct_install gct_codebufferwrite gct_databufferwrite gct_ffi gct_raise gct_return gct_tick gct_locvalue gct_set gct_opcurrheap gct_storeconsts gct_shareinst_store gct_shareinst_other gct_loop gct_break_none gct_break_some gct_continue_none gct_continue_some gct_call_none gct_call_ret gct_call_ret_handler \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
 run_probe word_alloc_get_writes_probeScript.sml word_alloc_get_writes_probe.out \
   writes_move writes_store_consts writes_inst_load16 writes_shared_load16 writes_shared_store16 writes_seq_catchall writes_install \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
@@ -2703,6 +2711,7 @@ run_probe word_to_stack_abs_stack_probeScript.sml word_to_stack_abs_stack_probe.
 run_probe word_to_stack_index_list_probeScript.sml word_to_stack_index_list_probe.out \
   il_empty il_single il_desc an_even an_odd il_snd il_fst il_el_zero il_el_last \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe parmove_semantics_probeScript.sml parmove_semantics_probe.out \
   sem_windmill sem_repeated sem_parallel_swap1 sem_parallel_swap2 sem_sequential_swap2 sem_parallel_last sem_sequential_last sem_untouched sem_state_first sem_state_second sem_ignore_temp sem_real_difference \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -2756,4 +2765,14 @@ run_probe labsem_arithmetic_probeScript.sml labsem_arithmetic_probe.out lab_arit
 
 run_probe parmove_permutation_probeScript.sml parmove_permutation_probe.out \
   pp_first_one pp_second_one pp_first_three pp_second_three pp_first_four pp_second_four pp_duplicate_first pp_duplicate_second pp_swap pp_empty \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+
+run_probe parmove_steps_probeScript.sml parmove_steps_probe.out \
+  ps_remove ps_start ps_extend ps_save ps_emit_head ps_emit_last \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+
+run_probe parmove_noread_probeScript.sml parmove_noread_probe.out \
+  pn_duplicate_left pn_duplicate_right pn_untouched_left pn_untouched_right pn_boundary_left pn_boundary_right pn_self_left pn_self_right \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

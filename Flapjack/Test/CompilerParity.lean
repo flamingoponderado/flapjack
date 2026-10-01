@@ -1,4 +1,6 @@
 import Flapjack.Test.LabSemArithmeticParity
+import Flapjack.Test.ParmoveStepsParity
+import Flapjack.Test.ParmoveNoReadParity
 import Flapjack.Test.ParmovePermutationParity
 import Flapjack.Test.ParmoveEnvironmentParity
 import Flapjack.Test.ParmovePathParity
@@ -532,6 +534,8 @@ import Flapjack.Test.WordAllocApplyColourExactParity
 import Flapjack.Test.WordAllocCutEnvLemmaParity
 import Flapjack.Test.WordAllocInstructionWritesParity
 import Flapjack.Test.WordAllocReadsExpParity
+import Flapjack.Test.WordAllocGetDeltaInstParity
+import Flapjack.Test.WordAllocGetClashTreeParity
 import Flapjack.Test.WordAllocProgramWritesParity
 import Flapjack.Test.CakeSsaSharedParity
 import Flapjack.Test.CakeSsaMemoryParity
@@ -1344,6 +1348,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LoopPropsEvalExactParity.runChecks,
     Flapjack.Test.SptreeSetOpsParity.runChecks,
     Flapjack.Test.WordAllocCutEnvLemmaParity.runChecks,
+    Flapjack.Test.WordAllocGetDeltaInstParity.runChecks,
+    Flapjack.Test.WordAllocGetClashTreeParity.runChecks,
     Flapjack.Test.LoopMarkAllHOLParity.runChecks,
     Flapjack.Test.LoopCallCompHOLParity.runChecks,
     Flapjack.Test.CrepLocalsWordLabParity.runChecks,
