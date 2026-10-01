@@ -138,7 +138,7 @@ theorem allDistinctIsSparseSublist {α : Type} :
   exact hd.sublist ((isSparseSublist_iff l1 l2).mp h)
 
 /-- A sorted list stays sorted under `FILTER` for a transitive order. -/
-private theorem holSorted_filter {α : Type} (R : α → α → Prop) (hR : holTransitive R)
+theorem holSorted_filter {α : Type} (R : α → α → Prop) (hR : holTransitive R)
     (p : α → Bool) : ∀ (l : List α), holSorted R l → holSorted R (l.filter p)
   | [], _ => trivial
   | h :: t, hs => by

@@ -101,6 +101,18 @@ run_probe() {
   done
 }
 
+run_probe lab_to_target_encoding_similarity_probeScript.sml lab_to_target_encoding_similarity_probe.out \
+  es_line es_line_types es_initial es_initial_types es_again es_again_types es_sections es_sections_types es_initial_value es_again_growth es_again_unchanged es_again_no_growth es_sections_value es_sections_similar \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_padding_similarity_probeScript.sml lab_to_target_padding_similarity_probe.out \
+  ps_add ps_add_types ps_section ps_section_types ps_code ps_code_types ps_add_value ps_section_value ps_empty_nop ps_acc_value ps_label_only ps_code_similar \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe asmprops_arithmetic_preservation_probeScript.sml asmprops_arithmetic_preservation_probe.out \
+  ap_upd_pc_simps ap_upd_pc_simps_types ap_binop_upd_consts ap_binop_upd_consts_types ap_arith_upd_consts ap_arith_upd_consts_types ap_add ap_shift_fail ap_div_zero ap_longmul ap_longdiv_zero ap_carry ap_addoverflow ap_suboverflow ap_pc \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
+
 run_probe stacksem_fp_case_types_probeScript.sml stacksem_fp_case_types_probe.out \
   fpc_inst fpc_constructor fpc_lookup fpc_update fpc_general_lookup fpc_general_update fpc_all_payloads \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -3057,6 +3069,21 @@ run_probe lab_to_target_removelabels_probeScript.sml lab_to_target_removelabels_
   LineBytesLabAsm ProgToBytesEmpty ProgToBytesConcrete RemoveLabelsLoopZero \
   RemoveLabelsLoopOne RemoveLabelsZero \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_line_len_probeScript.sml lab_to_target_line_len_probe.out \
+  LineLenLabel LineLenAsmEmpty LineLenAsmBytesMismatch LineLenLabAsm LineLenWide \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_section_length_probeScript.sml lab_to_target_section_length_probe.out \
+  SectionLengthEmpty SectionLengthMixed SectionLengthMixedPosition SectionLengthMixedLabels \
+  SectionLengthZeroLabel SectionLengthZeroLenLabel SectionLengthDuplicateLabels \
+  SectionLengthArbitraryAccumulator SecLengthAddEmpty SecLengthAddMixed SecLengthAddMixedValue \
+  SecLengthAddZeroAnnotation SecLengthAddEmptyBytesAnnotation \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe byte_word_to_bytes_aux_probeScript.sml byte_word_to_bytes_aux_probe.out \
+  ByteAuxLE16Cycle ByteAuxBE16Cycle ByteAuxLE32Cycle ByteAuxBE32Cycle \
+  ByteAuxOneByteCycle ByteAuxSubByteLEWrap ByteAuxSubByteBEWrap ByteAuxZero \
+  ByteWholeLE16 ByteWholeBE16 ByteWholeSubByte ByteIndexSubByteLE ByteIndexSubByteBE \
+  ByteGetSubByteShift \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe lab_to_target_padding_length_probeScript.sml lab_to_target_padding_length_probe.out \
   OriginalLengthPadBytes PadLengthExtend PadLengthMultiNop PadLengthExact PadLengthZero \
   PadLengthGenericBool PadLengthEmptyNopOutsidePremise \
@@ -3891,3 +3918,42 @@ run_probe ssa_cc_trans_props_allocation_probeScript.sml ssa_cc_trans_props_alloc
   spa_ffi_type_numset spa_ffi_type_ssa spa_ffi_type_na spa_ffi_type_lt spa_ffi_type_progOut spa_ffi_type_ssaOut spa_ffi_type_naOut \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe ssa_force_rename_generic_probeScript.sml ssa_force_rename_generic_probe.out \
+  fr_definition fr_lookup_force_rename_aux fr_lookup_force_rename fr_domain_force_rename fr_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_loop_control_probeScript.sml ssa_cc_trans_props_loop_control_probe.out \
+  spl_full spl_type_names spl_type_body spl_type_exit_names spl_type_ssa spl_type_na spl_type_lt spl_type_progOut \
+  spl_type_ssaOut spl_type_naOut spl_type_setup_prog spl_type_ssa_refreshed spl_type_na_refreshed spl_type_ssa_names spl_type_ssa_exit spl_type_ssa_body \
+  spb_full spb_type_n spb_type_ssa spb_type_na spb_type_lt spb_type_progOut spb_type_ssaOut spb_type_naOut \
+  spc_full spc_type_n spc_type_ssa spc_type_na spc_type_lt spc_type_progOut spc_type_ssaOut spc_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_calls_probeScript.sml ssa_cc_trans_props_calls_probe.out \
+  spt_full spt_type_dest spt_type_args spt_type_h spt_type_ssa spt_type_na spt_type_lt spt_type_progPrime spt_type_ssaPrime spt_type_naPrime spr_full spr_type_ret spr_type_numset spr_type_ret_handler spr_type_l1 spr_type_l2 spr_type_dest spr_type_args spr_type_h spr_type_ssa spr_type_na spr_type_lt spr_type_progPrime spr_type_ssaPrime spr_type_naPrime spr_type_all_names spr_type_ls spr_type_stack_mov spr_type_stack_set spr_type_names spr_type_conv_args spr_type_move_args spr_type_ssa_cut spr_type_ret_mov spr_type_ssaPrimePrime spr_type_naPrimePrime spr_type_retPrime spr_type_ssa_2_p spr_type_na_2_p spr_type_ren_ret_handler spr_type_ssa_2 spr_type_na_2 spr_type_regs spr_type_mov_ret_handler spr_type_v spr_type_n spr_type_v2 spr_type_hPrime spr_type_v4 spr_type_l1PrimePrime spr_type_l2Prime spr_type_nPrime spr_type_ssa_3_p spr_type_na_3_p \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_instruction_keys_probeScript.sml word_cse_instruction_keys_probe.out \
+  key_def_wordToNum key_def_shiftToNum key_def_arithOpToNum key_def_regImmToNumList key_def_arithToNumList key_def_memOpToNum key_def_loadToNumList key_def_fpToNumList key_def_instToNumList key_def_OpCurrHeapToNumList key_shift_lsl key_shift_lsr key_shift_asr key_shift_ror key_op_add key_heap_add key_op_sub key_heap_sub key_op_and key_heap_and key_op_or key_heap_or key_op_xor key_heap_xor key_mem_load key_load_load key_mem_load8 key_load_load8 key_mem_load16 key_load_load16 key_mem_load32 key_load_load32 key_mem_store key_load_store key_mem_store8 key_load_store8 key_mem_store16 key_load_store16 key_mem_store32 key_load_store32 key_word_1 key_imm_1 key_const_1 key_word_32 key_imm_32 key_const_32 key_word_64 key_imm_64 key_const_64 key_word_80 key_imm_80 key_const_80 key_reg key_arith_0 key_inst_arith_0 key_arith_1 key_inst_arith_1 key_arith_2 key_inst_arith_2 key_arith_3 key_inst_arith_3 key_arith_4 key_inst_arith_4 key_arith_5 key_inst_arith_5 key_arith_6 key_inst_arith_6 key_arith_7 key_inst_arith_7 key_fp_fpLess key_inst_fpLess key_fp_fpLessEqual key_inst_fpLessEqual key_fp_fpEqual key_inst_fpEqual key_fp_fpAbs key_inst_fpAbs key_fp_fpNeg key_inst_fpNeg key_fp_fpSqrt key_inst_fpSqrt key_fp_fpAdd key_inst_fpAdd key_fp_fpSub key_inst_fpSub key_fp_fpMul key_inst_fpMul key_fp_fpDiv key_inst_fpDiv key_fp_fpFma key_inst_fpFma key_fp_fpMov key_inst_fpMov key_fp_fpMovToReg key_inst_fpMovToReg key_fp_fpMovFromReg key_inst_fpMovFromReg key_fp_fpToInt key_inst_fpToInt key_fp_fpFromInt key_inst_fpFromInt key_skip key_mem_inst \
+  key_type_wordToNum key_type_shiftToNum key_type_arithOpToNum key_type_regImmToNumList key_type_arithToNumList key_type_memOpToNum key_type_loadToNumList key_type_fpToNumList key_type_instToNumList key_type_OpCurrHeapToNumList \
+  "$cake_dir/compiler/backend/word_cseScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_cse_register_keys_probeScript.sml word_cse_register_keys_probe.out \
+  rk_statement_firstRegOfArith rk_statement_arithWrites rk_statement_arithReads rk_statement_fpWrites rk_statement_can_mem_arith rk_statement_is_store rk_statement_wordToNum_unique rk_statement_arithOpToNum_eq rk_statement_memOpToNum_eq rk_statement_shiftToNum_eq rk_type_firstRegOfArith rk_type_arithWrites rk_type_arithReads rk_type_fpWrites rk_type_can_mem_arith rk_type_is_store rk_a0_firstRegOfArith_8 rk_a0_arithWrites_8 rk_a0_arithReads_8 rk_a0_can_mem_arith_8 rk_a1_firstRegOfArith_8 rk_a1_arithWrites_8 rk_a1_arithReads_8 rk_a1_can_mem_arith_8 rk_a2_firstRegOfArith_8 rk_a2_arithWrites_8 rk_a2_arithReads_8 rk_a2_can_mem_arith_8 rk_a3_firstRegOfArith_8 rk_a3_arithWrites_8 rk_a3_arithReads_8 rk_a3_can_mem_arith_8 rk_a4_firstRegOfArith_8 rk_a4_arithWrites_8 rk_a4_arithReads_8 rk_a4_can_mem_arith_8 rk_a5_firstRegOfArith_8 rk_a5_arithWrites_8 rk_a5_arithReads_8 rk_a5_can_mem_arith_8 rk_a6_firstRegOfArith_8 rk_a6_arithWrites_8 rk_a6_arithReads_8 rk_a6_can_mem_arith_8 rk_a7_firstRegOfArith_8 rk_a7_arithWrites_8 rk_a7_arithReads_8 rk_a7_can_mem_arith_8 rk_a8_firstRegOfArith_8 rk_a8_arithWrites_8 rk_a8_arithReads_8 rk_a8_can_mem_arith_8 rk_a9_firstRegOfArith_8 rk_a9_arithWrites_8 rk_a9_arithReads_8 rk_a9_can_mem_arith_8 rk_a0_firstRegOfArith_80 rk_a0_arithWrites_80 rk_a0_arithReads_80 rk_a0_can_mem_arith_80 rk_a1_firstRegOfArith_80 rk_a1_arithWrites_80 rk_a1_arithReads_80 rk_a1_can_mem_arith_80 rk_a2_firstRegOfArith_80 rk_a2_arithWrites_80 rk_a2_arithReads_80 rk_a2_can_mem_arith_80 rk_a3_firstRegOfArith_80 rk_a3_arithWrites_80 rk_a3_arithReads_80 rk_a3_can_mem_arith_80 rk_a4_firstRegOfArith_80 rk_a4_arithWrites_80 rk_a4_arithReads_80 rk_a4_can_mem_arith_80 rk_a5_firstRegOfArith_80 rk_a5_arithWrites_80 rk_a5_arithReads_80 rk_a5_can_mem_arith_80 rk_a6_firstRegOfArith_80 rk_a6_arithWrites_80 rk_a6_arithReads_80 rk_a6_can_mem_arith_80 rk_a7_firstRegOfArith_80 rk_a7_arithWrites_80 rk_a7_arithReads_80 rk_a7_can_mem_arith_80 rk_a8_firstRegOfArith_80 rk_a8_arithWrites_80 rk_a8_arithReads_80 rk_a8_can_mem_arith_80 rk_a9_firstRegOfArith_80 rk_a9_arithWrites_80 rk_a9_arithReads_80 rk_a9_can_mem_arith_80 rk_fp_fpLess rk_fp_fpLessEqual rk_fp_fpEqual rk_fp_fpAbs rk_fp_fpNeg rk_fp_fpSqrt rk_fp_fpAdd rk_fp_fpSub rk_fp_fpMul rk_fp_fpDiv rk_fp_fpFma rk_fp_fpMov rk_fp_fpMovToReg rk_fp_fpMovFromReg rk_fp_fpToInt rk_fp_fpFromInt rk_store_load rk_store_load8 rk_store_load16 rk_store_load32 rk_store_store rk_store_store8 rk_store_store16 rk_store_store32 rk_replay_wordToNum_unique rk_replay_arithOpToNum_eq rk_replay_memOpToNum_eq rk_replay_shiftToNum_eq \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_cse_insert_equality_probeScript.sml word_cse_insert_equality_probe.out \
+  ie_full ie_replay ie_0_7 ie_0_8 ie_1_7 ie_1_8 ie_2_7 ie_2_8 ie_3_7 ie_3_8 ie_4_7 ie_4_8 ie_binder_types \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_cse_arithmetic_keys_probeScript.sml word_cse_arithmetic_keys_probe.out \
+  ak_full ak_replay ak_arith_type ak_state_type ak_value_type ak_0_1 ak_1_1 ak_2_1 ak_3_1 ak_4_1 ak_5_1 ak_6_1 ak_7_1 ak_8_1 ak_9_1 ak_10_1 ak_11_1 ak_12_1 ak_13_1 ak_14_1 ak_0_32 ak_1_32 ak_2_32 ak_3_32 ak_4_32 ak_5_32 ak_6_32 ak_7_32 ak_8_32 ak_9_32 ak_10_32 ak_11_32 ak_12_32 ak_13_32 ak_14_32 ak_0_64 ak_1_64 ak_2_64 ak_3_64 ak_4_64 ak_5_64 ak_6_64 ak_7_64 ak_8_64 ak_9_64 ak_10_64 ak_11_64 ak_12_64 ak_13_64 ak_14_64 ak_0_80 ak_1_80 ak_2_80 ak_3_80 ak_4_80 ak_5_80 ak_6_80 ak_7_80 ak_8_80 ak_9_80 ak_10_80 ak_11_80 ak_12_80 ak_13_80 ak_14_80 \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_executed_input_probeScript.sml stack_to_lab_executed_input_probe.out \
+  guard_source_get_drop guard_source_alloc_drop guard_source_stackstore_drop guard_source_datawrite_drop guard_source_skip_section guard_source_seq_section guard_source_loc_section \
+  "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"
+
+run_probe lab_implicit_section_zero_probeScript.sml lab_implicit_section_zero_probe.out \
+  zero_original_skip_late_zero zero_original_section_base zero_original_second_base zero_original_second_label zero_original_empty_section zero_original_crosssection_bytes \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/encoders/riscv"

@@ -1,0 +1,5 @@
+fr_definition=⊢ (∀ssa. force_rename [] ssa = ssa) ∧ ∀y xs x ssa. force_rename ((x,y)::xs) ssa = force_rename xs (insert x y ssa)
+fr_lookup_force_rename_aux=⊢ ∀ls ssa. lookup x (force_rename (REVERSE ls) ssa) = case ALOOKUP ls x of NONE => lookup x ssa | SOME y => SOME y
+fr_lookup_force_rename=⊢ lookup x (force_rename ls ssa) = case ALOOKUP (REVERSE ls) x of NONE => lookup x ssa | SOME y => SOME y
+fr_domain_force_rename=⊢ domain (force_rename ls ssa) = domain ssa ∪ set (MAP FST ls)
+fr_type=:(num # α) list -> α sptree$num_map -> α sptree$num_map

@@ -36,7 +36,9 @@ COORDINATOR_PENDING_NOTE = re.compile(
     r"\b(?:acceptance|review)\b[^.;]{0,20}?\b(?:pending|required)\b"
     r"|\bcoordinator\s+(?:is\s+)?(?:pending|required)\b"
     r"|\bpending\s+(?:coordinator|integration)\s+(?:acceptance|review)\b"
-    r"|\b(?:acceptance|review)\s+pending\s+coordinator\b",
+    r"|\b(?:acceptance|review)\s+pending\s+coordinator\b"
+    r"|\b(?:fleet\s+merge|merge)\s+acceptance\b"
+    r"|\bacceptance\s+separate\b",
     re.IGNORECASE,
 )
 REFS = runpy.run_path(str(ROOT / "scripts" / "check-hol-refs.py"))

@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.LabLang
 import Flapjack.Compiler.Backend.LabSem.State
+import Flapjack.Compiler.Backend.LabToTarget.Native
 import Flapjack.Compiler.Encoders.Asm
 
 /-!
@@ -15,8 +16,7 @@ positive-width `BitVec width`; the `word8` byte lists keep their literal
 fixed width.  The instruction encoder `enc` is a parameter of `enc_line`, as
 in HOL, and is not the production assembler's encoder.
 
-This module is the pure encoding half of the phase; the label-computation,
-offset and program-transform halves remain to be ported.
+The other phase definitions live in sibling counterpart modules.
 -/
 
 namespace Flapjack.Compiler.Backend.LabToTarget
@@ -48,19 +48,9 @@ def labInst {width : Nat} [NeZero width] (w : BitVec width)
   | .install => .jump w
   | .callFFI _ => .jump w
 
-/-- Exact HOL `lab_to_target$cbw_to_asm_def[simp]` (`lab_to_targetScript.sml:31-37`):
-`Asmi a` is already an `asm`; `Cbw r1 r2` is a `Store8` from `r2` to the
-address `r1 + 0`; `ShareMem m r ad` is the matching `Mem`.  Stated over the
-exact `HolAsm`/`HolAddr` carriers, so its word-carrying arguments resolve to
-`BitVec width`. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "cbw_to_asm_def"
-  (words_as_type_indexed_bitvec)]
-def cbwToAsmExact {width : Nat} [NeZero width]
-    (instruction : AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) : HolAsm width :=
-  match instruction with
-  | .asmi asm => asm
-  | .cbw left right => .inst (.mem .store8 right (.addr left 0))
-  | .shareMem operator register address => .inst (.mem operator register address)
+/-- Flapjack compatibility alias; the sole tagged implementation is
+`cbwToAsmHOL` in the native counterpart module. -/
+abbrev cbwToAsmExact := @cbwToAsmHOL
 
 /-- Exact HOL `lab_to_target$enc_line_def` (`lab_to_targetScript.sml:40-47`):
 a `Label` keeps its identity and takes the supplied `skip_len` as length; an
