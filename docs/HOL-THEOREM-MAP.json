@@ -42484,5 +42484,14 @@
   "hol_name": "state_exn",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2 reg_alloc101-103: Fail string | Subscript. HOL string is char list, retained as List of reviewed MlString.HolChar=BitVec8 canonical256-element char; no UTF8 String or mlstring wrapper. Constructor arity/equality preserved including0/255 bytes/order. Fresh original probe/kernel fixtures; raising/accessors and production refinement remain open prerequisites. Coordinator review pending."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRelAux.lean",
+    "lean_name": "stackRelAux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.29.1) against word_to_stackProofScript.sml:815-838: literal four-clause stack_rel_aux over exact WordSemStackFrame/WordLocW with independent arbitrary cutset/frame carriers and no success/range premise beyond the source implications."
+  }
 ]
