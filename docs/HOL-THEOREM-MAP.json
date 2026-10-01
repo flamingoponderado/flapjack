@@ -45476,5 +45476,29 @@
     "lean_name": "stExPartitionMoveRelatedSub",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.10): reg_allocProofScript.sml:2118-2134 ∀atemps lss lss' s. EVERY (λx. x < LENGTH s.move_related) atemps ⇒ ∃ts fs. st_ex_PARTITION move_related_sub atemps lss lss' s = (M_success (ts,fs),s) ∧ EVERY (λx. MEM x lss ∨ MEM x atemps) ts ∧ EVERY (λx. MEM x lss' ∨ MEM x atemps) fs. Lean: the same universally quantified statement over the reviewed ra_state carrier, accepted stExPartition and generated moveRelatedSub (.10.5.2), with EVERY as bounded ∀ and MEM as list membership; only the input atemps carry the bound, accumulators are unconstrained, the returned state is the input state. No extra premise. Kernel-checked (axioms: propext only); the proof reads elements with bounds-checked getElem and does not reach the held HOL EL rendering. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "is_not_coalesced_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SplitDegree.lean",
+    "lean_name": "isNotCoalesced",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.9.1): reg_allocScript.sml:322-327 is_not_coalesced d = do dt <- coalesced_sub d; return (d = dt) od; type num -> ra_state -> (bool, state_exn) exc # ra_state. Lean: bind of the generated coalescedSub (.10.5.2) and ret (decide (d = dt)). Original EVAL rows (scripts/hol-probes/reg_alloc_split_degree_probe.out) kernel-replayed in Flapjack.Test.RegAllocSplitDegreeParity. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "split_degree_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SplitDegree.lean",
+    "lean_name": "splitDegree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.9.1): reg_allocScript.sml:330-340 split_degree d k v = if v < d then do vd <- degrees_sub v; b <- is_not_coalesced v; return (vd < k ∧ b) od else return T; type num -> num -> num -> ra_state -> (bool, state_exn) exc # ra_state. Lean: same branch, generated degreesSub then isNotCoalesced, HOL bool conjunction as decide (vd < k) && b; v ≥ d returns true without reading the state. Original EVAL rows incl. the out-of-array v < d failure kernel-replayed in Flapjack.Test.RegAllocSplitDegreeParity. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "st_ex_FILTER_is_not_coalesced",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/NotCoalescedFilter.lean",
+    "lean_name": "stExFilterIsNotCoalesced",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.9.1): reg_allocProofScript.sml:2286-2298 ∀ls acc s. EVERY (λx. x < LENGTH s.coalesced) ls ∧ EVERY (λx. x < LENGTH s.coalesced) acc ⇒ ∃ts fs. st_ex_FILTER is_not_coalesced ls acc s = (M_success ts,s) ∧ EVERY (λx. x < LENGTH s.coalesced) ts. Lean: same quantifiers, conjunctive premise and conclusion with EVERY as bounded ∀; the HOL existential fs occurs nowhere in the body and HOL types are inhabited, so that vacuous binder is omitted (documented beside the theorem). Kernel-checked; the proof uses the Flapjack getElem read lemma mSub_success_getElem and does not reach the held HOL EL rendering. Coordinator source acceptance pending."
   }
 ]

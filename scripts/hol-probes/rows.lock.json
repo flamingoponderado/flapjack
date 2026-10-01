@@ -3217,6 +3217,12 @@
       "sha256": "de123ad8f6d9bb266bcbe293233e5836185c6a35940a8c076c0297e41748d217"
     },
     {
+      "bytes": 287,
+      "out": "reg_alloc_split_degree_probe.out",
+      "rows": 12,
+      "sha256": "fbed50b810c36d820e87925968e60adb58b39360253d97ace908076c2286c86a"
+    },
+    {
       "bytes": 245,
       "out": "reg_alloc_state_foreach_probe.out",
       "rows": 12,

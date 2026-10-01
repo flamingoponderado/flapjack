@@ -3185,6 +3185,10 @@ run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe reg_alloc_split_degree_probeScript.sml reg_alloc_split_degree_probe.out \
+  inc_self inc_other inc_last inc_oob sd_low_self sd_high sd_low_coalesced_k6 sd_eq_k sd_out_of_d sd_oob_bound_true sd_beyond_all sd_state \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe reg_alloc_graph_construction_probeScript.sml reg_alloc_graph_construction_probe.out \
   ie_basic ie_self ie_oob ie_oob_first lie_basic lie_fail_mid cie_basic ec_basic ec_fail mt_basic mt_oob mg_delta mg_set mg_branch_none mg_branch_some mg_seq mg_fail eg_basic eg_fail ira_basic \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"

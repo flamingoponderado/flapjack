@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.RegAlloc.Accessors
 import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
 
 /-!
 # reg_allocProof `st_ex_PARTITION move_related_sub`
@@ -15,15 +16,6 @@ rendering.
 namespace Flapjack.RegAlloc
 
 open Flapjack.Translator.Monadic.MonadBase
-
-/-- Flapjack helper: an in-range `Msub` read succeeds with the indexed element. -/
-private theorem mSub_success {α ε : Type} (e : ε) :
-    ∀ (ls : List α) (n : Nat) (h : n < ls.length), mSub e n ls = .success ls[n]
-  | [], _, h => absurd h (by simp)
-  | _ :: _, 0, _ => by simp [mSub]
-  | _ :: tail, n + 1, h => by
-      simp only [mSub, Nat.add_one_ne_zero, if_false, Nat.add_sub_cancel]
-      exact mSub_success e tail n (by simpa using h)
 
 /-- HOL `st_ex_PARTITION_move_related_sub` (`reg_allocProofScript.sml:2118-2134`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml"
@@ -46,7 +38,7 @@ theorem stExPartitionMoveRelatedSub :
         fun x hx => hb x (by simp [hx])
       have hsub : moveRelatedSub h s = (.success s.move_related[h], s) := by
         show (mSub StateException.Subscript h s.move_related, s) = _
-        rw [mSub_success _ _ _ hh]
+        rw [mSub_success_getElem _ _ _ hh]
       cases hflag : s.move_related[h] with
       | true =>
           obtain ⟨ts, fs, heq, hts, hfs⟩ := ih (h :: lss) lss' s hrest

@@ -774,6 +774,9 @@ import Flapjack.Compiler.Backend.RegAlloc.TagColour
 import Flapjack.Compiler.Backend.RegAlloc.MoveTable
 import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
+import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
 
 
 

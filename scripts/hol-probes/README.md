@@ -2728,6 +2728,13 @@ the finite fixtures do not prove cross-assistant equivalence.
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
 
+`reg_alloc_split_degree_probe` captures 12 original EVAL results of
+`is_not_coalesced` and `split_degree` (coalesce targets, degree comparisons,
+the `v ≥ d` short-circuit, an out-of-array failure and state preservation),
+kernel-replayed in `RegAllocSplitDegreeParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_split_degree_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_graph_construction_probe` captures 20 original EVAL results of
 `insert_edge`, `list_insert_edge`, `clique_insert_edge`, `extend_clique`,
 `mk_tags`, `mk_graph` (Delta/Set/Branch NONE/Branch SOME/Seq), `extend_graph`
