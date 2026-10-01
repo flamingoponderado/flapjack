@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveFrame
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap

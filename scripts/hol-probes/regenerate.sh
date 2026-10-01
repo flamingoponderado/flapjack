@@ -3430,3 +3430,7 @@ run_probe ssa_merge_frame_probeScript.sml ssa_merge_frame_probe.out \
 run_probe word_alloc_limit_props_probeScript.sml word_alloc_limit_props_probe.out \
   lp_full_source_replay lp_residue0 lp_residue1 lp_residue2 lp_residue3 lp_residue4 lp_skip1 lp_seven lp_eight lp_ignored16 lp_tail_handler lp_call_body lp_huge \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_no_shmemop_handlers_probeScript.sml word_to_stack_no_shmemop_handlers_probe.out \
+  hn_push_source hn_pop_source hn_args_source hn_push_type hn_pop_type hn_args_type hn_push_64_F hn_pop_64_F_safe hn_pop_64_F_forbidden hn_push_64_T hn_pop_64_T_safe hn_pop_64_T_forbidden hn_push_1_F hn_pop_1_F_safe hn_pop_1_F_forbidden hn_push_1_T hn_pop_1_T_safe hn_pop_1_T_forbidden hn_args_direct_zero hn_args_direct_perf hn_args_indirect_small hn_args_indirect_huge \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

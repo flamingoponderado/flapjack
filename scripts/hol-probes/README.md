@@ -3388,3 +3388,12 @@ positive-width programs and the original limit equality premise. Cases retain
 all residues, widths1/32/64/80, the original ignored Load16 registers, tail Call
 handler exclusion, returning Call body traversal and unbounded Nat registers.
 The qualified tag records only the standard HOL type-indexed word translation.
+
+`word_to_stack_no_shmemop_handlers_probe.out` literally replays all three local
+PushHandler/PopHandler/StackHandlerArgs no-shmemop proofs and captures their
+generic operation types. Sixteen fresh predicate observations cover both perf
+flags, independent unused frame carriers, safe and forbidden continuations,
+widths1/32/64/80, direct/indirect generic destinations and large frame offsets.
+`WordToStackNoShmemopHandlersParity.lean` kernel-replays every observation and
+applies each full theorem at arbitrary original carriers. Pop retains false
+continuations; no range, safety, valid-frame or execution premises are added.

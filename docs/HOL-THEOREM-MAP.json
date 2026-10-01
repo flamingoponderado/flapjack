@@ -44189,5 +44189,32 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison2026-10-01 bead30.1: full local word_allocProof10299-10335, arbitrary original program and Nat limit with only original limit_var program = limit premise; both allocation-class and complete every_var strict-bound conclusions retained. Native faithful WordLangProgHOL/BitVec positive width with NeZero discharges original HOL dimension positivity; all original constructor carriers and return-dependent Call handler occurrence traversal retained. Native maxVarMax and everyVarMono with unconditional source-local arithmetic establish bound for every occurrence, no successful compiler assumption, simplified evaluator or supplied desired bound. Literal original whole local theorem proof freshly re-elaborated using original exported max_var_max/every_var_mono; twelve original full program limit/class/occurrence tuples exactly match imported kernel fixtures, generic fixture applies actual full theorem at arbitrary programs and limits. Word qualifier permits only type-indexed positive word carrier translation; no additional map/list/name/FP behavior qualification or theorem premise. No executed compiler change and not full SSA correctness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "PushHandler_no_shmemop",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemop/Handlers.lean",
+  "lean_name": "pushHandlerNoShmemop",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison2026-10-01 bead48.2.3: full local PushHandler_no_shmemop12233-12240: arbitrary perf Bool, labels Nat and Nat\u00d7beta\u00d7gamma frame with two independently quantified unused carriers; unconditional complete no_shmemop result. Both perf alternatives of literal native syntax retained. Sole word qualifier translates original type-indexed word to positive BitVec width/NeZero, with native HolProg and accepted original constructor arities/fields; independent unused frame/Sum carriers are preserved, not specialized. Literal entire original three local proofs and generic operation types freshly replayed in original HOL. Sixteen same-input native predicate observations (including mixed frame types, false continuations, direct/indirect Sum Bool Unit and large frames) match kernel fixtures; three arbitrary-carrier applications check the actual complete theorem signatures. No executable or compiler change and no full comp_no_shmemop claim."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "PopHandler_no_shmemop",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemop/Handlers.lean",
+  "lean_name": "popHandlerNoShmemop",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison2026-10-01 bead48.2.3: full local PopHandler_no_shmemop12242-12249: arbitrary perf and Nat\u00d7beta\u00d7gamma frame and native continuation; exact Boolean equality renders original iff and preserves both false and true continuations. No assumption of continuation safety. Sole word qualifier translates original type-indexed word to positive BitVec width/NeZero, with native HolProg and accepted original constructor arities/fields; independent unused frame/Sum carriers are preserved, not specialized. Literal entire original three local proofs and generic operation types freshly replayed in original HOL. Sixteen same-input native predicate observations (including mixed frame types, false continuations, direct/indirect Sum Bool Unit and large frames) match kernel fixtures; three arbitrary-carrier applications check the actual complete theorem signatures. No executable or compiler change and no full comp_no_shmemop claim."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "StackHandlerArgs_no_shmemop",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemop/Handlers.lean",
+  "lean_name": "stackHandlerArgsNoShmemop",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison2026-10-01 bead48.2.3: full local StackHandlerArgs_no_shmemop12251-12258: arbitrary perf, Sum alpha beta destination with independent payload carriers, argument count Nat and complete Nat\u00d7Nat\u00d7Nat frame; unconditional result. Accepted stack_move_no_shmemop preserves the native generated stack allocation continuation at every offset/count; no bounds, frame validity or target safety premises. Sole word qualifier translates original type-indexed word to positive BitVec width/NeZero, with native HolProg and accepted original constructor arities/fields; independent unused frame/Sum carriers are preserved, not specialized. Literal entire original three local proofs and generic operation types freshly replayed in original HOL. Sixteen same-input native predicate observations (including mixed frame types, false continuations, direct/indirect Sum Bool Unit and large frames) match kernel fixtures; three arbitrary-carrier applications check the actual complete theorem signatures. No executable or compiler change and no full comp_no_shmemop claim."
 }
 ]
