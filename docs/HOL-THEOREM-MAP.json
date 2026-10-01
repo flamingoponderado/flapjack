@@ -40276,5 +40276,23 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pbmi) against targetSemScript.sml:52-57: encoded_bytes_in_mem c pc m md <=> ?i k. k * (2 ** c.code_alignment) < LENGTH (c.encode i) /\\ bytes_in_memory pc (DROP (k * (2 ** c.code_alignment)) (c.encode i)) m md, verbatim; 2 ** code_alignment -> 2 ^ codeAlignment, DROP -> List.drop, encode : 'a asm -> word8 list -> HolAsm width -> List (BitVec 8), words qualifier for the BitVec width/8 carriers; bytes_in_memory is the tagged bytesInMemoryHOL."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "perf_call_prefix_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativePerf.lean",
+    "lean_name": "perfCallPrefixNative",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "Source review word_to_stackScript.sml319-343: literal five-node prefix and two-node suffix, signed word offsets, registers/order and source list_Seq preserved. Native HolProg positive width matches word-indexed source through words_as_type_indexed_bitvec; universal toGeneric transport kernel checked. Syntax only, no x64 instrumentation verification or production-route claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "perf_call_suffix_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativePerf.lean",
+    "lean_name": "perfCallSuffixNative",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "Source review word_to_stackScript.sml319-343: literal five-node prefix and two-node suffix, signed word offsets, registers/order and source list_Seq preserved. Native HolProg positive width matches word-indexed source through words_as_type_indexed_bitvec; universal toGeneric transport kernel checked. Syntax only, no x64 instrumentation verification or production-route claim.",
+    "words_as_type_indexed_bitvec": true
+  }
 ]
