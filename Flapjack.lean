@@ -252,6 +252,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Colour
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetDeletion
+import Flapjack.Compiler.Backend.RegAlloc.Proofs
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Leaves
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckCol
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetInsertion
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
