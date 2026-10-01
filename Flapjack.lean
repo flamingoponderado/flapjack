@@ -129,6 +129,7 @@ import Flapjack.Compiler.Encoders.AsmProps.Target
 import Flapjack.Compiler.Encoders.AsmSem.State
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
 import Flapjack.Compiler.Backend.Semantics.TargetSem.PostAsm
+import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
 import Flapjack.Compiler.Backend.StackProps.FloatNames
 import Flapjack.Compiler.Backend.StackProps.AddressNames
 import Flapjack.Compiler.Backend.StackProps.InstructionNames

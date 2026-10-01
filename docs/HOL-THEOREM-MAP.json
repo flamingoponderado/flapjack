@@ -39154,5 +39154,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w51v) vs targetSemScript.sml:410-423: HOL post_ccache_asm mc_conf t1 ms' = t1 with regs := (if MEM a callee_saved_regs \\/ a = ptr_reg \\/ ~(a < reg_count) \\/ MEM a avoid_regs then t1.regs a else get_reg ms' a), fp_regs := get_fp_reg ms', pc := t1.regs link_reg (memory untouched). Lean postCcacheAsmHOL has the same guard including the ptr_reg preservation and leaves mem unchanged; over exact carriers with BitVec-width words."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "read_ffi_bytearray_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/FfiReads.lean",
+    "lean_name": "readFfiBytearrayHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-bkw2) against targetSemScript.sml:60-68: read_bytearray (mc.target.get_reg ms ptr_reg) (w2n (mc.target.get_reg ms len_reg)) (\\a. if a IN mc.prog_addresses then SOME (mc.target.get_byte ms a) else NONE). Lean renderBytearrayWordHOL (byteWidth:=8) over BitVec width/BitVec 8 with the same program-address restriction."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "read_ffi_bytearrays_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/FfiReads.lean",
+    "lean_name": "readFfiBytearraysHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-bkw2) against targetSemScript.sml:70-74: the pair (read_ffi_bytearray mc mc.ptr_reg mc.len_reg ms, read_ffi_bytearray mc mc.ptr2_reg mc.len2_reg ms). Lean pair of readFfiBytearrayHOL at ptrReg/lenReg and ptr2Reg/len2Reg."
   }
 ]
