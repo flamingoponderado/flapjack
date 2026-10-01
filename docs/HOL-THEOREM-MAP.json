@@ -45284,5 +45284,37 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead26.13: original proved val word_to_stackProofScript.sml11698-11703 including final SIMP_RULE std_ss [IMP_CONJ_THM]. Fresh original Q.prove reconstruction kernel-proves and prints conjunction of two implications, matched literally by Lean. Arbitrary callback Nat -> HolProg width, register and entire three-Nat frame tuple retained; each sole premise universally requires empty get_code_labels of callback. Both conclusions concern actual reviewed wRegWrite1Native/2Native and accepted literal StackProps.getCodeLabels, including stackStore empty labels on spilled paths, with no frame bounds, register convention, desired output or execution premise. Only HOL positive word dimension translated to BitVec width with NeZero. Fresh six original probes cover physical/boundary/spilled/zero/80-bit register and labelled-callback sentinel; registered kernel fixtures non-vacuously apply both implications. Standard Lean axioms only; no native_decide, EL, opaque choice of program or new axiom. This helper is explicitly used in original full code-label proof11784/11796; that theorem and executable production route remain open. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "remove_colours_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Colouring.lean",
+    "lean_name": "removeColours",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9) against reg_allocScript.sml:874-891: three clauses in HOL order ((ls,[]) => return []; ([],ks) => return ks; (x::xs,ks) => cx <- node_tag_sub x; r <- case cx of Fixed c => remove_colours xs (FILTER (\\x. x <> c) ks) | _ => remove_colours xs ks; return r), first-match priority as HOL's overlapping patterns; HOL type num list -> num list -> ra_state -> (num list, state_exn) exc # ra_state. HOL do-blocks as accepted bind/ignoreBind/ret; exception type state_exn as in the fresh HOL type_of; reviewed accessors (.10.5.2) and stExForeach."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "assign_Atemp_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Colouring.lean",
+    "lean_name": "assignAtempTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9) against reg_allocScript.sml:896-919: node_tag_sub n; Atemp => adj_ls_sub n; remove_colours adjs ks; [] => update_node_tag n Stemp | x::_ => prefs n ks; NONE => Fixed x | SOME y => Fixed y; other tags return (); prefs at HOL type num -> num list -> ra_state -> (num option, state_exn) exc # ra_state. HOL do-blocks as accepted bind/ignoreBind/ret; exception type state_exn as in the fresh HOL type_of; reviewed accessors (.10.5.2) and stExForeach."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "assign_Atemps_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Colouring.lean",
+    "lean_name": "assignAtemps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9) against reg_allocScript.sml:923-936: get_dim; ls <- return (FILTER (\\n. n < d) ls); ks <- return (GENLIST (\\x.x) k); cs <- return (GENLIST (\\x.x) d); st_ex_FOREACH ls (assign_Atemp_tag ks prefs); st_ex_FOREACH cs (assign_Atemp_tag ks prefs); GENLIST (\\x.x) n as List.range n, each return-bind kept literally. HOL do-blocks as accepted bind/ignoreBind/ret; exception type state_exn as in the fresh HOL type_of; reviewed accessors (.10.5.2) and stExForeach."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "first_match_col_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Colouring.lean",
+    "lean_name": "firstMatchCol",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9) against reg_allocScript.sml:994-1003: [] => return NONE; x::xs => node_tag_sub x; Fixed m => if MEM m ks then return (SOME m) else first_match_col ks xs | _ => first_match_col ks xs. HOL do-blocks as accepted bind/ignoreBind/ret; exception type state_exn as in the fresh HOL type_of; reviewed accessors (.10.5.2) and stExForeach."
   }
 ]

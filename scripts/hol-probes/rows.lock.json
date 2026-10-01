@@ -3115,6 +3115,12 @@
       "sha256": "1832a5c8df26d3e4d503c9b896b8c92656597611be255c73f45cbd33d46b6c82"
     },
     {
+      "bytes": 580,
+      "out": "reg_alloc_colouring_probe.out",
+      "rows": 18,
+      "sha256": "c273e7a1a5ad0a3f70bb5ea0fb5348e6e4e3a3b059aed54e8d33bc804f88b9bf"
+    },
+    {
       "bytes": 266,
       "out": "reg_alloc_dec_deg_probe.out",
       "rows": 6,
