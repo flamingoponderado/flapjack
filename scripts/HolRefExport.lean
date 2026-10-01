@@ -315,6 +315,7 @@ import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
 import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
+import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpNamed

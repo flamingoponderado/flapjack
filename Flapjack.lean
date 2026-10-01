@@ -380,6 +380,8 @@ import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
 import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
+import Flapjack.Compiler.Backend.WordGcFunctions
+import Flapjack.Misc.FiniteMapApply
 import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
 import Flapjack.Pancake.WordLang.OccurrencesExact
