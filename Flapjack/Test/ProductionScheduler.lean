@@ -4,7 +4,7 @@ import Flapjack.Compiler.Backend.WordToStack.NativeMoves
 namespace Flapjack.Test.ProductionScheduler
 open Flapjack RiscV
 
-/-! Kernel computation fixtures for optional scheduling; no native_decide. -/
+/-! Kernel computation fixtures for optional scheduling. -/
 example : wordStackCakeParallelOptionOrder [] = some [] := by cbv
 example : wordStackCakeParallelOptionOrder [(.register 0, .register 0)] = some [] := by cbv
 example : wordStackCakeParallelOptionOrder [(.register 0, .register 1), (.register 0, .register 2)] =
