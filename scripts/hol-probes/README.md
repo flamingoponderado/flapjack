@@ -2446,3 +2446,11 @@ routing. Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_max_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `word_to_stack_full_read_bitmap_mixed_probeScript.sml` captures six original universal success-preservation applications at independently chosen bitmap/descriptor widths (8/1, 8/16, 1/32, 16/8, offset 8/32 and same-width 8/8), plus four actual success/zero/location guard equalities. Matching kernel applications include arbitrary independent positive widths. This repairs full_read_bitmap_append type generality; its proof and executed fullReadBitmap definition are unchanged.
+
+`word_alloc_heu_call_probe.out` captures sixteen original call-name unions,
+kernel-replayed as exact trees by `HeuCallParity`. Generic tracked Nat, Bool
+and Nat-tuple payloads, overlap/disjoint/deep keys and malformed internal nodes
+are covered. Payload-only map retains raw structure and no wf premise is added.
+Finite observations do not establish cross-prover equivalence or executed
+allocator routing. Regenerate read-only with
+`HOL_PROBE_ONLY=word_alloc_heu_call_probeScript.sml scripts/hol-probes/regenerate.sh`.
