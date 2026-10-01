@@ -2698,7 +2698,7 @@ run_probe word_to_stack_stack_size_rel_probeScript.sml word_to_stack_stack_size_
 
 run_probe target_sem_encoded_bytes_probeScript.sml target_sem_encoded_bytes_probe.out \
   oracle_first oracle_shift bytes_empty bytes_nonempty bytes_domain_fail bytes_wrap \
-  encoded_drop encoded_guard_true encoded_guard_strict encoded_bytes_match \
+  encoded_drop encoded_guard_true encoded_guard_strict encoded_bytes_match encoded_bytes_in_mem_whole \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe misc_asm_write_bytearray_probeScript.sml misc_asm_write_bytearray_probe.out \
@@ -2802,3 +2802,6 @@ run_probe labsem_shared_memory_probeScript.sml labsem_shared_memory_probe.out \
 run_probe parmove_remove_last_probeScript.sml parmove_remove_last_probe.out \
   pr_self_pre_1 pr_self_pre_4 pr_self_pre_5 pr_self_post_1 pr_self_post_4 pr_self_post_5 pr_last_pre_1 pr_last_pre_4 pr_last_pre_5 pr_last_post_1 pr_last_post_4 pr_last_post_5 pr_bad_self_pre pr_bad_self_post pr_bad_read_pre pr_bad_read_post \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe labsem_inst_probeScript.sml labsem_inst_probe.out \
+  lab_inst_skip lab_inst_const lab_inst_arith_or_loc lab_inst_arith_or_loc_other lab_inst_arith_div_zero lab_inst_arith_shift_invalid lab_inst_mem_load_loc lab_inst_mem_store_unaligned lab_inst_mem_load32_loc_failure lab_inst_mem_load16_unsupported lab_inst_mem_store16_unsupported lab_inst_fp_mov_payload lab_inst_fp_neg_zero lab_inst_fp_from_reg_loc_failure \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
