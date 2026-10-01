@@ -1,0 +1,12 @@
+ptr_remove=T
+ptr_start=T
+ptr_extend=T
+ptr_save_cycle=T
+ptr_emit_head=T
+ptr_emit_last=T
+ptr_save_none=T
+ptr_emit_scratch=T
+ptr_bool=T
+ptr_refl_empty=T
+ptr_refl_scratch=T
+ptr_cycle_three=T

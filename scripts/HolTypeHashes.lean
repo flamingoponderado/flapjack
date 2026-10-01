@@ -1,3 +1,6 @@
+import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
+import Flapjack.Compiler.Backend.RegAlloc.Initialization
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
 import Flapjack.Translator.Monadic.MonadBase.ArrayLength
 import Flapjack.Compiler.Backend.RegAlloc.StateMap
@@ -5,6 +8,10 @@ import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
 import Flapjack.Misc.FindIndex.Append
 import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+import Flapjack.Compiler.Backend.Parmove.MapState
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
+import Flapjack.Compiler.Backend.Parmove.StateToList
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux

@@ -2575,3 +2575,31 @@ group order, including self moves, duplicate orientations, zeros and large
 natural numbers. Finite observations do not prove cross-assistant equivalence
 or executed allocator routing. Regenerate with
 `HOL_PROBE_ONLY=word_alloc_canonize_moves_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_copy_codec_domain_probe` records eight original copy equations;
+`WordCopyCodecDomainParity.lean` replays them and separately checks nested
+five-register AddCarry rejection. Codec-domain preservation is Flapjack
+infrastructure, not a HOL semantic equivalence theorem.
+
+`parmove_all_distinct_step_probe`, `parmove_state_to_list_probe`, and
+`parmove_temp_steps_probe` capture original observations replayed by the
+corresponding Lean parity modules. They cover primitive real-destination
+distinctness, generic three-list flattening, and RTC scratch safety respectively.
+`parmove_preservation_shape_probe` records the original preservation and
+renaming statements/types as an audit aid, not a port or equivalence proof.
+Its capture omits blank separator lines between printed HOL clauses.
+
+`parmove_map_state_probe` captures ten original equations for mapping both
+endpoints through all three lists, including independent Nat-to-Bool carriers
+and noninjective maps. `ParmoveMapStateParity` replays the same inputs in Lean;
+the finite fixtures do not prove cross-assistant equivalence.
+
+`reg_alloc_sorted_mem_probe` captures twelve original early-stop membership
+equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
+the same cases and the executed wrapper's equation for arbitrary keys/lists.
+
+`word_to_stack_program_bitmaps_probe` captures ten original single-program
+and list-compiler bitmap snapshots, replayed in `WordToStackProgramBitmapsParity`.
+Cases include invalid initial bounds, width one, repeated identifiers, and
+independent Bool identifiers. The general prefix/accounting proofs retain
+the original compiler output equations and initial-length bound; finite
+snapshots are not a cross-language equivalence proof.
