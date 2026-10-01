@@ -42722,5 +42722,29 @@
     "hol_name": "run_ira_state_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.4.1): literal define_run_declarations factory reg_allocScript1466-1468 and ml_monadBaseLib467-538. All twelve native State fields preserved; adj_ls/node_tag/degrees/coalesced/move_related become Nat x element initialization pairs. FST is independent replication length, SND is replicated value; seven remaining fields unchanged. Runner accepts arbitrary MonadBase.M State value exception, reconstructs the exact State with five List.replicate calls and returns run result without consistency/success premises. Native List/Nat/Bool/Tag carriers and independent Type0 result/exception match source. Eight fresh original HOL EVAL observations including inconsistent dim, zero lengths and failure replay kernel-checked. Production IRC route and remaining public wrappers stay open on parent. Main source comparison completed against literal define_run generator467-538 and original12-field carrier; independent fresh original fixture replay verified, unified publication separately gated."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortMoves.lean",
+    "lean_name": "sortMoves",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "sort_moves_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 343-346: arbitrary (num # alpha) list; strict descending priority comparator passed to source-reviewed native MlList.sort. Generic payload retained; external sort helpers are untagged and not independently pinned. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator acceptance pending; production allocator routing remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortMoves.lean",
+    "lean_name": "smerge",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "smerge_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 349-360: arbitrary (num # alpha) lists; empty-side equations and >= left-head selection, otherwise right-head selection; no sortedness assumption, payload untouched. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator acceptance pending; production allocator routing remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortMoves.lean",
+    "lean_name": "memSmerge",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "MEM_smerge",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 2175-2182: universally quantified free x and xs/ys; membership iff union of input memberships, arbitrary payload, no sortedness/distinctness/target-result premise; functional induction on actual smerge. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator acceptance pending; production allocator routing remains separate."
   }
 ]

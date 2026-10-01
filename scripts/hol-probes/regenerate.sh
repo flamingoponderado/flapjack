@@ -3110,3 +3110,7 @@ run_probe word_copy_codec_domain_probeScript.sml word_copy_codec_domain_probe.ou
 run_probe reg_alloc_initialization_probeScript.sml reg_alloc_initialization_probe.out \
   ira_adj ira_tag ira_degrees ira_coalesced ira_move_related ira_preserved ira_failure ira_zero \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe reg_alloc_sort_moves_probeScript.sml reg_alloc_sort_moves_probe.out \
+  sort_empty sort_one sort_mixed sort_ties sort_bool merge_empty merge_left merge_right merge_ties merge_unsorted merge_duplicate merge_bool \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"

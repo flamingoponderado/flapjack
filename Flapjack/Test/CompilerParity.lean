@@ -1,3 +1,4 @@
+import Flapjack.Test.RegAllocSortMovesParity
 import Flapjack.Test.ProductionThreeToTwoDomain
 import Flapjack.Test.RegAllocInitializationParity
 import Flapjack.Test.WordCopyCodecDomainParity

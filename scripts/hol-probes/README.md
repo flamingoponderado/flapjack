@@ -2579,3 +2579,5 @@ or executed allocator routing. Regenerate with
 `WordCopyCodecDomainParity.lean` replays them and separately checks nested
 five-register AddCarry rejection. Codec-domain preservation is Flapjack
 infrastructure, not a HOL semantic equivalence theorem.
+
+- `reg_alloc_sort_moves_probeScript.sml`: twelve complete original sort/merge equations, including reversed five-way sort ties, left-biased merge ties, arbitrary Bool payloads, duplicates and unsorted inputs; replayed in `RegAllocSortMovesParity.lean`.
