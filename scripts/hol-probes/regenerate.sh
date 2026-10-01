@@ -3527,3 +3527,15 @@ run_probe word_to_stack_code_label_safety_probeScript.sml word_to_stack_code_lab
 run_probe word_convs_code_label_carriers_probeScript.sml word_convs_code_label_carriers_probe.out \
   clc_bool clc_unit clc_list clc_option \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_convs_no_alloc_def_probeScript.sml word_convs_no_alloc_def_probe.out \
+  wcna_01_mt wcna_02_seq wcna_03_loop wcna_04_if wcna_05_call wcna_06_alloc wcna_07_loc wcna_08_share wcna_09_install wcna_10_skip wcna_11_move wcna_12_inst wcna_13_assign wcna_14_get wcna_15_set wcna_16_store wcna_17_consts wcna_18_raise wcna_19_return wcna_20_break wcna_21_continue wcna_22_tick wcna_23_heap wcna_24_code wcna_25_data wcna_26_ffi wcna_call_none_none_width1 wcna_call_return_only_width1 wcna_call_both_present_width1 \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_convs_no_mt_def_probeScript.sml word_convs_no_mt_def_probe.out \
+  wcnm_01_mt wcnm_02_seq wcnm_03_loop wcnm_04_if wcnm_05_call wcnm_06_alloc wcnm_07_loc wcnm_08_share wcnm_09_install wcnm_10_skip wcnm_11_move wcnm_12_inst wcnm_13_assign wcnm_14_get wcnm_15_set wcnm_16_store wcnm_17_consts wcnm_18_raise wcnm_19_return wcnm_20_break wcnm_21_continue wcnm_22_tick wcnm_23_heap wcnm_24_code wcnm_25_data wcnm_26_ffi wcnm_call_none_none_width1 wcnm_call_return_only_width1 wcnm_call_both_present_width1 \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_convs_no_share_inst_def_probeScript.sml word_convs_no_share_inst_def_probe.out \
+  wcns_01_mt wcns_02_seq wcns_03_loop wcns_04_if wcns_05_call wcns_06_alloc wcns_07_loc wcns_08_share wcns_09_install wcns_10_skip wcns_11_move wcns_12_inst wcns_13_assign wcns_14_get wcns_15_set wcns_16_store wcns_17_consts wcns_18_raise wcns_19_return wcns_20_break wcns_21_continue wcns_22_tick wcns_23_heap wcns_24_code wcns_25_data wcns_26_ffi wcns_call_none_none_width1 wcns_call_return_only_width1 wcns_call_both_present_width1 \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
