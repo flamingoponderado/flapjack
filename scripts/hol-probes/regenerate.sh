@@ -782,6 +782,11 @@ run_probe word_to_stack_retained_frame_probeScript.sml word_to_stack_retained_fr
 run_probe word_to_stack_allocator_stages_probeScript.sml word_to_stack_allocator_stages_probe.out \
   allocator_stages_skip allocator_stages_tick allocator_stages_raise allocator_stages_tail_call \
   "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_selector_domain_probeScript.sml word_to_stack_selector_domain_probe.out \
+  selector_program_skip selector_program_seq selector_program_set selector_program_load \
+  selector_program_store selector_program_store_offset selector_program_share selector_program_if \
+  selector_program_loop selector_program_must selector_program_tail_handler selector_program_return selector_program_both \
+  "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
 run_probe word_to_stack_selector_prelude_probeScript.sml word_to_stack_selector_prelude_probe.out \
   selector_prelude_const selector_prelude_var selector_prelude_lookup selector_prelude_load \
   selector_prelude_add selector_prelude_shift selector_prelude_shift_oob selector_prelude_heap \

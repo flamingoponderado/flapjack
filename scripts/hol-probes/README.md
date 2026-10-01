@@ -1,3 +1,19 @@
+`word_to_stack_selector_domain_probe.out` records thirteen complete original
+`inst_select riscv_config 23` program trees across assignment, Set, Load,
+Store, shared Store8, Seq/If/Loop/MustTerminate and optional Call bodies.
+`WordToStackSelectorDomainParity` kernel-checks twelve matches and explicitly
+records positive-offset Store as false: the production source-shaped Store is
+not original Mem/Addr, the existing open `flapjack-pxn.10` integration gap.
+The exact production counter-tree remains beside the unchanged original oracle.
+`ProductionSelectorDomain` proves structural support equality and actual partial
+codec acceptance/rejection equality for the executed selector and its own-
+temporary wrapper, using accepted atom/address closure. It is untagged carrier
+infrastructure, not universal HOL selector semantics, pre-SSA/source image
+closure, native ABI/configuration correspondence, or executed native routing.
+Kernel sentinels preserve five-register AddCarry rejection in Seq, Loop and
+both Call bodies while accepting the original four-register operation; generic
+applications include positive widths1/80 and unbounded natural temporaries.
+
 `parmove_fstep_map_inj_probe.out` records the complete original
 `fstep_MAP_INJ` statement and eight pairs of complete original output trees.
 The Nat-to-Bool renaming collapses registers outside the state support while
