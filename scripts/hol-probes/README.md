@@ -2351,6 +2351,13 @@ identity colouring, with a variable address. The same inputs are kernel-replayed
 in `WordAllocShareCheckerParity`, imported by the actual CompilerParity driver.
 These finite observations supplement the full original-motive case proofs;
 they do not establish cross-prover equivalence or whole allocator correctness.
+
+`word_alloc_share_checker_probeScript.sml` freshly observes all eight ShareInst
+checker cases (Store/Store8/Store16/Store32 and Load/Load8/Load16/Load32) under
+identity colouring, with a variable address. The same inputs are kernel-replayed
+in `WordAllocShareCheckerParity`, imported by the actual CompilerParity driver.
+These finite observations supplement the full original-motive case proofs;
+they do not establish cross-prover equivalence or whole allocator correctness.
 `word_to_stack_comp_prefix_probeScript.sml` freshly observes nine whole
 compiler-prefix equations: Skip, Alloc, MustTerminate, Seq, If, Loop, returning
 Call with perf enabled, returning Call with handler, and StoreConsts. Every

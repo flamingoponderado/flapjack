@@ -2974,4 +2974,6 @@ run_probe word_alloc_spillcost_probeScript.sml word_alloc_spillcost_probe.out \
 
 run_probe word_alloc_oracle_colour_probeScript.sml word_alloc_oracle_colour_probe.out \
   oc_none oc_empty oc_physical_bad oc_checker_collision oc_forced_collision oc_forced_distinct oc_rename oc_stack_equal oc_stack_below oc_raw_map \
+run_probe word_alloc_return_checker_probeScript.sml word_alloc_return_checker_probe.out \
+  rc_empty rc_cuts rc_duplicate_args rc_return_tick rc_return_break rc_return_collision rc_args_collision \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
