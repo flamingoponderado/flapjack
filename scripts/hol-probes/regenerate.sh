@@ -3685,3 +3685,7 @@ run_probe word_to_stack_no_shmemop_top_probeScript.sml word_to_stack_no_shmemop_
 run_probe word_to_stack_comp_no_install_probeScript.sml word_to_stack_comp_no_install_probe.out \
   ci_full ci_conf_type ci_perf_type ci_source_type ci_bitmap_type ci_frame_type ci_target_type ci_residual_type ci_skip_64 ci_move_64 ci_inst_64 ci_assign_64 ci_get_64 ci_set_64 ci_store_64 ci_alloc_64 ci_store_consts_64 ci_raise_64 ci_return_64 ci_break_64 ci_continue_64 ci_tick_64 ci_heap_64 ci_loc_64 ci_install_64 ci_code_write_64 ci_data_write_64 ci_ffi_64 ci_share_64 ci_must_64 ci_loop_64 ci_seq_64 ci_branch_64 ci_call_64 ci_nested_1 ci_if_1 ci_ignored_1 ci_nested_32 ci_if_32 ci_ignored_32 ci_nested_64 ci_if_64 ci_ignored_64 ci_nested_80 ci_if_80 ci_ignored_80 ci_ignored_install \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_no_install_programs_probeScript.sml word_to_stack_no_install_programs_probe.out \
+  ip_full ip_conf_type ip_perf_type ip_register_type ip_source_type ip_bitmap_type ip_outputs_type ip_frames_type ip_residual_type ip_empty_1 ip_safe_1 ip_ignored_1 ip_shared_1 ip_empty_32 ip_safe_32 ip_ignored_32 ip_shared_32 ip_empty_64 ip_safe_64 ip_ignored_64 ip_shared_64 ip_empty_80 ip_safe_80 ip_ignored_80 ip_shared_80 \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
