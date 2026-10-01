@@ -31,6 +31,7 @@ import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.ParmoveAllDistinctPmovParity
 import Flapjack.Test.ParmoveTempPmovParity
 import Flapjack.Test.ParmoveInjOnStateParity
+import Flapjack.Test.ParmoveInjOnStateStepsParity
 import Flapjack.Test.ParmoveFirstIndexParity
 import Flapjack.Test.RegAllocSafeDivParity
 import Flapjack.Test.WordToStackUnreachCodecParity

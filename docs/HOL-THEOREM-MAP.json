@@ -43852,5 +43852,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmPropsScript.sml:440-... write_mem_word_mem_eq: !k b a s x. ~(write_mem_word b k a s).failed /\\ x \\notin s.mem_domain ==> (write_mem_word b k a s).mem x = s.mem x. Lean keeps the exact hypothesis pair and conclusion; the value word dimension (a) is independent of the address/state dimension (b,s,x)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "steps_inj_on_state",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/InjOnState/Steps.lean",
+    "lean_name": "stepsInjOnState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-w1a4.14): HOL steps_inj_on_state parmoveScript.sml:1115 states forall s1 s2. inj_on_state f s1 /\\ s1 |> * s2 ==> inj_on_state f s2, where |> * is the reflexive transitive closure of the primitive step relation. Lean keeps the same two premises (injOnState f first and Steps first second, with Steps = Relation.ReflTransGen Step) and the same conclusion; each step is discharged by the already-reviewed literal step_inj_on_state (stepInjOnState). No global-injectivity, safety, target-result or EL premise is added; carriers Option alpha/Option beta are fully generic with no word dimension."
   }
 ]
