@@ -1953,37 +1953,6 @@ the production route. Regenerate read-only with
 HOL_PROBE_ONLY=word_alloc_get_writes_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
-`word_alloc_get_delta_inst_probe.out` captures twenty-four direct original
-`get_delta_inst_def` observations (word_allocScript.sml1085-1119). Full-tree
-equalities cover Skip, Const, Binop with Reg/Imm, Shift with Reg/Imm, Div,
-AddCarry, AddOverflow, SubOverflow, LongMul, LongDiv, the Load/Store/Load32/
-Store32/Load8/Store8 memory clauses, FP FPLess, FPMovToReg at64/32,
-FPMovFromReg at64/32, and the FPNeg catchall yielding `Delta [] []`. The
-identical inputs and outputs are kernel replayed by
-`Flapjack.Test.WordAllocGetDeltaInstParity`. These regression rows do not
-establish cross-language equivalence or complete the production route.
-Regenerate read-only with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
-HOL_PROBE_ONLY=word_alloc_get_delta_inst_probeScript.sml
-scripts/hol-probes/regenerate.sh`.
-
-`word_alloc_get_clash_tree_probe.out` captures thirty-two direct original
-`get_clash_tree_def` observations (word_allocScript.sml1131-1212). Each row is a
-full-tree equality over the exact `wordLang$prog` carrier with explicit
-`sptree$fromAList` num_set operands: Skip, Move, Inst, Assign, Get, Store, Seq,
-If with Reg/Imm, MustTerminate, Alloc, Install, CodeBufferWrite,
-DataBufferWrite, FFI, Raise, Return, Tick, LocValue, Set, OpCurrHeap,
-StoreConsts, ShareInst with Store and Load, Loop, Break/Continue inside and
-outside the loop context, Call with no return, Call with a return, and Call with
-both a return and a handler (the required `Branch`). The identical inputs and
-outputs are kernel replayed by
-`Flapjack.Test.WordAllocGetClashTreeParity`. These regression rows do not
-establish cross-language equivalence or complete the production route.
-Regenerate read-only with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
-HOL_PROBE_ONLY=word_alloc_get_clash_tree_probeScript.sml
-scripts/hol-probes/regenerate.sh`.
-
 `word_alloc_get_writes_probe.out` records seven direct original
 `get_writes_def` observations (word_allocScript.sml1009-1023). Identical
 full-tree inputs/outputs are kernel replayed in
@@ -2051,3 +2020,11 @@ full `parmove_correct` remain open.
 - `word_to_stack_abs_stack_prefix_probeScript.sml`: successful bitmap prefix preservation for base, ordinary, handler, recursive and mixed frames.
 
 - `word_to_stack_abs_stack_lengths_probeScript.sml`: exact successful abstraction frame counts for base, ordinary, handler, recursive and mixed frames.
+
+### Literal Word-to-Stack move wrapper
+
+`word_to_stack_wmove_probeScript.sml` captures eleven original64-bit equality
+rows for exact DIV2/parmove/format_var/wMoveAux composition. All formatting
+branches, register and spill swaps, odd indices and DIV2 collision, truncated
+offsets and fprime are replayed by `literalWMoveParityGuard` in the normal
+compiler parity suite. Production comp/compile wiring remains open.

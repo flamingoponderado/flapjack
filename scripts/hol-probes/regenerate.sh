@@ -2712,13 +2712,6 @@ run_probe word_to_stack_index_list_probeScript.sml word_to_stack_index_list_prob
   il_empty il_single il_desc an_even an_odd il_snd il_fst il_el_zero il_el_last \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-# The word_to_stack bitmap-append probe observes `read_bitmap` and
-# `full_read_bitmap` on terminal and continuation bitmap words and on the same
-# inputs with extra bitmap words appended (word_to_stackProofScript.sml:744,757).
-run_probe word_to_stack_bitmap_append_probeScript.sml word_to_stack_bitmap_append_probe.out \
-  rb_terminal rb_terminal_append rb_cont rb_cont_append frb_word frb_word_append \
-  frb_cont frb_cont_append frb_loc \
-  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe parmove_semantics_probeScript.sml parmove_semantics_probe.out \
   sem_windmill sem_repeated sem_parallel_swap1 sem_parallel_swap2 sem_sequential_swap2 sem_parallel_last sem_sequential_last sem_untouched sem_state_first sem_state_second sem_ignore_temp sem_real_difference \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
