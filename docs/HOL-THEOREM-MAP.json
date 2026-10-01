@@ -43905,5 +43905,13 @@
   "lean_name": "listNextVarRenameLemma2Prime",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a source4579-4593 comparison: six arbitrary input/output List Nat, Spt Nat and Nat variables; exact renamer equality followed by ALL_DISTINCT, all four map/domain/outside-lookup/inside-success conclusions retained. Proof specializes accepted lemma2 and substitutes equality. THE uses getD only on successful lookups established by fourth conclusion; existing selector-independence covers all SOME-agreeing choices without constraining THE NONE. Native Spt retains malformed trees and unbounded Nat. Generic kernel fixture applies actual theorem with arbitrary inputs and outputs. Original renamer observations freshly regenerated; local theorem source-reviewed, no exported theorem invocation claimed. Coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "merge_moves_fst",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoveBounds.lean",
+  "lean_name": "mergeMovesFst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source4667-4684 comparison: arbitrary input list, natural start, native canonical Spt Nat maps; no premises. Same let-bound five-product result, start<=counter plus EVERY MAP FST destinations strict below resulting counter and >=original counter for each move list. List membership universal renders EVERY directly. Tail-first induction/cases native original mergeMoves; no distinctness/wf/allocation-class/map relation or supplied result premise. Fresh original full renamer results replay ten empty/missing/equal/unequal/repeated/reordered/malformed/unbounded Nat cases; kernel matches full tuples and applies all three conclusions to arbitrary inputs. Original local theorem source-reviewed, no DB export invocation claimed. Coordinator acceptance pending; executed list-state route remains separate."
 }
 ]
