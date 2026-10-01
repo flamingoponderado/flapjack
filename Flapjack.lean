@@ -100,6 +100,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.ShMemLoadLemmas
 import Flapjack.Compiler.Backend.StackProps.RemoveNames
 import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
+import Flapjack.Pancake.WordLang.OccurrencesExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpNamed
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCmpShift
@@ -151,6 +152,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
 import Flapjack.Compiler.Backend.WordAlloc.Colour
+import Flapjack.Compiler.Backend.WordAlloc.InstructionWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.HolRef
@@ -771,6 +773,7 @@ import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.WordAllocLiveExpressionParity
 import Flapjack.Test.WordAllocProgramLivenessParity
 import Flapjack.Test.WordAllocApplyColourExactParity
+import Flapjack.Test.WordAllocInstructionWritesParity
 import Flapjack.Test.CrepToLoopCompileExpExactParity
 import Flapjack.Test.CrepToLoopCompileExactParity
 import Flapjack.Test.CrepToLoopCompFuncParity
@@ -835,6 +838,7 @@ import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.Parmove
 import Flapjack.RiscV.CakeAllocatorBitsBridge

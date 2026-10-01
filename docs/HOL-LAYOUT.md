@@ -62,6 +62,7 @@ for the review rule.
 | `compiler/backend/stack_to_labScript.sml` | `Flapjack/Compiler/Backend/StackToLab.lean` (`flatten` and `prog_to_section`; `compile` remains open) |
 | `compiler/backend/reg_alloc/parmoveScript.sml` | `Flapjack/Compiler/Backend/Parmove.lean` |
 | `compiler/backend/word_to_stackScript.sml` | `Flapjack/Compiler/Backend/WordToStack.lean`, `Flapjack/Compiler/Backend/WordToStackRegFormat.lean` |
+| `compiler/backend/proofs/word_to_stackProofScript.sml` | `Flapjack/Compiler/Backend/WordToStack/Proofs/` (theorem groups, including `StackSize.lean`) |
 | `panStaticScript.sml` | `Flapjack/Pancake/PanStatic.lean` |
 | `pan_simpScript.sml` | `Flapjack/Pancake/PanSimp.lean` |
 | `pan_structsScript.sml` | `Flapjack/Pancake/PanStructs.lean` |
