@@ -4252,6 +4252,22 @@ Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_top_probeScript.sml`.
 
 - `ssa_cc_trans_props_loop_control_probeScript.sml` specializes the original functional induction rule to the full native program invariant and replays literal Resume Loop/Break/Continue tactics. Three full clauses and29 carrier captures retain Loop setup binders/guards and its actual-context body IH.
 `lab_to_target_padding_length_probeScript.sml` exports original `LENGTH_pad_bytes` (lab_to_targetProofScript.sml:3195) and six direct `pad_bytes` EVAL observations over natural-number and Boolean lists: extension, multi-element nop truncation, exact fit, zero length, Boolean payloads, and the empty-nop sentinel outside the theorem premise. The full original premise remains nonempty nop and bytes length at most the requested length. `Flapjack.Test.LabToTargetPaddingLengthParity` kernel-replays all six concrete rows and exercises the public arbitrary-carrier theorem. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_padding_length_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_padding_similarity_probeScript.sml` captures the complete
+original add-nop, section-padding and code-padding similarity statements and
+full quantified types. Its local add-nop theorem replays the original statement
+and proof literally. Six direct padding observations include empty nop chunks,
+label-only code, nonempty accumulators and unchanged resolved offsets. Kernel
+fixtures replay them and apply the full theorem at arbitrary positive width and
+arbitrary accumulator; no full compiler or cross-language equivalence is claimed.
+
+`lab_to_target_encoding_similarity_probeScript.sml` captures four complete
+original similarity statements and their inferred types; both local lemmas
+replay literal source statements and proofs. Six native observations exercise
+initial encoding, unchanged and changed offsets, length growth/failure flags,
+nonempty accumulators and multiple sections. The full line theorem retains
+HOL's complete result tail `(position, flag)` and arbitrary prefix premise.
+Kernel fixtures replay the observations and apply the full section theorem.
 ### Generic force_rename repair
 
 `ssa_force_rename_generic_probe.out` replays the literal three complete lookup/domain proofs at word_allocProofScript.sml:6347–6381 and captures the original arbitrary-payload definition type. The Lean Bool/Unit fixtures exercise the generalized definition and theorem instances; SSA bounds retain their Nat specialization.

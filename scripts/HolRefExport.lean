@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
 import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls

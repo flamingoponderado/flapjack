@@ -51380,5 +51380,41 @@
     "lean_name": "linearScanRegAllocCorrect",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.19): linear_scanProofScript.sml:6008-6230 ∀k moves ct forced. EVERY (λ(r1,r2). in_clash_tree ct r1 ∧ in_clash_tree ct r2) forced ⇒ ∃col livein flivein. linear_scan_reg_alloc k moves ct forced = M_success col ∧ check_clash_tree (sp_default col) ct LN LN = SOME (livein, flivein) ∧ (∀r. in_clash_tree ct r ⇒ r ∈ domain col ∧ if is_phy_var r then sp_default col r = r DIV 2 else if is_stack_var r then k ≤ sp_default col r else T) ∧ (∀r. r ∈ domain col ⇒ in_clash_tree ct r) ∧ EVERY (λ(r1,r2). sp_default col r1 = sp_default col r2 ⇒ r1 = r2) forced; DB.fetch show_types compared (TV=0, no free variables). Lean: the same single hypothesis and five conclusion conjuncts over the exact tagged linearScanRegAlloc (Exc result, whose definition reads colours through HOL EL as the exact holEl), spDefault, checkClashTree, sptDomain, inClashTree, with the Bool if-chain. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "linesRel_encLine",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "LIST_REL_enc_line",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original local3353 complete EVERY2 equivalence, arbitrary ls/lsPrime, encoder and len binders, actual MAP(enc_line enc len). Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "codeSimilar_encSecList",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_enc_sec_list",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original3362 complete code_similar iff under actual initial encSecList, all code1/code2/n binders and encoder-dependent Skip byte length retained. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "encLinesAgain_implies_similar",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_lines_again_IMP_similar",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original local3376 all ten explicit binders labs/ffis/pos/enc/lines/acc/ok/linesPrime/okPrime/curr. Full execution equality retains okPrime:Nat×Bool, original EVERY2 curr (REVERSE acc) premise and full EVERY2(curr++lines)linesPrime conclusion. Actual recursive branch invariant includes unchanged offset, changed offset, MAX byte lengths, position and accumulated flag. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "encSecsAgain_implies_similar",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_secs_again_IMP_similar",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original3391 all pos/labs/ffis/enc/code/code1/ok binders, full result equality and code-similarity implication; complete recursion threads actual position and both section success flags. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
   }
 ]

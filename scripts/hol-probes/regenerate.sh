@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe lab_to_target_encoding_similarity_probeScript.sml lab_to_target_encoding_similarity_probe.out \
+  es_line es_line_types es_initial es_initial_types es_again es_again_types es_sections es_sections_types es_initial_value es_again_growth es_again_unchanged es_again_no_growth es_sections_value es_sections_similar \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_padding_similarity_probeScript.sml lab_to_target_padding_similarity_probe.out \
   ps_add ps_add_types ps_section ps_section_types ps_code ps_code_types ps_add_value ps_section_value ps_empty_nop ps_acc_value ps_label_only ps_code_similar \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
