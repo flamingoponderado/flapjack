@@ -1,3 +1,10 @@
+`stack_to_lab_executed_input_probe.out` records seven original native fallback
+and section observations. The four residual operations flatten to empty lines;
+the new Flapjack native boundary rejects them. Skip remains a valid empty
+program. Seq and distinct LocValue fields pin original final-label and target
+order without extra entry aliases or fresh-label maxima. HOL has no such guard:
+these rows do not claim a compiler simulation or original guard declaration.
+
 `stack_to_lab_executed_codec_probe.out` records nine fresh original native
 constructor/operand observations, including AddCarry's four positions, an
 unsupported overflow result, memory offsets, Cbw's address/value/store order,

@@ -3868,3 +3868,7 @@ run_probe ssa_cc_trans_props_move_probeScript.sml ssa_cc_trans_props_move_probe.
   spm_full spm_type_pri spm_type_ls spm_type_ssa spm_type_na spm_type_lt spm_type_progOut spm_type_ssaOut spm_type_naOut \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_executed_input_probeScript.sml stack_to_lab_executed_input_probe.out \
+  guard_source_get_drop guard_source_alloc_drop guard_source_stackstore_drop guard_source_datawrite_drop guard_source_skip_section guard_source_seq_section guard_source_loc_section \
+  "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"

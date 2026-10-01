@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackToLab.ExecutedInput
 import Flapjack.Compiler.Backend.StackLang.ProductionMacros
 import Flapjack.Compiler.Backend.StackLang.ProductionWordBoundary
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
