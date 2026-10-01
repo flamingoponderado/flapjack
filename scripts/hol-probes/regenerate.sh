@@ -3106,3 +3106,7 @@ run_probe word_alloc_canonize_moves_probeScript.sml word_alloc_canonize_moves_pr
 run_probe word_copy_codec_domain_probeScript.sml word_copy_codec_domain_probe.out \
   copy_carry copy_load16 copy_store16 copy_seq_alias copy_if copy_loop copy_must copy_both \
   "$cake_dir/compiler/backend/word_copyScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_program_bitmaps_probeScript.sml word_to_stack_program_bitmaps_probe.out \
+  pb_single_skip pb_single_zero_frame pb_single_alloc pb_single_seq pb_single_invalid_bound pb_single_width_one pb_rows_empty pb_rows_repeat_id pb_rows_mixed pb_rows_bool \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

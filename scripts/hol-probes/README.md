@@ -2579,3 +2579,15 @@ or executed allocator routing. Regenerate with
 `WordCopyCodecDomainParity.lean` replays them and separately checks nested
 five-register AddCarry rejection. Codec-domain preservation is Flapjack
 infrastructure, not a HOL semantic equivalence theorem.
+
+`word_to_stack_program_bitmaps_probe.out` contains ten fresh direct original
+`compile_prog` and `compile_word_to_stack` observations, kernel-replayed by
+`Flapjack.Test.WordToStackProgramBitmapsParity`. They retain bitmap lengths,
+counts, gaps, initial-prefix equality, frame outputs and repeated/Boolean keys;
+cases include zero frame, nested insertion, width one and an invalid initial
+length bound. The full arbitrary-input prefix and accounting theorems live in
+`WordToStack/Proofs/ProgramBitmaps.lean`. These finite observations do not prove
+cross-language equivalence or source-to-RISC-V correctness. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_program_bitmaps_probeScript.sml
+scripts/hol-probes/regenerate.sh` from the read-only prebuilt backend theory.

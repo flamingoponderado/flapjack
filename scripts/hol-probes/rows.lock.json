@@ -4319,6 +4319,12 @@
       "out": "word_alloc_canonize_moves_probe.out",
       "rows": 19,
       "sha256": "0eba6bb18803383ae0edee43b2f5b4300176f89ef0295c6b846840c60d44672c"
+    },
+    {
+      "bytes": 336,
+      "out": "word_to_stack_program_bitmaps_probe.out",
+      "rows": 10,
+      "sha256": "8765182f39ccdb4a95f8cea1b64beaf2fa8acd8e53f4fc02f35699e632a5889b"
     }
   ],
   "version": 1
