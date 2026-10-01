@@ -1,0 +1,13 @@
+SectionLabelsEmpty=(5,[])
+SectionLabelsEmptyLabs=(5,[(9,9)])
+SectionLabelsConcrete=(22,[(2,17); (1,13)])
+SectionLabelsConcreteLabs=(22,[(2,17); (1,13); (7,7)])
+ComputeLabelsAltEmpty=LN
+ComputeLabelsAltConcrete=⦕ 1 ↦ ⦕ 0 ↦ 10; 1 ↦ 13 ⦖; 2 ↦ ⦕ 0 ↦ 13; 2 ↦ 20 ⦖ ⦖
+ComputeLookupSection1=SOME ⦕ 0 ↦ 10; 1 ↦ 13 ⦖
+ComputeLookupSection2=SOME ⦕ 0 ↦ 13; 2 ↦ 20 ⦖
+ComputeLookupSection3Absent=NONE
+ComputeLookupSection1Start=SOME 10
+ComputeLookupSection1Label1=SOME 13
+ComputeLookupSection2Start=SOME 13
+ComputeLookupSection2Label2=SOME 20

@@ -1,0 +1,33 @@
+NotSkipSkip=F
+NotSkipAsm=T
+NotSkipLabel=T
+NotSkipLabAsm=T
+FilterSkipEmpty=[]
+FilterSkipOne=[Section 1 [LabAsm (Jump (Lab 1 0)) 0w [] 1]]
+FilterSkipTwo=[Section 1 []; Section 2 [LabAsm (Jump (Lab 1 0)) 0w [] 1]]
+ListSubsetTrue=T
+ListSubsetFalse=F
+ConfigLabels=LN
+ConfigSecPosLen=[]
+ConfigPos=10
+ConfigInitClock=0
+ConfigFfiNames=NONE
+ConfigShmemExtra=[]
+ConfigHashSize=0
+CompileLabSuccess=SOME
+  ([],
+   <|labels := ⦕ 1 ↦ ⦕ 0 ↦ 10; 5 ↦ 10 ⦖ ⦖; sec_pos_len := [(1,10,0)];
+     pos := 10; init_clock := 0; ffi_names := SOME []; shmem_extra := [];
+     hash_size := 0|>)
+CompileLabFfiSubsetFail=NONE
+CompileLabRemoveLabelsNone=NONE
+CompileSkip=SOME
+  ([],
+   <|labels := ⦕ 1 ↦ ⦕ 0 ↦ 10; 5 ↦ 10 ⦖ ⦖; sec_pos_len := [(1,10,0)];
+     pos := 10; init_clock := 0; ffi_names := SOME []; shmem_extra := [];
+     hash_size := 0|>)
+CompileLabFilterSkip=SOME
+  ([],
+   <|labels := ⦕ 1 ↦ ⦕ 0 ↦ 10; 5 ↦ 10 ⦖ ⦖; sec_pos_len := [(1,10,0)];
+     pos := 10; init_clock := 0; ffi_names := SOME []; shmem_extra := [];
+     hash_size := 0|>)

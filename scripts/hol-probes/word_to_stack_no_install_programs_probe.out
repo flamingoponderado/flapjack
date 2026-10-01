@@ -1,0 +1,25 @@
+ip_full=⊢ ∀ac perf k prog bs prog' fs' bs'. EVERY (λ(n,m,pp). no_install pp) prog ∧ compile_word_to_stack ac perf k prog bs = (prog',fs',bs') ∧ (perf ⇔ F) ⇒ EVERY (λ(a,p). no_install p) prog'
+ip_conf_type=:α asm_config
+ip_perf_type=:bool
+ip_register_type=:num
+ip_source_type=:(β # num # α prog) list
+ip_bitmap_type=:α word app_list # num
+ip_outputs_type=:(β # α stackLang$prog) list
+ip_frames_type=:num list
+ip_residual_type=:α word app_list # num
+ip_empty_1=T
+ip_safe_1=T
+ip_ignored_1=T
+ip_shared_1=T
+ip_empty_32=T
+ip_safe_32=T
+ip_ignored_32=T
+ip_shared_32=T
+ip_empty_64=T
+ip_safe_64=T
+ip_ignored_64=T
+ip_shared_64=T
+ip_empty_80=T
+ip_safe_80=T
+ip_ignored_80=T
+ip_shared_80=T

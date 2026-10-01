@@ -1,0 +1,8 @@
+lu_hit=20
+lu_hit_zero=10
+lu_miss_default=99
+lu_empty_default=7
+fi_zero=SOME 0
+fi_middle=SOME 8
+fi_absent=NONE
+fi_duplicate=SOME 4

@@ -2,6 +2,9 @@ import Flapjack.Compiler.Backend.LinearScan.Proofs.LiveTree
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
 import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
 import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
+import Flapjack.Compiler.Backend.LinearScan.Proofs.GoodState
+import Flapjack.Compiler.Backend.LinearScan.Proofs.SpillRegister
+import Flapjack.Compiler.Backend.LinearScan.Proofs.EdgesToAdjlist
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalMonad
@@ -23,6 +26,13 @@ order:
   `check_intervals_check_live_tree` and `get_intervals_ct_eq`.
 * `RegExchange`: `linear_scanProofScript.sml:2020-2402`, the generated
   array accessor equations and `apply_reg_exchange_correct`.
+* `GoodState`: `linear_scanProofScript.sml:2404-2696`, the colouring-state
+  invariant `good_linear_scan_state`, releasing inactive intervals and
+  finding a colour.
+* `SpillRegister`: `linear_scanProofScript.sml:2697-2946`, sparse sublists
+  and `spill_register` preserving `good_linear_scan_state`.
+* `EdgesToAdjlist`: `linear_scanProofScript.sml:2947-3071`, the forced-edge
+  adjacency lists and the `forbidden_is_from_*` predicates.
 * `Bijection`: `linear_scanProofScript.sml:4997-5204`, the register
   bijection invariants.
 * `ApplyBijection`: `linear_scanProofScript.sml:5565-6006`, checking a
