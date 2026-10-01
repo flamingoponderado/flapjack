@@ -20,8 +20,12 @@ def msub {value exception : Type} (e : exception) : Nat → List value → Exc v
   | _, [] => .failure e
   | n, x :: l' => if n = 0 then .success x else msub e (n - 1) l'
 
-/-- Exact HOL `Msub_eq` (`ml_monadBaseScript.sml:131-138`). -/
-@[hol "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml" "Msub_eq"]
+/-- HOL `Msub_eq` (`ml_monadBaseScript.sml:131-138`).
+
+Provisional and untagged: this ports HOL `Msub_eq` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem msubEq {value exception : Type} :
     ∀ (l : List value) (n : Nat) (e : exception) (h : n < l.length),
       msub e n l = .success (l[n]'h) := by

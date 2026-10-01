@@ -40,8 +40,12 @@ private theorem updateEqn {value : Type} (get : LinearScanHiddenState → List v
   · rw [if_pos h]; unfold arrayUpdate; rw [mupdateEq _ _ _ _ h]
   · rw [if_neg h]; unfold arrayUpdate; rw [mupdateExnEq _ _ _ _ (by omega)]
 
-/-- Exact HOL `colors_sub_eqn` (`linear_scanProofScript.sml:2020-2029`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "colors_sub_eqn"]
+/-- HOL `colors_sub_eqn` (`linear_scanProofScript.sml:2020-2029`).
+
+Provisional and untagged: this ports HOL `colors_sub_eqn` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem colorsSubEqn (n : Nat) (s : LinearScanHiddenState) :
     colorsSub n s = if n < s.colors.length then (.success (holEl n s.colors), s)
       else (.failure .Subscript, s) := subEqn _ n s
@@ -53,8 +57,12 @@ theorem updateColorsEqn (n t : Nat) (s : LinearScanHiddenState) :
       (.success (), { s with colors := s.colors.set n t }) else (.failure .Subscript, s) :=
   updateEqn _ _ n t s
 
-/-- Exact HOL `int_beg_sub_eqn` (`linear_scanProofScript.sml:2042-2051`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "int_beg_sub_eqn"]
+/-- HOL `int_beg_sub_eqn` (`linear_scanProofScript.sml:2042-2051`).
+
+Provisional and untagged: this ports HOL `int_beg_sub_eqn` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem intBegSubEqn (n : Nat) (s : LinearScanHiddenState) :
     intBegSub n s = if n < s.int_beg.length then (.success (holEl n s.int_beg), s)
       else (.failure .Subscript, s) := subEqn _ n s
@@ -66,8 +74,12 @@ theorem updateIntBegEqn (n : Nat) (t : Int) (s : LinearScanHiddenState) :
       (.success (), { s with int_beg := s.int_beg.set n t }) else (.failure .Subscript, s) :=
   updateEqn _ _ n t s
 
-/-- Exact HOL `int_end_sub_eqn` (`linear_scanProofScript.sml:2064-2073`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "int_end_sub_eqn"]
+/-- HOL `int_end_sub_eqn` (`linear_scanProofScript.sml:2064-2073`).
+
+Provisional and untagged: this ports HOL `int_end_sub_eqn` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem intEndSubEqn (n : Nat) (s : LinearScanHiddenState) :
     intEndSub n s = if n < s.int_end.length then (.success (holEl n s.int_end), s)
       else (.failure .Subscript, s) := subEqn _ n s
@@ -79,8 +91,12 @@ theorem updateIntEndEqn (n : Nat) (t : Int) (s : LinearScanHiddenState) :
       (.success (), { s with int_end := s.int_end.set n t }) else (.failure .Subscript, s) :=
   updateEqn _ _ n t s
 
-/-- Exact HOL `sorted_regs_sub_eqn` (`linear_scanProofScript.sml:2086-2095`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "sorted_regs_sub_eqn"]
+/-- HOL `sorted_regs_sub_eqn` (`linear_scanProofScript.sml:2086-2095`).
+
+Provisional and untagged: this ports HOL `sorted_regs_sub_eqn` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem sortedRegsSubEqn (n : Nat) (s : LinearScanHiddenState) :
     sortedRegsSub n s = if n < s.sorted_regs.length then
       (.success (holEl n s.sorted_regs), s) else (.failure .Subscript, s) := subEqn _ n s
@@ -94,9 +110,12 @@ theorem updateSortedRegsEqn (n t : Nat) (s : LinearScanHiddenState) :
       else (.failure .Subscript, s) :=
   updateEqn _ _ n t s
 
-/-- Exact HOL `sorted_moves_sub_eqn` (`linear_scanProofScript.sml:2108-2117`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
-  "sorted_moves_sub_eqn"]
+/-- HOL `sorted_moves_sub_eqn` (`linear_scanProofScript.sml:2108-2117`).
+
+Provisional and untagged: this ports HOL `sorted_moves_sub_eqn` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem sortedMovesSubEqn (n : Nat) (s : LinearScanHiddenState) :
     sortedMovesSub n s = if n < s.sorted_moves.length then
       (.success (holEl n s.sorted_moves), s) else (.failure .Subscript, s) := subEqn _ n s
@@ -116,9 +135,12 @@ theorem updateSortedMovesEqn (n : Nat) (t : Nat × (Nat × Nat)) (s : LinearScan
 def lookupDefaultId (s : Spt Nat) (x : Nat) : Nat := (sptLookup x s).elim x (fun x => x)
 
 /-- HOL proof-script definition `find_reg_exchange_step`
-(`linear_scanProofScript.sml:2136-2143`); `EL r colors` is unbounded, as in HOL. -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
-  "find_reg_exchange_step_def"]
+(`linear_scanProofScript.sml:2136-2143`); `EL r colors` is unbounded, as in HOL.
+
+Provisional and untagged: this ports HOL `find_reg_exchange_step_def` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 noncomputable def findRegExchangeStep (colors : List Nat) (r : Nat) :
     Spt Nat × Spt Nat → Spt Nat × Spt Nat
   | (exch, invexch) =>
@@ -129,10 +151,13 @@ noncomputable def findRegExchangeStep (colors : List Nat) (r : Nat) :
       (sptInsert col1 fcol1 (sptInsert col2 fcol2 exch),
         sptInsert fcol1 col1 (sptInsert fcol2 col2 invexch))
 
-/-- Exact HOL `find_reg_exchange_FOLDL` (`linear_scanProofScript.sml:2145-2153`);
-HOL's unused binder `colors` is retained. -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
-  "find_reg_exchange_FOLDL"]
+/-- HOL `find_reg_exchange_FOLDL` (`linear_scanProofScript.sml:2145-2153`);
+HOL's unused binder `colors` is retained.
+
+Provisional and untagged: this ports HOL `find_reg_exchange_FOLDL` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem findRegExchangeFoldl :
     ∀ (l _colors : List Nat) (exch invexch : Spt Nat) (sth : LinearScanHiddenState),
       (∀ r, r ∈ l → r < sth.colors.length) →
@@ -284,9 +309,12 @@ private theorem exchangeStep (cols σ σi De Di : Nat → Nat) (h k : Nat) (t : 
     · rw [if_neg c2]
       exact he Ht c hck
 
-/-- Exact HOL `find_reg_exchange_FOLDR_correct` (`linear_scanProofScript.sml:2166-2281`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
-  "find_reg_exchange_FOLDR_correct"]
+/-- HOL `find_reg_exchange_FOLDR_correct` (`linear_scanProofScript.sml:2166-2281`).
+
+Provisional and untagged: this ports HOL `find_reg_exchange_FOLDR_correct` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem findRegExchangeFoldrCorrect :
     ∀ (l colors : List Nat) (exch invexch : Spt Nat) (k : Nat),
       (l.map (fun r => holEl r colors)).Nodup ∧ (∀ r, r ∈ l → isPhyVar r) ∧
@@ -330,9 +358,12 @@ theorem findRegExchangeFoldrCorrect :
         (fun y => by rw [lookupDefaultIdInsert, lookupDefaultIdInsert])
         hnotin hphy' hb hc hd he
 
-/-- Exact HOL `find_reg_exchange_correct` (`linear_scanProofScript.sml:2283-2311`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
-  "find_reg_exchange_correct"]
+/-- HOL `find_reg_exchange_correct` (`linear_scanProofScript.sml:2283-2311`).
+
+Provisional and untagged: this ports HOL `find_reg_exchange_correct` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem findRegExchangeCorrect :
     ∀ (l : List Nat) (sth : LinearScanHiddenState) (k : Nat),
       (l.map (fun r => holEl r sth.colors)).Nodup ∧ (∀ r, r ∈ l → isPhyVar r) ∧
@@ -362,9 +393,12 @@ theorem findRegExchangeCorrect :
   simp only [List.mem_reverse] at this
   exact this
 
-/-- Exact HOL `MAP_colors_eq_lemma` (`linear_scanProofScript.sml:2313-2350`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
-  "MAP_colors_eq_lemma"]
+/-- HOL `MAP_colors_eq_lemma` (`linear_scanProofScript.sml:2313-2350`).
+
+Provisional and untagged: this ports HOL `MAP_colors_eq_lemma` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem mapColorsEqLemma :
     ∀ (sth : LinearScanHiddenState) (n : Nat) (f : Nat → Nat),
       n ≤ sth.colors.length →
@@ -407,8 +441,12 @@ theorem mapColorsEqLemma :
         show holEl n' (sth.colors.set n _) = _
         rw [holEl_set _ _ _ _ hlt, if_neg (by omega)]
 
-/-- Exact HOL `MAP_colors_eq` (`linear_scanProofScript.sml:2352-2362`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "MAP_colors_eq"]
+/-- HOL `MAP_colors_eq` (`linear_scanProofScript.sml:2352-2362`).
+
+Provisional and untagged: this ports HOL `MAP_colors_eq` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem mapColorsEq :
     ∀ (sth : LinearScanHiddenState) (f : Nat → Nat),
       ∃ sthout, (.success (), sthout) = mapColors f sth.colors.length sth ∧
@@ -419,9 +457,12 @@ theorem mapColorsEq :
   obtain ⟨sthout, hrun, hl, hb, he, hlo, -⟩ := mapColorsEqLemma sth sth.colors.length f (Nat.le_refl _)
   exact ⟨sthout, hrun, hlo, hl, hb, he⟩
 
-/-- Exact HOL `apply_reg_exchange_correct` (`linear_scanProofScript.sml:2364-2402`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
-  "apply_reg_exchange_correct"]
+/-- HOL `apply_reg_exchange_correct` (`linear_scanProofScript.sml:2364-2402`).
+
+Provisional and untagged: this ports HOL `apply_reg_exchange_correct` but its statement uses HOL `EL`
+(rendered by the untagged total `holEl`, or its bounded form), whose HOL
+`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 theorem applyRegExchangeCorrect :
     ∀ (l : List Nat) (sth : LinearScanHiddenState) (k : Nat),
       (l.map (fun r => holEl r sth.colors)).Nodup ∧ (∀ r, r ∈ l → isPhyVar r) ∧
