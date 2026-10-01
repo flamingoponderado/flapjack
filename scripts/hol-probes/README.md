@@ -2316,3 +2316,10 @@ whole allocator theorem; universal case proofs retain the original motive.
 `word_alloc_merge_stack_only_probeScript.sml` captures nine original full-tree equations for every move-analysis branch: present alloc/physical/stack source, absent stack alloc/physical source, missing/root deletion, fixed overwrite, and raw non-wf trees. Same-input kernel fixtures are registered in actual CompilerParity. This helper is not full stack analysis or allocator correctness.
 
 `parmove_correct_probeScript.sml` kernel-proves seven universal-environment instances of original `parmove_correct`, deriving the windmill premise by EVAL: empty, self, chain, cycle, fan-out, reordered chain and Boolean register/value carriers. Matching Lean kernel applications are imported by CompilerParity; this is theorem replay, not an executable compiler parity measurement.
+
+`word_alloc_coalesce_cost_probeScript.sml` observes eight original native
+`get_coalescecost` equations, covering endpoint absence/presence, unequal stored
+values, identical endpoints, Bool payloads, zero multiplier, a large natural,
+and a malformed tree. `WordAllocCoalesceCostParity` replays the same inputs in
+the actual test driver. This definition does not yet replace the executed
+allocator heuristics and does not establish whole allocator correctness.

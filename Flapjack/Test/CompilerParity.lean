@@ -1,3 +1,4 @@
+import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
 import Flapjack.Test.WordToStackCompilePrefixParity
 import Flapjack.Test.ParmoveCorrectParity

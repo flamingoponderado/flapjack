@@ -2927,3 +2927,7 @@ run_probe word_alloc_merge_stack_only_probeScript.sml word_alloc_merge_stack_onl
 run_probe parmove_correct_probeScript.sml parmove_correct_probe.out \
   pc_empty pc_self pc_chain pc_cycle pc_fanout pc_order pc_bool \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_alloc_coalesce_cost_probeScript.sml word_alloc_coalesce_cost_probe.out \
+  cc_absent cc_left cc_right cc_both cc_same cc_zero cc_large cc_raw \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
