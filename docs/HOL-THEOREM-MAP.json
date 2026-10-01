@@ -40965,5 +40965,117 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.4): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Loop case of evaluate_ind: same binder s, the HOL case-split conclusion rendered by the untagged stackSwapPost, and as premises exactly the two Loop induction hypotheses of the tagged Lean evaluate_ind (wordSemScript.sml evaluate_ind rebound without fix_clock): STOP (Loop names c exit_names) at dec_clock s1 for every cut state v, body run (res, s1) = evaluate c v with cont_loop res and s1.clock <> 0, and the body c at every cut state v. No extra premise. Proof follows HOL (wordPropsScript.sml:2533-2833), using the rebound evaluate_def: cut_state keeps stack and handler and commutes with the stack swap; a continuing body result either times out with a flushed state or is transported into the next iteration (s_key_eq_trans, untagged stackSwapRel_seqTail); Break 0 leaves through the exit cut; every other result passes through exit_loop with the body's transported run (untagged stackSwapRel_exitLoop, including the exception LASTN frame). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstMemory.lean",
+  "lean_name": "evaluateApplyColour_InstLoad",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.3: HOL evaluate_apply_colour Inst memory1291-1373 and wordSem inst_def776-821, Load constructor case. Same st/cst/f/live/lt quantifiers, original colouring_ok/state-equality/live-scoped-locals premises and full existential applyColourPost; no subprogram/IH or target-evaluation/success premise. Actual native inst/evaluate unfolded. Address remains Op Add [Var base;Const offset], transported by accepted apply_colour_exp_lemma with singleton read scope derived from get_live_inst. Ordinary Load/Store preserve arbitrary WordLoc payloads; narrow8/32 keep zero resize/truncation, actual memory/domain/endian helper and Loc failures. Unsupported Load16/Store16 retain unconditional source Error, not shared-memory behavior. State relation supplies identical memory/domain/endian fields, so actual helper outcomes coincide; successful loads use original scoped writes-union-live injectivity and delete relation; stores preserve locals and exact same updated memory. All other failures discharge original source Error disjunction. Canonical imported fpRegs/store carrier and actual broad roundtrip witness. Inherited reals_as_rational_cuts from wordSem evaluate/inst, SOUNDNESS item8; no direct real rendering. Remaining FP/Skip/full Inst assembly stays open. Coordinator source review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstMemory.lean",
+  "lean_name": "evaluateApplyColour_InstLoad8",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.3: HOL evaluate_apply_colour Inst memory1291-1373 and wordSem inst_def776-821, Load8 constructor case. Same st/cst/f/live/lt quantifiers, original colouring_ok/state-equality/live-scoped-locals premises and full existential applyColourPost; no subprogram/IH or target-evaluation/success premise. Actual native inst/evaluate unfolded. Address remains Op Add [Var base;Const offset], transported by accepted apply_colour_exp_lemma with singleton read scope derived from get_live_inst. Ordinary Load/Store preserve arbitrary WordLoc payloads; narrow8/32 keep zero resize/truncation, actual memory/domain/endian helper and Loc failures. Unsupported Load16/Store16 retain unconditional source Error, not shared-memory behavior. State relation supplies identical memory/domain/endian fields, so actual helper outcomes coincide; successful loads use original scoped writes-union-live injectivity and delete relation; stores preserve locals and exact same updated memory. All other failures discharge original source Error disjunction. Canonical imported fpRegs/store carrier and actual broad roundtrip witness. Inherited reals_as_rational_cuts from wordSem evaluate/inst, SOUNDNESS item8; no direct real rendering. Remaining FP/Skip/full Inst assembly stays open. Coordinator source review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstMemory.lean",
+  "lean_name": "evaluateApplyColour_InstLoad32",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.3: HOL evaluate_apply_colour Inst memory1291-1373 and wordSem inst_def776-821, Load32 constructor case. Same st/cst/f/live/lt quantifiers, original colouring_ok/state-equality/live-scoped-locals premises and full existential applyColourPost; no subprogram/IH or target-evaluation/success premise. Actual native inst/evaluate unfolded. Address remains Op Add [Var base;Const offset], transported by accepted apply_colour_exp_lemma with singleton read scope derived from get_live_inst. Ordinary Load/Store preserve arbitrary WordLoc payloads; narrow8/32 keep zero resize/truncation, actual memory/domain/endian helper and Loc failures. Unsupported Load16/Store16 retain unconditional source Error, not shared-memory behavior. State relation supplies identical memory/domain/endian fields, so actual helper outcomes coincide; successful loads use original scoped writes-union-live injectivity and delete relation; stores preserve locals and exact same updated memory. All other failures discharge original source Error disjunction. Canonical imported fpRegs/store carrier and actual broad roundtrip witness. Inherited reals_as_rational_cuts from wordSem evaluate/inst, SOUNDNESS item8; no direct real rendering. Remaining FP/Skip/full Inst assembly stays open. Coordinator source review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstMemory.lean",
+  "lean_name": "evaluateApplyColour_InstLoad16",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.3: HOL evaluate_apply_colour Inst memory1291-1373 and wordSem inst_def776-821, Load16 constructor case. Same st/cst/f/live/lt quantifiers, original colouring_ok/state-equality/live-scoped-locals premises and full existential applyColourPost; no subprogram/IH or target-evaluation/success premise. Actual native inst/evaluate unfolded. Address remains Op Add [Var base;Const offset], transported by accepted apply_colour_exp_lemma with singleton read scope derived from get_live_inst. Ordinary Load/Store preserve arbitrary WordLoc payloads; narrow8/32 keep zero resize/truncation, actual memory/domain/endian helper and Loc failures. Unsupported Load16/Store16 retain unconditional source Error, not shared-memory behavior. State relation supplies identical memory/domain/endian fields, so actual helper outcomes coincide; successful loads use original scoped writes-union-live injectivity and delete relation; stores preserve locals and exact same updated memory. All other failures discharge original source Error disjunction. Canonical imported fpRegs/store carrier and actual broad roundtrip witness. Inherited reals_as_rational_cuts from wordSem evaluate/inst, SOUNDNESS item8; no direct real rendering. Remaining FP/Skip/full Inst assembly stays open. Coordinator source review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstMemory.lean",
+  "lean_name": "evaluateApplyColour_InstStore16",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.3: HOL evaluate_apply_colour Inst memory1291-1373 and wordSem inst_def776-821, Store16 constructor case. Same st/cst/f/live/lt quantifiers, original colouring_ok/state-equality/live-scoped-locals premises and full existential applyColourPost; no subprogram/IH or target-evaluation/success premise. Actual native inst/evaluate unfolded. Address remains Op Add [Var base;Const offset], transported by accepted apply_colour_exp_lemma with singleton read scope derived from get_live_inst. Ordinary Load/Store preserve arbitrary WordLoc payloads; narrow8/32 keep zero resize/truncation, actual memory/domain/endian helper and Loc failures. Unsupported Load16/Store16 retain unconditional source Error, not shared-memory behavior. State relation supplies identical memory/domain/endian fields, so actual helper outcomes coincide; successful loads use original scoped writes-union-live injectivity and delete relation; stores preserve locals and exact same updated memory. All other failures discharge original source Error disjunction. Canonical imported fpRegs/store carrier and actual broad roundtrip witness. Inherited reals_as_rational_cuts from wordSem evaluate/inst, SOUNDNESS item8; no direct real rendering. Remaining FP/Skip/full Inst assembly stays open. Coordinator source review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstMemory.lean",
+  "lean_name": "evaluateApplyColour_InstStore",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.3: HOL evaluate_apply_colour Inst memory1291-1373 and wordSem inst_def776-821, Store constructor case. Same st/cst/f/live/lt quantifiers, original colouring_ok/state-equality/live-scoped-locals premises and full existential applyColourPost; no subprogram/IH or target-evaluation/success premise. Actual native inst/evaluate unfolded. Address remains Op Add [Var base;Const offset], transported by accepted apply_colour_exp_lemma with singleton read scope derived from get_live_inst. Ordinary Load/Store preserve arbitrary WordLoc payloads; narrow8/32 keep zero resize/truncation, actual memory/domain/endian helper and Loc failures. Unsupported Load16/Store16 retain unconditional source Error, not shared-memory behavior. State relation supplies identical memory/domain/endian fields, so actual helper outcomes coincide; successful loads use original scoped writes-union-live injectivity and delete relation; stores preserve locals and exact same updated memory. All other failures discharge original source Error disjunction. Canonical imported fpRegs/store carrier and actual broad roundtrip witness. Inherited reals_as_rational_cuts from wordSem evaluate/inst, SOUNDNESS item8; no direct real rendering. Remaining FP/Skip/full Inst assembly stays open. Coordinator source review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstMemory.lean",
+  "lean_name": "evaluateApplyColour_InstStore8",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.3: HOL evaluate_apply_colour Inst memory1291-1373 and wordSem inst_def776-821, Store8 constructor case. Same st/cst/f/live/lt quantifiers, original colouring_ok/state-equality/live-scoped-locals premises and full existential applyColourPost; no subprogram/IH or target-evaluation/success premise. Actual native inst/evaluate unfolded. Address remains Op Add [Var base;Const offset], transported by accepted apply_colour_exp_lemma with singleton read scope derived from get_live_inst. Ordinary Load/Store preserve arbitrary WordLoc payloads; narrow8/32 keep zero resize/truncation, actual memory/domain/endian helper and Loc failures. Unsupported Load16/Store16 retain unconditional source Error, not shared-memory behavior. State relation supplies identical memory/domain/endian fields, so actual helper outcomes coincide; successful loads use original scoped writes-union-live injectivity and delete relation; stores preserve locals and exact same updated memory. All other failures discharge original source Error disjunction. Canonical imported fpRegs/store carrier and actual broad roundtrip witness. Inherited reals_as_rational_cuts from wordSem evaluate/inst, SOUNDNESS item8; no direct real rendering. Remaining FP/Skip/full Inst assembly stays open. Coordinator source review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstMemory.lean",
+  "lean_name": "evaluateApplyColour_InstStore32",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.3: HOL evaluate_apply_colour Inst memory1291-1373 and wordSem inst_def776-821, Store32 constructor case. Same st/cst/f/live/lt quantifiers, original colouring_ok/state-equality/live-scoped-locals premises and full existential applyColourPost; no subprogram/IH or target-evaluation/success premise. Actual native inst/evaluate unfolded. Address remains Op Add [Var base;Const offset], transported by accepted apply_colour_exp_lemma with singleton read scope derived from get_live_inst. Ordinary Load/Store preserve arbitrary WordLoc payloads; narrow8/32 keep zero resize/truncation, actual memory/domain/endian helper and Loc failures. Unsupported Load16/Store16 retain unconditional source Error, not shared-memory behavior. State relation supplies identical memory/domain/endian fields, so actual helper outcomes coincide; successful loads use original scoped writes-union-live injectivity and delete relation; stores preserve locals and exact same updated memory. All other failures discharge original source Error disjunction. Canonical imported fpRegs/store carrier and actual broad roundtrip witness. Inherited reals_as_rational_cuts from wordSem evaluate/inst, SOUNDNESS item8; no direct real rendering. Remaining FP/Skip/full Inst assembly stays open. Coordinator source review pending."
 }
 ]
