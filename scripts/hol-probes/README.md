@@ -3076,3 +3076,17 @@ recursive Call/Loop bodies, ignored fields, non-wellformed cutsets and widths
 1/32/64/80. `WordAllocMaxVarMaxParity` checks93 kernel examples against these
 inputs and the full premise-free theorem. Run this capture alone with
 `HOL_PROBE_ONLY=word_alloc_max_var_max_probeScript.sml`.
+### Generic native ASM assertions
+
+`asmprops_assertions_probeScript.sml` evaluates original `asmPropsTheory`
+`asserts`/`asserts2` using its exported `asserts_eval` numeral equations
+(the recursive `asserts_def` is marked `nocompute`) and `asserts2_def`.
+Its sixteen concrete rows check zero-count behavior, terminal `next 0`,
+descending noncommutative update order and reversed GENLIST prefixes,
+weakening context bounds, Bool states and independent Nat-state/Bool-
+intermediate iteration, count-dependent interference and failed predicates.
+`AsmPropsAssertionsParity.lean` kernel-replays the same inputs. Fresh
+original full-type queries retain both independent carriers; the definition
+ports have no word specialization. These rows are regression evidence,
+not HOL-to-Lean equivalence or complete encoder correctness. The full
+iteration/weakening theorem chain is a separate dependency.

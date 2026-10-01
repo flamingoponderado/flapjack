@@ -1,0 +1,16 @@
+assert_zero_skip_p=T
+assert_zero_runs_next=F
+assert_order_ok=T
+assert_order_bad=F
+assert_count_fold=13210
+assert_prefixes=[13; 132; 1321]
+assert_weaken_bound=T
+assert_state_bool=T
+assert2_zero=T
+assert2_mixed_ok=T
+assert2_mixed_bad=F
+assert2_changed_above=T
+assert2_first_pair=(0,T)
+assert2_constant_ok=T
+assert2_every_pairs=[(0,T); (1,F); (2,T); (1,F)]
+assert2_first_bad=F
