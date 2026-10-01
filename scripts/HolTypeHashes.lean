@@ -1,3 +1,29 @@
+import Flapjack.Compiler.Backend.WordAlloc.LimitVar
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
+import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
+import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
+import Flapjack.Compiler.Backend.WordAlloc.SSASetup
+import Flapjack.Compiler.Encoders.AsmProps.Assertions
+import Flapjack.Compiler.Backend.StackProps.LabelSafety
+import Flapjack.Compiler.Backend.Parmove.FstepMapInj
+import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
+import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
+import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+import Flapjack.Compiler.Backend.Parmove.StepMapInj
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
+import Flapjack.Pancake.WordConvs.NameMonotonicity
+import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+import Flapjack.Pancake.WordConvs.EveryVarInstMono
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Pmov
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
+import Flapjack.Compiler.Backend.Parmove.InjOnState
+import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
 import Flapjack.Compiler.Backend.BackendProps
 
 import Flapjack.Compiler.Backend.LabToTarget.Interference
@@ -11,15 +37,15 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
 import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
+import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Navigation
 import Flapjack.Compiler.Backend.LabToTarget.Memory
-import Flapjack.Compiler.Backend.Parmove.AllDistinct.Pmov
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
-import Flapjack.Compiler.Backend.Parmove.InjOnState
 import Flapjack.Compiler.Backend.LabToTarget.Fetch
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
@@ -314,6 +340,7 @@ import Flapjack.Pancake.PanStructs.OldExpShapeExact
 import Flapjack.Compiler.Backend.WordAlloc.Instructions
 import Flapjack.Compiler.Backend.WordAlloc.Colour
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
@@ -760,6 +787,8 @@ import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Pancake.PanStructs
 import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
+import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
 
 
 

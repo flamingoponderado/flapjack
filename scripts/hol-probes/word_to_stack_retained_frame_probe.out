@@ -1,0 +1,8 @@
+retained_frame_empty=0
+retained_frame_register_edge=0
+retained_frame_first_spill=2
+retained_frame_second_spill=3
+retained_frame_args_dominate=5
+retained_frame_equal_demand=3
+retained_frame_zero_registers=2
+retained_frame_large_name=9223372036854775788

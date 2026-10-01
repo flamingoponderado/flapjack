@@ -347,9 +347,12 @@ def wordInstSelectAtom [Sub α] [Add α] [DecidableEq α] [OfNat α 0] [OfNat α
          `wordInstSelectAddressAtom`, so ordinary out-of-range operations take
          Cake's `Const`/`Reg` materialization here. -/
       let (prelude, selectedLeft) := wordInstSelectAtom temp left
+      -- Original word_instScript.sml:267–273 groups Const and Binop together.
+      -- Preserve that subtree inside the expression prelude (including Load).
       let materialized : WordProg α × WordExp α :=
-        (wordDeadSelectSeq (wordDeadSelectSeq prelude (.inst (.const (temp + 1) value)))
-          (.inst (.arith (.binOp operator temp temp (.reg (temp + 1))))), .var temp)
+        (wordDeadSelectSeq prelude
+          (wordDeadSelectSeq (.inst (.const (temp + 1) value))
+            (.inst (.arith (.binOp operator temp temp (.reg (temp + 1)))))), .var temp)
       let normal :=
         match selectedLeft with
         | .var selected =>

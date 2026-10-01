@@ -1,6 +1,15 @@
+import Flapjack.Test.SSARegisterClassParity
+import Flapjack.Test.SSALocalsParity
+import Flapjack.Test.SSAMapParity
+import Flapjack.Test.SSASetupParity
+import Flapjack.Test.StackPropsLabelSafetyParity
+import Flapjack.Test.WordConvsProgramMonoParity
+import Flapjack.Test.WordConvsNameMonoParity
 import Flapjack.Test.WordConvsExpMonoParity
 import Flapjack.Test.WordAllocMaxVarExpParity
 import Flapjack.Test.WordAllocMaxVarInstParity
+import Flapjack.Test.WordConvsEveryVarInstMonoParity
+import Flapjack.Test.ParmovePreservesMovesParmoveParity
 import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.RegAllocSortMovesRouteParity
@@ -34,6 +43,10 @@ import Flapjack.Test.ParmoveDestinationWrapperParity
 import Flapjack.Test.ParmoveDStepStepParity
 
 import Flapjack.Test.WordToStackCompileKeysParity
+import Flapjack.Test.WordToStackRetainedFrameParity
+import Flapjack.Test.WordToStackAllocatorCodecParity
+import Flapjack.Test.WordToStackSelectorPreludeParity
+import Flapjack.Test.WordToStackSelectorDomainParity
 import Flapjack.Test.WordToStackNativeConfigParity
 import Flapjack.Test.ParmoveDStepsParity
 import Flapjack.Test.WordLangMaxVarParity
@@ -216,6 +229,8 @@ import Flapjack.Test.LoopPropsCutSetsParity
 import Flapjack.Test.LoopPropsCompSyntaxOkParity
 import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
+import Flapjack.Test.SSARenameLookupParity
+import Flapjack.Test.SSAMergeMovesParity
 
 /-!
 # Flapjack regression tests
