@@ -7,7 +7,7 @@ private def handler : WordSemStackFrame 8 := .stackFrame none [] [] (some (0,1,2
 /-- Concrete regression predicate, not a HOL declaration or equivalence claim. -/
 private def lengths (frames : List (WordSemStackFrame 8))
     (stack : List (WordLocW 8)) (lens : List Nat) : Prop :=
-  (absStack (bitmapWidth := 8) [3] frames stack lens).map List.length = some frames.length ∧
+  (absStack [3] frames stack lens).map List.length = some frames.length ∧
     lens.length = frames.length
 example : lengths [] [.word 0] [] := by cbv
 example : lengths [plain] [.word 1,.word 7,.word 0] [1] := by cbv
