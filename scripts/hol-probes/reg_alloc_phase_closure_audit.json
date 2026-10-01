@@ -33,7 +33,7 @@
       "key": "classifiers",
       "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.8",
       "title": "Fixed/Atemp/Fixed_k/considered_var/deg_or_inf definitions and bounded traversal lemmas",
-      "source_review": "is_Fixed_def:449; is_Atemp_def:490; is_Fixed_k_def:498; considered_var_def:506; deg_or_inf_def:516; st_ex_FILTER_considered_var:2350, local val st_ex_MAP_deg_or_inf:2363. Exact k versus k+1, no substitute Boolean test.",
+      "source_review": "is_Fixed_def:449; is_Atemp_def:490; is_Fixed_k_def:498; considered_var_def:506; deg_or_inf_def:516; st_ex_FILTER_considered_var:2350, local val st_ex_MAP_deg_or_inf:2364. Exact k versus k+1, no substitute Boolean test.",
       "helper_dependencies": [],
       "phase_children": []
     },
@@ -61,7 +61,7 @@
       "key": "sort",
       "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.11",
       "title": "sort_moves/smerge definitions and MEM_smerge",
-      "source_review": "sort_moves_def343/smerge_def349; MEM_smerge2172. Descending strict-priority sort and left-biased >= merge ties. No allocator state prerequisite; sorted_mem is separately tracked.",
+      "source_review": "sort_moves_def343/smerge_def349; MEM_smerge2175. Descending strict-priority sort and left-biased >= merge ties. No allocator state prerequisite; sorted_mem is separately tracked.",
       "helper_dependencies": [],
       "phase_children": []
     },
@@ -473,6 +473,11 @@
     {
       "name": "do_spill_success",
       "line": 2790
+    },
+    {
+      "name": "st_ex_MAP_deg_or_inf",
+      "line": 2364,
+      "kind": "local val Q.prove"
     }
   ]
 }

@@ -1,0 +1,16 @@
+ira_adj=T
+
+ira_tag=T
+
+ira_degrees=T
+
+ira_coalesced=T
+
+ira_move_related=T
+
+ira_preserved=T
+
+ira_failure=T
+
+ira_zero=T
+

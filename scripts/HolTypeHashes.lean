@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.Parmove.MapState
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
 import Flapjack.Compiler.Backend.Parmove.StateToList
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
+import Flapjack.Compiler.Backend.RegAlloc.Initialization
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
 import Flapjack.Translator.Monadic.MonadBase.ArrayLength
 import Flapjack.Compiler.Backend.RegAlloc.StateMap
