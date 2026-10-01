@@ -3156,3 +3156,7 @@ run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_
 run_probe word_to_stack_compile_lookup_probeScript.sml word_to_stack_compile_lookup_probe.out \
   lookup_duplicate_first lookup_later_threaded lookup_missing lookup_bool_first \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_register_labels_probeScript.sml word_to_stack_register_labels_probe.out \
+  wr_physical wr_boundary wr_spilled wr_zero wr_large wr_labelled \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

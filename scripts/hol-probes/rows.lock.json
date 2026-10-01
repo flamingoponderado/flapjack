@@ -3397,6 +3397,12 @@
       "sha256": "54a79a9880ec84098f8719f8bff7c2e57ec163f7cda13f55a2118269c2d81382"
     },
     {
+      "bytes": 267,
+      "out": "stackprops_code_labels_probe.out",
+      "rows": 15,
+      "sha256": "0951919b9c2820704747f40b352ab0cf70ab9bb1ee3a2535536992f1814929e6"
+    },
+    {
       "bytes": 744,
       "out": "stacksem_allocation_probe.out",
       "rows": 19,
@@ -4321,6 +4327,12 @@
       "sha256": "7c33587acfd91d6f617f50e173e084012fd4dccabda86d1c189634dc6ffa2746"
     },
     {
+      "bytes": 100,
+      "out": "word_to_stack_register_labels_probe.out",
+      "rows": 6,
+      "sha256": "b9bb14bb79be72c5d83ae4f8b1f00a0beb7092529dd537b2fcc094f8d9bb0c78"
+    },
+    {
       "bytes": 119,
       "out": "word_to_stack_stack_size_rel_probe.out",
       "rows": 8,
@@ -4391,12 +4403,6 @@
       "out": "wrap_rt_probe.out",
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
-    },
-    {
-      "bytes": 267,
-      "out": "stackprops_code_labels_probe.out",
-      "rows": 15,
-      "sha256": "0951919b9c2820704747f40b352ab0cf70ab9bb1ee3a2535536992f1814929e6"
     }
   ],
   "version": 1
