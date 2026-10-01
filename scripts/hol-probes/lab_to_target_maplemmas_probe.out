@@ -1,0 +1,10 @@
+PadCodeMapEmptyEq=T
+PadCodeMapConcreteEq=T
+PadCodeMapConcreteLhs=[Section 1 [Label 1 2 0; Asm (Asmi (Inst Skip)) [1w; 2w; 9w] 3];
+ Section 2 []]
+PadCodeMapConcreteRhs=[Section 1 [Label 1 2 0; Asm (Asmi (Inst Skip)) [1w; 2w; 9w] 3];
+ Section 2 []]
+ProgToBytesMapEmptyEq=T
+ProgToBytesMapConcreteEq=T
+ProgToBytesMapConcreteLhs=[1w; 2w; 3w]
+ProgToBytesMapConcreteRhs=[1w; 2w; 3w]
