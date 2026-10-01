@@ -38974,7 +38974,7 @@
     "hol_name": "full_read_bitmap_append",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.39: literal HOL read_bitmap_append_extra744-755 and full_read_bitmap_append757-766. Same successfuldecode premise and samebits conclusion after appendedbitmap list; all lists/descriptors arbitrary, one sourcepositivewidth BitVec/NeZero, reviewed StackSem.readBitmap/fullReadBitmap at samewidth. Induction follows terminal versus continuationword clauses. Descriptor bound is proved from successfuldecode (emptydrop contradicts reader), not an extra assumption. No changedreader, fuel, totalEL, finite-map or trustqualifier. Fresh original4equations/kernel replay cover terminal/continuation and one-baseddescriptor offsets1/2. Laterabs_stack_bitmaps_prefix andstate/compiler correctness separate."
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 flapjack-yg5q: HOL757-766 independently quantifies bitmap-word and word_loc payload dimensions. Restored bitmapWidth and width with both NeZero, unchanged sole successful fullReadBitmap premise, bits conclusion, and proof text. No equal-width restriction or executable definition change. Fresh original six universal mixed/same-width applications plus four success/zero/Loc observations all T; matching kernel fixtures include arbitrary independent positive dimensions. Actual proof axioms propext and Quot.sound. Exactly this existing type pin changes; coordinator review pending."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexListLemmas.lean",
