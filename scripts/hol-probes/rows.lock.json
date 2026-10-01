@@ -603,6 +603,7 @@
     {"bytes":121,"out":"word_alloc_reads_exp_probe.out","rows":7,"sha256":"a3281fc000ffe3bbb0060d2cb73b86ec3509a4d30bca60bc4fe916185811b011"},
     {"bytes":125,"out":"word_alloc_remove_dead_inst_probe.out","rows":12,"sha256":"24f25a6713937f41a3a065af0fbf87f310f8858fbbcba3dbce2030e1e2a367de"},
     {"bytes":117,"out":"word_alloc_remove_temp_stack_probe.out","rows":8,"sha256":"0b23c989ed5a8b9a1567a56edabd3287d1165ebd8549fba111dc721fb78fcd97"},
+    {"bytes":118,"out":"word_alloc_return_checker_probe.out","rows":7,"sha256":"45b3a8f87ca3f0cd2d45f149db761957a63ec1f83a579b1ff666ce7ee6f96094"},
     {"bytes":241,"out":"word_alloc_setup_colour_probe.out","rows":10,"sha256":"a04b9a32b5efd9c8d92aaa6cc68c2de56bf0d49d0482858cafea59015d8b334a"},
     {"bytes":94,"out":"word_alloc_share_checker_probe.out","rows":8,"sha256":"452ceac2f1351e4af4c424823adc205a3aa7e56bd9a8cfc76abba6afe2408acc"},
     {"bytes":1365,"out":"word_alloc_spill_probe.out","rows":7,"sha256":"b4ee845624c4802676aff25309f8e35846eee3a4f20b573995a7e15372a14946"},

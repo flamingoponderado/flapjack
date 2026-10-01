@@ -2351,3 +2351,26 @@ identity colouring, with a variable address. The same inputs are kernel-replayed
 in `WordAllocShareCheckerParity`, imported by the actual CompilerParity driver.
 These finite observations supplement the full original-motive case proofs;
 they do not establish cross-prover equivalence or whole allocator correctness.
+
+`word_alloc_share_checker_probeScript.sml` freshly observes all eight ShareInst
+checker cases (Store/Store8/Store16/Store32 and Load/Load8/Load16/Load32) under
+identity colouring, with a variable address. The same inputs are kernel-replayed
+in `WordAllocShareCheckerParity`, imported by the actual CompilerParity driver.
+These finite observations supplement the full original-motive case proofs;
+they do not establish cross-prover equivalence or whole allocator correctness.
+`word_to_stack_comp_prefix_probeScript.sml` freshly observes nine whole
+compiler-prefix equations: Skip, Alloc, MustTerminate, Seq, If, Loop, returning
+Call with perf enabled, returning Call with handler, and StoreConsts. Every
+input starts from a nested AppList whose count is deliberately below its
+flattened length. `WordToStackCompilePrefixParity` applies the full original
+output-equation theorem to the same actual compiler outputs in the real Lake
+test driver. These observations are regression evidence, not a cross-prover
+equivalence or whole-compiler correctness proof.
+
+`word_alloc_return_checker_probeScript.sml` freshly observes seven returning
+Call equations without an exception handler: empty sets, nonempty cutsets,
+duplicate arguments/return variables, Tick and table-routed Break return
+programs, and independently rejected return-set/argument-set colour collisions.
+`WordAllocReturnCheckerParity` kernel-replays the same inputs through the actual
+CompilerParity driver and instantiates the universal original-motive theorem.
+These finite observations do not prove cross-prover or whole-allocator equivalence.
