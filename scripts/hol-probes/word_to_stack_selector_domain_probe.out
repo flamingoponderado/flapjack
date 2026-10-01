@@ -1,0 +1,13 @@
+selector_program_skip=Skip
+selector_program_seq=Seq (Inst (Const 2 7w)) Tick
+selector_program_set=Seq (Move 0 [(23,18)]) (Set (Temp 1w) (Var 23))
+selector_program_load=Seq (Move 0 [(23,18)]) (Inst (Mem Load 2 (Addr 23 0w)))
+selector_program_store=Seq (Move 0 [(23,18)]) (Inst (Mem Store 10 (Addr 23 0w)))
+selector_program_store_offset=Seq (Move 0 [(23,18)]) (Inst (Mem Store 10 (Addr 23 7w)))
+selector_program_share=Seq (Move 0 [(23,18)]) (ShareInst Store8 10 (Op Add [Var 23; Const 7w]))
+selector_program_if=If Equal 1 (Imm 0w) (Inst (Const 2 7w)) Tick
+selector_program_loop=Loop LN (Inst (Const 2 7w)) LN
+selector_program_must=MustTerminate (Inst (Const 2 7w))
+selector_program_tail_handler=Call NONE (SOME 7) [] (SOME (1,Inst (Const 3 9w),5,6))
+selector_program_return=Call (SOME ([],(LN,LN),Inst (Const 2 7w),3,4)) (SOME 7) [] NONE
+selector_program_both=Call (SOME ([],(LN,LN),Seq (Inst (Const 2 7w)) Tick,3,4)) (SOME 7) [] (SOME (1,Seq (Inst (Const 3 9w)) Tick,5,6))
