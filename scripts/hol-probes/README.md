@@ -1,3 +1,10 @@
+`lab_implicit_section_zero_probe.out` records six original ignored-zero,
+implicit-section-base and nonzero-label positions. Executed collectors replay
+matching pre-encoding lines using actual instruction counts. This pins the
+section-zero convention and exact original target bytes for a direct cross-section
+jump followed by Const. It is not complete encoded-line-length or finite-map
+correspondence for all inputs or duplicate section names.
+
 `stack_to_lab_executed_input_probe.out` records seven original native fallback
 and section observations. The four residual operations flatten to empty lines;
 the new Flapjack native boundary rejects them. Skip remains a valid empty

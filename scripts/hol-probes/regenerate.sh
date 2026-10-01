@@ -3872,3 +3872,7 @@ run_probe ssa_cc_trans_props_move_probeScript.sml ssa_cc_trans_props_move_probe.
 run_probe stack_to_lab_executed_input_probeScript.sml stack_to_lab_executed_input_probe.out \
   guard_source_get_drop guard_source_alloc_drop guard_source_stackstore_drop guard_source_datawrite_drop guard_source_skip_section guard_source_seq_section guard_source_loc_section \
   "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"
+
+run_probe lab_implicit_section_zero_probeScript.sml lab_implicit_section_zero_probe.out \
+  zero_original_skip_late_zero zero_original_section_base zero_original_second_base zero_original_second_label zero_original_empty_section zero_original_crosssection_bytes \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/encoders/riscv"

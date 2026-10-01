@@ -1,3 +1,4 @@
+import Flapjack.Test.LabImplicitSectionZero
 import Flapjack.Test.StackToLabExecutedInput
 import Flapjack.Test.ProductionMacros
 import Flapjack.Test.StackWordBoundary
