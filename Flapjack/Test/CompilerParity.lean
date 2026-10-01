@@ -96,6 +96,7 @@ import Flapjack.Test.LabToTargetEncodingParity
 import Flapjack.Test.LabToTargetLabelsParity
 import Flapjack.Test.LabToTargetPositionsParity
 import Flapjack.Test.LabToTargetSecondPassParity
+import Flapjack.Test.LabToTargetPaddingParity
 import Flapjack.Test.ParmoveInvariantsParity
 import Flapjack.Test.WordToStackAbsStackLengthsParity
 import Flapjack.Test.WordToStackAbsStackPrefixParity
@@ -1486,6 +1487,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetLabelsParity.runChecks,
     Flapjack.Test.LabToTargetPositionsParity.runChecks,
     Flapjack.Test.LabToTargetSecondPassParity.runChecks,
+    Flapjack.Test.LabToTargetPaddingParity.runChecks,
     Flapjack.Test.MiscLookupAnyFindIndexParity.runChecks
     ].mapM id
   unless results.all id do
