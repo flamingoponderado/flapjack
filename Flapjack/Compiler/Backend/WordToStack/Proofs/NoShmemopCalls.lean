@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
 import Flapjack.Compiler.Backend.WordToStack.NativeCompile
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
 import Flapjack.Pancake.WordConvs.PredicateEquations
@@ -160,5 +161,57 @@ theorem compNoShmemopReturningCall {width : Nat} [NeZero width]
     simp [noShmemop, callDestNoShmemop, wLiveNoShmemop, stackArgsNative,
       stackMoveNoShmemop, copyRetNoShmemop, retSafe,
       perfCallPrefixNoShmemop, perfCallSuffixNoShmemop]
+
+
+/-- Full original returning Call with a handler. The return compilation's
+residual bitmap feeds the handler compiler, and only the two original child
+induction hypotheses are used. All source handler payloads remain arbitrary. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
+  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+theorem compNoShmemopHandledCall {width : Nat} [NeZero width]
+    (conf : AsmConfigExact width) (perf : Bool)
+    (values : List Nat) (live : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (label1 label2 : Nat)
+    (destination : Option Nat) (args : List Nat)
+    (handleValue : Nat) (handleCode : WordLangProgHOL (BitVec width)) (handleLabel1 handleLabel2 : Nat)
+    (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
+    (output : HolProg width) (residual : AppList (BitVec width) × Nat)
+    (guard : noShareInstSubprogsHOL
+      (.call (some (values,live,retCode,label1,label2)) destination args
+        (some (handleValue,handleCode,handleLabel1,handleLabel2))) = true)
+    (compiled : compNative conf perf
+      (.call (some (values,live,retCode,label1,label2)) destination args
+        (some (handleValue,handleCode,handleLabel1,handleLabel2))) bs frame = (output,residual))
+    (ihReturn : ∀ (subBs : AppList (BitVec width) × Nat) (subFrame : Nat × Nat × Nat)
+      (subOutput : HolProg width) (subResidual : AppList (BitVec width) × Nat),
+      noShareInstSubprogsHOL retCode = true →
+      compNative conf perf retCode subBs subFrame = (subOutput,subResidual) →
+      noShmemop subOutput = true)
+    (ihHandler : ∀ (subBs : AppList (BitVec width) × Nat) (subFrame : Nat × Nat × Nat)
+      (subOutput : HolProg width) (subResidual : AppList (BitVec width) × Nat),
+      noShareInstSubprogsHOL handleCode = true →
+      compNative conf perf handleCode subBs subFrame = (subOutput,subResidual) →
+      noShmemop subOutput = true) :
+    noShmemop output = true := by
+  have guards : noShareInstSubprogsHOL retCode = true ∧
+      noShareInstSubprogsHOL handleCode = true := by
+    apply Bool.and_eq_true_iff.mp
+    simpa only [callNoShareClause] using guard
+  have retSafe := ihReturn (wLiveNative live bs frame).2 frame
+    (compNative conf perf retCode (wLiveNative live bs frame).2 frame).1
+    (compNative conf perf retCode (wLiveNative live bs frame).2 frame).2 guards.1 rfl
+  have handlerSafe := ihHandler
+    (compNative conf perf retCode (wLiveNative live bs frame).2 frame).2 frame
+    (compNative conf perf handleCode
+      (compNative conf perf retCode (wLiveNative live bs frame).2 frame).2 frame).1
+    (compNative conf perf handleCode
+      (compNative conf perf retCode (wLiveNative live bs frame).2 frame).2 frame).2 guards.2 rfl
+  have result := congrArg Prod.fst compiled
+  simp only [compNative] at result
+  rw [← result]
+  cases perf <;>
+    simp [noShmemop, callDestNoShmemop, wLiveNoShmemop, pushHandlerNoShmemop,
+      stackHandlerArgsNoShmemop, popHandlerNoShmemop, copyRetNoShmemop,
+      retSafe, handlerSafe, perfCallPrefixNoShmemop, perfCallSuffixNoShmemop]
 
 end Flapjack.Compiler.Backend.WordToStack.Native

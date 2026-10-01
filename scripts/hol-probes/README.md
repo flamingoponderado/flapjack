@@ -3781,3 +3781,18 @@ inputs and applies the full generic original-shaped theorem with its genuine
 return-body induction hypothesis. These regressions do not establish
 cross-language equivalence or full compiler correctness.
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_returning_probeScript.sml`.
+
+### Full returning Call with a handler
+
+`word_to_stack_no_shmemop_handled_probeScript.sml` captures twenty-six
+original source/compiled-target predicate pairs. The return body and handler
+both produce bitmaps in the original compiler order. Widths1/32/64/80, both
+perf flags, direct/indirect destinations and empty/single/multiple arguments
+and return values are retained. Independently and jointly forbidden/invalid
+children preserve false/false and false/true observations.
+`WordToStackNoShmemopHandledCallParity` kernel-reduces identical inputs and
+applies the full generic original case with only the genuine return and handler
+induction hypotheses. The three Call cases complete the original constructor
+group; other constructors and assembly remain separately tracked. These
+regressions do not establish cross-language equivalence or whole compiler correctness.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_handled_probeScript.sml`.

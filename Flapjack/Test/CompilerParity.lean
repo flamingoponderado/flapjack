@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackNoShmemopHandledCallParity
 import Flapjack.Test.WordToStackNoShmemopReturningCallParity
 import Flapjack.Test.WordToStackNoShmemopTailCallParity
 import Flapjack.Test.WordToStackNoShmemopHandlersParity
