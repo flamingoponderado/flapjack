@@ -2410,3 +2410,10 @@ the executed allocator. Regenerate with
 `word_alloc_stack_only_probeScript.sml` captures fifteen original full-tree equalities for native stack analysis: right-fold Move and reverse Seq order, branch operand deletion, recursive wrappers, all Call handler forms, Delta removal and non-Delta preservation, including raw initial trees and the entry projection. Matching kernel fixtures run through CompilerParity. Production allocator routing remains separate.
 
 `word_alloc_get_prefs_probeScript.sml` captures seventeen original full-list preference equalities, with nonempty accumulators, duplicates/self moves, branch and sequential ordering, both returning handlers, tail-handler exclusion, loops, nested wrappers, ignored constructors and priority/register naturals exceeding 2^64. Matching actual CompilerParity fixtures reduce in the kernel. Native allocator assembly and production routing remain separate.
+
+`spt_map_probe.out` contains ten direct original payload-only `sptree$map`
+observations, kernel-replayed by `SptMapParity`. Every constructor, malformed
+empty internal nodes (which must be retained), nested raw trees and independent
+Bool/Nat/Unit payload types are covered. These finite observations do not
+establish cross-prover equivalence or route the executed allocator. Regenerate
+read-only with `HOL_PROBE_ONLY=spt_map_probeScript.sml scripts/hol-probes/regenerate.sh`.

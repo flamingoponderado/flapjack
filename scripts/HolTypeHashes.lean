@@ -1,3 +1,4 @@
+import Flapjack.Misc.Sptree.Map
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
 import Flapjack.Compiler.Backend.WordAlloc.OracleColour

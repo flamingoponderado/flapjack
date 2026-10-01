@@ -3009,3 +3009,7 @@ run_probe parmove_temp_mixed_probeScript.sml parmove_temp_mixed_probe.out \
 run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembly_probe.out \
   ca_control ca_return ca_handler ca_tail_ignored ca_collision \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe spt_map_probeScript.sml spt_map_probe.out \
+  sm_empty sm_leaf sm_children sm_root sm_raw_bn sm_raw_bs sm_raw_nested sm_bool_nat sm_nat_bool sm_unit_raw \
+  "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
