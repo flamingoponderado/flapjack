@@ -2408,6 +2408,10 @@ run_probe pan_globals_fperm_name_probeScript.sml pan_globals_fperm_name_probe.ou
   "$cake_dir/pancake/pan_globalsScript.sml" \
   "$cake_dir/pancake"
 
+run_probe word_to_stack_comp_native_probeScript.sml word_to_stack_comp_native_probe.out \
+  comp_skip comp_must comp_seq comp_loop comp_return comp_raise comp_set_bitmap comp_set_bad comp_assign_fallback comp_install comp_tailcall comp_share_bad comp_if_valid comp_if_materialize comp_returning comp_handler comp_seq_bitmaps comp_if_bitmaps comp_call_bitmaps \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
 run_probe word_to_stack_handler_probeScript.sml word_to_stack_handler_probe.out \
   shaF pop_eq "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"

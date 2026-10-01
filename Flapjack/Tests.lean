@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackNativeCompileParity
 import Flapjack.Test.StackSemStackCodecParity
 import Flapjack.Test.StackSemControl
 import Flapjack.Test.StackSemStateOps
