@@ -3131,6 +3131,22 @@ run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe reg_alloc_sorted_mem_probeScript.sml reg_alloc_sorted_mem_probe.out \
+  sorted_mem_empty sorted_mem_singleton sorted_mem_above sorted_mem_middle sorted_mem_gap sorted_mem_below sorted_mem_tail sorted_mem_duplicate sorted_mem_unsorted_stop sorted_mem_unsorted_continue sorted_mem_zero sorted_mem_large \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_program_bitmaps_probeScript.sml word_to_stack_program_bitmaps_probe.out \
+  pb_single_skip pb_single_zero_frame pb_single_alloc pb_single_seq pb_single_invalid_bound pb_single_width_one pb_rows_empty pb_rows_repeat_id pb_rows_mixed pb_rows_bool \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe reg_alloc_sort_moves_probeScript.sml reg_alloc_sort_moves_probe.out \
+  sort_empty sort_one sort_mixed sort_ties sort_bool merge_empty merge_left merge_right merge_ties merge_unsorted merge_duplicate merge_bool \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_probe.out \
+  adrtc_scratch adrtc_first adrtc_middle adrtc_last \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe reg_alloc_phase_closure_probeScript.sml reg_alloc_phase_closure_probe.out \
   ra_phase_do_simplify ra_phase_do_coalesce ra_phase_do_prefreeze ra_phase_do_freeze ra_phase_do_spill ra_phase_dec_deg ra_phase_dec_degree ra_phase_push_stack ra_phase_is_not_coalesced ra_phase_split_degree ra_phase_sort_moves ra_phase_smerge ra_phase_revive_moves ra_phase_unspill ra_phase_inc_deg ra_phase_is_Fixed ra_phase_is_Atemp ra_phase_is_Fixed_k ra_phase_considered_var ra_phase_deg_or_inf ra_phase_bg_ok ra_phase_consistency_ok ra_phase_coalesce_parent ra_phase_canonize_move ra_phase_st_ex_FIRST ra_phase_respill ra_phase_reset_move_related ra_phase_st_ex_list_MIN_cost ra_phase_st_ex_list_MAX_deg \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
