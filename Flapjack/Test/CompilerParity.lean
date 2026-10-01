@@ -1,4 +1,6 @@
+import Flapjack.Test.SSAListRenameArithmeticParity
 import Flapjack.Test.WordAllocMaxVarMaxParity
+import Flapjack.Test.SSALocalsParity
 import Flapjack.Test.SSAMapParity
 import Flapjack.Test.SSASetupParity
 import Flapjack.Test.AsmPropsAssertionsParity
@@ -739,6 +741,7 @@ import Flapjack.Test.PanLangGeneratedSizeParity
 import Flapjack.Test.CrepLangGeneratedSizeParity
 import Flapjack.Test.PanSimpProgBridgeParity
 import Flapjack.Test.RegAllocStateForeachParity
+import Flapjack.Test.SSARenameLookupParity
 
 
 
