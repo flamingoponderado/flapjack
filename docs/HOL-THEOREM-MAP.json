@@ -42045,6 +42045,14 @@
   "reviewer": "flapjack-luna-a source comparison: HOL 2813-2826 and case Continue at 3270-3299. Exact WordLangProgHOL positive-width BitVec carrier; original six premises and five conclusions via accepted clashTreeGoal/clashTreeConcl. Loop has only body IH, uses right-first checker and fixed-set checkColInj; Break/Continue derive indexed projection wf from EVERY table premise, including absent lookup LN. No extra evaluation, injectivity, table bounds or desired conclusion premises. words_as_type_indexed_bitvec is only carrier translation. Coordinator review pending."
 },
 {
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/CoalesceCost.lean",
+  "lean_name": "getCoalesceCost",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_coalescecost_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison word_allocScript1676-1681: generic native num_map payload translated constructor-for-constructor to Spt alpha, exact right-associated Nat tuple n,p,(x,y). lookup NONE contributes0 and any SOME contributes1 (Option.isNone exactly tests constructor; no payload equality or value cost). Exact unbounded Nat n*(10*(p+1)+xcost+ycost), unchanged endpoint pair, no wf/range/success premise. No width or map qualifier needed. Original eight observations include asymmetric presence, same endpoints, Bool payload, zero multiplier, 2^64 and malformed tree. Executed allocator migration remains open; coordinator review pending."
+},
+{
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Heuristics.lean",
   "lean_name": "getSpillCost",
   "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
