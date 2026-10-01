@@ -2598,3 +2598,5 @@ the finite fixtures do not prove cross-assistant equivalence.
 `reg_alloc_sorted_mem_probe` captures twelve original early-stop membership
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
+
+- `parmove_preserves_moves_step_probeScript.sml`: ten original non-self destination predicates before/after Save, including scratch destination. Lean fixtures certify the steps and witness changes; observations do not prove transition or cross-assistant equivalence.

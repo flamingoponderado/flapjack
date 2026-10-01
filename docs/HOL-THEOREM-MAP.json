@@ -42794,5 +42794,13 @@
     "hol_name": "ALL_DISTINCT_steps",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead flapjack-w1a4.3: source979-989 initial ALL_DISTINCT(FILTER IS_SOME(MAP FST concatenation of pending/active/emitted)) conjunct primitive-step RTC implies same final predicate. Native State alpha retains raw Option alpha pair-list triple and source-reviewed Steps=ReflTransGen Step. Arbitrary alpha, no equality instance, no wf/scratch-safety/target-result hypothesis. Proof lifts accepted full single-step invariant by refl/tail induction. Fresh four original predicate observations plus Lean zero-step and certified two-step start/save fixtures; observations are regression evidence, not cross-assistant equivalence. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PreservesMoves/Step.lean",
+    "lean_name": "stepPreservesMoves",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "step_preserves_moves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead flapjack-w1a4.7: source1030-1037 full primitive Step implies preservation of existential non-self source for every destination x. Native arbitrary Option alpha register and pair-list triple State, stateToList concatenation, all six Step clauses retained. No equality instance, state validity, scratch-safety or supplied target-result premise. Save may change the source to NONE; scratch destination uses the emitted original source. Proof handles every constructor, including all pending/active/emitted membership branches. Fresh original destination predicate observations and matching kernel fixtures are regression evidence, not cross-assistant equivalence. Coordinator acceptance pending."
   }
 ]
