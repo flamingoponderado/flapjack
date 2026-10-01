@@ -44026,5 +44026,13 @@
     "lean_name": "stepsMapInj",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison parmoveScript.sml:1179-1189. HOL steps_MAP_INJ[local] : !s1 s2. s1 |> s2 ==> inj_on_state f s1 ==> map_state f s1 |>* map_state f s2. Lean stepsMapInj {a b} (f : Option a -> Option b) (first second : State a) : Steps first second -> injOnState f first -> Steps (mapState f first) (mapState f second). Route-local inductive Steps (= ReflTransGen Step) over the list state, no word carrier; proof uses stepsInjOnState to carry injectivity and stepMapInj per step. Reviewed_exact (no word/finite-map carrier qualifier needed)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "pmov_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PmovMapInj.lean",
+    "lean_name": "pmovMapInj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w1a4.18) against parmoveScript.sml:1257-1289: HOL '∀p. ⊢ p ∧ inj_on_state f p ⇒ pmov (map_state f p) = map_state f (pmov p)', where ⊢ is the wf invariant. Lean pmovMapInj has the same two premises (wf state, injOnState f state) and the same conclusion over the reviewed polymorphic State alpha / map_state / pmov / fstep_MAP_INJ / fstep_dstep / wf_steps / steps_inj_on_state infra; no extra target-result/safety/global-injectivity premise and no word or finite-map carrier, so no representation qualifier applies."
   }
 ]

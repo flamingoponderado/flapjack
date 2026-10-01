@@ -47,6 +47,7 @@ import Flapjack.Compiler.Backend.LabToTarget.Memory
 import Flapjack.Compiler.Backend.Parmove.InjOnState.Step
 import Flapjack.Compiler.Backend.Parmove.InjOnState.Steps
 import Flapjack.Compiler.Backend.Parmove.StepsMapInj
+import Flapjack.Compiler.Backend.Parmove.PmovMapInj
 import Flapjack.Compiler.Backend.LabToTarget.Fetch
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
