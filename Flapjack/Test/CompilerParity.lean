@@ -1,6 +1,10 @@
+import Flapjack.Test.LabToTargetLineLenParity
+import Flapjack.Test.LabToTargetSectionLengthParity
+import Flapjack.Test.ByteWordToBytesAuxParity
 import Flapjack.Test.StackPropsInstructionConstantsParity
 import Flapjack.Test.LabToTargetPaddingLengthParity
 import Flapjack.Test.LabToTargetMapLemmasParity
+import Flapjack.Test.SSAForceRenameGeneric
 import Flapjack.Test.LabToTargetEncodingParity
 import Flapjack.Test.LabToTargetLabelsParity
 import Flapjack.Test.LabToTargetPositionsParity
@@ -1201,6 +1205,9 @@ def checkBool (name : String) (condition : Bool) : IO Bool := do
 
 def main : IO Unit := do
   let results ← [
+    Flapjack.Test.LabToTargetLineLenParity.runChecks,
+    Flapjack.Test.LabToTargetSectionLengthParity.runChecks,
+    Flapjack.Test.ByteWordToBytesAuxParity.runChecks,
     Flapjack.Test.LabToTargetPaddingLengthParity.runChecks,
     Flapjack.Test.LabToTargetMapLemmasParity.runChecks,
     Flapjack.Test.LabToTargetEncodingParity.runChecks,

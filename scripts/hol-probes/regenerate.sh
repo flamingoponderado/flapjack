@@ -3057,6 +3057,21 @@ run_probe lab_to_target_removelabels_probeScript.sml lab_to_target_removelabels_
   LineBytesLabAsm ProgToBytesEmpty ProgToBytesConcrete RemoveLabelsLoopZero \
   RemoveLabelsLoopOne RemoveLabelsZero \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_line_len_probeScript.sml lab_to_target_line_len_probe.out \
+  LineLenLabel LineLenAsmEmpty LineLenAsmBytesMismatch LineLenLabAsm LineLenWide \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_section_length_probeScript.sml lab_to_target_section_length_probe.out \
+  SectionLengthEmpty SectionLengthMixed SectionLengthMixedPosition SectionLengthMixedLabels \
+  SectionLengthZeroLabel SectionLengthZeroLenLabel SectionLengthDuplicateLabels \
+  SectionLengthArbitraryAccumulator SecLengthAddEmpty SecLengthAddMixed SecLengthAddMixedValue \
+  SecLengthAddZeroAnnotation SecLengthAddEmptyBytesAnnotation \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe byte_word_to_bytes_aux_probeScript.sml byte_word_to_bytes_aux_probe.out \
+  ByteAuxLE16Cycle ByteAuxBE16Cycle ByteAuxLE32Cycle ByteAuxBE32Cycle \
+  ByteAuxOneByteCycle ByteAuxSubByteLEWrap ByteAuxSubByteBEWrap ByteAuxZero \
+  ByteWholeLE16 ByteWholeBE16 ByteWholeSubByte ByteIndexSubByteLE ByteIndexSubByteBE \
+  ByteGetSubByteShift \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe lab_to_target_padding_length_probeScript.sml lab_to_target_padding_length_probe.out \
   OriginalLengthPadBytes PadLengthExtend PadLengthMultiNop PadLengthExact PadLengthZero \
   PadLengthGenericBool PadLengthEmptyNopOutsidePremise \
@@ -3902,4 +3917,6 @@ run_probe ssa_cc_trans_props_loop_control_probeScript.sml ssa_cc_trans_props_loo
 
 run_probe ssa_cc_trans_props_calls_probeScript.sml ssa_cc_trans_props_calls_probe.out \
   spt_full spt_type_dest spt_type_args spt_type_h spt_type_ssa spt_type_na spt_type_lt spt_type_progPrime spt_type_ssaPrime spt_type_naPrime spr_full spr_type_ret spr_type_numset spr_type_ret_handler spr_type_l1 spr_type_l2 spr_type_dest spr_type_args spr_type_h spr_type_ssa spr_type_na spr_type_lt spr_type_progPrime spr_type_ssaPrime spr_type_naPrime spr_type_all_names spr_type_ls spr_type_stack_mov spr_type_stack_set spr_type_names spr_type_conv_args spr_type_move_args spr_type_ssa_cut spr_type_ret_mov spr_type_ssaPrimePrime spr_type_naPrimePrime spr_type_retPrime spr_type_ssa_2_p spr_type_na_2_p spr_type_ren_ret_handler spr_type_ssa_2 spr_type_na_2 spr_type_regs spr_type_mov_ret_handler spr_type_v spr_type_n spr_type_v2 spr_type_hPrime spr_type_v4 spr_type_l1PrimePrime spr_type_l2Prime spr_type_nPrime spr_type_ssa_3_p spr_type_na_3_p \
+run_probe ssa_force_rename_generic_probeScript.sml ssa_force_rename_generic_probe.out \
+  fr_definition fr_lookup_force_rename_aux fr_lookup_force_rename fr_domain_force_rename fr_type \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
