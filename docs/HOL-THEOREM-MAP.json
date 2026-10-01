@@ -40908,5 +40908,25 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol original source comparison 2026-10-01 b4v0.4: literal labSem429-488 full native load/store/eight-case shared-memory dispatcher on accepted State/HolAddr/WordLocW and canonical HolFfiResult/HolFfiState. Whole-word requests test w2n MOD(width DIV8)=0 and exact shared domain; nonzero sizes test byte_align base only, with actual LOG2 byte alignment at arbitrary positive widths. callFFIHOL mappedRead/mappedWrite config singleton n2w size; protocol bytes little endian independent of state.be. Loads send address bytes and decode all returned bytes, not TAKE size; stores send whole or TAKE size value bytes followed by full address bytes. Final returns preserve original state exactly; returned loads update only ffi/register/pc/clock, returned stores only ffi/pc/clock via original inc_pc/dec_clock. Shared16 supported unlike ordinary mem_op16. Qualified only positive width/Type0 FFI carrier translation, no map/string/list exception or extra callback. 39 direct original rows allT and paired native kernel replay include exact protocol/oracle guards/events, final and invalid return lengths, Loc failures, alias/clock0/endianness/address wrap, widths24/8/1 and size256 configuration truncation. Three untagged clock consequences are Flapjack infrastructure for original evaluator recursion, not separate HOL theorem claims. Full evaluator/executable routing/end-to-end correctness remain open; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabSem/Inst.lean",
+    "lean_name": "asmInst",
+    "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+    "hol_name": "asm_inst_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-01 b4v0.2: literal asm_inst_def311-317 all five Skip/Const/Arith/Mem/FP clauses on accepted canonical native State/HolInst, directly calling the source-compared arithUpd/memOp/fpUpd. No operation callback or alternate semantics; failure updates retained. asm_inst_consts367-382 same arbitrary i/s quantification, no hypotheses, original ordered thirteen conjuncts pc/code/clock/ffi/io_regs/io_fp_regs/cc_regs/cc_fp_regs/ptr_reg/len_reg/ptr2_reg/len2_reg/link_reg equal original fields. Kernel proof cases every real Arith/Mem/FP constructor and unfolds actual native transitions/updaters, no assumed frame. Qualified only positive word dimension/Type0 FFI translation. Inherits reals_as_rational_cuts through reviewed fpUpd in definition/type constant closure, docs/SOUNDNESS.md item8; no direct real rendering in this module and no extra qualifier claimed. Original dispatch observations check all five constructors, retained failed arithmetic/memory writes, Loc behavior and raw FP payload/error paths; accepted prerequisite oracles cover all inner operations. Full native evaluator/executable routing/end-to-end remain open; independent coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabSem/Inst.lean",
+    "lean_name": "asmInstConsts",
+    "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+    "hol_name": "asm_inst_consts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-01 b4v0.2: literal asm_inst_def311-317 all five Skip/Const/Arith/Mem/FP clauses on accepted canonical native State/HolInst, directly calling the source-compared arithUpd/memOp/fpUpd. No operation callback or alternate semantics; failure updates retained. asm_inst_consts367-382 same arbitrary i/s quantification, no hypotheses, original ordered thirteen conjuncts pc/code/clock/ffi/io_regs/io_fp_regs/cc_regs/cc_fp_regs/ptr_reg/len_reg/ptr2_reg/len2_reg/link_reg equal original fields. Kernel proof cases every real Arith/Mem/FP constructor and unfolds actual native transitions/updaters, no assumed frame. Qualified only positive word dimension/Type0 FFI translation. Inherits reals_as_rational_cuts through reviewed fpUpd in definition/type constant closure, docs/SOUNDNESS.md item8; no direct real rendering in this module and no extra qualifier claimed. Original dispatch observations check all five constructors, retained failed arithmetic/memory writes, Loc behavior and raw FP payload/error paths; accepted prerequisite oracles cover all inner operations. Full native evaluator/executable routing/end-to-end remain open; independent coordinator source review pending."
   }
 ]
