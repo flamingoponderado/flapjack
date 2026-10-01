@@ -3185,3 +3185,16 @@ conclusion as T; these are theorem applications rather than direct EVAL of a
 symbolic universally quantified lookup predicate. Two further rows EVAL/simplify
 the physical-register and at-bound false premises. The complete local theorem
 is printed separately and is not claimed to be an exported HOL DB theorem.
+
+### SSA register-class conversion
+
+`ssa_register_flip_probeScript.sml` replays all three complete local source
+proofs: `is_alloc_var_flip`, `is_stack_var_flip`, and `flip_rw`. Eight direct
+original predicate tuples cover all four residues, both nonphysical classes
+after further increments, and large natural indices. The probe applies each
+implication three times, discharging its premise by original EVAL, and applies
+the unconditional two-equality theorem to all eight inputs. Each result has no
+hypotheses; `EQT_INTRO` renders its proved conclusion as T. The three local
+replays are captured separately and are not claimed exported HOL DB theorems.
+`SSARegisterFlipParity` kernel-checks identical tuples and fourteen full public
+theorem applications, without a bounded-register or additional class premise.

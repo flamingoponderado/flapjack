@@ -3415,6 +3415,12 @@
       "sha256": "d1a7a95b4d2e730a6518608c3b3c4ebd742d43c32fa47f5325741f87b16995a4"
     },
     {
+      "bytes": 790,
+      "out": "ssa_register_flip_probe.out",
+      "rows": 25,
+      "sha256": "6f7a989504063c08b420dccce972f3dfdb6ba7d6986920ce68374727a85bb729"
+    },
+    {
       "bytes": 459,
       "out": "ssa_rename_lookup_probe.out",
       "rows": 5,

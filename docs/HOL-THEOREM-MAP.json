@@ -43915,5 +43915,29 @@
     "lean_name": "ssaMapOKExtend",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c full source4624-4634: arbitrary Nat next/name and native Spt Nat map, original ssa_map_ok AND not is_phy_var next premise, complete ssa_map_ok(next+4)(insert name next map) conclusion. No allocation-class, distinctness, tree validity, bound or target-result strengthening. Accepted native map predicate and same/different lookup insertion laws cover arbitrary malformed trees and overwrites. Original local statement and proof replayed literally; seven applications discharge the full original premise, check empty hypotheses and exact desired conclusion, then EQT_INTRO renders the proven map predicate as T. Two false original premise sentinels and matching nine Lean checks. Actual prerequisite of merge_moves_frame4664 and later SSA cases. No executed compiler behavior change; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "is_alloc_var_flip",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARegisterFlip.lean",
+    "lean_name": "isAllocVarFlip",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source5726-5746/5862-5875: arbitrary Nat next, only original source class premise for each implication, unconditional pair of Boolean equalities for flip_rw. Accepted native isAllocVar/isStackVar modulo-four residues1/3. Nat.add_mod preserves natural addition without a bounded-register or wordwidth assumption. All4residues including physical classes and large Nat observations match original direct EVAL, six guarded source theorem applications and eight unconditional flip_rw applications; three complete literal local proof replays separately labeled, not claimed exported DB theorems. Lean eight kernel tuples and fourteen actual theorem applications; initial fixture spacing fixed before successful gates. Real source consumers5913/6053/9367/9747, distinct from previous +4 increment ports. No executable compiler behavior change; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "is_stack_var_flip",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARegisterFlip.lean",
+    "lean_name": "isStackVarFlip",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source5726-5746/5862-5875: arbitrary Nat next, only original source class premise for each implication, unconditional pair of Boolean equalities for flip_rw. Accepted native isAllocVar/isStackVar modulo-four residues1/3. Nat.add_mod preserves natural addition without a bounded-register or wordwidth assumption. All4residues including physical classes and large Nat observations match original direct EVAL, six guarded source theorem applications and eight unconditional flip_rw applications; three complete literal local proof replays separately labeled, not claimed exported DB theorems. Lean eight kernel tuples and fourteen actual theorem applications; initial fixture spacing fixed before successful gates. Real source consumers5913/6053/9367/9747, distinct from previous +4 increment ports. No executable compiler behavior change; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "flip_rw",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARegisterFlip.lean",
+    "lean_name": "flipRw",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source5726-5746/5862-5875: arbitrary Nat next, only original source class premise for each implication, unconditional pair of Boolean equalities for flip_rw. Accepted native isAllocVar/isStackVar modulo-four residues1/3. Nat.add_mod preserves natural addition without a bounded-register or wordwidth assumption. All4residues including physical classes and large Nat observations match original direct EVAL, six guarded source theorem applications and eight unconditional flip_rw applications; three complete literal local proof replays separately labeled, not claimed exported DB theorems. Lean eight kernel tuples and fourteen actual theorem applications; initial fixture spacing fixed before successful gates. Real source consumers5913/6053/9367/9747, distinct from previous +4 increment ports. No executable compiler behavior change; coordinator acceptance pending."
   }
 ]
