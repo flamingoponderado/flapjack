@@ -1,0 +1,11 @@
+load "bossLib"; load "preamble"; load "wordLangTheory";
+open bossLib HolKernel Parse preamble wordLangTheory;
+fun out label q = (print(label ^ "="); print_term(rhs(concl(EVAL q))); print "\n");
+val _ = out "max_var" ``max_var_exp (Var 37 : 8 wordLang$exp)``;
+val _ = out "max_load" ``max_var_exp (Load (Load (Var 19)) : 8 wordLang$exp)``;
+val _ = out "max_op_empty" ``max_var_exp (Op Add [] : 8 wordLang$exp)``;
+val _ = out "max_op_nested" ``max_var_exp (Op Add [Var 3; Load (Var 51); Var 3] : 8 wordLang$exp)``;
+val _ = out "max_shift" ``max_var_exp (Shift Lsl (Var 22) (Var 6) : 8 wordLang$exp)``;
+val _ = out "max_const" ``max_var_exp (Const 255w : 8 wordLang$exp)``;
+val _ = out "max_lookup" ``max_var_exp (Lookup (Temp 9w) : 8 wordLang$exp)``;
+val _ = out "max_mixed" ``max_var_exp (Op Sub [Load (Shift Lsr (Var 7) (Var 29)); Var 4; Const 9w] : 8 wordLang$exp)``;

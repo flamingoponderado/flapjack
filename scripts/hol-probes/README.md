@@ -1,3 +1,11 @@
+`word_to_stack_comp_native_probe.out` contains 19 direct original comp_def observations,
+kernel-replayed by WordToStackNativeCompileParity. Includes recursive returning/handled
+Calls, valid/invalid immediates and Seq/If/Call bitmap threading. The complete
+native traversal is source-reviewed; these rows do not prove cross-prover
+equivalence or establish production routing/compiler correctness. Regenerate
+with HOL_PROBE_ONLY=word_to_stack_comp_native_probeScript.sml and the read-only
+prebuilt CakeML backend theory directory.
+
 `word_to_stack_write_bitmap_type.sml` queries the original HOL constant type
 (`α sptree$num_map -> num -> num -> β word list`) from the prebuilt
 `word_to_stackTheory`; run `HOL/bin/hol run <absolute script path>` from the
@@ -31,6 +39,17 @@ This restricted test evaluator is not the total evaluate_def port. Regenerate
 with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 # Original Pancake HOL probes
+
+`labsem_fp_updates_probe.out` records 29 direct original `labSem$fp_upd`
+observations, paired with kernel checks in `LabSemFpUpdatesParity`. All sixteen
+constructors are exercised. Cases include NaN/sign payloads, signed zero,
+rounding ties, FMA operand order, aliased destinations, failure with retained
+overflow writes, odd-half insertion, and actual widths8/32/64/128. The IEEE
+definitions and conversions are registered in HOL's EVAL compset as in the
+existing machine IEEE probes. These finite observations do not establish full
+LabSem evaluator routing or cross-language IEEE equivalence. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=labsem_fp_updates_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `reg_alloc_clash_tree_probe.out` captures eight direct original register
 allocator checker observations: repeated deletion, duplicate colours,
@@ -2090,3 +2109,65 @@ showing the no-read premise is necessary. `ParmoveNoReadParity.lean` replays
 all rows and checks the full-function lemma with the original sole premise.
 The source function update is expressed as the equivalent conditional.
 Full scheduler semantic preservation remains open.
+
+### ParMove well-formedness preservation observations
+
+`parmove_wf_steps_probeScript.sml` evaluates fourteen original HOL states: each
+of the six relation rules has a valid pre/post example, and pending temporary
+source and broken path examples are false. `ParmoveWfStepsParity.lean` replays
+the states and kernel-checks generic one-step/RTC theorem applications plus
+a start/emit chain. These observations support state-shape review; the full
+universally quantified preservation proofs are independently kernel-checked.
+Full scheduler semantic correctness remains open.
+`labsem_memory_probeScript.sml` captures 46 original ordinary-memory observations across all eight mem_op cases: retained failed Load/Store writes, narrow type/alignment/aligned-domain checks, endian and resizing, unsupported16 operations, address wrap, sticky failure, and one-/eight-bit dimensions. `LabSemMemoryParity` replays them with targeted simplification and kernel computation. The original unused `is_Loc` classifies `semanticPrimitives.v` (Loc Bool/Nat), not `wordLang.word_loc`, and is tracked separately on `flapjack-og0v`; it is absent from these memory operations.
+
+`parmove_start_extend_probeScript.sml` captures 14 direct original HOL `sem`
+values for the Start and Extend states, with nonempty reversed emitted histories,
+shared sources and snapshot reads. The final pair deliberately repeats a
+destination and differs (27 versus 37): it is outside `wf`, not a valid-step
+semantic-equivalence claim. Lean kernel examples replay all rows; the generic
+case proofs establish the original quantified `eqenv` conclusion under `wf`.
+The other four cases and full `step_sem` assembly remain open.
+`labsem_shared_memory_probeScript.sml` evaluates original LabSem shared-memory load/store/op equations (429–488). Its 39 rows check all eight operations and actual mappedRead/mappedWrite configuration and little-endian payloads against guarded canonical FFI oracles. They cover returned host/events/register/PC/clock state, unchanged final state, invalid return length, domain and Loc errors, aliasing, clock zero, width24 LOG2 alignment, width8/1 boundaries, TAKE beyond the word length, size256 configuration truncation, ignored ordinary-memory endianness, and address wrap. Generic-width byte results unfold the original library set_byte definition after EVAL. `Flapjack/Test/LabSemSharedMemoryParity.lean` replays every row in the kernel on an arbitrary remaining source state. Full native evaluate and production routing remain separate work.
+
+`parmove_remove_last_probeScript.sml` captures 16 direct original HOL `sem`
+values for RemoveSelf and EmitLast, including nonempty reversed emitted history
+and parallel snapshot reads. Two deliberately invalid pairs differ: a repeated
+destination fails `wf` (17 versus 37), and a pending source reads the emitted
+destination despite valid `wf` (17 versus 27). Lean checks every row and these
+premise boundaries. The generic case proofs retain both original premises;
+Save, EmitHead and the full semantic-preservation assembly remain open.
+
+`target_sem_encoded_bytes_probeScript.sml` captures ten component observations
+and proves the whole `encoded_bytes_in_mem` predicate on the same configuration,
+memory and domain. The eleventh row is printed only after checking the theorem's
+exact conclusion and empty hypothesis list. `TargetSemEncodedBytesParity.lean`
+replays each row, using the same `Jump 0w` and block-index `1` witnesses for the
+whole predicate. These concrete checks do not prove compiler correctness.
+`labsem_inst_probeScript.sml` checks original native asm_inst dispatch for all five constructors in fourteen direct rows: Skip/Const, Loc-sensitive arithmetic, failed division/shift writes, Loc memory and failed Store updates, unsupported ordinary16, and raw FP payload/sign/register-error paths. `Flapjack/Test/LabSemInstParity.lean` replays identical inputs and expected results in the kernel. `LabSem/Inst.lean` separately proves the full unconditional thirteen-conjunct original asm_inst_consts by unfolding every actual native Arith/Mem/FP case. The FP dependency inherits the existing real-number translation assurance boundary; full native evaluate and production routing remain separate work.
+`parmove_save_probeScript.sml` captures 20 original HOL `sem` values for Save,
+including a cycle, reversed nonempty emitted history, and the permitted final
+`NONE` source. The temporary may change (99 to 67) while real-register results
+agree. A deliberately invalid pending `NONE` source yields 99 versus 27 and
+fails `wf`; no equivalence is claimed for it. Lean checks all observations and
+the input invariants. Save's generic theorem proves the original real-register
+equivalence from the full source `wf`, with no extra agreement premise.
+
+`wordlang_max_var_inst_probeScript.sml` captures 26 direct original
+`max_var_inst` equations, covering every arithmetic and memory clause, integer
+FP comparison results, both 32/64-bit transfer branches, and the FP default.
+`WordLangMaxVarInstParity.lean` replays these finite observations in the kernel.
+They support regression review, not a cross-prover equivalence proof or
+production compiler routing claim.
+
+`word_lang_max_var_exp_probeScript.sml` captures eight original expression frame bounds: variables, nested loads, empty and nested operators, shifts, constants, lookups and mixed expressions. `WordLangMaxVarExpParity.lean` kernel-replays identical inputs. Full program max_var and native compiler wrapper routing remain separate work.
+`wordlang_cutsets_max_probeScript.sml` captures eight original `cutsets_max`
+equations over both Spt components, including raw and non-well-formed trees.
+`WordLangCutsetsMaxParity.lean` kernel-replays the same inputs. These rows are
+regression evidence, not a full compiler or cross-prover equivalence proof.
+`parmove_emithead_probeScript.sml` captures 26 fresh original sem values, paired
+with kernel checks: reversed history, a three-move active path and valid final
+NONE source. Two wf-valid boundaries violate the constructor guards: closing
+a cycle changes register2 from17 to27; a pending read changes register4 from17
+to27. These are not accepted steps. The proof derives active no-read and retains
+both original guards. Full step_sem/RTC/scheduler assembly remains open.

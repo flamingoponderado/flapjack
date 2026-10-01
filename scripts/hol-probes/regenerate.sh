@@ -2408,6 +2408,18 @@ run_probe pan_globals_fperm_name_probeScript.sml pan_globals_fperm_name_probe.ou
   "$cake_dir/pancake/pan_globalsScript.sml" \
   "$cake_dir/pancake"
 
+run_probe wordlang_cutsets_max_probeScript.sml wordlang_cutsets_max_probe.out \
+  cm_empty cm_left cm_right cm_both cm_zero cm_nonwf cm_raw cm_deep \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe wordlang_max_var_inst_probeScript.sml wordlang_max_var_inst_probe.out \
+  mi_skip mi_const mi_binop_reg mi_binop_imm mi_shift_reg mi_shift_imm mi_div mi_addCarry mi_addOverflow mi_subOverflow mi_longMul mi_longdiv mi_load mi_store mi_load32 mi_store32 mi_load8 mi_store8 mi_fpLess mi_fpLessEqual mi_fpEqual mi_toreg64 mi_fromreg64 mi_toreg32 mi_fromreg32 mi_fpdefault \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_comp_native_probeScript.sml word_to_stack_comp_native_probe.out \
+  comp_skip comp_must comp_seq comp_loop comp_return comp_raise comp_set_bitmap comp_set_bad comp_assign_fallback comp_install comp_tailcall comp_share_bad comp_if_valid comp_if_materialize comp_returning comp_handler comp_seq_bitmaps comp_if_bitmaps comp_call_bitmaps \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
 run_probe word_to_stack_handler_probeScript.sml word_to_stack_handler_probe.out \
   shaF pop_eq "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
@@ -2696,6 +2708,15 @@ run_probe word_to_stack_stack_size_rel_probeScript.sml word_to_stack_stack_size_
   ss_none ss_some ss_bad_max ss_missing_loc ss_missing_frame ss_frame_guard \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe target_sem_encoded_bytes_probeScript.sml target_sem_encoded_bytes_probe.out \
+  oracle_first oracle_shift bytes_empty bytes_nonempty bytes_domain_fail bytes_wrap \
+  encoded_drop encoded_guard_true encoded_guard_strict encoded_bytes_match encoded_bytes_in_mem_whole \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe misc_asm_write_bytearray_probeScript.sml misc_asm_write_bytearray_probe.out \
+  wa_empty wa_wrap0 wa_wrap1 wa_wrap255 \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe word_lang_occurrences_exact_probeScript.sml word_lang_occurrences_exact_probe.out \
   name_empty name_even name_odd var_move_even var_move_odd var_loop_live stack_loop_live stack_alloc_odd var_call_none stack_call_none var_call_some stack_call_some \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
@@ -2775,4 +2796,35 @@ run_probe parmove_steps_probeScript.sml parmove_steps_probe.out \
 
 run_probe parmove_noread_probeScript.sml parmove_noread_probe.out \
   pn_duplicate_left pn_duplicate_right pn_untouched_left pn_untouched_right pn_boundary_left pn_boundary_right pn_self_left pn_self_right \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe labsem_fp_updates_probeScript.sml labsem_fp_updates_probe.out lab_fp_less_nan lab_fp_less_equal_zero lab_fp_equal_nan lab_fp_equal_zero lab_fp_mov_payload lab_fp_abs_payload lab_fp_neg_zero lab_fp_sqrt_four lab_fp_add_two lab_fp_sub_zero lab_fp_mul_four lab_fp_div_half lab_fp_fma_order lab_fp_to_reg64 lab_fp_to_reg_alias32 lab_fp_from_reg64 lab_fp_from_reg_loc_error lab_fp_from_reg32 lab_fp_from_reg8 lab_fp_to_int_tie_even lab_fp_to_int_negative lab_fp_to_int_overflow_bits lab_fp_to_int_overflow_failed lab_fp_to_int_inf_error lab_fp_to_int_odd32 lab_fp_from_int64 lab_fp_from_int32 lab_fp_from_int8 lab_fp_from_int128 "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe parmove_wf_steps_probeScript.sml parmove_wf_steps_probe.out \
+  pw_remove_pre pw_remove_post pw_start_pre pw_start_post pw_extend_pre pw_extend_post pw_save_pre pw_save_post pw_emit_head_pre pw_emit_head_post pw_emit_last_pre pw_emit_last_post pw_bad_source pw_bad_path \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe labsem_memory_probeScript.sml labsem_memory_probe.out lab_mem_load_word lab_mem_load_loc lab_mem_store_loc lab_mem_load_unaligned_write lab_mem_store_unaligned_write lab_mem_load_domain_write lab_mem_store_domain_write lab_mem_load_address_loc lab_mem_store_address_loc lab_mem_address_wrap lab_mem_load32_le_low lab_mem_load32_le_high lab_mem_load32_be_high lab_mem_load32_be_low lab_mem_load32_unsigned lab_mem_load32_unaligned lab_mem_load32_domain lab_mem_load32_loc lab_mem_load32_address_loc lab_mem_store32_le_narrow lab_mem_store32_be_narrow lab_mem_store32_upper_half lab_mem_store32_unaligned lab_mem_store32_domain lab_mem_store32_source_loc lab_mem_store32_memory_loc lab_mem_load8_le lab_mem_load8_be lab_mem_load8_unsigned lab_mem_load8_domain_base lab_mem_load8_loc lab_mem_load8_address_loc lab_mem_store8_le_narrow lab_mem_store8_be_narrow lab_mem_store8_domain_base lab_mem_store8_source_loc lab_mem_store8_memory_loc lab_mem_load16_unsupported lab_mem_load16_loc_address lab_mem_store16_unsupported lab_mem_store16_loc_address lab_mem_sticky_load lab_mem_sticky_store lab_mem_width1_address0 lab_mem_width1_address1 lab_mem_width8_address1 "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe parmove_start_extend_probeScript.sml parmove_start_extend_probe.out \
+  ps_start_pre_1 ps_start_pre_4 ps_start_pre_5 ps_start_post_1 ps_start_post_4 ps_start_post_5 ps_extend_pre_1 ps_extend_pre_3 ps_extend_pre_5 ps_extend_post_1 ps_extend_post_3 ps_extend_post_5 ps_bad_pre ps_bad_post \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe labsem_shared_memory_probeScript.sml labsem_shared_memory_probe.out \
+  lab_shared_load lab_shared_load8 lab_shared_load16 lab_shared_load32 lab_shared_store lab_shared_store8 lab_shared_store16 lab_shared_store32 lab_shared_load16_unaligned lab_shared_store16_unaligned lab_shared_load_word_unaligned lab_shared_store_word_unaligned lab_shared_load_word_domain lab_shared_store_word_domain lab_shared_load_narrow_domain lab_shared_store_narrow_domain lab_shared_load_address_loc lab_shared_store_address_loc lab_shared_store_value_loc lab_shared_load_final lab_shared_store_final lab_shared_load_wrong_length lab_shared_store_wrong_length lab_shared_load_zero_clock lab_shared_store_zero_clock lab_shared_load_address_alias lab_shared_load_protocol_ignores_be lab_shared_store_protocol_ignores_be lab_shared_load24_alignment lab_shared_store24_alignment lab_shared_load1_empty lab_shared_store1_empty lab_shared_load1_mod0 lab_shared_store1_mod0 lab_shared_load8_word lab_shared_store8_short_take16 lab_shared_load_size256 lab_shared_store_size256 lab_shared_load_address_wrap \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe parmove_remove_last_probeScript.sml parmove_remove_last_probe.out \
+  pr_self_pre_1 pr_self_pre_4 pr_self_pre_5 pr_self_post_1 pr_self_post_4 pr_self_post_5 pr_last_pre_1 pr_last_pre_4 pr_last_pre_5 pr_last_post_1 pr_last_post_4 pr_last_post_5 pr_bad_self_pre pr_bad_self_post pr_bad_read_pre pr_bad_read_post \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe labsem_inst_probeScript.sml labsem_inst_probe.out \
+  lab_inst_skip lab_inst_const lab_inst_arith_or_loc lab_inst_arith_or_loc_other lab_inst_arith_div_zero lab_inst_arith_shift_invalid lab_inst_mem_load_loc lab_inst_mem_store_unaligned lab_inst_mem_load32_loc_failure lab_inst_mem_load16_unsupported lab_inst_mem_store16_unsupported lab_inst_fp_mov_payload lab_inst_fp_neg_zero lab_inst_fp_from_reg_loc_failure \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe parmove_save_probeScript.sml parmove_save_probe.out \
+  pv_save_history_pre_1 pv_save_history_pre_4 pv_save_history_pre_5 pv_save_history_pre_temp pv_save_history_post_1 pv_save_history_post_4 pv_save_history_post_5 pv_save_history_post_temp pv_save_cycle_pre_1 pv_save_cycle_pre_2 pv_save_cycle_pre_4 pv_save_cycle_post_1 pv_save_cycle_post_2 pv_save_cycle_post_4 pv_save_none_source_pre_1 pv_save_none_source_pre_4 pv_save_none_source_post_1 pv_save_none_source_post_4 pv_save_bad_pending_pre_4 pv_save_bad_pending_post_4 \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe word_lang_max_var_exp_probeScript.sml word_lang_max_var_exp_probe.out \
+  max_var max_load max_op_empty max_op_nested max_shift max_const max_lookup max_mixed \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe parmove_emithead_probeScript.sml parmove_emithead_probe.out \
+  pv_head_history_pre_1 pv_head_history_pre_2 pv_head_history_pre_3 pv_head_history_pre_4 pv_head_history_pre_5 pv_head_history_post_1 pv_head_history_post_2 pv_head_history_post_3 pv_head_history_post_4 pv_head_history_post_5 pv_head_none_pre_1 pv_head_none_pre_2 pv_head_none_pre_4 pv_head_none_post_1 pv_head_none_post_2 pv_head_none_post_4 pv_head_bad_endpoint_pre_1 pv_head_bad_endpoint_pre_2 pv_head_bad_endpoint_post_1 pv_head_bad_endpoint_post_2 pv_head_bad_pending_pre_1 pv_head_bad_pending_pre_2 pv_head_bad_pending_pre_4 pv_head_bad_pending_post_1 pv_head_bad_pending_post_2 pv_head_bad_pending_post_4 \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

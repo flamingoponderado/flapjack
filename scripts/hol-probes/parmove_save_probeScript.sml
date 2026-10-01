@@ -1,0 +1,27 @@
+load "bossLib";
+load "preamble";
+load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun print_eval label q = let val th = EVAL q in
+ (print (label ^ "="); print_term (rconc th); print "\n") end;
+val env = ``\x:num option. case x of NONE => 99n | SOME k => 10*k+7``;
+print_eval "pv_save_history_pre_1" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 1)``;
+print_eval "pv_save_history_pre_4" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 4)``;
+print_eval "pv_save_history_pre_5" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 5)``;
+print_eval "pv_save_history_pre_temp" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (NONE)``;
+print_eval "pv_save_history_post_1" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 1,NONE)],[(NONE,SOME 2);(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 1)``;
+print_eval "pv_save_history_post_4" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 1,NONE)],[(NONE,SOME 2);(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 4)``;
+print_eval "pv_save_history_post_5" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 1,NONE)],[(NONE,SOME 2);(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 5)``;
+print_eval "pv_save_history_post_temp" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 1,NONE)],[(NONE,SOME 2);(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (NONE)``;
+print_eval "pv_save_cycle_pre_1" ``parmove$sem ([(SOME 4,SOME 1)],[(SOME 1,SOME 2);(SOME 2,SOME 1)],[]) ^env (SOME 1)``;
+print_eval "pv_save_cycle_pre_2" ``parmove$sem ([(SOME 4,SOME 1)],[(SOME 1,SOME 2);(SOME 2,SOME 1)],[]) ^env (SOME 2)``;
+print_eval "pv_save_cycle_pre_4" ``parmove$sem ([(SOME 4,SOME 1)],[(SOME 1,SOME 2);(SOME 2,SOME 1)],[]) ^env (SOME 4)``;
+print_eval "pv_save_cycle_post_1" ``parmove$sem ([(SOME 4,SOME 1)],[(SOME 1,SOME 2);(SOME 2,NONE)],[(NONE,SOME 1)]) ^env (SOME 1)``;
+print_eval "pv_save_cycle_post_2" ``parmove$sem ([(SOME 4,SOME 1)],[(SOME 1,SOME 2);(SOME 2,NONE)],[(NONE,SOME 1)]) ^env (SOME 2)``;
+print_eval "pv_save_cycle_post_4" ``parmove$sem ([(SOME 4,SOME 1)],[(SOME 1,SOME 2);(SOME 2,NONE)],[(NONE,SOME 1)]) ^env (SOME 4)``;
+print_eval "pv_save_none_source_pre_1" ``parmove$sem ([(SOME 4,SOME 2)],[(SOME 1,NONE)],[]) ^env (SOME 1)``;
+print_eval "pv_save_none_source_pre_4" ``parmove$sem ([(SOME 4,SOME 2)],[(SOME 1,NONE)],[]) ^env (SOME 4)``;
+print_eval "pv_save_none_source_post_1" ``parmove$sem ([(SOME 4,SOME 2)],[(SOME 1,NONE)],[(NONE,NONE)]) ^env (SOME 1)``;
+print_eval "pv_save_none_source_post_4" ``parmove$sem ([(SOME 4,SOME 2)],[(SOME 1,NONE)],[(NONE,NONE)]) ^env (SOME 4)``;
+print_eval "pv_save_bad_pending_pre_4" ``parmove$sem ([(SOME 4,NONE)],[(SOME 1,SOME 2)],[]) ^env (SOME 4)``;
+print_eval "pv_save_bad_pending_post_4" ``parmove$sem ([(SOME 4,NONE)],[(SOME 1,NONE)],[(NONE,SOME 2)]) ^env (SOME 4)``;
