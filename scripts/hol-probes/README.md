@@ -2397,3 +2397,12 @@ These finite observations do not establish cross-prover equivalence or route
 the executed allocator. Regenerate read-only with
 `HOL_PROBE_ONLY=spt_mapi_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `parmove_temp_mixed_probeScript.sml` checks four literal scratch-safety clauses with independent bool destination and num source carriers. `ParmoveTempAppendParity` kernel-replays these rows and applies the append theorem to arbitrary independent carriers; existing same-carrier sentinels remain registered.
+
+`word_alloc_checker_assembly_probe.out` observes five mixed original checker
+equations, kernel-replayed by `WordAllocCheckerAssemblyParity`. Nested control
+(Seq/MustTerminate/If/Loop/Break/Continue), returning and handled calls, a tail
+call with an ignored malformed handler, and collision rejection are covered.
+The full theorem is assembled universally from reviewed constructor cases;
+these finite observations do not establish cross-prover equivalence or route
+the executed allocator. Regenerate with
+`HOL_PROBE_ONLY=word_alloc_checker_assembly_probeScript.sml scripts/hol-probes/regenerate.sh`.

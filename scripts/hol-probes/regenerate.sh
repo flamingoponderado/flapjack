@@ -2999,3 +2999,7 @@ run_probe word_alloc_heu_counters_probeScript.sml word_alloc_heu_counters_probe.
 run_probe parmove_temp_mixed_probeScript.sml parmove_temp_mixed_probe.out \
   ntm_real ntm_read ntm_write ntm_both \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembly_probe.out \
+  ca_control ca_return ca_handler ca_tail_ignored ca_collision \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
