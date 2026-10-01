@@ -463,6 +463,7 @@
     {"bytes": 296, "out": "pancake_peg_probe.out", "rows": 1, "sha256": "1087f8c89b4f68e7d0e0e4ade5f93a0acf6316a5505fb5148e43d268ac758b80"},
     {"bytes": 689, "out": "parmove_emithead_probe.out", "rows": 26, "sha256": "dda7aa9299652a795d587f0e52c7a63caf53369bcc793d032458d4704992a117"},
     {"bytes": 153, "out": "parmove_environment_probe.out", "rows": 8, "sha256": "c0ea060f5ddc87d9fbaf0916b05174c62550ce8faa557763d5a203c62ea0d9dd"},
+    {"bytes": 386, "out": "parmove_final_probe.out", "rows": 7, "sha256": "12dc56e3354f8ae0190fb9c1ea937f8f3329a2c19644f3059cef1b548eeab834"},
     {"bytes": 124, "out": "parmove_fstep_probe.out", "rows": 10, "sha256": "9c8a786eb072aa9b95652444d754fd3d05baee183313cf8689a451540b3e09c0"},
     {"bytes": 224, "out": "parmove_invariants_probe.out", "rows": 13, "sha256": "9e0215ba434733695ce75e6251c2190e8633130a127331ee3ff7a1f5e9894504"},
     {"bytes": 160, "out": "parmove_noread_probe.out", "rows": 8, "sha256": "dba55ea223771055b2d4763890ffaadbf2ea0feae2d5c283955b045ef6687e5b"},

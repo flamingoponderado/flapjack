@@ -2186,7 +2186,14 @@ and 32/64-bit instruction transfer branches. `WordLangMaxVarParity.lean`
 kernel-replays the same inputs. These finite rows support source review;
 they do not establish a cross-prover equivalence or production route.
 
+`parmove_final_probeScript.sml` freshly captures seven full original pmov
+results: terminal history preservation, self move, dependency chain, cycle,
+scratch-register inputs, duplicate destinations and nonempty active/history.
+Every full state is kernel paired in ParmoveFinalParity. Scratch and duplicate
+inputs deliberately exceed wf: pmov_final is unconditional. It proves empty
+pending/active lists and an existential emitted history, not semantic correctness.
+
 `labsem_evaluate_probeScript.sml` checks all full native evaluator branches in 57 whole executions, including installed-code execution, byte/configuration guard rejection, failed-instruction rollback, clock exhaustion, shared-memory sequence shifts, external-call register/FP havoc and exact return/final events. The paired kernel fixtures live in `Flapjack/Test/LabSemEvaluateParity.lean`. Constructor-specific `loc_to_pc` computation equations are derived with `SIMP_CONV [Once loc_to_pc_def]` in the HOL kernel to eliminate the original existential label guard before recursive execution; these preserve the original evaluator and inputs.
 
-
 `word_to_stack_programs_native_probeScript.sml` observes the literal native `compile_prog` and generic `compile_word_to_stack` in 21 original executions. Cases cover frame subtraction/MAX boundaries, widths1/8/64, perf, arbitrary identifiers, duplicate preservation, and left-to-right bitmap content/length across multiple programs and multiword insertions. `Flapjack/Test/WordToStackNativeProgramsParity.lean` replays identical inputs and results in the kernel. Native top-level compilation and production caller routing remain separate work.
+
