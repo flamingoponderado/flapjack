@@ -1,3 +1,4 @@
+import Flapjack.Test.StackPropsCodeLabelsParity
 import Flapjack.Test.RegAllocSortedMemParity
 import Flapjack.Test.ParmoveAllDistinctStepsParity
 import Flapjack.Test.RegAllocSortMovesParity
