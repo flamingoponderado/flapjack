@@ -2231,3 +2231,6 @@ those remain tracked on the WordToStack compiler beads.
 of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
 states. `ParmoveDestinationParity` replays each row and applies the unconditional
 original destination-membership theorem, including malformed states.
+
+
+`labsem_semantics_probeScript.sml` proves four whole behavior observations through original `semantics_def`: Error, success, resource limit, and self-loop divergence with the entire arbitrary input trace retained. Evaluator equations are derived in the original HOL kernel and record-update left-hand sides normalized before rewriting the quantified clocks. The loop equation covers every natural clock by induction; the divergent trace uses the actual constant-image and prefix-chain/LUB uniqueness theorems. `Flapjack/Test/LabSemSemanticsParity.lean` proves the corresponding native observations, including arbitrary Halt word values. Neither side substitutes a finite timeout for divergence.

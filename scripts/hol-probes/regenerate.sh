@@ -2865,3 +2865,7 @@ run_probe word_to_stack_native_config_probeScript.sml word_to_stack_native_confi
 run_probe parmove_destination_probeScript.sml parmove_destination_probe.out \
   pv_destination_terminal pv_destination_self pv_destination_chain pv_destination_cycle pv_destination_scratch pv_destination_duplicate pv_destination_active \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe labsem_semantics_probeScript.sml labsem_semantics_probe.out \
+  lab_semantics_empty_error lab_semantics_halt_success lab_semantics_halt_resource lab_semantics_loop_diverge \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
