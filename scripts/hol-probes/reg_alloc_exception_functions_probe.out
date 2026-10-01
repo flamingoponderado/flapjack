@@ -1,0 +1,11 @@
+ef_raise_fail=T
+ef_raise_sub=T
+ef_hs_success=M_success 5
+ef_hs_catch=M_success 9
+ef_hs_pass_fail=M_failure (Fail "x")
+ef_hs_failing_state=M_success 7
+ef_hs_accessor=M_success Atemp
+ef_hf_catch=M_success 2
+ef_hf_pass_sub=M_failure Subscript
+ef_hf_success=M_success 4
+ef_hf_failing_state=M_success 6

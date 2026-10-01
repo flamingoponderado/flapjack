@@ -1,4 +1,13 @@
 import Flapjack.Test.StackToLabNativeParity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectLeft
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
+import Flapjack.Test.SSAMapStepParity
+import Flapjack.Test.SSALocalsInsertParity
+import Flapjack.Test.SSAMapBoundsParity
+import Flapjack.Test.SSARegisterFlipParity
+import Flapjack.Test.SSAMapExtendParity
+import Flapjack.Test.SSARenamePropertiesParity
 import Flapjack.Test.SSALocalsPhysicalInsertParity
 import Flapjack.Test.SSAMapPreservationParity
 import Flapjack.Test.SSARegisterFlipParity
@@ -147,6 +156,8 @@ import Flapjack.Test.WordToStack.ReturnCopy
 import Flapjack.Test.WordToStack.Special
 import Flapjack.Test.PipelineDiagnostics
 import Flapjack.Test.FullSsa
+import Flapjack.Test.ProductionAllocationLimit
+import Flapjack.Test.LoopToWordSourceCodec
 import Flapjack.Test.PanValueMemoryFfi
 import Flapjack.Test.PanValueAcceleratorFfi
 import Flapjack.Test.PanValueFfiClockMemoryFfi

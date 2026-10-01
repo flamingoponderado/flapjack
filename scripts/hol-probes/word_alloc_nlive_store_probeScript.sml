@@ -1,0 +1,17 @@
+load "bossLib";
+load "preamble";
+load "word_allocProofTheory";
+open bossLib HolKernel Parse preamble word_allocTheory word_allocProofTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val _ = observe "ns_lookup_dead" ``nlive_store [NextFree] (Lookup NextFree : 64 wordLang$exp)``;
+val _ = observe "ns_lookup_live" ``nlive_store [NextFree] (Lookup EndOfHeap : 64 wordLang$exp)``;
+val _ = observe "ns_var" ``nlive_store [NextFree] (Var 3 : 64 wordLang$exp)``;
+val _ = observe "ns_const" ``nlive_store [] (Const 7w : 64 wordLang$exp)``;
+val _ = observe "ns_op_dead" ``nlive_store [NextFree] (Op Add [Var 1; Lookup NextFree] : 64 wordLang$exp)``;
+val _ = observe "ns_op_live" ``nlive_store [NextFree] (Op Add [Var 1; Lookup CurrHeap] : 64 wordLang$exp)``;
+val _ = observe "ns_op_empty" ``nlive_store [NextFree] (Op Add [] : 64 wordLang$exp)``;
+val _ = observe "ns_load" ``nlive_store [NextFree] (Load (Lookup EndOfHeap) : 64 wordLang$exp)``;
+val _ = observe "ns_load_dead" ``nlive_store [EndOfHeap; NextFree] (Load (Lookup EndOfHeap) : 64 wordLang$exp)``;
+val _ = observe "ns_shift_left_dead" ``nlive_store [NextFree] (Shift Lsl (Lookup NextFree) (Const 1w) : 64 wordLang$exp)``;
+val _ = observe "ns_shift_right_dead" ``nlive_store [NextFree] (Shift Lsl (Var 2) (Lookup NextFree) : 64 wordLang$exp)``;
+val _ = observe "ns_shift_live" ``nlive_store [] (Shift Asr (Lookup NextFree) (Var 4) : 64 wordLang$exp)``;

@@ -1,3 +1,12 @@
+ssa_map_bounds_probe.out captures nine complete original map-validity pairs and a kernel replay of the full original local bound-monotonicity proof. Cases include empty/malformed trees, equal/raised/rejected bounds, physical registers, unbounded natural values and overwritten entries. SSAMapBoundsParity replays the same predicates and applies the full theorem to arbitrary maps/bounds. Recursive insertion is unfolded once before predicate simplification to avoid expanding dead recursive branches.
+`word_program_max_unrestricted_probe.out` captures eight fresh whole-program
+maximum and limit results across Seq, tail Call handler, returning Call with
+handler, and Loop containing ordinary 16-bit memory. The existing program
+maximum codec theorem now holds without the memory guard. Kernel fixtures check
+all four original maxima/limits, actual codec acceptance and unchanged guard
+rejection; the earlier 32 constructor rows and five-register rejection remain.
+This is carrier correspondence, not an executed native limit route.
+
 `word_max_inst_route_probe.out` records seven fresh original instruction maxima
 and program limits. HOL max_var_inst leaves Mem Load16/Store16 to the zero
 fallback, unlike its explicit Load/Store/Load8/Store8/Load32/Store32 clauses.
@@ -2728,11 +2737,21 @@ the executed allocator. Regenerate read-only with
 
 `word_alloc_get_forced_probeScript.sml` captures twenty-eight original `get_forced` rows over `c with ISA := _`: each forced `AddCarry`/`AddOverflow`/`SubOverflow`/`LongMul` ISA guard and its rejected ISA, omitted equal-register pairs, `FPMovToReg`/`FPMovFromReg` at 32 and 64 bits, an unforced instruction, `Seq`/`If`/`MustTerminate`/`Loop`, returning calls with and without a handler, a tail call with a handler, `Skip`, and registers above 2^64. `Flapjack/Test/GetForcedParity.lean` replays each row and instantiates `getForcedInGetClashTree`. These are proof-side ports; the executed RISC-V allocator still uses its own forced-edge traversal.
 
+`word_alloc_remove_dead_probeScript.sml` captures twenty-five original `remove_dead`/`remove_dead_prog` rows over one live set (each observed as program, `toAList` keys and dead stores): partial and fully dead `Move`, dead and live `Inst`, `Get`, `OpCurrHeap`, dead `LocValue`, `Set` of a register to a dead and a live store, `Set` of a compound expression, `Seq` dropping a `Skip` and keeping both children, `MustTerminate`, a fully dead `If` and an immediate `If`, a returning call with a handler, a tail call, `Alloc`, `Loop`, `Break`, a `Continue` outside its loop context, the catchall `Tick`, and `remove_dead_prog`. Two `live_store_rel` rows are decided by proving the row or its negation. `Flapjack/Test/WordAllocRemoveDeadParity.lean` replays every row in the kernel.
+
+`word_alloc_nlive_store_probeScript.sml` captures twelve original `nlive_store` rows: a dead and a live `Lookup`, `Var`/`Const`, `Op` with a dead, a live and no argument, live and dead `Load`, `Shift` with each operand dead, and a live `Shift`. `Flapjack/Test/WordAllocNliveStoreParity.lean` proves each `T` row and refutes each `F` row in the kernel.
+
 `reg_alloc_invariants_probeScript.sml` captures thirty original reg_allocProof invariant rows. Quantified `bool` definitions are decided by proving the row or its negation with `TAC_PROOF` and a recorded tactic: `has_edge` (hit, miss, both bounds, a key above 2^64), `undirected`, `good_ra_state` (well-formed, unsorted adjacency, out-of-range move, wrong array length), `no_clash` (distinct, clashing, non-fixed, self loop), `sp_inverts` (inverse, mismatch, inserted pair), `is_clique`, `is_subgraph`, `hide`, `colouring_satisfactory` (injective, clashing, self loop) and the `good_pref`/`good_neg_pref` oracle conditions. `Flapjack/Test/RegAllocInvariantsParity.lean` proves or refutes each row in the kernel and instantiates `spInvertsInsert`.
 
 `reg_alloc_mk_bij_lemmas_probeScript.sml` captures six original `list_remap`/`mk_bij` instances through `toAList`: a repeated and pre-mapped name list from nonempty maps, an inverse pair extended from a nonempty inverse, `wf` of both results, a mixed `Seq`/`Branch SOME`/`Set` tree, and a key above 2^64. `Flapjack/Test/RegAllocMkBijLemmasParity.lean` replays each row and applies `listRemapDomain`, `listRemapWf`, `mkBijAuxDomain`, `mkBijAuxBij` and `mkBijAuxWf` to the probe inputs.
 
 `reg_alloc_accessors_probeScript.sml` captures eighteen original rows of the `ml_monadBaseLib`-generated `ra_state` accessors on one concrete state: `get_dim`/`get_stack`/`get_avail_moves_wl`, `set_dim` and a `set_` that leaves other fields, `adj_ls_length`, in-range and out-of-range (including a key above 2^64) `node_tag_sub`/`adj_ls_sub`/`degrees_sub`/`coalesced_sub`, in-range and out-of-range `update_degrees` (failure keeps the state), `update_move_related`/`update_node_tag`, `st_ex_MAP adj_ls_sub` with and without an out-of-range index, and `Mupdate`. `Flapjack/Test/RegAllocAccessorsParity.lean` replays each row and applies `updateDegreesEqn` and the provisional `degreesSubEqn`/`stExMapAdjLsSub` to the same inputs.
+
+`reg_alloc_colouring_probeScript.sml` captures eighteen original rows of `remove_colours` (empty colours taking priority, no nodes, fixed neighbours, duplicate colours, out-of-range nodes before and after the colours run out), `assign_Atemp_tag` (no-preference and last-colour oracles, no remaining colour, non-`Atemp` node unchanged, out-of-range node), `assign_Atemps` (heuristic order with an out-of-range entry, oracle choice, a single colour) and `first_match_col` (hit, colour outside `ks`, empty list, an index above 2^64). `Flapjack/Test/RegAllocColouringParity.lean` replays each row in the kernel.
+
+`reg_alloc_exception_functions_probeScript.sml` captures eleven original rows of the generated `raise_Fail`/`raise_Subscript`/`handle_Fail`/`handle_Subscript`: both raises, success passing through, each handler catching its own constructor and passing the other, continuation from the failing state, and `handle_Subscript` around an out-of-range `node_tag_sub`. `Flapjack/Test/RegAllocExceptionFunctionsParity.lean` replays each row in the kernel.
+
+`reg_alloc_stemp_colouring_probeScript.sml` captures the HOL types of `assign_Stemp_tag` and `neg_biased_pref` and eighteen original rows of `tag_col`, `unbound_colour` (empty, gap, entries below the start colour, duplicates), `assign_Stemp_tag` (default and oracle choices, non-`Stemp` node unchanged, out-of-range node), `assign_Stemps` (two start colours), `neg_first_match_col` (hit, excluded colour, out-of-range node) and `neg_biased_pref` (hit, missing move entry, out-of-range partner caught by `handle_Subscript`, node outside `dim`). `Flapjack/Test/RegAllocStempColouringParity.lean` replays each value row in the kernel.
 `word_alloc_checker_assembly_probe.out` observes five mixed original checker
 equations, kernel-replayed by `WordAllocCheckerAssemblyParity`. Nested control
 (Seq/MustTerminate/If/Loop/Break/Continue), returning and handled calls, a tail
@@ -3411,6 +3430,13 @@ returning Call bodies, ignored tail handlers and ignored Load16 fields.
 inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
 The executed upstream maximum/limit route remains tracked on .30.1.2.1.
 
+`ssa_locals_bounds_probe.out` replays the literal original local
+`ssa_locals_rel_more` proof (5195–5203), preserving its generic locals payload
+and original conjunction. Existing `ssa_locals_rel_probe.out` observations and
+`SSALocalsParity` fixtures cover nonvacuous, rejected, boundary and malformed
+relations; that fixture additionally applies the complete bound theorem at
+arbitrary payload, trees and counters.
+
 `ssa_locals_swap_probe.out` captures the complete literal local SSA map-swap
 proof and inferred free-variable types. Source and target states share only
 the word dimension; their code and FFI carriers are independent. The generic
@@ -3539,6 +3565,13 @@ hypotheses; `EQT_INTRO` renders its proved conclusion as T. The three local
 replays are captured separately and are not claimed exported HOL DB theorems.
 `SSARegisterFlipParity` kernel-checks identical tuples and fourteen full public
 theorem applications, without a bounded-register or additional class premise.
+
+`ssa_locals_insert_probe.out` replays both literal original fresh SSA/local
+insertion proofs and captures their fully generic locals/value types. Two
+concrete original theorem applications match `SSALocalsInsertParity`: insertion
+from empty trees and insertion preserving an existing mapped source key/value.
+These are checked theorem applications rather than a claim that the original
+simplifier decides the quantified relation after insertion.
 `ssa_locals_bounds_probe.out` replays the literal original local
 `ssa_locals_rel_more` proof (5195–5203), preserving its generic locals payload
 and original conjunction. Existing `ssa_locals_rel_probe.out` observations and
@@ -3557,6 +3590,10 @@ applies all three full public theorems with arbitrary inputs and positive width.
 These regressions do not establish cross-language equivalence or instrumentation
 evaluation correctness. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_call_core_probeScript.sml`.
 
+`ssa_map_step_probe.out` replays the original local plus-two bound proof
+using a freshly replayed original local monotonicity proof. Its six complete
+predicate pairs are kernel matched in `SSAMapStepParity`, including the
+rejected-bound/physical cases, malformed tree and unbounded natural values.
 ### SSA map intersection and insertion
 
 `ssa_map_preservation_probeScript.sml` replays the complete literal local proofs
@@ -3592,6 +3629,9 @@ only the original allocation-class premise and all four result conjuncts.
 Malformed/physical-counter observation rows test the definition; they do not
 claim that the allocation premise holds. No exported local theorem is claimed.
 
+ssa_merge_correct_right_probe.out replays the complete original local merge_moves_correctR proof and its literal local prerequisites, then records all original inferred state/carrier types. CorrectRight proves the same five-conjunct native statement in Lean; no executable change or cross-language equivalence claim.
+
+ssa_merge_correct_left_probe.out replays the full original local merge_moves_correctL proof and its literal prerequisites, recording the complete statement and seven inferred types. CorrectLeft proves all five native evaluator conclusions with original hypotheses. No executable change or cross-language equivalence claim.
 ### Full WordConvs no-install equations
 
 `word_convs_no_install_def_probeScript.sml` projects all 26 clauses of the
@@ -3712,3 +3752,12 @@ including arbitrary exact MlString pass-through. HOL's locally overloaded
 `++` remains left-associative, so the generic callback bridge's right-associated
 tree is not a definition-exact substitute. Production routing remains tracked
 on fleet bead `flapjack-52bq.1`.
+ssa_physical_state_updates_probe.out freshly replays the literal physical-target setVar and list-insert locals-relation proofs and records their independent source/target code/FFI types. SSALocalsPhysicalStateUpdates retains every original premise including list length, using native Spt locals. No executable change or cross-language equivalence claim.
+
+### SSA merge unchanged lookups
+
+`ssa_merge_move_lookups_probeScript.sml` replays the complete literal original local frame2 and frame3 proofs, specializes frame3 to empty maps, applies it under independently proved guards for an absent-list key and an outside-intersection key, captures both whole merge results, and checks the false guard for a changed common key. Lean `mergeMovesFrame3` retains the full original guard and both lookup equalities for arbitrary native trees.
+
+### Loop-to-Word label threading and handler ownership
+
+`loop_to_word_label_handlers_probeScript.sml` replays all four full literal source proofs: function-label preservation, next-label monotonicity, handler ownership for comp, and per-function ownership for compile_prog. Actual theorem applications use original compiler equalities supplied by EVAL; no extra guard or target evaluation assumption. Complete nested outputs at widths 1/64/80 show return labels, exception labels, both continuations and final counter; the tail case ignores its source handlers. A duplicate-owner compiled list and false-owner sentinel are retained. Matching generic-width kernel fixtures apply the public theorems and check the complete nested output.

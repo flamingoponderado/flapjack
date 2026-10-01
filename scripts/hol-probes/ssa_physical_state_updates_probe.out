@@ -1,0 +1,6 @@
+ph_set_full=⊢ ssa_map_ok na ssa ∧ ssa_locals_rel na ssa st.locals cst.locals ∧ is_phy_var v ⇒ ssa_locals_rel na ssa st.locals (set_var v a cst).locals
+ph_set_type_st=:(α, β, γ) state
+ph_set_type_cst=:(α, δ, ε) state
+ph_list_full=⊢ ssa_map_ok na ssa ∧ ssa_locals_rel na ssa st.locals cst.locals ∧ EVERY is_phy_var ls ∧ LENGTH ls = LENGTH x ⇒ ssa_locals_rel na ssa st.locals (alist_insert ls x cst.locals)
+ph_list_type_st=:(α, β, γ) state
+ph_list_type_cst=:(α, δ, ε) state

@@ -1,0 +1,7 @@
+ml_full=⊢ ssa_map_ok na ssa ⇒ ssa_map_ok (na + 2) ssa
+ml_empty=(T,T)
+ml_valid=(T,T)
+ml_rejected=(F,T)
+ml_physical=(F,F)
+ml_invalid=(T,T)
+ml_large=(T,T)
