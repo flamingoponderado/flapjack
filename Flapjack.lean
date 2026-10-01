@@ -1,6 +1,8 @@
+import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.StackLang.ProductionWordBoundary
 import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Recursive
@@ -8,6 +10,8 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallTop
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallPrograms
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
@@ -372,6 +376,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.ShMemLoadLemmas
 import Flapjack.Compiler.Backend.StackProps.RemoveNames
 import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
+import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
 import Flapjack.Pancake.WordLang.OccurrencesExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
@@ -1164,6 +1169,7 @@ import Flapjack.Compiler.Backend.LinearScan.HiddenState
 import Flapjack.Compiler.Backend.LinearScan.Steps
 import Flapjack.Compiler.Backend.LinearScan.Sorting
 import Flapjack.Compiler.Backend.LinearScan.TopLevel
+import Flapjack.Compiler.Backend.LinearScan.MapColorsSub
 import Flapjack.Misc.Sptree.Foldi
 import Flapjack.Misc.MiscThe
 import Flapjack.Misc.ListEl
@@ -1192,6 +1198,7 @@ import Flapjack.Compiler.Backend.LabToTarget.Labels
 import Flapjack.Compiler.Backend.LabToTarget.Positions
 import Flapjack.Compiler.Backend.LabToTarget.SecondPass
 import Flapjack.Compiler.Backend.LabToTarget.Padding
+import Flapjack.Compiler.Backend.LabToTarget.PaddingLength
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
 import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
 import Flapjack.Compiler.Backend.LabToTarget.Compile

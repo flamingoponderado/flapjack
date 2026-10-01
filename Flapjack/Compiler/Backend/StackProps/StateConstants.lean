@@ -84,16 +84,17 @@ theorem setVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 
 /-- Full original source statement at line 74, including all conjuncts.
-No additional hypothesis or state-field specialization is introduced. -/
+The updated FFI host is independently polymorphic, as in HOL gamma-to-delta
+state record update; all other updates keep the original input carrier. -/
 @[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "set_var_with_const" 74
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem setVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
+theorem setVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {OtherF : Type}
     (x : Nat) (y : WordLocW width) (z : StackSemStateFiniteExact width C F)
-    (clk : Nat) (m : BitVec width → WordLocW width) (newFfi : HolFfiState F)
+    (clk : Nat) (m : BitVec width → WordLocW width) (newFfi : HolFfiState OtherF)
     (stk : List (WordLocW width)) (stk_space : Nat) :
     setVar x y { z with clock := clk } = { setVar x y z with clock := clk } ∧
    setVar x y { z with memory := m } = { setVar x y z with memory := m } ∧
-   setVar x y { z with ffi := newFfi } = { setVar x y z with ffi := newFfi } ∧
+   setVar x y ({ z with ffi := newFfi } : StackSemStateFiniteExact width C OtherF) = { setVar x y z with ffi := newFfi } ∧
    setVar x y { z with stack := stk } = { setVar x y z with stack := stk } ∧
    setVar x y { z with stackSpace := stk_space } = { setVar x y z with stackSpace := stk_space } := by
   exact ⟨rfl, rfl, rfl, rfl, rfl⟩

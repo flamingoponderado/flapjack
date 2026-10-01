@@ -5,6 +5,8 @@ import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
 import Flapjack.Compiler.Backend.LinearScan.Proofs.GoodState
 import Flapjack.Compiler.Backend.LinearScan.Proofs.SpillRegister
 import Flapjack.Compiler.Backend.LinearScan.Proofs.EdgesToAdjlist
+import Flapjack.Compiler.Backend.LinearScan.Proofs.ColorRegister
+import Flapjack.Compiler.Backend.LinearScan.Proofs.PassInvariants
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalMonad
@@ -33,6 +35,10 @@ order:
   and `spill_register` preserving `good_linear_scan_state`.
 * `EdgesToAdjlist`: `linear_scanProofScript.sml:2947-3071`, the forced-edge
   adjacency lists and the `forbidden_is_from_*` predicates.
+* `ColorRegister`: `linear_scanProofScript.sml:3073-3548`, stealing,
+  `color_register`, `find_spill` and the colouring step `linear_reg_alloc_step_aux`.
+* `PassInvariants`: `linear_scanProofScript.sml:3550-3820`, the pass1/pass2
+  steps, `intbeg_less`, and the `st_ex_FOLDL` pass invariants.
 * `Bijection`: `linear_scanProofScript.sml:4997-5204`, the register
   bijection invariants.
 * `ApplyBijection`: `linear_scanProofScript.sml:5565-6006`, checking a

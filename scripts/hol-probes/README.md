@@ -4122,6 +4122,21 @@ The new kernel replay covers domain failure, Loc rejection, missing operands,
 operator lists, wraparound, shift bounds and successful/failed assignment.
 The full recursive theorem imposes no success, size or clock bound. These
 captures provide regression evidence, not HOL-to-Lean equivalence.
+`ssa_fake_moves_correct_right_probeScript.sml` replays the literal right fake-move simulation and its local prerequisites, capturing the full five-conclusion statement and seven inferred types.
+
+`ssa_fix_inconsistencies_correct_left_probeScript.sml` replays the literal left reconciliation assembly and its original merge/fake prerequisites; captures the full statement and six types, including identical source/target word/code/FFI dimensions.
+
+`ssa_fix_inconsistencies_correct_right_probeScript.sml` replays the literal right reconciliation assembly and original map-agreement prerequisites, capturing the full returned-left-map result and six inferred types.
+
+`stackprops_instruction_constants_probeScript.sml` captures four complete
+original instruction support statements and their full types, plus ten native
+observations of success, failure, clock updates and FFI updates. The two local
+clock-neutral lemmas replay the original source statement and proof verbatim.
+The FFI theorem preserves HOL's independent updated host type. The published
+`set_var_with_const` FFI conjunct is likewise repaired to retain that independent
+host; its original 26-row state-constants capture was freshly regenerated and
+remains unchanged. These probes do not establish cross-language equivalence or
+remove the inherited external real-carrier assumption.
 ### Full native compiler no-install preservation
 
 `word_to_stack_comp_no_install_probeScript.sml` freshly captures original
@@ -4187,8 +4202,39 @@ evidence, not a cross-prover equivalence proof.
 
 - `ssa_rename_shifted_properties_probeScript.sml` replays the original raw-list derived pipeline and shifted move wrapper with nine original prerequisites; full statements and twelve type rows distinguish their input map-bound counters and conjunction orders.
 
+`lab_to_target_maplemmas_probeScript.sml` reads the two original `lab_to_target` MAP lemmas directly: `pad_code_MAP` (`pad_code nop = MAP (\x. Section (Section_num x) (pad_section nop (Section_lines x) []))`, line 226) and `prog_to_bytes_MAP` (`!ls. prog_to_bytes ls = FLAT (MAP (FLAT o MAP line_bytes o Section_lines) ls)`, line 341). Its 8 rows EVAL both sides of each theorem on concrete 64-bit `labLang$sec` values: `pad_code_MAP` empty and over a two-section list (`[Section 1 [Label 1 2 0; Asm (Asmi (Inst Skip)) [1w;2w;9w] 3]; Section 2 []]`), printing the equality (`T`) plus the observed left/right-hand section lists; and `prog_to_bytes_MAP` empty and over the three-section `bytesCode` list from the sibling label-removal probe (the empty middle section is skipped, giving `[1w;2w;3w]`), printing the equality (`T`) plus the observed left/right-hand byte lists. The rows are kernel-replayed in `Flapjack.Test.LabToTargetMapLemmasParity` (bead `flapjack-pxn.18.5.15.10.29`). Regenerate with `HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_maplemmas_probeScript.sml scripts/hol-probes/regenerate.sh`.
 - `ssa_cc_trans_props_move_probeScript.sml` replays the original marked Move case of program allocation/map properties after its original native compiler unfolding, with four original local prerequisites, full case statement and eight carrier captures.
+### WordProps code-map no-install convention
+
+`word_props_no_install_code_probeScript.sml` freshly captures full original
+`no_install_code_def`, three carrier queries and sixteen concrete lookup and
+source-predicate observations over widths1/80 and all Spt constructors.
+Malformed trees, missing keys and actual forbidden Install entries remain in
+scope. `Flapjack/Test/WordPropsNoInstallCodeParity.lean` checks the observations
+and arbitrary-width empty/safe-malformed/forbidden-map convention properties.
+Captures are regressions, not a HOL-to-Lean equivalence proof or new original
+proof replay. The predicate does not narrow the source code-map carrier.
+
+Selector: `HOL_PROBE_ONLY=word_props_no_install_code_probeScript.sml`.
+
+### Full native code-map top no-install theorem
+
+`word_to_stack_no_install_top_probeScript.sml` freshly captures full original
+`word_to_stack_compile_no_install`, six carriers, sixteen actual
+ALL_DISTINCT/source-list/target-list observations and three complete HOL
+finite-code guard proofs using original lookup/fromAList definitions.
+The safe-first/bad-later duplicate-key map has a true complete code guard but
+false source/target list predicates. The theorem therefore retains the
+original distinct-key hypothesis. Widths1/32/64/80, underflow/large register
+counts and both injected stubs are covered. Matching kernel fixtures retain
+complete map guard proofs and full-signature applications. These are
+regression observations and small concrete HOL guard proofs, not a new proof
+replay of the full compiler theorem or a HOL-to-Lean equivalence proof.
+Whole compiler semantic correctness remains unfinished.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_top_probeScript.sml`.
 
 - `ssa_cc_trans_props_allocation_probeScript.sml` replays the literal original Alloc/Install/FFI case tactics and native compiler unfolding with original shifted-list derivation and local prerequisites; three full cases and 31 type captures check the counter/map/cutset/loop-table/program and exact mlstring carriers.
 
 - `ssa_cc_trans_props_loop_control_probeScript.sml` specializes the original functional induction rule to the full native program invariant and replays literal Resume Loop/Break/Continue tactics. Three full clauses and29 carrier captures retain Loop setup binders/guards and its actual-context body IH.
+`lab_to_target_padding_length_probeScript.sml` exports original `LENGTH_pad_bytes` (lab_to_targetProofScript.sml:3195) and six direct `pad_bytes` EVAL observations over natural-number and Boolean lists: extension, multi-element nop truncation, exact fit, zero length, Boolean payloads, and the empty-nop sentinel outside the theorem premise. The full original premise remains nonempty nop and bytes length at most the requested length. `Flapjack.Test.LabToTargetPaddingLengthParity` kernel-replays all six concrete rows and exercises the public arbitrary-carrier theorem. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_padding_length_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
