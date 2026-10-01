@@ -39031,5 +39031,13 @@
   "hol_name": "insert_unchanged",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.4.4.2): original2255-2264 generic tree/key/value; sole lookup=some value premise, full structural insert equality, no wf premise. Literal four constructors and recursive parity/address arithmetic. Needed by check_partial_col_INJ existing-key branch2667-2683. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CheckPartialCol.lean",
+  "lean_name": "checkPartialColInj",
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "check_partial_col_INJ",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.4.4), original2632-2683: same generic colouring f, numeric name list, four unit Spt maps, original wf live/domain flive=image/scoped INJ/checker-success premises only. Full conjunction wf output/liveprime literal numset_list_insert/scoped INJ/full image-domain equality. Existing-name branch uses accepted insert_unchanged; new-name branch derives collision exclusion from input image and absent colour, preserves wf and image. No wf coloured, global injection or simulation assumption added. Coordinator review pending."
 }
 ]
