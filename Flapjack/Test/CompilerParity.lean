@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackCseCodecParity
 import Flapjack.Test.WordToStackDeadCodecParity
 import Flapjack.Test.WordToStackSsaCodecParity
 import Flapjack.Test.WordToStackProgramMaximumParity

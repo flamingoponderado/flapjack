@@ -1,0 +1,16 @@
+cc_skip=T
+cc_move=T
+cc_const=T
+cc_get=T
+cc_load=T
+cc_offset=T
+cc_shift=T
+cc_load16=T
+cc_share=T
+cc_loop=T
+cc_must=T
+cc_if=T
+cc_tail=T
+cc_return=T
+cc_store_barrier=T
+cc_call_barrier=T
