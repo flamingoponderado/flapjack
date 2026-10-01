@@ -2861,3 +2861,14 @@ run_probe parmove_stepscorrect_probeScript.sml parmove_stepscorrect_probe.out \
 run_probe word_to_stack_programs_native_probeScript.sml word_to_stack_programs_native_probe.out \
   wts_prog_zero_registers wts_prog_register_only wts_prog_exact_register_args wts_prog_first_stack_arg wts_prog_three_stack_args wts_prog_all_stack_args wts_prog_huge_register_count wts_prog_var_boundary wts_prog_var_first_stack wts_prog_var_odd_stack wts_prog_vars_exceed_args wts_prog_args_exceed_vars wts_prog_perf_tick wts_prog_width_one wts_prog_list_empty wts_prog_list_generic wts_prog_list_duplicates wts_prog_bitmap_order wts_prog_bitmap_reverse wts_prog_bitmap_multiword wts_prog_bitmap_zero_frame \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+run_probe parmove_split_source_probeScript.sml parmove_split_source_probe.out \
+  pv_split_empty pv_split_first pv_split_middle pv_split_absent pv_split_none pv_split_duplicate_dest pv_split_late_zero \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_native_config_probeScript.sml word_to_stack_native_config_probe.out \
+  nc_length nc_empty nc_single nc_nonwf nc_raw nc_update_length nc_update_tree \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe parmove_destination_probeScript.sml parmove_destination_probe.out \
+  pv_destination_terminal pv_destination_self pv_destination_chain pv_destination_cycle pv_destination_scratch pv_destination_duplicate pv_destination_active \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

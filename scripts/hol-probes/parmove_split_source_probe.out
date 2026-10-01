@@ -1,0 +1,7 @@
+pv_split_empty=([],[])
+pv_split_first=([],[(SOME 7,SOME 1); (SOME 8,SOME 1)])
+pv_split_middle=([(SOME 7,SOME 2)],[(SOME 8,SOME 1); (SOME 9,SOME 1)])
+pv_split_absent=([(SOME 7,SOME 2); (SOME 8,SOME 3)],[])
+pv_split_none=([(SOME 7,SOME 2)],[(SOME 8,NONE); (SOME 9,NONE)])
+pv_split_duplicate_dest=([(SOME 7,SOME 2)],[(SOME 7,SOME 1); (SOME 7,SOME 3)])
+pv_split_late_zero=([(NONE,SOME 2)],[(SOME 0,SOME 0)])

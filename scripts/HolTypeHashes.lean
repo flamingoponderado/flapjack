@@ -1,4 +1,7 @@
+import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
+
+import Flapjack.Compiler.Backend.Parmove.DestinationMembership
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Install
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.FFI
 import Flapjack.Pancake.WordLang.MaxVar
@@ -635,6 +638,7 @@ import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
 import Flapjack.Pancake.WordLang
 import Flapjack.Pancake.WordLang.OccurrencesExact
 import Flapjack.Pancake.WordConvs
+import Flapjack.Pancake.WordConvs.WfCutsets
 import Flapjack.Pancake.WordConvs.NotCreated
 import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.Compiler.Backend.StackProps
