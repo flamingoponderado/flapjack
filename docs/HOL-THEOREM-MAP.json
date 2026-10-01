@@ -49450,5 +49450,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead47.3: complete original12029-12127 and comp_def453-555, all26 constructors and3 Call alternatives. Arbitrary original config/perf/full source program/input bitmap/full Nat frame/output-residual pair retained; only original wordConvs no_install guard, actual compiler equality and perf=false hypotheses. Exact target no_install conclusion. All child IH internally discharged by source-size recursion including full tuple equalities and exact left-to-right bitmap threading; no public IH, target safety/evaluation/simulation, bounds, config validity, conversion or HD/EL premises. Accepted canonical source/target predicates and all8 no-install helpers reused; source WordLangInst lowers through exact HolInst codec, positive words/faithful MlString/Spt/config/AppList carriers reviewed. Private dispatch/shared lowering calculations have no separate HOL original. Shared-memory operations are allowed by no_install and rejected Install source guards retained. Sole word qualifier translates positive HOL dimension to BitVec width/NeZero. Fresh original exported theorem/all7 carrier types and39 actual pairs (26 constructor rows plus12 deep width1/32/64/80 cases and ignored-Install handler sentinel) kernel replayed, with2 full arbitrary-program theorem applications. Proof-only syntax preservation, not target semantics or whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_inst_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAInstructionProps.lean",
+    "lean_name": "ssaCcTransInstProps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-yfm2: compared word_allocProofScript.sml5817-5833, replayed literal theorem proof with literal local ssa_map_ok_extend/is_alloc_var_add prerequisites, and captured six original argument carriers. Retains forall instruction/ssa/next/output/ssaOut/nextOut, actual native ssa_cc_trans_inst output equality, original ssa_map_ok and is_alloc_var conjunction, and all three counter monotonicity/allocation/output-map conclusions. Reviewed original asm inst, arith, reg_imm, addr, memop and FP constructors against native carriers; input and output share positive BitVec width with NeZero, including exact dimindex=64 FP branches and both register-equality branches of FPMovFromReg. SSA tree maps use reviewed Spt, not finite-map translation; priority/move sequence and all one/two-name insertions remain native. Proof case splits all instructions and discharges only the original fresh insert allocation/bounds; no added executable/evaluation or output-validity premise."
   }
 ]

@@ -4067,6 +4067,10 @@ before tagging it. Regenerate with
 `ssa_fix_inconsistencies_correct_left_probeScript.sml` replays the literal left reconciliation assembly and its original merge/fake prerequisites; captures the full statement and six types, including identical source/target word/code/FFI dimensions.
 
 `ssa_fix_inconsistencies_correct_right_probeScript.sml` replays the literal right reconciliation assembly and original map-agreement prerequisites, capturing the full returned-left-map result and six inferred types.
+
+- `ssa_cc_trans_exp_correct_probeScript.sml` replays the literal local SSA expression correctness proof (word_allocProof6256–6294) and captures the full theorem plus all six inferred argument carriers.
+
+- `ssa_fix_inconsistencies_props_probeScript.sml` replays literal reconciliation allocation/map bounds with its three original local prerequisites and captures the full theorem and eight argument carriers.
 ### WordSem partial Word extractors
 
 The final four rows of `word_sem_accessors_probe.out` freshly evaluate the
@@ -4132,3 +4136,5 @@ Captures are regression evidence, not a new original proof replay or a
 HOL-to-Lean equivalence proof. Whole compiler semantic correctness is open.
 
 Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_install_probeScript.sml`.
+
+- `ssa_cc_trans_inst_props_probeScript.sml` replays literal instruction allocation/map properties with original local map-extension and allocation-add proofs, capturing the full theorem and six argument carriers.

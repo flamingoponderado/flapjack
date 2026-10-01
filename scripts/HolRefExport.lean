@@ -105,6 +105,7 @@ import Flapjack.Compiler.Backend.WordAlloc.FullSSA
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesProps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAInstructionProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
