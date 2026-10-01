@@ -2056,6 +2056,9 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     reviewed_exact = {
         ("Flapjack/Misc/Sptree.lean", "lookupAny"),
         ("Flapjack/Misc/FindIndex.lean", "findIndex"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "findPos"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "getLabel"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "getFfiIndex"),
         ("Flapjack/Misc/LList.lean", "lprefixAntisymHOL"),
         ("Flapjack/Misc/LList.lean", "lprefixTransHOL"),
         ("Flapjack/Misc/LList.lean", "prefixesLprefixTotalHOL"),

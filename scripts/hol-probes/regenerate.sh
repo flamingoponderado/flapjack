@@ -2914,6 +2914,12 @@ run_probe lab_to_target_labels_probeScript.sml lab_to_target_labels_probe.out \
   ComputeLookupSection1 ComputeLookupSection2 ComputeLookupSection3Absent \
   ComputeLookupSection1Start ComputeLookupSection1Label1 \
   ComputeLookupSection2Start ComputeLookupSection2Label2 \
+    "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_positions_probeScript.sml lab_to_target_positions_probe.out \
+  FindPosHit FindPosHitZero FindPosDefaultLabel FindPosDefaultSection \
+  GetLabelJump GetLabelJumpCmp GetLabelCall GetLabelLocValue GetLabelDefault \
+  GetFfiIndexHit GetFfiIndexDefault \
+  GetJumpOffsetCallFFI GetJumpOffsetInstall GetJumpOffsetHalt GetJumpOffsetJump \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_total_colour_probeScript.sml word_alloc_total_colour_probe.out \
   tc_absent_zero tc_absent_physical tc_absent_virtual tc_absent_large_physical tc_absent_large_virtual tc_mapped_physical tc_mapped_virtual tc_mapped_zero \

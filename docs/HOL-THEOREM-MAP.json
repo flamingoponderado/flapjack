@@ -41546,6 +41546,39 @@
   "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.8): literal lab_to_targetScript.sml:76-83, clause for clause. `compute_labels_alt pos [] labs = labs`; `Section k lines::rest` computes `let (new_pos,sec_labs) = section_labels pos lines []`, then recurses with `new_pos` and accumulates `insert k (fromAList ((0,pos)::sec_labs)) labs`, capturing the section start `pos` (not `new_pos`) under key 0. HOL `insert` and `fromAList` are the Sptree operations and render as `sptInsert`/`sptFromAList`; the accumulator type is `num_map num_map` = `num spt spt` (the generated lab_to_targetTheory doc prints `num -> α sec list -> num sptree$num_map sptree$num_map -> ...`, with `num_map = 'a spt`), i.e. Lean `Spt (Spt Nat)`, matching the `(num#num)` entries fed to `fromAList`. The line parameters stay fully polymorphic (no word/`BitVec` occurs in the signature). No added hypothesis or weakened clause. Replayed as the ComputeLabelsAlt/ComputeLookup* rows of lab_to_target_labels_probe.out in Flapjack.Test.LabToTargetLabelsParity. Coordinator source review pending."
 },
   {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "findPos",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "find_pos_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:86-89 `find_pos (Lab k1 k2) labs = (lookup_any k2 (lookup_any k1 labs LN) 0):num`, clause for clause on the single Lab constructor. The outer default is the empty inner spt (Lean .ln) and the inner default is the numeric 0; HOL lookup_any is the reviewed lookupAny, with `labs : num spt spt` rendered as `Spt (Spt Nat)`. No word/BitVec carrier occurs, so no qualifier is needed. Replayed as the FindPos* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "getLabel",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_label_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:91-98, clause for clause. `Jump l => l`, `JumpCmp c r ri l => l`, `Call l => l`, `LocValue r l => l`, and the catch-all `_ => Lab 0 0` covering CallFFI/Install/Halt; the ignored cmp/reg_imm payloads are not inspected. Cmp/RegImm/MlString stay fully polymorphic, so no word/BitVec carrier occurs and no qualifier is needed. Replayed as the GetLabel* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "getFfiIndex",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_ffi_index_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:104-107 `get_ffi_index ffis s = the 0 (find_index s ffis 0)`, fully generic in the list element type. HOL `the` is rendered as Option.getD 0, HOL find_index is the reviewed findIndex, and HOL `=` on the generic element type is the standard decidable equality [DecidableEq alpha]. No word/BitVec carrier occurs, so no qualifier is needed. Replayed as the GetFfiIndex* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "getJumpOffset",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_jump_offset_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:109-118, all four clauses in order. `CallFFI s => 0w - n2w (pos + (3 + get_ffi_index ffis (ExtCall s)) * ffi_offset)`, `Install => 0w - n2w (pos + 2 * ffi_offset)`, `Halt => 0w - n2w (pos + ffi_offset)`, and the catch-all `a => n2w (find_pos (get_label a) labs) - n2w pos`; `pos` is HOL num (Lean Nat), `ffis` is the exact ffiname list (Lean List HolFfiName, ExtCall s = .extCall MlString), and ffi_offset is ffiOffset. The HOL probe showed the result `b word` stays independent of the instruction's `a reg_imm` word dimension (dimword (:-a) stayed free when the instruction was fixed at 64), so the port keeps two independent positive widths (regImmWidth and width) rather than specializing. Only HOL's type-indexed `a word` is translated to positive-width BitVec width with its own [NeZero] (words_as_type_indexed_bitvec) and the 0w-/n2w rendering is kept literal. Replayed as the GetJumpOffset* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+  },
+  {
     "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
     "hol_name": "wf_union",
     "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
