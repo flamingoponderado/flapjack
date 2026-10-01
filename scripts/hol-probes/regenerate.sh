@@ -3391,6 +3391,10 @@ run_probe parmove_step_map_inj_probeScript.sml parmove_step_map_inj_probe.out \
   smi_original_statement smi_remove_self smi_start smi_extend smi_save smi_emit_head smi_emit_last smi_scoped_collapse smi_scoped_injectivity \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe word_alloc_max_var_max_probeScript.sml word_alloc_max_var_max_probe.out \
+  mvm_original_statement mvm_skip mvm_move mvm_move_empty mvm_inst64 mvm_inst32 mvm_assign mvm_get mvm_store mvm_tail_ignored mvm_tail_empty mvm_call_body mvm_call_cutset mvm_call_values mvm_handler_value mvm_handler_body mvm_seq mvm_must mvm_if_reg mvm_if_imm mvm_alloc mvm_consts mvm_install mvm_codewrite mvm_datawrite mvm_ffi mvm_raise mvm_heap mvm_return mvm_return_empty mvm_tick mvm_loc mvm_set mvm_share mvm_loop_exit mvm_loop_body mvm_break mvm_continue mvm_width1_huge mvm_inst_load16_ignored mvm_inst_store16_ignored mvm_inst_fp80_from mvm_call_arguments mvm_call_nested_handler mvm_cutsets_nonwf mvm_op_list_nested mvm_inst_fp_ignored \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
   ss_even ss_empty ss_duplicates ss_invalid ss_one ss_setup0 ss_setup1 ss_setup3 ss_setup80 even_list_def next_var_rename_def list_next_var_rename_def setup_ssa_def ss_setup_1_to_80 ss_setup_80_to_1 ss_setup_original_type \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
