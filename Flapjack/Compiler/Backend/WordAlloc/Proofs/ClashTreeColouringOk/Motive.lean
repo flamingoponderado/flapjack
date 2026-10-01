@@ -11,9 +11,12 @@ import Flapjack.Pancake.WordConvs.WfCutsets
 # `clash_tree_colouring_ok` statement
 
 The statement of `word_allocProofScript.sml:2813-2826` `clash_tree_colouring_ok`
-split into its per-program goal, so that the HOL `get_clash_tree_ind` cases can
-be stated as genuine cases of the same theorem, and the common `Delta` step of
-the statement cases. These are Flapjack infrastructure for the case split; the
+split into its per-program structural-induction goal, and the common `Delta`
+step of the statement cases. Unlike HOL's `get_clash_tree_ind`, recursive
+pieces use induction hypotheses universally quantified over `lt`; their proofs
+instantiate these at HOL's required table (extended for Loop). These are
+Flapjack infrastructure for the structural case split, not literal instances
+of HOL's recursion-induction hypotheses; the
 tagged assembly states the HOL theorem itself. HOL sets are predicates:
 `IMAGE f (domain t)` is `fun y => ∃ x, sptDomain t x ∧ f x = y` and
 `INJ f (domain t) UNIV` is injectivity on `sptDomain t`.
