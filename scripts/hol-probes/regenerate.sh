@@ -3073,6 +3073,14 @@ run_probe parmove_temp_step_probeScript.sml parmove_temp_step_probe.out \
   pts_remove pts_start pts_extend pts_save_cycle pts_emit_head pts_emit_last pts_save_none pts_emit_scratch pts_bool \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe word_to_stack_colour_domain_probeScript.sml word_to_stack_colour_domain_probe.out \
+  cd_load16 cd_store16 cd_load8 cd_store32 cd_carry cd_collision cd_seq cd_must cd_if cd_loop cd_tail_handler cd_both cd_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_program_maximum_probeScript.sml word_to_stack_program_maximum_probe.out \
+  pm_skip pm_tick pm_move pm_assign pm_inst pm_get pm_store pm_set pm_seq pm_if_reg pm_if_imm pm_loop pm_must pm_break pm_continue pm_raise pm_loc pm_return pm_return_initial pm_tail_handler pm_return_call pm_both_call pm_alloc pm_constants pm_heap pm_install pm_code_write pm_data_write pm_ffi pm_shared16 pm_large pm_tail_empty \
+  "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"
+
 run_probe parmove_preservation_shape_probeScript.sml parmove_preservation_shape_probe.out \
   pm_audit_not_use_temp_before_assign_append pm_audit_not_use_temp_before_assign_insert pm_audit_not_use_temp_before_assign_thm pm_audit_step_not_use_temp_before_assign pm_audit_steps_not_use_temp_before_assign pm_audit_pmov_not_use_temp_before_assign pm_audit_parmove_not_use_temp_before_assign pm_audit_ALL_DISTINCT_step pm_audit_ALL_DISTINCT_steps pm_audit_ALL_DISTINCT_pmov pm_audit_ALL_DISTINCT_parmove pm_audit_state_to_list_def pm_audit_step_preserves_moves pm_audit_steps_preserves_moves pm_audit_pmov_preserves_moves pm_audit_parmove_preserves_moves pm_audit_map_state_def pm_audit_inj_on_state_def pm_audit_step_inj_on_state pm_audit_steps_inj_on_state pm_audit_step_MAP_INJ pm_audit_fstep_MAP_INJ pm_audit_pmov_MAP_INJ pm_audit_parmove_MAP_INJ pm_audit_type_state_to_list pm_audit_type_map_state pm_audit_type_inj_on_state \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
