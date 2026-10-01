@@ -1,0 +1,4 @@
+full_flatten_source_proof=∀t p n m cs bs ls a b c. byte_offset_ok c 0w ∧ stack_asm_ok c p ∧ flatten t p n m cs bs = (ls,a,b) ⇒ EVERY (line_ok_pre c) (append ls)
+full_compile_all_source_statement=⊢ byte_offset_ok c 0w ∧ EVERY (λ(n,p). stack_asm_ok c p) prog ⇒ all_enc_ok_pre c (MAP prog_to_section prog)
+full_compile_all_application=(T,T,T)
+full_compile_all_sections=[Section 7 [Asm (Cbw 1 2) [] 0; Label 7 1 0; Asm (Asmi (Inst Skip)) [] 0; Label 7 2 0]; Section 8 [Label 8 2 0; LabAsm (Jump (Lab 8 3)) 0w [] 0; LabAsm (Jump (Lab 8 2)) 0w [] 0; Label 8 3 0; Label 8 1 0]; Section 9 [LabAsm (JumpCmp NotLess 3 (Reg 4) (Lab 9 2)) 0w [] 0; Asm (Asmi (Inst Skip)) [] 0; Label 9 2 0; Label 9 1 0]; Section 10 [LabAsm (LocValue 3 (Lab 8 9)) 0w [] 0; Asm (Asmi (JumpReg 4)) [] 0; Label 8 9 0; Asm (Asmi (Inst Skip)) [] 0; LabAsm (Jump (Lab 10 13)) 0w [] 0; Label 10 11 0; Asm (Asmi (Inst Skip)) [] 0; Label 10 13 0; Label 10 1 0]]
