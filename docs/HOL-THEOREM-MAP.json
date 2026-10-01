@@ -42398,6 +42398,22 @@
     "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead11.5.10.1: literal datatype 1346-1348. Constructor arities and Nat payloads match; all twelve ra_state fields retain Lists, alist List (Nat × (Nat × Nat)), Bool list. No list-array qualifier or production IRC equivalence claim. Coordinator review pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCall.lean",
+    "lean_name": "heuMergeCall",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "heu_merge_call_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.5.4): source1392-1395 heu_merge_call (t1:num_set) t2 = union t1 t2, both inputs and result unit Spt. Literal source operation and argument order retained, no wf/domain premise or function-backed map substitution. Source num_set is accepted unit Spt; add_call generic payload is independent universe-0 alpha, not narrowed to heuristic tuple. Accepted payload-only map1545-1550 preserves every raw BN/BS, unlike indexed mapi; original union219-239 clause by clause preserves left-biased/raw tree behavior. Sixteen fresh original exact-tree observations and identical kernel driver replay cover empty/overlap/disjoint sets, Nat/Bool/Nat-tuple payloads, deep keys, large ignored payload, raw internal nodes and raw overlap. Native get_heu prerequisite only; executed allocator route and whole correctness remain open. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCall.lean",
+    "lean_name": "addCall",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "add_call_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.5.4): source1398-1401 add_call lr calls:num_set = union (map (lambda v. unit) lr) calls, arbitrary tracked payload alpha retained. Literal source operation and argument order retained, no wf/domain premise or function-backed map substitution. Source num_set is accepted unit Spt; add_call generic payload is independent universe-0 alpha, not narrowed to heuristic tuple. Accepted payload-only map1545-1550 preserves every raw BN/BS, unlike indexed mapi; original union219-239 clause by clause preserves left-biased/raw tree behavior. Sixteen fresh original exact-tree observations and identical kernel driver replay cover empty/overlap/disjoint sets, Nat/Bool/Nat-tuple payloads, deep keys, large ignored payload, raw internal nodes and raw overlap. Native get_heu prerequisite only; executed allocator route and whole correctness remain open. Coordinator review pending."
+  },
+  {
     "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
     "lean_name": "Exc",
     "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",

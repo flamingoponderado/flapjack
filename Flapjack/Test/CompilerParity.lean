@@ -1,6 +1,7 @@
 import Flapjack.Test.FindIndexAppendParity
 import Flapjack.Test.MonadBaseParity
 import Flapjack.Test.RegAllocCarriers
+import Flapjack.Test.HeuCallParity
 import Flapjack.Test.HeuMaxParity
 import Flapjack.Test.WordToStackBitmapMixedParity
 import Flapjack.Test.HeuInstParity

@@ -3044,3 +3044,6 @@ run_probe word_to_stack_full_read_bitmap_mixed_probeScript.sml word_to_stack_ful
 run_probe find_index_append_probeScript.sml find_index_append_probe.out \
   fia_empty fia_empty_left fia_empty_right fia_left_head fia_duplicates fia_right_last fia_absent fia_zero fia_bool fia_large \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
+run_probe word_alloc_heu_call_probeScript.sml word_alloc_heu_call_probe.out \
+  hc_merge_empty hc_merge_left hc_merge_right hc_merge_overlap hc_merge_disjoint hc_merge_raw_left hc_merge_raw_right hc_merge_raw_root hc_add_empty hc_add_nat hc_add_bool hc_add_tuple hc_add_nested hc_add_raw_bn hc_add_raw_bs hc_add_raw_overlap \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
