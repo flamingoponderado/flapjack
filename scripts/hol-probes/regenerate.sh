@@ -2998,9 +2998,6 @@ run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembl
   ca_control ca_return ca_handler ca_tail_ignored ca_collision \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
-run_probe word_to_stack_cutset_maximum_probeScript.sml word_to_stack_cutset_maximum_probe.out \
-  cs_empty cs_root cs_left cs_right cs_duplicates cs_left_max cs_reordered cs_root_duplicates cs_large cs_overlap cs_range cs_sparse \
-  "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"
 run_probe parmove_independence_probeScript.sml parmove_independence_probe.out \
   ind_head ind_middle ind_tail ind_cycle ind_fanout ind_self ind_bool ind_empty_others ind_nil_nat ind_nil_bool \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3025,13 +3022,6 @@ run_probe word_alloc_heu_max_probeScript.sml word_alloc_heu_max_probe.out \
   hm_tuple hm_tuple_equal hm_tuple_zero hm_tuple_large hm_empty hm_left hm_right hm_overlap hm_disjoint hm_mixed hm_nested hm_raw_left_bn hm_raw_right_bn hm_raw_both_bn hm_raw_left_bs hm_raw_right_bs hm_raw_both_bs hm_raw_bs_leaf hm_raw_leaf_bs hm_raw_empty_leaf \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
-run_probe word_to_stack_instruction_maximum_probeScript.sml word_to_stack_instruction_maximum_probe.out \
-  im_const im_bin_reg im_bin_imm im_shift_reg im_shift_imm im_div im_carry im_mul im_longdiv im_load im_store8 im_large im_load16 im_store16 \
-  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
-
-run_probe word_to_stack_colour_domain_probeScript.sml word_to_stack_colour_domain_probe.out \
-  cd_load16 cd_store16 cd_load8 cd_store32 cd_carry cd_collision cd_seq cd_must cd_if cd_loop cd_tail_handler cd_both cd_large \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe monad_base_probeScript.sml monad_base_probe.out \
   mb_bind_ok mb_bind_fail mb_ignore_ok mb_ignore_fail mb_return mb_run_ok mb_run_fail mb_alloc_three mb_alloc_zero mb_exn_bytes \
   "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3063,9 +3053,6 @@ run_probe word_to_stack_instruction_maximum_probeScript.sml word_to_stack_instru
   im_const im_bin_reg im_bin_imm im_shift_reg im_shift_imm im_div im_carry im_mul im_longdiv im_load im_store8 im_large im_load16 im_store16 \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
 
-run_probe word_to_stack_program_maximum_probeScript.sml word_to_stack_program_maximum_probe.out \
-  pm_skip pm_tick pm_move pm_assign pm_inst pm_get pm_store pm_set pm_seq pm_if_reg pm_if_imm pm_loop pm_must pm_break pm_continue pm_raise pm_loc pm_return pm_return_initial pm_tail_handler pm_return_call pm_both_call pm_alloc pm_constants pm_heap pm_install pm_code_write pm_data_write pm_ffi pm_shared16 pm_large pm_tail_empty \
-  "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"
 run_probe reg_alloc_remap_probeScript.sml reg_alloc_remap_probe.out \
   remap_empty remap_delta remap_duplicate remap_seq remap_branch remap_fixed remap_raw_empty remap_raw_root remap_set_order remap_large remap_nested remap_initial \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3092,3 +3079,10 @@ run_probe parmove_temp_step_probeScript.sml parmove_temp_step_probe.out \
 run_probe word_to_stack_dead_codec_probeScript.sml word_to_stack_dead_codec_probe.out \
   dc_skip dc_move dc_const dc_load dc_load16 dc_store dc_share dc_seq dc_if dc_loop dc_must dc_tail_handler dc_return_handler \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_colour_domain_probeScript.sml word_to_stack_colour_domain_probe.out \
+  cd_load16 cd_store16 cd_load8 cd_store32 cd_carry cd_collision cd_seq cd_must cd_if cd_loop cd_tail_handler cd_both cd_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_program_maximum_probeScript.sml word_to_stack_program_maximum_probe.out \
+  pm_skip pm_tick pm_move pm_assign pm_inst pm_get pm_store pm_set pm_seq pm_if_reg pm_if_imm pm_loop pm_must pm_break pm_continue pm_raise pm_loc pm_return pm_return_initial pm_tail_handler pm_return_call pm_both_call pm_alloc pm_constants pm_heap pm_install pm_code_write pm_data_write pm_ffi pm_shared16 pm_large pm_tail_empty \
+  "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"
