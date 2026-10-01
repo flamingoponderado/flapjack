@@ -43922,5 +43922,13 @@
   "lean_name": "mergeMovesFst",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a source4667-4684 comparison: arbitrary input list, natural start, native canonical Spt Nat maps; no premises. Same let-bound five-product result, start<=counter plus EVERY MAP FST destinations strict below resulting counter and >=original counter for each move list. List membership universal renders EVERY directly. Tail-first induction/cases native original mergeMoves; no distinctness/wf/allocation-class/map relation or supplied result premise. Fresh original full renamer results replay ten empty/missing/equal/unequal/repeated/reordered/malformed/unbounded Nat cases; kernel matches full tuples and applies all three conclusions to arbitrary inputs. Original local theorem source-reviewed, no DB export invocation claimed. Coordinator acceptance pending; executed list-state route remains separate."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "merge_moves_frame2",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoveDomains.lean",
+  "lean_name": "mergeMovesFrame2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source4687-4717 comparison: arbitrary list/start/native Spt Nat maps, no premises; original five-product merge_moves let result. Both characteristic-domain equalities retained plus every input-list key in original native intersection has equal output lookups. No distinctness, wf, class, freshness, map relation or desired result premise. Native canonical Spt/inter/domain_inter and lookup/insert laws retain all constructors including malformed trees. Full tail-first induction handles missing/equal/unequal cases; inserts occur only at present keys. Generic kernel actual theorem application retains all three conjuncts; freshly regenerated original complete merge results, definition/type and ten kernel replays include missing/equal/unequal/repeated/reordered/malformed/unbounded Nat inputs. Local HOL theorem compared from source, no exported invocation claimed. Executed list-state route remains separate."
 }
 ]
