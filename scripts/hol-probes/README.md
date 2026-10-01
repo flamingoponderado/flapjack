@@ -2256,3 +2256,8 @@ to the same actual compiler results. The source theorem preserves the entire
 key list; it does not establish pass simulation or final binary correctness.
 
 `word_alloc_even_locals_probeScript.sml` computes the original starting-local domain predicate on six full native word/location trees: empty, zero, sparse even keys, odd, mixed and duplicate overwrite. Standard finite-domain logical rewrites normalize its universal quantifier; actual Spt insertion-domain lemmas replay the same six inputs in kernel fixtures imported by CompilerParity. This predicate is a prerequisite, not the whole allocator theorem.
+
+`word_alloc_total_colour_probeScript.sml` records eight direct original
+`total_colour` lookups: absent physical/virtual keys (including large keys),
+mapped physical/virtual keys, and a mapped zero colour. Same-input kernel
+fixtures are registered in the actual CompilerParity test root.

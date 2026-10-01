@@ -1,5 +1,7 @@
 import Flapjack.Test.ParmoveDStepsSteps
 import Flapjack.Test.WordAllocEvenLocalsParity
+import Flapjack.Test.WordAllocTotalColourParity
+import Flapjack.Test.ParmoveSourceWrapperParity
 import Flapjack.Test.WordToStackNativeConfigParity
 import Flapjack.Test.ParmoveDStepsParity
 import Flapjack.Test.ParmoveDStepStepParity

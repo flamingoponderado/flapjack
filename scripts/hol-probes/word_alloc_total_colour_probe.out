@@ -1,0 +1,8 @@
+tc_absent_zero=0
+tc_absent_physical=2
+tc_absent_virtual=0
+tc_absent_large_physical=4294967296
+tc_absent_large_virtual=0
+tc_mapped_physical=14
+tc_mapped_virtual=16
+tc_mapped_zero=0
