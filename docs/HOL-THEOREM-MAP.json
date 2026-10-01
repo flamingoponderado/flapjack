@@ -41291,5 +41291,23 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol source comparison 2026-10-01 b4v0: complete original evaluate_def490-617, literal zero-clock priority and every Inst/JumpReg/Cbw/ShareMem/Halt/LocValue/Jump/JumpCmp/Call/Install/CallFFI/default equation on accepted native 23-field State and MachineResult. Real source clock recursion; failed instruction writes roll back to original state, timeout retains successful writes. Original shared and external FFI final/return rules, sequence shifts and distinct register/FP havoc retained. Install arbitrary configuration equality uses local Classical decision without BEq assumption; buffer bytes and next oracle configuration both required, nonempty program appended, pointer override retained. No hooks or extra hypotheses. Qualified only positive word dimensions and Type0 host. Inherits reviewed reals_as_rational_cuts through asmInst/fpUpd, docs/SOUNDNESS.md item8; no direct real rendering. 57 original HOL whole-execution observations paired with kernel Lean fixtures cover all branches, installed-code execution, guard rejection, clock boundaries, rollback, final events and return havoc. Original loc_to_pc computation rules derived in HOL kernel from same definition. Compiler execution unchanged; native semantics assembly and full compiler correctness remain open. Independent coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativePrograms.lean",
+  "lean_name": "compileProgNative",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "compile_prog_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison 2026-10-01 wrapper25.14: literal compile_prog583-593 and compile_word_to_stack595-601 over accepted positive-width WordLangProgHOL/AsmConfigExact, full native compNative and source maxVarHOL; native output HolProg with same word dimension and exact AppList bitmap carrier. Natural arg_count-reg_count and MAX((max_var DIV2+1)-reg_count,stack_args), zero/nonzero frame branch, allocation frame-stack_args retained without well-formedness assumptions. Returned triple contains actual compiled body/frame/full updated bitmaps. Recursive list wrapper preserves independent arbitrary identifier beta:Type, input and duplicate order, each compiled frame, and source left-to-right bitmap threading. No callbacks, conversions or successful-compilation premise. 21 original HOL observations paired with kernel fixtures: underflow/zero-register/first spilled/even-odd variable boundaries, args vs vars maximum, widths1/8/64, perf, empty and arbitrary-beta lists, duplicates, ordered distinct bitmap contents and multiword insertion. Production compiler remains independent; parent25 inventory stays open and linked16 tracks missing native top config/compile. Full compiler theorem and production correspondence are not claimed; independent coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativePrograms.lean",
+  "lean_name": "compileWordToStackNative",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "compile_word_to_stack_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison 2026-10-01 wrapper25.14: literal compile_prog583-593 and compile_word_to_stack595-601 over accepted positive-width WordLangProgHOL/AsmConfigExact, full native compNative and source maxVarHOL; native output HolProg with same word dimension and exact AppList bitmap carrier. Natural arg_count-reg_count and MAX((max_var DIV2+1)-reg_count,stack_args), zero/nonzero frame branch, allocation frame-stack_args retained without well-formedness assumptions. Returned triple contains actual compiled body/frame/full updated bitmaps. Recursive list wrapper preserves independent arbitrary identifier beta:Type, input and duplicate order, each compiled frame, and source left-to-right bitmap threading. No callbacks, conversions or successful-compilation premise. 21 original HOL observations paired with kernel fixtures: underflow/zero-register/first spilled/even-odd variable boundaries, args vs vars maximum, widths1/8/64, perf, empty and arbitrary-beta lists, duplicates, ordered distinct bitmap contents and multiword insertion. Production compiler remains independent; parent25 inventory stays open and linked16 tracks missing native top config/compile. Full compiler theorem and production correspondence are not claimed; independent coordinator review pending."
 }
 ]
