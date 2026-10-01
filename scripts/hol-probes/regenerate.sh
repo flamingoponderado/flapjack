@@ -2720,3 +2720,7 @@ run_probe parmove_invariants_probeScript.sml parmove_invariants_probe.out \
 run_probe word_to_stack_bitmap_append_probeScript.sml word_to_stack_bitmap_append_probe.out \
   ba_terminal ba_continuation ba_full_one ba_full_two \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_wmove_probeScript.sml word_to_stack_wmove_probe.out \
+  wm_empty wm_self wm_reg wm_load wm_store wm_spill wm_swap wm_spill_swap wm_odd wm_underflow wm_fprime \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

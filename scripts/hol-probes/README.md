@@ -2016,3 +2016,11 @@ pending missing source/destination; allowed final temporary source; rejected
 FRONT temporary source, active temporary destination and broken active path.
 `ParmoveInvariantsParity.lean` kernel replays all rows. `wf_step`/`wf_steps` and
 full `parmove_correct` remain open.
+
+### Literal Word-to-Stack move wrapper
+
+`word_to_stack_wmove_probeScript.sml` captures eleven original64-bit equality
+rows for exact DIV2/parmove/format_var/wMoveAux composition. All formatting
+branches, register and spill swaps, odd indices and DIV2 collision, truncated
+offsets and fprime are replayed by `literalWMoveParityGuard` in the normal
+compiler parity suite. Production comp/compile wiring remains open.

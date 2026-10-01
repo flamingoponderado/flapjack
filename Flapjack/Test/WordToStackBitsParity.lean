@@ -404,6 +404,35 @@ example : wMoveSingle (α := BitVec 64) (Sum.inl 3, Sum.inl 5) (2, 7, 9) =
     .inst (.arith (.binop .or 3 5 (.reg 5))) := rfl
 example : wMoveAux (α := BitVec 64) [] (2, 7, 9) = .skip := rfl
 
+/-! ## Literal wMove wrapper
+Eleven direct original HOL equality rows at 64-bit syntax, in
+`word_to_stack_wmove_probe.out`. These cover all formatted move cases, register
+and spill cycles, DIV2 collision/odd inputs, truncated offsets and fprime.
+The existing structural comparator covers exactly these generated constructors.
+No production compiler call to wMove is claimed. -/
+def literalWMoveParityGuard : Bool :=
+  wMoveProgBEq (wMove (width := 64) [] (3, 8, 0)) .skip &&
+  wMoveProgBEq (wMove (width := 64) [(2, 3)] (3, 8, 0)) .skip &&
+  wMoveProgBEq (wMove (width := 64) [(2, 4)] (3, 8, 0)) (wmsOr 1 2) &&
+  wMoveProgBEq (wMove (width := 64) [(2, 8)] (3, 8, 0)) (smLoad 1 6) &&
+  wMoveProgBEq (wMove (width := 64) [(8, 2)] (3, 8, 0)) (smStore 1 6) &&
+  wMoveProgBEq (wMove (width := 64) [(8, 10)] (3, 8, 0))
+    (smSeq (smLoad 3 5) (smStore 3 6)) &&
+  wMoveProgBEq (wMove (width := 64) [(2, 4), (4, 2)] (3, 8, 0))
+    (smSeq (wmsOr 4 2) (smSeq (wmsOr 2 1) (wmsOr 1 4))) &&
+  wMoveProgBEq (wMove (width := 64) [(8, 10), (10, 8)] (3, 8, 0))
+    (smSeq (smLoad 4 5) (smSeq (smSeq (smLoad 3 6) (smStore 3 5)) (smStore 4 6))) &&
+  wMoveProgBEq (wMove (width := 64) [(3, 5)] (3, 8, 0)) (wmsOr 1 2) &&
+  wMoveProgBEq (wMove (width := 64) [(2, 8)] (3, 0, 0)) (smLoad 1 0) &&
+  wMoveProgBEq (wMove (width := 64) [(8, 10)] (3, 8, 99))
+    (smSeq (smLoad 3 5) (smStore 3 6))
+
+#guard literalWMoveParityGuard
+-- A second positive width checks that the wrapper retains its generic syntax.
+example : wMove (width := 32) [] (3, 8, 0) = .skip := by
+  simp [wMove, Flapjack.Compiler.Backend.Parmove.parmove,
+    Flapjack.Compiler.Backend.Parmove.pmov, wMoveAux]
+
 /-! ## Executable bitmap recursion ↔ tagged recursion
 
 Untagged bridge (bead `flapjack-pxn.18.5.15.3.1.1`): the executed
@@ -1023,6 +1052,6 @@ def runChecks : IO Bool := do
     stackMoveParityGuard && wMoveParityGuard && copyRetParityGuard &&
     copyRetIndependentGuard && wLiveParityGuard && handlerParityGuard &&
     callDestParityGuard && stubParityGuard && wShareInstParityGuard &&
-    wInstParityGuard)
+    wInstParityGuard && literalWMoveParityGuard)
 
 end Flapjack.Test.WordToStackBitsParity

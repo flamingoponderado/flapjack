@@ -38981,5 +38981,14 @@
   "hol_name": "wf_init",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source132-139: exact conjunction windmill pending and both pending coordinates SOME implies wf(pending,[],[]), final empty list has independent generic element carrier, no extra premise. Full invariant preservation and parmove_correct remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+  "lean_name": "wMove",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wMove_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.5: exact83-86 maps DIV2 over both Nat coordinates, actual reviewed parmove scheduler, maps format_var k over both Option coordinates, then exact wMoveAux with unchanged k/f/fprime triple. Output ProgM(BitVec width) uses single shared positive word dimension and faithful MlString; qualifier only type-indexed word translation. No fuel/simulation premise or alternative executed scheduler. Eleven fresh direct original64-bit equality rows cover all formatting branches, register/spill swap cycles, odd DIV2/collision, underflow and fprime; width32 empty case kernel checked. Production comp/compile wiring tracked25 remains open."
 }
 ]
