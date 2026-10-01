@@ -2219,3 +2219,10 @@ first/middle/absent matches, NONE, duplicate destinations and late zero. Generic
 untagged SplitSource laws derive prefixNoRead, suffixheadmatch and empty-suffix
 NoRead equivalence. They are Flapjack infrastructure, not a general indexed
 combinator port or completed functional scheduler simulation.
+
+`word_to_stack_native_config_probeScript.sml` captures seven fresh original
+configuration record projections and updates. Empty, singleton, raw BS and
+non-well-formed BN trees are retained without a validity restriction.
+`WordToStackNativeConfigParity.lean` kernel-replays the same records. This
+carrier prerequisite does not establish the top compiler or its executed route;
+those remain tracked on the WordToStack compiler beads.

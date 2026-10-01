@@ -2857,3 +2857,7 @@ run_probe word_to_stack_programs_native_probeScript.sml word_to_stack_programs_n
 run_probe parmove_split_source_probeScript.sml parmove_split_source_probe.out \
   pv_split_empty pv_split_first pv_split_middle pv_split_absent pv_split_none pv_split_duplicate_dest pv_split_late_zero \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_native_config_probeScript.sml word_to_stack_native_config_probe.out \
+  nc_length nc_empty nc_single nc_nonwf nc_raw nc_update_length nc_update_tree \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
