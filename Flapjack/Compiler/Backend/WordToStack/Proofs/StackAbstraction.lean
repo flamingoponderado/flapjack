@@ -6,10 +6,13 @@ namespace Flapjack.WordToStackProofs
 
 /-- Literal source abstraction. Frame-size predictions and saved source locals
 are intentionally ignored here; the later stack relation checks consistency.
-The bitmap and stack words have the same dimension, as in the source. -/
+The bitmap words have an independent positive dimension from the stack/frame
+`word_loc` words, as in the source (`full_read_bitmap` is polymorphic in the
+bitmap word type and the `word_loc` type). -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "abs_stack_def"
   (words_as_type_indexed_bitvec)]
-def absStack {width : Nat} [NeZero width] (bitmaps : List (BitVec width))
+def absStack {bitmapWidth : Nat} {width : Nat} [NeZero bitmapWidth] [NeZero width]
+    (bitmaps : List (BitVec bitmapWidth))
     (frames : List (WordSemStackFrame width)) (stack : List (WordLocW width))
     (lens : List Nat) :
     Option (List (Option (WordLocW width × WordLocW width) × List Bool × List (WordLocW width))) :=

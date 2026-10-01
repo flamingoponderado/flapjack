@@ -7,10 +7,10 @@ namespace Flapjack.WordToStackProofs
 The source success premise discharges all bounds and recursive decoding. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "abs_stack_bitmaps_prefix"
   (words_as_type_indexed_bitvec)]
-theorem absStackBitmapsPrefix {width : Nat} [NeZero width]
-    (bitmaps : List (BitVec width)) (frames : List (WordSemStackFrame width))
+theorem absStackBitmapsPrefix {bitmapWidth : Nat} {width : Nat} [NeZero bitmapWidth] [NeZero width]
+    (bitmaps : List (BitVec bitmapWidth)) (frames : List (WordSemStackFrame width))
     (stack : List (WordLocW width)) (lens : List Nat)
-    (moreBitmaps : List (BitVec width))
+    (moreBitmaps : List (BitVec bitmapWidth))
     (result : List (Option (WordLocW width × WordLocW width) × List Bool × List (WordLocW width)))
     (h : absStack bitmaps frames stack lens = some result) :
     absStack (bitmaps ++ moreBitmaps) frames stack lens = some result := by

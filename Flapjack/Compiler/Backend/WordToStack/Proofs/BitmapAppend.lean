@@ -24,9 +24,9 @@ theorem readBitmapAppendExtra {width : Nat} [NeZero width]
 /-- Appending bitmap words preserves a successful one-based descriptor lookup. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "full_read_bitmap_append"
   (words_as_type_indexed_bitvec)]
-theorem fullReadBitmapAppend {width : Nat} [NeZero width]
-    (bitmaps : List (BitVec width)) (w : WordLocW width) (bits : List Bool)
-    (moreBitmaps : List (BitVec width)) (h : fullReadBitmap bitmaps w = some bits) :
+theorem fullReadBitmapAppend {bitmapWidth : Nat} {width : Nat} [NeZero bitmapWidth] [NeZero width]
+    (bitmaps : List (BitVec bitmapWidth)) (w : WordLocW width) (bits : List Bool)
+    (moreBitmaps : List (BitVec bitmapWidth)) (h : fullReadBitmap bitmaps w = some bits) :
     fullReadBitmap (bitmaps ++ moreBitmaps) w = some bits := by
   cases w with
   | loc a b => simp [fullReadBitmap] at h
