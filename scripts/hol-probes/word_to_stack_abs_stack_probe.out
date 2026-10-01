@@ -1,0 +1,11 @@
+as_base=T
+as_base_bad=T
+as_plain=T
+as_bitmap_bad=T
+as_len_bad=T
+as_short=T
+as_rest_bad=T
+as_handler=T
+as_marker_bad=T
+as_handler_short=T
+as_lens_bad=T
