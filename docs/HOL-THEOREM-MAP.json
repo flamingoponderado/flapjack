@@ -49095,6 +49095,20 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_moves_correctR",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFakeMovesCorrectRight.lean",
+    "lean_name": "fakeMovesCorrectR",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 5qx9: original5089-5184 and fresh literal three-proof/seven-type replay from matching pinned CakeML857f0d/HOLa390cb shared builds. Full right-side allocation/Nodup/right-mapOK and locals-relation implication, actual native right fakeMoves/evaluate, all five NONE/untouched right map/old target locals/output locals/full state conclusions retained. Fresh stR alpha,beta,gamma and cstR alpha,delta,epsilon types confirm independent code/FFI and shared positive word dimension. Canonical fpRegs/store roundtrip reviewed; guarded SOME selectors, actual parallel Move and zero Const, actual Seq clock/termdep restoration. No successful-evaluation/post-state or left-mapOK premise. Inherits reals_as_rational_cuts SOUNDNESS item8. Left helper infrastructure reused from checked4847ec1e8; accepted frame30.12 checked native tree, ordinary unified18f233 mergeac8e99f6b. No executable route change.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/FpInstructions.lean",
     "lean_name": "instFp",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
@@ -49123,6 +49137,34 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 completed full source/body/carrier comparison2026-10-01 bead y19g.11.3, source409-640. Exact HolInst five outer constructors and all16 HolFp opcodes; all numeric payloads, positive machine width, fixed64 FP register words, arbitrary independent compile C and FFI F retained. Actual imported22-field native owning state and canonical regs/fpRegs/store codec, same-module witness. Full inst composes actual source-reviewed integer/memory and completeFP clauses; generic structural coverage proves selected fragment outerOption always present even on semantic failure. Source comparison retains Skip identity/Const assign, Or same-register Word-or-Loc copy, all shifts/div/carry/overflow/longmul/longdiv guards and write order, complete load/store address/domain/endian operations, unsupported16-bit memory returningNONE, allFP guards/modes/order/conversions reviewed under i81m. No callbacks, success assumption, target result, stronger carrier bound, alternate evaluator or dropped field. Inherits reals_as_rational_cuts from actualFP arithmetic/conversion/sqrt renderings, SOUNDNESS item8; pure Lean sqrt comparison is not cross-HOL equivalence. No direct rendering call requires a directreal qualifier. Kernel full constructor coverage and clock preservation; fresh original integer andFP observation groups. This is full primitive inst_def only, not evaluate_def, production route or whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fix_inconsistencies_correctL",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFixInconsistenciesCorrectLeft.lean",
+    "lean_name": "fixInconsistenciesCorrectL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 7aal: original5227-5262 plus fresh literal original assembly/prerequisite proof replay from matching pinned CakeML857f0d/HOLa390cb shared builds. Six inferred argument types confirm stL/cstL same alpha,beta,gamma state, unlike generic merge/fake helpers: shared word/code/FFI retained. Original allocation and left-mapOK conjuncts, native fixInconsistencies let and universally quantified states/locals relation implication (state binders commuted before state-independent allocation/map assumptions to expose carrier to the syntactic qualifier checker), all actual evaluation NONE/output locals/full state conclusions preserved. Actual original union/toAList key list, native merge and fakeMoves, real Seq fixClock discharge from proved frame; no target-evaluation/postrelation premise. Canonical fpRegs/store roundtrip and positive BitVec/NeZero reviewed; guarded selectors. Inherits reals_as_rational_cuts SOUNDNESS item8; returned code only Move/zero Const. Accepted jbh9/npgx/frame30.7 dependencies source present; no executable compiler route change.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fix_inconsistencies_correctR",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFixInconsistenciesCorrectRight.lean",
+    "lean_name": "fixInconsistenciesCorrectR",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-02 amny: original5264-5316 and fresh literal original right assembly plus merge/fake/frame/swap prerequisites replay from matching pinned CakeML857f0d/HOLa390cb shared builds. Six inferred types confirm same alpha,beta,gamma state dimensions. Original allocation/right-mapOK premises and state-quantified locals relation implication preserved (universal states commuted across state-independent premises for syntactic carrier visibility). Actual returned right program evaluates to NONE and establishes outputlocals relation at the RETURNED LEFT ssaU, not right-only map, plus whole-state relation. Native merge/fake frames prove entire output domain/lookup agreement for original union/toAList keys; ssaEqRelSwap discharges actual left-map result. No target-evaluation, desired agreement, post-state or extra left-mapOK premise. Canonical fpRegs/store roundtrip and positive BitVec/NeZero reviewed. Inherits reals_as_rational_cuts SOUNDNESS item8; Move/zeroConst only. Source/kernel-checked accepted aaaj/5qx9/frame30.7/qn5j/wma3/frame30.12/odmf dependencies; untagged local relation composition reused, no artificial source edge to left correctness theorem. No executed compiler route change.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackProps/ExpressionClock.lean",

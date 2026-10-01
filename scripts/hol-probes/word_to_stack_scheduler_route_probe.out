@@ -1,0 +1,8 @@
+sr_order_empty=[]
+sr_order_swap=[(NONE,SOME 1); (SOME 1,SOME 0); (SOME 0,NONE)]
+sr_order_duplicate=[(SOME 0,SOME 1); (SOME 0,SOME 2)]
+sr_none_slot=INL 23
+sr_spill_cycle=Seq (StackLoad 23 1)
+  (Seq (Seq (StackLoad 22 2) (StackStore 22 1)) (StackStore 23 2))
+sr_spill_zero_frame=Seq (StackLoad 23 0)
+  (Seq (Seq (StackLoad 22 0) (StackStore 22 0)) (StackStore 23 0))

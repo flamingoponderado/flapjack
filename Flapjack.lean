@@ -4,14 +4,9 @@ import Flapjack.Compiler.Backend.StackProps.StateConstants
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Recursive
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Recursive
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
-import Flapjack.Compiler.Backend.StackProps.ClockSupport
-import Flapjack.Compiler.Backend.StackProps.StateConstants
 import Flapjack.Compiler.Backend.LabProps.Native
 import Flapjack.Compiler.Backend.StackToLab.Native
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
@@ -197,6 +192,9 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
+import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
+import Flapjack.Compiler.Backend.WordToStack.ProductionConfiguration
+import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
 import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorPrelude
 import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorDomain
@@ -1251,6 +1249,9 @@ import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
 import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
 import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
 import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
 
