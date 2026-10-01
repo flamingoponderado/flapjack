@@ -1,0 +1,13 @@
+selector_prelude_const=Inst (Const 23 7w)
+selector_prelude_var=Move 0 [(23,18)]
+selector_prelude_lookup=Get 23 CurrHeap
+selector_prelude_load=Seq (Move 0 [(23,18)]) (Inst (Mem Load 23 (Addr 23 0w)))
+selector_prelude_add=Seq (Move 0 [(23,18)]) (Inst (Arith (Binop Add 23 23 (Imm 7w))))
+selector_prelude_shift=Seq (Move 0 [(23,18)]) (Inst (Arith (Shift Lsl 23 23 (Imm 3w))))
+selector_prelude_shift_oob=Inst (Const 23 0w)
+selector_prelude_heap=Seq (Inst (Const 23 7w)) (OpCurrHeap Xor 23 23)
+selector_prelude_load_offset=Seq (Move 0 [(23,18)]) (Inst (Mem Load 23 (Addr 23 7w)))
+selector_prelude_load_large_offset=Seq
+  (Seq (Move 0 [(23,18)])
+     (Seq (Inst (Const 24 4096w)) (Inst (Arith (Binop Add 23 23 (Reg 24))))))
+  (Inst (Mem Load 23 (Addr 23 0w)))

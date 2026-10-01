@@ -1,3 +1,11 @@
+import Flapjack.Compiler.Backend.StackProps.LabelSafety
+import Flapjack.Compiler.Backend.Parmove.FstepMapInj
+import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
+import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+import Flapjack.Compiler.Backend.Parmove.StepMapInj
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
+import Flapjack.Pancake.WordConvs.NameMonotonicity
+import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
 import Flapjack.Pancake.WordConvs.EveryVarInstMono
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove
@@ -18,6 +26,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
 import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
@@ -797,6 +806,7 @@ import Flapjack.Misc.LookupAny
 import Flapjack.Compiler.Backend.RegAlloc.Coalesce
 import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
 import Flapjack.Compiler.Backend.RegAlloc.MovePrep
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.ClashTreeDomain
 
 
 
