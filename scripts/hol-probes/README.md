@@ -1,3 +1,31 @@
+`wordconvs_exp_mono_probe.out` freshly prints original every_var_exp_mono
+and eight same-expression predicate observations. Registered WordConvsExpMonoParity
+fixtures apply the full implication non-vacuously at widths1/32/64/80 for
+empty/nested/duplicate/Load/Shift/ignored payloads and80-bit registers.
+The final shrinking-bound sentinel rejects removal of the global implication
+guard. Regression rows do not establish cross-assistant equivalence. Regenerate
+with HOL_PROBE_ONLY=wordconvs_exp_mono_probeScript.sml and the read-only prebuilt
+CakeML backend semantics directory.
+
+`word_alloc_max_exp_probe.out` captures ten direct original maximum, inclusive
+bound, and strict-bound sentinel triples. Registered WordAllocMaxVarExpParity
+fixtures check identical recursive syntax at widths1/32/64/80 including empty
+Op, duplicate/nested arguments, ignored Const/Lookup and80-bit register numbers.
+The final row freshly reconstructs the complete local max_var_exp_max from
+its literal proof, using original imported WordConvs monotonicity. These are
+regression evidence, not cross-assistant equivalence or full pass correctness.
+Regenerate with HOL_PROBE_ONLY=word_alloc_max_exp_probeScript.sml using the
+read-only prebuilt CakeML backend semantics theory directory.
+
+`word_alloc_max_inst_probe.out` records 12 direct original maximum/safety rows
+and fresh Q.prove re-elaboration of the complete local max_var_inst_max theorem.
+The registered WordAllocMaxVarInstParity fixtures check the same instructions
+and non-vacuously instantiate the universal bound. Width64 excludes the second
+FP transfer register; widths32/80 retain it, and FP-only register numbers are ignored.
+These are regression evidence, not cross-assistant equivalence or production routing.
+Regenerate with HOL_PROBE_ONLY=word_alloc_max_inst_probeScript.sml and the read-only
+prebuilt CakeML backend theory directory.
+
 `word_to_stack_comp_native_probe.out` contains 19 direct original comp_def observations,
 kernel-replayed by WordToStackNativeCompileParity. Includes recursive returning/handled
 Calls, valid/invalid immediates and Seq/If/Call bitmap threading. The complete

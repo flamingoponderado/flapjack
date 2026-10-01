@@ -1,0 +1,13 @@
+load "preamble";
+load "wordConvsTheory";
+open bossLib HolKernel Parse preamble wordLangTheory wordConvsTheory;
+fun out label q = (print (label ^ "="); print_term (rconc (EVAL q)); print "\n");
+val _ = out "em_var" ``let e = (Var 3:64 wordLang$exp) in (every_var_exp (\x. x <= 3) e, every_var_exp (\x. x <= 9) e)``;
+val _ = out "em_nested" ``let e = (Op Add [Var 2; Load (Var 7); Shift Lsl (Var 9) (Var 1)]:64 wordLang$exp) in (every_var_exp (\x. x <= 9) e, every_var_exp (\x. x <= 99) e)``;
+val _ = out "em_empty" ``let e = (Op Sub []:1 wordLang$exp) in (every_var_exp (\x. x <= 0) e, every_var_exp (\x. x <= 0) e)``;
+val _ = out "em_const" ``let e = (Const 999w:32 wordLang$exp) in (every_var_exp (\x. x <= 0) e, every_var_exp (\x. x <= 1) e)``;
+val _ = out "em_lookup" ``let e = (Lookup CurrHeap:64 wordLang$exp) in (every_var_exp (\x. x <= 0) e, every_var_exp (\x. x <= 0) e)``;
+val _ = out "em_duplicate" ``let e = (Op Add [Var 4; Var 4; Op Sub [Var 1]]:80 wordLang$exp) in (every_var_exp (\x. x <= 4) e, every_var_exp (\x. x <= 8) e)``;
+val _ = out "em_large" ``let e = (Load (Var 1208925819614629174706176):64 wordLang$exp) in (every_var_exp (\x. x <= 1208925819614629174706176) e, every_var_exp (\x. x <= 2417851639229258349412352) e)``;
+val _ = out "em_guard_needed" ``let e = (Var 7:64 wordLang$exp) in (every_var_exp (\x. x <= 9) e, every_var_exp (\x. x <= 3) e)``;
+val _ = (print "em_original_theorem="; print_thm (DB.fetch "wordConvs" "every_var_exp_mono"); print "\n");
