@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.LabLang
+import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Misc.Sptree
 import Flapjack.Misc.FindIndex
 import Flapjack.FfiHOL
@@ -14,6 +15,7 @@ word-free; `get_jump_offset` builds width-indexed offsets.
 namespace Flapjack.Compiler.Backend.LabToTarget
 
 open Flapjack.Compiler.Backend.LabLang
+open Flapjack.Compiler.Encoders.Asm
 
 /-- Exact HOL `ffi_offset_def` (`cakeml/compiler/backend/lab_to_targetScript.sml:15-16`). -/
 @[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "ffi_offset_def"]
@@ -28,8 +30,10 @@ def findPos (label : Lab) (labs : Spt (Spt Nat)) : Nat :=
 
 /-- Exact HOL `get_label_def` (`cakeml/compiler/backend/lab_to_targetScript.sml:91-97`):
     the label carried by a jump/call/loc-value, defaulting to `Lab 0 0`. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "get_label_def"]
-def getLabel {Cmp RegImm MlString : Type} : AsmWithLab Cmp RegImm MlString → Lab
+@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "get_label_def"
+  (words_as_type_indexed_bitvec)]
+def getLabel {width : Nat} [NeZero width] :
+    AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString → Lab
   | .jump target => target
   | .jumpCmp _ _ _ target => target
   | .call target => target
@@ -38,20 +42,24 @@ def getLabel {Cmp RegImm MlString : Type} : AsmWithLab Cmp RegImm MlString → L
 
 /-- Exact HOL `get_ffi_index_def` (`cakeml/compiler/backend/lab_to_targetScript.sml:104-107`):
     `get_ffi_index ffis s = the 0 (find_index s ffis 0)`, i.e. the first index
-    of `s` in `ffis` with default `0`. -/
+    of `s` in `ffis` with default `0`. HOL is generic in the element type, so
+    the port keeps the arbitrary element carrier with its decidable equality. -/
 @[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "get_ffi_index_def"]
-def getFfiIndex (ffis : List HolFfiName) (s : HolFfiName) : Nat :=
+def getFfiIndex {α : Type} [DecidableEq α] (ffis : List α) (s : α) : Nat :=
   (Flapjack.Misc.findIndex s ffis 0).getD 0
 
 /-- Exact HOL `get_jump_offset_def` (`cakeml/compiler/backend/lab_to_targetScript.sml:109-118`):
     the relative back-offset from the current position to the target, with the
     special call-FFI/install/halt forms; `n2w` becomes `BitVec.ofNat width`.
     HOL fixes the `asm_with_lab` name payload to `mlstring`, so the name carrier
-    is the native `MlString`. -/
+    is the native `MlString`; HOL's result `'b word` dimension is independent of
+    the instruction's `reg_imm` word dimension, so the two keep separate
+    positive-width binders. -/
 @[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "get_jump_offset_def"
   (words_as_type_indexed_bitvec)]
-def getJumpOffset {width : Nat} [NeZero width] {Cmp RegImm : Type}
-    (instruction : AsmWithLab Cmp RegImm Flapjack.Basis.Pure.MlString.MlString)
+def getJumpOffset {regImmWidth : Nat} {width : Nat} [NeZero regImmWidth] [NeZero width]
+    (instruction : AsmWithLab HolCmp (HolRegImm regImmWidth)
+      Flapjack.Basis.Pure.MlString.MlString)
     (ffis : List HolFfiName) (labs : Spt (Spt Nat)) (pos : Nat) : BitVec width :=
   match instruction with
   | .callFFI s =>

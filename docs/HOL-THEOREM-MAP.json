@@ -43694,14 +43694,14 @@
     "lean_name": "findPos",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL find_pos_def lab_to_targetScript.sml:86-89 uses lookup_any k2 (lookup_any k1 labs LN) 0 over num_map num_map; the Lean port reuses reviewed lookupAny over Spt (Spt Nat); word-free."
-  },
-  {
+  },  {
     "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
     "hol_name": "get_label_def",
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
     "lean_name": "getLabel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL get_label_def lab_to_targetScript.sml:91-97 Jump/JumpCmp/Call/LocValue carry their label and the catch-all is Lab 0 0; Lean pattern-matches the LabLang AsmWithLab constructors with the same default; word-free and polymorphic in the payload carriers."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL get_label_def lab_to_targetScript.sml:91-97 Jump/JumpCmp/Call/LocValue carry their label and the catch-all is Lab 0 0. HOL asm_with_lab carries the fixed cmp/name carriers and one type-indexed reg_imm word, so the port is AsmWithLab HolCmp (HolRegImm width) MlString with the reg_imm word translated to BitVec width; the instruction carrier is therefore width-indexed."
   },
   {
     "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
