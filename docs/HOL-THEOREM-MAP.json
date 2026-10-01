@@ -39683,5 +39683,29 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.3), original1105-1130 and Resume1833-1881: original3premises/full existential post at exact Cmp/register-immediate/two branch constructor; only genuine branch IHs. Missing source lookup/comparison chooses source Error; successful lookup transport preserves identical WordLocW operands and exact wordSemWordCmp result, without assuming word-only operands or comparison success. Chosen branch receives original colouringOk/state relation and locals restricted from full merged input live set. Positive-width word and canonical fpRegs/store qualifiers with imported-carrier roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator, SOUNDNESS item8. Coordinator review pending.",
   "inherits_reals_as_rational_cuts": true
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants/Path.lean",
+  "lean_name": "windmill_cons",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "windmill_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.10: source50-54: exact equivalence windmill(head::tail) iff head destination not in MAP FST tail and windmill tail. Generic same-component pair/List carrier; no distinct sources, decidable equality or extra wf premise."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants/Path.lean",
+  "lean_name": "path_change_start",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "path_change_start",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.10: source64-72: universally quantified prefix/replacement/last, exact conjunction path(SNOC last prefix) and FST last=FST replacement implies path(SNOC replacement prefix). SNOC rendered prefix++singleton; all fields/carriers preserved, no fresh destination/NoRead/wf/target-path premise. Structural list induction matches source empty/single/multiple cases. Required wf_step141-149 and thereby dsteps_steps/full scheduler theorem. Ten fresh original T/F path/windmill observations and generic kernel applications cover premise boundaries; wf_step remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/EnvironmentChange.lean",
+  "lean_name": "parsem_change_env",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_change_env",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.11: source255-265 exact conjunction (notMEM key MAP FST moves implies first key=second key) and MAP(first o SND)moves=MAP(second o SND)moves implies pointwise parsem equality. Generic pair/List and function environments retained. No windmill, destination uniqueness, globally equal inputs or target evaluation premise added. Function-update codec lemma proves result by induction, preserving repeated destination last-write behavior. Direct prerequisite of step_sem cycle case; full scheduler correctness remains open."
 }
 ]
