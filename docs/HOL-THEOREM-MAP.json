@@ -39476,7 +39476,6 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2115-2133: !x b s t. s_key_eq (push_env x b s).stack t.stack ==> ?n l ls opt. t.stack = StackFrame n (toAList (FST x)) l opt :: ls /\\ ?y. pop_env t = SOME y /\\ y.locals = union (fromAList l) (fromAList (toAList (FST x))) /\\ domain (SND x) UNION domain (FST x) = domain y.locals /\\ s_key_eq s.stack y.stack; set equality as predicate equality, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
 },
-<<<<<<< HEAD
 {
   "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
   "lean_name": "updPc",
@@ -39745,34 +39744,4 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead25.12: original register-write clauses40-50, ordered stack-load recursion52-55, and all wInst clauses88-185 compared with native HolInst/HolProg payloads. Same register division, strict window bound, saturating subtraction, staging and spill order, literal LongMul/LongDiv register assignments, six handled memory operations (Load16/Store16 catchall), FP comparison staging and width=64 move split, remaining FP passthrough and Inst Skip catchall. HolInst/HolArith/HolRegImm/HolAddr constructors are source-reviewed mirrors; HolFp/HolCmp/HolMemop aliases unchanged. words_as_type_indexed_bitvec records only positive width translation with NeZero; no extra premises or supplied target result. Universal toGeneric_wInst transport is kernel checked, not a semantics theorem. Full compiler and executed route remain open on parent25; coordinator review pending."
 }
-=======
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
-    "hol_name": "evaluate_apply_colour",
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/MustTerminate.lean",
-    "lean_name": "evaluateApplyColour_MustTerminate",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "fpRegs",
-      "store"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.2), original1105-1130 and Resume1433-1447: exact constructor with original3 premises/full existential post, only genuine body IH. Zero termdep yields source Error; otherwise body runs with original MustTerminate_limit and decremented termdep, its selected oracle retained. Body Error and timeout-to-Error handled; all other results restore original clock and termdep, original state and result-selected locals conclusion. Canonical fpRegs/store and positive-width word qualifiers with imported carrier roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator, SOUNDNESS item8; no evaluator mutation. Coordinator review pending.",
-    "inherits_reals_as_rational_cuts": true
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
-    "hol_name": "evaluate_apply_colour",
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/If.lean",
-    "lean_name": "evaluateApplyColour_If",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "fpRegs",
-      "store"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.3), original1105-1130 and Resume1833-1881: original3premises/full existential post at exact Cmp/register-immediate/two branch constructor; only genuine branch IHs. Missing source lookup/comparison chooses source Error; successful lookup transport preserves identical WordLocW operands and exact wordSemWordCmp result, without assuming word-only operands or comparison success. Chosen branch receives original colouringOk/state relation and locals restricted from full merged input live set. Positive-width word and canonical fpRegs/store qualifiers with imported-carrier roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator, SOUNDNESS item8. Coordinator review pending.",
-    "inherits_reals_as_rational_cuts": true
-  }
->>>>>>> 5e219f931
 ]
