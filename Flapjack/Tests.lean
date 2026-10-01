@@ -1,3 +1,13 @@
+import Flapjack.Test.WordConvsExpMonoParity
+import Flapjack.Test.WordAllocMaxVarExpParity
+import Flapjack.Test.WordAllocMaxVarInstParity
+import Flapjack.Test.ParmovePreservesMovesPmovParity
+import Flapjack.Test.ParmovePreservesMovesStepsParity
+import Flapjack.Test.RegAllocSortMovesRouteParity
+import Flapjack.Test.ParmovePreservesMovesStepParity
+import Flapjack.Test.ParmoveAllDistinctStepsParity
+import Flapjack.Test.RegAllocSortMovesParity
+import Flapjack.Test.ProductionThreeToTwoDomain
 import Flapjack.Test.CanonizeMovesParity
 import Flapjack.Test.MonadArrayLengthParity
 import Flapjack.Test.RegAllocStateMapParity

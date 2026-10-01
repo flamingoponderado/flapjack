@@ -1,4 +1,37 @@
+import Flapjack.Compiler.Backend.BackendProps
+
+import Flapjack.Compiler.Backend.LabToTarget.Interference
+import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
+import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
+import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarInst
+import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
+import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
+import Flapjack.Pancake.WordConvs.CodeLabels
+import Flapjack.Compiler.Backend.StackProps.CodeLabels
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
+import Flapjack.Compiler.Backend.LabToTarget.Navigation
+import Flapjack.Compiler.Backend.LabToTarget.Memory
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Pmov
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
+import Flapjack.Compiler.Backend.Parmove.InjOnState
+import Flapjack.Compiler.Backend.LabToTarget.Fetch
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Steps
+import Flapjack.Compiler.Backend.RegAlloc.SortMoves
+import Flapjack.Compiler.Backend.WordToStack.ProductionThreeToTwoDomain
+import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+import Flapjack.Compiler.Backend.Parmove.MapState
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
+import Flapjack.Compiler.Backend.Parmove.StateToList
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
 import Flapjack.Compiler.Backend.RegAlloc.Initialization
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
 import Flapjack.Translator.Monadic.MonadBase.ArrayLength
@@ -7,12 +40,9 @@ import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
 import Flapjack.Misc.FindIndex.Append
 import Flapjack.Compiler.Backend.RegAlloc.Exceptions
-import Flapjack.Compiler.Backend.Parmove.MapState
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
-import Flapjack.Compiler.Backend.Parmove.StateToList
-import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
+import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
 import Flapjack.Misc.FindIndex.ShiftZero
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
@@ -44,6 +74,7 @@ import Flapjack.Compiler.Backend.Parmove.Correct
 import Flapjack.Compiler.Backend.WordAlloc.Heuristics
 import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.FirstIndex
 import Flapjack.Misc.FindIndex
 import Flapjack.Compiler.Backend.Parmove.DStepsSteps
 import Flapjack.Compiler.Backend.WordAlloc.StackOnly
@@ -63,14 +94,16 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
+import Flapjack.Compiler.Backend.WordToStack.ProductionSsaCodecDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionDeadCodecDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionCseCodecDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionUnreachCodecDomain
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep
-
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
 import Flapjack.Compiler.Backend.Parmove.PmovDsteps
 import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
-
 import Flapjack.Compiler.Backend.Parmove.DestinationMembership
 import Flapjack.Compiler.Backend.Parmove.FstepDstep
 import Flapjack.Compiler.Backend.Parmove.SourceMembership
@@ -726,6 +759,9 @@ import Flapjack.Pancake.WordConvs.NotCreated
 import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Pancake.PanStructs
+import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+
+
 
 open Lean Elab Command Flapjack
 
