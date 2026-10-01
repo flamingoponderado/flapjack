@@ -1,10 +1,13 @@
 import Flapjack.Test.SSALocalsPhysicalInsertParity
 import Flapjack.Test.SSAMapPreservationParity
+import Flapjack.Test.SSAMapBoundsParity
+import Flapjack.Test.WordAllocLimitArithmeticParity
+import Flapjack.Test.WordAllocMoveHeadParity
+import Flapjack.Test.WordAllocLimitVarParity
+import Flapjack.Test.SSARenamePropertiesParity
 import Flapjack.Test.SSARegisterFlipParity
 import Flapjack.Test.SSAMapExtendParity
-import Flapjack.Test.SSARenamePropertiesParity
 
-import Flapjack.Test.WordAllocLimitVarParity
 import Flapjack.Test.SSAListRenameArithmeticParity
 import Flapjack.Test.AsmPropsAssertionsIterationParity
 import Flapjack.Test.WordAllocMaxVarMaxParity
@@ -42,6 +45,7 @@ import Flapjack.Test.StackPropsForbiddenOperationsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.WordConvsLabelSafetyParity
 import Flapjack.Test.WordToStackNoShmemopHelpersParity
+import Flapjack.Test.WordToStackNoShmemopCallCoreParity
 import Flapjack.Test.WordToStackHandlerFrameCarriersParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity
