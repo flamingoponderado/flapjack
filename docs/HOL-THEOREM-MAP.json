@@ -40080,5 +40080,51 @@
   "hol_name": "parsem_NoRead",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.3: original267-283 exact sole NoRead moves x premise (local overload notMEM x MAP SND), conclusion full function equality parsem((x,y)::moves)env=parsem moves((x=+env y)env). Generic same-component pair/List and function environments retained; no windmill/no-write/global environment equality premise. Tail source-map equality follows because every source differs from x; update-list definition then yields original equation. Repeated destinations allowed, snapshot vs updated-read boundary covered by8fresh original rows and Lean guards/full-function generic use. step_sem429/443 actual prerequisite; whole semantic preservation remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_delta_inst_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ClashTreeInst.lean",
+  "lean_name": "getDeltaInst",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison 2026-10-01, bead flapjack-pxn.18.5.11.4.3.1: word_allocScript.sml:1085-1119 get_delta_inst_def compared clause by clause against getDeltaInst over the exact positive-width HolInst carrier and the literal ClashTree receiver. Skip -> Delta [] []; Const reg w -> Delta [reg] []; Binop/Shift match their reg_imm right operand, Reg r3 -> Delta [r1] [r2;r3] and Imm -> Delta [r1] [r2]; Div r1 r2 r3 -> Delta [r1] [r3;r2]; AddCarry -> Delta [r1;r4] [r4;r3;r2]; AddOverflow/SubOverflow -> Delta [r1;r4] [r3;r2]; LongMul -> Delta [r1;r2] [r4;r3]; LongDiv -> Delta [r1;r2] [r5;r4;r3]; Load/Load32/Load8 -> Delta [r] [a]; Store/Store32/Store8 -> Delta [] [r;a]; FPLess/FPLessEqual/FPEqual -> Delta [r] []; the HOL dimindex(:'a) = 64 tests for FPMovToReg and FPMovFromReg are rendered as width = 64 on the positive-width BitVec width carrier (dimindex(:'a) = width), giving Delta [r1] [] vs Delta [r1;r2] [] and Delta [] [r1] vs Delta [] [r1;r2]; the final HOL catchall Delta [] [] is the Lean _ arm covering FPNeg/FPAdd and other unlisted instructions such as Load16. No quantifier, hypothesis, side condition, or list order differs; the sole carrier translation is HOL 'a word -> BitVec width at [NeZero width]. Twenty-four fresh direct original HOL full-tree equalities (scripts/hol-probes/word_alloc_get_delta_inst_probe.out) are kernel replayed by Flapjack.Test.WordAllocGetDeltaInstParity. Proof-side port; replacing the executed caller remains separate work."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_clash_tree_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ClashTreeProg.lean",
+  "lean_name": "getClashTree",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison 2026-10-01, bead flapjack-pxn.18.5.11.4.3: word_allocScript.sml:1131-1212 get_clash_tree_def compared clause by clause against getClashTree over the exact WordLangProgHOL (BitVec width) program carrier, the literal ClashTree receiver, the exact Spt Unit num_sets, getDeltaInst through the bijective HolInst.ofWordLangInst codec, getReadsExpHOL, numsetListInsert, sptUnion and sptInsert. The extra loop-context parameter lt is HOL (num_set # num_set) list. Skip/Tick/MustTerminate Skip -> Delta [] []; Move pri ls -> Delta (MAP FST ls) (MAP SND ls); Inst i -> get_delta_inst i; Assign num exp -> Delta [num] (get_reads_exp exp); Get num store -> Delta [num] []; Store exp num -> Delta [] (num::get_reads_exp exp); Seq visits first then second; If computes both branch trees first and matches the reg_imm right operand, Reg r2 -> Seq (Delta [] [r1;r2]) (Branch NONE e2t e3t) and Imm -> Seq (Delta [] [r1]) (Branch NONE e2t e3t); Alloc/Install/FFI use union (FST numset) (SND numset) and Install writes r1; CodeBufferWrite/DataBufferWrite -> Delta [] [r2;r1]; Raise -> Delta [] [num]; Return num1 nums -> Delta [] (num1::nums); LocValue -> Delta [r] []; Set -> Delta [] (get_reads_exp exp); OpCurrHeap b dst src -> Delta [dst] [src]; StoreConsts a b c d ws -> Delta [a;b;c;d] [c;d]; ShareInst is the literal four-store-width disjunction with the value prepended before the reads, else Delta [v] reads; Loop wraps Set names, Set exit_names, the body at (names,exit_names)::lt, then Set names; Break/Continue use lt[n]? and fall back to Set LN on NONE, selecting exit_names for Break and names for Continue; Call computes args_set = numset_list_insert args LN, returns Set args_set when ret is NONE, and otherwise cutset = union (FST cutsets) (SND cutsets), live_set = union cutset args_set, ret_tree = Seq (Set (numset_list_insert vs cutset)) (get_clash_tree ret_handler lt), yielding Seq (Set live_set) ret_tree with no handler and Branch (SOME live_set) ret_tree (Seq (Set (insert v' () cutset)) (get_clash_tree prog lt)) with one. The definition is total over all 26 wordLang constructors, no catch-all. All list orders, duplicate reads, finite-map operators and clause guards are literal; the sole carrier translation is HOL 'a word -> positive BitVec width with [NeZero width]. Thirty-two fresh direct original HOL full-tree/clash-tree equalities (scripts/hol-probes/word_alloc_get_clash_tree_probe.out) are kernel replayed by Flapjack.Test.WordAllocGetClashTreeParity. Proof-side port; replacing the executed get_clash_tree caller remains separate work."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/MoveStoreConsts.lean",
+  "lean_name": "evaluateApplyColour_Move",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (bead flapjack-pxn.18.5.11.1.24): HOL Resume evaluate_apply_colour[Move] case of word_allocProofScript.sml:1169-1223, i.e. the HOL theorem with prog fixed to the Move constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Uses the shared applyColourPost/applyColourLocals/getLive/getWrites carriers and the tagged apply_colour Move clause; the source and coloured get_vars are transported by the tagged strong_locals_rel_get_vars. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/MoveStoreConsts.lean",
+  "lean_name": "evaluateApplyColour_StoreConsts",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (bead flapjack-pxn.18.5.11.1.24): HOL Resume evaluate_apply_colour[StoreConsts] case of word_allocProofScript.sml:2024-2061, i.e. the HOL theorem with prog fixed to the StoreConsts constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Uses the shared applyColourPost/applyColourLocals/getLive/getWrites carriers and the tagged apply_colour StoreConsts clause; get_var transport uses the tagged strong_locals_rel_get_var and the two live-scoped inserts use the tagged strong_locals_rel_insert, matching HOL Resume evaluate_apply_colour[StoreConsts]. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
 }
 ]
