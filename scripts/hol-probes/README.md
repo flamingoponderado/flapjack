@@ -2497,6 +2497,38 @@ unbounded names/counters and widths 1/64/128. These finite observations do not
 establish general cross-prover equivalence or production allocator routing.
 Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
+
+`word_alloc_canonize_sort_probe.out` captures seventeen fresh original mllist
+sort observations on the exact inline x/y/priority comparator, replayed by
+`CanonizeSortParity`. Empty/base/recursive sizes, duplicates, coordinate
+precedence, unnormalized reversed pairs and unbounded names/priorities are
+covered. This reuses the existing native MlList sorter; it neither expands
+external-source checker trust nor completes normalization/grouping or executed
+allocator routing. Source revision/span digest are beside `canonizeMoveLess`.
+Regenerate read-only with
+`HOL_PROBE_ONLY=word_alloc_canonize_sort_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`monad_list_primitives_probe.out` captures twenty-five fresh original Msub,
+Mupdate and failure-bound observations, replayed by `MonadListPrimitivesParity`
+in the kernel. Head/middle/last/empty/boundary/large indices, duplicates and
+independent Nat/Bool/tuple value/exception carriers are covered. Generic theorem
+applications retain only the original out-of-range premise. Finite observations
+do not establish cross-prover equivalence or completion of successful EL/LUPDATE
+equations, state-array accessors or production allocator routing. Regenerate
+read-only with
+`HOL_PROBE_ONLY=monad_list_primitives_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_state_map_probe.out` captures the original polymorphic st_ex_MAP
+type and nineteen fresh result/state equations, replayed by
+`RegAllocStateMapParity` in the kernel. Independent input/state/result/exception
+carriers, effect order, every failure position, failure-returned state,
+state-dependent failure and empty callbacks are covered. The source type is
+recorded as an observation; no genericity is inferred from specialized rows
+alone. Finite observations do not establish cross-prover equivalence or
+completion of generated allocator functions or production routing. Regenerate
+read-only with
+`HOL_PROBE_ONLY=reg_alloc_state_map_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `word_alloc_canonize_moves_aux_probeScript.sml` / `.out` compares the literal
 counting recursion at word_allocScript1641-1648 against twelve full output
 lists: empty/current zero count, arbitrary accumulator, priority up/down/equal,
@@ -2522,6 +2554,12 @@ RTC/pmov and full Move correctness remain separate open obligations.
 `word_to_stack_dead_codec_probe` captures thirteen fresh original whole-program dead-code output equations: dead moves/constants/loads, retained ordinary 16-bit memory and stores, observable shared loads, sequence and If pruning, loops, MustTerminate, unchanged tail-call handlers and both transformed returning Call continuations. Kernel fixtures replay the same complete output trees. Separate production-only five-register AddCarry sentinels check deletion, live retention and nested handler rejection; that constructor has no HOL counterpart. The full arbitrary-backward-state theorem and executed wrapper prove one-way actual codec acceptance closure, not equality, since deletion can remove a rejected primitive. Subsequent optimizations and the native compiler route remain open.
 
 `word_to_stack_cse_codec_probe` captures sixteen fresh original complete CSE output equations, covering constant recording, repeated Get/load/offset/shift facts, ordinary 16-bit memory, observable shared loads, loops, MustTerminate, If, unchanged returning and tail Call bodies, and memory-store/call knowledge barriers. Kernel fixtures replay every same-input complete tree. Separate sentinels check nested five-register AddCarry rejection. Untagged infrastructure proves actual CSE preserves codec acceptance exactly for arbitrary knowledge and all program constructors, then derives the executed wrapper; it assumes no valid-knowledge, codec-success, desired-output or pass-success premise. Remaining optimization passes and native routing stay open.
+`monad_array_length_probe.out` captures five fresh original Marray_length
+equations, kernel replayed in `MonadArrayLengthParity`: empty/duplicate lists,
+Bool/list states, Bool values and a large Nat state. Generic pointwise equation
+is separately kernel checked. Finite observations do not establish
+cross-assistant equivalence or production allocator routing. Regenerate with
+`HOL_PROBE_ONLY=monad_array_length_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
 
 `word_alloc_canonize_sort_probe.out` captures seventeen fresh original mllist
@@ -2539,3 +2577,14 @@ Regenerate read-only with
 `reg_alloc_safe_div_probe` captures fourteen fresh original guarded natural-division equations: zero numerator/denominator, one, below/equal/above divisor, exact/remainder division and numerals above 2^80. Kernel fixtures replay all same inputs and prove the executed `cakeSafeDiv` wrapper is definitionally the reviewed `RegAlloc.safeDiv` at arbitrary Nat inputs. The actual minimum-cost scan and spill selection call this shared definition. These equations do not establish the full spill/allocator success theorem, which remains dependency-linked work.
 
 `parmove_first_index_probe` captures fifteen fresh original predicate/first-read/first-write triples. Empty and ordinary moves, absent writes/reads, simultaneous scratch access, strictly earlier/later writes, repeated occurrences and independent Bool/Nat/function carriers are covered. Kernel fixtures replay the same full triples. The exact tagged characterization retains both zero-offset optional first indices and strict order; local classical equality preserves arbitrary carriers without a public decidable-equality premise. Step/RTC/pmov and complete Move correctness remain separate obligations.
+`word_alloc_canonize_moves_probe.out` contains nineteen fresh original full
+canonize_moves equations, kernel replayed by `CanonizeMovesParity`. They cover
+normalization, strict sorting, maximum priorities, group counts and reverse
+group order, including self moves, duplicate orientations, zeros and large
+natural numbers. Finite observations do not prove cross-assistant equivalence
+or executed allocator routing. Regenerate with
+`HOL_PROBE_ONLY=word_alloc_canonize_moves_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_copy_codec_domain_probe` records eight original copy equations;
+`WordCopyCodecDomainParity.lean` replays them and separately checks nested
+five-register AddCarry rejection. Codec-domain preservation is Flapjack
+infrastructure, not a HOL semantic equivalence theorem.

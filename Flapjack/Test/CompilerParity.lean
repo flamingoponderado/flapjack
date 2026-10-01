@@ -4,8 +4,13 @@ import Flapjack.Test.WordToStackUnreachCodecParity
 import Flapjack.Test.WordToStackCseCodecParity
 import Flapjack.Test.WordToStackDeadCodecParity
 import Flapjack.Test.WordToStackSsaCodecParity
+import Flapjack.Test.CanonizeMovesParity
+import Flapjack.Test.MonadArrayLengthParity
+import Flapjack.Test.RegAllocStateMapParity
+import Flapjack.Test.MonadListPrimitivesParity
 import Flapjack.Test.CanonizeSortParity
 import Flapjack.Test.FindIndexAppendParity
+import Flapjack.Test.WordCopyCodecDomainParity
 import Flapjack.Test.HeuProgParity
 import Flapjack.Test.WordToStackProgramMaximumParity
 import Flapjack.Test.WordToStackColourDomainParity
