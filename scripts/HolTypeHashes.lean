@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveFrame
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveDomains

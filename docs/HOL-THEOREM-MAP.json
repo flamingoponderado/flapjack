@@ -44164,6 +44164,15 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .48.2.2: full original copy_ret_aux_no_shmemop12202-12210 and perf_call_prefix/suffix_no_shmemop12221-12231. Every Nat register/frame offset/count/label input retained, arbitrary positive program word width; unconditional original StackProps no_shmemop truth conclusions. Native return induction preserves exact descending list_Seq recursion; instrumentation helpers retain full original syntax, including ordinary memory operations which are distinct from forbidden shared-memory operations. Only HOL positive word dimension is translated to BitVec width/NeZero. No frame/count/label bounds, validity, compiler result, safety/evaluation/simulation hypothesis. Independent of unused-frame carrier repair and pending wrapper proofs. Twelve freshly regenerated original helper predicate EVAL claims resolve T (zero/one/repeated return copying, zero/large offsets/registers, widths1/32/64/80); identical kernel rfl observations and arbitrary positive-width public theorem applications PASS. No instrumentation evaluation correctness or cross-language equivalence claim; integration acceptance pending."
   },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_eq_rel_swap",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsSwap.lean",
+    "lean_name": "ssaEqRelSwap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a compared5186-5193 and fresh original inferred types: st:(alpha,beta,gamma) state; cst:(alpha,delta,epsilon) state. Positive indexed word dimension shared, all four ignored code/FFI types independently generic Type0. Actual reviewed native WordSem state carriers preserved, no state parameters replaced by maps; only locals Spt field traversed, no finite-map field used. Original relation AND domain equality AND pointwise lookup equality, identical swapped locals-relation conclusion, no extra premise. Native accepted locals predicate supplies guarded THE correspondence. Full original literal proof srw_tac replay PASS, independent inferred state carrier types captured. Generic kernel fixture applies actual theorem at arbitrary states/maps/width. No executable change.",
+    "words_as_type_indexed_bitvec": true
+  },
 {
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "merge_moves_frame",
