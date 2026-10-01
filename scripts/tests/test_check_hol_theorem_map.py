@@ -63,6 +63,9 @@ class CoordinatorPendingReviewNoteTest(unittest.TestCase):
     def test_rejects_intervening_and_reversed_pending_notes(self):
         notes = [
             "Coordinator source acceptance pending.",
+            "Fleet merge acceptance remains tracked separately on the existing beads.",
+            "merge acceptance separate",
+            "acceptance separate",
             "pending coordinator acceptance",
             "integration acceptance pending",
             "external PR review pending",

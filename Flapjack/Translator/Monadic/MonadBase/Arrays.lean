@@ -13,8 +13,8 @@ not in the canonical `ListPrimitives`/`ArrayLength` modules (`Msub`/`Mupdate`,
 their failure equations and `Marray_length` live there). HOL
 represents a fixed array in the monad state as a list, so the Lean carrier is
 `List`; an out-of-range index fails with the supplied exception and leaves
-the state unchanged, exactly as in HOL. HOL `EL n l` under `n < LENGTH l` is
-the bounded `l[n]`.
+the state unchanged, exactly as in HOL. The success theorem uses `holEl n l`;
+under `n < LENGTH l` it agrees with the bounded `l[n]`.
 -/
 
 namespace Flapjack.Translator.Monadic.MonadBase
