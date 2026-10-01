@@ -3763,3 +3763,6 @@ run_probe ssa_fix_inconsistencies_props_probeScript.sml ssa_fix_inconsistencies_
   fip_full fip_type_prio fip_type_ssaL fip_type_ssaR fip_type_na fip_type_a fip_type_b fip_type_nextOut fip_type_ssaU \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe stack_to_lab_executed_codec_probeScript.sml stack_to_lab_executed_codec_probe.out \
+  codec_source_addcarry codec_source_addoverflow codec_source_memoffset codec_source_cbw codec_source_cbw_store_order codec_source_name_bytes codec_source_ffi codec_source_nonzero_position codec_source_wide_constant \
+  "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"

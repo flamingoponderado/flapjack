@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Recursive
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive

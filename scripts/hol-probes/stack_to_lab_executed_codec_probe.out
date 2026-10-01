@@ -1,0 +1,9 @@
+codec_source_addcarry=(List [Asm (Asmi (Inst (Arith (AddCarry 1 2 3 4)))) [] 0],F,2)
+codec_source_addoverflow=(List [Asm (Asmi (Inst (Arith (AddOverflow 1 2 3 4)))) [] 0],F,2)
+codec_source_memoffset=(List [Asm (Asmi (Inst (Mem Store8 2 (Addr 3 255w)))) [] 0],F,2)
+codec_source_cbw=(List [Asm (Cbw 3 4) [] 0],F,2)
+codec_source_cbw_store_order=Inst (Mem Store8 4 (Addr 3 0w))
+codec_source_name_bytes=[0; 128; 255; 65]
+codec_source_ffi=(List [LabAsm (LocValue 5 (Lab 7 2)) 0w [] 0; LabAsm (CallFFI «\^@\128\255A») 0w [] 0; Label 7 2 0],F,3)
+codec_source_nonzero_position=LabAsm (Jump (Lab 17 29)) 1w [0w; 128w; 255w] 23
+codec_source_wide_constant=(List [Asm (Asmi (Inst (Const 999 0x80000000000000000001w))) [] 0],F,2)

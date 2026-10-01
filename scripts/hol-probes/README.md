@@ -1,3 +1,12 @@
+`stack_to_lab_executed_codec_probe.out` records nine fresh original native
+constructor/operand observations, including AddCarry's four positions, an
+unsupported overflow result, memory offsets, Cbw's address/value/store order,
+embedded NUL/high-byte names, nonzero LabAsm position with byte caches, and an
+80-bit constant. StackToLabExecutedCodecParity kernel-replays these source rows
+and checks supported conversion/rejection boundaries. The codec is untagged
+Flapjack interface infrastructure with independent successful-output recovery;
+these rows do not assert a HOL codec, production wiring, or semantic simulation.
+
 ssa_map_bounds_probe.out captures nine complete original map-validity pairs and a kernel replay of the full original local bound-monotonicity proof. Cases include empty/malformed trees, equal/raised/rejected bounds, physical registers, unbounded natural values and overwritten entries. SSAMapBoundsParity replays the same predicates and applies the full theorem to arbitrary maps/bounds. Recursive insertion is unfolded once before predicate simplification to avoid expanding dead recursive branches.
 `word_program_max_unrestricted_probe.out` captures eight fresh whole-program
 maximum and limit results across Seq, tail Call handler, returning Call with
