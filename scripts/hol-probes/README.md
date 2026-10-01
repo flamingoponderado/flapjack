@@ -1967,6 +1967,23 @@ Regenerate read-only with
 HOL_PROBE_ONLY=word_alloc_get_delta_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
+`word_alloc_get_clash_tree_probe.out` captures thirty-two direct original
+`get_clash_tree_def` observations (word_allocScript.sml1131-1212). Each row is a
+full-tree equality over the exact `wordLang$prog` carrier with explicit
+`sptree$fromAList` num_set operands: Skip, Move, Inst, Assign, Get, Store, Seq,
+If with Reg/Imm, MustTerminate, Alloc, Install, CodeBufferWrite,
+DataBufferWrite, FFI, Raise, Return, Tick, LocValue, Set, OpCurrHeap,
+StoreConsts, ShareInst with Store and Load, Loop, Break/Continue inside and
+outside the loop context, Call with no return, Call with a return, and Call with
+both a return and a handler (the required `Branch`). The identical inputs and
+outputs are kernel replayed by
+`Flapjack.Test.WordAllocGetClashTreeParity`. These regression rows do not
+establish cross-language equivalence or complete the production route.
+Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_get_clash_tree_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `word_alloc_get_writes_probe.out` records seven direct original
 `get_writes_def` observations (word_allocScript.sml1009-1023). Identical
 full-tree inputs/outputs are kernel replayed in
