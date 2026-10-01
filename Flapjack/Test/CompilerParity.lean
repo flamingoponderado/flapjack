@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackProgramMaximumParity
 import Flapjack.Test.WordToStackColourDomainParity
 import Flapjack.Test.WordToStackInstructionMaximumParity
 import Flapjack.Test.HeuCallParity
