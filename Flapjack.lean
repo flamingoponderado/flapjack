@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.StackLang.ProductionWordBoundary
 import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Recursive
@@ -1164,6 +1165,7 @@ import Flapjack.Compiler.Backend.LinearScan.HiddenState
 import Flapjack.Compiler.Backend.LinearScan.Steps
 import Flapjack.Compiler.Backend.LinearScan.Sorting
 import Flapjack.Compiler.Backend.LinearScan.TopLevel
+import Flapjack.Compiler.Backend.LinearScan.MapColorsSub
 import Flapjack.Misc.Sptree.Foldi
 import Flapjack.Misc.MiscThe
 import Flapjack.Misc.ListEl
@@ -1274,6 +1276,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAInstructionProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsMove
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft

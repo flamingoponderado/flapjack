@@ -3867,3 +3867,8 @@ run_probe ssa_rename_shifted_properties_probeScript.sml ssa_rename_shifted_prope
   srm_full srm_type_ls srm_type_ssa srm_type_na srm_type_lsOut srm_type_ssaOut srm_type_naOut \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_move_probeScript.sml ssa_cc_trans_props_move_probe.out \
+  spm_full spm_type_pri spm_type_ls spm_type_ssa spm_type_na spm_type_lt spm_type_progOut spm_type_ssaOut spm_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

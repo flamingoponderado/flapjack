@@ -10,6 +10,7 @@ import Flapjack.Test.LabToTargetShmemInfoParity
 import Flapjack.Test.LabToTargetCompileParity
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity
+import Flapjack.Test.StackWordBoundary
 import Flapjack.Test.StackToLabExecutedCodecParity
 import Flapjack.Test.StackPropsExpressionClockParity
 import Flapjack.Test.StackToLabFullEncodingParity
