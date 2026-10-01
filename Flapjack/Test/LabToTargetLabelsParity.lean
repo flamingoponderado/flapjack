@@ -9,27 +9,32 @@ original `lab_to_target` label-computation definitions
 (`section_labels_def`, `compute_labels_alt_def`) on concrete `labLang$line`,
 `labLang$sec` and `num_map` values.
 
-The `Line`/`Section` carriers are instantiated at `Unit` for the opaque
-instruction/word parameters, since the label-computation definitions never
-inspect them.  Every captured row is replayed below as a kernel-checked `rfl`
-example and as a `runChecks` runtime comparison.
+The `Line`/`Section` carriers are instantiated at HOL's actual carriers
+(`HolAsm`, `HolMemop`, `HolAddr`, `HolCmp`, `HolRegImm`, `MlString`) at the
+positive width `8`, with native instruction/word payloads; the
+label-computation definitions never inspect those payloads, but the carriers
+match the source type.  Every captured row is replayed below as a
+kernel-checked `rfl` example and as a `runChecks` runtime comparison.
 -/
 
 namespace Flapjack.Test.LabToTargetLabelsParity
 
 open Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang
+open Flapjack.Compiler.Encoders.Asm
+open Flapjack.Basis.Pure.MlString
 open Flapjack
 
-private abbrev L := Line Unit Unit Unit
+private abbrev L := Line (AsmOrCbw (HolAsm 8) HolMemop (HolAddr 8))
+  (AsmWithLab HolCmp (HolRegImm 8) MlString) (BitVec 8)
 private abbrev S := Section L
 
 private def label0 : L := .label 0 0 0
-private def asm1 : L := .asm () [1] 1
+private def asm1 : L := .asm (.asmi (.inst .skip)) [1] 1
 private def label1 : L := .label 0 1 2
 private def label2 : L := .label 0 2 4
-private def asm2 : L := .asm () [1, 2] 2
-private def labasm3 : L := .labAsm () () [3] 3
+private def asm2 : L := .asm (.asmi (.inst .skip)) [1, 2] 2
+private def labasm3 : L := .labAsm (.jump (.lab 0 0)) (BitVec.ofNat 8 0) [3] 3
 
 private def lines : List L := [label0, asm1, label1, label2, asm2, labasm3]
 private def sec1 : S := { sectionId := 1, lines := [label0, asm1, label1] }

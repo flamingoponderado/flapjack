@@ -1,20 +1,22 @@
 import Flapjack.Compiler.Backend.LabLang
+import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Misc.Sptree
 
 /-!
 # Faithful Cake label computation (`lab_to_target`)
 
-Exact carriers-witnessed definitions from
-`cakeml/compiler/backend/lab_to_targetScript.sml:62-83`.  `section_labels`
-folds a section's lines into a `(position, labelled-offset-list)` pair,
-ignoring zero labels; `compute_labels_alt` walks the section list and builds
-the two-level `spt` mapping each section id to its label offsets, seeded with
-the section's start position under key `0`.
+Exact definitions from `cakeml/compiler/backend/lab_to_targetScript.sml:62-83`.
+`section_labels` folds a section's lines into a `(position,
+labelled-offset-list)` pair, ignoring zero labels; `compute_labels_alt` walks
+the section list and builds the two-level `spt` mapping each section id to its
+label offsets, seeded with the section's start position under key `0`.
 
-The line parameters (`AsmOrCbw`, `AsmWithLab`, `Word`) stay fully
-polymorphic, so this module carries no word-width translation.  HOL `insert`
-and `fromAList` are the Sptree operations, rendered as `sptInsert` and
-`sptFromAList`.
+HOL `line` and `sec` share a single type-indexed word parameter `'a`, so the
+imported `LabLang.Line`/`LabLang.Section` carriers are instantiated at HOL's
+actual carriers: `HolAsm`, `HolMemop`, `HolAddr`, `HolCmp`, `HolRegImm` and
+the opaque `MlString`, with only HOL's `'a word` translated to the
+positive-width `BitVec width`.  HOL `insert` and `fromAList` are the Sptree
+operations, rendered as `sptInsert` and `sptFromAList`.
 
 This is the label-computation half of the phase; the offset and
 program-transform halves remain to be ported.
@@ -23,6 +25,8 @@ program-transform halves remain to be ported.
 namespace Flapjack.Compiler.Backend.LabToTarget
 
 open Flapjack.Compiler.Backend.LabLang
+open Flapjack.Compiler.Encoders.Asm
+open Flapjack.Basis.Pure.MlString
 open Flapjack
 
 /-- Exact HOL `lab_to_target$section_labels_def`
@@ -30,9 +34,11 @@ open Flapjack
 lines.  A `Label` with a zero label number is ignored (`if l2 = 0`), otherwise
 its `(label, pos + len)` is prepended to the accumulated list; `Asm` and
 `LabAsm` advance the position by their fixed `len` without recording a label. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "section_labels_def"]
-def sectionLabels {AsmOrCbw AsmWithLab Word : Type} (pos : Nat)
-    (lines : List (Line AsmOrCbw AsmWithLab Word))
+@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "section_labels_def"
+  (words_as_type_indexed_bitvec)]
+def sectionLabels {width : Nat} [NeZero width] (pos : Nat)
+    (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
     (labs : List (Nat × Nat)) : Nat × List (Nat × Nat) :=
   match lines with
   | [] => (pos, labs)
@@ -50,9 +56,11 @@ its `(new_pos, sec_labs)` from the running position, and the section id is
 mapped to the `spt` built from `(0, pos) :: sec_labs` via `fromAList`, inserted
 into the accumulator with `insert`.  The start offset `pos` is captured before
 advancing. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "compute_labels_alt_def"]
-def computeLabelsAlt {AsmOrCbw AsmWithLab Word : Type} (pos : Nat)
-    (sections : List (Section (Line AsmOrCbw AsmWithLab Word)))
+@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "compute_labels_alt_def"
+  (words_as_type_indexed_bitvec)]
+def computeLabelsAlt {width : Nat} [NeZero width] (pos : Nat)
+    (sections : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
     (labs : Spt (Spt Nat)) : Spt (Spt Nat) :=
   match sections with
   | [] => labs
