@@ -156,6 +156,7 @@ import Flapjack.Test.LabToTargetPositionsParity
 import Flapjack.Test.LabToTargetSecondPassParity
 import Flapjack.Test.LabToTargetPaddingParity
 import Flapjack.Test.LabToTargetRemoveLabelsParity
+import Flapjack.Test.LabToTargetMapLemmasParity
 import Flapjack.Test.LabToTargetShmemInfoParity
 import Flapjack.Test.LabToTargetCompileParity
 import Flapjack.Test.ParmoveInvariantsParity
@@ -1559,6 +1560,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetSecondPassParity.runChecks,
     Flapjack.Test.LabToTargetPaddingParity.runChecks,
     Flapjack.Test.LabToTargetRemoveLabelsParity.runChecks,
+    Flapjack.Test.LabToTargetMapLemmasParity.runChecks,
     Flapjack.Test.LabToTargetShmemInfoParity.runChecks,
     Flapjack.Test.LabToTargetCompileParity.runChecks,
     Flapjack.Test.MiscLookupAnyFindIndexParity.runChecks

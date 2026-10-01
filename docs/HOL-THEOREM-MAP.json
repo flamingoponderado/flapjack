@@ -43851,6 +43851,15 @@
 },
 {
   "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+  "lean_name": "padCodeMap",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "pad_code_MAP",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.29): literal lab_to_targetScript.sml:226. HOL states the function equality `pad_code nop = MAP (lambda x. Section (Section_num x) (pad_section nop (Section_lines x) []))` and proves it via FUN_EQ_THM, list induction, and a section case split. The Lean theorem states exactly that function equality with `List.map` for `MAP`, the Section structure's `sectionId`/`lines` selectors for `Section_num`/`Section_lines`, and the same explicit `nop`; no hypothesis is added and no clause changed. The only carrier difference is HOL's type-indexed `'a word` translated to positive-width `BitVec width`, retained by `{width : Nat}`/`[NeZero width]` and named at the annotated section carrier; `nop` is HOL's fixed `word8` list. Proved by `funext` plus induction mirroring HOL. Direct original-HOL EVAL rows PadCodeMapEmpty/PadCodeMapTwo evaluate both sides in scripts/hol-probes/lab_to_target_maplemmas_probe.out and are replayed in Flapjack.Test.LabToTargetMapLemmasParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
   "lean_name": "secLength",
   "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
   "hol_name": "sec_length_def",
@@ -43947,6 +43956,15 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:332-337, all three clauses. `[] => []`; `Section k [] :: xs => prog_to_bytes xs` (empty sections are skipped); `Section k (y::ys) :: xs => line_bytes y ++ prog_to_bytes (Section k ys :: xs)`. The result is the fixed HOL `word8 list` and the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). HOL's well-founded recursion over the shrinking section line list is mirrored by Lean's recursion, whose equation lemmas are used for the kernel replay; no guard or clause is weakened. Replayed as the ProgToBytesEmpty/ProgToBytesConcrete rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "progToBytesMap",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "prog_to_bytes_MAP",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.29): literal lab_to_targetScript.sml:341. HOL states `forall ls. prog_to_bytes ls = FLAT (MAP (FLAT o MAP line_bytes o Section_lines) ls)` and proves it with prog_to_bytes_ind. The Lean theorem states exactly that equality with `List.flatten` for `FLAT`, `List.map` for `MAP`, the composition spelled pointwise as `fun s => (s.lines.map lineBytes).flatten`, and `Section_lines` read as `s.lines`; it adds no hypothesis and changes no clause. HOL's type-indexed `'a word` is translated to positive-width `BitVec width`, retained by `{width : Nat}`/`[NeZero width]` and named in the section carrier argument; the result is HOL's fixed `word8 list`. Proved by the same well-founded induction over the shrinking section line list (Lean's generated `progToBytes.induct`). Direct original-HOL EVAL rows ProgToBytesMapEmpty/ProgToBytesMapTwo evaluate both sides in scripts/hol-probes/lab_to_target_maplemmas_probe.out and are replayed in Flapjack.Test.LabToTargetMapLemmasParity. Coordinator source review pending."
 },
 {
   "lean_path": "Flapjack/Misc/Sptree.lean",

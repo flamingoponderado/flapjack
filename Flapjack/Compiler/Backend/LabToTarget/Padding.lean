@@ -101,6 +101,27 @@ def padCode {width : Nat} [NeZero width] (nop : List (BitVec 8))
   | [] => []
   | ⟨n, xs⟩ :: ys => ⟨n, padSection nop xs []⟩ :: padCode nop ys
 
+/-- Exact HOL `lab_to_target$pad_code_MAP` (`lab_to_targetScript.sml:226`):
+`pad_code nop = MAP (λx. Section (Section_num x) (pad_section nop
+(Section_lines x) []))`.  The linked Section/Line carrier's only type-indexed
+word is translated to positive-width `BitVec width` (words_as_type_indexed_bitvec).
+HOL proves this function equality with `FUN_EQ_THM` followed by list induction and
+a case split on the section; the Lean proof is the same `funext` plus
+`List`-induction, with no added hypothesis or changed clause. -/
+@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "pad_code_MAP"
+  (words_as_type_indexed_bitvec)]
+theorem padCodeMap {width : Nat} [NeZero width] (nop : List (BitVec 8)) :
+    padCode nop =
+      List.map (fun x : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) =>
+          ⟨x.sectionId, padSection nop x.lines []⟩) := by
+  funext sections
+  induction sections with
+  | nil => simp only [padCode, List.map_nil]
+  | cons s rest ih =>
+      cases s with
+      | mk n xs => simp only [padCode, List.map_cons, ih]
+
 /-- Exact HOL `lab_to_target$sec_length_def`
 (`lab_to_targetScript.sml:234-239`), clause for clause.  The accumulator `k`
 starts the sum; `Label`/`Asm`/`LabAsm` all add their recorded length. -/
