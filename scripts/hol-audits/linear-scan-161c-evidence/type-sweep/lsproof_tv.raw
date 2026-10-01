@@ -1,0 +1,131 @@
+TV set_MAP_FST_toAList_eq_domain 1
+ST set_MAP_FST_toAList_eq_domain ∀(s :α sptree$num_map). set (MAP (FST :num # α -> num) (toAList s)) = (domain s :num -> bool)
+
+TV numset_list_insert_FOLDL 0
+TV numset_list_insert_nottailrec_FOLDR 0
+TV both_numset_list_insert_equal 0
+TV domain_numset_list_insert 0
+TV lookup_insert_id 0
+TV numset_list_insert_FILTER 0
+TV domain_numset_list_delete 1
+ST domain_numset_list_delete ∀(l :num list) (s :α sptree$num_map). (domain (numset_list_delete l s) :num -> bool) = (domain s :num -> bool) DIFF set l
+
+TV check_partial_col_success_INJ_lemma 0
+TV check_partial_col_success_INJ 0
+TV check_partial_col_input_monotone 0
+TV numset_list_delete_IMAGE 0
+TV check_partial_col_IMAGE 0
+TV branch_domain 0
+TV check_partial_col_branch_domain 0
+TV check_partial_col_branch_comm 0
+TV check_partial_col_list_monotone 0
+TV check_live_tree_success 0
+TV ALL_DISTINCT_INJ_MAP 2
+ST ALL_DISTINCT_INJ_MAP ∀(f :α -> β) (l :α list). ALL_DISTINCT (MAP f l) ⇒ INJ f (set l) 𝕌(:β)
+
+TV check_col_output 1
+ST check_col_output ∀(f :num -> num) (live :α sptree$num_map) (live' :α sptree$num_map) (flive' :sptree$num_set). check_col f live = SOME (live',flive') ⇒ (domain flive' :num -> bool) = IMAGE f (domain live' :num -> bool) ∧ INJ f (domain live' :num -> bool) 𝕌(:num)
+
+TV check_col_success 1
+ST check_col_success ∀(f :num -> num) (live :α sptree$num_map). INJ f (domain live :num -> bool) 𝕌(:num) ⇒ ∃(flive :sptree$num_set). check_col f live = SOME (live,flive)
+
+TV check_clash_tree_output 0
+TV get_live_tree_correct_lemma 0
+TV get_live_tree_correct 0
+TV get_live_tree_correct_LN 0
+TV check_partial_col_numset_list_insert 0
+TV check_live_tree_eq_get_live_backward 0
+TV fix_domination_fixes_domination 0
+TV fix_domination_check_live_tree 0
+TV size_of_live_tree_positive 0
+TV check_number_property_strong_monotone_weak 0
+TV check_number_property_strong_monotone 0
+TV check_number_property_strong_end 0
+TV check_number_property_monotone_weak 0
+TV lookup_numset_list_add_if 0
+TV lookup_numset_list_add_if_lt 0
+TV lookup_numset_list_add_if_gt 0
+TV domain_numset_list_add_if 0
+TV domain_numset_list_add_if_lt 0
+TV domain_numset_list_add_if_gt 0
+TV lookup_numset_list_delete 1
+ST lookup_numset_list_delete ∀(l :num list) (s :α sptree$num_map) (x :num). lookup x (numset_list_delete l s) = if MEM x l then (NONE :α option) else lookup x s
+
+TV get_intervals_nout 0
+TV get_intervals_withlive_nout 0
+TV get_intervals_intend_augment 0
+TV check_number_property_intend 0
+TV get_intervals_live_less_end 0
+TV get_intervals_withlive_intbeg_reduce 0
+TV get_intervals_withlive_intbeg_nout 0
+TV get_intervals_intbeg_nout 0
+TV get_intervals_withlive_live_intbeg 0
+TV get_intervals_withlive_n_eq_get_intervals_n 0
+TV get_intervals_withlive_end_eq_get_intervals_end 0
+TV get_intervals_beg_subset_registers 0
+TV get_intervals_withlive_beg_lipschitz 0
+TV get_intervals_withlive_live_tree_registers_subset_endout 0
+TV get_intervals_withlive_beg_subset_get_intervals_beg 0
+TV get_intervals_withlive_registers_subset_beg 0
+TV get_intervals_end_increase 0
+TV get_intervals_intbeg_reduce 1
+ST get_intervals_intbeg_reduce ∀(lt :live_tree) (n_in :int) (beg_in :int sptree$num_map) (end_in :int sptree$num_map) (n_out :int) (beg_out :int sptree$num_map) (end_out :int sptree$num_map) (live :α). (n_out,beg_out,end_out) = get_intervals lt n_in beg_in end_in ∧ (∀(r :num) (v :int). lookup r beg_in = SOME v ⇒ n_in ≤ v) ⇒ (∀(r :num). (case lookup r beg_out of (NONE :int option) => n_out | SOME x => x) ≤ case lookup r beg_in of (NONE :int option) => n_in | SOME x => x) ∧ ∀(r :num) (v :int). lookup r beg_out = SOME v ⇒ n_out ≤ v
+
+TV check_startlive_prop_monotone 0
+TV check_startlive_prop_augment_ndef 0
+TV get_intervals_check_startlive_prop 0
+TV get_intervals_withlive_beg_less_live 0
+TV get_intervals_withlive_beg_eq_get_intervals_beg_when_some 0
+TV get_intervals_domain_eq_live_tree_registers 0
+TV get_intervals_withlive_domain_eq_live_tree_registers 0
+TV get_intervals_withlive_beg_eq_get_intervals_beg 0
+TV check_number_property_subset_endout 0
+TV get_intervals_beg_less_live 1
+ST get_intervals_beg_less_live ∀(lt :live_tree) (live_in :α) (n_out :int) (beg_out :int sptree$num_map) (end_out :int sptree$num_map). (n_out,beg_out,end_out) = get_intervals (fix_domination lt) (0 :int) (LN :int sptree$num_map) (LN :int sptree$num_map) ⇒ check_number_property_strong (λ(n :int) (live :sptree$num_set). ∀(r :num). r ∈ (domain live :num -> bool) ⇒ (case lookup r beg_out of (NONE :int option) => n_out | SOME x => x) ≤ n) (fix_domination lt) (0 :int) (LN :sptree$num_set)
+
+TV exists_point_inside_interval_interval_intersect 0
+TV check_intervals_check_live_tree_lemma 0
+TV check_intervals_check_live_tree 0
+TV get_intervals_ct_aux_live 0
+TV get_intervals_ct_aux_int 0
+TV get_intervals_ct_eq 0
+TV update_colors_eqn 0
+TV update_int_beg_eqn 0
+TV update_int_end_eqn 0
+TV update_sorted_regs_eqn 0
+TV update_sorted_moves_eqn 0
+TV lookup_default_id_def 0
+TV lookup_default_id_insert 0
+TV id_def 1
+ST id_def ∀(x :α). id x = x
+
+TV good_bijection_state_def 0
+TV convention_partitions_or 0
+TV find_bijection_invariants 0
+TV FOLDL_find_bijection_invariants 0
+TV foldi_find_bijection_invariants 1
+ST foldi_find_bijection_invariants ∀(st :bijection_state) (s :α sptree$num_map) (regset :num -> bool). good_bijection_state st regset ⇒ good_bijection_state (foldi (λ(r :num) (v :α) (acc :bijection_state). find_bijection_step acc r) (0 :num) st s) ((domain s :num -> bool) ∪ regset)
+
+TV in_clash_tree_set_eq 0
+TV find_bijection_clash_tree_invariants 0
+TV find_bijection_init_invariants 0
+TV check_col_apply_bijection 0
+TV check_partial_col_apply_bijection 0
+TV check_clash_tree_output_subset 0
+TV domain_apply_bij_set 1
+ST domain_apply_bij_set ∀(s :α sptree$num_map) (bij :num sptree$num_map). (domain (foldi (λ(r :num) (_0 :α) (acc :sptree$num_set). insert (the (0 :num) (lookup r bij)) () acc) (0 :num) (LN :sptree$num_set) s) :num -> bool) = IMAGE (λ(r :num). the (0 :num) (lookup r bij)) (domain s :num -> bool)
+
+TV in_clash_tree_apply_bij 0
+TV LENGTH_toAList 1
+ST LENGTH_toAList ∀(s :α sptree$num_map). LENGTH (toAList s) = size s
+
+TV check_col_equal_col 1
+ST check_col_equal_col ∀(s :α sptree$num_map) (f1 :num -> num) (f2 :num -> num). (∀(r :num). r ∈ (domain s :num -> bool) ⇒ f1 r = f2 r) ⇒ check_col f1 s = check_col f2 s
+
+TV check_partial_col_equal_col 0
+TV check_clash_tree_equal_col 0
+TV check_clash_tree_apply_bijection 0
+TV in_clash_tree_eq_live_tree_registers 0
+TV get_live_backward_in_live_tree_registers 0
+TV fix_domination_live_tree_registers 0
+TV get_intervals_beg_less_end 0

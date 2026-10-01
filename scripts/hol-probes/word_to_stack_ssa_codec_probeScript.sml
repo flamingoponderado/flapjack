@@ -1,0 +1,11 @@
+load "bossLib"; load "preamble"; load "word_allocTheory";
+open HolKernel Parse bossLib preamble word_allocTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "sc_skip" ``full_ssa_cc_trans 2 (Skip:8 wordLang$prog) = Seq (Move1 [(5,0);(9,2)]) Skip``;
+val _ = out "sc_assigns" ``full_ssa_cc_trans 2 (Seq (Assign 0 (Const 0w)) (Assign 2 (Var 0)):8 wordLang$prog) = Seq (Move1 [(5,0);(9,2)]) (Seq (Assign 13 (Const 0w)) (Assign 17 (Var 13)))``;
+val _ = out "sc_constant" ``full_ssa_cc_trans 0 (Inst (Const 1 7w):8 wordLang$prog) = Seq (Move1 []) (Inst (Const 5 7w))``;
+val _ = out "sc_shift" ``full_ssa_cc_trans 0 (Inst (Arith (Shift Lsl 1 2 (Reg 3))):8 wordLang$prog) = Seq (Move1 []) (Seq (Move1 [(8,0)]) (Inst (Arith (Shift Lsl 5 0 (Reg 8)))))``;
+val _ = out "sc_multiply" ``full_ssa_cc_trans 0 (Inst (Arith (LongMul 1 2 3 4)):8 wordLang$prog) = Seq (Move1 []) (Seq (Move1 [(0,0);(4,0)]) (Seq (Inst (Arith (LongMul 6 0 0 4))) (Move1 [(13,0);(9,6)])))``;
+val _ = out "sc_raise" ``full_ssa_cc_trans 2 (Raise 2:8 wordLang$prog) = Seq (Move1 [(5,0);(9,2)]) (Seq (Move1 [(2,9)]) (Raise 2))``;
+val _ = out "sc_call" ``full_ssa_cc_trans 2 (Call NONE (SOME 7) [0;2] NONE:8 wordLang$prog) = Seq (Move1 [(5,0);(9,2)]) (Seq (Move1 [(0,5);(2,9)]) (Call NONE (SOME 7) [0;2] NONE))``;
+val _ = out "sc_return" ``full_ssa_cc_trans 3 (Return 0 [2;4]:8 wordLang$prog) = Seq (Move1 [(9,0);(13,2);(17,4)]) (Seq (Move 0 [(2,13);(4,17)]) (Return 9 [2;4]))``;

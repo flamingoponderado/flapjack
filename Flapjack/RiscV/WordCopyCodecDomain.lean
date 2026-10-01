@@ -1,17 +1,8 @@
 import Flapjack.RiscV.WordCopyProp
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
 
 namespace Flapjack.RiscV
-
-private theorem isSome_bind_some (first : Option α) (f : α → β) :
-    (first.bind fun x => some (f x)).isSome = first.isSome := by
-  cases first <;> rfl
-
-private theorem isSome_bind_pair (first : Option α) (second : Option β)
-    (f : α → β → γ) :
-    (first.bind fun x => second.bind fun y => some (f x y)).isSome =
-      (first.isSome && second.isSome) := by
-  cases first <;> cases second <;> rfl
+open WordProgCarrierCodec
 
 /-- Flapjack carrier-domain infrastructure for the actual copy instruction
 rewriter. It preserves encoder acceptance, including rejection of the separate
@@ -39,7 +30,7 @@ theorem wordCopyProg_codecDomain {width : Nat} [WordCseHash (BitVec width)]
       (wordLangProgToHOL program).isSome := by
   induction state, program using wordCopyProg.induct <;>
     simp_all [wordCopyProg, wordLangProgToHOL,
-      Option.isSome_map, isSome_bind_some, isSome_bind_pair]
+      Option.isSome_map, optionMapDomain, optionPairDomain]
   all_goals try (split <;> simp_all [wordLangProgToHOL])
   rename_i initial original rewritten final h
   have preserved := wordCopyInst_codecDomain initial original

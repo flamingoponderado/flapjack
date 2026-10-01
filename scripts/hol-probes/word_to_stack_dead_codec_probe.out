@@ -1,0 +1,13 @@
+dc_skip=T
+dc_move=T
+dc_const=T
+dc_load=T
+dc_load16=T
+dc_store=T
+dc_share=T
+dc_seq=T
+dc_if=T
+dc_loop=T
+dc_must=T
+dc_tail_handler=T
+dc_return_handler=T
