@@ -39247,22 +39247,8 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3.2): labSemScript47 is_Label true exactly Label, false on other two constructors. Canonical actual LabLang Line payloads use HolAsm/HolMemop/HolAddr and HolCmp/HolRegImm/MlString with BitVec at one positive NeZero width; fixed encoded bytes BitVec8 retained. The former generic isLabel quantified arbitrary payload Types, including an arbitrary Word, which is not the source carrier even when ignored; its unqualified tag/map/pin are removed while the generic function signature/body stay unchanged as explicitly documented Flapjack-only utility. Native three-case classifier is exact under word-dimension translation. Unconditional kernel isLabelHOL_eq_generic compares actual native instances, no added hypothesis. Native navigation/evaluator consumption remains linked on b4v0.3/b4v0; no executed compiler change or performance exception."
 },
-{
-  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
-  "hol_name": "is_Label_def",
-  "lean_path": "Flapjack/Compiler/Backend/LabSem.lean",
-  "lean_name": "isLabel",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Codex (labSemScript.sml:47 is_Label returns T exactly on Label, F otherwise; Lean pattern match preserves all constructors)"
-},
-{
-  "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
-  "hol_name": "sec_ends_with_label_def",
-  "lean_path": "Flapjack/Compiler/Backend/LabProps.lean",
-  "lean_name": "secEndsWithLabelHOL",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Codex (labPropsScript.sml:81 is a HOL predicate, not a Boolean result; the tagged Lean declaration returns Prop with nonempty and final-label conditions, while secEndsWithLabel is an untagged executable Bool counterpart)"
-},
+
+
 {
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ReadsLiveExpressions.lean",
   "lean_name": "getReadsExpGetLiveExp",
@@ -39284,6 +39270,20 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.1), original theorem1105-1130 and Resume Seq1811-1831: original st/cst/f/live/lt three premises and full existential permutation/error/result/state/locals conclusion at Seq. Only genuine first/second subprogram IHs applyColourGoal added. Error and early non-NONE branches reuse first oracle; NONE branch obtains second oracle then exact wordProps permute_swap_lemma combines source choices. Exact rebound evaluator removes fix_clock via proved clock bound; raw production evaluator unchanged. Qualified canonical fpRegs/store and positive-width words, imported owning carrier with same-module roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator as in existing leaf cases, SOUNDNESS item8. Coordinator review pending.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/MustTerminate.lean",
+  "lean_name": "evaluateApplyColour_MustTerminate",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.2), original1105-1130 and Resume1433-1447: exact constructor with original3 premises/full existential post, only genuine body IH. Zero termdep yields source Error; otherwise body runs with original MustTerminate_limit and decremented termdep, its selected oracle retained. Body Error and timeout-to-Error handled; all other results restore original clock and termdep, original state and result-selected locals conclusion. Canonical fpRegs/store and positive-width word qualifiers with imported carrier roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator, SOUNDNESS item8; no evaluator mutation. Coordinator review pending.",
   "inherits_reals_as_rational_cuts": true
 }
 ]

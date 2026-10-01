@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Seq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ReadsLiveExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckPartialCol
