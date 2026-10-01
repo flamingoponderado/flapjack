@@ -50774,5 +50774,23 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-661y: genuine original resumed Continue case of word_allocProofScript.sml6193-6228. Specialized original ssa_cc_trans_ind with the full original program property, then replayed literal original Resume Loop/Break/Continue tactics after their original compiler unfolding with literal original local prerequisites; full three clauses and29 argument carriers captured. Retains native compiler output equality, original map/allocation conjunction and all3 counter monotonicity/allocation/output-map conclusions. Loop retains all original setupProg/refreshed/counter/ssaNames/ssaExit/bodyMap binders, all four defining guard equalities, and original body IH at the actual cut/refreshed-counter/extended-loop-table context before output binders/premises; no stronger arbitrary-context body predicate or whole-loop property assumption. Setup extension/refresh frames, body caller obligations and final refreshed exit-map intersection at body output counter are derived via actual native renaming/intersection/monotone-map proofs. Break/Continue have no IH and quantify arbitrary loop tables, preserving both map/counter on every lookup/reconciliation branch without a table-validity premise. Native positive BitVec word width/NeZero is the only translation; Spt Unit sets, Spt Nat maps, List loop triples and natural labels/counters remain identity constructors. All other program invariant cases/assembly remain open on parentbwlk."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_props",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsCalls.lean",
+  "lean_name": "ssaCcTransPropsTailCall",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol-a source comparison flapjack-vw2t: original marked Calls6092–6174 and native compiler functional induction. Call NONE specialized functional-induction clause21; no IH. Original compiler equality plus ssa_map_ok/is_alloc_var premises imply all three counter monotonicity/allocation/map bounds; actual handler input frames and final reconciliation derived, no extra validity/distinctness/evaluation/post-map/desired simulation premise. Native List/Nat/Spt cutsets and loop-table triples; Option Nat destination; actual four-field exception payload, positive width BitVec matching original word dimension. Fresh literal original Call tactics kernel replay and full quantified types captured. Proof-side infrastructure; executable unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_props",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsCalls.lean",
+  "lean_name": "ssaCcTransPropsReturningCall",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol-a source comparison flapjack-vw2t: original marked Calls6092–6174 and native compiler functional induction. Call SOME specialized functional-induction clause22; exception IH first, return IH second, retaining every actual setup/rename/cut/handler/fresh guard and binder before output quantifiers. Original compiler equality plus ssa_map_ok/is_alloc_var premises imply all three counter monotonicity/allocation/map bounds; actual handler input frames and final reconciliation derived, no extra validity/distinctness/evaluation/post-map/desired simulation premise. Native List/Nat/Spt cutsets and loop-table triples; Option Nat destination; actual four-field exception payload, positive width BitVec matching original word dimension. Fresh literal original Call tactics kernel replay and full quantified types captured. Proof-side infrastructure; executable unchanged."
 }
 ]
