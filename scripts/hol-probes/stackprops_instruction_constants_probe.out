@@ -1,0 +1,30 @@
+ic_fields=inst (i :α inst) (s :(α, β, γ) state) = SOME (t :(α, β, γ) state) ⇒
+t.ffi = s.ffi ∧ t.clock = s.clock ∧ (t.use_alloc ⇔ s.use_alloc) ∧
+(t.use_store ⇔ s.use_store) ∧ (t.use_stack ⇔ s.use_stack) ∧ t.code = s.code ∧
+(t.be ⇔ s.be) ∧ t.gc_fun = s.gc_fun ∧ t.mdomain = s.mdomain ∧
+t.sh_mdomain = s.sh_mdomain ∧ t.bitmaps = s.bitmaps ∧ t.compile = s.compile ∧
+t.compile_oracle = s.compile_oracle
+ic_fields_types=(t :(α, β, γ) state)::(α, β, γ) state;(s :(α, β, γ) state)::(α, β, γ) state;(i :α inst)::α inst;
+ic_map=inst (i :α inst) ((s :(α, β, γ) state) with clock := (k :num)) =
+OPTION_MAP (λ(s :(α, β, γ) state). s with clock := k) (inst i s)
+ic_map_types=(s :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(i :α inst)::α inst;
+ic_clock=(inst (i :α inst) (s :(α, β, γ) state) = SOME (t :(α, β, γ) state) ⇒
+ inst i (s with clock := (k :num)) = SOME (t with clock := k)) ∧
+(inst i s = (NONE :(α, β, γ) state option) ⇒
+ inst i (s with clock := k) = (NONE :(α, β, γ) state option))
+ic_clock_types=(k :num)::num;(t :(α, β, γ) state)::(α, β, γ) state;(s :(α, β, γ) state)::(α, β, γ) state;(i :α inst)::α inst;
+ic_ffi=(inst (i :α inst) (s :(α, β, γ) state) = SOME (t :(α, β, γ) state) ⇒
+ inst i (s with ffi := (k :δ ffi_state)) = SOME (t with ffi := k)) ∧
+(inst i s = (NONE :(α, β, γ) state option) ⇒
+ inst i (s with ffi := k) = (NONE :(α, β, δ) state option))
+ic_ffi_types=(k :δ ffi_state)::δ ffi_state;(t :(α, β, γ) state)::(α, β, γ) state;(s :(α, β, γ) state)::(α, β, γ) state;(i :α inst)::α inst;
+ic_const_clock=SOME (19,SOME (Word 12w))
+ic_const_clock_zero=SOME (0,SOME (Word 12w))
+ic_div_failure=NONE
+ic_or_location=SOME (19,SOME (Loc 4 5))
+ic_store_success=SOME (19,Loc 4 5)
+ic_store_failure=NONE
+ic_fp_abs=SOME (0,SOME 0x3FF0000000000000w)
+ic_fp_missing=NONE
+ic_const_ffi=SOME (T,19,SOME (Word 12w))
+ic_none_ffi=NONE

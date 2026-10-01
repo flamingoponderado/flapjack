@@ -1,4 +1,5 @@
 import Flapjack.Test.ByteWordToBytesAuxParity
+import Flapjack.Test.StackPropsInstructionConstantsParity
 import Flapjack.Test.LabToTargetPaddingLengthParity
 import Flapjack.Test.LabToTargetMapLemmasParity
 import Flapjack.Test.LabToTargetEncodingParity
@@ -14,10 +15,13 @@ import Flapjack.Test.StackPropsClockSupportParity
 import Flapjack.Test.StackWordBoundary
 import Flapjack.Test.StackToLabExecutedCodecParity
 import Flapjack.Test.StackPropsExpressionClockParity
+import Flapjack.Test.StackPropsStateConstantsFfiCarrierParity
 import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.ProductionScheduler
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordToStackNoInstallTopParity
+import Flapjack.Test.WordPropsNoInstallCodeParity
 import Flapjack.Test.WordToStackNoInstallProgramsParity
 import Flapjack.Test.WordToStackCompNoInstallParity
 import Flapjack.Test.WordToStackNoShmemopTopParity
