@@ -1,3 +1,4 @@
+import Flapjack.Test.WordCopyCodecDomainParity
 import Flapjack.Test.FindIndexAppendParity
 import Flapjack.Test.CanonizeSortParity
 import Flapjack.Test.HeuProgParity
@@ -1488,4 +1489,3 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
 end Flapjack.Test.CompilerParity
 
 def main : IO Unit := Flapjack.Test.CompilerParity.main
-import Flapjack.Test.WordCopyCodecDomainParity

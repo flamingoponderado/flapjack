@@ -2528,3 +2528,7 @@ external-source checker trust nor completes normalization/grouping or executed
 allocator routing. Source revision/span digest are beside `canonizeMoveLess`.
 Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_canonize_sort_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_copy_codec_domain_probe` records eight original copy equations;
+`WordCopyCodecDomainParity.lean` replays them and separately checks nested
+five-register AddCarry rejection. Codec-domain preservation is Flapjack
+infrastructure, not a HOL semantic equivalence theorem.

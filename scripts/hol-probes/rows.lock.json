@@ -1,5 +1,4 @@
 {
-  "version": 1,
   "records": [
     {
       "bytes": 1837,
@@ -3884,6 +3883,12 @@
       "sha256": "952f3d8fd5d2350e05cd64d45e9e09567459feb04168dc9750a3ae6b63157a3f"
     },
     {
+      "bytes": 105,
+      "out": "word_copy_codec_domain_probe.out",
+      "rows": 8,
+      "sha256": "827e611dcd187f91050c51df40a398378ef7f890dbfecdd107dca04f4001fd89"
+    },
+    {
       "bytes": 2328,
       "out": "word_inst_probe.out",
       "rows": 36,
@@ -4291,5 +4296,6 @@
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
     }
-  ]
+  ],
+  "version": 1
 }
