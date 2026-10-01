@@ -1,0 +1,17 @@
+load "bossLib";
+load "preamble";
+load "word_allocTheory";
+open bossLib HolKernel Parse preamble word_allocTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val _ = observe "cma_empty" ``canonize_moves_aux 7 ((2,3):num # num) 0 [] [] = [(0,7,(2,3))]``;
+val _ = observe "cma_acc" ``canonize_moves_aux 7 ((2,3):num # num) 9 [] [(8,6,(4,5))] = [(9,7,(2,3));(8,6,(4,5))]``;
+val _ = observe "cma_same_up" ``canonize_moves_aux 2 ((1,3):num # num) 1 [(9,(1,3))] [] = [(2,9,(1,3))]``;
+val _ = observe "cma_same_down" ``canonize_moves_aux 9 ((1,3):num # num) 4 [(2,(1,3))] [] = [(5,9,(1,3))]``;
+val _ = observe "cma_same_equal" ``canonize_moves_aux 9 ((1,3):num # num) 0 [(9,(1,3))] [] = [(1,9,(1,3))]``;
+val _ = observe "cma_different" ``canonize_moves_aux 7 ((1,3):num # num) 4 [(2,(4,5))] [] = [(1,2,(4,5));(4,7,(1,3))]``;
+val _ = observe "cma_groups" ``canonize_moves_aux 2 ((1,3):num # num) 1 [(7,(1,3));(4,(5,6));(9,(5,6))] [(8,6,(4,5))] = [(2,9,(5,6));(2,7,(1,3));(8,6,(4,5))]``;
+val _ = observe "cma_unsorted" ``canonize_moves_aux 2 ((1,3):num # num) 1 [(7,(4,5));(4,(1,3))] [] = [(1,4,(1,3));(1,7,(4,5));(1,2,(1,3))]``;
+val _ = observe "cma_reversed" ``canonize_moves_aux 2 ((1,3):num # num) 1 [(7,(3,1))] [] = [(1,7,(3,1));(1,2,(1,3))]``;
+val _ = observe "cma_self" ``canonize_moves_aux 0 ((3,3):num # num) 0 [(0,(3,3))] [] = [(1,0,(3,3))]``;
+val _ = observe "cma_large" ``canonize_moves_aux 18446744073709551616 ((18446744073709551617,3):num # num) 18446744073709551616 [(2,(18446744073709551617,3))] [] = [(18446744073709551617,18446744073709551616,(18446744073709551617,3))]``;
+val _ = observe "cma_bool" ``canonize_moves_aux 2 T 4 [(7,T);(3,F)] [] = [(1,3,F);(5,7,T)]``;

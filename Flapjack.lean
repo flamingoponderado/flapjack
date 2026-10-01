@@ -2,6 +2,9 @@ import Flapjack.Misc.FindIndex.Append
 import Flapjack.Compiler.Backend.RegAlloc.Exceptions
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
+import Flapjack.Misc.FindIndex.ShiftZero
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
 import Flapjack.Compiler.Backend.WordAlloc.HeuCall
 import Flapjack.Compiler.Backend.WordAlloc.HeuMax
 import Flapjack.Compiler.Backend.RegAlloc.Carriers

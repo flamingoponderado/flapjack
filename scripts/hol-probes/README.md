@@ -2489,3 +2489,24 @@ unbounded names/counters and widths 1/64/128. These finite observations do not
 establish general cross-prover equivalence or production allocator routing.
 Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_alloc_canonize_moves_aux_probeScript.sml` / `.out` compares the literal
+counting recursion at word_allocScript1641-1648 against twelve full output
+lists: empty/current zero count, arbitrary accumulator, priority up/down/equal,
+changed groups, reverse flush order, unsorted/reversed/self moves, and unbounded
+Nat counters/priorities/registers. Kernel pairs live in
+`Flapjack/Test/WordAllocCanonizeMovesAuxParity.lean`; this does not establish
+the separate sort prerequisite or executed allocator routing.
+
+`misc_find_index_shift_zero_probeScript.sml` / `.out` compares ten whole
+original offset-shift equations with kernel theorem applications in
+`Flapjack/Test/FindIndexShiftZeroParity.lean`: empty, head/interior/last, missing,
+duplicates, zero and unbounded offsets/identifiers, and Boolean carriers.
+This supports the Move first-index characterization; it does not establish
+the full pass-correctness result.
+
+`parmove_temp_step_probeScript.sml` / `.out` captures nine combined original
+wf/source/target scratch-safety observations for all six primitive Step cases,
+cycle save, prior-written scratch reads/save, and Boolean registers. Matching
+`Flapjack/Test/ParmoveTempStepParity.lean` checks source wf/safety and derives
+target safety via the actual Step constructor and full ported theorem.
+RTC/pmov and full Move correctness remain separate open obligations.

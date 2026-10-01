@@ -3063,3 +3063,15 @@ run_probe reg_alloc_remap_probeScript.sml reg_alloc_remap_probe.out \
 run_probe word_alloc_heu_prog_probeScript.sml word_alloc_heu_prog_probe.out \
   hp_move hp_inst hp_get hp_set_var hp_set_other hp_heap hp_heap_alias hp_loc hp_seq hp_must hp_loop hp_if_reg hp_if_alias hp_if_imm hp_tail_indirect hp_tail_other hp_tail_self hp_ret_indirect hp_ret_other hp_ret_self hp_ret_discard hp_ret_self_discard hp_ret_handler hp_if_calls hp_seq_calls hp_share_load hp_share_load8 hp_share_load16 hp_share_load32 hp_share_store hp_share_store8 hp_share_store16 hp_share_store32 hp_ignore_skip hp_ignore_assign hp_ignore_store hp_ignore_alloc hp_ignore_consts hp_ignore_raise hp_ignore_return hp_ignore_break hp_ignore_continue hp_ignore_tick hp_ignore_install hp_ignore_code hp_ignore_data hp_ignore_ffi hp_width1 hp_width128 hp_large_counter hp_raw_skip hp_raw_self \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_canonize_moves_aux_probeScript.sml word_alloc_canonize_moves_aux_probe.out \
+  cma_empty cma_acc cma_same_up cma_same_down cma_same_equal cma_different cma_groups cma_unsorted cma_reversed cma_self cma_large cma_bool \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe misc_find_index_shift_zero_probeScript.sml misc_find_index_shift_zero_probe.out \
+  fiz_empty fiz_head fiz_middle fiz_last fiz_absent fiz_zero fiz_large_offset fiz_large_value fiz_bool fiz_bool_absent \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
+
+run_probe parmove_temp_step_probeScript.sml parmove_temp_step_probe.out \
+  pts_remove pts_start pts_extend pts_save_cycle pts_emit_head pts_emit_last pts_save_none pts_emit_scratch pts_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
