@@ -2384,3 +2384,11 @@ proves equalities on the same inputs by kernel-checked reduction, without a
 program DecidableEq assumption, and is imported by the actual test driver.
 This is finite regression evidence, not whole-allocator correctness; the
 executed allocator route remains separate work.
+
+`spt_mapi_probe.out` contains twelve direct original `mapi0_def`/`mapi_def`
+observations, kernel-replayed as exact trees in `SptMapiParity`. Cases cover
+left/right key order, nested nodes, smart-constructor normalization of raw
+malformed trees, nonzero starting indices and Bool/Nat payload changes.
+These finite observations do not establish cross-prover equivalence or route
+the executed allocator. Regenerate read-only with
+`HOL_PROBE_ONLY=spt_mapi_probeScript.sml scripts/hol-probes/regenerate.sh`.

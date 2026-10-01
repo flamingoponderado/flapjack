@@ -42185,5 +42185,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison word_allocScript1607-1626: explicit NONE and SOME col branches on exact Spt Nat num_map, supplied literal ClashTree and WordLangProgHOL positive-width BitVec program. Native totalColour/everyEvenColour/checkClashTree/applyColour/everyStackVarHOL helpers used, not production substitutes. Checker non-NONE is Option.isSome (constructor test), conjunctions Boolean, x>=2*k is decide(2*k<=x) on unboundedNat, forcedpairs EVERY disequality List.all with exactNat BEq. Returns actualcolouredprogram onlyafter both guards, every rejectionNONE retained; no successfuloracle/poststate/targetevaluation premise. words_as_type_indexed_bitvec only carrier translation; Spt is originalnum_map nofinite-mapqualifier. Executedallocator migration remains open; original branch parity and coordinatorreview pending."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/Mapi.lean",
+    "lean_name": "sptMapi0",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "mapi0_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.5.3.1): source four constructor equations866-875: LN unchanged, LS applies f at current index, BN/BS recurse left at i+2*lrnext i and right at i+lrnext i; BS root applies f i; smart constructors collapse empty children exactly. HOL polymorphic input/output payloads translate to independent universe-0 alpha/beta; Nat indices and constructor-for-constructor Spt retained, no wf or finite-map representation premise. Dependencies compared: lrnext421-426 is zero1 / successor 2*lrnext(n/2), mk_BN88-92 and mk_BS94-98 agree with imported lrNext/sptMkBN/sptMkBS including malformed-tree normalization. Twelve original HOL equality observations and same-input kernel tree replay cover key asymmetry, nested trees, raw empty nodes, nonzero indices and Bool/Nat payload changes. This literal helper is a prerequisite for heu_max_all, not an executed allocator route or completed compiler correctness theorem; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/Mapi.lean",
+    "lean_name": "sptMapi",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "mapi_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.5.3.1): source equation877-878 applies mapi0 f 0 to the input tree. HOL polymorphic input/output payloads translate to independent universe-0 alpha/beta; Nat indices and constructor-for-constructor Spt retained, no wf or finite-map representation premise. Dependencies compared: lrnext421-426 is zero1 / successor 2*lrnext(n/2), mk_BN88-92 and mk_BS94-98 agree with imported lrNext/sptMkBN/sptMkBS including malformed-tree normalization. Twelve original HOL equality observations and same-input kernel tree replay cover key asymmetry, nested trees, raw empty nodes, nonzero indices and Bool/Nat payload changes. This literal helper is a prerequisite for heu_max_all, not an executed allocator route or completed compiler correctness theorem; coordinator review pending."
   }
 ]

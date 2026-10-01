@@ -2977,3 +2977,7 @@ run_probe word_alloc_oracle_colour_probeScript.sml word_alloc_oracle_colour_prob
 run_probe word_alloc_return_checker_probeScript.sml word_alloc_return_checker_probe.out \
   rc_empty rc_cuts rc_duplicate_args rc_return_tick rc_return_break rc_return_collision rc_args_collision \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe spt_mapi_probeScript.sml spt_mapi_probe.out \
+  mi_empty mi_leaf mi_children mi_root mi_nested mi_raw_bn mi_raw_bs mi_raw_nested mi_index3 mi_index6 mi_bool_nat mi_nat_bool \
+  "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"

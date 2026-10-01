@@ -1,3 +1,4 @@
+import Flapjack.Test.SptMapiParity
 import Flapjack.Test.WordAllocOracleColourParity
 import Flapjack.Test.WordAllocReturnCheckerParity
 import Flapjack.Test.WordAllocShareCheckerParity
