@@ -1,3 +1,7 @@
+import Flapjack.Test.ParmoveInvariantsParity
+import Flapjack.Test.WordToStackAbsStackLengthsParity
+import Flapjack.Test.WordToStackAbsStackPrefixParity
+import Flapjack.Test.WordToStackMapFstParity
 
 import Flapjack.Test.WordToStackBitmapAppendParity
 import Flapjack.Test.WordToStackIndexListParity
@@ -1367,7 +1371,10 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.PanSimpProgBridgeParity.runChecks,
     Flapjack.Test.CrepSemTotalExtCallParity.runChecks,
     Flapjack.Test.WordToStackBitmapAppendParity.runChecks,
+    Flapjack.Test.WordToStackMapFstParity.runChecks,
     Flapjack.Test.WordToStackIndexListParity.runChecks,
+    Flapjack.Test.WordToStackAbsStackLengthsParity.runChecks,
+    Flapjack.Test.WordToStackAbsStackPrefixParity.runChecks,
     Flapjack.Test.WordToStackBitmapAppendParity.runChecks,
     Flapjack.Test.WordToStackAbsStackParity.runChecks,
     Flapjack.Test.WordToStackFramesParity.runChecks,

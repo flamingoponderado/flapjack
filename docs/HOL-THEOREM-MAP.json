@@ -38951,12 +38951,103 @@
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.41: literal projections346/353 and lookup330/338. Polymorphic List and Nat quantifiers match; COUNT_LIST translated List.range, reverse keys plus k; original i<LENGTH xs guards both EL accesses, bounded Lean indexing adds no premise and indexed-list bound derives from lengthIndexList. Same truncated Nat subtraction in both spellings. No unguarded HD/default, word or finite-map carrier difference. Structural induction proves all four; original projection/first/last lookup rows replay in kernel. Full state relation remains separate."
 },
 {
-  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
-  "hol_name": "get_delta_inst_def",
-  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ClashTreeInst.lean",
-  "lean_name": "getDeltaInst",
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "colouring_ok_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ColouringOk.lean",
+  "lean_name": "colouringOk",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-ds9 source comparison 2026-10-01, bead flapjack-pxn.18.5.11.4.3.1: word_allocScript.sml:1085-1119 get_delta_inst_def compared clause by clause against getDeltaInst over the exact positive-width HolInst carrier and the literal ClashTree receiver. Skip -> Delta [] []; Const reg w -> Delta [reg] []; Binop/Shift match their reg_imm right operand, Reg r3 -> Delta [r1] [r2;r3] and Imm -> Delta [r1] [r2]; Div r1 r2 r3 -> Delta [r1] [r3;r2]; AddCarry -> Delta [r1;r4] [r4;r3;r2]; AddOverflow/SubOverflow -> Delta [r1;r4] [r3;r2]; LongMul -> Delta [r1;r2] [r4;r3]; LongDiv -> Delta [r1;r2] [r5;r4;r3]; Load/Load32/Load8 -> Delta [r] [a]; Store/Store32/Store8 -> Delta [] [r;a]; FPLess/FPLessEqual/FPEqual -> Delta [r] []; the HOL dimindex(:'a) = 64 tests for FPMovToReg and FPMovFromReg are rendered as width = 64 on the positive-width BitVec width carrier (dimindex(:'a) = width), giving Delta [r1] [] vs Delta [r1;r2] [] and Delta [] [r1] vs Delta [] [r1;r2]; the final HOL catchall Delta [] [] is the Lean _ arm covering FPNeg/FPAdd and other unlisted instructions such as Load16. No quantifier, hypothesis, side condition, or list order differs; the sole carrier translation is HOL 'a word -> BitVec width at [NeZero width]. Twenty-four fresh direct original HOL full-tree equalities (scripts/hol-probes/word_alloc_get_delta_inst_probe.out) are kernel replayed by Flapjack.Test.WordAllocGetDeltaInstParity. Proof-side port; replacing the executed caller remains separate work."
-}
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.19) against word_allocProofScript.sml:100-146, clause by clause over WordLangProgHOL with the reviewed getLive, getWrites, numsetListInsert, sptUnion/sptInsert: Seq (s2_live = get_live s2 live lt, s1_live = get_live s1 s2_live lt, INJ on domain s1_live, colouring_ok s2 live lt, colouring_ok s1 s2_live lt); If (union of branch live sets, merged inserts r1 then Reg r2 as HOL's insert r2 () (insert r1 () union_live), INJ on merged, both branches at live lt); returning Call (args_set = numset_list_insert args LN, all_names = union (SND cutset) (FST cutset), INJ on union all_names args_set and on numset_list_insert v all_names, colouring_ok ret_handler live lt, handler NONE => T | SOME (v,prog,_,_) => INJ on insert v () all_names and colouring_ok prog live lt); MustTerminate; Loop (INJ on names and exit_names, body at names with (names,exit_names)::lt); catch-all incl. Call NONE (INJ on get_live prog live lt and on union (get_writes prog) live). INJ f s UNIV rendered as injectivity on the predicate domain (codomain UNIV trivial), as in the accepted cut_names/strong_locals ports. Positive BitVec width is the only carrier translation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "check_col_INJ",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CheckCol.lean",
+  "lean_name": "checkColInj",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal source2592-2606 comparison 2026-10-01 bead11.4.5: same sole successful check_col premise on existing exact NumSet/Spt Unit checker, all three source conclusions q=input tree, scoped INJ on domain q with UNIV range tautology discharged, and full predicate equality domain r = IMAGE f domain q. No added wf/global injection/target evaluation assumption. ALL_DISTINCT is exact Pairwise inequality; unconditional toAList/lookup bridge and full fromAList/numeric-insert equality used only inside kernel proof. No representation qualifier or executable evaluator change."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "path",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "path_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source57-62: generic pair list; empty/singleton true; earlier source equals next destination and recurse on tail, same equality orientation."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "path_tail",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "path_tail",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source75-80: universally quantified generic tail/head; path cons implies path tail without further hypotheses."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "wf",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "wf_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source120-129: generic Option-register pending/active lists and independent arbitrary emitted carrier; all six conjuncts in source order; windmill pending++active; both pending coordinates SOME; nonempty active FRONT sources SOME; all active destinations SOME; path active. Lean List dropLast equals HOL FRONT on nonempty list guarded exactly as HOL; emitted moves unconstrained. Bounded universal membership is EVERY/MAP, no added side condition."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "wf_init",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "wf_init",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source132-139: exact conjunction windmill pending and both pending coordinates SOME implies wf(pending,[],[]), final empty list has independent generic element carrier, no extra premise. Full invariant preservation and parmove_correct remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MapFst.lean",
+  "lean_name": "mapFst",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "MAP_FST_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.42: literal MAP_FST_def782 maps pair first components, retaining list order and arbitrary second components; MAP_SND_MAP_FST786 universally quantifies list and arbitrary key function, unconditional value-projection equality. Polymorphic pair/List carriers match constructor-for-constructor, no injectivity, bound, word, finite-map or evaluator premise. Kernel map-composition simplification and fresh original empty/descendingkeys/collision/value rows replayed. Source uses1506/1667/1693/1862/1930 support stack relation proof; full pass correctness separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MapFst.lean",
+  "lean_name": "mapSndMapFst",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "MAP_SND_MAP_FST",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.42: literal MAP_FST_def782 maps pair first components, retaining list order and arbitrary second components; MAP_SND_MAP_FST786 universally quantifies list and arbitrary key function, unconditional value-projection equality. Polymorphic pair/List carriers match constructor-for-constructor, no injectivity, bound, word, finite-map or evaluator premise. Kernel map-composition simplification and fresh original empty/descendingkeys/collision/value rows replayed. Source uses1506/1667/1693/1862/1930 support stack relation proof; full pass correctness separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstractionPrefix.lean",
+  "lean_name": "absStackBitmapsPrefix",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "abs_stack_bitmaps_prefix",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.40: literal HOL768-779 quantifies bitmap/frame/stack/lens/suffix/result and assumes only abs_stack success, concluding identical SOME result under bitmap append. Same exact reviewed absStack and frame/WordLocW carriers at one source positive width, BitVec/NeZero standard translation only. Structural frame induction follows every ordinary/handler/fallback branch; fullReadBitmapAppend handles successful reader and induction hypothesis supplies recursive result. No new bounds, target evaluation assumption, totalHD/default, finite-map or runtime path. Fresh original five base/ordinary/handler/nested/mixed successful prefix rows and kernel replay; full state/pass relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstractionLengths.lean",
+  "lean_name": "absStackImpLength",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "abs_stack_IMP_LENGTH",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.43: literal1188-1195 forall bitmap/sourceframes/targetstack/lens/result, only abs_stack success premise, identical conjunction result.length=frames.length AND lens.length=frames.length. Same exact absStack/frame/WordLocW at one positive sourcewordwidth BitVec/NeZero translation. Structural frame induction extracts successful recursive result and original reconstructed result equality for ordinary and handler branches; fallback success contradictions match source. No extra guard, totalHD/default, evaluator or finite-map premise. Freshoriginal five framecountrows and kernel replay also check concrete lens counts. Actual compilerproofuses1436/1947/2022/2212/2511/2545/2725/5265; full relation/simulation separate."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree/InsertUnchanged.lean",
+  "lean_name": "sptInsertUnchanged",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "insert_unchanged",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.4.4.2): original2255-2264 generic tree/key/value; sole lookup=some value premise, full structural insert equality, no wf premise. Literal four constructors and recursive parity/address arithmetic. Needed by check_partial_col_INJ existing-key branch2667-2683. Coordinator review pending."
+},
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_delta_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ClashTreeInst.lean",
+    "lean_name": "getDeltaInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison 2026-10-01, bead flapjack-pxn.18.5.11.4.3.1: word_allocScript.sml:1085-1119 get_delta_inst_def compared clause by clause against getDeltaInst over the exact positive-width HolInst carrier and the literal ClashTree receiver. Skip -> Delta [] []; Const reg w -> Delta [reg] []; Binop/Shift match their reg_imm right operand, Reg r3 -> Delta [r1] [r2;r3] and Imm -> Delta [r1] [r2]; Div r1 r2 r3 -> Delta [r1] [r3;r2]; AddCarry -> Delta [r1;r4] [r4;r3;r2]; AddOverflow/SubOverflow -> Delta [r1;r4] [r3;r2]; LongMul -> Delta [r1;r2] [r4;r3]; LongDiv -> Delta [r1;r2] [r5;r4;r3]; Load/Load32/Load8 -> Delta [r] [a]; Store/Store32/Store8 -> Delta [] [r;a]; FPLess/FPLessEqual/FPEqual -> Delta [r] []; the HOL dimindex(:'a) = 64 tests for FPMovToReg and FPMovFromReg are rendered as width = 64 on the positive-width BitVec width carrier (dimindex(:'a) = width), giving Delta [r1] [] vs Delta [r1;r2] [] and Delta [] [r1] vs Delta [] [r1;r2]; the final HOL catchall Delta [] [] is the Lean _ arm covering FPNeg/FPAdd and other unlisted instructions such as Load16. No quantifier, hypothesis, side condition, or list order differs; the sole carrier translation is HOL 'a word -> BitVec width at [NeZero width]. Twenty-four fresh direct original HOL full-tree equalities (scripts/hol-probes/word_alloc_get_delta_inst_probe.out) are kernel replayed by Flapjack.Test.WordAllocGetDeltaInstParity. Proof-side port; replacing the executed caller remains separate work."
+  }
 ]
