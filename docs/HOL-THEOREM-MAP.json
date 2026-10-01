@@ -38966,5 +38966,13 @@
   "lean_name": "checkColInj",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c literal source2592-2606 comparison 2026-10-01 bead11.4.5: same sole successful check_col premise on existing exact NumSet/Spt Unit checker, all three source conclusions q=input tree, scoped INJ on domain q with UNIV range tautology discharged, and full predicate equality domain r = IMAGE f domain q. No added wf/global injection/target evaluation assumption. ALL_DISTINCT is exact Pairwise inequality; unconditional toAList/lookup bridge and full fromAList/numeric-insert equality used only inside kernel proof. No representation qualifier or executable evaluator change."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree/InsertUnchanged.lean",
+  "lean_name": "sptInsertUnchanged",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "insert_unchanged",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.4.4.2): original2255-2264 generic tree/key/value; sole lookup=some value premise, full structural insert equality, no wf premise. Literal four constructors and recursive parity/address arithmetic. Needed by check_partial_col_INJ existing-key branch2667-2683. Coordinator review pending."
 }
 ]
