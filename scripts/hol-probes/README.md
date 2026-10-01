@@ -2000,6 +2000,7 @@ and eqenv ignores only NONE. The two eqenv rows use the original
 premise is imposed on repeated destinations. Full scheduler correctness and
 production wiring remain open.
 
+- `word_to_stack_map_fst_probeScript.sml`: exact pair-key mapping, collision retention and value projection.
 ### Literal parallel-move scheduler
 
 `parmove_scheduler_probeScript.sml` captures nine original pmov/parmove outputs:
@@ -2016,3 +2017,4 @@ pending missing source/destination; allowed final temporary source; rejected
 FRONT temporary source, active temporary destination and broken active path.
 `ParmoveInvariantsParity.lean` kernel replays all rows. `wf_step`/`wf_steps` and
 full `parmove_correct` remain open.
+- `word_to_stack_abs_stack_prefix_probeScript.sml`: successful bitmap prefix preservation for base, ordinary, handler, recursive and mixed frames.

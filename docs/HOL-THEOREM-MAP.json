@@ -38998,5 +38998,30 @@
   "hol_name": "wf_init",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source132-139: exact conjunction windmill pending and both pending coordinates SOME implies wf(pending,[],[]), final empty list has independent generic element carrier, no extra premise. Full invariant preservation and parmove_correct remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MapFst.lean",
+  "lean_name": "mapFst",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "MAP_FST_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.42: literal MAP_FST_def782 maps pair first components, retaining list order and arbitrary second components; MAP_SND_MAP_FST786 universally quantifies list and arbitrary key function, unconditional value-projection equality. Polymorphic pair/List carriers match constructor-for-constructor, no injectivity, bound, word, finite-map or evaluator premise. Kernel map-composition simplification and fresh original empty/descendingkeys/collision/value rows replayed. Source uses1506/1667/1693/1862/1930 support stack relation proof; full pass correctness separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MapFst.lean",
+  "lean_name": "mapSndMapFst",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "MAP_SND_MAP_FST",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.42: literal MAP_FST_def782 maps pair first components, retaining list order and arbitrary second components; MAP_SND_MAP_FST786 universally quantifies list and arbitrary key function, unconditional value-projection equality. Polymorphic pair/List carriers match constructor-for-constructor, no injectivity, bound, word, finite-map or evaluator premise. Kernel map-composition simplification and fresh original empty/descendingkeys/collision/value rows replayed. Source uses1506/1667/1693/1862/1930 support stack relation proof; full pass correctness separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstractionPrefix.lean",
+  "lean_name": "absStackBitmapsPrefix",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "abs_stack_bitmaps_prefix",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.40: literal HOL768-779 quantifies bitmap/frame/stack/lens/suffix/result and assumes only abs_stack success, concluding identical SOME result under bitmap append. Same exact reviewed absStack and frame/WordLocW carriers at one source positive width, BitVec/NeZero standard translation only. Structural frame induction follows every ordinary/handler/fallback branch; fullReadBitmapAppend handles successful reader and induction hypothesis supplies recursive result. No new bounds, target evaluation assumption, totalHD/default, finite-map or runtime path. Fresh original five base/ordinary/handler/nested/mixed successful prefix rows and kernel replay; full state/pass relation remains separate."
 }
 ]
