@@ -38823,5 +38823,33 @@
   "lean_name": "checkClashTree",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c literal source1019-1080 comparison 2026-10-01 bead11.4.1: exact four-constructor carrier List Nat and NumSet/Spt Unit; sequential deletion, ALL_DISTINCT as Pairwise inequality, existing-name skip and new-colour collision failure, Delta discarded write result, independent Branch inputs and reverse Seq traversal. Existing exact Spt operations; no representation qualifier or extra premise. Proof-side only; production migration bead11.4.2 remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "permute_swap_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwap.lean",
+  "lean_name": "permute_swap_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.22) against wordPropsScript.sml:3241-3247: forall prog st perm, let (res,rst) = evaluate (prog,st) in res <> SOME Error ==> ?perm'. evaluate (prog, st with permute := perm') = (res, rst with permute := perm), over the tagged wordSem evaluate. Same binders, single premise, existential conclusion; no added hypothesis. Proof follows HOL's evaluate_ind split: Alloc and returning Call choose perm' = if x = 0 then st.permute 0 else perm'' (x-1) as HOL, Seq/Loop/Call thread the inner existentials, other statements are permute-constant (untagged leaf lemmas). Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "permute_swap_lemma4",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/PermuteSwap.lean",
+  "lean_name": "permuteSwapLemma4",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.22) against word_allocProofScript.sml:836-851: (!st'. evaluate (prog,st) = (SOME Error,st') ==> P (SOME Error,st')) /\\ (?perm. P ((I ## (λs. s with permute := perm)) (evaluate (prog,st)))) ==> ?perm. P (evaluate (prog, st with permute := perm)); free prog st P as explicit binders, I ## g rendered as the pair map (p.1, g p.2). Exact; proof from tagged permute_swap_lemma as in HOL. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
 }
 ]
