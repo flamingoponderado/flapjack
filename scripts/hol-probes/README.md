@@ -3014,6 +3014,12 @@ definitional equality in `WordAllocFixInconsistenciesParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_fix_inconsistencies_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`hol_sorting_probe` captures the original HOL `SORTED`, `PART` and `PARTITION`
+types and 11 EVAL results at the pinned HOL revision (including a
+non-transitive relation for `SORTED`), kernel-replayed in `HolSortingParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=hol_sorting_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `hol_list_el_probe` captures the original HOL `HD`/`EL` types and six in-range
 values at the pinned HOL revision (`HD []` and out-of-range `EL` are
 unspecified and not probed), kernel-replayed in `HolListElParity`. Regenerate

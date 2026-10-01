@@ -48650,5 +48650,29 @@
     "lean_name": "holEl",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.3.38.1), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: listScript.sml:225-228 EL 0 l = HD l /\\ EL (SUC n) l = EL n (TL l); type num -> 'a list -> 'a. Lean: same two clauses over holHd and List.tail (HOL TL_DEF 132-135: TL [] = [], TL (h::t) = t, i.e. List.tail). Original type confirmed by type_of; original in-range EVAL rows (scripts/hol-probes/hol_list_el_probe.out) kernel-replayed in Flapjack.Test.HolListElParity. No extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "SORTED_DEF",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holSorted",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:564-568 SORTED R [] = T, SORTED R [x] = T, SORTED R (x::y::rst) <=> R x y /\\ SORTED R (y::rst); type ('a -> 'a -> bool) -> 'a list -> bool, the relation rendered as α → α → Prop. Same three clauses; no transitivity assumed. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "PART_DEF",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holPart",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:643-648 PART P [] l1 l2 = (l1,l2), PART P (h::rst) l1 l2 = if P h then PART P rst (h::l1) l2 else PART P rst l1 (h::l2); type ('a -> bool) -> 'a list -> 'a list -> 'a list -> 'a list # 'a list, predicate as α → Bool. Same clauses. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "PARTITION_DEF",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holPartition",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:740-741 PARTITION P l = PART P l [] []; type ('a -> bool) -> 'a list -> 'a list # 'a list. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
   }
 ]

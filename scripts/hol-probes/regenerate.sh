@@ -3300,6 +3300,10 @@ run_probe word_alloc_fix_inconsistencies_probeScript.sml word_alloc_fix_inconsis
   ol_hit ol_miss pr_none pr_inl pr_inr fm fms_empty fms_left_only fms_right_only fms_both fi_equal fi_mixed \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe hol_sorting_probeScript.sml hol_sorting_probe.out \
+  sorted_type part_type partition_type sorted_empty sorted_single sorted_asc sorted_dup sorted_le_dup sorted_gt sorted_nontrans part_basic part_empty partition_basic partition_bool \
+  "$repo_dir/HOL/src/sort/sortingScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe hol_list_el_probeScript.sml hol_list_el_probe.out \
   hd_type el_type hd_cons hd_bool el_zero el_last el_nested el_large \
   "$repo_dir/HOL/src/list/src/listScript.sml" "$cake_dir/compiler/backend/reg_alloc"
