@@ -39707,5 +39707,41 @@
   "hol_name": "parsem_change_env",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.11: source255-265 exact conjunction (notMEM key MAP FST moves implies first key=second key) and MAP(first o SND)moves=MAP(second o SND)moves implies pointwise parsem equality. Generic pair/List and function environments retained. No windmill, destination uniqueness, globally equal inputs or target evaluation premise added. Function-update codec lemma proves result by induction, preserving repeated destination last-write behavior. Direct prerequisite of step_sem cycle case; full scheduler correctness remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wRegWrite1_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeInstructions.lean",
+  "lean_name": "wRegWrite1Native",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead25.12: original register-write clauses40-50, ordered stack-load recursion52-55, and all wInst clauses88-185 compared with native HolInst/HolProg payloads. Same register division, strict window bound, saturating subtraction, staging and spill order, literal LongMul/LongDiv register assignments, six handled memory operations (Load16/Store16 catchall), FP comparison staging and width=64 move split, remaining FP passthrough and Inst Skip catchall. HolInst/HolArith/HolRegImm/HolAddr constructors are source-reviewed mirrors; HolFp/HolCmp/HolMemop aliases unchanged. words_as_type_indexed_bitvec records only positive width translation with NeZero; no extra premises or supplied target result. Universal toGeneric_wInst transport is kernel checked, not a semantics theorem. Full compiler and executed route remain open on parent25; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wRegWrite2_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeInstructions.lean",
+  "lean_name": "wRegWrite2Native",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead25.12: original register-write clauses40-50, ordered stack-load recursion52-55, and all wInst clauses88-185 compared with native HolInst/HolProg payloads. Same register division, strict window bound, saturating subtraction, staging and spill order, literal LongMul/LongDiv register assignments, six handled memory operations (Load16/Store16 catchall), FP comparison staging and width=64 move split, remaining FP passthrough and Inst Skip catchall. HolInst/HolArith/HolRegImm/HolAddr constructors are source-reviewed mirrors; HolFp/HolCmp/HolMemop aliases unchanged. words_as_type_indexed_bitvec records only positive width translation with NeZero; no extra premises or supplied target result. Universal toGeneric_wInst transport is kernel checked, not a semantics theorem. Full compiler and executed route remain open on parent25; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wStackLoad_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeInstructions.lean",
+  "lean_name": "wStackLoadNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead25.12: original register-write clauses40-50, ordered stack-load recursion52-55, and all wInst clauses88-185 compared with native HolInst/HolProg payloads. Same register division, strict window bound, saturating subtraction, staging and spill order, literal LongMul/LongDiv register assignments, six handled memory operations (Load16/Store16 catchall), FP comparison staging and width=64 move split, remaining FP passthrough and Inst Skip catchall. HolInst/HolArith/HolRegImm/HolAddr constructors are source-reviewed mirrors; HolFp/HolCmp/HolMemop aliases unchanged. words_as_type_indexed_bitvec records only positive width translation with NeZero; no extra premises or supplied target result. Universal toGeneric_wInst transport is kernel checked, not a semantics theorem. Full compiler and executed route remain open on parent25; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wInst_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeInstructions.lean",
+  "lean_name": "wInstNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead25.12: original register-write clauses40-50, ordered stack-load recursion52-55, and all wInst clauses88-185 compared with native HolInst/HolProg payloads. Same register division, strict window bound, saturating subtraction, staging and spill order, literal LongMul/LongDiv register assignments, six handled memory operations (Load16/Store16 catchall), FP comparison staging and width=64 move split, remaining FP passthrough and Inst Skip catchall. HolInst/HolArith/HolRegImm/HolAddr constructors are source-reviewed mirrors; HolFp/HolCmp/HolMemop aliases unchanged. words_as_type_indexed_bitvec records only positive width translation with NeZero; no extra premises or supplied target result. Universal toGeneric_wInst transport is kernel checked, not a semantics theorem. Full compiler and executed route remain open on parent25; coordinator review pending."
 }
 ]
