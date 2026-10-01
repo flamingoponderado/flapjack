@@ -3973,6 +3973,12 @@
       "sha256": "2490079b54edb7cbe00ffe7717a06275637536c4c88d66d448cd7c12471631f9"
     },
     {
+      "bytes": 444,
+      "out": "word_alloc_limit_var_probe.out",
+      "rows": 14,
+      "sha256": "db1e3e6df8071dbc6f18f1c7b1d69e292cacca9191b68abf3b874a819c91a98d"
+    },
+    {
       "bytes": 134,
       "out": "word_alloc_live_colour_noalias_probe.out",
       "rows": 4,
