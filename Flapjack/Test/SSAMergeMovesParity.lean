@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveDomains
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
 namespace Flapjack.Test.SSAMergeMovesParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
@@ -29,5 +30,14 @@ example (names : List Nat) (next : Nat) (leftMap rightMap : Spt Nat) :
     (∀ dest ∈ result.1.map Prod.fst, dest < result.2.2.1 ∧ dest ≥ next) ∧
     (∀ dest ∈ result.2.1.map Prod.fst, dest < result.2.2.1 ∧ dest ≥ next) :=
   mergeMovesFst names next leftMap rightMap
+
+-- Actual full domain/agreement theorem, without input preconditions.
+example (names : List Nat) (next : Nat) (leftMap rightMap : Spt Nat) :
+    let result := mergeMoves names leftMap rightMap next
+    sptDomain result.2.2.2.1 = sptDomain leftMap ∧
+    sptDomain result.2.2.2.2 = sptDomain rightMap ∧
+    (∀ key, key ∈ names ∧ sptDomain (sptInter leftMap rightMap) key →
+      sptLookup key result.2.2.2.1 = sptLookup key result.2.2.2.2) :=
+  mergeMovesFrame2 names next leftMap rightMap
 
 end Flapjack.Test.SSAMergeMovesParity
