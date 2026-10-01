@@ -4138,6 +4138,52 @@ HOL-to-Lean equivalence proof. Whole compiler semantic correctness is open.
 Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_install_probeScript.sml`.
 
 - `ssa_cc_trans_inst_props_probeScript.sml` replays literal instruction allocation/map properties with original local map-extension and allocation-add proofs, capturing the full theorem and six argument carriers.
+### Full native program-list no-install preservation
+
+`word_to_stack_no_install_programs_probeScript.sml` freshly captures exported
+original `compile_word_to_stack_no_install`, all eight carriers and sixteen
+actual source/target pairs over widths1/32/64/80. Observations retain false
+performance, generic Boolean identifiers with duplicates, empty/multiple rows,
+bitmap-changing Alloc/StoreConsts and arbitrary frame boundaries. Shared
+operations are allowed, and the ignored Install handler remains false source
+and true target. `Flapjack/Test/WordToStackNoInstallProgramsParity.lean` checks
+all pairs and two full generic-identifier applications with the original
+performance equality. Regression evidence is not a new original proof replay
+or a HOL-to-Lean equivalence proof. Code-map and compiler semantic correctness
+remain open.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_programs_probeScript.sml`.
+
+`lab_to_target_encoding_probeScript.sml` reads the original `lab_to_target` assembly encoding definitions (`ffi_offset`, `lab_inst`, `cbw_to_asm`, `enc_line`, `enc_sec`, `enc_sec_list`). Because `enc_line` takes the instruction encoder as a parameter, the probe supplies a concrete encoder at dimension 8 (`Inst Skip` to `[1w]`, every other asm to `[2w;3w]`), so the stored `LENGTH bs` fields and the `skip_len` of `enc_sec_list` are observable. Its 17 rows are kernel-replayed in `Flapjack.Test.LabToTargetEncodingParity`; it does not claim the label-computation or program-transform halves.
+
+`lab_to_target_labels_probeScript.sml` reads the original `lab_to_target` label-computation definitions (`section_labels`, `compute_labels_alt`). Its 13 rows EVAL the source definitions on concrete 8-bit labLang lines/sections: an empty line list and two nonzero accumulators, a six-line section where the zero label is ignored and labels 1 and 2 land at offsets 13 and 17, the empty-label-map case, the two-level `num_map` that `compute_labels_alt` builds over two sections (section 1 seeded at 10 with label 1 at 13; section 2 seeded at 13 with label 2 at 20), absent-section `lookup`, and the nested per-section start/label lookups. The rows are kernel-replayed in `Flapjack.Test.LabToTargetLabelsParity`. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_labels_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_positions_probeScript.sml` reads the original `lab_to_target` position, label, FFI-index and jump-offset definitions (`find_pos`, `get_label`, `get_ffi_index`, `get_jump_offset`). Its 15 rows EVAL the source definitions on a two-level section map (section 7 to `{0 -> 10, 3 -> 13}`), an `ffiname list` (`[ExtCall a; ExtCall b]`) and `pos = 10` at 64-bit: `find_pos` hit/hit-at-zero/missing-label/missing-section, all five `get_label` clauses (four labels plus the `Lab 0 0` default), `get_ffi_index` hit (`1`) and default (`0`), and the four `get_jump_offset` clauses (`CallFFI b` = `0xFFFFFFFFFFFFFFB6`, `Install` = `0xFFFFFFFFFFFFFFD6`, `Halt` = `0xFFFFFFFFFFFFFFE6`, `Jump (Lab 7 3)` = `3`). The rows are kernel-replayed in `Flapjack.Test.LabToTargetPositionsParity` (bead `flapjack-pxn.18.5.15.10.11`). HOL's result word dimension is independent of the instruction's `reg_imm` word dimension, so the Lean port carries separate positive-width binders. Regenerate with `HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_positions_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_secondpass_probeScript.sml` reads the original `lab_to_target` second-pass definitions (`enc_lines_again`, `enc_secs_again`, `lines_upd_lab_len`, `upd_lab_len`). Its 11 rows EVAL the source definitions on concrete 64-bit `labLang$line`/`labLang$sec` values with the same section map (section 7 to `{0 -> 10, 3 -> 13}`) and a concrete encoder returning `[1w;2w;3w]` for every asm: the empty line list; a keep-only list exercising the `Label`/`Asm`/`LabAsm` clauses; a stale `LabAsm` word at `l = 1` (`l1 = 3 > 1`, flag `F`) and at `l = 7` (`l1 = max 3 7 = 7`, flag `T`); the empty section list and a two-section program whose first section re-encodes and second keeps; `lines_upd_lab_len` empty, at even `pos` (label length `0`) and at odd `pos` (label length `1`); and `upd_lab_len` empty and over two sections. The rows are kernel-replayed in `Flapjack.Test.LabToTargetSecondPassParity` (bead `flapjack-pxn.18.5.15.10.13`). Regenerate with `HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_secondpass_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_padding_probeScript.sml` reads the original `lab_to_target` label-checking, padding and symbol-collection definitions (`line_ok_light`, `sec_ok_light`, `pad_bytes`, `add_nop`, `pad_section`, `pad_code`, `sec_length`, `get_symbols`). Its 28 rows EVAL the source definitions on concrete 64-bit `labLang$line`/`labLang$sec` values with an 8/64-matching assembler configuration (`code_alignment = 2`, jump/cjump/loc offset bounds `(0, 100)`, `avoid_regs = [3]`, `reg_count = 8`), so a jump target `8` is in range and two-aligned (`T`), `3` is unaligned (`F`), `101` is out of range (`F`), and `Call` is rejected (`F`): `pad_bytes` when `len` fits, appends one repeating byte and appends a two-byte nop chunk; `add_nop` empty, `Label`-then-`Asm` (the `Asm` clause stops recursion), `Asm` head and `LabAsm` head; `pad_section` empty and a `Label`/`Asm`/`Label` list (the second label triggers `add_nop`); `pad_code` empty and two sections; `sec_length` empty (`5`) and a concrete line list (`21`); `get_symbols` empty and two sections (`[(1,10,11); (2,21,3)]`); all ten `line_ok_light` shapes; and two `sec_ok_light` sections. The rows are kernel-replayed in `Flapjack.Test.LabToTargetPaddingParity` (bead `flapjack-pxn.18.5.15.10.14`). Regenerate with `HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_padding_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_removelabels_probeScript.sml` reads the original `lab_to_target` zero-label accumulation and label-removal definitions (`zero_labs_acc_of`, `line_get_zero_labs_acc`, `sec_get_zero_labs_acc`, `get_zero_labs_acc`, `zero_labs_acc_exist`, `remove_labels_loop`, `remove_labels`, `line_bytes`, `prog_to_bytes`). Its 22 rows EVAL the source definitions on concrete 64-bit `labLang$line`/`labLang$sec` values; the accumulator observations print `toAList` of the resulting `num_set`: `zero_labs_acc_of` for a `LocValue`/`Jump`/`JumpCmp` with second part `0` (`[(n,())]`), with a non-zero second part (`[]`) and the `Halt` catch-all (`[]`); `line_get_zero_labs_acc` on a `LabAsm`, a `Label` and an `Asm`; `get_zero_labs_acc` empty (`[]`) and over a one-section code with zero labels `{1,3}` whose `toAList` is `[(3,()); (1,())]`; `zero_labs_acc_exist` on a lab map containing both zero labels (`T`) and one missing `3` (`F`); `line_bytes` on a `Label` (`[]`), `Asm` (`[1w;2w]`) and `LabAsm` (`[]`); `prog_to_bytes` empty and over a three-section code where the empty middle section is skipped (`[1w;2w;3w]`); and `remove_labels_loop` at clock `0`/`1` plus `remove_labels` at clock `0` on a one-section program with the 8/64 assembler configuration (encoder discards its argument), each returning `SOME` with the length-adjusted section and recomputed label map. All rows are EVAL-reducible, so none is omitted. The rows are kernel-replayed in `Flapjack.Test.LabToTargetRemoveLabelsParity` (bead `flapjack-pxn.18.5.15.10.16`). Regenerate with `HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_removelabels_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`misc_lookup_any_find_index_probeScript.sml` records direct original-HOL `EVAL`
+rows for the two misc prerequisites of the lab_to_target position lookups:
+`misc$lookup_any` (`cakeml/misc/miscScript.sml:344-350`, an `spt` lookup
+returning a default on a missing key) and `misc$find_index`
+(`cakeml/misc/miscScript.sml:1055-1058`, a first-match list search from a
+starting offset). The four `lookup_any` rows cover a hit, a hit at key 0, a
+miss returning the default, and the empty map; the four `find_index` rows cover
+a hit at offset 0, a hit at an offset greater than 0, a miss returning `NONE`,
+and an earlier duplicate that must win. The kernel replay is
+`Flapjack.Test.MiscLookupAnyFindIndexParity`, registered in the lake test root
+`Flapjack/Test/CompilerParity.lean`. The Lean ports are `lookupAny` in
+`Flapjack/Misc/Sptree.lean` and `findIndex` in `Flapjack/Misc/FindIndex.lean`;
+HOL `=` is rendered by Lean's standard `DecidableEq` for the generic element
+type (bead `flapjack-pxn.18.5.15.10.10`). Regenerate with
+`HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=misc_lookup_any_find_index_probeScript.sml
+scripts/hol-probes/regenerate.sh`. These finite observations are regression
+evidence, not a cross-prover equivalence proof.
 
 - `ssa_rename_shifted_properties_probeScript.sml` replays the original raw-list derived pipeline and shifted move wrapper with nine original prerequisites; full statements and twelve type rows distinguish their input map-bound counters and conjunction orders.
 

@@ -1,3 +1,12 @@
+import Flapjack.Test.LabToTargetEncodingParity
+import Flapjack.Test.LabToTargetLabelsParity
+import Flapjack.Test.LabToTargetPositionsParity
+import Flapjack.Test.LabToTargetSecondPassParity
+import Flapjack.Test.LabToTargetPaddingParity
+import Flapjack.Test.LabToTargetRemoveLabelsParity
+import Flapjack.Test.LabToTargetShmemInfoParity
+import Flapjack.Test.LabToTargetCompileParity
+import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity
 import Flapjack.Test.StackToLabExecutedCodecParity
 import Flapjack.Test.StackPropsExpressionClockParity
@@ -5,6 +14,7 @@ import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.ProductionScheduler
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordToStackNoInstallProgramsParity
 import Flapjack.Test.WordToStackCompNoInstallParity
 import Flapjack.Test.WordToStackNoShmemopTopParity
 import Flapjack.Test.WordToStackNoShmemopProgramsParity
@@ -1183,6 +1193,16 @@ def checkBool (name : String) (condition : Bool) : IO Bool := do
 
 def main : IO Unit := do
   let results ← [
+    Flapjack.Test.LabToTargetEncodingParity.runChecks,
+    Flapjack.Test.LabToTargetLabelsParity.runChecks,
+    Flapjack.Test.LabToTargetPositionsParity.runChecks,
+    Flapjack.Test.LabToTargetSecondPassParity.runChecks,
+    Flapjack.Test.LabToTargetPaddingParity.runChecks,
+    Flapjack.Test.LabToTargetRemoveLabelsParity.runChecks,
+    Flapjack.Test.LabToTargetShmemInfoParity.runChecks,
+    Flapjack.Test.LabToTargetCompileParity.runChecks,
+    Flapjack.Test.MiscLookupAnyFindIndexParity.runChecks,
+
     checkEq "Cake return 0 generated words"
       (leanReturnWords 0) (cakeReturnWords 0),
     checkEq "Cake return 7 generated words"

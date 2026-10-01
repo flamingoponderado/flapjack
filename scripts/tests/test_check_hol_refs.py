@@ -2031,6 +2031,25 @@ class HolDatatypeDeclarationsTest(unittest.TestCase):
         )
         self.assertEqual(DECL(path, {})["shape"], [2])
 
+    def test_datatype_name_on_its_own_line_is_indexed(self):
+        path = self._write_sml(
+            "Datatype:\n"
+            "  shmem_info_num\n"
+            "  = <| entry_pc : num\n"
+            "     ; nbytes : word8 |>\n"
+            "End\n"
+        )
+        self.assertEqual(DECL(path, {})["shmem_info_num"], [2])
+
+    def test_lab_to_target_shmem_info_num_is_resolvable(self):
+        path = (
+            Path(__file__).resolve().parents[2]
+            / "cakeml/compiler/backend/lab_to_targetScript.sml"
+        )
+        cache = {}
+        self.assertIsNone(REF_ERROR(path, "shmem_info_num", None, cache))
+        self.assertIsNone(REF_ERROR(path, "shmem_info_num", 350, cache))
+
     def test_panlang_shape_is_resolvable(self):
         path = (
             Path(__file__).resolve().parents[2]
