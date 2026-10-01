@@ -1,0 +1,20 @@
+pi_empty=T
+pi_empty_existing=T
+pi_live=T
+pi_overwrite=T
+pi_branch=T
+pi_invalid=T
+pi_huge=T
+pi_generic_nat=T
+pi_nonphysical_guard=F
+pi_invalid_map_guard=F
+pi_full_source_replay=⊢ ∀v stloc ssa na cstloc a.
+    ssa_map_ok na ssa ∧ ssa_locals_rel na ssa stloc cstloc ∧ is_phy_var v ⇒
+    ssa_locals_rel na ssa stloc (insert v a cstloc)
+pi_original_types=v
+::num;stloc
+::α sptree$num_map;ssa
+::num sptree$num_map;na
+::num;cstloc
+::α sptree$num_map;a
+::α;

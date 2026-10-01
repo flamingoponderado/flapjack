@@ -1414,6 +1414,9 @@ def wordArithCakeMaxVar : WordArith α → Nat
 def wordInstCakeMaxVar : WordInst α → Nat
   | .const destination _ => destination
   | .arith operation => wordArithCakeMaxVar operation
+  -- HOL max_var_inst deliberately leaves Load16/Store16 to its zero fallback.
+  | .mem .load16 _ _ | .mem .store16 _ _
+  | .memOffset .load16 _ _ _ | .memOffset .store16 _ _ _ => 0
   | .mem _ destination address => max destination address
   | .memOffset _ destination address _ => max destination address
 
