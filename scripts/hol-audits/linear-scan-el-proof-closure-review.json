@@ -4,7 +4,7 @@
   "candidate_sha": "8d74461ad0d406d75936f3dbb681ddf9c43566c3",
   "peer_audit_repair_sha": "0f9c0c0b2b8307faaefd610a906331b2ad16bc6e",
   "peer_merge_head": "09dcc091b58ec2ee239e7ac5d6e60f211ba65375",
-  "status": "Exact161c independent full type/proof closure PASS; source repair PASS; final isolated test/pins/warnings running, overall allocator source acceptance remains coordinator scope",
+  "status": "Exact161c independent fullproof/kernel/test/pins/warnings/reference gates PASS; fresh HOLindex inventory metadata HOLD; allocator acceptance remains coordinator scope",
   "coverage": {
     "candidate_tags": 208,
     "expected_candidate_tags": 208,
@@ -147,7 +147,20 @@
         734
       ],
       "independent_native_allowlist": "PASS",
-      "test_pins_warnings": "running session47182"
+      "test_pins_warnings": "terminal exit0; lake test PASS,2578types unchanged,0warnings",
+      "inventory": {
+        "status": "HOLD stale committed inventory against regenerated exact source index",
+        "source_gitlink": "857f0d98d",
+        "index_files": 1046,
+        "declarations": 37052,
+        "dependency_edges": 4697,
+        "unparsed_files": 4,
+        "old_source_pool": 13675,
+        "fresh_source_pool": 13740,
+        "old_citation_closure": 6594,
+        "fresh_citation_closure": 6642,
+        "artifact": "scripts/hol-audits/linear-scan-161c-evidence/inventory.diff"
+      }
     }
   }
 }
