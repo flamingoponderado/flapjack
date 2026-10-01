@@ -1,0 +1,11 @@
+me_const=(0,T,T)
+me_lookup=(0,T,T)
+me_var=(1208925819614629174706176,T,F)
+me_load=(7,T,F)
+me_empty=(0,T,T)
+me_nested=(19,T,F)
+me_duplicate=(9,T,F)
+me_shiftleft=(23,T,F)
+me_shiftright=(43,T,F)
+me_zero=(0,T,T)
+me_original_theorem=⊢ ∀exp. every_var_exp (λx. x ≤ max_var_exp exp) exp
