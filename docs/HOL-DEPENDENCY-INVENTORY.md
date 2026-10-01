@@ -11,28 +11,28 @@ The cited-declaration counts below are a **lexical reachability set** computed f
 ## Counts
 
 - Scripts/theories in the transitive ancestor closure: `267`
-- Declarations in those theories (source pool): `13669`
-  - by kind: Datatype: 223, Definition: 3538, Theorem: 9908
-  - by area: pancake: 1329, cakeml_backend: 10487, cakeml_semantics: 912, cakeml_other: 88, basis: 354, other: 499
-- Lexically cited declarations (citation closure of the root; not a dependency bound): `6594` unique declaration names (not declaration identities)
-  - by kind: Datatype: 118, Definition: 1848, Theorem: 4628
-  - by area: pancake: 544, cakeml_backend: 5708, cakeml_semantics: 167, cakeml_other: 21, basis: 29, other: 125
+- Declarations in those theories (source pool): `13740`
+  - by kind: Datatype: 225, Definition: 3540, Theorem: 9914, Type: 61
+  - by area: pancake: 1343, cakeml_backend: 10513, cakeml_semantics: 937, cakeml_other: 91, basis: 354, other: 502
+- Lexically cited declarations (citation closure of the root; not a dependency bound): `6642` unique declaration names (not declaration identities)
+  - by kind: Datatype: 123, Definition: 1850, Theorem: 4628, Type: 41
+  - by area: pancake: 551, cakeml_backend: 5724, cakeml_semantics: 188, cakeml_other: 23, basis: 29, other: 127
   - each cited name is attributed to one representative declaration (first with that name in index order) for the per-kind, per-area and per-theory breakdowns
-- HOL-qualified `Theory$name` token occurrences resolved to an unqualified declaration name: `1020`
+- HOL-qualified `Theory$name` token occurrences resolved to an unqualified declaration name: `1035`
 
 ## Validation
 
 All count invariants hold:
-- cited total (`6594` unique names) equals the per-kind, per-area and per-theory sums; each name is attributed to one representative declaration
+- cited total (`6642` unique names) equals the per-kind, per-area and per-theory sums; each name is attributed to one representative declaration
 - source-pool totals equal the per-kind and per-area sums
 - every cited name is a declaration in the theory closure
 
 ## Lean coverage of the lexically cited set
 
-- Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `1798` (not the validated tag count)
-- Lexically cited names with a textual `(theory, name)` match: `735`
-- Lexically cited names with no textual `(theory, name)` match: `5859`
-- ... of which also have no same-name textual match anywhere: `5768` (name heuristic: neither an over- nor an under-approximation of genuinely missing ports)
+- Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `1814` (not the validated tag count)
+- Lexically cited names with a textual `(theory, name)` match: `757`
+- Lexically cited names with no textual `(theory, name)` match: `5885`
+- ... of which also have no same-name textual match anywhere: `5791` (name heuristic: neither an over- nor an under-approximation of genuinely missing ports)
 
 ## Direct citations of the root theorem
 
@@ -122,7 +122,7 @@ All count invariants hold:
 
 ## Lexically cited declarations per theory (top 30)
 
-- `data_to_word_memoryProof`: 657
+- `data_to_word_memoryProof`: 659
 - `data_to_word_gcProof`: 296
 - `data_to_word_assignProof`: 270
 - `lab_to_targetProof`: 257
@@ -131,7 +131,7 @@ All count invariants hold:
 - `wordConvsProof`: 144
 - `backendProof`: 132
 - `source_to_flatProof`: 121
-- `misc`: 118
+- `misc`: 120
 - `stack_allocProof`: 116
 - `flat_patternProof`: 112
 - `stack_removeProof`: 112
@@ -142,15 +142,15 @@ All count invariants hold:
 - `wordProps`: 91
 - `pan_globalsProof`: 88
 - `word_to_stackProof`: 87
+- `reg_alloc`: 85
 - `source_evalProof`: 83
-- `reg_alloc`: 82
 - `dataProps`: 81
 - `closProps`: 80
 - `gc_shared`: 80
 - `pan_to_wordProof`: 70
 - `pan_structsProof`: 68
+- `linear_scan`: 66
 - `word_allocProof`: 65
-- `linear_scan`: 64
 - `flat_elimProof`: 60
 
 ## Transitive ancestor closure (all theories)

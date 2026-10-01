@@ -1,0 +1,8 @@
+pad_original_statement=ALL_DISTINCT (MAP FST mvs) ⇒ ALL_DISTINCT (FILTER IS_SOME (MAP FST (parmove mvs)))
+pad_empty=[]
+pad_self=[]
+pad_chain=[(SOME 0,SOME 1); (SOME 1,SOME 2)]
+pad_swap=[(NONE,SOME 1); (SOME 1,SOME 0); (SOME 0,NONE)]
+pad_cycle=[(NONE,SOME 1); (SOME 1,SOME 2); (SOME 2,SOME 0); (SOME 0,NONE)]
+pad_shared_source=[(SOME 0,SOME 2); (SOME 1,SOME 2)]
+pad_duplicate_boundary=(F,F)

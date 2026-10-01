@@ -1,0 +1,9 @@
+em_var=(T,T)
+em_nested=(T,T)
+em_empty=(T,T)
+em_const=(T,T)
+em_lookup=(T,T)
+em_duplicate=(T,T)
+em_large=(T,T)
+em_guard_needed=(T,F)
+em_original_theorem=⊢ ∀P exp Q. (∀x. P x ⇒ Q x) ∧ every_var_exp P exp ⇒ every_var_exp Q exp
