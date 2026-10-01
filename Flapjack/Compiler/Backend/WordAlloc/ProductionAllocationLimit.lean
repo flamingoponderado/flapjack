@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordAlloc.ProductionLimitVar
+import Flapjack.Compiler.Backend.WordAlloc.ProductionRemoveDead
 import Flapjack.RiscV.WordDeadCode
 
 namespace Flapjack.RiscV.CakeRegAlloc
@@ -30,34 +31,18 @@ theorem cakeAllocateWordFunctionNativeLimit_eq {width : Nat} [NeZero width]
       simp only [cakeAllocateWordFunctionNativeLimit, encoded, Option.bind_some, limit]
       rfl
 
-/-- Native limit feeding the shared cleanup/IRC/retained-colour implementation.
-The complete input program is encoded, not a synthetic maximum-only program.
-Codec rejection stays explicit; source pipeline wiring and universal input
-acceptance remain open. Flapjack production infrastructure with no HOL original. -/
+/-- Native limit feeding the shared cleanup/IRC/retained-colour implementation,
+with both liveness-based dead-code passes run by the reviewed `removeDeadProg`
+(`wordRemoveDeadProgramViaHOL`). The complete input program is encoded, not a
+synthetic maximum-only program. Codec rejection stays explicit; universal input
+acceptance remains open. Flapjack production infrastructure with no HOL original. -/
 def cakeAllocateWordFunctionAfterDeadWithColourNativeLimit
     {width : Nat} [NeZero width] (currentFunction : Nat)
     (parameters : List Nat) (program : WordProg (BitVec width)) :
     Option (CakeAllocationWithColour (BitVec width)) :=
   (wordLangProgToHOL program).bind (fun native =>
-    cakeAllocateWordFunctionAfterDeadWithColourFromLimit
+    cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith wordRemoveDeadProgramViaHOL
       (Compiler.Backend.WordAlloc.limitVar native) currentFunction parameters program)
-
-/-- Whole retained-colour result correspondence, including failures, for every
-input program. This is a partial-codec equation, not a HOL correctness theorem. -/
-theorem cakeAllocateWordFunctionAfterDeadWithColourNativeLimit_eq
-    {width : Nat} [NeZero width] (currentFunction : Nat)
-    (parameters : List Nat) (program : WordProg (BitVec width)) :
-    cakeAllocateWordFunctionAfterDeadWithColourNativeLimit currentFunction parameters program =
-      (wordLangProgToHOL program).bind (fun _ =>
-        cakeAllocateWordFunctionAfterDeadWithColour currentFunction parameters program) := by
-  have limit := wordSsaLimitVar_codec parameters program
-  cases encoded : wordLangProgToHOL program with
-  | none => simp [cakeAllocateWordFunctionAfterDeadWithColourNativeLimit, encoded]
-  | some native =>
-      simp only [encoded, Option.map_some, Option.some.injEq] at limit
-      simp only [cakeAllocateWordFunctionAfterDeadWithColourNativeLimit, encoded,
-        Option.bind_some, limit]
-      rfl
 
 /-- Legacy tuple projection of the same native-limit allocator adapter.
 Flapjack production infrastructure; it is not yet the executed source route. -/
@@ -68,47 +53,33 @@ def cakeAllocateWordFunctionAfterDeadNativeLimit
   (cakeAllocateWordFunctionAfterDeadWithColourNativeLimit
     currentFunction parameters program).map CakeAllocationWithColour.toLegacy
 
-/-- Complete legacy allocation result correspondence at the partial codec
-boundary. Flapjack infrastructure without a HOL theorem claim. -/
-theorem cakeAllocateWordFunctionAfterDeadNativeLimit_eq
-    {width : Nat} [NeZero width] (currentFunction : Nat)
-    (parameters : List Nat) (program : WordProg (BitVec width)) :
-    cakeAllocateWordFunctionAfterDeadNativeLimit currentFunction parameters program =
-      (wordLangProgToHOL program).bind (fun _ =>
-        cakeAllocateWordFunctionAfterDead currentFunction parameters program) := by
-  unfold cakeAllocateWordFunctionAfterDeadNativeLimit
-  rw [cakeAllocateWordFunctionAfterDeadWithColourNativeLimit_eq]
-  cases wordLangProgToHOL program <;> rfl
-
 /-- Executed fixed-width allocator boundary. Every codec-accepted complete
-input obtains its counter from reviewed native `limitVar`. The broader Word
-extension keeps its historical allocation behavior when the native codec
-rejects it; this is compatibility, not a performance exception. Source-input
-closure separately proves source functions never take that branch. -/
+input obtains its counter from reviewed native `limitVar` and runs both
+dead-code passes through reviewed `removeDeadProg`. The broader Word extension
+keeps its historical allocation behavior when the native codec rejects it; this
+is compatibility, not a performance exception. Source-input closure separately
+proves source functions never take that branch. -/
 def cakeAllocateWordFunctionAfterDeadRoutedLimit
     {width : Nat} [NeZero width] (currentFunction : Nat)
     (parameters : List Nat) (program : WordProg (BitVec width)) :
     Option (WordSsaState × List Nat × WordProg (BitVec width) × WordSpillState) :=
   match wordLangProgToHOL program with
   | none => cakeAllocateWordFunctionAfterDead currentFunction parameters program
-  | some native => cakeAllocateWordFunctionAfterDeadFromLimit
-      (Compiler.Backend.WordAlloc.limitVar native) currentFunction parameters program
+  | some native =>
+      (cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith wordRemoveDeadProgramViaHOL
+        (Compiler.Backend.WordAlloc.limitVar native) currentFunction parameters program).map
+        CakeAllocationWithColour.toLegacy
 
-/-- Whole-result equality including all allocation failures and unsupported
-Word inputs. No successful allocation or output relation is assumed. This is
-Flapjack routing infrastructure, not a HOL allocation-correctness theorem. -/
-theorem cakeAllocateWordFunctionAfterDeadRoutedLimit_eq
+/-- A codec-rejected input keeps the complete historical allocation result,
+including every failure. Flapjack routing infrastructure, not a HOL
+allocation-correctness theorem. -/
+theorem cakeAllocateWordFunctionAfterDeadRoutedLimit_rejected
     {width : Nat} [NeZero width] (currentFunction : Nat)
-    (parameters : List Nat) (program : WordProg (BitVec width)) :
+    (parameters : List Nat) (program : WordProg (BitVec width))
+    (rejected : wordLangProgToHOL program = none) :
     cakeAllocateWordFunctionAfterDeadRoutedLimit currentFunction parameters program =
       cakeAllocateWordFunctionAfterDead currentFunction parameters program := by
-  have limit := wordSsaLimitVar_codec parameters program
-  cases encoded : wordLangProgToHOL program with
-  | none => simp [cakeAllocateWordFunctionAfterDeadRoutedLimit, encoded]
-  | some native =>
-      simp only [encoded, Option.map_some, Option.some.injEq] at limit
-      simp only [cakeAllocateWordFunctionAfterDeadRoutedLimit, encoded, limit]
-      exact (cakeAllocateWordFunctionAfterDead_fromLimit currentFunction parameters program).symm
+  simp [cakeAllocateWordFunctionAfterDeadRoutedLimit, rejected]
 
 /-- Accepted input executes precisely the native full-program limit adapter,
 not the compatibility branch. The premise is input codec acceptance only. -/
@@ -123,7 +94,6 @@ theorem cakeAllocateWordFunctionAfterDeadRoutedLimit_native
   | some native =>
       simp [cakeAllocateWordFunctionAfterDeadRoutedLimit,
         cakeAllocateWordFunctionAfterDeadNativeLimit,
-        cakeAllocateWordFunctionAfterDeadWithColourNativeLimit,
-        cakeAllocateWordFunctionAfterDeadFromLimit, encoded]
+        cakeAllocateWordFunctionAfterDeadWithColourNativeLimit, encoded]
 
 end Flapjack.RiscV.CakeRegAlloc

@@ -30,28 +30,20 @@ example : cakeAllocateWordFunctionAfterDeadWithColourNativeLimit 0 []
 -- The accepted codec does not waive the original ordinary-16-bit memory guard.
 example : cakeAllocateWordFunctionAfterDeadWithColourNativeLimit 0 []
     (.inst (.mem .load16 4 8) : WordProg (BitVec 64)) = none := by
-  rw [cakeAllocateWordFunctionAfterDeadWithColourNativeLimit_eq]
-  simp [cakeAllocateWordFunctionAfterDeadWithColour,
-    cakeAllocateWordFunctionAfterDeadWithColourFromLimit, RiscV.allocatorMemorySupported]
+  simp [cakeAllocateWordFunctionAfterDeadWithColourNativeLimit,
+    cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith, RiscV.allocatorMemorySupported]
 
 example {width : Nat} [NeZero width] (count : Nat) (program : WordProg (BitVec width)) :
     wordFullSsaCcTransNativeLimit count program =
       (wordLangProgToHOL program).map (fun _ => wordFullSsaCcTrans count program) :=
   wordFullSsaCcTransNativeLimit_eq count program
 
+-- Codec-rejected inputs keep the complete historical result and failures.
 example {width : Nat} [NeZero width] (label : Nat) (parameters : List Nat)
-    (program : WordProg (BitVec width)) :
-    cakeAllocateWordFunctionAfterDeadNativeLimit label parameters program =
-      (wordLangProgToHOL program).bind (fun _ =>
-        cakeAllocateWordFunctionAfterDead label parameters program) :=
-  cakeAllocateWordFunctionAfterDeadNativeLimit_eq label parameters program
-
--- Routing preserves the complete result for arbitrary inputs and failures.
-example {width : Nat} [NeZero width] (label : Nat) (parameters : List Nat)
-    (program : WordProg (BitVec width)) :
+    (program : WordProg (BitVec width)) (rejected : wordLangProgToHOL program = none) :
     cakeAllocateWordFunctionAfterDeadRoutedLimit label parameters program =
       cakeAllocateWordFunctionAfterDead label parameters program :=
-  cakeAllocateWordFunctionAfterDeadRoutedLimit_eq label parameters program
+  cakeAllocateWordFunctionAfterDeadRoutedLimit_rejected label parameters program rejected
 
 -- Unsupported extension follows its historical compatibility path, rather
 -- than becoming a new codec-rejection allocation failure.
@@ -64,8 +56,7 @@ example : cakeAllocateWordFunctionAfterDeadRoutedLimit 0 []
 -- Codec acceptance does not alter the allocator's separate memory guard.
 example : cakeAllocateWordFunctionAfterDeadRoutedLimit 0 []
     (.inst (.mem .load16 4 8) : WordProg (BitVec 64)) = none := by
-  rw [cakeAllocateWordFunctionAfterDeadRoutedLimit_eq]
-  simp [cakeAllocateWordFunctionAfterDead, cakeAllocateWordFunctionAfterDeadWithColour,
-    cakeAllocateWordFunctionAfterDeadWithColourFromLimit, RiscV.allocatorMemorySupported]
+  simp [cakeAllocateWordFunctionAfterDeadRoutedLimit, wordLangProgToHOL, wordLangInstToHOL,
+    cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith, RiscV.allocatorMemorySupported]
 
 end Flapjack.Test.ProductionAllocationLimit
