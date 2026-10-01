@@ -486,6 +486,16 @@ order-insensitive domain model of `docs/NUM-SET-AUDIT.md`). -/
 def preAllocConventions {width : Nat} (program : WordLangProg (BitVec width)) : Prop :=
   everyStackVar isStackVar program ∧ callArgConvention program
 
+/-- Literal pre-allocation convention over the faithful Spt-backed program
+(`wordConvsScript.sml:425-429`): every cut-set name is a stack variable and the
+call argument convention holds. The positive-width word translation is the sole
+carrier difference; HOL's `∧` of Booleans is `&&`. -/
+@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "pre_alloc_conventions_def"
+  (words_as_type_indexed_bitvec)]
+def preAllocConventionsHOL {width : Nat} [NeZero width]
+    (program : WordLangProgHOL (BitVec width)) : Bool :=
+  everyStackVarHOL isStackVar program && callArgConventionHOL program
+
 /-- HOL `wordConvsScript$post_alloc_conventions_def` (`wordConvsScript.sml:432-437`).
 It asserts the post-allocation convention on a backend program: every register
 is a physical register (`is_phy_var`), every name in the cut sets is at least
