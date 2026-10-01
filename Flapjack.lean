@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.LabSem.Navigation
 import Flapjack.Compiler.Backend.LabProps.SectionEnd
 import Flapjack.Compiler.Backend.LabSem.Updates
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Seq
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ReadsLiveExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckPartialCol
 import Flapjack.Misc.Sptree.InsertUnchanged
 import Flapjack.Compiler.Backend.LabSem.Classifier
@@ -152,6 +154,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Motive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
@@ -878,6 +881,7 @@ import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.Parmove
 import Flapjack.Compiler.Backend.Parmove.Semantics
 import Flapjack.Compiler.Backend.Parmove.Invariants
+import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
 import Flapjack.RiscV.CakeAllocatorBitsBridge
 import Flapjack.StackAlloc
 import Flapjack.StackAlloc.Runtime

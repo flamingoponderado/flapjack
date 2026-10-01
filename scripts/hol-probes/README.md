@@ -2031,3 +2031,11 @@ offsets and fprime are replayed by `literalWMoveParityGuard` in the normal
 compiler parity suite. Production comp/compile wiring remains open.
 
 `labsem_navigation_probeScript.sml` captures 23 original LabSem fetch, instruction-count, section-entry/positive-label lookup, and following-return-label observations across empty sections. Encoded metadata lengths deliberately differ from instruction positions. The probe simplifies the original existential label guard before EVAL; it defines no substitute evaluator. `Flapjack.Test.LabSemNavigationParity` kernel replays the native definitions using the reviewed classifier.
+### Parallel-move update lemmas
+
+`parmove_updates_probeScript.sml` captures eight original parallel environment
+lookups and two temporary-insensitive equivalence directions. Fresh insertion,
+snapshot sources, untouched/empty/self/swap cases and repeated-destination
+freshness failure are replayed by `ParmoveUpdateLemmasParity.lean`, alongside
+generic freshness/windmill theorem applications. Full step invariance and
+`parmove_correct` remain open.
