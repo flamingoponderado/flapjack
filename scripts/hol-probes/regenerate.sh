@@ -3349,3 +3349,7 @@ run_probe stackprops_forbidden_operations_probeScript.sml stackprops_forbidden_o
 run_probe word_alloc_limit_var_probeScript.sml word_alloc_limit_var_probe.out \
   lv_original_definition lv_original_type lv_residue0 lv_residue1 lv_residue2 lv_residue3 lv_residue4 lv_skip1 lv_seven lv_eight lv_ignored16 lv_tail_handler lv_call_body lv_huge \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_bounds_probeScript.sml ssa_locals_bounds_probe.out \
+  lb_more \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

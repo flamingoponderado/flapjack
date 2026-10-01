@@ -3160,3 +3160,10 @@ returning Call bodies, ignored tail handlers and ignored Load16 fields.
 `WordAllocLimitVarParity` checks thirteen kernel examples against identical
 inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
 The executed upstream maximum/limit route remains tracked on .30.1.2.1.
+
+`ssa_locals_bounds_probe.out` replays the literal original local
+`ssa_locals_rel_more` proof (5195–5203), preserving its generic locals payload
+and original conjunction. Existing `ssa_locals_rel_probe.out` observations and
+`SSALocalsParity` fixtures cover nonvacuous, rejected, boundary and malformed
+relations; that fixture additionally applies the complete bound theorem at
+arbitrary payload, trees and counters.
