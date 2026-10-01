@@ -38585,6 +38585,22 @@
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.37: literal index_list319-322 recurses on polymorphic List, uses n+length tail, retains order and fixed starting n; LENGTH_index_list325-329 universally quantifies list and Nat with unconditional identical length equality proved by induction; adjust_names792-794 is Nat division by2. No word/fmap/array carrier difference, extra premise or runtime approximation. Fresh original5rows and kernel replay cover empty/singleton/descending indices/even+odd division. Needed stack_rel_aux815 indexing; full state relation remains separate."
 },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "pmov_def",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove.lean",
+    "lean_name": "pmov",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source606-633: final state iff both pending and active are empty, unchanged emitted suffix; otherwise recursive fstep with identical measure2*pending length+active length. Generic option registers, propositional equality, no fuel or wf premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "parmove_def",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove.lean",
+    "lean_name": "parmove",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source666-670: map SOME over both register coordinates, start with empty active/emitted lists, project emitted component and reverse. Generic registers; no added hypothesis. Full semantic parmove_correct and production wiring remain open."
+  },
 {
   "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
   "hol_name": "s_frame_val_eq_def",

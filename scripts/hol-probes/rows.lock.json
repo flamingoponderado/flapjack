@@ -453,6 +453,7 @@
     {"bytes": 513, "out": "pan_word_of_bytes_overlong_probe.out", "rows": 17, "sha256": "413f95c14359ac90e03392a24a7149c10183db056e5fe0c94457c3b1e5995b5b"},
     {"bytes": 296, "out": "pancake_peg_probe.out", "rows": 1, "sha256": "1087f8c89b4f68e7d0e0e4ade5f93a0acf6316a5505fb5148e43d268ac758b80"},
     {"bytes": 124, "out": "parmove_fstep_probe.out", "rows": 10, "sha256": "9c8a786eb072aa9b95652444d754fd3d05baee183313cf8689a451540b3e09c0"},
+    {"bytes": 348, "out": "parmove_scheduler_probe.out", "rows": 9, "sha256": "9a52f48f9aa4d0ba87adf2f57586cbe903fb818c605ab885e0b106469a00ed6e"},
     {"bytes": 238, "out": "parmove_semantics_probe.out", "rows": 12, "sha256": "e6cf39747a7d47e75fded9b903563dc2d888216d779c2c7cc83d7b33eb245cfd"},
     {"bytes": 1467, "out": "parse_statement_probe.out", "rows": 2, "sha256": "78464aedbb34b041a2ef04eea0fd0d2842de25f576e6165dc7b6524ab93c667c"},
     {"bytes": 182, "out": "prog_if_probe.out", "rows": 2, "sha256": "86056be1950303f8195fa52dcbf2c23c065d52323da492bb4fede3d8b1af899e"},
