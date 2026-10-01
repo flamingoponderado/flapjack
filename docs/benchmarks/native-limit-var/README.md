@@ -1,57 +1,68 @@
-# Native limit-var routing audit
+# Native limit-var routing audit: corrected allocator boundary
 
-The native codec-and-limit path has low measured absolute cost. These measurements
-provide **no material performance exception** for retaining the direct production
-helper. The native routing bead remains open.
+This report supersedes the discovery-only measurements from `de88e014e`.
+The original benchmark used `wordFfiDiscoveryBody`, which also runs DCE and
+unreachable removal. Actual allocation receives the selected program before
+those discovery-only transformations. The earlier 23/31 ms figures therefore
+did not measure the actual allocator input.
 
-## Results
+The compiler callers and benchmark now share `wordBeforeSsaAllocatorBody`:
+`wordInstSelectProgramFrom (wordToWordPreSsa (wordFlattenProgramFrom body))`.
+Its kernel-checked equation is identical to the original inline preparation.
+All three executed allocator callers use it; FFI discovery applies its existing
+DCE/unreachable passes afterwards. Compiler behavior and oracle manifests are
+unchanged.
 
-| Inputs | Functions | Direct limit per pass | Codec plus native limit per pass | Added time |
+## Corrected results
+
+| Actual allocator inputs | Functions | Direct limit per pass | Codec plus native limit per pass | Added time |
 |---|---:|---:|---:|---:|
-| Original 166-source corpus | 863 | 0.240 ms | 1.761 ms | 1.521 ms |
-| Pinned accelerated guest | 823 | 17.472 ms | 40.454 ms | 22.982 ms |
-| Pinned software guest | 805 | 26.447 ms | 57.034 ms | 30.586 ms |
+| 166 corpus entries (161 files) | 863 | 0.290 ms | 2.187 ms | 1.897 ms |
+| Pinned accelerated guest | 823 | 16.464 ms | 31.849 ms | 15.385 ms |
+| Pinned software guest | 805 | 18.143 ms | 35.822 ms | 17.678 ms |
 
-Every function was checked: zero codec rejections, zero value mismatches, and
-matching observed checksums throughout. Guest complete-compile medians were
-13.936 s and 32.051 s, with the exact pinned original stdout hashes preserved in
-all three samples. The added cost of one helper sweep is about 0.165% and 0.095%
-of those times. This is a comparison of measurements, not an end-to-end benchmark
-of a compiler modified to use native limit-var. Call frequency and other input
-shapes can affect total cost.
+The manifest contains five repeated source entries; all 166 entries were retained.
+Every function invocation was checked: zero codec rejections, zero value mismatches, and
+matching observed direct/native checksums throughout. Three fresh full compiler
+runs per guest preserved the exact pinned original stdout hashes. Complete
+compile medians were 13.877 s and 31.448 s. The additional cost of one helper
+sweep is about 0.111% and 0.056% of those times. These measurements establish
+no material performance exception; actual native routing remains open.
 
-Corpus totals use five paired samples with 20 repetitions, divided by 20 before
-summing each sample across the 166 sources. The table reports the median total
-for each path separately. Guests use five paired samples with five repetitions.
-Timing runs used the compiled `flapjack-limit-var-bench` executable, performed a
-warmup, alternated path order, and recomputed the native codec for every call.
-The helper operations are marked `noinline`; results feed returned checksums
-printed after each sample. Shared-host noise is visible in the raw samples.
+The scope mistake changes observed limits, not just a label: the
+`pxn98_unreach_elim.pnk` checksum is 23 at the actual allocator boundary versus
+19 after discovery cleanup. The accelerated guest checksum is 29815 versus
+29771; software is 30381 on both. Old captures are retained unchanged under
+`discovery-superseded/`, with an explicit correction of their scope. Comparing
+timing differences between these captures does not isolate a speed change:
+input shape and shared-host load differ.
 
-## Inputs and scope
+## Method and scope
 
-The driver follows the source parser/static checker, default-main handling,
-Pan simplification and structuring, global/Crep compilation, source Loop route,
-and `panToWordCompileProg`. Each function then uses `wordFfiDiscoveryBody`, the
-same flattened, source-shaped pre-SSA preparation used by the production route.
-Preparation is outside helper timing. Native measurements call
-`wordLangProgToHOL` and reviewed `WordAlloc.limitVar` on the resulting complete
-native program. Direct measurements call the actual `wordSsaLimitVar` helper.
-Coverage failures are printed with indices and cause a nonzero exit.
+The source frontend follows parser/static checking, default-main handling,
+Pan simplification/structuring, global/Crep compilation, the source Loop route,
+and actual `panToWordCompileProg`. Each Word function is then prepared by the
+same helper called immediately before the production allocator. Preparation is
+outside helper timing. Native measurements encode the complete actual program
+and call reviewed `WordAlloc.limitVar`; direct measurements call the actual
+`wordSsaLimitVar` helper.
 
-`ProductionLimitVar.wordSsaLimitVar_codec` proves correspondence for arbitrary
-formals, positive word widths, and every production program at the Option level.
-It reuses the full program maximum correspondence. Both sides are `none` on codec
-rejection; this does not prove that every future source program is codec accepted.
-The corpus/guest coverage is empirical, not a universal source-image theorem.
+The compiled helpers are marked `noinline`. Both paths are warmed; paired order
+alternates; every result feeds a printed checksum; native projection is
+recomputed on every call. Corpus totals use five samples with 20 repetitions,
+divided by 20 before summing across all 166 corpus entries. Guests use five samples with
+five repetitions. The table gives each path median separately. The host is
+shared and has no exclusive CPU affinity; raw samples expose variation.
+Full-compile timing includes process startup and captured output.
 
-The measured production SSA APIs are generic over `WordProg alpha`, while native
-`limitVar` consumes a width-indexed word carrier. The remaining work is to factor
-the actual initial-counter computation so the fixed-width production caller can
-supply the native result, retaining generic compatibility interfaces separately,
-and to prove or explicitly track source codec acceptance at that boundary.
-Neither the actual compiler route nor its memory guard is changed by this audit.
-No synthetic program or successful-compilation premise is used to claim routing.
+`wordSsaLimitVar_codec` proves actual helper correspondence for arbitrary
+formals, positive widths and every production program at the Option level.
+`wordBeforeSsaAllocatorBody_eq` checks the whole preparation equation without
+an allocation-success premise. Empirical coverage does not establish universal
+pre-SSA codec preservation. This is not an end-to-end timing of a compiler
+already rerouted through native limit; call frequency and other inputs can
+change total cost. Source codec closure and actual native caller wiring remain
+tracked on the open routing dependency graph.
 
 ## Reproduce
 
@@ -64,10 +75,10 @@ python3 scripts/benchmark-native-limit-var.py --repeats 5 --samples 5 \
   /tmp/flap-03rs-ci-fetch/guest-software.pp.pnk
 ```
 
-The raw JSONL files contain every function-coverage record and timing sample;
-`metadata.json` pins all input hashes, the raw output hashes, toolchain and host
-method. `full-guests.jsonl` contains three fresh compiler wall-time/output-hash
-samples per guest. Full-compile timing includes process startup and captured
-output, while helper timing uses `IO.monoNanosNow` inside one process. The
-compiler sources and benchmark code are pinned by the commit containing this
-report; the metadata baseline is the ordinary-merged tree before this audit.
+Raw JSONL files contain every coverage record and timing sample, including any
+failures. A rejection/mismatch causes a nonzero exit. `metadata.json` pins all
+163 distinct input-file hashes for 168 invocations and the raw captures, toolchain, baseline and corrected
+measurement boundary. `full-guests.jsonl` contains all six fresh complete
+compiler timing/output-hash samples. The commit containing this report pins
+the benchmark and production preparation code; the metadata baseline is the
+ordinary-merged tree before this repair.

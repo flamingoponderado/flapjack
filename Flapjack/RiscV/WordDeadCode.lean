@@ -523,12 +523,17 @@ routes. Reject them recursively at entry, before each liveness-based dead pass,
 and before graph construction/colouring. Checks preserve every accepted tree;
 failure returns `none`, with no deletion or opcode substitution. This checked
 safety boundary does not prove universal source-to-boundary closure. -/
-def cakeAllocateWordFunctionAfterDeadWithColour [OfNat α 0] [WordCseHash α] (currentFunction : Nat)
+/- Shared executed allocation implementation with an explicit full-program
+SSA limit. This factors the initial counter only; cleanup, checked memory
+boundaries, IRC and retained colouring are the actual production operations.
+Flapjack infrastructure, not a HOL theorem port or native-routing claim. -/
+def cakeAllocateWordFunctionAfterDeadWithColourFromLimit [OfNat α 0] [WordCseHash α]
+    (limit currentFunction : Nat)
     (parameters : List Nat) (program : WordProg α) [BEq α] :
     Option (CakeAllocationWithColour α) :=
   if !allocatorMemorySupported program then none else
   let (state, renamedParameters, ssaProgram) :=
-    wordFullSsaCcTrans parameters.length program
+    wordFullSsaCcTransFromLimit limit parameters.length program
   if !allocatorMemorySupported ssaProgram then none else
   let ssaProgram := wordRemoveDeadProgram ssaProgram
   let ssaProgram := wordCseProp ssaProgram
@@ -557,6 +562,32 @@ def cakeAllocateWordFunctionAfterDeadWithColour [OfNat α 0] [WordCseHash α] (c
         cakeColourWordSpillState cakeRiscVRegisterCount
           parameters ssaProgram colouring, colouring⟩
 
+/-- Historical retained-colour API using the production limit helper.
+Its implementation shares the explicit-counter allocation boundary. -/
+def cakeAllocateWordFunctionAfterDeadWithColour [OfNat α 0] [WordCseHash α]
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg α) [BEq α] :
+    Option (CakeAllocationWithColour α) :=
+  cakeAllocateWordFunctionAfterDeadWithColourFromLimit
+    (wordSsaLimitVar parameters program) currentFunction parameters program
+
+/-- Complete retained-colour API equality, including every failure path.
+Flapjack infrastructure, not an assumed allocation simulation or HOL port. -/
+theorem cakeAllocateWordFunctionAfterDeadWithColour_fromLimit
+    [OfNat α 0] [WordCseHash α] [BEq α]
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg α) :
+    cakeAllocateWordFunctionAfterDeadWithColour currentFunction parameters program =
+      cakeAllocateWordFunctionAfterDeadWithColourFromLimit
+        (wordSsaLimitVar parameters program) currentFunction parameters program := by
+  rfl
+
+/-- The legacy tuple projection shares the retained-colour implementation.
+Flapjack production infrastructure with no HOL original. -/
+def cakeAllocateWordFunctionAfterDeadFromLimit [OfNat α 0] [WordCseHash α]
+    (limit currentFunction : Nat) (parameters : List Nat) (program : WordProg α) [BEq α] :
+    Option (WordSsaState × List Nat × WordProg α × WordSpillState) :=
+  (cakeAllocateWordFunctionAfterDeadWithColourFromLimit
+    limit currentFunction parameters program).map CakeAllocationWithColour.toLegacy
+
 /-- Historical executed API, now a projection of the shared result retaining
 its actual colouring. Guard/pass order and allocation inputs are shared. -/
 def cakeAllocateWordFunctionAfterDead [OfNat α 0] [WordCseHash α] (currentFunction : Nat)
@@ -564,6 +595,16 @@ def cakeAllocateWordFunctionAfterDead [OfNat α 0] [WordCseHash α] (currentFunc
     Option (WordSsaState × List Nat × WordProg α × WordSpillState) :=
   (cakeAllocateWordFunctionAfterDeadWithColour currentFunction parameters program).map
     CakeAllocationWithColour.toLegacy
+
+/-- Equality of the whole legacy allocator result, not just its fresh counter.
+Flapjack infrastructure; no HOL original. -/
+theorem cakeAllocateWordFunctionAfterDead_fromLimit
+    [OfNat α 0] [WordCseHash α] [BEq α]
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg α) :
+    cakeAllocateWordFunctionAfterDead currentFunction parameters program =
+      cakeAllocateWordFunctionAfterDeadFromLimit
+        (wordSsaLimitVar parameters program) currentFunction parameters program := by
+  rfl
 
 /-- The retained colouring is precisely the one used to construct the actual
 spill state, derived from the executed result equation. Flapjack-only carrier
@@ -575,7 +616,7 @@ theorem cakeAllocateWordFunctionAfterDeadWithColour_allocation
     (h : cakeAllocateWordFunctionAfterDeadWithColour currentFunction parameters program = some output) :
     output.allocation = cakeColourWordSpillState cakeRiscVRegisterCount
       parameters output.program output.colouring := by
-  unfold cakeAllocateWordFunctionAfterDeadWithColour at h
+  unfold cakeAllocateWordFunctionAfterDeadWithColour cakeAllocateWordFunctionAfterDeadWithColourFromLimit at h
   repeat' (split at h <;> simp_all)
   all_goals rcases h with ⟨_, _, _, rfl⟩
   all_goals rfl
@@ -604,7 +645,7 @@ theorem cakeAllocateWordFunctionAfterDeadWithColour_output_supported
     (output : CakeAllocationWithColour α)
     (h : cakeAllocateWordFunctionAfterDeadWithColour currentFunction parameters program = some output) :
     allocatorMemorySupported output.program = true := by
-  unfold cakeAllocateWordFunctionAfterDeadWithColour at h
+  unfold cakeAllocateWordFunctionAfterDeadWithColour cakeAllocateWordFunctionAfterDeadWithColourFromLimit at h
   repeat' (split at h <;> simp_all)
   all_goals rcases h with ⟨_, _, checked, rfl⟩
   all_goals exact checked
@@ -618,7 +659,7 @@ theorem cakeAllocateWordFunctionAfterDead_input_supported
     (output : WordSsaState × List Nat × WordProg α × WordSpillState)
     (h : cakeAllocateWordFunctionAfterDead currentFunction parameters program = some output) :
     allocatorMemorySupported program = true := by
-  unfold cakeAllocateWordFunctionAfterDead cakeAllocateWordFunctionAfterDeadWithColour at h
+  unfold cakeAllocateWordFunctionAfterDead cakeAllocateWordFunctionAfterDeadWithColour cakeAllocateWordFunctionAfterDeadWithColourFromLimit at h
   split at h <;> simp_all [CakeAllocationWithColour.toLegacy]
 
 /-- The program returned by successful allocation also passed the recursive

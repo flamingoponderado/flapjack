@@ -7,6 +7,7 @@ all four original maxima/limits, actual codec acceptance and unchanged guard
 rejection; the earlier 32 constructor rows and five-register rejection remain.
 This is carrier correspondence, not an executed native limit route.
 
+ssa_map_bounds_probe.out captures nine complete original map-validity pairs and a kernel replay of the full original local bound-monotonicity proof. Cases include empty/malformed trees, equal/raised/rejected bounds, physical registers, unbounded natural values and overwritten entries. SSAMapBoundsParity replays the same predicates and applies the full theorem to arbitrary maps/bounds. Recursive insertion is unfolded once before predicate simplification to avoid expanding dead recursive branches.
 `word_max_inst_route_probe.out` records seven fresh original instruction maxima
 and program limits. HOL max_var_inst leaves Mem Load16/Store16 to the zero
 fallback, unlike its explicit Load/Store/Load8/Store8/Load32/Store32 clauses.
@@ -2253,6 +2254,29 @@ not the whole HOL `inst_def`. Regenerate read-only using
 HOL_PROBE_ONLY=stacksem_fp_arith_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
+`stacksem_fp_convert_probeScript.sml` captures eleven original `inst_def`
+observations for FPSqrt, FPToInt and FPFromInt
+(`cakeml/compiler/backend/semantics/stackSemScript.sml:558-562` for FPSqrt,
+`:605-623` for FPToInt and `:624-636` for FPFromInt). FPSqrt is probed on the
+exact square 4.0 (`0x4010000000000000`) whose `isqrtLib` sqrt is
+2.0 (`0x4000000000000000`), plus a missing-operand failure. FPToInt covers an
+in-range 2.0 -> `2w`, a `2^52` value that fails HOL's `w2i (i2w i) = i` word32
+round-trip (out-of-range -> NONE), the 32-bit low/high `bit_field_insert`
+split (`FPToInt 14 2` / `FPToInt 15 2` into `d1 DIV 2 = 7`), and a missing
+operand. FPFromInt covers the 64-bit low-32-bit read (`0x0000000000000003` ->
+3.0), the 32-bit low/high half selection (`FPFromInt 7 14` -> 4.0,
+`FPFromInt 7 15` -> 3.0 over `fp7 = 0x0000000300000004`), and a
+missing-operand failure. `Flapjack/Test/StackSemFpRegisterInstParity.lean`
+kernel-replays every row: the FPSqrt row uses `holFp64Sqrt_rte` from
+`Flapjack/Misc/BinaryIeeeSqrtFp64.lean`, the FPFromInt rows use
+`holIntToFp64_rte` from `Flapjack/Misc/BinaryIeeeConvert.lean`, and the FPToInt
+rows use the computable `holFp64ToInt`. The untagged partial case helper
+`Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean` is
+not the whole HOL `inst_def`. Regenerate read-only using
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_fp_convert_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+
 `stack_props_inst_name_probe.out` records ten direct `inst_name_def` EVAL rows
 from original stackPropsTheory, covering every instruction constructor and
 logical-register/address, two-register arithmetic, and FP alias failures.
@@ -3684,6 +3708,7 @@ its existing canonical Lean definition now preserves the generic carrier.
 The actual compiler theorem still uses Nat there, as required by its original
 compiler type. No clauses or executed compiler behavior change.
 
+ssa_physical_state_updates_probe.out freshly replays the literal physical-target setVar and list-insert locals-relation proofs and records their independent source/target code/FFI types. SSALocalsPhysicalStateUpdates retains every original premise including list length, using native Spt locals. No executable change or cross-language equivalence claim.
 ### Full WordConvs forbidden-constructor equation group
 
 `word_convs_no_alloc_def_probeScript.sml`, `word_convs_no_mt_def_probeScript.sml`
@@ -3721,4 +3746,210 @@ replays identical observations through the actual kernel-checked compiler
 equations and applies the original-shaped Inst case at arbitrary inputs.
 These regressions do not establish cross-language equivalence or full compiler
 preservation. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_inst_probeScript.sml`.
+
+
+
+`word_alloc_limit_props_probe.out` freshly re-elaborates the literal complete
+local `limit_var_props` proof, then evaluates twelve complete native program
+maximum/limit/allocation/strict-occurrence tuples. The tuples exactly match
+`WordAllocLimitVarParity.lean`; `WordAllocLimitPropertiesParity.lean` imports
+those kernel fixtures and applies the full public theorem with arbitrary
+positive-width programs and the original limit equality premise. Cases retain
+all residues, widths1/32/64/80, the original ignored Load16 registers, tail Call
+handler exclusion, returning Call body traversal and unbounded Nat registers.
+The qualified tag records only the standard HOL type-indexed word translation.
+
+`word_to_stack_no_shmemop_handlers_probe.out` literally replays all three local
+PushHandler/PopHandler/StackHandlerArgs no-shmemop proofs and captures their
+generic operation types. Sixteen fresh predicate observations cover both perf
+flags, independent unused frame carriers, safe and forbidden continuations,
+widths1/32/64/80, direct/indirect generic destinations and large frame offsets.
+`WordToStackNoShmemopHandlersParity.lean` kernel-replays every observation and
+applies each full theorem at arbitrary original carriers. Pop retains false
+continuations; no range, safety, valid-frame or execution premises are added.
+
+`stack_to_lab_native_probe.out` records the full original `flatten_def` and
+45 complete native output observations, including actual `app_list` tree
+association, all If and optional Call branches, all original fallback
+constructors, width1/80 words, and exact FFI names. The native counterpart is
+`StackToLab/Native.lean`; `StackToLabNativeParity` supplies 45 kernel fixtures,
+including arbitrary exact MlString pass-through. HOL's locally overloaded
+`++` remains left-associative, so the generic callback bridge's right-associated
+tree is not a definition-exact substitute. Production routing remains tracked
+on fleet bead `flapjack-52bq.1`.
+ssa_rename_property_wrappers_probe.out replays original class-add, full core renaming and both property wrapper proofs, recording original polymorphic Move program type. SSARenamePropertyWrappers retains all original producer equalities, hypotheses and four conclusions on native producers. No executable change or cross-language equivalence claim.
+### Real-sqrt rounding agreement source review
+
+`real_sqrt_round_agreement_special_probeScript.sml` freshly records the original
+`fp64_sqrt` infinity and negative-zero results for all three directed modes.
+The six same-input kernel theorems live in `BinaryIeeeSqrtRoundAgreementParity`.
+Two further original whole-flag equalities cover negative finite and quiet-NaN
+inputs with arbitrary rounding mode, replayed by generic kernel theorems; the
+NaN payload choice is never replaced by a numerical representative.
+The existing seven exact-square RTE rows and two RTE special rows were freshly
+regenerated unchanged during the review. The built original HOL checkout and
+this checkout's read-only HOL submodule both use
+`a390cbabd3a4521bab4ee20281e3e42933a8a3ae`.
+
+The reused `RoundAgreement` theorem covers every mode and binary64 input;
+lower rational-radicand nonnegativity is discharged internally in the full
+float sqrt path. It proves a Lean cut-renderer/Mathlib-real-renderer equality,
+without assuming or proving HOL-to-Lean equivalence. Directed finite results
+are agreement theorem instances here, without a numeric oracle conversion for
+Hilbert choice on the finite float carrier. The two non-square RTE hardware
+checks remain supplemental comparisons, not original HOL oracle rows.
+Faithful HOL carrier acceptance and complete StackSem instructions/evaluation
+remain separate tracked work.
+
 ssa_physical_state_updates_probe.out freshly replays the literal physical-target setVar and list-insert locals-relation proofs and records their independent source/target code/FFI types. SSALocalsPhysicalStateUpdates retains every original premise including list length, using native Spt locals. No executable change or cross-language equivalence claim.
+
+ssa_option_lookup_subset_probe.out replays the full original subset-helper proof and three inferred native map/list types. SSAOptionLookupSubset retains the two original domain premises and complete mapped-name domain conclusion, with generic locals payload. Proof-only regression evidence, not cross-language equivalence.
+### SSA merge unchanged lookups
+
+`ssa_merge_move_lookups_probeScript.sml` replays the complete literal original local frame2 and frame3 proofs, specializes frame3 to empty maps, applies it under independently proved guards for an absent-list key and an outside-intersection key, captures both whole merge results, and checks the false guard for a changed common key. Lean `mergeMovesFrame3` retains the full original guard and both lookup equalities for arbitrary native trees.
+
+### Loop-to-Word label threading and handler ownership
+
+`loop_to_word_label_handlers_probeScript.sml` replays all four full literal source proofs: function-label preservation, next-label monotonicity, handler ownership for comp, and per-function ownership for compile_prog. Actual theorem applications use original compiler equalities supplied by EVAL; no extra guard or target evaluation assumption. Complete nested outputs at widths 1/64/80 show return labels, exception labels, both continuations and final counter; the tail case ignores its source handlers. A duplicate-owner compiled list and false-owner sentinel are retained. Matching generic-width kernel fixtures apply the public theorems and check the complete nested output.
+
+`stacksem_fp_conversion_types_probeScript.sml` captures seven original full
+types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
+three machine-IEEE operations and the generic compile-oracle projection. The
+state parameters and fixed word64 FP register carrier are retained; this is
+source-shape evidence, not a HOL-to-Lean equivalence proof.
+### Native compiler flat-effect no-shared-memory cases
+
+`word_to_stack_no_shmemop_flat_probeScript.sml` captures fifty-four original
+source-guard/actual-target-predicate observations for twelve flat-effect cases
+over widths1/32/64/80, both perf flags and zero/nonzero/large frames. Samples
+include move cycles/repeated sources, malformed cutsets, bitmap-producing live
+and constant paths, exact byte-backed FFI names and all Set expression branches.
+`WordToStackNoShmemopFlatEffectsParity` replays the identical inputs through
+actual compiler equations: fifty direct kernel predicate reductions and four
+Move observations using accepted preservation for arbitrary scheduled lists.
+The latter do not claim direct reduction of the scheduler. Twelve generic
+public case applications keep the original guard and compilation equality.
+These regressions do not establish cross-language equivalence or the complete
+compiler theorem. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_flat_probeScript.sml`.
+
+### Native compiler recursive no-shared-memory cases
+
+`word_to_stack_no_shmemop_recursive_probeScript.sml` evaluates forty-two
+original source/actual-target predicate pairs for MustTerminate, Loop, Seq
+and all If operand/validation branches. Widths1/32/64/80, both perf flags,
+malformed cutsets and nested bitmap-producing branches are retained. False
+source guards include genuinely forbidden output, invalid-address fallback
+and an independently checked handler ignored by the tail-call compiler;
+explicit false/false and false/true expectations prevent an equivalence claim.
+`WordToStackNoShmemopRecursiveParity` kernel-reduces the identical compiler
+equations and applies all four generic original-shaped cases with only their
+legitimate source-subprogram induction hypotheses. The accepted full source
+guard equations are reused. These regressions do not establish cross-language
+equivalence or complete the compiler theorem. Selector:
+`HOL_PROBE_ONLY=word_to_stack_no_shmemop_recursive_probeScript.sml`.
+
+`ssa_rename_move_preserve_weak_probe.out` freshly replays the full original move-renaming preservation proof plus its literal local prerequisites and five original inferred carriers; both states share all three type dimensions. No successful target evaluation or post-state relation is assumed.
+### Loop-to-Word compiled names, membership, and first-match lookup
+
+`loop_to_word_program_names_probeScript.sml` replays all four complete original proofs at lines 1850–1909. It captures entire duplicate-name and distinct-name compiled lists, true/false name-distinctness, the first duplicate lookup, and missing lookup. Generic-width Lean fixtures match these results and apply each public theorem. Lookup preserves the original first-match semantics without a distinct-name premise. Selector: `HOL_PROBE_ONLY=loop_to_word_program_names_probeScript.sml`.
+
+### Executable canonical quiet-NaN arithmetic refinement
+
+`Flapjack/Misc/BinaryIeeeArithExec.lean` supplies five computable word producers and unconditional equality-or-quiet-NaN refinements to the existing arithmetic renderings. The logical operations remain unchanged. `BinaryIeeeArithExecParity.lean` matches all 49 rows of the freshly regenerated `machine_ieee_fp64_arith_nan`, `machine_ieee_fp64_arith_special`, and `machine_ieee_fp64_arith_round` captures: non-choice outputs are bit-exact, while symbolic quiet-NaN choices are matched by canonical quiet NaNs without asserting payload equality. WordSem uses roundTiesToEven and ignores flags for these five clauses. Full instruction/evaluator routing remains open under h29l.10; these new executable producers are Flapjack infrastructure, not separately tagged HOL declarations.
+
+`lab_validity_native_probe.out` freshly records three original native
+conversion/validity definitions and sixteen original observations, including
+actual eight-bit assembler configuration acceptance/rejection, empty and
+mixed sections, and width1/80 memory-conversion boundaries with unbounded
+natural registers. `LabValidityNativeParity` has sixteen kernel fixtures,
+including generic payload/cache statements. The exact definitions live in
+`LabToTarget/Native.lean` and `LabProps/Native.lean`; the generic callback
+helpers are separate infrastructure. Native executable routing and full
+encoding correctness remain tracked on the fleet dependency graph.
+
+`stacksem_fp_conversion_types_probeScript.sml` captures seven original full
+types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
+three machine-IEEE operations and the generic compile-oracle projection. The
+state parameters and fixed word64 FP register carrier are retained; this is
+source-shape evidence, not a HOL-to-Lean equivalence proof.
+`word_alloc_limit_props_probe.out` freshly re-elaborates the literal complete
+local `limit_var_props` proof, then evaluates twelve complete native program
+maximum/limit/allocation/strict-occurrence tuples. The tuples exactly match
+`WordAllocLimitVarParity.lean`; `WordAllocLimitPropertiesParity.lean` imports
+those kernel fixtures and applies the full public theorem with arbitrary
+positive-width programs and the original limit equality premise. Cases retain
+all residues, widths1/32/64/80, the original ignored Load16 registers, tail Call
+handler exclusion, returning Call body traversal and unbounded Nat registers.
+The qualified tag records only the standard HOL type-indexed word translation.
+
+`word_to_stack_no_shmemop_handlers_probe.out` literally replays all three local
+PushHandler/PopHandler/StackHandlerArgs no-shmemop proofs and captures their
+generic operation types. Sixteen fresh predicate observations cover both perf
+flags, independent unused frame carriers, safe and forbidden continuations,
+widths1/32/64/80, direct/indirect generic destinations and large frame offsets.
+`WordToStackNoShmemopHandlersParity.lean` kernel-replays every observation and
+applies each full theorem at arbitrary original carriers. Pop retains false
+continuations; no range, safety, valid-frame or execution premises are added.
+
+### Full native tail Call no-shared-memory case
+
+`word_to_stack_no_shmemop_tail_probeScript.sml` captures twenty-two original
+source-guard/compiled-target pairs. Widths1/32/64/80, both perf flags,
+direct/indirect destinations, empty arguments, large final registers and full
+frames are retained. Safe and forbidden compiler-ignored handlers show why the
+original source implication is retained instead of an equivalence.
+`WordToStackNoShmemopTailCallParity` reduces the identical native compiler
+inputs in the kernel and applies the complete generic original-shaped case.
+The guarded nonempty LAST path needs no total-list default assumption.
+These fixtures do not prove cross-language equivalence or full compiler correctness.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_tail_probeScript.sml`.
+
+### Full returning Call without a handler
+
+`word_to_stack_no_shmemop_returning_probeScript.sml` captures twenty-two
+original source/compiled-target predicate pairs for returning Calls with no
+handler. Widths1/32/64/80, both perf flags, direct/indirect destinations and
+empty/single/multiple arguments and return values are retained. Nested Alloc
+and Return bodies exercise actual bitmap threading; valid shared and invalid
+address bodies retain false/false and false/true source/target sentinels.
+`WordToStackNoShmemopReturningCallParity` kernel-reduces identical compiler
+inputs and applies the full generic original-shaped theorem with its genuine
+return-body induction hypothesis. These regressions do not establish
+cross-language equivalence or full compiler correctness.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_returning_probeScript.sml`.
+
+### Full returning Call with a handler
+
+`word_to_stack_no_shmemop_handled_probeScript.sml` captures twenty-six
+original source/compiled-target predicate pairs. The return body and handler
+both produce bitmaps in the original compiler order. Widths1/32/64/80, both
+perf flags, direct/indirect destinations and empty/single/multiple arguments
+and return values are retained. Independently and jointly forbidden/invalid
+children preserve false/false and false/true observations.
+`WordToStackNoShmemopHandledCallParity` kernel-reduces identical inputs and
+applies the full generic original case with only the genuine return and handler
+induction hypotheses. The three Call cases complete the original constructor
+group; other constructors and assembly remain separately tracked. These
+regressions do not establish cross-language equivalence or whole compiler correctness.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_handled_probeScript.sml`.
+
+`stackprops_state_constants_probeScript.sml` captures the complete thirteen
+state-operation constant/commutation statements from stackProps20-168 and
+their original free-variable types. It fetches exported HOL theorems; the
+local/overwritten declarations at84/90/110/125 are explicitly re-proved with
+their original statements and proofs. In particular, empty_env_const has
+independently polymorphic x and z states. These are source-shape captures,
+not a claim of HOL-to-Lean equivalence or exported status for local helpers.
+### Primitive and rejected no-shared-memory compiler cases
+
+`word_to_stack_no_shmemop_primitives_probeScript.sml` captures thirty-two
+original source/actual-target predicate pairs for Skip, Assign, Store, Raise,
+Break, Continue, Tick and ShareInst. Widths1/32/64/80, both perf flags and full
+zero/nonzero/large frames remain explicit. Assign and Store retain the original
+compiler's impossible-constructor Skip fallback. Valid and invalid shared Load
+and Store keep false/false and false/true results instead of an equivalence.
+`WordToStackNoShmemopPrimitivesParity` kernel-reduces identical compiler inputs
+and applies all eight full original-shaped cases. The rejected ShareInst proof
+uses only its original false source guard, with no target safety premise.
+These regressions do not establish cross-language equivalence or full compiler correctness.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_primitives_probeScript.sml`.

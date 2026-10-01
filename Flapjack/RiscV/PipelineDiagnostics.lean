@@ -11,6 +11,7 @@ import Flapjack.RiscV.WordDeadCode
 import Flapjack.RiscV.WordInstSelect
 import Flapjack.RiscV.WordSimp
 import Flapjack.RiscV.WordUnreach
+import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 
 /-!
 # Checked pipeline Word-to-Stack diagnostics
@@ -144,6 +145,24 @@ def wordAllocateSsaFunctionWithEntryAndClashTreeWithSpillsAndPreferencesRiscV [O
   RiscV.CakeRegAlloc.cakeAllocateWordFunction parameters program
     currentFunction RiscV.CakeRegAlloc.cakeRiscVRegisterCount
 
+/-- Actual fixed-width Word input prepared for the allocator's full-SSA
+boundary. Discovery-only DCE/unreachable removal is deliberately outside this
+operation: those transformations would change SSA's program limit. Shared by
+the executed callers and the native-limit benchmark to prevent measurement
+drift. Flapjack production infrastructure, not a HOL correctness theorem. -/
+def wordBeforeSsaAllocatorBody [NeZero width]
+    (body : WordProg (RiscV.Word width)) : WordProg (RiscV.Word width) :=
+  RiscV.wordInstSelectProgramFrom
+    (RiscV.wordToWordPreSsa (RiscV.wordFlattenProgramFrom body))
+
+/-- Whole-program equality to the original inline preparation, with no
+successful allocation or input-codec premise. Flapjack infrastructure. -/
+theorem wordBeforeSsaAllocatorBody_eq [NeZero width]
+    (body : WordProg (RiscV.Word width)) :
+    wordBeforeSsaAllocatorBody body =
+      RiscV.wordInstSelectProgramFrom
+        (RiscV.wordToWordPreSsa (RiscV.wordFlattenProgramFrom body)) := by rfl
+
 /-! Checked counterpart of the full-SSA spill pipeline.  The historical
 `Option` function intentionally keeps the old API, but it loses which Word
 section failed when allocation or location-aware Word-to-Stack lowering
@@ -160,11 +179,8 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaChecked [NeZero width] :
          `word_to_word` order.  `word_unreach` runs after SSA and cleanup;
          doing it here changes the fresh-name bound used by SSA. -/
       let unallocatedBody :=
-        RiscV.wordInstSelectProgramFrom
-          (RiscV.wordToWordPreSsa
-            (RiscV.wordFlattenProgramFrom
-              (LoopToWord.loopToWordCompFunc label parameters body)))
-      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDead
+        wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc label parameters body)
+      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedLimit
           label wordParameters unallocatedBody with
       | none => .error (.allocationFailure label)
       | some (_, renamedParameters, renamedProgram, allocation) =>
@@ -227,11 +243,8 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsCheckedAux
   | (label, parameters, body) :: functions =>
       let wordParameters := wordSsaAbiParameters parameters.length
       let unallocatedBody :=
-          RiscV.wordInstSelectProgramFrom
-            (RiscV.wordToWordPreSsa
-              (RiscV.wordFlattenProgramFrom
-                (LoopToWord.loopToWordCompFunc label parameters body)))
-      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDead
+          wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc label parameters body)
+      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedLimit
           label wordParameters unallocatedBody with
       | none => .error (.allocationFailure label)
       | some (_, renamedParameters, renamedProgram, allocation) =>
@@ -303,10 +316,8 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsFromWordCheckedA
   | (label, arity, body) :: functions =>
       let wordParameters := wordSsaAbiParameters arity
       let unallocatedBody :=
-        RiscV.wordInstSelectProgramFrom
-          (RiscV.wordToWordPreSsa
-            (RiscV.wordFlattenProgramFrom body))
-      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDead
+        wordBeforeSsaAllocatorBody body
+      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedLimit
           label wordParameters unallocatedBody with
       | none => .error (.allocationFailure label)
       | some (_, _renamedParameters, renamedProgram, allocation) =>
@@ -493,8 +504,7 @@ structure SourceRiscVRuntimeImage (width : Nat) where
 def wordFfiDiscoveryBody [NeZero width]
     (body : WordProg (RiscV.Word width)) : WordProg (RiscV.Word width) :=
   RiscV.wordRemoveUnreachable (wordProgDCE
-    (RiscV.wordInstSelectProgramFrom
-      (RiscV.wordToWordPreSsa (RiscV.wordFlattenProgramFrom body))))
+    (wordBeforeSsaAllocatorBody body))
 
 /-! Source-facing entrypoint. Parsing and static checking are kept ahead of
     the existing entry-aware pipeline so callers can distinguish front-end,
