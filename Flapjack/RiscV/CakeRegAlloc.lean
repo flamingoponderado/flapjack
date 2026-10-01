@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
+import Flapjack.Compiler.Backend.RegAlloc.SortedMem
 import Flapjack.RiscV.AllocatorMemoryInvariant
 import Flapjack.RiscV.CakeAllocatorCore
 import Flapjack.RiscV.Allocator
@@ -1036,12 +1037,14 @@ def cakeSortedInsert (x : Nat) : List Nat → List Nat
     adjacency lists are kept descending by `cakeSortedInsert`, so on them this
     agrees with `List.contains`; it is what the original computes, and the
     early exit is why the original's coalescing scans stay cheap. -/
-def cakeSortedMem (x : Nat) : List Nat → Bool
-  | [] => false
-  | y :: ys =>
-      if x = y then true
-      else if x > y then false
-      else cakeSortedMem x ys
+def cakeSortedMem (x : Nat) (ys : List Nat) : Bool :=
+  Flapjack.RegAlloc.sortedMem x ys
+
+/-- Flapjack API correspondence, with no separate HOL original: the executed
+helper uses the literal reviewed definition for every list, including unsorted
+ones. This does not establish the rest of allocator correctness. -/
+theorem cakeSortedMem_eq_literal (x : Nat) (ys : List Nat) :
+    cakeSortedMem x ys = Flapjack.RegAlloc.sortedMem x ys := rfl
 
 /-- Adjacency list of node `i` (`adj_ls_sub`). -/
 def cakeAdjSub (adj : CakeNodeMap (List Nat)) (i : Nat) : List Nat :=

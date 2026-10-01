@@ -42747,6 +42747,22 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead46.5: full literal source909-918 RTC invariant, input (wf and safety of REVERSE(active++emitted)) conjunct Steps implies both target wf and same safety, arbitrary alpha. Native ReflTransGen Step is reviewed exact RTC, chronology/order and Boolean=true translation unchanged. No target invariant/initialized scratch premise added. Tail induction invokes accepted wf_step and step_not_use_temp_before_assign with IH source conjuncts; reflexivity retains both. Twelve fresh original combined wf/safety observations plus genuine native RTC/kernel theorem applications cover all clauses, prior scratch, Bool, zero-step states and three-step cycle. No executed behavior change; pmov/full parmove remain open. Coordinator source comparison completed against the cited literal HOL clauses; fresh original observations replayed. Unified kernel gates and publication separately required."
   },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapState.lean",
+    "lean_name": "mapState",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "map_state_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.11: literal source1086-1088 let m=MAP(f##f) in m##m##m. Native List.map(Prod.map f f) then right-associated Prod.map m (Prod.map m m) preserves both endpoints and all three list orders. Fresh original type audit independent alpha -> beta and raw pair-list triple input/output; generic native alpha/beta not specialized to Option registers, no equality/injectivity/NONE-preservation premise. Ten fresh original whole outputs paired with kernel fixtures include empty/each segment/order, noninjective constant, unbounded Nat, Bool, Nat->Bool different carriers and changing NONE. Definition proof support only, no executed behavior change; injective simulation obligations remain open. Coordinator source comparison completed against the cited literal HOL clauses; fresh original observations replayed. Unified kernel gates and publication separately required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortedMem.lean",
+    "lean_name": "sortedMem",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "sorted_mem_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead.11.5.10.5.8.6.25: literal reg_allocScript193-199 arbitrary Nat key and List Nat. Empty false; head equality true; x>head false before recursion; otherwise recursive tail. No descending-order, membership, uniqueness or range premise. Nat equality/order and Bool/List constructors retained exactly. Twelve fresh original EVAL equations replay identical inputs by kernel rfl, including unsorted early-stop rejection, unsorted continuing match, duplicates, zero, tail, and 80-bit key. Production cakeSortedMem now delegates this same definition; unconditional arbitrary-key/list kernel equality and former recursive equation replay establish this helper replacement only. Remaining allocator state and graph correctness are unproved; this routing does not claim allocator correctness. Fresh original executed corpus comparison is required on linked .25.1. Coordinator review pending."
+  },
 {
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SafeDiv.lean",
     "lean_name": "safeDiv",
@@ -42763,7 +42779,7 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison 2026-10-01 bead .15.3.46.3: complete original858-877 predicate equality translated as predicate=true iff forall firstreadindex i, source find_index NONE (MAP SND ls)0=SOME i implies exists firstwriteindex j with destination find_index NONE (MAP FST ls)0=SOME j and j<i. Independent arbitrary destination/source Type carriers, all Option-pair lists and both literal offset0 searches retained. No validity/distinctness/success/targetrun premise; local classical DecidableEq implements HOL equality without adding public caller typeclass binders. Structural list/Option cases and accepted arbitrary-offset shift_0 derive strict order, including simultaneous NONE/NONE failure. Fresh fifteen original full predicate/read/write equations include duplicates, absent reads/writes, mixed Bool/Nat and function-valued source; identical-input kernel replay plus unrestricted public theorem fixture. Coordinator review and complete compiler/move safety assembly remain required."
   },
-  {
+{
     "lean_path": "Flapjack/Compiler/Backend/Parmove/InjOnState.lean",
     "lean_name": "injOnState",
     "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
