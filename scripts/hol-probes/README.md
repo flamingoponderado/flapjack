@@ -4279,3 +4279,10 @@ and proof literally. Six direct padding observations include empty nop chunks,
 label-only code, nonempty accumulators and unchanged resolved offsets. Kernel
 fixtures replay them and apply the full theorem at arbitrary positive width and
 arbitrary accumulator; no full compiler or cross-language equivalence is claimed.
+
+`binary_ieee_real_carrier_source_probeScript.sml` captures all 14 original
+real-rounding/sqrt and fixed64 codec definitions, with their full quantified
+types (28 rows), for the source review of `BinaryIeeeSqrt.RealCarrier`.
+The seven original exact-square observations remain in
+`machine_ieee_fp64_sqrt_exact_probe.out`; these source/type captures and examples
+provide review/regression evidence, not cross-assistant equivalence.

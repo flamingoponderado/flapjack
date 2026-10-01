@@ -1,3 +1,5 @@
+import Flapjack.FpSemHOL.RealSqrtAgreement
+import Flapjack.Compiler.Backend.Semantics.WordSem.Inst.RealSqrtAgreement
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
 import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
