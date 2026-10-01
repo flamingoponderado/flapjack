@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrograms
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop
