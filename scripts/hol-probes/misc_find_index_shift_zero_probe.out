@@ -1,0 +1,10 @@
+fiz_empty=T
+fiz_head=T
+fiz_middle=T
+fiz_last=T
+fiz_absent=T
+fiz_zero=T
+fiz_large_offset=T
+fiz_large_value=T
+fiz_bool=T
+fiz_bool_absent=T

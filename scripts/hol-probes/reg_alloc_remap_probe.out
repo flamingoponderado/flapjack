@@ -1,0 +1,12 @@
+remap_empty=T
+remap_delta=T
+remap_duplicate=T
+remap_seq=T
+remap_branch=T
+remap_fixed=T
+remap_raw_empty=T
+remap_raw_root=T
+remap_set_order=T
+remap_large=T
+remap_nested=T
+remap_initial=T

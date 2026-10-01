@@ -18,6 +18,9 @@ from pathlib import Path
 HOL_RELN_TUPLES = runpy.run_path(
     str(Path(__file__).with_name("hol_sml_declarations.py"))
 )["hol_reln_tuple_declarations"]
+HOL_DEFINE_RUN = runpy.run_path(
+    str(Path(__file__).with_name("hol_sml_declarations.py"))
+)["define_run_declarations"]
 
 
 IDENT = r"[A-Za-z_][A-Za-z0-9_'$]*"
@@ -29,6 +32,7 @@ TOP_LEVEL = re.compile(
 DECL_RE = re.compile(
     r"^\s*(Theorem|Triviality|Definition)\s+(\S+?)\s*(?::|=)"
 )
+TYPE_RE = re.compile(r"^\s*Type\s+(" + IDENT + r")\s*=\s*(``|“)")
 OLD_DECL_RE = re.compile(
     r"^\s*val\s+(" + IDENT + r")\s*=\s*(Q\.prove|prove|store_thm|Define)\b"
 )
@@ -134,6 +138,17 @@ def declaration_end(masked: list[str], start: int, kind: str) -> int:
             if re.match(r"^\s*End\b", masked[i]):
                 return i + 1
         return len(masked)
+    if kind == "Type":
+        match = TYPE_RE.match(masked[start])
+        assert match is not None
+        closing = "``" if match.group(2) == "``" else "”"
+        for i in range(start, len(masked)):
+            content = masked[i][match.end():] if i == start else masked[i]
+            if closing in content:
+                return i + 1
+            if i > start and TOP_LEVEL.match(masked[i]):
+                return i
+        return len(masked)
     raise ValueError(f"unknown declaration kind: {kind}")
 
 
@@ -180,6 +195,10 @@ def parse_file(root: Path, path: Path) -> tuple[list[Entry], list[tuple[str, str
     relation_tuples = {
         start - 1: (names, end)
         for names, start, end in HOL_RELN_TUPLES(text)
+    }
+    run_factories = {
+        start - 1: (carrier, runner, end)
+        for carrier, runner, start, end in HOL_DEFINE_RUN(text)
     }
     relative = path.relative_to(root).as_posix()
     entries: list[Entry] = []
@@ -242,6 +261,13 @@ def parse_file(root: Path, path: Path) -> tuple[list[Entry], list[tuple[str, str
     i = 0
     while i < len(masked):
         line = masked[i]
+        if i in run_factories:
+            carrier, runner, end = run_factories[i]
+            entries.append(Entry("Datatype", carrier, relative, i + 1, end, theory))
+            entries.append(Entry("Definition", runner, relative, i + 1, end, theory))
+            recognized_style = True
+            i = end
+            continue
         if i in relation_tuples:
             names, end = relation_tuples[i]
             entries.extend(Entry("Theorem", name, relative, i + 1, end, theory) for name in names)
@@ -254,6 +280,13 @@ def parse_file(root: Path, path: Path) -> tuple[list[Entry], list[tuple[str, str
             name = clean_name(raw_name)
             end = declaration_end(masked, i, kind)
             entries.append(Entry(kind, name, relative, i + 1, end, theory))
+            i = max(i + 1, end)
+            continue
+
+        type_match = TYPE_RE.match(line)
+        if type_match:
+            end = declaration_end(masked, i, "Type")
+            entries.append(Entry("Type", type_match.group(1), relative, i + 1, end, theory))
             i = max(i + 1, end)
             continue
 

@@ -1,0 +1,9 @@
+stl_empty=T
+stl_pending=T
+stl_active=T
+stl_emitted=T
+stl_order=T
+stl_duplicates=T
+stl_large=T
+stl_bool=T
+stl_pairs=T

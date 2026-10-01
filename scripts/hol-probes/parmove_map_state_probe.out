@@ -1,0 +1,10 @@
+pms_empty=T
+pms_pending=T
+pms_active=T
+pms_emitted=T
+pms_order=T
+pms_constant=T
+pms_large=T
+pms_bool=T
+pms_cross_carrier=T
+pms_option_constant=T

@@ -1,3 +1,10 @@
+import Flapjack.Test.CanonizeMovesParity
+import Flapjack.Test.MonadArrayLengthParity
+import Flapjack.Test.RegAllocStateMapParity
+import Flapjack.Test.MonadListPrimitivesParity
+import Flapjack.Test.CanonizeSortParity
+import Flapjack.Test.HeuProgParity
+import Flapjack.Test.RegAllocRemapParity
 import Flapjack.Test.HeuCallParity
 import Flapjack.Test.HeuMaxParity
 import Flapjack.Test.HeuInstParity

@@ -1,6 +1,23 @@
+import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+import Flapjack.Compiler.Backend.RegAlloc.Initialization
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
+import Flapjack.Translator.Monadic.MonadBase.ArrayLength
+import Flapjack.Compiler.Backend.RegAlloc.StateMap
+import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
+import Flapjack.Misc.FindIndex.Append
+import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+import Flapjack.Compiler.Backend.Parmove.MapState
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
+import Flapjack.Compiler.Backend.Parmove.StateToList
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
+import Flapjack.Compiler.Backend.WordAlloc.HeuProg
+import Flapjack.Compiler.Backend.RegAlloc.Remap
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
+import Flapjack.Misc.FindIndex.ShiftZero
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
 import Flapjack.Compiler.Backend.WordAlloc.HeuCall
 import Flapjack.Compiler.Backend.WordAlloc.HeuMax
-import Flapjack.Compiler.Backend.RegAlloc.Exceptions
 import Flapjack.Compiler.Backend.RegAlloc.Carriers
 import Flapjack.Compiler.Backend.WordAlloc.HeuInst
 import Flapjack.Misc.Sptree.Map
@@ -18,6 +35,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CallNone
 import Flapjack.Misc.FindIndex.Bounds
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Append
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
+import Flapjack.Compiler.Backend.WordAlloc.GetForced
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
 import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompilePrefix
@@ -42,6 +61,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
 import Flapjack.Compiler.Backend.WordToStack.ProductionExpressionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
+import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep
 
@@ -275,6 +296,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetDeletion
 import Flapjack.Compiler.Backend.RegAlloc.Proofs
+import Flapjack.Compiler.Backend.RegAlloc.SpDefault
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Leaves
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Inst

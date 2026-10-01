@@ -1,0 +1,12 @@
+cma_empty=T
+cma_acc=T
+cma_same_up=T
+cma_same_down=T
+cma_same_equal=T
+cma_different=T
+cma_groups=T
+cma_unsorted=T
+cma_reversed=T
+cma_self=T
+cma_large=T
+cma_bool=T

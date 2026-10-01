@@ -24332,7 +24332,7 @@
     "hol_path": "cakeml/basis/pure/mllistScript.sml",
     "hol_name": "sort_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.4): HOL mllist$sort = mergesort$mergesort_tail (mllistScript.sml:287-289). Lean sort r l = mergesortTail r l, where mergesortTail/mergesortNTail/mergeTail/sort2Tail/sort3Tail render HOL/src/sort/mergesortScript.sml:101-159 clause for clause (REV l acc = l.reverse ++ acc, DIV2 n = n / 2, the negate toggle and DROP split kept literal); HOL R : 'a -> 'a -> bool is Lean α → α → Bool. Rows sort_kvc/env_to_list of scripts/hol-probes/word_sem_env_probe.out are checked by Flapjack.Test.WordSemEnvParity."
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.4): HOL mllist$sort = mergesort$mergesort_tail (mllistScript.sml:287-289). Lean sort r l = mergesortTail r l, where mergesortTail/mergesortNTail/mergeTail/sort2Tail/sort3Tail render HOL/src/sort/mergesortScript.sml:101-159 clause for clause (REV l acc = l.reverse ++ acc, DIV2 n = n / 2, the negate toggle and DROP split kept literal); HOL R : 'a -> 'a -> bool is Lean α → α → Bool. Rows sort_kvc/env_to_list of scripts/hol-probes/word_sem_env_probe.out are checked by Flapjack.Test.WordSemEnvParity. Follow-up flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.4.2): native sort reused by the inline strict x/y/priority comparison from word_allocScript1653-1660. Full external101-159 helpers compared again, including every malformed short-list clause and negate/drop/REV behavior; read-only HOL revision a390cbabd3a4521bab4ee20281e3e42933a8a3ae, captured source span SHA256 b17fc2bc0ce0c81299cffe879fe945fba21d2e69cfe7238ecc2d7a8a3f120aaf. Existing source alias/body/pin unchanged; no external checker trust expansion. Seventeen fresh original mllist sort observations on exact inline comparator and registered kernel replay cover empty/base/recursive sizes, duplicates, coordinate-before-priority order, reversed unnormalized pairs and unbounded Nat. Full canonize_moves normalization/grouping and executed allocator remain separate open dependencies."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Env.lean",
@@ -42421,68 +42421,346 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol: source5636-5650 compared binder by binder against arbitrary native AsmConfigExact, perf, WordLangProgHOL, AppList/count, natural frame triple and HolProg output. Sole hypotheses are actual compiler output equation and initial flattened-length bound; conclusion retains final bound and before-minus-length equals after-minus-length. Positive type-indexed word translation only; accepted native compiler/carriers and exact functional induction cover every constructor, including both If branches, Loop, MustTerminate, Seq and returning Call with return and handler IHs. Actual wLiveLength and insertBitmap accounting compose; no frame/config validity, evaluation-success, output-bound or simulation premise. Eighteen fresh original observations paired with kernel fixtures cover nonzero gaps, nested insertion, tiny/multiword widths and a failing initial-bound counterexample. Axiom audit contains only propext, Classical.choice and Quot.sound. Executed compiler routing remains on linked bead25.17."
   },
-{
-  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
-  "lean_name": "Exc",
-  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
-  "hol_name": "exc",
-  "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase17-19. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
-},
-{
-  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
-  "lean_name": "M",
-  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
-  "hol_name": "M",
-  "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase21. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
-},
-{
-  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
-  "lean_name": "bind",
-  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
-  "hol_name": "st_ex_bind_def",
-  "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase34-40. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
-},
-{
-  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
-  "lean_name": "ignoreBind",
-  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
-  "hol_name": "st_ex_ignore_bind_def",
-  "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase42-48. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
-},
-{
-  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
-  "lean_name": "ret",
-  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
-  "hol_name": "st_ex_return_def",
-  "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase86-89. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
-},
-{
-  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
-  "lean_name": "arrayAlloc",
-  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
-  "hol_name": "Marray_alloc_def",
-  "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase216-219. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
-},
-{
-  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
-  "lean_name": "run",
-  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
-  "hol_name": "run_def",
-  "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase565-567. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
-},
-{
-  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Exceptions.lean",
-  "lean_name": "StateException",
-  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
-  "hol_name": "state_exn",
-  "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2 reg_alloc101-103: Fail string | Subscript. HOL string is char list, retained as List of reviewed MlString.HolChar=BitVec8 canonical256-element char; no UTF8 String or mlstring wrapper. Constructor arity/equality preserved including0/255 bytes/order. Fresh original probe/kernel fixtures; raising/accessors and production refinement remain open prerequisites. Coordinator source review completed before fleet integration."
-}
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+    "lean_name": "Exc",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "exc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase17-19. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+    "lean_name": "M",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "M",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase21. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+    "lean_name": "bind",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "st_ex_bind_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase34-40. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+    "lean_name": "ignoreBind",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "st_ex_ignore_bind_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase42-48. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+    "lean_name": "ret",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "st_ex_return_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase86-89. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+    "lean_name": "arrayAlloc",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Marray_alloc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase216-219. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+    "lean_name": "run",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "run_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase565-567. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator source review completed before fleet integration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Exceptions.lean",
+    "lean_name": "StateException",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "state_exn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2 reg_alloc101-103: Fail string | Subscript. HOL string is char list, retained as List of reviewed MlString.HolChar=BitVec8 canonical256-element char; no UTF8 String or mlstring wrapper. Constructor arity/equality preserved including0/255 bytes/order. Fresh original probe/kernel fixtures; raising/accessors and production refinement remain open prerequisites. Coordinator source review completed before fleet integration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Remap.lean",
+    "lean_name": "listRemap",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "list_remap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.3): original 1096-1104, full native ClashTree, List Nat and Spt Nat maps retained with right-associated map/map/Nat product and arbitrary initial maps/counter. list_remap tests only forward lookup and increments unbounded fresh Nat only for absent names; reverse-map collisions use literal insert overwrite. Delta reads then writes; Branch left then right then optional fixed toAList names; Seq right then left. toAList retains original mixed enumeration and malformed-tree behavior. No fuel, validity or target-result premise. Twelve fresh original exact-tree observations and kernel driver replay cover duplicate names, all traversal constructors, optional branch sets, mixed set enumeration, malformed trees, large unbounded names/counter and arbitrary inconsistent initial maps. Pure analysis prerequisite, production allocator migration remains open; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Remap.lean",
+    "lean_name": "mkBijAux",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "mk_bij_aux_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.3): original 1106-1119, full native ClashTree, List Nat and Spt Nat maps retained with right-associated map/map/Nat product and arbitrary initial maps/counter. list_remap tests only forward lookup and increments unbounded fresh Nat only for absent names; reverse-map collisions use literal insert overwrite. Delta reads then writes; Branch left then right then optional fixed toAList names; Seq right then left. toAList retains original mixed enumeration and malformed-tree behavior. No fuel, validity or target-result premise. Twelve fresh original exact-tree observations and kernel driver replay cover duplicate names, all traversal constructors, optional branch sets, mixed set enumeration, malformed trees, large unbounded names/counter and arbitrary inconsistent initial maps. Pure analysis prerequisite, production allocator migration remains open; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Remap.lean",
+    "lean_name": "mkBij",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "mk_bij_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.3): original 1121-1125, full native ClashTree, List Nat and Spt Nat maps retained with right-associated map/map/Nat product and arbitrary initial maps/counter. list_remap tests only forward lookup and increments unbounded fresh Nat only for absent names; reverse-map collisions use literal insert overwrite. Delta reads then writes; Branch left then right then optional fixed toAList names; Seq right then left. toAList retains original mixed enumeration and malformed-tree behavior. No fuel, validity or target-result premise. Twelve fresh original exact-tree observations and kernel driver replay cover duplicate names, all traversal constructors, optional branch sets, mixed set enumeration, malformed trees, large unbounded names/counter and arbitrary inconsistent initial maps. Pure analysis prerequisite, production allocator migration remains open; coordinator review pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "sp_default_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SpDefault.lean",
+    "lean_name": "spDefault",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.6) against reg_allocScript.sml:1219-1222: sp_default t i = case lookup i t of NONE => if is_phy_var i then i DIV 2 else 0 | SOME x => x, over the exact num num_map carrier Spt Nat with the reviewed sptLookup and isPhyVar; DIV as Nat division."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "total_colour_alt",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/TotalColour.lean",
+    "lean_name": "totalColourAlt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.6) against word_allocScript.sml:1597-1604: total_colour col = (\\x. 2 * x) o sp_default col as a function equality over Spt Nat, with the reviewed totalColour and spDefault; no premise. Proof: the missing physical-register case uses is_phy_var (x MOD 2 = 0) so 2 * (x DIV 2) = x."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "in_clash_tree_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "inClashTree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.7) against reg_allocProofScript.sml:770-780, clause by clause over the reviewed ClashTree carrier: Delta w r (MEM x w \\/ MEM x r), Set names (x IN domain names as sptDomain), Branch name_opt t1 t2 (either child or, for SOME names, domain names; NONE F), Seq (either child). HOL bool as Prop."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "INJ_IMG_lookup",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "injImgLookup",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.7) against reg_allocProofScript.sml:3100-3109: !x. INJ g UNIV UNIV /\\ domain (gt:num_set) = IMAGE g (domain ft) ==> lookup (g x) gt = lookup x ft; free g gt ft bound as explicit parameters, INJ g UNIV UNIV as global injectivity, IMAGE as an existential, num_set = Spt Unit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "check_partial_col_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "checkPartialColInjCompose",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.7) against reg_allocProofScript.sml:3111-3125 (the reg_allocProof composition lemma, not the word_allocProof check_partial_col_INJ): !ls t ft gt. INJ g UNIV UNIV /\\ domain gt = IMAGE g (domain ft) ==> case check_partial_col f ls t ft of NONE => check_partial_col (g o f) ls t gt = NONE | SOME (tt,ftt) => ?gtt. check_partial_col (g o f) ls t gt = SOME (tt,gtt) /\\ domain gtt = IMAGE g (domain ftt); free f g as explicit parameters; HOL case as a Lean match on the reviewed checkPartialCol."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "check_col_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "checkColInjCompose",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.7) against reg_allocProofScript.sml:3127-3150 (reg_allocProof composition form): INJ g UNIV UNIV ==> case check_col f s of NONE => check_col (g o f) s = NONE | SOME (t,ft) => ?gt. check_col (g o f) s = SOME (t,gt) /\\ domain gt = IMAGE g (domain ft), s : num_set, free f g s explicit; reviewed checkCol (ALL_DISTINCT as Pairwise ≠)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "check_clash_tree_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "checkClashTreeInj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.7) against reg_allocProofScript.sml:3152-3205: !ct f g live flive glive. INJ g UNIV UNIV /\\ domain glive = IMAGE g (domain flive) ==> case check_clash_tree f ct live flive of NONE => check_clash_tree (g o f) ct live glive = NONE | SOME (liveout,fliveout) => ?gliveout. check_clash_tree (g o f) ct live glive = SOME (liveout,gliveout) /\\ domain gliveout = IMAGE g (domain fliveout); induction on ct as HOL, Delta via the composition check_partial_col_INJ with domain_numset_list_delete and injective image of difference, Set/Branch fixed via check_col_INJ."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_forced_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/GetForced.lean",
+    "lean_name": "getForced",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocScript.sml:1466-1513, clause by clause: Inst AddCarry r1 r2 r3 r4 adds (if r1=r3 then [] else [(r1,r3)]) ++ (if r1=r4 then [] else [(r1,r4)]) ++ acc when c.ISA = MIPS \\/ RISC_V else acc; AddOverflow/SubOverflow add the (r1,r3) pair under the same guard; LongMul adds (r1,r2) on ARMv7, else (r1,r3),(r1,r4) on ARMv8 \\/ RISC_V \\/ Ag32, else acc; FPMovToReg r1 r2 d and FPMovFromReg d r1 r2 add [(r1,r2)] when dimindex(:'a) = 32 (width = 32) /\\ r1 <> r2; other Inst acc; MustTerminate and Loop recurse on the body; Seq s1 s2 = get_forced c s1 (get_forced c s2 acc); If e2 e3 likewise; Call (SOME (v,cutset,ret_handler,l1,l2)) folds the handler prog (if SOME) after ret_handler, NONE handler only ret_handler; all other programs including Call NONE return acc. List order and guards literal; ISA constructors as AsmArchitecture. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_forced_tail_split",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/GetForced.lean",
+    "lean_name": "getForcedTailSplit",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocProofScript.sml:3311-3318: !c p ls ls'. get_forced c p (ls++ls') = get_forced c p ls ++ ls'; proof by get_forced_ind as HOL. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "EVERY_get_forced",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/GetForced.lean",
+    "lean_name": "everyGetForced",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocProofScript.sml:3320-3326: EVERY P (get_forced c p ls) <=> EVERY P (get_forced c p []) /\\ EVERY P ls, free P c p ls explicit, P : num # num -> bool as Prop predicate, EVERY P l as forall x in l, P x. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_forced_pairwise_distinct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/GetForced.lean",
+    "lean_name": "getForcedPairwiseDistinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocProofScript.sml:3328-3335: !c prog ls. EVERY (\\(x,y). x <> y) ls ==> EVERY (\\(x,y). x <> y) (get_forced c prog ls); paired lambda as projections x.1 <> x.2. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_forced_in_get_clash_tree",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/GetForced.lean",
+    "lean_name": "getForcedInGetClashTree",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocProofScript.sml:3337-3375: !prog lt c. EVERY (\\(x,y). in_clash_tree (get_clash_tree prog lt) x /\\ in_clash_tree (get_clash_tree prog lt) y) (get_forced c prog []); reviewed inClashTree/getClashTree; the untagged generalized-accumulator lemma getForcedInClashTreeAcc replaces HOL's EVERY_get_forced rewriting inside the get_forced_ind proof. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuProg.lean",
+    "lean_name": "getHeu",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_heu_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.5): full source1403-1464 over reviewed WordLangProgHOL(BitVec width), positive NeZero width and actual Spt HeuData/NumSet pair. Full program constructor arity, WordLangInst mirror positions and eight shared memop constructors audited against wordLangScript36-74 and asmScript; generic source word dimension translated at positive width, no fixed machine-width substitution. Native Lists/maps/mlstring carriers retain source shapes. Move right fold sources then destinations; Set Var only; heap source read before destination; Seq forward, MustTerminate/Loop recurse; If independently evaluates both bodies from same incoming pair then componentwise maximum/call union plus condition reads. Tail Call ignores arbitrary handler and adds tracked names only for direct self-target; returning Call pre-adds self names, evaluates return body, and NONE exception handler deliberately discards bodyCalls; SOME exception body starts from same original tracked/pre-added calls and combines both results. No target-evaluation, successful converter, validity, callback or fuel hypothesis. All eight ShareInst memory widths count only payload name, ignoring address; every other constructor retains input pair. Fifty-two fresh original observations and identical registered kernel exact-tree fixtures cover every program clause, both target/handler options, branch/Seq call unions, aliases, all catchalls, positive widths1/64/128, unbounded name/counter and raw-tree preservation. Analysis prerequisite only: get_heuristics assembly and production allocator migration remain open; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/CanonizeMovesAux.lean",
+    "lean_name": "canonizeMovesAux",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "canonize_moves_aux_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead11.5.3.2.4.1: literal HOL1641-1648 all two equations and both nonempty branches. Nat priorities/counters and polymorphic move carrier alpha with exact equality with right-associated triple output and arbitrary accumulator match source. Empty remainder always emits current group, including counter0; equality compares the whole arbitrary move, MAX retains largest priority, equal branch increments counter, unequal branch resets1 and prepends old triple. Input need not be sorted or canonical; no word-width bound, extra premise, callback or changed list order. Twelve fresh original equations paired with kernel fixtures cover all branches, accumulator/order, unsorted/reversed/self moves and Naturals above2^64 and independent Boolean move carrier. Native proof-side helper only: full canonize_moves sort prerequisite and production routing remain open; coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Misc/FindIndex/ShiftZero.lean",
+    "lean_name": "findIndexShiftZero",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "find_index_shift_0",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead46.10: entire misc1241-1256 arbitrary list, target and Nat offset equality to OPTION_MAP(lambda index.index+offset) at zero-offset search. Preserves generic alpha equality, first occurrence, NONE and duplicates; no success, uniqueness, range or bounded-offset premise. Induction follows source head equality split, uses tail law at offset+1 and1, cases on tail Option result, Nat associativity. Ten fresh original whole equations matched by kernel theorem applications across Nat/Bool, empty/head/interior/last/missing/duplicates/zero, unbounded offsets and identifiers; extra ground kernel first-duplicate guard. Required first-index characterization and full Move/pass correctness remain open. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Step.lean",
+    "lean_name": "stepNotUseTempBeforeAssign",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "step_not_use_temp_before_assign",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead46.4: full original879-907 primitive Step preservation of not_use_temp_before_assign(REVERSE(active++emitted)). Same arbitrary generic register carrier and all six exact Step clauses, source wf and source Boolean safety only; no target wf/safety/initialization hypothesis. RemoveSelf leaves chronology unchanged; Start/Extend derive ordinary inserted move from pending wf; Save uses exact append equivalence and option split, including prior scratch initialization; EmitHead derives ordinary head from active FRONT source and destination wf and removes/reinserts it; EmitLast has identical chronology. Local untagged neutral-move equation is documented Flapjack infrastructure, no extra premise. Nine fresh original combined wf/source/target observations paired with genuine native Step theorem applications cover every constructor, cycle save, prior-written scratch read/save, and Bool carrier. Full RTC/pmov/Move/compiler results remain open. Coordinator source acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Misc/FindIndex/Append.lean",
+    "lean_name": "findIndexAppend",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "find_index_APPEND",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead46.8 misc1265-1274: arbitrary element carrier, Lists l1/l2, target x, Nat n; full equality with case find_index x l1 n. NONE searches l2 at n+LENGTH l1; SOME preserves first result. Literal reviewed findIndex evaluator, no presence/unique-match/zero-offset/fuel/target-result premise. DecidableEq supplies HOL propositional equality only. Kernel list induction generalizes arbitrary offset; ten fresh original EVAL rows replay identical inputs, including Bool carrier, duplicates and offset10^20. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/ListPrimitives.lean",
+    "lean_name": "mSub",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Msub_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.1): original 124-129, accepted exact Exc value/exception carrier with arbitrary independent universe-0 value and exception types, HOL list as Lean List and unbounded num as Nat. Msub empty-list failure and zero-success/nonzero recursive index subtraction retained; Mupdate retains full prefix only on recursive success and propagates original failure unchanged. Original n >= LENGTH l premise translates to values.length <= index, no validity, source-success, DecidableEq, exception classification or fixed-width restriction. Both generic failure-bound theorems prove original exact equality by list induction and index cases, with no added premises; kernel axioms propext/Classical.choice/Quot.sound only. Twenty-five fresh original observations and identical registered kernel replay cover head/middle/last/empty/boundary/large indices, duplicate values, independent Nat/Bool/tuple types and theorem applications at six failing boundaries. No total EL/LUPDATE claim is made; successful equations and state-array accessors remain parent frontier. Pure primitives/proofs; executed allocator migration and whole compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/ListPrimitives.lean",
+    "lean_name": "mUpdate",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Mupdate_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.1): original 150-162, accepted exact Exc value/exception carrier with arbitrary independent universe-0 value and exception types, HOL list as Lean List and unbounded num as Nat. Msub empty-list failure and zero-success/nonzero recursive index subtraction retained; Mupdate retains full prefix only on recursive success and propagates original failure unchanged. Original n >= LENGTH l premise translates to values.length <= index, no validity, source-success, DecidableEq, exception classification or fixed-width restriction. Both generic failure-bound theorems prove original exact equality by list induction and index cases, with no added premises; kernel axioms propext/Classical.choice/Quot.sound only. Twenty-five fresh original observations and identical registered kernel replay cover head/middle/last/empty/boundary/large indices, duplicate values, independent Nat/Bool/tuple types and theorem applications at six failing boundaries. No total EL/LUPDATE claim is made; successful equations and state-array accessors remain parent frontier. Pure primitives/proofs; executed allocator migration and whole compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/ListPrimitives.lean",
+    "lean_name": "mSubExnEq",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Msub_exn_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.1): original 140-146, accepted exact Exc value/exception carrier with arbitrary independent universe-0 value and exception types, HOL list as Lean List and unbounded num as Nat. Msub empty-list failure and zero-success/nonzero recursive index subtraction retained; Mupdate retains full prefix only on recursive success and propagates original failure unchanged. Original n >= LENGTH l premise translates to values.length <= index, no validity, source-success, DecidableEq, exception classification or fixed-width restriction. Both generic failure-bound theorems prove original exact equality by list induction and index cases, with no added premises; kernel axioms propext/Classical.choice/Quot.sound only. Twenty-five fresh original observations and identical registered kernel replay cover head/middle/last/empty/boundary/large indices, duplicate values, independent Nat/Bool/tuple types and theorem applications at six failing boundaries. No total EL/LUPDATE claim is made; successful equations and state-array accessors remain parent frontier. Pure primitives/proofs; executed allocator migration and whole compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/ListPrimitives.lean",
+    "lean_name": "mUpdateExnEq",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Mupdate_exn_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.1): original 171-178, accepted exact Exc value/exception carrier with arbitrary independent universe-0 value and exception types, HOL list as Lean List and unbounded num as Nat. Msub empty-list failure and zero-success/nonzero recursive index subtraction retained; Mupdate retains full prefix only on recursive success and propagates original failure unchanged. Original n >= LENGTH l premise translates to values.length <= index, no validity, source-success, DecidableEq, exception classification or fixed-width restriction. Both generic failure-bound theorems prove original exact equality by list induction and index cases, with no added premises; kernel axioms propext/Classical.choice/Quot.sound only. Twenty-five fresh original observations and identical registered kernel replay cover head/middle/last/empty/boundary/large indices, duplicate values, independent Nat/Bool/tuple types and theorem applications at six failing boundaries. No total EL/LUPDATE claim is made; successful equations and state-array accessors remain parent frontier. Pure primitives/proofs; executed allocator migration and whole compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StateMap.lean",
+    "lean_name": "stExMap",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "st_ex_MAP_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.2): full original148-156 and independently captured source type (input -> state -> Exc result exception # state) -> input list -> state -> Exc (result list) exception # state. All four carriers independently universe-0 Type, no specialization to allocator state_exn, fixed register type, successful callback, validity or DecidableEq hypothesis. Source empty return[] and head effect/bind then recursive tail effect/bind then cons-return are literal, using accepted exact MonadBase.M/Exc/bind/ret definitions. Failure short-circuits and retains the state returned by the failing computation, including prior head effects; no rollback or map-over-results substitute. Original type row plus nineteen fresh complete result/state equations and identical registered kernel replay cover empty callbacks, head/middle/last failure, state-dependent failure, order/reverse/duplicates/large values, independent Bool/Nat/list/tuple state/value/result/exception carriers and arbitrary generic empty-list equation. Pure monadic analysis dependency only: generated array/accessor functions and executed allocator/correctness route remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/ArrayLength.lean",
+    "lean_name": "arrayLength",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Marray_length_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.3): original ml_monadBaseScript.sml200-203. Generic getter state -> List value, independent state/value/exception Type carriers, result M state Nat exception. HOL LENGTH becomes List.length, M_success becomes accepted Exc.success and the entire input state is returned unchanged. No bounds, equality instance, validity, successful callback or fixed allocator state. Same total lambda equation. Five fresh original equations and identical kernel replay cover empty/duplicate lists, independent Bool/list states and Bool values with large Nat state; universal pointwise rfl checks all three carriers. Finite observations are regression evidence, not cross-assistant equivalence. Native analysis primitive only; other array accessors and actual production allocator route stay open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/CanonizeMoves.lean",
+    "lean_name": "canonizeMoves",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "canonize_moves_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.4): complete original1650-1662. Input List (Nat # (Nat # Nat)), result List (Nat # Nat # (Nat # Nat)), fixed original num priorities and endpoint carriers, no hypotheses. Literal MAP flips endpoints precisely when x > y including unchanged equality, then accepted native mllist sort uses strict x/y/priority comparison with original nesting. Empty sorted list yields empty; nonempty (p,m)::xs calls accepted canonizeMovesAux p m 1 xs [], preserving reverse sorted group output, counts and MAX priority. No callback, assumed sorted input, supplied output, fuel, fixed width, equality restriction or filtered self move. Accepted source sorting prerequisite .4.2 and counting .4.1 reused; underlying untagged sorting helpers retain explicit external source audit beside CanonizeSort. Nineteen fresh original complete equations allT and registered kernel replay cover reversed orientations collapsing together, duplicate counts/priorities, self moves, every small-sort branch, long lists, zeros and unbounded numbers. Native analysis definition only; actual executed allocator canonicalization/get_heuristics and compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Initialization.lean",
+    "lean_name": "IraState",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "ira_state",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.4.1): literal define_run_declarations factory reg_allocScript1466-1468 and ml_monadBaseLib467-538. All twelve native State fields preserved; adj_ls/node_tag/degrees/coalesced/move_related become Nat x element initialization pairs. FST is independent replication length, SND is replicated value; seven remaining fields unchanged. Runner accepts arbitrary MonadBase.M State value exception, reconstructs the exact State with five List.replicate calls and returns run result without consistency/success premises. Native List/Nat/Bool/Tag carriers and independent Type0 result/exception match source. Eight fresh original HOL EVAL observations including inconsistent dim, zero lengths and failure replay kernel-checked. Production IRC route and remaining public wrappers stay open on parent. Main source comparison completed against literal define_run generator467-538 and original12-field carrier; independent fresh original fixture replay verified, unified publication separately gated."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Initialization.lean",
+    "lean_name": "runIraState",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "run_ira_state_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.4.1): literal define_run_declarations factory reg_allocScript1466-1468 and ml_monadBaseLib467-538. All twelve native State fields preserved; adj_ls/node_tag/degrees/coalesced/move_related become Nat x element initialization pairs. FST is independent replication length, SND is replicated value; seven remaining fields unchanged. Runner accepts arbitrary MonadBase.M State value exception, reconstructs the exact State with five List.replicate calls and returns run result without consistency/success premises. Native List/Nat/Bool/Tag carriers and independent Type0 result/exception match source. Eight fresh original HOL EVAL observations including inconsistent dim, zero lengths and failure replay kernel-checked. Production IRC route and remaining public wrappers stay open on parent. Main source comparison completed against literal define_run generator467-538 and original12-field carrier; independent fresh original fixture replay verified, unified publication separately gated."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/AllDistinct/Step.lean",
+    "lean_name": "allDistinctStep",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "ALL_DISTINCT_step",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.2: full source966-977 arbitrary alpha/state triples. Only primitive Step and source ALL_DISTINCT(FILTER IS_SOME(MAP FST(pending++active++emitted))) imply target same property. All six native clauses, no wf/initialized scratch/target-result premise or equality-carrier restriction. List Nodup/Option.isSome translate literally. Eleven fresh original observations and actual kernel Step/theorem applications cover six clauses, cycle/save/read and non-wf repeated NONE destinations, Bool; duplicate real destination negative guard. RTC/pmov/full parmove remain open. Coordinator source comparison completed against the cited literal HOL clauses; fresh original observations replayed. Unified kernel gates and publication separately required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/StateToList.lean",
+    "lean_name": "stateToList",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "state_to_list_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.6: literal source1026-1028 APPEND(FST p)(FST(SND p)) ++ SND(SND p), preserving left association and pending/active/emitted order. Fresh original type audit alpha list # alpha list # alpha list -> alpha list requires broad arbitrary-element lists; native generic alpha is not specialized to Option register moves and requires no equality instance. List/product constructor translation exact, no extra bound/callback/premise. Nine fresh original whole output equations with kernel rfl fixtures cover empty and each segment, ordering/duplicates, Nat beyond2^64, independent Bool and raw pair carriers. Definition-only proof support, no executed behavior change; move-preservation/renaming ports remain open. Coordinator source comparison completed against the cited literal HOL clauses; fresh original observations replayed. Unified kernel gates and publication separately required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Steps.lean",
+    "lean_name": "stepsNotUseTempBeforeAssign",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "steps_not_use_temp_before_assign",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead46.5: full literal source909-918 RTC invariant, input (wf and safety of REVERSE(active++emitted)) conjunct Steps implies both target wf and same safety, arbitrary alpha. Native ReflTransGen Step is reviewed exact RTC, chronology/order and Boolean=true translation unchanged. No target invariant/initialized scratch premise added. Tail induction invokes accepted wf_step and step_not_use_temp_before_assign with IH source conjuncts; reflexivity retains both. Twelve fresh original combined wf/safety observations plus genuine native RTC/kernel theorem applications cover all clauses, prior scratch, Bool, zero-step states and three-step cycle. No executed behavior change; pmov/full parmove remain open. Coordinator source comparison completed against the cited literal HOL clauses; fresh original observations replayed. Unified kernel gates and publication separately required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapState.lean",
+    "lean_name": "mapState",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "map_state_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.11: literal source1086-1088 let m=MAP(f##f) in m##m##m. Native List.map(Prod.map f f) then right-associated Prod.map m (Prod.map m m) preserves both endpoints and all three list orders. Fresh original type audit independent alpha -> beta and raw pair-list triple input/output; generic native alpha/beta not specialized to Option registers, no equality/injectivity/NONE-preservation premise. Ten fresh original whole outputs paired with kernel fixtures include empty/each segment/order, noninjective constant, unbounded Nat, Bool, Nat->Bool different carriers and changing NONE. Definition proof support only, no executed behavior change; injective simulation obligations remain open. Coordinator source comparison completed against the cited literal HOL clauses; fresh original observations replayed. Unified kernel gates and publication separately required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortedMem.lean",
+    "lean_name": "sortedMem",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "sorted_mem_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead.11.5.10.5.8.6.25: literal reg_allocScript193-199 arbitrary Nat key and List Nat. Empty false; head equality true; x>head false before recursion; otherwise recursive tail. No descending-order, membership, uniqueness or range premise. Nat equality/order and Bool/List constructors retained exactly. Twelve fresh original EVAL equations replay identical inputs by kernel rfl, including unsorted early-stop rejection, unsorted continuing match, duplicates, zero, tail, and 80-bit key. Production cakeSortedMem now delegates this same definition; unconditional arbitrary-key/list kernel equality and former recursive equation replay establish this helper replacement only. Remaining allocator state and graph correctness are unproved; this routing does not claim allocator correctness. Fresh original executed corpus comparison is required on linked .25.1. Coordinator review pending."
+  }
 ]
