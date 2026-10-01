@@ -43586,6 +43586,15 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "all_enc_ok_light",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "allEncOkLight",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): HOL lab_to_targetScript.sml:188 declares all_enc_ok_light as an Overload (which the reference checker resolves as a declaration), body `λc ls. EVERY (sec_ok_light c) ls`; Lean `sections.all (secOkLight config)` is exactly List.all over the same exact secOkLight, no clause or guard changed. The linked Section/Line carrier's only type-indexed word is translated to positive-width BitVec width with [NeZero width]."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/AsmUpdates.lean",
     "lean_name": "updPc_with_pc",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
@@ -43858,7 +43867,7 @@
   "hol_name": "remove_labels_loop_def",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:286-311, clause for clause and let-binding for let-binding, preserving HOL's shadowing. `labs = compute_labels_alt pos sec_list init_labs`; `(sec_list,done) = enc_secs_again pos labs ffis c.encode sec_list`; when `done` then `sec_list = upd_lab_len pos sec_list`, `labs = compute_labels_alt pos sec_list init_labs`, `(sec_list,done) = enc_secs_again pos labs ffis c.encode sec_list`, `sec_list = pad_code (c.encode (Inst Skip)) sec_list`, then `if done /\\ all_enc_ok_light c sec_list /\\ zero_labs_acc_exist labs sec_list then SOME (sec_list,labs) else NONE`; otherwise `if clock = 0 then NONE else remove_labels_loop (clock-1) c pos init_labs ffis sec_list` on the shadowed sec_list. `c.encode` is `config.encode` of the exact `AsmConfigExact width`; `all_enc_ok_light` is HOL's Overload `EVERY (sec_ok_light c)`, rendered as the untagged helper `allEncOkLight`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Lean termination is on the decremented `clock` only, matching HOL's clock recursion; no guard, conjunct, or returned pair is weakened. Replayed as the RemoveLabelsLoopZero/One rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:286-311, clause for clause and let-binding for let-binding, preserving HOL's shadowing. `labs = compute_labels_alt pos sec_list init_labs`; `(sec_list,done) = enc_secs_again pos labs ffis c.encode sec_list`; when `done` then `sec_list = upd_lab_len pos sec_list`, `labs = compute_labels_alt pos sec_list init_labs`, `(sec_list,done) = enc_secs_again pos labs ffis c.encode sec_list`, `sec_list = pad_code (c.encode (Inst Skip)) sec_list`, then `if done /\\ all_enc_ok_light c sec_list /\\ zero_labs_acc_exist labs sec_list then SOME (sec_list,labs) else NONE`; otherwise `if clock = 0 then NONE else remove_labels_loop (clock-1) c pos init_labs ffis sec_list` on the shadowed sec_list. `c.encode` is `config.encode` of the exact `AsmConfigExact width`; `all_enc_ok_light` is HOL's Overload `EVERY (sec_ok_light c)`, rendered as the tagged helper `allEncOkLight`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Lean termination is on the decremented `clock` only, matching HOL's clock recursion; no guard, conjunct, or returned pair is weakened. Replayed as the RemoveLabelsLoopZero/One rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
 },
 {
   "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",

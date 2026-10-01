@@ -100,9 +100,12 @@ def zeroLabsAccExist {width : Nat} [NeZero width] (labs : Spt (Spt Nat))
     | none => false
     | some l => (sptLookup 0 l).isSome)
 
-/-- HOL `lab_to_targetScript.sml:188` declares `all_enc_ok_light` as an
-`Overload`, not a named `Definition`, so it carries no `@[hol]` tag:
-`all_enc_ok_light c ls = EVERY (sec_ok_light c) ls`. -/
+/-- Exact HOL `lab_to_target$all_enc_ok_light` (`lab_to_targetScript.sml:188`,
+declared as an `Overload`, which the reference checker resolves as a
+declaration): `all_enc_ok_light c ls = EVERY (sec_ok_light c) ls`, rendered as
+`List.all` over the same exact `secOkLight`. -/
+@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "all_enc_ok_light"
+  (words_as_type_indexed_bitvec)]
 def allEncOkLight {width : Nat} [NeZero width] (config : AsmConfigExact width)
     (sections : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Bool :=
