@@ -1,0 +1,21 @@
+first_compile_prog_all_distinct_source_replay=⊢ ∀prog.
+    ALL_DISTINCT (MAP FST prog) ⇒ ALL_DISTINCT (MAP FST (compile_prog prog))
+first_compile_all_distinct_source_replay=⊢ ∀prog. ALL_DISTINCT (MAP FST prog) ⇒ ALL_DISTINCT (MAP FST (compile prog))
+mem_prog_mem_compile_prog_source_replay=⊢ ∀prog name params body.
+    MEM (name,params,body) prog ⇒
+    MEM (name,LENGTH params + 1,comp_func name params body)
+      (compile_prog prog)
+lookup_prog_some_lookup_compile_prog_source_replay=⊢ ∀prog name params body.
+    lookup name (fromAList prog) = SOME (params,body) ⇒
+    lookup name (fromAList (compile_prog prog)) =
+    SOME (LENGTH params + 1,comp_func name params body)
+pn_duplicate_result=[(7,2,Skip); (7,1,Tick)]
+pn_distinct_result=[(7,2,Skip); (8,1,Tick)]
+pn_duplicate_names=F
+pn_distinct_names=T
+pn_first_lookup=SOME (2,Skip)
+pn_missing_lookup=NONE
+pn_distinct_theorem=T
+pn_compile_theorem=T
+pn_member_theorem=T
+pn_lookup_theorem=T

@@ -3,6 +3,10 @@ import Flapjack.Compiler.Backend.LabProps.Native
 import Flapjack.Compiler.Backend.StackToLab.Native
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
+import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
 import Flapjack.Pancake.LoopToWord.Proofs.LabelHandlers
 import Flapjack.Pancake.WordConvs.PredicateEquations
@@ -10,6 +14,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapStep
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
+import Flapjack.Pancake.WordConvs.PredicateEquations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabelSafety
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalInsert
@@ -72,6 +77,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCallCore
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopReturn
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopInstructions
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopFlatEffects
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopRecursive
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Pancake.WordConvs.LabelSafety
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
@@ -452,6 +459,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
@@ -515,6 +523,7 @@ import Flapjack.Misc.FlatReplicate
 import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry
 import Flapjack.Misc.OptMmapCong
+import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
 import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepLang
