@@ -8,6 +8,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
 import Flapjack.Misc.BinaryIeeeArithExec
 import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
+import Flapjack.Compiler.Backend.StackProps.StateConstants
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Pancake.LoopToWord.CompFuncCodecDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
