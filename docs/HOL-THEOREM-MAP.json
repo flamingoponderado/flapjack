@@ -38401,5 +38401,38 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-b4v0.1): labSemScript.sml10-44. Word8Loc exactly Byte word8 | LocByte num num num. State preserves all23 fields in order: regs total num->word_loc, fp_regs total num->word64, mem total word->word_loc, mem_domain/shared_mem_domain sets, pc, be, ffi, io_regs num->ffiname->num->word option, cc_regs num->num->word option, io_fp_regs/cc_fp_regs num->num->word64, code list of sections, compile C->prog->(word8 list*C)option, compile_oracle num->C*prog, code_buffer buffer(width,8), clock, failed and five ptr/len/link register fields. Canonical WordLocW, WordSemBuffer, HolFfiState and HolFfiName imported without duplication. Concrete LabLang instantiation uses HolAsm (not merely HolInst nor generic AsmData), HolMemop/HolAddr/HolCmp/HolRegImm and opaque MlString at one shared width; all constructor arities and source payloads compared labLang16-51/asm138-145. Sets use the previously reviewed Bool membership rendering; no finite-map fields, hence no fmap qualifier. Only variable word dimension uses positive BitVec width/NeZero; fixed8/64 retained. C/F universe0 independent; no evaluator or runtime claim.",
   "words_as_type_indexed_bitvec": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "lookup_numset_list_insert",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSets.lean",
+  "lean_name": "lookupNumsetListInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.18: literal2720-2727 unconditional full Option lookup equality; MEM names selects SOME Unit, otherwise preserves original lookup. Literal head-after-tail recursion with exact same-key/different-key sptInsert lookup proofs; duplicates retained; no wf premise. No executable caller change; source proof prerequisites of allocator liveness/colouring, full pass correctness remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "domain_numset_list_insert",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSets.lean",
+  "lean_name": "domainNumsetListInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.18: literal200-206 unconditional full set equality, source domain UNION set names in this order; sets rendered as Nat predicates, original List Nat and Spt Unit. Derived from exact lookup equation by Option.isSome; no wf or additional membership premise. No executable caller change; source proof prerequisites of allocator liveness/colouring, full pass correctness remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "domain_numset_list_insert_eq_union",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSets.lean",
+  "lean_name": "domainNumsetListInsertEqUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.18: literal2692-2696 unconditional full domain equality between numeric-name insertion and union(insert names LN,live); source left-biased tree union exact, predicate domain set equality with no tree wf premise. No executable caller change; source proof prerequisites of allocator liveness/colouring, full pass correctness remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_writes_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProgramWrites.lean",
+  "lean_name": "getWrites",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.17.1: literal1009-1023, all13 compiled clauses, exact WordLangProgHOL positive BitVec/NeZero and NumSet Spt Unit. Move inserts MAP FST in literal head-after-tail order; Inst calls accepted getWritesInst; Assign/Get/LocValue/Install/OpCurrHeap write only source destination. StoreConsts inserts a outside b outside c outside d. ShareInst Load/Load8/Load16/Load32 write destination; every other program gives LN, with no recursive traversal or extra premise. Source carrier arity/field types reused from reviewed program liveness; no finite-map/array/name substitution. Seven fresh direct original HOL full-tree observations kernel replayed, including instruction Load16 versus shared Load16, shared store, compound Seq fallback. Production route17.2 and inventory17 stay OPEN separately; full colouring/allocation theorem not claimed."
 }
 ]
