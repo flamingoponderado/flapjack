@@ -9,6 +9,10 @@ import Flapjack.Misc.SptreeLookup
 HOL `Resume evaluate_apply_colour[...]` blocks for the statements without
 sub-programs (`word_allocProofScript.sml:1165-2268`). Each theorem is the HOL
 theorem restricted to one constructor; none needs an induction hypothesis.
+
+The untagged carrier, domain and state-update helpers below are local Lean
+proof infrastructure. They factor these case proofs and do not claim to port
+independent HOL declarations.
 -/
 
 namespace Flapjack.WordAlloc
