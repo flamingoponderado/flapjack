@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.RegAlloc.Carriers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
 import Flapjack.Compiler.Backend.Parmove.Independence
