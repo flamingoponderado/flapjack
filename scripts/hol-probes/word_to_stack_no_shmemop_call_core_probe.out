@@ -1,0 +1,12 @@
+cc_ret_zero=T
+cc_ret_one=T
+cc_ret_many=T
+cc_ret_width1=T
+cc_prefix_1=T
+cc_suffix_1=T
+cc_prefix_32=T
+cc_suffix_32=T
+cc_prefix_64=T
+cc_suffix_64=T
+cc_prefix_80=T
+cc_suffix_80=T

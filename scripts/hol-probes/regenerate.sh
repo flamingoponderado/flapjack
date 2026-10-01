@@ -3340,6 +3340,10 @@ run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
   ss_even ss_empty ss_duplicates ss_invalid ss_one ss_setup0 ss_setup1 ss_setup3 ss_setup80 even_list_def next_var_rename_def list_next_var_rename_def setup_ssa_def ss_setup_1_to_80 ss_setup_80_to_1 ss_setup_original_type \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe ssa_map_bounds_probeScript.sml ssa_map_bounds_probe.out \
+  mb_empty mb_valid mb_same mb_bound mb_physical mb_invalid mb_large_physical mb_large mb_overwrite mb_more \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
   sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3401,3 +3405,17 @@ run_probe ssa_map_extend_probeScript.sml ssa_map_extend_probe.out \
 run_probe ssa_register_flip_probeScript.sml ssa_register_flip_probe.out \
   rf_residue_0 rf_equalities_0 rf_residue_1 rf_equalities_1 rf_residue_2 rf_equalities_2 rf_residue_3 rf_equalities_3 rf_residue_4 rf_equalities_4 rf_residue_5 rf_equalities_5 rf_residue_6 rf_equalities_6 rf_residue_7 rf_equalities_7 rf_alloc_application_0 rf_alloc_application_1 rf_alloc_application_2 rf_stack_application_0 rf_stack_application_1 rf_stack_application_2 rf_is_alloc_var_flip_source_replay rf_is_stack_var_flip_source_replay rf_flip_rw_source_replay \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_bounds_probeScript.sml ssa_locals_bounds_probe.out \
+  lb_more \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_alloc_move_head_probeScript.sml word_alloc_move_head_probe.out \
+  mh_original_statement mh_original_types mh_original_state_type mh_empty mh_single mh_parallel mh_overwrite mh_self mh_same_source mh_malformed mh_huge mh_missing_source mh_duplicate_destination mh_bad_tail \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_alloc_limit_arithmetic_probeScript.sml word_alloc_limit_arithmetic_probe.out \
+  la_original_numeric_proof la_0 la_1 la_2 la_3 la_4 la_7 la_8 la_15 la_16 la_1208925819614629174706176 la_1208925819614629174706177 la_1208925819614629174706178 la_1208925819614629174706179 \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_no_shmemop_call_core_probeScript.sml word_to_stack_no_shmemop_call_core_probe.out \
+  cc_ret_zero cc_ret_one cc_ret_many cc_ret_width1 cc_prefix_1 cc_suffix_1 cc_prefix_32 cc_suffix_32 cc_prefix_64 cc_suffix_64 cc_prefix_80 cc_suffix_80 \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
