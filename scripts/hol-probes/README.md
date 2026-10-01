@@ -2663,3 +2663,13 @@ case is also checked by `rfl`. Finite parity observations support the literal
 source comparison; they do not prove cross-prover equivalence or execute a
 production allocator replacement. Native phase proofs and production routing
 remain separate work.
+
+## Native state-exception iteration
+
+`reg_alloc_state_foreach_probeScript.sml` captures the generic original
+`st_ex_FOREACH` type and eleven direct observations. `RegAllocStateForeachParity`
+replays order, discarded success values, failure-state retention and tail skipping,
+including independent Boolean callback results and List/Boolean states. These finite
+rows do not establish full allocator correctness or production routing. Regenerate
+with `HOL_PROBE_ONLY=reg_alloc_state_foreach_probeScript.sml` and the read-only
+original CakeML reg_alloc theory directory.

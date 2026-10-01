@@ -1067,6 +1067,7 @@ import Flapjack.RiscV.WordDiagnostics
 import Flapjack.FfiHOL
 import Flapjack.FfiBridge
 import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+import Flapjack.Compiler.Backend.RegAlloc.StateForeach
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside

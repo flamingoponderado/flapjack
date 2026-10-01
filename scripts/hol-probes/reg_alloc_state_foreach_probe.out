@@ -1,0 +1,12 @@
+sf_type=:α list -> (α -> β -> (γ, δ) exc # β) -> β -> (unit, δ) exc # β
+sf_empty=T
+sf_order=T
+sf_reverse=T
+sf_duplicates=T
+sf_fail_empty=T
+sf_fail_first=T
+sf_fail_middle=T
+sf_fail_last=T
+sf_bool_result=T
+sf_list_state=T
+sf_bool_state=T

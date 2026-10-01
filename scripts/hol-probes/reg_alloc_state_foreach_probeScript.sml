@@ -1,0 +1,17 @@
+load "bossLib";
+load "preamble";
+load "reg_allocTheory";
+open bossLib HolKernel Parse preamble reg_allocTheory ml_monadBaseTheory;
+print "sf_type="; print_type(type_of ``reg_alloc$st_ex_FOREACH``); print "\n";
+fun row label tm = (print(label^"="); print_term(rhs(concl(EVAL tm)));print "\n");
+row "sf_empty" ``st_ex_FOREACH [] (\(x:num) (s:num). (M_success (x+1),s*10+x)) 42 = (M_success (),42)``;
+row "sf_order" ``st_ex_FOREACH [1;2;3] (\(x:num) (s:num). (M_success (x+1),s*10+x)) 0 = (M_success (),123)``;
+row "sf_reverse" ``st_ex_FOREACH [3;2;1] (\(x:num) (s:num). (M_success (x+1),s*10+x)) 0 = (M_success (),321)``;
+row "sf_duplicates" ``st_ex_FOREACH [2;2;3] (\(x:num) (s:num). (M_success (x+1),s*10+x)) 0 = (M_success (),223)``;
+row "sf_fail_empty" ``st_ex_FOREACH [] (\(x:num) (s:num). if x=0 then (M_failure 17,s+7) else (M_success (x+1),s+x)) 5 = (M_success (),5)``;
+row "sf_fail_first" ``st_ex_FOREACH [0;2;3] (\(x:num) (s:num). if x=0 then (M_failure 17,s+7) else (M_success (x+1),s+x)) 5 = (M_failure 17,12)``;
+row "sf_fail_middle" ``st_ex_FOREACH [2;0;3] (\(x:num) (s:num). if x=0 then (M_failure 17,s+7) else (M_success (x+1),s+x)) 5 = (M_failure 17,14)``;
+row "sf_fail_last" ``st_ex_FOREACH [2;3;0] (\(x:num) (s:num). if x=0 then (M_failure 17,s+7) else (M_success (x+1),s+x)) 5 = (M_failure 17,17)``;
+row "sf_bool_result" ``st_ex_FOREACH [1;2;3] (\(x:num) (s:num). (M_success (EVEN x),s*10+x)) 0 = (M_success (),123)``;
+row "sf_list_state" ``st_ex_FOREACH [2;3;5] (\(x:num) (s:num list). (M_success (x+1),s++[x])) [99] = (M_success (),[99;2;3;5])``;
+row "sf_bool_state" ``st_ex_FOREACH [2;3;5] (\(x:num) (s:bool). (M_success x,~s)) T = (M_success (),F)``;

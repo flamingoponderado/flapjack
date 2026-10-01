@@ -43098,5 +43098,13 @@
     "hol_name": "st_ex_PARTITION_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-b source comparison (2026-10-01, bead .18.5.11.5.10.5.8.6.24): reg_allocScript158-168 two literal recursive equations. Original type printed fresh: (alpha -> beta -> (bool,gamma) exc # beta) -> alpha list -> alpha list -> alpha list -> beta -> (alpha list # alpha list,gamma) exc # beta. Lean preserves independent value/state/exception Type carriers and reviewed M/Exc, List and Bool. Empty input returns existing yes/no accumulators and unchanged state without predicate execution. Nonempty input binds head predicate then recurses on tail with head prepended to selected accumulator, preserving left-to-right effects, reversed selected input order, failure exception and failure-returned state through accepted bind. No added premise, fuel, array/map substitution or post-state assumption. Fresh original reg_alloc_state_partition_probe captures type plus 22 T observations; matching kernel decide fixtures and generic empty-input rfl in RegAllocStatePartitionParity. Native allocator phases and actual compiler routing remain open under .10.5.8; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StateForeach.lean",
+    "lean_name": "stExForeach",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "st_ex_FOREACH_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-10-01; bead .18.5.11.5.10.5.5.1), reg_allocScript139-146: original empty equation returns unit without invoking action; cons uses st_ex_ignore_bind(action x)(recursive tail). Lean retains independent element/state/action-result/exception Type carriers confirmed by fresh original constant type. Successful callback value ignored; state threaded, failure retains returned state and skips tail via accepted ignoreBind. Fresh original11 observations and kernel replay cover order, duplicates, empty/first/middle/last failure, Bool result, List and Bool state. Definition axiom-free; no representation qualifier or added premises. Native allocator phase proofs and production routing remain open. Coordinator source review pending."
   }
 ]
