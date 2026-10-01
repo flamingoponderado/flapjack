@@ -1,20 +1,7 @@
 import Flapjack.RiscV.WordDeadCode
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
 
 namespace Flapjack
-
-/-- Flapjack-only Option packaging: a pair of successful encodings introduces
-no additional failure point. There is no HOL declaration for this helper. -/
-private theorem optionPairDomain {α β γ : Type} (first : Option α)
-    (second : Option β) (make : α → β → γ) :
-    (first.bind fun a => second.bind fun b => some (make a b)).isSome =
-      (first.isSome && second.isSome) := by
-  cases first <;> cases second <;> rfl
-
-/-- Flapjack-only Option packaging for one successful constructor. -/
-private theorem optionMapDomain {α β : Type} (value : Option α) (make : α → β) :
-    (value.bind fun a => some (make a)).isSome = value.isSome := by
-  cases value <;> rfl
 
 /-- The actual allocator's three-to-two transform preserves precisely the
 partial production-to-native codec domain. Its two arithmetic assignment
@@ -31,6 +18,7 @@ theorem wordLangProgToHOL_wordThreeToTwoReg_isSome {width : Nat}
     (wordLangProgToHOL (RiscV.wordThreeToTwoReg program)).isSome =
       (wordLangProgToHOL program).isSome := by
   fun_induction RiscV.wordThreeToTwoReg program <;>
-    simp_all [wordLangProgToHOL, optionPairDomain, optionMapDomain]
+    simp_all [wordLangProgToHOL, WordProgCarrierCodec.optionPairDomain,
+      WordProgCarrierCodec.optionMapDomain]
 
 end Flapjack
