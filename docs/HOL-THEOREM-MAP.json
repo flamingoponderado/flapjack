@@ -45468,5 +45468,13 @@
     "lean_name": "initRaState",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.5.3): reg_allocScript.sml:1241-1248 init_ra_state ct forced fs (ta,fa,n) = do mk_graph (sp_default ta) ct []; extend_graph (sp_default ta) forced; mk_tags n fs (sp_default fa) od; type clash_tree -> (num # num) list -> num_set -> num num_map # num num_map # num -> ra_state -> (unit, state_exn) exc # ra_state. Lean: same sequence with the accepted spDefault, the tuple argument as a pattern-matched product. HOL do-blocks rendered by the accepted MonadBase bind/ignoreBind/ret, literal `x <- return e` binders as bind (ret e). Accessors are the generated ra_state accessors of .10.5.2 (opus-wordsem e234f6ad2, pending coordinator acceptance). Original type confirmed by type_of; original EVAL rows with full ra_state results in scripts/hol-probes/reg_alloc_graph_construction_probe.out kernel-replayed in Flapjack.Test.RegAllocGraphConstructionParity. No extra premise. Proof-side port; the executed allocator builds its graph through CakeRegAlloc and is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "st_ex_PARTITION_move_related_sub",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/MoveRelatedPartition.lean",
+    "lean_name": "stExPartitionMoveRelatedSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.10): reg_allocProofScript.sml:2118-2134 ∀atemps lss lss' s. EVERY (λx. x < LENGTH s.move_related) atemps ⇒ ∃ts fs. st_ex_PARTITION move_related_sub atemps lss lss' s = (M_success (ts,fs),s) ∧ EVERY (λx. MEM x lss ∨ MEM x atemps) ts ∧ EVERY (λx. MEM x lss' ∨ MEM x atemps) fs. Lean: the same universally quantified statement over the reviewed ra_state carrier, accepted stExPartition and generated moveRelatedSub (.10.5.2), with EVERY as bounded ∀ and MEM as list membership; only the input atemps carry the bound, accumulators are unconstrained, the returned state is the input state. No extra premise. Kernel-checked (axioms: propext only); the proof reads elements with bounds-checked getElem and does not reach the held HOL EL rendering. Coordinator source acceptance pending."
   }
 ]

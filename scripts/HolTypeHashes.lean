@@ -773,6 +773,7 @@ import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
 import Flapjack.Compiler.Backend.RegAlloc.TagColour
 import Flapjack.Compiler.Backend.RegAlloc.MoveTable
 import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
 
 
 
