@@ -779,6 +779,14 @@ import Flapjack.Test.CakeSsaControlParity
 import Flapjack.Test.CakeSsaCallParity
 import Flapjack.Test.CakeSsaInstParity
 import Flapjack.Test.CakeWordAllocParity
+import Flapjack.Test.WordAllocLiveExpressionParity
+import Flapjack.Test.WordCompileExpExactParity
+import Flapjack.Test.StackSemLoopControlParity
+import Flapjack.Test.StackSemJumpLowerParity
+import Flapjack.Test.PanGlobalsFpermCodeParity
+import Flapjack.Test.CrepToLoopCompFuncParity
+import Flapjack.Test.WordAllocGetDeltaInstParity
+import Flapjack.Test.WordAllocGetClashTreeParity
 import Flapjack.Test.WordAllocCutEnvLemmaParity
 import Flapjack.Test.CakeSsaSharedParity
 import Flapjack.Test.CakeSsaMemoryParity
