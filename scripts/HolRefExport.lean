@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallTop
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallPrograms
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop

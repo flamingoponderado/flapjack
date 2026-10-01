@@ -50430,5 +50430,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-jq7g: genuine Move case of word_allocProofScript.sml5951ff, original marked Move proof5958-5986 replayed literally after its original compiler unfolding with four literal local prerequisites; full case statement and eight inferred carriers captured. Substitutes only Move pri ls for universally quantified prog, retains arbitrary input/output Spt maps, natural counters/priority, original loop-table list of Spt map and two Spt sets, native compiler output equality, original ssa_map_ok/is_alloc_var conjunction, and all three counter monotonicity/allocation/output-map conclusions. No IH for nonrecursive Move, no extra distinctness/tree validity/evaluation or target-validity assumption. forceRename uses actual filtered zip; all selected destination bounds/nonphysicality are derived from accepted list_next_var_rename_lemma_1 and original allocation residue. Native WordLangProgHOL carrier has positive BitVec width/NeZero; Spt maps/sets and List pairs remain identity translations, with no finite-map qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/NoInstallCode.lean",
+    "lean_name": "noInstallCode",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "no_install_code_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02 beadflapjack-word-code-no-install-def: complete originalwordProps4707-4710. Input exact arbitrary (num x wordLang prog) num_map translated constructor-for-constructor to Spt(Nat x WordLangProgHOL(BitVec width)), all k/n/program quantifiers and lookup Some(n,p) implication retained, canonical noInstallSubprogsHOL p=true conclusion. No validity/finite-support/equality/safety premise; malformed trees and full argument counts retained. No finite-map qualifier: original carrier is Spt tree, not |->. Sole qualifier translates positive HOL dimension to BitVec width/NeZero. Fresh exported full definition/3type queries/16 actual lookup-to-source-predicate observations over widths1/80 and all LN/LS/BN/BS forms, bad Install and missing keys; sixteen kernel observations plus arbitrary-width empty, malformed-safe BS and forbidden-leaf convention proofs. This is a proof-side Prop predicate required by the original top theorem, no executable compiler routing or semantic correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstallTop.lean",
+    "lean_name": "wordToStackCompileNoInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_compile_no_install",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02 beadflapjack-wts-code-no-install: complete original12392-12410, actual compile_def603-619, wordProps no_install_code_def4707-4710 and canonical Spt lookup/fromAList. Arbitrary original config/Nat row identifiers/full source programs/all four output carriers retained; only original ALL_DISTINCT mapped identifiers, no_install_code actual fromAList and compile equality at false perf hypotheses. Source list guard derived internally by distinct-key first-match lookup induction, not assumed or substituted. Target EVERY no_install includes both injected stubs. List.Nodup corresponds HOL ALL_DISTINCT, code Spt exact original num_map, no finite-map translation. Sole word qualifier translates positive HOL words to BitVec width/NeZero. Fresh original exported theorem/all6types/16 distinct-source-target observations over widths1/32/64/80, plus3 complete finite-code guard proofs. Duplicate safe-first/bad-later sentinel has true full code-map guard but false source/target, demonstrating original distinctness is retained. Kernel16 observations/3 arbitrary-width codeguard proofs/2 full original theorem applications. No public IH, listguard, target safety/evaluation/simulation, conversion or bounds premise. Proof-only top syntax preservation, not whole compiler semantic correctness."
   }
 ]
