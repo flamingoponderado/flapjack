@@ -1,0 +1,14 @@
+hcf_push_type=:bool -> num -> num -> num # α # β -> γ stackLang$prog
+hcf_pop_type=:bool -> num # α # β -> γ stackLang$prog -> γ stackLang$prog
+hcf_push_64_F=T
+hcf_pop_64_F_skip=T
+hcf_pop_64_F_forbidden=T
+hcf_push_64_T=T
+hcf_pop_64_T_skip=T
+hcf_pop_64_T_forbidden=T
+hcf_push_1_F=T
+hcf_pop_1_F_skip=T
+hcf_pop_1_F_forbidden=T
+hcf_push_1_T=T
+hcf_pop_1_T_skip=T
+hcf_pop_1_T_forbidden=T

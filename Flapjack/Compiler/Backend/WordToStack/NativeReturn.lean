@@ -22,12 +22,14 @@ def copyRetAuxNative {width : Nat} [NeZero width] (k f : Nat) : Nat → HolProg 
   | 0 => .skip
   | n + 1 => listSeq [.stackLoad k n, .stackStore k (n + f), copyRetAuxNative k f n]
 
-/-- Literal return copy/free wrapper. The return-value list element carrier is
-independent of the native continuation carrier, as in the source length operation. -/
+/-- Literal return copy/free wrapper. The unused third frame component has its own
+independent carrier, as confirmed by the original full HOL type. The return-value
+list element carrier is independent of the native continuation carrier, as in
+the source length operation. -/
 @[hol "cakeml/compiler/backend/word_to_stackScript.sml" "copy_ret_def"
   (words_as_type_indexed_bitvec)]
-def copyRetNative {width : Nat} [NeZero width] {β : Type}
-    (perf isHandle : Bool) (kf : Nat × Nat × Nat)
+def copyRetNative {width : Nat} [NeZero width] {β γ : Type}
+    (perf isHandle : Bool) (kf : Nat × Nat × γ)
     (vs : List β) (kont : HolProg width) : HolProg width :=
   let n := WordToStack.numStackRet kf.1 vs
   if n = 0 then kont
@@ -57,8 +59,8 @@ theorem toGeneric_copyRetAuxNative {width : Nat} [NeZero width] (k f n : Nat) :
 
 /-- Flapjack-only universal wrapper transport for arbitrary continuations and
 return-value lists. No wellformedness, bounds, result or target-evaluation premise. -/
-theorem toGeneric_copyRetNative {width : Nat} [NeZero width] {β : Type}
-    (perf isHandle : Bool) (kf : Nat × Nat × Nat) (vs : List β) (kont : HolProg width) :
+theorem toGeneric_copyRetNative {width : Nat} [NeZero width] {β γ : Type}
+    (perf isHandle : Bool) (kf : Nat × Nat × γ) (vs : List β) (kont : HolProg width) :
     toGeneric (copyRetNative perf isHandle kf vs kont) =
       WordToStackRegFormat.copyRet perf isHandle kf vs (toGeneric kont) := by
   simp only [copyRetNative, WordToStackRegFormat.copyRet]

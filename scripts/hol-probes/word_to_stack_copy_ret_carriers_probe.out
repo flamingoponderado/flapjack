@@ -1,0 +1,5 @@
+ret_tail_bool_zero=T
+ret_tail_bool_plain=T
+ret_tail_list_handle=T
+ret_tail_list_perf=T
+ret_tail_install=T
