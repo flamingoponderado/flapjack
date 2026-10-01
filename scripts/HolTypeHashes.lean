@@ -1,9 +1,9 @@
 import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
+import Flapjack.Compiler.Backend.BackendProps
+
 import Flapjack.Compiler.Backend.LabToTarget.Interference
 import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
-import Flapjack.Compiler.Backend.BackendProps
-
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
 import Flapjack.Pancake.WordConvs.CodeLabels
