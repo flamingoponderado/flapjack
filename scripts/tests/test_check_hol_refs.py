@@ -2,6 +2,7 @@
 
 import os
 import runpy
+import shutil
 import tempfile
 import unittest
 import contextlib
@@ -3044,6 +3045,86 @@ class FmapEqualityStrictnessTest(unittest.TestCase):
             "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
         ]
         self.assertEqual(self._errors(declaration, lines), [])
+
+
+class HolMlBindingClassificationTest(unittest.TestCase):
+    """Header declarations and ML ``val NAME =`` bindings resolve by syntax.
+
+    The scanner accepts any ``val NAME =`` binding and does not check whether
+    the value is a proof, so these tests pin the scanner's evidence only; the
+    theorem-status rule is enforced by source review.
+    """
+
+    def _fixture(self, text):
+        root = Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: shutil.rmtree(root, ignore_errors=True))
+        path = root / "FixtureScript.sml"
+        path.write_text(text)
+        return path, {}
+
+    def test_theorem_valued_qprove_binding_is_a_declaration(self):
+        path, cache = self._fixture(
+            "val llist_shorter_lnth = Q.prove (\n"
+            "  ``!ll1 ll2. T``,\n"
+            "  simp[]);\n"
+        )
+        self.assertIsNone(REF_ERROR(path, "llist_shorter_lnth", None, cache))
+        self.assertIsNone(REF_ERROR(path, "llist_shorter_lnth", 1, cache))
+
+    def test_val_binding_does_not_register_quoted_goal_names(self):
+        path, cache = self._fixture(
+            "val proved_lemma = Q.prove (``!x. x = x``, simp[]);\n"
+        )
+        self.assertIsNone(REF_ERROR(path, "proved_lemma", None, cache))
+        self.assertEqual(
+            REF_ERROR(path, "goal", None, cache), "declares no `goal`"
+        )
+
+    def test_quoted_goal_term_without_binding_is_rejected(self):
+        path, cache = self._fixture("val shared = build_goal goal names;\n")
+        self.assertEqual(
+            REF_ERROR(path, "goal", None, cache), "declares no `goal`"
+        )
+
+    def test_arbitrary_val_binding_resolves_syntactically(self):
+        # Scanner evidence only: every ``val NAME =`` binds the name, whether or
+        # not the value is a proof.  Theorem status is a source-review rule the
+        # checker does not enforce.
+        path, cache = self._fixture("val goal = ``!x. x = x``;\n")
+        self.assertIsNone(REF_ERROR(path, "goal", None, cache))
+
+    def test_header_keyword_declaration_resolves(self):
+        path, cache = self._fixture("Theorem LPREFIX_TRANS:\n  T\nProof simp[] QED\n")
+        self.assertIsNone(REF_ERROR(path, "LPREFIX_TRANS", None, cache))
+
+    def test_unknown_name_rejected(self):
+        path, cache = self._fixture("Theorem Known:\n  T\nProof simp[] QED\n")
+        self.assertEqual(REF_ERROR(path, "Missing", None, cache), "declares no `Missing`")
+
+    def test_wrong_source_line_rejected(self):
+        path, cache = self._fixture(
+            "val proved_lemma = Q.prove (``T``, simp[]);\n"
+        )
+        self.assertEqual(
+            REF_ERROR(path, "proved_lemma", 2, cache),
+            "declares `proved_lemma` at [1], not at line 2",
+        )
+
+
+class PinnedPathAllowlistAlignmentTest(unittest.TestCase):
+    """The Lean tag elaborator and the Python checker must allow the same pins."""
+
+    def test_lean_allowlist_matches_python_pins(self):
+        import re
+        holref = (CHECKER["ROOT"] / "Flapjack/HolRef.lean").read_text()
+        lean_paths = set(
+            re.findall(r'path == "(hol4/[^"]+\.sml)"', holref)
+        )
+        self.assertEqual(lean_paths, set(CHECKER["EXTERNAL_HOL_PATHS"]))
+
+    def test_every_python_pin_is_snapshotted(self):
+        for path in CHECKER["EXTERNAL_HOL_PATHS"]:
+            self.assertTrue((CHECKER["ROOT"] / path).is_file(), path)
 
 
 if __name__ == "__main__":

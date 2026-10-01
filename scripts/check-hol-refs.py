@@ -203,6 +203,13 @@ DECL_RE = re.compile(
     r"(?:theorem|lemma|def|abbrev|instance|inductive|structure|class|opaque|axiom)\s+"
     r"([^\s:({\[]+)"
 )
+# HOL declarations are recognized in two forms: the standard header keywords
+# below (`Theorem`, `Definition`, ...) and ML `val NAME = ...` bindings.  The
+# scanner deliberately accepts every `val NAME =` line, so a theorem-valued
+# binding such as `val llist_shorter_lnth = Q.prove (...)` can be cited from
+# `@[hol]`.  It cannot tell a proved binding from an arbitrary ML value and
+# does not enforce theorem status, so tagging a non-theorem value is prohibited
+# by source review, not by this check.
 HOL_HEADER_KEYWORDS = (
     "Theorem",
     "Triviality",
