@@ -2408,6 +2408,10 @@ run_probe pan_globals_fperm_name_probeScript.sml pan_globals_fperm_name_probe.ou
   "$cake_dir/pancake/pan_globalsScript.sml" \
   "$cake_dir/pancake"
 
+run_probe wordlang_cutsets_max_probeScript.sml wordlang_cutsets_max_probe.out \
+  cm_empty cm_left cm_right cm_both cm_zero cm_nonwf cm_raw cm_deep \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
 run_probe wordlang_max_var_inst_probeScript.sml wordlang_max_var_inst_probe.out \
   mi_skip mi_const mi_binop_reg mi_binop_imm mi_shift_reg mi_shift_imm mi_div mi_addCarry mi_addOverflow mi_subOverflow mi_longMul mi_longdiv mi_load mi_store mi_load32 mi_store32 mi_load8 mi_store8 mi_fpLess mi_fpLessEqual mi_fpEqual mi_toreg64 mi_fromreg64 mi_toreg32 mi_fromreg32 mi_fpdefault \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"

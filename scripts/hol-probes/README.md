@@ -2152,3 +2152,8 @@ FP comparison results, both 32/64-bit transfer branches, and the FP default.
 `WordLangMaxVarInstParity.lean` replays these finite observations in the kernel.
 They support regression review, not a cross-prover equivalence proof or
 production compiler routing claim.
+
+`wordlang_cutsets_max_probeScript.sml` captures eight original `cutsets_max`
+equations over both Spt components, including raw and non-well-formed trees.
+`WordLangCutsetsMaxParity.lean` kernel-replays the same inputs. These rows are
+regression evidence, not a full compiler or cross-prover equivalence proof.

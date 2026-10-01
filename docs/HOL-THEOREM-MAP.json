@@ -41181,5 +41181,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison wordLangScript216-241 and asmScript85-134: exact WordLangInst(BitVec width) instruction/arith/reg-imm/address/FP constructor payloads; positivewidth words_as_type_indexed_bitvec. All arithmetic max3/nestedMAX clauses and six memory cases retain argument order; FP comparisons return integer destination, FP MovToReg and MovFromReg preserve dimension64 branch and integer fields, all remaining FP cases default0. No extra premise, callback, targetresult, or dimension64 restriction; original26 direct rows include32/64 transfers and kernel replay. Full max_var/program frame sizing and production routing remainOPEN."
+},
+{
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "cutsets_max_def",
+  "lean_path": "Flapjack/Pancake/WordLang/CutsetsMax.lean",
+  "lean_name": "cutsetsMaxHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison wordLangScript247-250, cutsets abbreviation33 and misc num_set787: exact canonical Spt Unit pair (not raw fmap), both toAList/FST/MAX_LIST enumerations and outerMAX retained. Existing sptToAList mirrors raw HOL traversal and maxList is standard natural MAX_LIST empty0/consMAX; no added wf/support/domain premise or array/finite-map translation. Original8directrows include both components, deep inserts and nonwf/raw trees, kernel replay. Full max_var assembly/native wrapper production routing remainOPEN."
 }
 ]
