@@ -3192,3 +3192,7 @@ run_probe reg_alloc_state_foreach_probeScript.sml reg_alloc_state_foreach_probe.
 run_probe parmove_preserves_moves_pmov_probeScript.sml parmove_preserves_moves_pmov_probe.out \
   pmv_terminal pmv_pending pmv_output \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_alloc_max_exp_probeScript.sml word_alloc_max_exp_probe.out \
+  me_const me_lookup me_var me_load me_empty me_nested me_duplicate me_shiftleft me_shiftright me_zero me_original_theorem \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend/semantics"

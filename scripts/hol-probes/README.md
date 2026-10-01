@@ -1,3 +1,13 @@
+`word_alloc_max_exp_probe.out` captures ten direct original maximum, inclusive
+bound, and strict-bound sentinel triples. Registered WordAllocMaxVarExpParity
+fixtures check identical recursive syntax at widths1/32/64/80 including empty
+Op, duplicate/nested arguments, ignored Const/Lookup and80-bit register numbers.
+The final row freshly reconstructs the complete local max_var_exp_max from
+its literal proof, using original imported WordConvs monotonicity. These are
+regression evidence, not cross-assistant equivalence or full pass correctness.
+Regenerate with HOL_PROBE_ONLY=word_alloc_max_exp_probeScript.sml using the
+read-only prebuilt CakeML backend semantics theory directory.
+
 `word_alloc_max_inst_probe.out` records 12 direct original maximum/safety rows
 and fresh Q.prove re-elaboration of the complete local max_var_inst_max theorem.
 The registered WordAllocMaxVarInstParity fixtures check the same instructions

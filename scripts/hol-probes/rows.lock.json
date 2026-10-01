@@ -3853,6 +3853,12 @@
       "sha256": "95c0fd22077891c7d510c9afdbe86a6795254605d16cf11e8cc345859c72e624"
     },
     {
+      "bytes": 287,
+      "out": "word_alloc_max_exp_probe.out",
+      "rows": 11,
+      "sha256": "065e30996d63ebeacdfb205263ad9e8ff7098a2ab078dd0a84a2fb2af41f1b31"
+    },
+    {
       "bytes": 307,
       "out": "word_alloc_max_inst_probe.out",
       "rows": 13,

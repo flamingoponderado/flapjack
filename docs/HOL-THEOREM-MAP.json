@@ -43167,5 +43167,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c compared full local theorem10227-10235, every_var_inst98-131, max_var_inst216-243 and imported asm constructors. Arbitrary instruction, Nat register maxima, all arithmetic/memory/FP cases, positive width and exact width64 transfers. Bool decide renders original numeric predicate. No extra bound premise; only words_as_type_indexed_bitvec translation. Coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "max_var_exp_max",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/MaxVarExp.lean",
+    "lean_name": "maxVarExpMax",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c: full literal local theorem10211-10225 source compared, actual every_var_exp85-91/max_var_exp207-214 and exp14-23 carriers. All expression constructors including arbitrary recursive Op lists/empty, shifts and loads; Const/Lookup ignored. Numeric Nat maximum with original zero-based MAX_LIST; public theorem no extra bound/success/output premise. Private numeric-bound induction infrastructure establishes the unconditional result, not a hypothesis. Only positive width BitVec translation; imported WordStoreHOL fixes store payload to original non-word carrier. Coordinator acceptance pending."
   }
 ]

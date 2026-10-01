@@ -1,3 +1,4 @@
+import Flapjack.Test.WordAllocMaxVarExpParity
 import Flapjack.Test.WordAllocMaxVarInstParity
 import Flapjack.Test.WordToStackRegisterLabelsParity
 import Flapjack.Test.WordToStackCompileLookupParity
