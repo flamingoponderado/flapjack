@@ -3217,6 +3217,12 @@
       "sha256": "9150484c7cd2addcce59a37f55aab5454f3eccd6be645ca4e8148bbaacf78a3c"
     },
     {
+      "bytes": 580,
+      "out": "reg_alloc_colouring_probe.out",
+      "rows": 18,
+      "sha256": "c273e7a1a5ad0a3f70bb5ea0fb5348e6e4e3a3b059aed54e8d33bc804f88b9bf"
+    },
+    {
       "bytes": 455,
       "out": "reg_alloc_considered_var_probe.out",
       "rows": 20,
@@ -3227,6 +3233,12 @@
       "out": "reg_alloc_dec_deg_probe.out",
       "rows": 6,
       "sha256": "01dfe94275cdc543b9e92b6bab355cc1040aaca5f6eddaa6d43113feeb1f0a15"
+    },
+    {
+      "bytes": 298,
+      "out": "reg_alloc_exception_functions_probe.out",
+      "rows": 11,
+      "sha256": "aff11c8ca5563c166c2b681f6f7b00d0ce63d72dd8c6e065b1ef0de6a720f92c"
     },
     {
       "bytes": 6103,
@@ -3341,6 +3353,12 @@
       "out": "reg_alloc_state_partition_probe.out",
       "rows": 23,
       "sha256": "f77d83c8eb6624a79f956be3ade756841ba28b04cebf492636d49a890cdd1cec"
+    },
+    {
+      "bytes": 879,
+      "out": "reg_alloc_stemp_colouring_probe.out",
+      "rows": 20,
+      "sha256": "f748b69d78f716491c48f15c3524e99e08adf952a18d51f9cf6f7c24e01a973d"
     },
     {
       "bytes": 131,
@@ -4273,6 +4291,12 @@
       "sha256": "b9bd0faee01019ff7d28279dcdd162bb0e7f5fee0644aa5bc4e42c7585b1b165"
     },
     {
+      "bytes": 178,
+      "out": "word_alloc_nlive_store_probe.out",
+      "rows": 12,
+      "sha256": "ea57b24983b04af9e16930ec46c17820c6a99ac5be910c9284faba9b88b52021"
+    },
+    {
       "bytes": 164,
       "out": "word_alloc_oracle_colour_probe.out",
       "rows": 10,
@@ -4295,6 +4319,12 @@
       "out": "word_alloc_remove_dead_inst_probe.out",
       "rows": 12,
       "sha256": "24f25a6713937f41a3a065af0fbf87f310f8858fbbcba3dbce2030e1e2a367de"
+    },
+    {
+      "bytes": 1179,
+      "out": "word_alloc_remove_dead_probe.out",
+      "rows": 26,
+      "sha256": "6abc381f185f50edf55a0a6bfe04467f0718def338437ac375394806d6ebedae"
     },
     {
       "bytes": 117,
@@ -4897,6 +4927,12 @@
       "sha256": "b888dbdf7bd4550a498199b5e73cab593ea0e2a848c7537870a0be180a92b4db"
     },
     {
+      "bytes": 716,
+      "out": "word_to_stack_no_shmemop_flat_probe.out",
+      "rows": 54,
+      "sha256": "9ecf06eb8c2999dae282e10cf9df261bebdf63bd564b0b19f41e978d7ba269b9"
+    },
+    {
       "bytes": 404,
       "out": "word_to_stack_no_shmemop_helpers_probe.out",
       "rows": 22,
@@ -4907,6 +4943,12 @@
       "out": "word_to_stack_no_shmemop_inst_probe.out",
       "rows": 42,
       "sha256": "8d3d69d8ffbb34c465bd99f95ce3e7f52f7eda11384f66ab52f4f90d7d1b1d51"
+    },
+    {
+      "bytes": 693,
+      "out": "word_to_stack_no_shmemop_recursive_probe.out",
+      "rows": 42,
+      "sha256": "694f5d5d68ada438a46e602ddca8c1dbf73e86e26bfc33908d1063a9fa9f10ee"
     },
     {
       "bytes": 232,

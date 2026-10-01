@@ -1,0 +1,34 @@
+load "bossLib";
+load "preamble";
+load "reg_allocTheory";
+open bossLib HolKernel Parse preamble reg_allocTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+fun observe_type label tm = (print (label ^ "="); print_type (type_of tm); print "\n");
+val s0 = ``<| adj_ls := [[1;2];[0];[0;3];[2]]; node_tag := [Stemp; Fixed 5; Fixed 3; Stemp]; degrees := [2;1;2;1]; dim := 4;
+  simp_wl := []; spill_wl := []; freeze_wl := []; avail_moves_wl := []; unavail_moves_wl := [];
+  coalesced := [0;1;2;3]; move_related := [F;F;F;F]; stack := [] |>``;
+val pnone = ``\(n:num) (ks:num list) (s:ra_state). ((M_success NONE):(num option, state_exn) exc, s)``;
+val pnine = ``\(n:num) (ks:num list) (s:ra_state). ((M_success (SOME 9)):(num option, state_exn) exc, s)``;
+fun s t = subst [``S0:ra_state`` |-> s0,
+  ``PNONE:num -> num list -> ra_state -> (num option, state_exn) exc # ra_state`` |-> pnone,
+  ``PNINE:num -> num list -> ra_state -> (num option, state_exn) exc # ra_state`` |-> pnine] t;
+val _ = observe_type "st_type_assign_tag" ``assign_Stemp_tag``;
+val _ = observe_type "st_type_neg_biased" ``neg_biased_pref``;
+val _ = observe "st_tag_col" ``(tag_col (Fixed 7), tag_col Atemp, tag_col Stemp)``;
+val _ = observe "st_unbound_empty" ``unbound_colour 4 []``;
+val _ = observe "st_unbound_gap" ``unbound_colour 3 [3;4;6]``;
+val _ = observe "st_unbound_below" ``unbound_colour 3 [0;1;3;5]``;
+val _ = observe "st_unbound_dup" ``unbound_colour 2 [2;2;3]``;
+val _ = observe "st_tag_none" (s ``(SND (assign_Stemp_tag 3 PNONE 0 (S0:ra_state))).node_tag``);
+val _ = observe "st_tag_pref" (s ``(SND (assign_Stemp_tag 3 PNINE 0 (S0:ra_state))).node_tag``);
+val _ = observe "st_tag_non_stemp" (s ``assign_Stemp_tag 3 PNONE 1 (S0:ra_state) = (M_success (), S0)``);
+val _ = observe "st_tag_oob" (s ``FST (assign_Stemp_tag 3 PNONE 7 (S0:ra_state))``);
+val _ = observe "st_all" (s ``(FST (assign_Stemps 3 PNONE (S0:ra_state)), (SND (assign_Stemps 3 PNONE (S0:ra_state))).node_tag)``);
+val _ = observe "st_all_k_high" (s ``(SND (assign_Stemps 6 PNONE (S0:ra_state))).node_tag``);
+val _ = observe "st_neg_first_hit" (s ``FST (neg_first_match_col 4 [3] [2;1] (S0:ra_state))``);
+val _ = observe "st_neg_first_bad" (s ``FST (neg_first_match_col 4 [5] [1;2] (S0:ra_state))``);
+val _ = observe "st_neg_first_oob" (s ``FST (neg_first_match_col 0 [] [9] (S0:ra_state))``);
+val _ = observe "st_neg_biased" (s ``FST (neg_biased_pref 4 (insert 0 [2;1] LN) 0 [] (S0:ra_state))``);
+val _ = observe "st_neg_biased_missing" (s ``FST (neg_biased_pref 4 (insert 0 [2;1] LN) 3 [] (S0:ra_state))``);
+val _ = observe "st_neg_biased_oob_partner" (s ``FST (neg_biased_pref 0 (insert 0 [9;1] LN) 0 [] (S0:ra_state))``);
+val _ = observe "st_neg_biased_out_of_dim" (s ``FST (neg_biased_pref 0 (insert 8 [1] LN) 8 [] (S0:ra_state))``);

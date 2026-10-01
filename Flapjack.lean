@@ -73,6 +73,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCallCore
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopReturn
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopInstructions
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopFlatEffects
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopRecursive
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Pancake.WordConvs.LabelSafety
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
@@ -127,6 +129,16 @@ import Flapjack.Misc.FindIndex.Bounds
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Append
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
 import Flapjack.Compiler.Backend.WordAlloc.GetForced
+import Flapjack.Compiler.Backend.WordAlloc.RemoveDead
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Motive
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Loop
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Leaves
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Store
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Control
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.StateEffect
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Move
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Inst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
 import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
@@ -427,6 +439,9 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkBij
 import Flapjack.Compiler.Backend.RegAlloc.Accessors
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+import Flapjack.Compiler.Backend.RegAlloc.Colouring
+import Flapjack.Compiler.Backend.RegAlloc.ExceptionFunctions
+import Flapjack.Compiler.Backend.RegAlloc.StempColouring
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Leaves
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Inst

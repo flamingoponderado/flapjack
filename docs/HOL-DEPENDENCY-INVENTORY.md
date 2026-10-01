@@ -11,28 +11,28 @@ The cited-declaration counts below are a **lexical reachability set** computed f
 ## Counts
 
 - Scripts/theories in the transitive ancestor closure: `267`
-- Declarations in those theories (source pool): `13804`
-  - by kind: Datatype: 225, Definition: 3604, Theorem: 9914, Type: 61
-  - by area: pancake: 1343, cakeml_backend: 10577, cakeml_semantics: 937, cakeml_other: 91, basis: 354, other: 502
-- Lexically cited declarations (citation closure of the root; not a dependency bound): `6651` unique declaration names (not declaration identities)
-  - by kind: Datatype: 123, Definition: 1859, Theorem: 4628, Type: 41
-  - by area: pancake: 551, cakeml_backend: 5733, cakeml_semantics: 188, cakeml_other: 23, basis: 29, other: 127
+- Declarations in those theories (source pool): `13808`
+  - by kind: Datatype: 225, Definition: 3608, Theorem: 9914, Type: 61
+  - by area: pancake: 1343, cakeml_backend: 10581, cakeml_semantics: 937, cakeml_other: 91, basis: 354, other: 502
+- Lexically cited declarations (citation closure of the root; not a dependency bound): `6653` unique declaration names (not declaration identities)
+  - by kind: Datatype: 124, Definition: 1860, Theorem: 4628, Type: 41
+  - by area: pancake: 551, cakeml_backend: 5735, cakeml_semantics: 188, cakeml_other: 23, basis: 29, other: 127
   - each cited name is attributed to one representative declaration (first with that name in index order) for the per-kind, per-area and per-theory breakdowns
 - HOL-qualified `Theory$name` token occurrences resolved to an unqualified declaration name: `1035`
 
 ## Validation
 
 All count invariants hold:
-- cited total (`6651` unique names) equals the per-kind, per-area and per-theory sums; each name is attributed to one representative declaration
+- cited total (`6653` unique names) equals the per-kind, per-area and per-theory sums; each name is attributed to one representative declaration
 - source-pool totals equal the per-kind and per-area sums
 - every cited name is a declaration in the theory closure
 
 ## Lean coverage of the lexically cited set
 
-- Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `2257` (not the validated tag count)
-- Lexically cited names with a textual `(theory, name)` match: `1050`
-- Lexically cited names with no textual `(theory, name)` match: `5601`
-- ... of which also have no same-name textual match anywhere: `5507` (name heuristic: neither an over- nor an under-approximation of genuinely missing ports)
+- Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `2293` (not the validated tag count)
+- Lexically cited names with a textual `(theory, name)` match: `1063`
+- Lexically cited names with no textual `(theory, name)` match: `5590`
+- ... of which also have no same-name textual match anywhere: `5496` (name heuristic: neither an over- nor an under-approximation of genuinely missing ports)
 
 ## Direct citations of the root theorem
 
@@ -139,7 +139,7 @@ All count invariants hold:
 - `stack_to_labProof`: 109
 - `gen_gc_partial`: 104
 - `data_to_word`: 101
-- `reg_alloc`: 93
+- `reg_alloc`: 95
 - `wordProps`: 91
 - `pan_globalsProof`: 88
 - `word_to_stackProof`: 87

@@ -2738,11 +2738,21 @@ the executed allocator. Regenerate read-only with
 
 `word_alloc_get_forced_probeScript.sml` captures twenty-eight original `get_forced` rows over `c with ISA := _`: each forced `AddCarry`/`AddOverflow`/`SubOverflow`/`LongMul` ISA guard and its rejected ISA, omitted equal-register pairs, `FPMovToReg`/`FPMovFromReg` at 32 and 64 bits, an unforced instruction, `Seq`/`If`/`MustTerminate`/`Loop`, returning calls with and without a handler, a tail call with a handler, `Skip`, and registers above 2^64. `Flapjack/Test/GetForcedParity.lean` replays each row and instantiates `getForcedInGetClashTree`. These are proof-side ports; the executed RISC-V allocator still uses its own forced-edge traversal.
 
+`word_alloc_remove_dead_probeScript.sml` captures twenty-five original `remove_dead`/`remove_dead_prog` rows over one live set (each observed as program, `toAList` keys and dead stores): partial and fully dead `Move`, dead and live `Inst`, `Get`, `OpCurrHeap`, dead `LocValue`, `Set` of a register to a dead and a live store, `Set` of a compound expression, `Seq` dropping a `Skip` and keeping both children, `MustTerminate`, a fully dead `If` and an immediate `If`, a returning call with a handler, a tail call, `Alloc`, `Loop`, `Break`, a `Continue` outside its loop context, the catchall `Tick`, and `remove_dead_prog`. Two `live_store_rel` rows are decided by proving the row or its negation. `Flapjack/Test/WordAllocRemoveDeadParity.lean` replays every row in the kernel.
+
+`word_alloc_nlive_store_probeScript.sml` captures twelve original `nlive_store` rows: a dead and a live `Lookup`, `Var`/`Const`, `Op` with a dead, a live and no argument, live and dead `Load`, `Shift` with each operand dead, and a live `Shift`. `Flapjack/Test/WordAllocNliveStoreParity.lean` proves each `T` row and refutes each `F` row in the kernel.
+
 `reg_alloc_invariants_probeScript.sml` captures thirty original reg_allocProof invariant rows. Quantified `bool` definitions are decided by proving the row or its negation with `TAC_PROOF` and a recorded tactic: `has_edge` (hit, miss, both bounds, a key above 2^64), `undirected`, `good_ra_state` (well-formed, unsorted adjacency, out-of-range move, wrong array length), `no_clash` (distinct, clashing, non-fixed, self loop), `sp_inverts` (inverse, mismatch, inserted pair), `is_clique`, `is_subgraph`, `hide`, `colouring_satisfactory` (injective, clashing, self loop) and the `good_pref`/`good_neg_pref` oracle conditions. `Flapjack/Test/RegAllocInvariantsParity.lean` proves or refutes each row in the kernel and instantiates `spInvertsInsert`.
 
 `reg_alloc_mk_bij_lemmas_probeScript.sml` captures six original `list_remap`/`mk_bij` instances through `toAList`: a repeated and pre-mapped name list from nonempty maps, an inverse pair extended from a nonempty inverse, `wf` of both results, a mixed `Seq`/`Branch SOME`/`Set` tree, and a key above 2^64. `Flapjack/Test/RegAllocMkBijLemmasParity.lean` replays each row and applies `listRemapDomain`, `listRemapWf`, `mkBijAuxDomain`, `mkBijAuxBij` and `mkBijAuxWf` to the probe inputs.
 
 `reg_alloc_accessors_probeScript.sml` captures eighteen original rows of the `ml_monadBaseLib`-generated `ra_state` accessors on one concrete state: `get_dim`/`get_stack`/`get_avail_moves_wl`, `set_dim` and a `set_` that leaves other fields, `adj_ls_length`, in-range and out-of-range (including a key above 2^64) `node_tag_sub`/`adj_ls_sub`/`degrees_sub`/`coalesced_sub`, in-range and out-of-range `update_degrees` (failure keeps the state), `update_move_related`/`update_node_tag`, `st_ex_MAP adj_ls_sub` with and without an out-of-range index, and `Mupdate`. `Flapjack/Test/RegAllocAccessorsParity.lean` replays each row and applies `updateDegreesEqn` and the provisional `degreesSubEqn`/`stExMapAdjLsSub` to the same inputs.
+
+`reg_alloc_colouring_probeScript.sml` captures eighteen original rows of `remove_colours` (empty colours taking priority, no nodes, fixed neighbours, duplicate colours, out-of-range nodes before and after the colours run out), `assign_Atemp_tag` (no-preference and last-colour oracles, no remaining colour, non-`Atemp` node unchanged, out-of-range node), `assign_Atemps` (heuristic order with an out-of-range entry, oracle choice, a single colour) and `first_match_col` (hit, colour outside `ks`, empty list, an index above 2^64). `Flapjack/Test/RegAllocColouringParity.lean` replays each row in the kernel.
+
+`reg_alloc_exception_functions_probeScript.sml` captures eleven original rows of the generated `raise_Fail`/`raise_Subscript`/`handle_Fail`/`handle_Subscript`: both raises, success passing through, each handler catching its own constructor and passing the other, continuation from the failing state, and `handle_Subscript` around an out-of-range `node_tag_sub`. `Flapjack/Test/RegAllocExceptionFunctionsParity.lean` replays each row in the kernel.
+
+`reg_alloc_stemp_colouring_probeScript.sml` captures the HOL types of `assign_Stemp_tag` and `neg_biased_pref` and eighteen original rows of `tag_col`, `unbound_colour` (empty, gap, entries below the start colour, duplicates), `assign_Stemp_tag` (default and oracle choices, non-`Stemp` node unchanged, out-of-range node), `assign_Stemps` (two start colours), `neg_first_match_col` (hit, excluded colour, out-of-range node) and `neg_biased_pref` (hit, missing move entry, out-of-range partner caught by `handle_Subscript`, node outside `dim`). `Flapjack/Test/RegAllocStempColouringParity.lean` replays each value row in the kernel.
 `word_alloc_checker_assembly_probe.out` observes five mixed original checker
 equations, kernel-replayed by `WordAllocCheckerAssemblyParity`. Nested control
 (Seq/MustTerminate/If/Loop/Break/Continue), returning and handled calls, a tail
@@ -3721,3 +3731,33 @@ ssa_physical_state_updates_probe.out freshly replays the literal physical-target
 ### Loop-to-Word label threading and handler ownership
 
 `loop_to_word_label_handlers_probeScript.sml` replays all four full literal source proofs: function-label preservation, next-label monotonicity, handler ownership for comp, and per-function ownership for compile_prog. Actual theorem applications use original compiler equalities supplied by EVAL; no extra guard or target evaluation assumption. Complete nested outputs at widths 1/64/80 show return labels, exception labels, both continuations and final counter; the tail case ignores its source handlers. A duplicate-owner compiled list and false-owner sentinel are retained. Matching generic-width kernel fixtures apply the public theorems and check the complete nested output.
+### Native compiler flat-effect no-shared-memory cases
+
+`word_to_stack_no_shmemop_flat_probeScript.sml` captures fifty-four original
+source-guard/actual-target-predicate observations for twelve flat-effect cases
+over widths1/32/64/80, both perf flags and zero/nonzero/large frames. Samples
+include move cycles/repeated sources, malformed cutsets, bitmap-producing live
+and constant paths, exact byte-backed FFI names and all Set expression branches.
+`WordToStackNoShmemopFlatEffectsParity` replays the identical inputs through
+actual compiler equations: fifty direct kernel predicate reductions and four
+Move observations using accepted preservation for arbitrary scheduled lists.
+The latter do not claim direct reduction of the scheduler. Twelve generic
+public case applications keep the original guard and compilation equality.
+These regressions do not establish cross-language equivalence or the complete
+compiler theorem. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_flat_probeScript.sml`.
+
+### Native compiler recursive no-shared-memory cases
+
+`word_to_stack_no_shmemop_recursive_probeScript.sml` evaluates forty-two
+original source/actual-target predicate pairs for MustTerminate, Loop, Seq
+and all If operand/validation branches. Widths1/32/64/80, both perf flags,
+malformed cutsets and nested bitmap-producing branches are retained. False
+source guards include genuinely forbidden output, invalid-address fallback
+and an independently checked handler ignored by the tail-call compiler;
+explicit false/false and false/true expectations prevent an equivalence claim.
+`WordToStackNoShmemopRecursiveParity` kernel-reduces the identical compiler
+equations and applies all four generic original-shaped cases with only their
+legitimate source-subprogram induction hypotheses. The accepted full source
+guard equations are reused. These regressions do not establish cross-language
+equivalence or complete the compiler theorem. Selector:
+`HOL_PROBE_ONLY=word_to_stack_no_shmemop_recursive_probeScript.sml`.

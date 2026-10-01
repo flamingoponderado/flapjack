@@ -3061,6 +3061,21 @@ run_probe reg_alloc_mk_bij_lemmas_probeScript.sml reg_alloc_mk_bij_lemmas_probe.
 run_probe reg_alloc_accessors_probeScript.sml reg_alloc_accessors_probe.out \
   acc_get_dim acc_get_stack acc_get_avail acc_set_dim acc_set_keeps acc_adj_length acc_tag_sub acc_tag_sub_oob acc_adj_sub acc_large_oob acc_update_deg acc_update_oob acc_update_mr acc_update_tag acc_coalesced_sub acc_map_sub acc_map_oob acc_mupdate \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe reg_alloc_colouring_probeScript.sml reg_alloc_colouring_probe.out \
+  rc_empty_ks rc_no_nodes rc_fixed rc_dup_colours rc_oob rc_oob_after_empty aat_none aat_pref aat_stemp aat_non_atemp aat_oob aa_all aa_pref aa_one_colour fmc_hit fmc_not_in_ks fmc_empty fmc_oob \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe reg_alloc_exception_functions_probeScript.sml reg_alloc_exception_functions_probe.out \
+  ef_raise_fail ef_raise_sub ef_hs_success ef_hs_catch ef_hs_pass_fail ef_hs_failing_state ef_hs_accessor ef_hf_catch ef_hf_pass_sub ef_hf_success ef_hf_failing_state \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe reg_alloc_stemp_colouring_probeScript.sml reg_alloc_stemp_colouring_probe.out \
+  st_type_assign_tag st_type_neg_biased st_tag_col st_unbound_empty st_unbound_gap st_unbound_below st_unbound_dup st_tag_none st_tag_pref st_tag_non_stemp st_tag_oob st_all st_all_k_high st_neg_first_hit st_neg_first_bad st_neg_first_oob st_neg_biased st_neg_biased_missing st_neg_biased_oob_partner st_neg_biased_out_of_dim \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe word_alloc_remove_dead_probeScript.sml word_alloc_remove_dead_probe.out \
+  rd_move_partial rd_move_dead rd_inst_dead rd_inst_live rd_get_dead rd_get_live rd_curr_heap rd_locvalue_dead rd_set_dead_store rd_set_live_store rd_set_exp rd_seq_drop rd_seq_both rd_must rd_if_dead rd_if_imm rd_call_ret rd_call_tail rd_alloc rd_loop rd_break rd_continue_missing rd_catchall rd_prog lsr_agree lsr_differ \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_alloc_nlive_store_probeScript.sml word_alloc_nlive_store_probe.out \
+  ns_lookup_dead ns_lookup_live ns_var ns_const ns_op_dead ns_op_live ns_op_empty ns_load ns_load_dead ns_shift_left_dead ns_shift_right_dead ns_shift_live \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
   gf_addcarry_riscv gf_addcarry_mips gf_addcarry_self gf_addcarry_x86 gf_addovf_riscv gf_addovf_armv8 gf_subovf_mips gf_subovf_self gf_longmul_armv7 gf_longmul_armv7_self gf_longmul_riscv gf_longmul_ag32 gf_longmul_x86 gf_fptoreg_32 gf_fptoreg_32_self gf_fptoreg_64 gf_fpfromreg_32 gf_fpfromreg_64 gf_other_inst gf_seq gf_if gf_must gf_loop gf_call_return gf_call_both gf_call_tail gf_skip gf_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
@@ -3580,3 +3595,10 @@ run_probe ssa_merge_move_lookups_probeScript.sml ssa_merge_move_lookups_probe.ou
 run_probe loop_to_word_label_handlers_probeScript.sml loop_to_word_label_handlers_probe.out \
   comp_l_invariant_source_replay good_handlers_comp_source_replay loop_to_word_good_handlers_source_replay loop_to_word_comp_SND_LE_source_replay lh_nested64_result lh_nested64_owner lh_nested64_counter lh_nested64_handlers lh_nested1_result lh_nested1_owner lh_nested1_counter lh_nested1_handlers lh_nested80_result lh_nested80_owner lh_nested80_counter lh_nested80_handlers lh_ignored_tail_result lh_ignored_tail_owner lh_ignored_tail_counter lh_ignored_tail_handlers lh_program_result lh_program_handlers lh_wrong_owner \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe word_to_stack_no_shmemop_flat_probeScript.sml word_to_stack_no_shmemop_flat_probe.out \
+  fe_move_1 fe_return_1 fe_heap_1 fe_set_1 fe_get_1 fe_alloc_1 fe_consts_1 fe_loc_1 fe_install_1 fe_code_1 fe_data_1 fe_ffi_1 fe_move_32 fe_return_32 fe_heap_32 fe_set_32 fe_get_32 fe_alloc_32 fe_consts_32 fe_loc_32 fe_install_32 fe_code_32 fe_data_32 fe_ffi_32 fe_move_64 fe_return_64 fe_heap_64 fe_set_64 fe_get_64 fe_alloc_64 fe_consts_64 fe_loc_64 fe_install_64 fe_code_64 fe_data_64 fe_ffi_64 fe_move_80 fe_return_80 fe_heap_80 fe_set_80 fe_get_80 fe_alloc_80 fe_consts_80 fe_loc_80 fe_install_80 fe_code_80 fe_data_80 fe_ffi_80 fe_set_bitmap fe_set_const fe_set_lookup fe_set_load fe_set_op fe_set_shift \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_no_shmemop_recursive_probeScript.sml word_to_stack_no_shmemop_recursive_probe.out \
+  rc_must_1 rc_loop_1 rc_seq_1 rc_reg_1 rc_imm_yes_1 rc_imm_no_1 rc_must_32 rc_loop_32 rc_seq_32 rc_reg_32 rc_imm_yes_32 rc_imm_no_32 rc_must_64 rc_loop_64 rc_seq_64 rc_reg_64 rc_imm_yes_64 rc_imm_no_64 rc_must_80 rc_loop_80 rc_seq_80 rc_reg_80 rc_imm_yes_80 rc_imm_no_80 rc_must_shared rc_must_invalid rc_must_ignored_handler rc_loop_shared rc_loop_invalid rc_loop_ignored_handler rc_seq_shared rc_seq_invalid rc_seq_ignored_handler rc_reg_shared rc_reg_invalid rc_reg_ignored_handler rc_imm_yes_shared rc_imm_yes_invalid rc_imm_yes_ignored_handler rc_imm_no_shared rc_imm_no_invalid rc_imm_no_ignored_handler \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
