@@ -3040,3 +3040,7 @@ run_probe monad_base_probeScript.sml monad_base_probe.out \
 run_probe word_to_stack_full_read_bitmap_mixed_probeScript.sml word_to_stack_full_read_bitmap_mixed_probe.out \
   fra_8_1 fra_8_16 fra_1_32 fra_16_8 fra_offset fra_same fra_success8_1 fra_success1_32 fra_zero fra_loc \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe find_index_append_probeScript.sml find_index_append_probe.out \
+  fia_empty fia_empty_left fia_empty_right fia_left_head fia_duplicates fia_right_last fia_absent fia_zero fia_bool fia_large \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"

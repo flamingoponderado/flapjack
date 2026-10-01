@@ -42460,5 +42460,13 @@
     "hol_name": "state_exn",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2 reg_alloc101-103: Fail string | Subscript. HOL string is char list, retained as List of reviewed MlString.HolChar=BitVec8 canonical256-element char; no UTF8 String or mlstring wrapper. Constructor arity/equality preserved including0/255 bytes/order. Fresh original probe/kernel fixtures; raising/accessors and production refinement remain open prerequisites. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Misc/FindIndex/Append.lean",
+    "lean_name": "findIndexAppend",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "find_index_APPEND",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead46.8 misc1265-1274: arbitrary element carrier, Lists l1/l2, target x, Nat n; full equality with case find_index x l1 n. NONE searches l2 at n+LENGTH l1; SOME preserves first result. Literal reviewed findIndex evaluator, no presence/unique-match/zero-offset/fuel/target-result premise. DecidableEq supplies HOL propositional equality only. Kernel list induction generalizes arbitrary offset; ten fresh original EVAL rows replay identical inputs, including Bool carrier, duplicates and offset10^20. Coordinator review pending."
   }
 ]
