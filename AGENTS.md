@@ -233,19 +233,18 @@ evaluators (no clock, no memory domain, compile-and-execute "semantics") are
 not ports of HOL theorems about the faithful semantics and must not carry
 the tag of one.
 
-**Reviewed statements are pinned.** `docs/HOL-TYPE-HASHES.json` records the
-elaborated Lean type of each `reviewed_exact` entry in
-`docs/HOL-THEOREM-MAP.json`; for tagged definitions and `opaque` declarations it
-also records the elaborated body. CI runs `scripts/check_hol_type_hashes.py` and
-rejects statement or definition-body drift. After comparing a changed Lean
-statement (or definition body) with its HOL source, run
-`python3 scripts/check_hol_type_hashes.py --update` and review the
-lock-file diff. The hash gate detects Lean declaration changes only: it does not
-hash untagged dependencies, theorem proof terms, or the HOL declarations, and it
-does not prove HOL-to-Lean equivalence or replace source-level review.
-After rebuilding a tagged declaration, run `lake build Flapjack` before the
-type-hash check: it refreshes `.lake/build/ir/Flapjack.setup.json`, which can
-otherwise still point at an older cached OLean even when `lake test` passes.
+**Reviewed rows must match the elaborated attributes.** CI runs
+`scripts/check_hol_ref_export.py`, which exports every `@[hol]`-tagged
+declaration through `scripts/HolRefExport.lean` and requires each `reviewed_*`
+row of `docs/HOL-THEOREM-MAP.json` to match exactly one tagged declaration
+(by HOL reference and Lean leaf name) whose elaborated qualifiers equal the
+manifest's. Declaration statements and bodies are not pinned: a change to a
+reviewed Lean statement or definition body must be compared with its HOL source
+again before merging, and the gate does not prove HOL-to-Lean equivalence or
+replace source-level review. After rebuilding a tagged declaration, run
+`lake build Flapjack` before this check: it refreshes
+`.lake/build/ir/Flapjack.setup.json`, which can otherwise still point at an
+older cached OLean even when `lake test` passes.
 
 Entries marked `pending_statement_review` or
 `no_hol_reference_pending_classification` must not be described as exact HOL
@@ -314,7 +313,8 @@ is `NameRanged` on that declaration's output. Input premises such as
 supplies them. The reference checker verifies the witness name/result shape and
 manifest classification, while Lake checks the proof. Neither check establishes
 HOL correspondence or premise discharge; record those in source review. The
-theorem map and type-hash lock record both qualifier lists. Do not add this
+theorem map records both qualifier lists, and `check_hol_ref_export.py` compares
+them with the elaborated attribute. Do not add this
 qualifier to production declarations until checker tests and source review pass.
 
 **Qualify canonical finite-map carriers.** Use
@@ -601,8 +601,8 @@ elsewhere. A declaration that merely calls a qualified declaration (for
 example the wordSem `evaluate` calling `inst`) is a dependent: it does not
 carry the qualifier but must record `"inherits_reals_as_rational_cuts": true`
 and a note naming the inherited assumption in the theorem map.
-`check_hol_type_hashes.py` compares that field, in both directions, with the
-constant closure computed by `scripts/HolTypeHashes.lean` (types, and bodies
+`check_hol_ref_export.py` compares that field, in both directions, with the
+constant closure computed by `scripts/HolRefExport.lean` (types, and bodies
 of definitions, through Flapjack definitions and datatypes; theorem proofs are
 not followed). The inherited marker propagates the assumption only; it is
 not a review of the untagged definitions on the path. NaN results
