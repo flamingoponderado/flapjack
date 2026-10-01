@@ -50740,15 +50740,6 @@
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:285-291: !ls s. EVERY (\\v. v < LENGTH s.degrees) ls ==> st_ex_MAP degrees_sub ls s = (M_success (MAP (\\i. EL i s.degrees) ls),s); HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
-    "lean_name": "cbwToAsmExact",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "cbw_to_asm_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:31-37. `Asmi a => a`; `Cbw r1 r2 => Inst (Mem Store8 r2 (Addr r1 0w))`; `ShareMem m r ad => Inst (Mem m r ad)`. The generic untagged Flapjack.Compiler.Backend.LabProps.cbwToAsm is an AsmChecks record adapter whose signature carries an extra callback parameter, so a new exact definition over HolAsm/HolMemop/HolAddr was added in this module; LabProps.lean is unmodified. Only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the CbwToAsm* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
-  },
-  {
     "lean_path": "Flapjack/Byte.lean",
     "lean_name": "byteIndex",
     "hol_path": "HOL/src/n-bit/byteScript.sml",
