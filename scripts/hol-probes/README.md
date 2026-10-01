@@ -2625,3 +2625,5 @@ Lean fixture replays them. `parmove_all_distinct_steps_probe` captures four
 destination-distinctness observations; Lean also applies the full RTC theorem
 to zero-step and concrete two-step traces. These fixtures do not establish
 cross-language equivalence or whole allocator correctness.
+
+- `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
