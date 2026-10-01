@@ -12,13 +12,15 @@ fun print_eval label q =
 (* Direct HOL EVAL of the Word-to-Stack instruction helper used by `comp` and
    hence the `compile_semantics` theorem
    (cakeml/compiler/backend/proofs/word_to_stackProofScript.sml:10709).
-   Defined at cakeml/compiler/backend/word_to_stackScript.sml:88-175.
+   Defined at cakeml/compiler/backend/word_to_stackScript.sml:88-185.
 
    HOL is polymorphic in the stack word type 'a; the results are compared
    structurally via boolean equality at a concrete word type (64) so EVAL can
    reduce.  `inst` is `asm$inst` (Const/Arith/Mem/FP/Skip) and the result is a
    `stackLang$prog`.  `Mem Load16`/`Mem Store16` are intentionally unhandled by
-   HOL and fall to the `Skip` catch-all; the rows below pin that.
+   HOL and fall to the `Skip` catch-all. These fourteen representative 64-bit
+   rows pin Load16 only; Store16 and non-64-bit FP branches were source-reviewed
+   but are not covered by these observations.
 
    Provenance (bead flapjack-pxn.18.5.15.3.23): generated from the Flapjack
    checkout with the coordinator-approved read-only prebuilt CakeML/HOL object

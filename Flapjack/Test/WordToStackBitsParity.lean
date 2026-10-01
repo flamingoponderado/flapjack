@@ -925,9 +925,10 @@ example : wShareInst (α := BitVec 64) .store 5 (.addr 3 9) (2, 7, 9)
 /-! ## `wInst` oracle parity
 
 Structural comparison and rows reproducing `word_to_stack_winst_probe.out` for
-the instruction helper `wInst` (`word_to_stackScript.sml:88-175`), including
-the width-64 `FPMovToReg`/`FPMovFromReg` clauses and the `Load16`/`Store16`
-`Skip` catch-all. -/
+the instruction helper `wInst` (`word_to_stackScript.sml:88-185`). These are
+representative 64-bit observations, including `FPMovToReg`/`FPMovFromReg` and
+the `Load16` `Skip` catch-all. `Store16` and non-64-bit FP branches were
+source-reviewed but are not covered by these fourteen rows. -/
 
 private def winstInstBEq : WordLangInst (BitVec 64) → WordLangInst (BitVec 64) → Bool
   | .const r v, .const r' v' => r == r' && v == v'
