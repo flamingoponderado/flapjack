@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.Semantics.TargetSem.MappedMemory
 import Flapjack.Compiler.Backend.Parmove.DStepStep
 
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
+import Flapjack.Compiler.Backend.Parmove.PmovDsteps
 import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
 
@@ -229,6 +230,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ClashTreeInst
 import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetDeletion
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckCol
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetInsertion
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection

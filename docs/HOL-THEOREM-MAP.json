@@ -41432,6 +41432,95 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.30): HOL evaluate_apply_colour (word_allocProofScript.sml:1105-1163) itself: binders !prog st cst f live lt, the three HOL premises colouring_ok f prog live lt /\\ word_state_eq_rel st cst /\\ strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals, and the HOL existential conclusion rendered by the untagged applyColourPost (exists perm'; SOME Error => T; else res = res', word_state_eq_rel and the NONE/Break/Continue/other locals obligation), no other premise. HOL proves it by completeInduct_on prog_size with suspended per-constructor cases; the Lean proof is the untagged structural recursion applyColourGoal_all over the 26 tagged evaluateApplyColour_<Case> theorems, whose only extra hypotheses are sub-program IHs (Seq, If, MustTerminate, Loop body, Call return/exception handlers), each discharged by the recursive call. Axioms: propext, Classical.choice, Quot.sound. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_union",
+    "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
+    "lean_name": "sptWfUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.9) against sptreeScript.sml:247-253: !m1 m2. wf m1 /\\ wf m2 ==> wf (union m1 m2) over the exact Spt carrier, HOL wf = sptWf and union = sptUnion (left payload wins, clause for clause); no extra premise. Untagged sptIsEmpty_sptUnion factors HOL's isEmpty_union rewrite."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "lookup_difference",
+    "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
+    "lean_name": "sptLookupDifference",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.9) against sptreeScript.sml:411-419: !m1 m2 k. lookup k (difference m1 m2) = if lookup k m2 = NONE then lookup k m1 else NONE, heterogeneous payload types as HOL ('a spt, 'b spt), difference = sptDifference with mk_BN/mk_BS collapsing; no premise. Untagged sptLookupMkBN/sptLookupMkBS are HOL's lookup_mk_BN/lookup_mk_BS rewrites."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "spt_eq_thm",
+    "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
+    "lean_name": "sptEqThm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.9) against sptreeScript.sml:1212-1288: !t1 t2. wf t1 /\\ wf t2 ==> ((t1 = t2) <=> !n. lookup n t1 = lookup n t2) over Spt with sptWf/sptLookup (key arithmetic (k-1) DIV 2 with EVEN selecting the left subtree). Untagged key-decomposition helpers (lookup at 2j+2/2j+1, wf nonempty tree has a key, keyless wf tree is LN) factor the source case analysis."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_difference",
+    "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
+    "lean_name": "sptWfDifference",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.9) against sptreeScript.sml:1925-1930: !t1 t2. wf t1 /\\ wf t2 ==> wf (difference t1 t2), heterogeneous payloads, sptDifference with mk_BN/mk_BS; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "domain_insert_eq_union",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSetDeletion.lean",
+    "lean_name": "domainInsertEqUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.10) against word_allocProofScript.sml:2685-2690: domain (insert num () live) = domain (union (insert num () LN) live) over NumSet, domain as the sptDomain predicate; no premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "numset_list_insert_eq_UNION",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSetDeletion.lean",
+    "lean_name": "numsetListInsertEqUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.10) against word_allocProofScript.sml:2729-2749: !t t' ls. wf t /\\ wf t' /\\ domain t' = set ls ==> numset_list_insert ls t = union t' t; wf = sptWf, set ls as the membership predicate, equality of trees proved via the ported spt_eq_thm. Untagged sptWf_numsetListInsert factors HOL's inline wf_insert."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "wf_delete_swap",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSetDeletion.lean",
+    "lean_name": "wfDeleteSwap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.10) against word_allocProofScript.sml:2751-2760: wf t ==> delete a (delete c t) = delete c (delete a t), generic payload as HOL, free a c t universally bound; via spt_eq_thm, wf_delete and lookup_delete."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "numset_list_delete_swap",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSetDeletion.lean",
+    "lean_name": "numsetListDeleteSwap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.10) against word_allocProofScript.sml:2762-2772: !ls h live. wf live ==> wf (numset_list_delete ls live) /\\ numset_list_delete ls (delete h live) = delete h (numset_list_delete ls live), generic payload; numset_list_delete = the reviewed RegAlloc numsetListDelete."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "wf_numset_list_delete_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSetDeletion.lean",
+    "lean_name": "wfNumsetListDeleteEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.10) against word_allocProofScript.sml:2774-2780: !ls t live. wf t ==> FOLDR delete t ls = numset_list_delete ls t; FOLDR delete t ls = ls.foldr sptDelete t. HOL's bound live does not occur in the statement (unconstrained type), omitted and documented beside the declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "wf_get_live_exp",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSetDeletion.lean",
+    "lean_name": "wfGetLiveExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.10) against word_allocProofScript.sml:2782-2789: !exp. wf (get_live_exp exp) over WordLangExpHOL (BitVec width) with the reviewed getLiveExp (Var insert, Load, Op big_union, Shift union, Const/Lookup LN); untagged sptWf_bigUnion factors HOL's inline big_union_def/wf_union step.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "IMAGE_DIFF",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSetDeletion.lean",
+    "lean_name": "imageDiff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.10) against word_allocProofScript.sml:2806-2811: INJ f (s UNION t) UNIV ==> IMAGE f (s DIFF t) = IMAGE f s DIFF IMAGE f t, sets as predicates, INJ on the union as injectivity on the predicate (codomain UNIV trivial), IMAGE as an existential and DIFF as a negated conjunct, identical rendering to the accepted INJ_IMP_IMAGE_DIFF port (same HOL statement)."
   }
 ,
 {
@@ -41484,6 +41573,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a: full source5609-5616 compared binder by binder; generic identifier beta independent of positive word width, actual accepted native compile_word_to_stack, right-associated output remainder (frame list and bitmap pair), sole source compiler-output equality premise and whole MAP FST equality conclusion. Exact List/AppList/native HolProg/AsmConfig carriers; words_as_type_indexed_bitvec only translates the source dimension, no added frame/uniqueness/success premise. Induction on actual recursive wrapper threads its real bitmap result. Seven freshly regenerated original key-list equations kernel paired; production/compiler correctness parent remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/PmovDsteps.lean",
+  "lean_name": "pmovDsteps",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "pmov_dsteps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead25.6.12): literal642-653 unconditional forall state RTC DStep state(pmov state), native arbitrary Option/List state, same scheduler and six-rule relation. Actual pmov.induct, finished reflexivity, unfinished exact fstepDstep single step followed by recursive closure. No wf/termination/output/semantic simulation hypothesis; terminal emitted history retained. Seven original final-output fixtures replay closure; fresh original captured outputs checked. Coordinator review pending."
 }
 ,
 {
