@@ -2643,6 +2643,7 @@ cross-language equivalence. Regenerate against read-only prebuilt theories with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=wordconvs_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
 # Word-to-Stack native label helpers
 
 `word_to_stack_code_labels_probeScript.sml` evaluates fourteen complete-set
