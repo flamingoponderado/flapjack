@@ -140,6 +140,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.PushPopEnv
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.PermuteSwap
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
