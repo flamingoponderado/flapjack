@@ -1,0 +1,15 @@
+load "bossLib"; load "preamble"; load "word_copyTheory";
+open HolKernel Parse bossLib preamble word_copyTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val l16 = ``wordLang$Inst (Mem Load16 3 (Addr 5 7w)) : 8 wordLang$prog``;
+val s16 = ``wordLang$Inst (Mem Store16 3 (Addr 5 7w)) : 8 wordLang$prog``;
+val carry = ``wordLang$Inst (Arith (AddCarry 1 2 3 4)) : 8 wordLang$prog``;
+val _ = out "copy_carry" ``copy_prop ^carry = ^carry``;
+val _ = out "copy_load16" ``copy_prop ^l16 = ^l16``;
+val _ = out "copy_store16" ``copy_prop ^s16 = ^s16``;
+val _ = out "copy_seq_alias" ``copy_prop (wordLang$Seq (Move 0 [(1,5)]) (Raise 5) : 8 wordLang$prog) = wordLang$Seq (Move 0 [(1,5)]) (Raise 1)``;
+val _ = out "copy_if" ``copy_prop (wordLang$If Equal 3 (Reg 5) ^l16 ^s16) = wordLang$If Equal 3 (Reg 5) ^l16 ^s16``;
+val _ = out "copy_loop" ``copy_prop (wordLang$Loop LN ^l16 LN) = wordLang$Loop LN ^l16 LN``;
+val _ = out "copy_must" ``copy_prop (wordLang$MustTerminate ^carry) = wordLang$MustTerminate ^carry``;
+val both = ``wordLang$Call (SOME ([3],(LN,LN),^l16,19,23)) (SOME 17) [5] (SOME (7,^s16,29,31))``;
+val _ = out "copy_both" ``copy_prop ^both = ^both``;
