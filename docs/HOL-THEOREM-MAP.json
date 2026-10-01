@@ -14100,8 +14100,9 @@
     "hol_name": "good_handlers_def",
     "lean_path": "Flapjack/Pancake/WordConvs.lean",
     "lean_name": "goodHandlersHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex source review against wordConvsScript.sml:512-520: Call ret=NONE returns true without inspecting its handler; ret=SOME checks the return-handler program and, when present, requires its label equal n and checks that body; Seq and If conjoin recursive checks; Loop and MustTerminate recurse on their body; every remaining constructor is true. Lean uses the exact WordLangProgHOL carrier with positive BitVec word width corresponding to HOL words, exact spt num_set and mlstring fields, so there are no added predicates or altered clauses. All 12 direct HOL EVAL rows gh_call_none through gh_other in scripts/hol-probes/word_convs_good_handlers_probe.out are reproduced by Flapjack/Test/WordLangGoodHandlersParity.lean."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "Codex source review against wordConvsScript.sml:512-520: Call ret=NONE returns true without inspecting its handler; ret=SOME checks the return-handler program and, when present, requires its label equal n and checks that body; Seq and If conjoin recursive checks; Loop and MustTerminate recurse on their body; every remaining constructor is true. Lean uses the exact WordLangProgHOL carrier with positive BitVec word width corresponding to HOL words, exact spt num_set and mlstring fields, so there are no added predicates or altered clauses. All 12 direct HOL EVAL rows gh_call_none through gh_other in scripts/hol-probes/word_convs_good_handlers_probe.out are reproduced by Flapjack/Test/WordLangGoodHandlersParity.lean. Qualification source review by flapjack-sol2 (2026-10-01; bead flapjack-pxn.18.5.15.3.26.14; main-approved): complete original wordConvsScript.sml512-522 and exact WordLangProgHOL constructors compared again. The owner and program quantifiers, Call return five-tuple and handler four-tuple, absent-return handler omission, present-return recursion, handler Nat equality, Seq/If conjunctions, Loop/MustTerminate recursion and default true are unchanged. The existing BitVec width/NeZero width signature is the standard positive HOL word-dimension translation, now explicitly recorded by words_as_type_indexed_bitvec; no new evaluator, guard, carrier or definition clause is introduced. Nat BEq is the standard lawful Nat equality, with no generic instance assumption. HOL boolean conditions are rendered literally by Bool. Both cutsets remain exact Spt Unit, lists remain List, identifiers retain exact MlString. Existing twelve original EVAL inputs/results and matching kernel/runtime regressions are regenerated unchanged. Elaborated type and body SHA256 must remain identical; only qualifier metadata changes. This repair makes no new compiler correctness or cross-language proof claim.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/crepLangScript.sml",
@@ -45187,5 +45188,101 @@
     "lean_name": "updateMoveRelatedEqn",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.2) against reg_allocProofScript.sml:251-260: update_move_related analogue over move_related. No HOL EL; free n t s explicit."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StatePartition.lean",
+    "lean_name": "stExPartition",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "st_ex_PARTITION_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-10-01, bead .18.5.11.5.10.5.8.6.24): reg_allocScript158-168 two literal recursive equations. Original type printed fresh: (alpha -> beta -> (bool,gamma) exc # beta) -> alpha list -> alpha list -> alpha list -> beta -> (alpha list # alpha list,gamma) exc # beta. Lean preserves independent value/state/exception Type carriers and reviewed M/Exc, List and Bool. Empty input returns existing yes/no accumulators and unchanged state without predicate execution. Nonempty input binds head predicate then recurses on tail with head prepended to selected accumulator, preserving left-to-right effects, reversed selected input order, failure exception and failure-returned state through accepted bind. No added premise, fuel, array/map substitution or post-state assumption. Fresh original reg_alloc_state_partition_probe captures type plus 22 T observations; matching kernel decide fixtures and generic empty-input rfl in RegAllocStatePartitionParity. Native allocator phases and actual compiler routing remain open under .10.5.8; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StateForeach.lean",
+    "lean_name": "stExForeach",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "st_ex_FOREACH_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-10-01; bead .18.5.11.5.10.5.5.1), reg_allocScript139-146: original empty equation returns unit without invoking action; cons uses st_ex_ignore_bind(action x)(recursive tail). Lean retains independent element/state/action-result/exception Type carriers confirmed by fresh original constant type. Successful callback value ignored; state threaded, failure retains returned state and skips tail via accepted ignoreBind. Fresh original11 observations and kernel replay cover order, duplicates, empty/first/middle/last failure, Bool result, List and Bool state. Definition axiom-free; no representation qualifier or added premises. Native allocator phase proofs and production routing remain open. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PreservesMoves/Pmov.lean",
+    "lean_name": "pmovPreservesMoves",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "pmov_preserves_moves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 w1a4.9: full original1050-1061/fresh DB.fetch. Arbitrary Option alpha pair-list State; original wf/member/nonself conjunction implies destination in MAP FST actual pmov state. Canonical pmov uses computational DecidableEq alpha (propositional equality, no BEq laws); inherited accepted API, no new semantic premise. Primitive RTC derived from pmovDsteps and dsteps_steps; final witness derived from accepted stepsPreservesMoves. No supplied target output, RTC, scratch safety or invariant assumption. Original fixtures/kernel and full gates required; coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CodeLabels.lean",
+    "lean_name": "getCodeHandlerLabelsWStackLoad",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_code_handler_labels_wStackLoad",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.10): full original word_to_stackProofScript.sml:11705-11711 and underlying word_to_stackScript.sml:52-55,252-262,286-291,417-451 compared with getCodeHandlerLabelsWStackLoad. Retains arbitrary load pairs and continuation, with the original conjunction of code-set equality and handler-set equality. The actual reviewed wStackLoadNative/wLiveNative/stackMoveNative/copyRetAuxNative/copyRetNative definitions and accepted StackProps label extractors are used. Exact HolProg width preserves original constructor payloads; sole word-carrier translation is positive HOL dimension to BitVec width with NeZero width. HOL sets use Lean Set (Nat x Nat); list pairs remain List, cutsets remain Spt Unit, bitmaps remain AppList (BitVec width) x Nat. Return-list payload type is independent, as in original LENGTH-only definition. Zero/successor induction for copy_ret_aux matches source n=0/n-1 guarded recursion. No frame/register bound, convention, caller success, supplied target-label relation, evaluator/output predicate beyond the original wLive equation, or total HD/EL default is added. Fourteen fresh original complete-set assertions all evaluate to T and identical inputs are kernel-replayed, including nonempty owned handler/code sets, flags, loops, irregular counts and width one. This helper theorem does not establish the full word_to_stack_comp_code_labels statement or source-to-RISC-V correctness; cross-language source review remains distinct from kernel checking."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CodeLabels.lean",
+    "lean_name": "wLiveCodeLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wLive_code_labels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.10): full original word_to_stackProofScript.sml:11713-11719 and underlying word_to_stackScript.sml:52-55,252-262,286-291,417-451 compared with wLiveCodeLabels. Retains both cutsets, input and output bitmap pairs, full frame triple, and original wLive output equation implying empty code-label set. The actual reviewed wStackLoadNative/wLiveNative/stackMoveNative/copyRetAuxNative/copyRetNative definitions and accepted StackProps label extractors are used. Exact HolProg width preserves original constructor payloads; sole word-carrier translation is positive HOL dimension to BitVec width with NeZero width. HOL sets use Lean Set (Nat x Nat); list pairs remain List, cutsets remain Spt Unit, bitmaps remain AppList (BitVec width) x Nat. Return-list payload type is independent, as in original LENGTH-only definition. Zero/successor induction for copy_ret_aux matches source n=0/n-1 guarded recursion. No frame/register bound, convention, caller success, supplied target-label relation, evaluator/output predicate beyond the original wLive equation, or total HD/EL default is added. Fourteen fresh original complete-set assertions all evaluate to T and identical inputs are kernel-replayed, including nonempty owned handler/code sets, flags, loops, irregular counts and width one. This helper theorem does not establish the full word_to_stack_comp_code_labels statement or source-to-RISC-V correctness; cross-language source review remains distinct from kernel checking."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CodeLabels.lean",
+    "lean_name": "stackMoveCodeLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_code_labels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.10): full original word_to_stackProofScript.sml:11721-11726 and underlying word_to_stackScript.sml:52-55,252-262,286-291,417-451 compared with stackMoveCodeLabels. Retains all five original universally quantified arguments and full code-label set equality. The actual reviewed wStackLoadNative/wLiveNative/stackMoveNative/copyRetAuxNative/copyRetNative definitions and accepted StackProps label extractors are used. Exact HolProg width preserves original constructor payloads; sole word-carrier translation is positive HOL dimension to BitVec width with NeZero width. HOL sets use Lean Set (Nat x Nat); list pairs remain List, cutsets remain Spt Unit, bitmaps remain AppList (BitVec width) x Nat. Return-list payload type is independent, as in original LENGTH-only definition. Zero/successor induction for copy_ret_aux matches source n=0/n-1 guarded recursion. No frame/register bound, convention, caller success, supplied target-label relation, evaluator/output predicate beyond the original wLive equation, or total HD/EL default is added. Fourteen fresh original complete-set assertions all evaluate to T and identical inputs are kernel-replayed, including nonempty owned handler/code sets, flags, loops, irregular counts and width one. This helper theorem does not establish the full word_to_stack_comp_code_labels statement or source-to-RISC-V correctness; cross-language source review remains distinct from kernel checking."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CodeLabels.lean",
+    "lean_name": "getCodeHandlerLabelsCopyRetAux",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_code_handler_labels_copy_ret_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.10): full original word_to_stackProofScript.sml:11728-11736 and underlying word_to_stackScript.sml:52-55,252-262,286-291,417-451 compared with getCodeHandlerLabelsCopyRetAux. Retains all register, offset, count and handler-owner arguments and original conjunction of empty code and handler sets. The actual reviewed wStackLoadNative/wLiveNative/stackMoveNative/copyRetAuxNative/copyRetNative definitions and accepted StackProps label extractors are used. Exact HolProg width preserves original constructor payloads; sole word-carrier translation is positive HOL dimension to BitVec width with NeZero width. HOL sets use Lean Set (Nat x Nat); list pairs remain List, cutsets remain Spt Unit, bitmaps remain AppList (BitVec width) x Nat. Return-list payload type is independent, as in original LENGTH-only definition. Zero/successor induction for copy_ret_aux matches source n=0/n-1 guarded recursion. No frame/register bound, convention, caller success, supplied target-label relation, evaluator/output predicate beyond the original wLive equation, or total HD/EL default is added. Fourteen fresh original complete-set assertions all evaluate to T and identical inputs are kernel-replayed, including nonempty owned handler/code sets, flags, loops, irregular counts and width one. This helper theorem does not establish the full word_to_stack_comp_code_labels statement or source-to-RISC-V correctness; cross-language source review remains distinct from kernel checking."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CodeLabels.lean",
+    "lean_name": "getCodeHandlerLabelsCopyRet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_code_handler_labels_copy_ret",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.10): full original word_to_stackProofScript.sml:11738-11746 and underlying word_to_stackScript.sml:52-55,252-262,286-291,417-451 compared with getCodeHandlerLabelsCopyRet. Retains both performance and handler flags, full frame triple, arbitrary return-value payload type/list and native continuation, with both original label-set preservation equalities. The actual reviewed wStackLoadNative/wLiveNative/stackMoveNative/copyRetAuxNative/copyRetNative definitions and accepted StackProps label extractors are used. Exact HolProg width preserves original constructor payloads; sole word-carrier translation is positive HOL dimension to BitVec width with NeZero width. HOL sets use Lean Set (Nat x Nat); list pairs remain List, cutsets remain Spt Unit, bitmaps remain AppList (BitVec width) x Nat. Return-list payload type is independent, as in original LENGTH-only definition. Zero/successor induction for copy_ret_aux matches source n=0/n-1 guarded recursion. No frame/register bound, convention, caller success, supplied target-label relation, evaluator/output predicate beyond the original wLive equation, or total HD/EL default is added. Fourteen fresh original complete-set assertions all evaluate to T and identical inputs are kernel-replayed, including nonempty owned handler/code sets, flags, loops, irregular counts and width one. This helper theorem does not establish the full word_to_stack_comp_code_labels statement or source-to-RISC-V correctness; cross-language source review remains distinct from kernel checking."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/GetHeuristics.lean",
+    "lean_name": "getHeuristics",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_heuristics_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead.11.5.3.2: literal word_allocScript1683-1694 arbitrary Nat algorithm/functionName/native WordLangProgHOL positive-width BitVec. Odd MOD2=1 uses reviewed getHeu on LN pair, reviewed getPrefs empty list, exact external sptMapi with getSpillCost and lookup-key calls NONE, reviewed canonizeMoves and MAP getCoalesceCost. Even branch returns raw getPrefs and NONE; no callback, successful allocator, range, well-formedness or output premise. Literal Nat/List/Spt/Option constructors retained; words_as_type_indexed_bitvec records only original word dimension translation. All helper prerequisites accepted; sptMapi0 and smart constructors reviewed in external sptree counterpart. Ten fresh full original EVAL results and four whole structural insert equalities replayed by kernel-checked fixtures, including self/other call cost, duplicate/reversed moves, even raw priority, empty odd SOME LN,80bit algorithms and16/64word dimensions. This native source composition does not claim full allocator correctness or executed route; parent.5.3 retains production obligations. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompileLookup.lean",
+    "lean_name": "compileWordToStackImpALookup",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_IMP_ALOOKUP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.26.8), HOL lines 5692-5719: full original list-compilation and first-match source ALOOKUP equations, initial flattened-length bound, gap bound and final prefix of DROP gap x retained. Existential intermediate start/end bitmap states, frame and body retain compile_prog equation, bound, gap, prefix and compiled first-match ALOOKUP conclusion. ac/perf, register/argument counts, arbitrary independent identifier type and x retained. DecidableEq computes propositional equality in existing literal nil/cons panPropsALookupEq, not BEq or a unique-key premise. Reviewed native compileProgNative/compileWordToStackNative carriers; only positive HOL word dimension translated to BitVec width with NeZero. Head proof uses accepted tail prefix transitivity; tail proof uses accepted compileProgLength bound and exact gap equality. No target lookup/evaluation, frame, sorting, uniqueness or pass-success premise added. Fresh original duplicate-key/later-threaded/missing/Bool-key probes and Lean kernel replays accompany the theorem. Production route and full pass correctness remain separate open beads; coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterLabels.lean",
+    "lean_name": "getCodeLabelsWReg",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_code_labels_wReg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead26.13: original proved val word_to_stackProofScript.sml11698-11703 including final SIMP_RULE std_ss [IMP_CONJ_THM]. Fresh original Q.prove reconstruction kernel-proves and prints conjunction of two implications, matched literally by Lean. Arbitrary callback Nat -> HolProg width, register and entire three-Nat frame tuple retained; each sole premise universally requires empty get_code_labels of callback. Both conclusions concern actual reviewed wRegWrite1Native/2Native and accepted literal StackProps.getCodeLabels, including stackStore empty labels on spilled paths, with no frame bounds, register convention, desired output or execution premise. Only HOL positive word dimension translated to BitVec width with NeZero. Fresh six original probes cover physical/boundary/spilled/zero/80-bit register and labelled-callback sentinel; registered kernel fixtures non-vacuously apply both implications. Standard Lean axioms only; no native_decide, EL, opaque choice of program or new axiom. This helper is explicitly used in original full code-label proof11784/11796; that theorem and executable production route remain open. Coordinator source acceptance pending."
   }
 ]

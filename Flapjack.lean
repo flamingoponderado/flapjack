@@ -1,15 +1,25 @@
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
+import Flapjack.Pancake.WordConvs.CodeLabels
+import Flapjack.Compiler.Backend.StackProps.CodeLabels
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
+import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
+import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Navigation
 import Flapjack.Compiler.Backend.LabToTarget.Memory
 import Flapjack.Compiler.Backend.LabToTarget.Fetch
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
-import Flapjack.Compiler.Backend.StackProps.CodeLabels
-import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Steps
 import Flapjack.Compiler.Backend.RegAlloc.SortMoves
 import Flapjack.Compiler.Backend.WordToStack.ProductionThreeToTwoDomain
+import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+import Flapjack.Compiler.Backend.Parmove.MapState
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
+import Flapjack.Compiler.Backend.Parmove.StateToList
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
 import Flapjack.Compiler.Backend.RegAlloc.Initialization
 import Flapjack.RiscV.WordCopyCodecDomain
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
@@ -19,10 +29,6 @@ import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
 import Flapjack.Misc.FindIndex.Append
 import Flapjack.Compiler.Backend.RegAlloc.Exceptions
-import Flapjack.Compiler.Backend.Parmove.MapState
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
-import Flapjack.Compiler.Backend.Parmove.StateToList
-import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
@@ -78,12 +84,10 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep
-
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
 import Flapjack.Compiler.Backend.Parmove.PmovDsteps
 import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
-
 import Flapjack.Compiler.Backend.Parmove.DestinationMembership
 import Flapjack.Compiler.Backend.Parmove.FstepDstep
 import Flapjack.Compiler.Backend.Parmove.SourceMembership
@@ -1002,9 +1006,6 @@ import Flapjack.Test.LoopExactAssignedVarsParity
 import Flapjack.Test.LoopPropsCutSetsParity
 import Flapjack.Test.LoopPropsCompSyntaxOkParity
 import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
-/- The context-aware Crep-to-Loop correctness file is being updated alongside
-   the faithful `findLoopVar` lowering and is intentionally not in this
-   umbrella until its old identity-map assumptions are repaired. -/
 import Flapjack.LoopSemantics
 import Flapjack.MemOp
 import Flapjack.Word
@@ -1089,6 +1090,12 @@ import Flapjack.RiscV.LabDiagnostics
 import Flapjack.RiscV.WordDiagnostics
 import Flapjack.FfiHOL
 import Flapjack.FfiBridge
+import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+
+
+/- The context-aware Crep-to-Loop correctness file is being updated alongside
+   the faithful `findLoopVar` lowering and is intentionally not in this
+   umbrella until its old identity-map assumptions are repaired. -/
 
 /-!
 # Flapjack in Lean
