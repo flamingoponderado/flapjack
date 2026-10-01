@@ -4525,6 +4525,12 @@
       "sha256": "8765182f39ccdb4a95f8cea1b64beaf2fa8acd8e53f4fc02f35699e632a5889b"
     },
     {
+      "bytes": 112,
+      "out": "word_to_stack_program_code_labels_probe.out",
+      "rows": 8,
+      "sha256": "b847721678f908ce0431152c5230b9556dc54826487925dac80b4eaebd829372"
+    },
+    {
       "bytes": 392,
       "out": "word_to_stack_program_maximum_probe.out",
       "rows": 32,
