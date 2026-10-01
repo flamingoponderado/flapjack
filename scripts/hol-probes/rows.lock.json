@@ -3007,6 +3007,12 @@
       "sha256": "9a52f48f9aa4d0ba87adf2f57586cbe903fb818c605ab885e0b106469a00ed6e"
     },
     {
+      "bytes": 711,
+      "out": "parmove_scratch_order_wrapper_probe.out",
+      "rows": 9,
+      "sha256": "059425b8e9abd875c668e2c6041d15639578433c828d6d4f185690e6fad336d1"
+    },
+    {
       "bytes": 238,
       "out": "parmove_semantics_probe.out",
       "rows": 12,

@@ -2953,3 +2953,12 @@ replays all outputs and non-vacuous theorem applications in Lean, with a Bool
 carrier check. Original run used a temporary cwd and canonical in-memory
 `holpathdb` CAKEMLDIR registration/read-only theory paths; CakeML unchanged.
 Selector: `HOL_PROBE_ONLY=parmove_all_distinct_wrapper_probeScript.sml`.
+`parmove_scratch_order_wrapper_probe.out` freshly fetches the complete exported
+`parmove_not_use_temp_before_assign` theorem and records complete scheduled moves,
+first optional scratch-read/write indices, input windmill and the exact option-match
+conclusion for empty/self/chain/swap/cycle/shared-source, Bool swap and duplicate
+input. Swap/cycle read indices 2/3 follow write index 0; duplicate input is invalid
+while its no-read conclusion remains true. `ParmoveScratchOrderWrapperParity`
+replays all eight observations and the full generic theorem with seven valid
+applications. This is a proof-only wrapper port; the executed scheduler is unchanged.
+Selector: `HOL_PROBE_ONLY=parmove_scratch_order_wrapper_probeScript.sml`.
