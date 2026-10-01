@@ -3945,3 +3945,7 @@ run_probe word_cse_insert_equality_probeScript.sml word_cse_insert_equality_prob
 run_probe word_cse_arithmetic_keys_probeScript.sml word_cse_arithmetic_keys_probe.out \
   ak_full ak_replay ak_arith_type ak_state_type ak_value_type ak_0_1 ak_1_1 ak_2_1 ak_3_1 ak_4_1 ak_5_1 ak_6_1 ak_7_1 ak_8_1 ak_9_1 ak_10_1 ak_11_1 ak_12_1 ak_13_1 ak_14_1 ak_0_32 ak_1_32 ak_2_32 ak_3_32 ak_4_32 ak_5_32 ak_6_32 ak_7_32 ak_8_32 ak_9_32 ak_10_32 ak_11_32 ak_12_32 ak_13_32 ak_14_32 ak_0_64 ak_1_64 ak_2_64 ak_3_64 ak_4_64 ak_5_64 ak_6_64 ak_7_64 ak_8_64 ak_9_64 ak_10_64 ak_11_64 ak_12_64 ak_13_64 ak_14_64 ak_0_80 ak_1_80 ak_2_80 ak_3_80 ak_4_80 ak_5_80 ak_6_80 ak_7_80 ak_8_80 ak_9_80 ak_10_80 ak_11_80 ak_12_80 ak_13_80 ak_14_80 \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_executed_input_probeScript.sml stack_to_lab_executed_input_probe.out \
+  guard_source_get_drop guard_source_alloc_drop guard_source_stackstore_drop guard_source_datawrite_drop guard_source_skip_section guard_source_seq_section guard_source_loc_section \
+  "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"
