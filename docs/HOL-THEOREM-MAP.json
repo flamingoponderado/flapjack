@@ -43446,6 +43446,23 @@
     "reviewer": "flapjack-luna-c: complete original23-32 quantified P, exp, Q and conjunction antecedent retained: global pointwise Boolean implication AND actual every_var_exp P. Conclusion actual every_var_exp Q. Native WordLangExpHOL carrier, original every_var_exp85-91 and entire recursive List traversal matched including empty/nested Op, Load, Shift, Const/Lookup. No bound/evaluation/target premise beyond literal source. Only positive width BitVec carrier translation; all arbitrary Nat -> Bool predicates retained. Needed by word_allocProof max_var_max10285ff. Coordinator acceptance pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PreservesMoves/Parmove.lean",
+    "lean_name": "parmovePreservesMoves",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "parmove_preserves_moves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 w1a4.10: original1063-1084 and fresh original full theorem type. Arbitrary alpha pair list, original windmill/member/nonself conjunction, SOME destination membership in actual parmove output. Inherited computational DecidableEq uses propositional equality without extra equality laws. Derives lifted initial wf through SOME injectivity and wf_init, applies accepted pmovPreservesMoves, derives terminal emitted output via unconditional pmov_final, transports membership through wrapper reverse. No supplied output, scratch safety, RTC or extra invariant premise. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/WordConvs/EveryVarInstMono.lean",
+    "lean_name": "everyVarInstMono",
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "every_var_inst_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 .18.5.15.2.30.1.1.6: full original13-22/exported DB.fetch universal theorem. Arbitrary Bool predicates P/Q, original pointwise implication AND every_var_inst P inst imply every_var_inst Q inst. Explicit positive-width WordLangInst BitVec carrier compared constructor-for-constructor with original asm arithmetic/memory/FP and wordLang98-133, including width64 transfer and Load16/Store16 catchalls; no independent payload specialization. words_as_type_indexed_bitvec retains shared original word dimension and NeZero positivity. All native constructors checked, immediate implication internally derived; no extra bound, target evaluation or successful pass premise. Original14positive predicate pairs and non64 negative guard kernel replayed. Proof axioms propext only. Coordinator acceptance pending."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
     "lean_name": "updPc",
     "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",

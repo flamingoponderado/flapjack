@@ -1,0 +1,6 @@
+pmm_shared=T
+pmm_cycle=T
+pmm_bool=T
+pmm_output=T
+pmm_self=T
+pmm_empty=T
