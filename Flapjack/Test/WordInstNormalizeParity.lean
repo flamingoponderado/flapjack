@@ -384,8 +384,8 @@ def nestedAndImmediateMatches : Bool :=
     `2 ^ 60` is outside the signed 12-bit window in both directions. -/
 def nestedAndWideConstantMaterializes : Bool :=
   match wordInstSelectAtom (α := Nat) 23 (.op .and [.var 18, .const (2 ^ 60)]) with
-  | (.seq (.seq (.move 0 [(23, 18)]) (.inst (.const 24 c)))
-      (.inst (.arith (.binOp .and 23 23 (.reg 24)))), .var 23) => c == 2 ^ 60
+  | (.seq (.move 0 [(23, 18)])
+      (.seq (.inst (.const 24 c)) (.inst (.arith (.binOp .and 23 23 (.reg 24))))), .var 23) => c == 2 ^ 60
   | _ => false
 
 /- Cake's `inst_select ShareInst` takes the whole address through
@@ -396,9 +396,9 @@ def nestedAndWideConstantMaterializes : Bool :=
 def wideSharedStoreMaterializesAddress : Bool :=
   match wordInstSelectProgramFrom (α := Nat)
       (.shareInst .store8 10 (.op .add [.var 3, .const 2684420096])) with
-  | .seq (.seq (.seq (.move 0 [(11, 3)])
-      (.inst (.const 12 2684420096)))
-      (.inst (.arith (.binOp .add 11 11 (.reg 12)))))
+  | .seq (.seq (.move 0 [(11, 3)])
+      (.seq (.inst (.const 12 2684420096))
+        (.inst (.arith (.binOp .add 11 11 (.reg 12))))))
       (.shareInst .store8 10 (.var 11)) => true
   | _ => false
 

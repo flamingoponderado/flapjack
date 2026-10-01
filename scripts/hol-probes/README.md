@@ -1,3 +1,19 @@
+`parmove_fstep_map_inj_probe.out` records the complete original
+`fstep_MAP_INJ` statement and eight pairs of complete original output trees.
+The Nat-to-Bool renaming collapses registers outside the state support while
+preserving NONE; the probe proves each `inj_on_state` premise before reporting
+T. Cases cover empty/self/start/search/emit/cycle/non-cycle/existing scratch.
+`ParmoveFstepMapInjParity` kernel-replays both outputs and applies the actual
+generic theorem with each proved local-support premise. The theorem retains
+independent input/output register carriers and no global injectivity or safety
+premise. This is deterministic-step renaming, not full compiler correctness.
+
+`wordconvs_program_mono_probe.out` prints the complete original `every_var_mono`
+and eleven same-input predicate pairs replayed by `WordConvsProgramMonoParity`.
+These include Call NONE ignoring its populated handler, returning Calls with and
+without handlers, loop cut sets, and a false implication sentinel. Regenerate with
+`HOL_PROBE_ONLY=wordconvs_program_mono_probeScript.sml` against the read-only original tree.
+
 `wordconvs_name_mono_probe.out` prints the complete original theorem and
 five matching cut-set/predicate fixtures in `WordConvsNameMonoParity`, including
 a non-well-formed tree and a failed implication sentinel. Regenerate with
@@ -89,6 +105,53 @@ This restricted test evaluator is not the total evaluate_def port. Regenerate
 with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 # Original Pancake HOL probes
+
+`word_to_stack_selector_prelude_probe.out` captures ten fresh original
+`inst_select_exp riscv_config 23 23` output trees: constant, variable, CurrHeap
+lookup, load, immediate addition, valid/out-of-range shifts, CurrHeap arithmetic,
+and valid/large load offsets. `WordToStackSelectorPreludeParity` kernel-checks
+all ten matching complete trees after the `.17.2.16` repair: constant
+materialization preserves original HOL's right-associated Const/Binop subtree
+inside the expression prelude and outer Load sequence. A separate kernel check
+rejects the former left-associated production counter-tree. The original oracle
+capture is unchanged; these samples do not establish universal selector equality.
+Separate theorem applications cover
+arbitrary expressions and temporaries at positive widths, including 1/80 bits
+and natural register names above 64 bits; a load-tail rejection sentinel keeps
+unsupported incoming preludes rejected. `ProductionSelectorPrelude` proves
+actual atom/load-tail/address-wrapper carrier closure only. This does not prove
+universal HOL instruction-selector equivalence, whole-program selection,
+pre-SSA/source-image closure, or production native routing. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_selector_prelude_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_to_stack_allocator_stages_probe.out` records four fresh original
+pre-allocation stage-chain outputs for Skip, Tick, Raise and tail Call, following
+`word_to_word$compile_single`'s SSA/dead/CSE/copy/three-to-two/unreachable/dead
+order with original `two_reg_arith = F`. `WordToStackAllocatorCodecParity`
+replays the same complete output trees and separately checks actual allocator
+success, memory-guard failure and five-register codec rejection.
+`ProductionAllocatorCodec` composes the accepted codec closures through the
+real allocator wrapper and derives an existential native encoding of its actual
+coloured output from accepted input and the real result equation. These finite
+observations do not establish universal pass equivalence, acceptance of the
+initial source-to-Word image, native ABI/output equivalence, or executed routing.
+In particular, this does not source-review the production assignment-based
+three-to-two implementation as a universal port of the original pass.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_allocator_stages_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_to_stack_retained_frame_probe.out` captures eight fresh original
+`compile_prog` frame projections: empty, register-edge, first/second spill,
+argument-area dominance, equal demands, zero register count, and a natural
+register name above 64 bits. `WordToStackRetainedFrameParity` kernel-checks
+the same inputs/results and the five-register codec rejection sentinel.
+`ProductionFrame` relates the actual retained allocator result's occupancy
+and `cakeWordFrameSlots` to the Option-mapped native compiler frame; rejected
+codecs remain `none`. This does not establish codec success, native ABI/config
+or output correspondence, or executed native routing. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_retained_frame_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `ParmoveAllDistinctPmovParity` replays the complete original scheduler outputs
 terminal/self/chain/cycle/active from `parmove_final_probe.out` while applying
@@ -2987,3 +3050,29 @@ while its no-read conclusion remains true. `ParmoveScratchOrderWrapperParity`
 replays all eight observations and the full generic theorem with seven valid
 applications. This is a proof-only wrapper port; the executed scheduler is unchanged.
 Selector: `HOL_PROBE_ONLY=parmove_scratch_order_wrapper_probeScript.sml`.
+
+`parmove_step_map_inj_probe.out` freshly fetches the complete exported
+`step_MAP_INJ` theorem and records the complete mapped source/target states of
+all six primitive rules under an Option Bool-to-Option Nat renaming. The final
+sentinel maps every present natural to `SOME F`: it collapses 4 and 5, but the
+original prover verifies `inj_on_state` on the singleton endpoint support 3.
+`ParmoveStepMapInjParity` replays these states and all six genuine theorem
+applications, the scoped sentinel and an arbitrary carrier identity application.
+No global injectivity or decidable equality premise is introduced; this proof-only
+port leaves the executed scheduler unchanged.
+Selector: `HOL_PROBE_ONLY=parmove_step_map_inj_probeScript.sml`.
+### Full native asmSem FP transition
+
+`asmsem_fp_updates_probeScript.sml` uses the loaded original `asmSemTheory`
+and original IEEE libraries, evaluating 34 closed claims against the original
+`fp_upd`; every capture is resolved `T`. `AsmSemFpUpdatesParity` kernel-replays
+them against the native `AsmState` transition using reviewed IEEE refinement
+facts. All16 constructors are covered, with widths8/32/64/128, actual-width
+concatenation and signed extraction, paired alias/half writes, RTE ties, failed
+overflow writes, prior failure, NaN comparisons, sign payloads and FMA order.
+These are native raw register words, with no Lab location cases or evaluator
+callback. The full original `fp_upd_consts` theorem is separately kernel proved.
+The native transition inherits the existing IEEE real-rendering assurance limit
+(SOUNDNESS item8); fixed raw arithmetic NaN payload agreement is not asserted.
+Probes remain regression evidence, not complete cross-language IEEE equivalence
+or whole ASM/compiler routing acceptance.
