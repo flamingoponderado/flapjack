@@ -4,7 +4,7 @@
   "candidate_sha": "8d74461ad0d406d75936f3dbb681ddf9c43566c3",
   "peer_audit_repair_sha": "0f9c0c0b2b8307faaefd610a906331b2ad16bc6e",
   "peer_merge_head": "09dcc091b58ec2ee239e7ac5d6e60f211ba65375",
-  "status": "Exact161c independent fullproof/kernel/test/pins/warnings/reference gates PASS; fresh HOLindex inventory metadata HOLD; allocator acceptance remains coordinator scope",
+  "status": "Exact161c independent proof/kernel/test/pins/warnings/reference/checker gates PASS; fresh-index inventory metadata handed to coordinator-assigned Opus2 on95dm; js4m OPEN unassigned ready for bounded review acceptance. Overall allocator source acceptance remains pending.",
   "coverage": {
     "candidate_tags": 208,
     "expected_candidate_tags": 208,
@@ -160,6 +160,12 @@
         "old_citation_closure": 6594,
         "fresh_citation_closure": 6642,
         "artifact": "scripts/hol-audits/linear-scan-161c-evidence/inventory.diff"
+      },
+      "checker_tests": {
+        "exit": 0,
+        "tests": 433,
+        "seconds": 297.015,
+        "result": "OK"
       }
     },
     "expanded_type_sweep": {
