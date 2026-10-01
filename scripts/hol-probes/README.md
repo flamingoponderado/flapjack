@@ -2226,3 +2226,8 @@ non-well-formed BN trees are retained without a validity restriction.
 `WordToStackNativeConfigParity.lean` kernel-replays the same records. This
 carrier prerequisite does not establish the top compiler or its executed route;
 those remain tracked on the WordToStack compiler beads.
+
+`parmove_destination_probeScript.sml` observes the real/temporary destinations
+of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
+states. `ParmoveDestinationParity` replays each row and applies the unconditional
+original destination-membership theorem, including malformed states.
