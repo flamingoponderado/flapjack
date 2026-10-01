@@ -1,0 +1,18 @@
+load "bossLib"; load "preamble"; load "word_simpTheory";
+open HolKernel Parse bossLib preamble word_simpTheory;
+val _ = Globals.linewidth := 1000;
+fun out label tm = (print (label ^ "="); print_term (rhs (concl (EVAL tm))); print "\n");
+val cs = ``sptree$insert 1 (7w:64 word) (sptree$insert 2 9w LN)``;
+val _ = out "constant_program_skip" ``const_fp (Seq_assoc Skip (Skip:64 wordLang$prog))``;
+val _ = out "constant_program_assign" ``const_fp (Seq_assoc Skip (Seq (Assign 2 (Const 7w)) (Assign 3 (Var 2)):64 wordLang$prog))``;
+val _ = out "constant_program_selected" ``const_fp (Seq_assoc Skip (Seq (Assign 1 (Const 0w)) (If Equal 1 (Imm 0w) (Assign 2 (Const 7w)) (Assign 3 (Const 9w))):64 wordLang$prog))``;
+val _ = out "constant_program_unknown" ``const_fp (Seq_assoc Skip (If Equal 1 (Imm 0w) (Assign 2 (Const 7w)) Tick:64 wordLang$prog))``;
+val _ = out "constant_program_tail" ``FST (const_fp_loop (Call NONE (SOME 7) [1;2] (SOME(1,Assign 3 (Var 1),5,6))) ^cs)``;
+val _ = out "constant_program_return" ``FST (const_fp_loop (Call (SOME([], (LN,LN),Seq (Assign 3 (Var 1)) Tick,3,4)) (SOME 7) [1] NONE) ^cs)``;
+val _ = out "constant_program_both" ``FST (const_fp_loop (Call (SOME([], (LN,LN),Assign 3 (Var 1),3,4)) (SOME 7) [1] (SOME(1,Assign 4 (Var 2),5,6))) ^cs)``;
+val _ = out "constant_program_alloc" ``FST (const_fp_loop (Alloc 1 (LN,LN)) ^cs)``;
+val _ = out "constant_program_install" ``FST (const_fp_loop (Install 1 2 3 4 (LN,LN)) ^cs)``;
+val _ = out "constant_program_ffi" ``FST (const_fp_loop (FFI (strlit "echo") 1 2 3 4 (LN,LN)) ^cs)``;
+val _ = out "constant_program_loop" ``FST (const_fp_loop (Loop LN (Assign 3 (Var 1)) LN) ^cs)``;
+val _ = out "constant_program_must" ``FST (const_fp_loop (MustTerminate (Assign 3 (Var 1))) ^cs)``;
+val _ = out "constant_program_trailing_skip" ``const_fp (Seq_assoc Skip (Seq Tick Skip:64 wordLang$prog))``;

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.MergeMovesRoute
 import Flapjack.Compiler.Backend.WordAlloc.InstructionRoute
 import Flapjack.Compiler.Backend.WordAlloc.KeyMapRoute
 import Flapjack.Word
@@ -664,23 +665,15 @@ def wordSsaPriorityMove (preferred : Option Bool) (leftBranch : Bool)
     (moves : List (Nat × Nat)) : WordProg α :=
   .move (wordSsaBranchPriority preferred leftBranch) moves
 
-def wordSsaMergeMoves : List Nat → WordSsaState → WordSsaState → Nat →
-    List (Nat × Nat) × List (Nat × Nat) × Nat × WordSsaState × WordSsaState
-  | [], left, right, next => ([], [], next, left, right)
-  | name :: names, left, right, next =>
-      let (leftMoves, rightMoves, next, left, right) :=
-        wordSsaMergeMoves names left right next
-      match lookupNatInfo name left.current, lookupNatInfo name right.current with
-      | some leftName, some rightName =>
-          if leftName = rightName then
-            (leftMoves, rightMoves, next, left, right)
-          else
-            ((next, leftName) :: leftMoves, (next, rightName) :: rightMoves,
-              next + 4, wordSsaForceRename [(name, next)] left,
-              wordSsaForceRename [(name, next)] right)
-      | _, _ => (leftMoves, rightMoves, next, left, right)
-termination_by names => sizeOf names
-decreasing_by all_goals decreasing_trivial
+/-- Actual SSA merge executes the reviewed native operation through first-match
+list/tree codecs. Both state counters remain independent of the fresh merge
+counter, as in the prior list-state boundary. Map storage order is canonical
+native traversal; subsequent map reads use lookup and key sets. -/
+def wordSsaMergeMoves (names : List Nat) (left right : WordSsaState) (next : Nat) :
+    List (Nat × Nat) × List (Nat × Nat) × Nat × WordSsaState × WordSsaState :=
+  let (leftMoves,rightMoves,next,leftMap,rightMap) :=
+    Compiler.Backend.WordAlloc.mergeMovesExecutable names left.current right.current next
+  (leftMoves,rightMoves,next,{ left with current := leftMap },{ right with current := rightMap })
 
 def wordSsaFakeInconsistencyMoves [OfNat α 0] (preferred : Option Bool) :
     List Nat → WordSsaState → WordSsaState → Nat →
@@ -1089,12 +1082,14 @@ theorem wordSsaRenameProgram_ite [OfNat α 0] :
             (.seq (.move 1 [(18, 10)]) .skip))
           (.seq (.assign 14 (.var 0))
             (.seq (.move 1 [(18, 14)]) .skip))) := by
+  have merge : Compiler.Backend.WordAlloc.mergeMovesExecutable [1] [(1,10)] [(1,14)] 18 =
+      ([(18,10)],[(18,14)],22,[(1,18)],[(1,18)]) := by decide +kernel
   simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRenameExp, wordSsaRenameRegImm,
     wordSsaRead, wordSsaFresh, wordSsaKeys,
     wordSsaFixInconsistencies, wordSsaPriorityMove,
-    wordSsaBranchPriority, wordSsaMergeMoves,
-    wordSsaFakeInconsistencyMoves, wordSsaForceRename,
+    wordSsaBranchPriority, wordSsaMergeMoves, merge,
+    wordSsaFakeInconsistencyMoves,
     NumSet.fromList, NumSet.toAList, NumSet.toSet, NumSet.insert,
     NumSet.insertFuel, NumSet.lrnext, NumSet.lrnextFuel, NumSet.insertList,
     List.eraseDups, List.eraseDupsBy, List.eraseDupsBy.loop,

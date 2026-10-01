@@ -5,7 +5,9 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 /-- Native SSA merge moves. The tail runs before looking up the current key in
 the resulting maps. Missing or equal names preserve that result; unequal present
 names prepend moves and overwrite both maps with the next register. Executed
-list-state SSA routing remains a separate obligation. -/
+list-state SSA routing is defined in MergeMovesRoute and used by Allocator;
+ProductionMergeMoves proves its codec observations. Full SSA simulation remains
+a separate obligation. -/
 @[hol "cakeml/compiler/backend/word_allocScript.sml" "merge_moves_def"]
 def mergeMoves (names : List Nat) (leftMap rightMap : Spt Nat) (next : Nat) :
     List (Nat × Nat) × List (Nat × Nat) × Nat × Spt Nat × Spt Nat :=
