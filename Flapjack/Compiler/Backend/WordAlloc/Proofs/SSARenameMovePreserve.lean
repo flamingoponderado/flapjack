@@ -182,4 +182,67 @@ theorem listNextVarRenameMovePreserveWeak {width : Nat} [NeZero width] {C F : Ty
     simpa only [List.map_map, Function.comp_def] using update
   · exact h.2.2.2.2
 
+
+/-- Full strong native move preservation statement under source-domain premises.
+Fresh literal HOL replay confirms the complete five-conclusion statement and
+shared word/code/FFI dimensions. Canonical fpRegs/store and positive-width
+word carriers retain the inherited reals_as_rational_cuts assumption of
+SOUNDNESS item 8; this Move branch only reads/writes locals. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
+  "list_next_var_rename_move_preserve"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+theorem listNextVarRenameMovePreserve {width : Nat} [NeZero width] {C F : Type}
+    (source : WordSemStateFiniteExact width C F) (ssa : Spt Nat)
+    (next : Nat) (names : List Nat) (target : WordSemStateFiniteExact width C F)
+    (h : ssaLocalsRel next ssa source.locals target.locals ∧
+      (∀ key ∈ names, sptDomain source.locals key) ∧ names.Nodup ∧
+      ssaMapOK next ssa ∧ Flapjack.WordAlloc.wordStateEqRel source target) :
+    let (move, ssaOut, nextOut) := listNextVarRenameMove (width := width) ssa next names
+    let (result, targetOut) := WordSemStateFiniteExact.evaluate move target
+    result = none ∧ ssaLocalsRel nextOut ssaOut source.locals targetOut.locals ∧
+      Flapjack.WordAlloc.wordStateEqRel source targetOut ∧
+      (¬ isPhyVar next → ∀ register, isPhyVar register →
+        sptLookup register targetOut.locals = sptLookup register target.locals) ∧
+      (∀ key value, sptLookup key source.locals = some value →
+        sptLookup (holThe (sptLookup key ssa)) targetOut.locals = some value) := by
+  have present : ∀ key ∈ names, sptDomain ssa key := by
+    intro key member
+    obtain ⟨value, found⟩ := (sptMem_iff_lookup key source.locals).mp (h.2.1 key member)
+    exact (h.1.2 key value found).1
+  generalize renamed : listNextVarRename names ssa next = output
+  rcases output with ⟨outputs, ssaOut, nextOut⟩
+  have arithmetic := listNextVarRenameLemma1 names ssa next outputs ssaOut nextOut renamed
+  have lengths : outputs.length = (names.map (optionLookup ssa)).length := by
+    rw [arithmetic.2.1]
+    simp
+  obtain ⟨values, read, valuesEq⟩ := renameMoveInputs next ssa source.locals target names h.1 present
+  have weak := listNextVarRenameMovePreserveWeak source ssa next names target
+    ⟨h.1, present, h.2.2.1, h.2.2.2.1, h.2.2.2.2⟩
+  simp only [listNextVarRenameMove, renamed, WordSemStateFiniteExact.evaluate,
+    List.map_fst_zip (Nat.le_of_eq lengths),
+    List.map_snd_zip (Nat.le_of_eq lengths.symm), arithmetic.1, if_true, read] at weak ⊢
+  refine ⟨weak.1, weak.2.1, weak.2.2, ?_, ?_⟩
+  · intro nonphysical register physical
+    change sptLookup register (LoopSemStateFiniteExact.sptAlistInsert outputs values target.locals) = sptLookup register target.locals
+    apply Flapjack.WordAlloc.sptLookup_sptAlistInsert_notMem
+    intro member
+    rw [arithmetic.2.1] at member
+    obtain ⟨index, _, equal⟩ := List.mem_map.mp member
+    simp only [isPhyVar, decide_eq_true_eq] at nonphysical physical
+    omega
+  · intro key value found
+    obtain ⟨domain, matchValue, _⟩ := h.1.2 key value found
+    obtain ⟨register, mapped⟩ := (sptMem_iff_lookup key ssa).mp domain
+    have below := (h.2.2.2.1 key register mapped).2
+    have absent : register ∉ outputs := by
+      intro member
+      rw [arithmetic.2.1] at member
+      obtain ⟨index, _, equal⟩ := List.mem_map.mp member
+      omega
+    simp only [mapped, holThe]
+    change sptLookup register (LoopSemStateFiniteExact.sptAlistInsert outputs values target.locals) = some value
+    rw [Flapjack.WordAlloc.sptLookup_sptAlistInsert_notMem _ _ _ _ absent]
+    simpa only [mapped, Option.getD_some] using matchValue
+
 end Flapjack.Compiler.Backend.WordAlloc

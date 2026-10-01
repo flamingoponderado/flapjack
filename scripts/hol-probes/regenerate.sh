@@ -3709,3 +3709,13 @@ run_probe ssa_setup_props_probeScript.sml ssa_setup_props_probe.out \
 run_probe word_to_stack_comp_no_shmemop_probeScript.sml word_to_stack_comp_no_shmemop_probe.out \
   cs_full cs_conf_type cs_perf_type cs_source_type cs_bitmap_type cs_frame_type cs_target_type cs_residual_type cs_nested_1 cs_if_1 cs_ignored_1 cs_nested_32 cs_if_32 cs_ignored_32 cs_nested_64 cs_if_64 cs_ignored_64 cs_nested_80 cs_if_80 cs_ignored_80 \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_rename_move_preserve_probeScript.sml ssa_rename_move_preserve_probe.out \
+  rms_full rms_type_st rms_type_cst rms_type_ssa rms_type_na rms_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_fake_moves_correct_left_probeScript.sml ssa_fake_moves_correct_left_probe.out \
+  fml_full fml_type_ls fml_type_na fml_type_ssaL fml_type_ssaR fml_type_stL fml_type_cstL fml_type_prio \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
