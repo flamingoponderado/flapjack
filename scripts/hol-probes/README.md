@@ -2128,3 +2128,20 @@ destination and differs (27 versus 37): it is outside `wf`, not a valid-step
 semantic-equivalence claim. Lean kernel examples replay all rows; the generic
 case proofs establish the original quantified `eqenv` conclusion under `wf`.
 The other four cases and full `step_sem` assembly remain open.
+`labsem_shared_memory_probeScript.sml` evaluates original LabSem shared-memory load/store/op equations (429–488). Its 39 rows check all eight operations and actual mappedRead/mappedWrite configuration and little-endian payloads against guarded canonical FFI oracles. They cover returned host/events/register/PC/clock state, unchanged final state, invalid return length, domain and Loc errors, aliasing, clock zero, width24 LOG2 alignment, width8/1 boundaries, TAKE beyond the word length, size256 configuration truncation, ignored ordinary-memory endianness, and address wrap. Generic-width byte results unfold the original library set_byte definition after EVAL. `Flapjack/Test/LabSemSharedMemoryParity.lean` replays every row in the kernel on an arbitrary remaining source state. Full native evaluate and production routing remain separate work.
+
+`parmove_remove_last_probeScript.sml` captures 16 direct original HOL `sem`
+values for RemoveSelf and EmitLast, including nonempty reversed emitted history
+and parallel snapshot reads. Two deliberately invalid pairs differ: a repeated
+destination fails `wf` (17 versus 37), and a pending source reads the emitted
+destination despite valid `wf` (17 versus 27). Lean checks every row and these
+premise boundaries. The generic case proofs retain both original premises;
+Save, EmitHead and the full semantic-preservation assembly remain open.
+
+`target_sem_encoded_bytes_probeScript.sml` captures ten component observations
+and proves the whole `encoded_bytes_in_mem` predicate on the same configuration,
+memory and domain. The eleventh row is printed only after checking the theorem's
+exact conclusion and empty hypothesis list. `TargetSemEncodedBytesParity.lean`
+replays each row, using the same `Jump 0w` and block-index `1` witnesses for the
+whole predicate. These concrete checks do not prove compiler correctness.
+`labsem_inst_probeScript.sml` checks original native asm_inst dispatch for all five constructors in fourteen direct rows: Skip/Const, Loc-sensitive arithmetic, failed division/shift writes, Loc memory and failed Store updates, unsupported ordinary16, and raw FP payload/sign/register-error paths. `Flapjack/Test/LabSemInstParity.lean` replays identical inputs and expected results in the kernel. `LabSem/Inst.lean` separately proves the full unconditional thirteen-conjunct original asm_inst_consts by unfolding every actual native Arith/Mem/FP case. The FP dependency inherits the existing real-number translation assurance boundary; full native evaluate and production routing remain separate work.
