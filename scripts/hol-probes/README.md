@@ -2580,7 +2580,6 @@ or executed allocator routing. Regenerate with
 five-register AddCarry rejection. Codec-domain preservation is Flapjack
 infrastructure, not a HOL semantic equivalence theorem.
 
-- `reg_alloc_sort_moves_probeScript.sml`: twelve complete original sort/merge equations, including reversed five-way sort ties, left-biased merge ties, arbitrary Bool payloads, duplicates and unsorted inputs; replayed in `RegAllocSortMovesParity.lean`.
 `parmove_all_distinct_step_probe`, `parmove_state_to_list_probe`, and
 `parmove_temp_steps_probe` capture original observations replayed by the
 corresponding Lean parity modules. They cover primitive real-destination
@@ -2600,3 +2599,16 @@ equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
 
 - `parmove_preserves_moves_step_probeScript.sml`: ten original non-self destination predicates before/after Save, including scratch destination. Lean fixtures certify the steps and witness changes; observations do not prove transition or cross-assistant equivalence.
+`word_to_stack_program_bitmaps_probe` captures ten original single-program
+and list-compiler bitmap snapshots, replayed in `WordToStackProgramBitmapsParity`.
+Cases include invalid initial bounds, width one, repeated identifiers, and
+independent Bool identifiers. The general prefix/accounting proofs retain
+the original compiler output equations and initial-length bound; finite
+snapshots are not a cross-language equivalence proof.
+
+`reg_alloc_sort_moves_probe` captures twelve original priority-sort/merge
+equations, including equal priorities and unsorted merge inputs; the matching
+Lean fixture replays them. `parmove_all_distinct_steps_probe` captures four
+destination-distinctness observations; Lean also applies the full RTC theorem
+to zero-step and concrete two-step traces. These fixtures do not establish
+cross-language equivalence or whole allocator correctness.

@@ -1,0 +1,14 @@
+load "preamble";
+load "word_to_stackTheory";
+open bossLib HolKernel Parse preamble word_to_stackTheory;
+fun out label q = (print (label ^ "="); print_term (rconc (EVAL q)); print "\n");
+val _ = out "pb_single_skip" ``let (_,f,(bm,i)) = compile_prog (c:64 asm$asm_config) F (wordLang$Skip) 0 4 (Append (List [8w]) (List [2w]),5) in (LENGTH(append bm),i,i-LENGTH(append bm),TAKE 2 (append bm) = [8w;2w],f)``;
+val _ = out "pb_single_zero_frame" ``let (_,f,(bm,i)) = compile_prog (c:64 asm$asm_config) F (wordLang$Alloc 0 (LN,LN)) 0 4 (Append (List [8w]) (List [2w]),5) in (LENGTH(append bm),i,i-LENGTH(append bm),TAKE 2 (append bm) = [8w;2w],f)``;
+val _ = out "pb_single_alloc" ``let (_,f,(bm,i)) = compile_prog (c:64 asm$asm_config) F (wordLang$Alloc 0 (LN,LN)) 5 4 (Append (List [8w]) (List [2w]),5) in (LENGTH(append bm),i,i-LENGTH(append bm),TAKE 2 (append bm) = [8w;2w],f)``;
+val _ = out "pb_single_seq" ``let (_,f,(bm,i)) = compile_prog (c:64 asm$asm_config) F (wordLang$Seq (wordLang$Alloc 0 (LN,LN)) (wordLang$Alloc 0 (LN,LN))) 5 4 (Append (List [8w]) (List [2w]),5) in (LENGTH(append bm),i,i-LENGTH(append bm),TAKE 2 (append bm) = [8w;2w],f)``;
+val _ = out "pb_single_invalid_bound" ``let (_,f,(bm,i)) = compile_prog (c:64 asm$asm_config) F (wordLang$Alloc 0 (LN,LN)) 5 4 (Append (List [8w]) (List [2w]),1) in (LENGTH(append bm),i,i-LENGTH(append bm),TAKE 2 (append bm) = [8w;2w],f)``;
+val _ = out "pb_single_width_one" ``let (_,f,(bm,i)) = compile_prog (c:1 asm$asm_config) F (wordLang$Alloc 0 (LN,LN)) 5 4 (Append (List [8w]) (List [2w]),5) in (LENGTH(append bm),i,i-LENGTH(append bm),TAKE 2 (append bm) = [8w;2w],f)``;
+val _ = out "pb_rows_empty" ``let (ps,fs,(bm,i)) = compile_word_to_stack (c:64 asm$asm_config) F 4 [] (Append (List [8w]) (List [2w]),5) in (LENGTH(append bm),i,i-LENGTH(append bm),TAKE 2 (append bm) = [8w;2w],fs,MAP FST ps)``;
+val _ = out "pb_rows_repeat_id" ``let (ps,fs,(bm,i)) = compile_word_to_stack (c:64 asm$asm_config) F 4 [(7,5,wordLang$Alloc 0 (LN,LN));(7,5,wordLang$Alloc 0 (LN,LN))] (Append (List [8w]) (List [2w]),5) in (LENGTH(append bm),i,i-LENGTH(append bm),TAKE 2 (append bm) = [8w;2w],fs,MAP FST ps)``;
+val _ = out "pb_rows_mixed" ``let (ps,fs,(bm,i)) = compile_word_to_stack (c:64 asm$asm_config) F 4 [(8,0,wordLang$Skip);(9,5,wordLang$Alloc 0 (LN,LN));(10,5,wordLang$Seq (wordLang$Alloc 0 (LN,LN)) (wordLang$Alloc 0 (LN,LN)))] (Append (List [8w]) (List [2w]),5) in (LENGTH(append bm),i,i-LENGTH(append bm),TAKE 2 (append bm) = [8w;2w],fs,MAP FST ps)``;
+val _ = out "pb_rows_bool" ``let (ps,fs,(bm,i)) = compile_word_to_stack (c:8 asm$asm_config) F 4 [(T,5,wordLang$Alloc 0 (LN,LN));(F,0,wordLang$Skip)] (Append (List [8w]) (List [2w]),5) in (LENGTH(append bm),i,i-LENGTH(append bm),TAKE 2 (append bm) = [8w;2w],fs,MAP FST ps)``;
