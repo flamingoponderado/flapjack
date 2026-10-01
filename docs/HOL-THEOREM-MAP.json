@@ -43645,5 +43645,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .26.12: full original11748-11812 over actual literal compNative. Arbitrary assembler configuration, perf, faithful WordLangProgHOL, AppList bitmapstate with full Nat total, three-Nat frame tuple and owner retained. Only original good_handlers guard and perf=F hypotheses; full target Set(Nat x Nat) subset of raise/store-const stub pairs union image(n -> (n,0)) of literal source getter union literal compiled owned-handler getter. Actual compiler functional induction proves every constructor, including all instruction clauses, spilled registers, both immediate branches, direct/indirect/empty-argument dispatch, absent-return handler dropping, both returning call branches, arbitrary return lists and nested continuations. Final generated nonzero handler entry is discharged only from the original handler-owner conjunct, not a new premise. No frame bounds, target subset/evaluation, simulation, success, key uniqueness, HD/EL assumption or narrowed evaluator. Private local lowering/set equations are proved Flapjack-specific infrastructure with no separately claimed HOL original. Only original positive word dimension translated to BitVec width plus NeZero. Fourteen original actual compiler full-set/guard observations include wrong-owner guard sentinel, zero frame and width1; identical-input fixture and full gate validation recorded on bead. Regression evidence is not HOL-to-Lean equivalence. Coordinator review required before acceptance. Coordinator whole source/statement/fixture review completed (2026-10-01); independent acceptance tracked by flapjack-pxn.18.5.15.3.26.12.1."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "every_var_mono",
+    "lean_path": "Flapjack/Pancake/WordConvs/ProgramMonotonicity.lean",
+    "lean_name": "everyVarMono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c: complete source45-57 quantified P/native prog/Q with global predicate implication AND source every_var guard. Actual everyVarHOL over full WordLangProgHOL, original every_var_def133-176 including return-dependent handler traversal, all cutset Spt lists, instructions/expressions and catchall cases. No extra bound/wf/evaluation/success/target premise. Only positive word dimension BitVec translation; faithful MlString, List, Spt and other payload carriers retained. Coordinator complete source/fixture review accepted (2026-10-01)."
   }
 ]

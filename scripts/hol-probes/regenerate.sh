@@ -3280,3 +3280,7 @@ run_probe parmove_scratch_order_wrapper_probeScript.sml parmove_scratch_order_wr
 run_probe wordconvs_name_mono_probeScript.sml wordconvs_name_mono_probe.out \
   nm_empty nm_single nm_both nm_invalid nm_guard_needed nm_original_theorem \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordconvs_program_mono_probeScript.sml wordconvs_program_mono_probe.out \
+  pm_skip pm_moves pm_inst pm_assign pm_seq pm_alloc pm_loop pm_call_none pm_call_return pm_call_handler pm_guard_needed pm_original_theorem \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
