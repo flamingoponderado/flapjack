@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackCompilePrefixParity
 import Flapjack.Test.WordAllocTotalColourParity
 import Flapjack.Test.ParmoveSourceWrapperParity
 import Flapjack.Test.WordToStackInsertPrefixParity

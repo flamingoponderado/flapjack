@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompilePrefix
 import Flapjack.Compiler.Backend.WordAlloc.TotalColour
 import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepsSteps

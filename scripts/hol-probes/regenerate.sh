@@ -2906,3 +2906,7 @@ run_probe word_to_stack_live_prefix_probeScript.sml word_to_stack_live_prefix_pr
 run_probe word_to_stack_insert_prefix_probeScript.sml word_to_stack_insert_prefix_probe.out \
   ip_empty ip_append ip_nested ip_shortcount ip_slack ip_bool ip_option \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_comp_prefix_probeScript.sml word_to_stack_comp_prefix_probe.out \
+  cp_skip cp_alloc cp_must cp_seq cp_if cp_loop cp_return cp_handler cp_consts \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

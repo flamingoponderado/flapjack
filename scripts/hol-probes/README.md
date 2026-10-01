@@ -2294,3 +2294,12 @@ Nat payloads. `WordToStackInsertPrefixParity` kernel-applies the full original
 statement to the same actual insertion outputs in the CompilerParity driver.
 No word dimension or count bound is required. These observations are regression
 evidence, not a cross-prover equivalence or whole-compiler correctness proof.
+
+`word_to_stack_comp_prefix_probeScript.sml` freshly observes nine whole
+compiler-prefix equations: Skip, Alloc, MustTerminate, Seq, If, Loop, returning
+Call with perf enabled, returning Call with handler, and StoreConsts. Every
+input starts from a nested AppList whose count is deliberately below its
+flattened length. `WordToStackCompilePrefixParity` applies the full original
+output-equation theorem to the same actual compiler outputs in the real Lake
+test driver. These observations are regression evidence, not a cross-prover
+equivalence or whole-compiler correctness proof.
