@@ -44166,6 +44166,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_eq_rel_swap",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsSwap.lean",
+    "lean_name": "ssaEqRelSwap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a compared5186-5193 and fresh original inferred types: st:(alpha,beta,gamma) state; cst:(alpha,delta,epsilon) state. Positive indexed word dimension shared, all four ignored code/FFI types independently generic Type0. Actual reviewed native WordSem state carriers preserved, no state parameters replaced by maps; only locals Spt field traversed, no finite-map field used. Original relation AND domain equality AND pointwise lookup equality, identical swapped locals-relation conclusion, no extra premise. Native accepted locals predicate supplies guarded THE correspondence. Full original literal proof srw_tac replay PASS, independent inferred state carrier types captured. Generic kernel fixture applies actual theorem at arbitrary states/maps/width. No executable change.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "ssa_map_ok_inter",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMapPreservation.lean",
     "lean_name": "ssaMapOKInter",
@@ -44187,6 +44196,14 @@
     "lean_name": "ssaLocalsRelIgnoreInsert",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c compared full literal5573-5587: arbitrary generic payload alpha, Nat SSA map/source and target locals/next/physical key/inserted value; original conjunction ssa_map_ok AND ssa_locals_rel AND is_phy_var only. Complete unchanged relation conclusion after target insertion, both clauses retained. Map invariant excludes physical keys from every successful SSA image; guarded THE uses selector independence already reviewed with SSALocals. No freshness, injectivity, wellformedness, word-width, target-result or new trust assumption. Original complete local proof replay with original wordSemTheory environment, eight real theorem applications with independently proved full premises/empty hypotheses/exact conclusions rendered T by EQT_INTRO, two false guard EVAL sentinels, full inferred generic binder types. Eight kernel theorem applications over Bool/Nat payloads cover empty, live, overwrites, branching, malformed and huge keys. Actual fullSSA consumers7911/9644-9646. Source comparison complete; full SSA proof still incomplete, no executable compiler change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "merge_moves_frame",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoveFrame.lean",
+    "lean_name": "mergeMovesFrame",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-01 .30.7: original4636-4665 full arbitrary List Nat, counter Nat and both native Spt Nat maps; only original allocation-class premise. Same tail-first mergeMoves five-product with all four conjuncts: final allocation class, original-to-final bound and independent mapOK preservation implications on each side. No distinctness, wellformedness, initial mapOK strengthened premise, map relation or supplied target-result assumption. Native malformed trees and unbounded Nat retained. Original proof uses accepted ssa_map_ok_extend and convention class; Lean tail induction uses accepted isAllocVarAdd and ssaMapOKExtend with kernel arithmetic deriving nonphysicality. Literal original complete local theorem proof and ten same-input full result observations replayed freshly; imported existing kernel tuples plus full arbitrary-input actual theorem application. No executed compiler change or full SSA correctness claim."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoveLookups.lean",

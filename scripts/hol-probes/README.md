@@ -1,3 +1,11 @@
+`word_max_inst_route_probe.out` records seven fresh original instruction maxima
+and program limits. HOL max_var_inst leaves Mem Load16/Store16 to the zero
+fallback, unlike its explicit Load/Store/Load8/Store8/Load32/Store32 clauses.
+WordMaxInstRouteParity kernel-checks identical 32/64-bit operands and offsets
+against actual production helpers; the instruction correspondence covers every
+accepted codec form. Five-register AddCarry remains rejected. This repairs the
+production maximum discrepancy; it does not complete the native program route.
+
 `ssa_merge_route_probe.out` captures eight complete original merge_moves outputs
 through original fromAList/toAList: empty/missing/equal/unequal, tail-first
 fresh numbering, duplicate names, duplicate input-map first-match behavior,
@@ -3223,6 +3231,10 @@ returning Call bodies, ignored tail handlers and ignored Load16 fields.
 inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
 The executed upstream maximum/limit route remains tracked on .30.1.2.1.
 
+`ssa_locals_swap_probe.out` captures the complete literal local SSA map-swap
+proof and inferred free-variable types. Source and target states share only
+the word dimension; their code and FFI carriers are independent. The generic
+`SSALocalsParity` fixture applies the actual theorem at arbitrary native states.
 ### SSA renaming properties
 
 `ssa_rename_properties_probeScript.sml` replays the complete local
@@ -3389,6 +3401,16 @@ types are captured separately. The kernel fixture applies the full theorem to
 the identical Bool/Nat inputs, including overwritten physical keys, malformed
 trees and an unbounded natural key. These regressions are not a cross-language
 proof or completion of the full SSA correctness theorem.
+
+`ssa_merge_frame_probe.out` replays the literal complete local `merge_moves_frame`
+proof and its local `ssa_map_ok_extend` prerequisite, then freshly evaluates ten
+complete original merge results. The same-input kernel tuples in
+`SSAMergeMovesParity.lean` cover missing/equal/unequal maps, tail order, duplicate
+keys, malformed trees and unbounded natural registers.
+`SSAMergeMoveFrameParity.lean` applies the full theorem to arbitrary inputs with
+only the original allocation-class premise and all four result conjuncts.
+Malformed/physical-counter observation rows test the definition; they do not
+claim that the allocation premise holds. No exported local theorem is claimed.
 
 ### SSA merge unchanged lookups
 

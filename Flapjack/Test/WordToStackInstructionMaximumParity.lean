@@ -29,7 +29,7 @@ example : inputs.map (fun instruction => (wordLangInstToHOL instruction).map max
      some 0, some 0] := by decide +kernel
 
 example : inputs.map wordInstCakeMaxVar =
-    [17,17,11,17,11,17,17,17,23,17,17,1208925819614629174706177,17,17] := by
+    [17,17,11,17,11,17,17,17,23,17,17,1208925819614629174706177,0,0] := by
   decide +kernel
 
 example : inputs.map (fun instruction => RiscV.allocatorMemorySupported (.inst instruction)) =
