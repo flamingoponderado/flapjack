@@ -4045,3 +4045,20 @@ Captures are regressions, not a HOL-to-Lean equivalence proof or new original
 proof replay. The predicate does not narrow the source code-map carrier.
 
 Selector: `HOL_PROBE_ONLY=word_props_no_install_code_probeScript.sml`.
+
+### Full native code-map top no-install theorem
+
+`word_to_stack_no_install_top_probeScript.sml` freshly captures full original
+`word_to_stack_compile_no_install`, six carriers, sixteen actual
+ALL_DISTINCT/source-list/target-list observations and three complete HOL
+finite-code guard proofs using original lookup/fromAList definitions.
+The safe-first/bad-later duplicate-key map has a true complete code guard but
+false source/target list predicates. The theorem therefore retains the
+original distinct-key hypothesis. Widths1/32/64/80, underflow/large register
+counts and both injected stubs are covered. Matching kernel fixtures retain
+complete map guard proofs and full-signature applications. These are
+regression observations and small concrete HOL guard proofs, not a new proof
+replay of the full compiler theorem or a HOL-to-Lean equivalence proof.
+Whole compiler semantic correctness remains unfinished.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_top_probeScript.sml`.

@@ -3693,3 +3693,7 @@ run_probe word_to_stack_no_install_programs_probeScript.sml word_to_stack_no_ins
 run_probe word_props_no_install_code_probeScript.sml word_props_no_install_code_probe.out \
   nic_def nic_code_type nic_program_type nic_argument_type nic_empty_1 nic_leaf_zero_1 nic_leaf_missing_1 nic_bad_leaf_1 nic_malformed_empty_1 nic_malformed_value_1 nic_nested_left_1 nic_nested_right_1 nic_empty_80 nic_leaf_zero_80 nic_leaf_missing_80 nic_bad_leaf_80 nic_malformed_empty_80 nic_malformed_value_80 nic_nested_left_80 nic_nested_right_80 \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_to_stack_no_install_top_probeScript.sml word_to_stack_no_install_top_probe.out \
+  nt_full nt_conf_type nt_source_type nt_bitmaps_type nt_config_type nt_frames_type nt_outputs_type nt_empty_1 nt_safe_1 nt_shadow_1 nt_bad_1 nt_empty_32 nt_safe_32 nt_shadow_32 nt_bad_32 nt_empty_64 nt_safe_64 nt_shadow_64 nt_bad_64 nt_empty_80 nt_safe_80 nt_shadow_80 nt_bad_80 nt_code_empty nt_code_safe nt_code_shadow \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
