@@ -3295,6 +3295,10 @@ run_probe wordconvs_name_mono_probeScript.sml wordconvs_name_mono_probe.out \
 run_probe wordconvs_program_mono_probeScript.sml wordconvs_program_mono_probe.out \
   pm_skip pm_moves pm_inst pm_assign pm_seq pm_alloc pm_loop pm_call_none pm_call_return pm_call_handler pm_guard_needed pm_original_theorem \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stackprops_label_safety_probeScript.sml stackprops_label_safety_probe.out \
+  safety_empty safety_self_zero safety_self_one safety_missing_zero safety_external_zero safety_external_one safety_missing_one safety_higher_entry safety_owned_handler safety_foreign_handler \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe parmove_step_map_inj_probeScript.sml parmove_step_map_inj_probe.out \
   smi_original_statement smi_remove_self smi_start smi_extend smi_save smi_emit_head smi_emit_last smi_scoped_collapse smi_scoped_injectivity \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

@@ -1,0 +1,14 @@
+load "preamble";
+load "stackPropsTheory";
+open bossLib HolKernel Parse preamble stackPropsTheory;
+fun out label q = (print (label ^ "="); print_term (rconc ((EVAL THENC SIMP_CONV (srw_ss()) [listTheory.LIST_TO_SET_THM, get_code_labels_def, pred_setTheory.SUBSET_DEF] THENC EVAL) q)); print "\n");
+val _ = out "safety_empty" ``(stack_good_code_labels ([]:(num # 64 stackLang$prog) list) {}, stack_good_handler_labels ([]:(num # 64 stackLang$prog) list))``;
+val _ = out "safety_self_zero" ``let p = [(7,LocValue 0 7 0 : 64 stackLang$prog)] in (stack_good_code_labels p {}, stack_good_handler_labels p)``;
+val _ = out "safety_self_one" ``let p = [(7,RawCall 7 : 64 stackLang$prog)] in (stack_good_code_labels p {}, stack_good_handler_labels p)``;
+val _ = out "safety_missing_zero" ``let p = [(7,JumpLower 0 1 9 : 64 stackLang$prog)] in (stack_good_code_labels p {}, stack_good_handler_labels p)``;
+val _ = out "safety_external_zero" ``let p = [(7,JumpLower 0 1 9 : 64 stackLang$prog)] in (stack_good_code_labels p {9}, stack_good_handler_labels p)``;
+val _ = out "safety_external_one" ``let p = [(7,RawCall 9 : 64 stackLang$prog)] in (stack_good_code_labels p {9}, stack_good_handler_labels p)``;
+val _ = out "safety_missing_one" ``let p = [(7,RawCall 9 : 64 stackLang$prog)] in (stack_good_code_labels p {}, stack_good_handler_labels p)``;
+val _ = out "safety_higher_entry" ``let p = [(7,LocValue 0 7 2 : 64 stackLang$prog)] in (stack_good_code_labels p UNIV, stack_good_handler_labels p)``;
+val _ = out "safety_owned_handler" ``let p = [(7,Seq (LocValue 0 7 2) (Call (SOME (Skip,0,0,0)) (INR 0) (SOME (Skip,7,2))) : 64 stackLang$prog)] in (stack_good_code_labels p {}, stack_good_handler_labels p)``;
+val _ = out "safety_foreign_handler" ``let p = [(7,Seq (LocValue 0 7 2) (Call (SOME (Skip,0,0,0)) (INR 0) (SOME (Skip,8,2))) : 64 stackLang$prog)] in (stack_good_code_labels p {}, stack_good_handler_labels p)``;
