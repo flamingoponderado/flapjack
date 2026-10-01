@@ -41203,5 +41203,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison wordLangScript216-241 and asmScript85-134: exact WordLangInst(BitVec width) instruction/arith/reg-imm/address/FP constructor payloads; positivewidth words_as_type_indexed_bitvec. All arithmetic max3/nestedMAX clauses and six memory cases retain argument order; FP comparisons return integer destination, FP MovToReg and MovFromReg preserve dimension64 branch and integer fields, all remaining FP cases default0. No extra premise, callback, targetresult, or dimension64 restriction; original26 direct rows include32/64 transfers and kernel replay. Full max_var/program frame sizing and production routing remainOPEN."
+},
+{
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "max_var_exp_def",
+  "lean_path": "Flapjack/Pancake/WordLang/MaxVarExp.lean",
+  "lean_name": "maxVarExpHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Codex source comparison wordLangScript208-214: Var returns its Nat register, Load recurses, Op takes MAX_LIST of mapped bounds including zero for empty list, Shift takes MAX of both bounds, and Const/Lookup return zero. maxList independently compared with original natural MAX_LIST zero/cons MAX recursion. Signature specializes reviewed WordLangExpHOL to positive-width BitVec width with NeZero; store_name carrier retained, no extra premises or fixed-width restriction. Eight fresh direct original HOL observations and identical kernel fixtures cover each clause and nested/empty expressions. Full program max_var and native wrapper routing remain open under bead flapjack-pxn.18.5.15.3.25.15."
 }
 ]

@@ -2159,3 +2159,5 @@ FP comparison results, both 32/64-bit transfer branches, and the FP default.
 `WordLangMaxVarInstParity.lean` replays these finite observations in the kernel.
 They support regression review, not a cross-prover equivalence proof or
 production compiler routing claim.
+
+`word_lang_max_var_exp_probeScript.sml` captures eight original expression frame bounds: variables, nested loads, empty and nested operators, shifts, constants, lookups and mixed expressions. `WordLangMaxVarExpParity.lean` kernel-replays identical inputs. Full program max_var and native compiler wrapper routing remain separate work.
