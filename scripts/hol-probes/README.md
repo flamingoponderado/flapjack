@@ -1,4 +1,12 @@
 ssa_map_bounds_probe.out captures nine complete original map-validity pairs and a kernel replay of the full original local bound-monotonicity proof. Cases include empty/malformed trees, equal/raised/rejected bounds, physical registers, unbounded natural values and overwritten entries. SSAMapBoundsParity replays the same predicates and applies the full theorem to arbitrary maps/bounds. Recursive insertion is unfolded once before predicate simplification to avoid expanding dead recursive branches.
+`word_program_max_unrestricted_probe.out` captures eight fresh whole-program
+maximum and limit results across Seq, tail Call handler, returning Call with
+handler, and Loop containing ordinary 16-bit memory. The existing program
+maximum codec theorem now holds without the memory guard. Kernel fixtures check
+all four original maxima/limits, actual codec acceptance and unchanged guard
+rejection; the earlier 32 constructor rows and five-register rejection remain.
+This is carrier correspondence, not an executed native limit route.
+
 `word_max_inst_route_probe.out` records seven fresh original instruction maxima
 and program limits. HOL max_var_inst leaves Mem Load16/Store16 to the zero
 fallback, unlike its explicit Load/Store/Load8/Store8/Load32/Store32 clauses.
