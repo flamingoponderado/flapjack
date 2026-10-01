@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.StackProps.LabelSafety
+import Flapjack.Compiler.Backend.Parmove.FstepMapInj
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
 import Flapjack.Compiler.Backend.Parmove.StepMapInj
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
