@@ -278,7 +278,8 @@ parser/pipeline encodability remains a separate proof obligation.
 ## Pinned stateless guest builds
 
 `scripts/guest-parity.json` pins both guest sources to upstream revision
-`b2b653bfc406fae42ac3f7f1a23397ae4716cd1b`. Upstream
+`94649fbb0115f085f8180482af63e02c6d10e730` (tag `r20261001-01`, which ports the
+guest to tests-zkevm@v21.0.1). Upstream
 `tools/gen-guest-ast.sh` identifies `Guest/guest.pp.pnk` as the `ZISK_ACCEL`
 accelerator build and `Guest/guest-software.pp.pnk` as the default all-Pancake
 crypto build. These source variants select accelerator use; they are not
