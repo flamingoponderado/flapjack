@@ -1,0 +1,17 @@
+cs_empty=T
+cs_one=T
+cs_two=T
+cs_three=T
+cs_four=T
+cs_five=T
+cs_odd=T
+cs_even=T
+cs_dups=T
+cs_priority=T
+cs_x_first=T
+cs_y_second=T
+cs_reversed_coords=T
+cs_large=T
+cs_zeros=T
+cs_descending=T
+cs_ascending=T

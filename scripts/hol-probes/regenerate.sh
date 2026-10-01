@@ -3090,3 +3090,6 @@ run_probe word_to_stack_program_maximum_probeScript.sml word_to_stack_program_ma
 run_probe word_to_stack_cse_codec_probeScript.sml word_to_stack_cse_codec_probe.out \
   cc_skip cc_move cc_const cc_get cc_load cc_offset cc_shift cc_load16 cc_share cc_loop cc_must cc_if cc_tail cc_return cc_store_barrier cc_call_barrier \
   "$cake_dir/compiler/backend/word_cseScript.sml" "$cake_dir/compiler/backend"
+run_probe word_alloc_canonize_sort_probeScript.sml word_alloc_canonize_sort_probe.out \
+  cs_empty cs_one cs_two cs_three cs_four cs_five cs_odd cs_even cs_dups cs_priority cs_x_first cs_y_second cs_reversed_coords cs_large cs_zeros cs_descending cs_ascending \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
