@@ -2689,9 +2689,6 @@ run_probe word_lang_occurrences_exact_probeScript.sml word_lang_occurrences_exac
   name_empty name_even name_odd var_move_even var_move_odd var_loop_live stack_loop_live stack_alloc_odd var_call_none stack_call_none var_call_some stack_call_some \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
 
-run_probe parmove_semantics_probeScript.sml parmove_semantics_probe.out \
-  sem_windmill sem_repeated sem_parallel_swap1 sem_parallel_swap2 sem_sequential_swap2 sem_parallel_last sem_sequential_last sem_untouched sem_state_first sem_state_second sem_ignore_temp sem_real_difference \
-  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe word_to_stack_frames_probeScript.sml word_to_stack_frames_probe.out \
   hv_empty hv_plain hv_handler hf_none hf_some se_empty se_desc se_equal se_asc \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -2703,3 +2700,6 @@ run_probe word_to_stack_abs_stack_probeScript.sml word_to_stack_abs_stack_probe.
 run_probe word_to_stack_index_list_probeScript.sml word_to_stack_index_list_probe.out \
   il_empty il_single il_desc an_even an_odd \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe parmove_semantics_probeScript.sml parmove_semantics_probe.out \
+  sem_windmill sem_repeated sem_parallel_swap1 sem_parallel_swap2 sem_sequential_swap2 sem_parallel_last sem_sequential_last sem_untouched sem_state_first sem_state_second sem_ignore_temp sem_real_difference \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
