@@ -2090,3 +2090,13 @@ showing the no-read premise is necessary. `ParmoveNoReadParity.lean` replays
 all rows and checks the full-function lemma with the original sole premise.
 The source function update is expressed as the equivalent conditional.
 Full scheduler semantic preservation remains open.
+
+### ParMove well-formedness preservation observations
+
+`parmove_wf_steps_probeScript.sml` evaluates fourteen original HOL states: each
+of the six relation rules has a valid pre/post example, and pending temporary
+source and broken path examples are false. `ParmoveWfStepsParity.lean` replays
+the states and kernel-checks generic one-step/RTC theorem applications plus
+a start/emit chain. These observations support state-shape review; the full
+universally quantified preservation proofs are independently kernel-checked.
+Full scheduler semantic correctness remains open.

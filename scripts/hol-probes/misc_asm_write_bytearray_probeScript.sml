@@ -1,0 +1,10 @@
+load "preamble";
+load "miscTheory";
+open bossLib HolKernel Parse preamble miscTheory;
+fun print_eval label q = (print label; print "="; print_term (rconc (EVAL q)); print "\n");
+val m = ``(\ (a:1 word). (0w:8 word))``;
+val w = ``asm_write_bytearray (0w:1 word) [1w;2w;3w] ^m``;
+val _ = print_eval "wa_empty" ``asm_write_bytearray (0w:1 word) [] ^m``;
+val _ = print_eval "wa_wrap0" ``^w (0w:1 word)``;
+val _ = print_eval "wa_wrap1" ``^w (1w:1 word)``;
+val _ = print_eval "wa_wrap255" ``^w (255w:1 word)``;

@@ -1,6 +1,7 @@
+import Flapjack.Test.ParmoveWfStepsParity
+import Flapjack.Test.ParmoveNoReadParity
 import Flapjack.Test.LabSemArithmeticParity
 import Flapjack.Test.ParmoveStepsParity
-import Flapjack.Test.ParmoveNoReadParity
 import Flapjack.Test.ParmovePermutationParity
 import Flapjack.Test.ParmoveEnvironmentParity
 import Flapjack.Test.ParmovePathParity
@@ -455,6 +456,8 @@ import Flapjack.Test.StackToLabFlattenOpsParity
 import Flapjack.Test.StackToLabFlattenBaseParity
 import Flapjack.Test.StackToLabFlattenAppParity
 import Flapjack.Test.AsmConfigChecksParity
+import Flapjack.Test.AsmWriteBytearrayWrapParity
+import Flapjack.Test.TargetSemEncodedBytesParity
 import Flapjack.Test.PanSemDecCallErrorParity
 import Flapjack.Test.PanObservationalSemanticsParity
 import Flapjack.Test.PanSemanticsObservationsParity

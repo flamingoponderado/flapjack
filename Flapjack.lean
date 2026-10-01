@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.LabSem.Arithmetic
 import Flapjack.Compiler.Backend.WordToStack.NativeReturn
+import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
 import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
 import Flapjack.Compiler.Backend.WordToStack.NativeMoves
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
@@ -140,6 +141,15 @@ import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsRecursiveDisjoint
 import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.DynamicStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
+import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+import Flapjack.Compiler.Encoders.AsmProps.Target
+import Flapjack.Compiler.Encoders.AsmSem.State
+import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
+import Flapjack.Misc.AsmWriteBytearray
+import Flapjack.Misc.BytesInMemory
+import Flapjack.Compiler.Backend.Semantics.TargetSem.PostAsm
+import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
+import Flapjack.Compiler.Backend.Semantics.TargetSem.EncodedBytes
 import Flapjack.Compiler.Backend.StackProps.FloatNames
 import Flapjack.Compiler.Backend.StackProps.AddressNames
 import Flapjack.Compiler.Backend.StackProps.InstructionNames
@@ -905,6 +915,7 @@ import Flapjack.Compiler.Backend.Parmove
 import Flapjack.Compiler.Backend.Parmove.Semantics
 import Flapjack.Compiler.Backend.Parmove.Invariants
 import Flapjack.Compiler.Backend.Parmove.Invariants.Path
+import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
 import Flapjack.Compiler.Backend.Parmove.EnvironmentChange
 import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
 import Flapjack.Compiler.Backend.Parmove.Permutation
