@@ -38584,14 +38584,13 @@
     "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.2.1.1): asmSemScript68-73 four clauses Lsl logical left, Lsr logical right, Asr sign-extending right, Ror rotate-right. Native positive BitVec width/NeZero, arbitrary Nat amount unchanged. No option/error or masked amount; total HOL shifts retain oversize zero/sign-fill and modulo-width rotation. This is the exact operation called by labSem arith_upd104, whose separate assertion and failed-state update must be retained by parent b4v0.2.1; not backend_common word_shift constant nor wordLang option word_sh. Future native Lab evaluator must use this definition, full evaluator/runtime parent b4v0 remains open."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Frames.lean",
-    "lean_name": "handlerVal",
-    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
-    "hol_name": "handler_val_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.35: literal handler_val799-806, is_handler_frame809-812, sorted_env842-844. Exact positive-width WordLocW and WordSemStackFrame source186-191, list/product/Option constructor shape preserved. handler_val base1 and ordinary1/handler4 headers plus frame length; handler discriminator only final Option field. sorted_env inspects GC cutset only and descending adjacent keys: original HOL sortingScript SORTED_DEF564-567 compares adjacent pairs, implemented by zip with tail and List.all; empty/singleton vacuous. No compiler/evaluation/relation premises or finite-map translation. Fresh original9rows/kernel replay; full stack relation remains separate."
-  },
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Frames.lean",
+  "lean_name": "handlerVal",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "handler_val_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol PR1186 generality repair1npc: original handler_val797-807 has independent arbitrary handler payload alpha, ignored middle beta and frame-element gamma, giving (alpha option # beta # gamma list) list -> num. Full Lean Type parameters alpha/beta/gamma restored without word-width, equality, decidability or conversion premise; tag now unqualified reviewed_exact. All three source equations preserved: terminal1, NONE header1, SOME header4, frame length and recursive suffix. Existing WordLoc/Bool-list fixtures retained via explicit concrete type annotation. Eight fresh original non-word observations and same-input kernel fixtures include empty, ordinary/handler/mixed lengths and function-valued ignored middle/frame elements. No changes to isHandlerFrame/sortedEnv or their word-qualified source carriers; full compiler correctness remains separate."
+},
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Frames.lean",
     "lean_name": "isHandlerFrame",
