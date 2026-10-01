@@ -1,0 +1,12 @@
+lnvrm_basic=(Move0 [(21,11); (25,0); (29,10)],BN (BS LN 29 (LS 12)) (BN (BN LN (LS 25)) (LS 21)),33)
+lnvrm_empty=(Move0 [],BN (BS LN 10 (LS 12)) (BN LN (LS 11)),21)
+fr_basic=BN (BS LN 32 (LS 12)) (BN LN (BS LN 11 (LS 31)))
+mp_left=SOME (INL ())
+mp_right=SOME (INR ())
+mp_both=SOME (INL ())
+mp_none=NONE
+sr_moves=Move1 [(40,10)]
+sr_skip=Skip
+sr_payload=Move1 [(50,12)]
+ls_mixed=(Seq (Seq (Inst (Const 21 0w)) (Seq (Inst (Const 25 0w)) Skip)) (Move0 [(29,12); (33,10)]),BN (BS LN 33 (LS 29)) (BN (BN LN (LS 25)) (BS LN 11 (LS 21))),37)
+ls_empty=(Seq Skip (Move0 []),BN (BS LN 10 (LS 12)) (BN LN (LS 11)),21)

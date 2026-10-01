@@ -1159,6 +1159,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
 import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
 import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
 import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
+import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside

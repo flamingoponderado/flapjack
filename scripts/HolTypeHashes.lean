@@ -822,6 +822,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
 import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
 import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
 import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
+import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
 
 
 

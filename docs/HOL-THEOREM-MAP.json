@@ -46558,5 +46558,49 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.8): word_allocScript.sml:270-283 ssa_cc_trans_exp t (Var num) = Var (option_lookup t num); Load; Op wop (MAP (ssa_cc_trans_exp t) ls); Shift sh exp nexp both renamed; catchall unchanged (Const, Lookup). Lean: same clauses; the Op case maps over ls.attach for structural termination and theorem ssaCcTransExp_op restates it as the literal MAP. HOL α inst/exp/prog with α the word dimension are WordLangInst/WordLangExpHOL/WordLangProgHOL (BitVec width) with [NeZero width] (words_as_type_indexed_bitvec); dimindex (:α) is width. Original EVAL rows (scripts/hol-probes/word_alloc_ssa_trans_inst_probe.out, 28 rows at 64 and 32 bits) replayed by definitional equality in Flapjack.Test.WordAllocSSATransInstParity. No extra premise. Proof-side port; the executed list-state SSA pass is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "words_as_type_indexed_bitvec": true,
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "list_next_var_rename_move_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAHelpers.lean",
+    "lean_name": "listNextVarRenameMove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.9): word_allocScript.sml:285-290 list_next_var_rename_move ssa n ls = let cur_ls = MAP (option_lookup ssa) ls in let (new_ls,ssa',n') = list_next_var_rename ls ssa n in (Move0 (ZIP(new_ls,cur_ls)),ssa',n'); type num num_map -> num -> num list -> α prog # num num_map # num. ZIP pairs equal-length lists (both length ls), where HOL ZIP is specified, rendered List.zip. HOL α prog with α the word dimension is WordLangProgHOL (BitVec width), [NeZero width] (words_as_type_indexed_bitvec). Original EVAL rows (scripts/hol-probes/word_alloc_ssa_helpers_probe.out, 12 rows, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocSSAHelpersParity. No extra premise. Proof-side port; executed list-state SSA pass not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "force_rename_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAHelpers.lean",
+    "lean_name": "forceRename",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.9): word_allocScript.sml:294-298 force_rename [] ssa = ssa; force_rename ((x,y)::xs) ssa = force_rename xs (insert x y ssa). Original EVAL rows (scripts/hol-probes/word_alloc_ssa_helpers_probe.out, 12 rows, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocSSAHelpersParity. No extra premise. Proof-side port; executed list-state SSA pass not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "words_as_type_indexed_bitvec": true,
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "mk_prio_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAHelpers.lean",
+    "lean_name": "mkPrio",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.9): word_allocScript.sml:300-305 mk_prio el er = if el = Skip then SOME (INL()) else if er = Skip then SOME (INR()) else NONE; the prog equality tests with Skip as matches on .skip (equality with a nullary constructor holds exactly for that constructor). HOL α prog with α the word dimension is WordLangProgHOL (BitVec width), [NeZero width] (words_as_type_indexed_bitvec). Original EVAL rows (scripts/hol-probes/word_alloc_ssa_helpers_probe.out, 12 rows, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocSSAHelpersParity. No extra premise. Proof-side port; executed list-state SSA pass not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "words_as_type_indexed_bitvec": true,
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "ssa_reconcile_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAHelpers.lean",
+    "lean_name": "ssaReconcile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.9): word_allocScript.sml:318-326 ssa_reconcile cur_ssa tgt_ssa ns = let vars = MAP FST (toAList ns) in let moves = FILTER (λ(a,b). a ≠ b) (FLAT (MAP (λv. case lookup v cur_ssa of NONE => [] | SOME cur_v => [(option_lookup tgt_ssa v, cur_v)]) vars)) in if moves = [] then Skip else Move 1 moves; ns : β num_map with β arbitrary as in the original type. HOL α prog with α the word dimension is WordLangProgHOL (BitVec width), [NeZero width] (words_as_type_indexed_bitvec). Original EVAL rows (scripts/hol-probes/word_alloc_ssa_helpers_probe.out, 12 rows, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocSSAHelpersParity. No extra premise. Proof-side port; executed list-state SSA pass not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "words_as_type_indexed_bitvec": true,
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "loop_setup_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAHelpers.lean",
+    "lean_name": "loopSetup",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.9): word_allocScript.sml:332-345 loop_setup names exit_names ssa na: all_vars_ls = MAP FST (toAList (union names exit_names)); extend/refresh lists by lookup NONE / IS_SOME; list_next_var_rename on extend_ls; fake_prog = FOLDR Seq Skip (MAP fake_move fresh_pos_ls); list_next_var_rename_move on refresh_ls; result (Seq fake_prog refresh_mov, ssa_refreshed, na_refreshed). Lean: same, sptUnion (left-biased sptree union rendering), List.foldr .seq .skip. HOL α prog with α the word dimension is WordLangProgHOL (BitVec width), [NeZero width] (words_as_type_indexed_bitvec). Original EVAL rows (scripts/hol-probes/word_alloc_ssa_helpers_probe.out, 12 rows, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocSSAHelpersParity. No extra premise. Proof-side port; executed list-state SSA pass not routed through it. Coordinator source acceptance pending."
   }
 ]

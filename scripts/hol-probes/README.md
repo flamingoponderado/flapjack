@@ -2864,6 +2864,13 @@ the finite fixtures do not prove cross-assistant equivalence.
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
 
+`word_alloc_ssa_helpers_probe` captures 12 original EVAL results of
+`list_next_var_rename_move`, `force_rename`, `mk_prio`, `ssa_reconcile` and
+`loop_setup` at 64-bit words, replayed by definitional equality in
+`WordAllocSSAHelpersParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_ssa_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `word_alloc_ssa_trans_inst_probe` captures 28 original EVAL results of
 `ssa_cc_trans_inst` (every clause, fixed-register moves, the Load16/FP catchall
 and both `dimindex` branches at 64 and 32 bits) and `ssa_cc_trans_exp`,
