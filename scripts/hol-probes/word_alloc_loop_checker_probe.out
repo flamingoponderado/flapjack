@@ -1,0 +1,7 @@
+lc_break_absent=T
+lc_continue_absent=T
+lc_break_present=T
+lc_continue_present=T
+lc_loop_skip=T
+lc_loop_continue=T
+lc_break_collision=T

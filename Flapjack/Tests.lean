@@ -1,3 +1,12 @@
+import Flapjack.Test.HeuInstParity
+import Flapjack.Test.SptMapParity
+import Flapjack.Test.WordAllocCheckerAssemblyParity
+import Flapjack.Test.SptMapiParity
+import Flapjack.Test.WordAllocOracleColourParity
+import Flapjack.Test.WordAllocReturnCheckerParity
+import Flapjack.Test.WordAllocShareCheckerParity
+import Flapjack.Test.WordAllocCoalesceCostParity
+import Flapjack.Test.WordAllocLoopCheckerParity
 import Flapjack.Test.WordToStackCompilePrefixParity
 import Flapjack.Test.WordToStackInsertPrefixParity
 import Flapjack.Test.WordToStackLivePrefixParity

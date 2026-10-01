@@ -4,3 +4,5 @@ ss_bad_max=F
 ss_missing_loc=F
 ss_missing_frame=F
 ss_frame_guard=F
+ss_target_bool=T
+ss_target_nat=T

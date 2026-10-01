@@ -1,0 +1,6 @@
+ccn_empty=T
+ccn_one=T
+ccn_duplicate=T
+ccn_args=T
+ccn_collision=F
+ccn_handler_ignored=T
