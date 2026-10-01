@@ -49441,5 +49441,93 @@
     "lean_name": "holLex",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: pairScript.sml:786-791 $LEX (R1:'a->'a->bool) (R2:'b->'b->bool) = \\(s,t) (u,v). R1 s u \\/ (s=u) /\\ R2 t v; relations rendered as α → α → Prop, the paired abstraction (UNCURRY) read through p.1/p.2: holLex R1 R2 p q = R1 p.1 q.1 ∨ (p.1 = q.1 ∧ R2 p.2 q.2). Same single clause; the Decidable instance is untagged Flapjack infrastructure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "map_colors_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/MapColorsSub.lean",
+    "lean_name": "mapColorsSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: linear_scanScript.sml:1264-1268 map_colors_sub [] = return []; map_colors_sub (x::xs) = do fx <- colors_sub x; fxs <- map_colors_sub xs; return (fx::fxs) od, over the tagged colors_sub, st_ex_bind (bind) and st_ex_return (ret) in the linear_scan hidden-state monad; same two clauses and effect order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "map_colors_sub_eq",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/MapColorsSub.lean",
+    "lean_name": "mapColorsSubEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: linear_scanScript.sml:1270-1274 map_colors_sub = st_ex_MAP colors_sub, a function equality over the tagged stExMap; kernel-checked by funext and list induction; no premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "state_invariants_remove_head",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "stateInvariantsRemoveHead",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3073-3084. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_last_stealable_success",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "findLastStealableSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3086-3098, polymorphic active : (α # num) list as in HOL (TV=1). HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_last_stealable_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "findLastStealableOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3100-3130, polymorphic (TV=1); ¬is_phy_var (SND steal) ∧ lookup (EL (SND steal) sth.colors) forbidden = NONE ∧ the l1/l2 decomposition. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "good_linear_scan_state_active_length_colors",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "goodLinearScanStateActiveLengthColors",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3132-3140. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "color_register_eq",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "colorRegisterEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3142-3159, color_register st reg col rend = do update_colors reg col; return (st with <| active updated_by add_active_interval (rend,reg); phyregs := if is_phy_var reg then insert col () st.phyregs else st.phyregs |>) od, rendered with the tagged ignoreBind/ret. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "color_register_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "colorRegisterInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3161-3360, all eleven hypotheses and seven conclusion conjuncts in HOL order. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_spill_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "findSpillInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3362-3476, six hypotheses (good state at EL reg sth.int_beg) and eight conclusion conjuncts in HOL order; force : bool. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "linear_reg_alloc_step_aux_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "linearRegAllocStepAuxInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3478-3540, seven hypotheses incl. domain forbidden ⊆ {EL r sth.colors | r | MEM r l}, forbidden : num_set; eight conclusion conjuncts. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "st_ex_MAP_colors_sub",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "stExMapColorsSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3542-3548, st_ex_MAP colors_sub l sth = (M_success (MAP (\\r. EL r sth.colors) l), sth) over the tagged stExMap. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
   }
 ]

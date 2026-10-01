@@ -1151,6 +1151,7 @@ import Flapjack.Compiler.Backend.LinearScan.HiddenState
 import Flapjack.Compiler.Backend.LinearScan.Steps
 import Flapjack.Compiler.Backend.LinearScan.Sorting
 import Flapjack.Compiler.Backend.LinearScan.TopLevel
+import Flapjack.Compiler.Backend.LinearScan.MapColorsSub
 import Flapjack.Misc.Sptree.Foldi
 import Flapjack.Misc.MiscThe
 import Flapjack.Misc.ListEl
