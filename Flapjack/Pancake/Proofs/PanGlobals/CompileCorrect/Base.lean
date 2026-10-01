@@ -42,7 +42,13 @@ theorem holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact
 /-- HOL's `gen_goal pan_globals$compile` (`pan_globalsProofScript.sml:172-182`)
     for one program and source state; the shared conclusion of every
     `compile_correct` case.  Untagged: HOL's `goal` is an ML value, not a
-    declaration. -/
+    declaration.
+
+    Policy: HOL declarations (header keywords, or theorem-valued
+    `val NAME = Q.prove (...)` ML bindings) may be cited from `@[hol]`.  This
+    Lean rendering is infrastructure and carries no tag; the checker resolves
+    `val NAME =` lines syntactically and does not verify theorem status, so
+    classifying an ML value as a theorem is a source-review duty. -/
 def compileCorrectGoal {width : Nat} {σ : Type} [NeZero width]
     (p : ProgHOL width) (s : PanSemStateFiniteExact width σ) : Prop :=
   ∀ (res : Option (PanSemResultExact width)) (ctxt : PanGlobalsContextExact width)

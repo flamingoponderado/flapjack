@@ -300,6 +300,7 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
       path == "hol4/src/finite_maps/sptreeScript.sml" ||
       path == "hol4/src/coretypes/optionScript.sml" ||
       path == "hol4/src/coalgebras/llistScript.sml" ||
+      path == "hol4/src/n-bit/fcpScript.sml" ||
       path == "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml") &&
       (path.splitOn "/").all (fun part => part != "" && part != "." && part != "..") do
     throwError "@[hol]: path must be a safe `cakeml/...Script.sml` file or a pinned HOL4 snapshot, got {path}"
