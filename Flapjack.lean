@@ -1154,6 +1154,7 @@ import Flapjack.Compiler.Backend.LinearScan.TopLevel
 import Flapjack.Misc.Sptree.Foldi
 import Flapjack.Misc.MiscThe
 import Flapjack.Misc.ListEl
+import Flapjack.Misc.Relation
 import Flapjack.Misc.Sorting
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
 import Flapjack.Compiler.Backend.LinearScan.Proofs

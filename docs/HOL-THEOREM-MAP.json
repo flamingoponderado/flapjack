@@ -49177,5 +49177,93 @@
     "lean_name": "extractColorationOutput",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5867-5919, sp_inverts both ways and the two EVERY hypotheses; extract_coloration invbij l acc sth = (M_success col, sth), the per-r if MEM (the 0 (lookup r bij)) l case split with EL (the tagged miscThe), and domain col SUBSET domain bij UNION domain acc as ∀ x, sptDomain col x → sptDomain bij x ∨ sptDomain acc x. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/relation/relationScript.sml",
+    "hol_name": "transitive_def",
+    "lean_path": "Flapjack/Misc/Relation.lean",
+    "lean_name": "holTransitive",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: relationScript.sml:21-24 transitive (R:'a->'a->bool) = !x y z. R x y /\\ R y z ==> R x z; the relation rendered as α → α → Prop (as for holSorted), the same single clause."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "SORTED_EQ",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holSortedEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:588-596 !R L x. transitive R ==> (SORTED R (x::L) <=> SORTED R L /\\ !y. MEM y L ==> R x y), over the exact holSorted/holTransitive; same quantifiers, hypothesis and iff. Kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "SORTED_TL",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holSortedTl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:1117-1121 SORTED R (x :: xs) ==> SORTED R xs with R x xs free; Lean binds them explicitly. Kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "less_FST_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "lessFst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2404-2406 less_FST (x:int#num) y = FST x <= FST y, original type int # num -> int # α -> bool (type_of); Lean {α} (x : Int × Nat) (y : Int × α), x.1 ≤ y.1."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "transitive_less_FST",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "transitiveLessFst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2408-2413 transitive (less_FST : int # num -> int # num -> bool), i.e. holTransitive (lessFst (α := Nat)). HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "good_linear_scan_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "goodLinearScanState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2415-2443, type linear_scan_state -> linear_scan_hidden_state -> num list -> int -> (num # num) list -> num -> bool; all 22 conjuncts in HOL order (lengths, ALL_DISTINCT colorpool ++ active colours, bounds, the phyregs domain set equation, physical-register distinctness, colornum/colormax/stacknum orders, beg/end/active-interval clauses with pos ≤ 1 + EL r int_end, the interval_intersect (tagged intervalIntersect) injectivity, SORTED less_FST, active ends/membership, forced pairs, mincol bounds). HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "remove_inactive_intervals_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "removeInactiveIntervalsInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2453-2559 ∀beg st sth l pos forced mincol. good ∧ pos ≤ beg ⇒ ∃stout. (M_success stout, sth) = remove_inactive_intervals beg st sth ∧ good stout sth l beg forced mincol ∧ stout.colormax = st.colormax. HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "add_active_interval_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "addActiveIntervalOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2561-2592 ∀lin (x:α) lout. SORTED less_FST lin ∧ lout = add_active_interval (e,r) lin ⇒ SORTED less_FST lout ∧ ∃l1 l2. lin = l1 ++ l2 ∧ lout = l1 ++ (e,r)::l2; e:int and r:num are free in HOL and explicit Lean parameters; the unused x keeps its polymorphic type ({β}). HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_color_in_list_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "findColorInListOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2594-2621 ∀forbidden col l rest. find_color_in_list l forbidden = SOME (col,rest) ⇒ MEM col l ∧ col ∉ domain forbidden ∧ ∃l1 l2. rest = l1 ++ l2 ∧ l = l1 ++ col::l2. HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_color_in_colornum_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "findColorInColornumInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2623-2658, with stout and col free in HOL (explicit Lean parameters); hypotheses good, domain forbidden ⊆ {EL r sth.colors | MEM r l}, find_color_in_colornum st forbidden = (stout, SOME col); the six conclusion conjuncts incl. st = stout with <|colorpool := st.colorpool; colornum := st.colornum|>. HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_color_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "findColorInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2660-2695, the nine-variable statement with the same three hypotheses over find_color and the four conclusion conjuncts. HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
   }
 ]
