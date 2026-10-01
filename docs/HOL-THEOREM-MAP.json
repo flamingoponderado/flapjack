@@ -48015,5 +48015,19 @@
     "hol_name": "ssa_locals_rel_list_next_var_rename",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 flapjack-wvkd: full original5673-5708 literal four-proof/localtactic replay and nine original inferred carrier types PASS. Payload alpha is generic, source/target Spt alpha, native SSA Spt Nat and List Nat/alpha with arbitrary counters; no word/state/maps representation qualifier applies. All seven original conjunctive premises retained: actual native producer equality, locals relation, mapOK, length match, EVERY input name below counter, Nodup input, and nonphysical counter. Complete output SSA relation uses both actual native alist inserts and actual producer map/counter. No wf, successful execution, target result, post-state relation or stronger allocation-class hypothesis added. Kernel induction uses accepted generic insertion, source map extension, exact renaming arithmetic and native insert commutation; source and target prefix priority match HOL. Fresh original source from own CakeML857f0d plus matching pinned HOLa390cb build; no cross-prover equivalence claim. Proof-only; no executable compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASetupProps.lean",
+    "lean_name": "setupSSAProps",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "setup_ssa_props",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 flapjack-pxn.18.5.15.2.30.2: full original10139-10208 literal setup proof plus six original local prerequisite proofs and two original ML tactics freshly replayed; four inferred original state/program/counter/count types confirm state/program/move share word dimension and generic code/FFI. Original is_alloc_var limit AND exact initial source-locals domain=even_list count premises retained; complete six actual evaluator conclusions NONE, whole state relation, mapOK, locals relation, allocation class and counter lower bound retained. Actual reviewed setupSSA, WordSem evaluate and native Spt/list operations used, arbitrary initial values and malformed trees allowed; no successful pass/evaluation, bound on input physical keys, post-state relation or output premise added. Canonical fpRegs/store finite-support and positive BitVec/NeZero carriers explicit with genuine roundtrip witness. Inherits reals_as_rational_cuts via full evaluator, SOUNDNESS item8; Move prologue reads/writes only locals. Fresh own CakeML857f0d source replay on matching pinned HOLa390cb/CakeML857f0d built tree. No cross-prover equivalence claim and no compiler executable change; production SSA setup routing remains on separate existing child bead."
   }
 ]

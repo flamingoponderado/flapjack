@@ -3625,3 +3625,8 @@ run_probe ssa_locals_list_rename_probeScript.sml ssa_locals_list_rename_probe.ou
   lr_type_ys lr_type_ssaOut lr_type_naOut lr_type_ls \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_setup_props_probeScript.sml ssa_setup_props_probe.out \
+  setup_full setup_type_lim setup_type_n setup_type_st setup_type_prog \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
