@@ -3057,6 +3057,9 @@ run_probe lab_to_target_removelabels_probeScript.sml lab_to_target_removelabels_
   LineBytesLabAsm ProgToBytesEmpty ProgToBytesConcrete RemoveLabelsLoopZero \
   RemoveLabelsLoopOne RemoveLabelsZero \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_line_len_probeScript.sml lab_to_target_line_len_probe.out \
+  LineLenLabel LineLenAsmEmpty LineLenAsmBytesMismatch LineLenLabAsm LineLenWide \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_section_length_probeScript.sml lab_to_target_section_length_probe.out \
   SectionLengthEmpty SectionLengthMixed SectionLengthMixedPosition SectionLengthMixedLabels \
   SectionLengthZeroLabel SectionLengthZeroLenLabel SectionLengthDuplicateLabels \

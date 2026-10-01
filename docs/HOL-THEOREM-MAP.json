@@ -50632,5 +50632,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c literal source comparison lab_to_targetProofScript.sml3205-3210 and canonical definitions lab_to_targetScript section_labels/sec_length. Same forall pos/lines/acc, unconditional FST(section_labels pos lines acc)=sec_length lines pos. Exact native Line payloads retained; sole carrier translation positive generic word width with NeZero, fixed bytes8 and faithful MlString. No accumulator uniqueness/zero length/wellformedness or result premise added. Proof list induction generalized pos/acc and all Label0/nonzero/Asm/LabAsm branches. Original 8 EVAL/kernel fixtures cover nonzero starting position, ignored zero-label advances, zero length nonzero labels, duplicate labels, mixed instructions and arbitrary preexisting accumulators."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LineLength.lean",
+    "lean_name": "lineLen",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_len_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison3127-3131: all three Label/Asm/LabAsm clauses return the recorded Nat length unchanged. Same native Line carrier with fixed word8 bytes and MlString; sole translation positive type-indexed word dimension with NeZero. No assumptions, validation or encoded byte length substitution. Five original/kernel rows include arbitrary annotations inconsistent with actual bytes, zero/empty encoded bytes and widths8/64."
   }
 ]
