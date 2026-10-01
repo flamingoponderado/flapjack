@@ -41475,5 +41475,59 @@
   "hol_name": "dstep_step",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison (2026-10-01), original503-516: generic Option register, three List state, actual least DStep and primitive Step RTC, original sole wf premise. Five cases single primitive step; cycle Save followed by EmitHead derives r != NONE from wf real destinations, no extra assumption. Fresh six wf and nine semantic cycle observations replayed in kernel; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "ffiOffset",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "ffi_offset_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:15-17 `ffi_offset = 16:num`, transcribed as `Nat` 16. No word, list, map, string or FFI carrier, so no qualifier is needed. Replayed as the FFIOffset row of scripts/hol-probes/lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "labInst",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "lab_inst_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:21-29, all seven clauses. `Jump _`, `JumpCmp c r ri _`, `Call _` use the supplied target word; `LocValue r _` becomes `Loc r w`; `Halt`, `Install`, `CallFFI n` all collapse to `Jump w`, exactly as the source discards those payloads. Stated over the exact imported LabLang.asm_with_lab instantiated at HolCmp/HolRegImm/MlString; only HOL's type-indexed `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the seven LabInst* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "cbwToAsmExact",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "cbw_to_asm_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:31-37. `Asmi a => a`; `Cbw r1 r2 => Inst (Mem Store8 r2 (Addr r1 0w))`; `ShareMem m r ad => Inst (Mem m r ad)`. The generic untagged Flapjack.Compiler.Backend.LabProps.cbwToAsm is an AsmChecks record adapter whose signature carries an extra callback parameter, so a new exact definition over HolAsm/HolMemop/HolAddr was added in this module; LabProps.lean is unmodified. Only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the CbwToAsm* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "encLine",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "enc_line_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:40-47. `Label n1 n2 n3 => Label n1 n2 skip_len`; `Asm a _ _ => let bs = enc (cbw_to_asm a) in Asm a bs (LENGTH bs)`; `LabAsm l _ _ _ => let bs = enc (lab_inst 0w l) in LabAsm l 0w bs (LENGTH bs)`. The instruction encoder `enc : HolAsm width -> word8 list` is the HOL parameter of the same definition, not the production assembler encoder. Only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]`; the `word8 list` bytes stay fixed 8-bit (words_as_type_indexed_bitvec). Replayed as the EncLine* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "encSec",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "enc_sec_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:49-52 `enc_sec enc skip_len (Section k xs) = Section k (MAP (enc_line enc skip_len) xs)`, preserving the section id and mapping the passed encoder/skip_len over the line list. Exact Section/Line carriers at one width; only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the EncSec row of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "encSecList",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "enc_sec_list_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:54-57 `enc_sec_list enc xs = let skip_len = LENGTH (enc (Inst Skip)) in MAP (enc_sec enc skip_len) xs`, sharing one skip length computed from the encoding of `Inst Skip` across every section. Exact Section/Line carriers at one width; only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the EncSecList row of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
 }
+
 ]

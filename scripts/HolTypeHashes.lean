@@ -303,6 +303,7 @@ import Flapjack.Compiler.Backend.Parmove.Steps
 import Flapjack.Compiler.Backend.Parmove.NoRead
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
+import Flapjack.Compiler.Backend.LabToTarget.Encoding
 import Flapjack.Compiler.Backend.StackNames
 import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
