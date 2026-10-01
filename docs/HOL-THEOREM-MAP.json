@@ -43662,5 +43662,51 @@
     "hol_name": "step_MAP_INJ",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison2026-10-01 w1a4.15: full original1121-1178 forall source/target states, source primitive Step then inj_on_state f source imply mapped Step. Independent Option alpha to Option beta retained; no DecidableEq, global injectivity, wf, simulation, target result or safety premise. Same six literal Step constructors/carriers. Source-endpoint scoped injectivity derives mapped no-read conditions and head/last-source inequality; global NONE iff derives f NONE=NONE for save. Membership uses exact state_to_list pending/active/emitted order. Fresh exported DB.fetch original full theorem, six complete mapped source/target states Bool-to-Nat, and original proof of scoped injectivity for globally collapsing Option Nat-to-Option Bool map on singleton source support. Eleven kernel fixtures replay all six mapped pairs, all six genuine theorem applications, scoped-collapse/proof/application, and arbitrary input carrier identity with no equality instance. No external splitAtPki or unreviewed library theorem prerequisite, proof-only unchanged scheduler. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/FstepMapInj.lean",
+    "lean_name": "fstepMapInj",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "fstep_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.17: complete original1191-1253 forall p inj_on_state f p implies fstep(map_state f p)=map_state f(fstep p). Independent Option alpha/Option beta state carriers retained; native DecidableEq implementation parameters only, no global injectivity, wf, safety or target-result premise. Literal fstep526-545/map_state1086-1088/inj_on_state1090-1097 compared; native splitSource and frontLast proven to commute with local endpoint reflection/renaming, including first-source search, active LAST/FRONT and f NONE=NONE derived from original global NONE equivalence. Eight fresh original whole-output pairs with HOL-proved local premises and kernel theorem applications cover every step branch and a globally noninjective Nat-to-Bool map. Proof-only theorem, no executable change. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/FpUpdates.lean",
+    "lean_name": "fpUpd",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "fp_upd_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.28): all16 original asmSem fp_upd clauses on native AsmState and exact monomorphic HolFp. Fixed FP64, raw width-indexed register words (no Lab WordLoc callback/guard), RTE mode on every rounding operation; fp64_mul_add reads original r2/r3/r1 operand order. Non64 moves extract to actual width and concatenate actual widths before fixed64 conversion, sequential alias writes preserved. FPToInt asserts signedword32 equality yet unconditionally writes zero-extended32 or original-parent-register field insertion after failure; none conversion assertsfalse. FPFromInt64 signedextract32, non64 signedextractactualwidth (no width32 assumption). Direct reals_as_rational_cuts uses shared reviewed IEEE renderings/SOUNDNESS item8; no fixed arithmetic quiet-NaN payload or extra positivity/conversion-success premise. 34 fresh DIRECT original asmSemTheory rows and kernel replays cover all16, widths8/32/64/128, alias halves, overflow retainedwrites/failure, sign/NaN comparisons and exactpayloadmoves, FMAorder and ties. FullASM/evaluator/runtime routing not claimed. Coordinator flapjack-main complete declaration, fixture, original-source and existing import/qualification review accepted 2026-10-01; independent A28.1 source/kernel/original review passed. Main integration gates and CI remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/FpPreservation.lean",
+    "lean_name": "fpUpd_consts",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "fp_upd_consts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.28): original asmProps380-389 exact five conjuncts in sourceorder: native fp_upd preserves mem_domain, align, mem, lr, be for every operation/native state/positive width. Complete all16cases, including both width branches and Option integerconversion outcomes; no failed/conversion success/IEEE-result callback premise. Regs/fp_regs/failed may change and are not assertedconstant (matching original). Inherits reals_as_rational_cuts through native AsmSem.fpUpd, SOUNDNESS item8; theorem own source does not directly name an IEEE rendering and therefore carries only words qualifier plus inherited marker. Kernel checked full universal statement; original34FProws regression context, no wholeASM/encoder acceptance. Coordinator flapjack-main complete declaration, fixture, original-source and existing import/qualification review accepted 2026-10-01; independent A28.1 source/kernel/original review passed. Main integration gates and CI remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/LabelSafety.lean",
+    "lean_name": "stackGoodCodeLabels",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "stack_good_code_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/LabelSafety.lean",
+    "lean_name": "stackGoodHandlerLabels",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "stack_good_handler_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
   }
 ]

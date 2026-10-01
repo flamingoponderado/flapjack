@@ -1,3 +1,13 @@
+`parmove_fstep_map_inj_probe.out` records the complete original
+`fstep_MAP_INJ` statement and eight pairs of complete original output trees.
+The Nat-to-Bool renaming collapses registers outside the state support while
+preserving NONE; the probe proves each `inj_on_state` premise before reporting
+T. Cases cover empty/self/start/search/emit/cycle/non-cycle/existing scratch.
+`ParmoveFstepMapInjParity` kernel-replays both outputs and applies the actual
+generic theorem with each proved local-support premise. The theorem retains
+independent input/output register carriers and no global injectivity or safety
+premise. This is deterministic-step renaming, not full compiler correctness.
+
 `wordconvs_program_mono_probe.out` prints the complete original `every_var_mono`
 and eleven same-input predicate pairs replayed by `WordConvsProgramMonoParity`.
 These include Call NONE ignoring its populated handler, returning Calls with and
@@ -2989,6 +2999,32 @@ replays all eight observations and the full generic theorem with seven valid
 applications. This is a proof-only wrapper port; the executed scheduler is unchanged.
 Selector: `HOL_PROBE_ONLY=parmove_scratch_order_wrapper_probeScript.sml`.
 
+`stackprops_label_safety_probe.out` records ten original whole-program code/handler
+safety predicate pairs, including entry zero/one, missing/external labels, infinite
+external labels and owned versus foreign handlers. Kernel fixtures replay the
+full predicates; these observations are regression evidence, not cross-language
+equivalence. Regenerate with HOL_PROBE_ONLY=stackprops_label_safety_probeScript.sml
+and the read-only prebuilt backend semantics theories.
+`parmove_all_distinct_wrapper_probe.out` freshly fetches the complete exported
+`ALL_DISTINCT_parmove` theorem and captures six whole scheduler outputs
+(empty/self/chain/swap/cycle/shared source), plus the duplicate-destination
+input/output distinctness boundary `(F,F)`. `ParmoveAllDistinctWrapperParity`
+replays all outputs and non-vacuous theorem applications in Lean, with a Bool
+carrier check. Original run used a temporary cwd and canonical in-memory
+`holpathdb` CAKEMLDIR registration/read-only theory paths; CakeML unchanged.
+Selector: `HOL_PROBE_ONLY=parmove_all_distinct_wrapper_probeScript.sml`.
+### Native asmSem arithmetic and state operations
+
+`asmsem_arithmetic_probeScript.sml` evaluates the loaded original `asmSemTheory`
+state primitives and all eight `arith_upd_def` constructors. Its 52 captured rows
+are replayed by `Flapjack.Test.AsmSemArithmeticParity` against the native
+`AsmSem.Arithmetic` definitions, with unrelated state fields arbitrary. Cases
+cover ordered aliasing writes, retained writes on failed division and register
+shifts, immediate shifts without that register-only guard, prior failure,
+carry and signed overflow, and widths 1, 8, 32, and 64. Original DIV_0/MOD_0
+simplifications expose zero-divisor quotient/remainder results. These probes
+are regression evidence, not cross-language equivalence or full asm evaluation
+acceptance. CakeML/HOL remains read-only.
 `parmove_step_map_inj_probe.out` freshly fetches the complete exported
 `step_MAP_INJ` theorem and records the complete mapped source/target states of
 all six primitive rules under an Option Bool-to-Option Nat renaming. The final
@@ -2999,3 +3035,18 @@ applications, the scoped sentinel and an arbitrary carrier identity application.
 No global injectivity or decidable equality premise is introduced; this proof-only
 port leaves the executed scheduler unchanged.
 Selector: `HOL_PROBE_ONLY=parmove_step_map_inj_probeScript.sml`.
+### Full native asmSem FP transition
+
+`asmsem_fp_updates_probeScript.sml` uses the loaded original `asmSemTheory`
+and original IEEE libraries, evaluating 34 closed claims against the original
+`fp_upd`; every capture is resolved `T`. `AsmSemFpUpdatesParity` kernel-replays
+them against the native `AsmState` transition using reviewed IEEE refinement
+facts. All16 constructors are covered, with widths8/32/64/128, actual-width
+concatenation and signed extraction, paired alias/half writes, RTE ties, failed
+overflow writes, prior failure, NaN comparisons, sign payloads and FMA order.
+These are native raw register words, with no Lab location cases or evaluator
+callback. The full original `fp_upd_consts` theorem is separately kernel proved.
+The native transition inherits the existing IEEE real-rendering assurance limit
+(SOUNDNESS item8); fixed raw arithmetic NaN payload agreement is not asserted.
+Probes remain regression evidence, not complete cross-language IEEE equivalence
+or whole ASM/compiler routing acceptance.
