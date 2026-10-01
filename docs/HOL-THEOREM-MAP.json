@@ -41252,6 +41252,14 @@
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 child25.6.5.5: full original local step_sem370-444, forall states Step first second -> entire input wf -> forallenv eqenv; same Option/List/function carriers and arbitrary value carrier. Literal six-constructor case assembly, no assumed target evaluation/equality or stronger premise. All six concrete constructor applications kernel checked in ParmoveStepSemParity, arbitrary env. Original per-case captures retained (14 Start/Extend,16 RemoveSelf/EmitLast,20 Save,26 EmitHead); EmitHead independent coordinator review pending. No production behavior change; RTC/functional scheduler correctness remains open."
 },
 {
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepsSem.lean",
+  "lean_name": "steps_sem",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "steps_sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 child25.6.6: literal source446-456, forall states actual RTCStep and entire inputwf conjunction -> forallenv originaleqenv. Same Option/List/function/arbitraryvaluecarrier; reflexive case equality and tail induction using actualwf_steps transport thenfullstep_sem. No assumed intermediate/targetequivalence or omitted sourcecondition. Kernel chain includes Save/EmitHead/EmitLast on a cycle with literalNONE scratch, plus reflexive closure; original semantic values freshly captured. One-step fullassembly independentreview pending; no compilerexecution/fullschedulerclaim."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "evaluate_apply_colour",
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/FFI.lean",
