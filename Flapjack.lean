@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.Parmove.DSteps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Install
+import Flapjack.Compiler.Backend.Parmove.SplitSource
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.FFI
 import Flapjack.Pancake.WordLang.MaxVar
 import Flapjack.Pancake.WordLang.CutsetsMax
