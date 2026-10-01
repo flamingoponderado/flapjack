@@ -3353,3 +3353,14 @@ and original conjunction. Existing `ssa_locals_rel_probe.out` observations and
 `SSALocalsParity` fixtures cover nonvacuous, rejected, boundary and malformed
 relations; that fixture additionally applies the complete bound theorem at
 arbitrary payload, trees and counters.
+
+### Native return-copy and performance no-shared-memory core
+
+`word_to_stack_no_shmemop_call_core_probeScript.sml` evaluates twelve original
+helper predicate claims: zero/one/repeated return copying and complete perf
+prefix/suffix syntax over widths1/32/64/80. All claims resolve T. The ordinary
+Load/Store instrumentation operations remain distinct from forbidden ShMemOp.
+`WordToStackNoShmemopCallCoreParity` replays identical inputs in the kernel and
+applies all three full public theorems with arbitrary inputs and positive width.
+These regressions do not establish cross-language equivalence or instrumentation
+evaluation correctness. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_call_core_probeScript.sml`.
