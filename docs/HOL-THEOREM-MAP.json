@@ -41677,7 +41677,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison (2026-10-01), original3304-3307: forall natural key in actual locals domain, reviewed is_phy_var. Native Spt(WordLocW width) retains HOL word/location payload and sptree domain via lookup presence, no consecutive-key assumption or map substitution, no state/evaluation premise. Only positive type-indexed HOL word translated to BitVec width with NeZero. Six fresh original empty/zero/sparse-even/odd/mixed/overwrite domain observations kernel paired using actual insertion-domain equivalence, payload ignored exactly as source. Native definition only; whole word_alloc_correct and production composition remain open; coordinator source review pending."
-  }
+  },
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DStepsSteps.lean",
+  "lean_name": "dsteps_steps",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "dsteps_steps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison (2026-10-01), original517-523: forall native arbitrary Option/List move states, RTC DStep first second implies original whole wf first implies RTC Step first second. Same State/Step/DStep/wf carriers, no equality instance or output/intermediate-state hypothesis. RTC induction composes accepted dstep_step with wf_steps derived from accumulated primitive closure, matching original proof dependencies. Kernel reflexive/history, start-emit and cycle-save-emit closure fixtures registered actual CompilerParity. Coordinator source review pending; full parmove/compiler correctness remains open."
+}
 ,
 {
   "lean_path": "Flapjack/Compiler/Backend/Parmove/DestinationWrapper.lean",
