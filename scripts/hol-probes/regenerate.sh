@@ -2734,3 +2734,7 @@ run_probe word_to_stack_abs_stack_lengths_probeScript.sml word_to_stack_abs_stac
 run_probe word_to_stack_wmove_probeScript.sml word_to_stack_wmove_probe.out \
   wm_empty wm_self wm_reg wm_load wm_store wm_spill wm_swap wm_spill_swap wm_odd wm_underflow wm_fprime \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe parmove_updates_probeScript.sml parmove_updates_probe.out \
+  pu_fresh pu_snapshot pu_untouched pu_later_destination pu_freshness_boundary pu_empty pu_self pu_swap pu_eq_forward pu_eq_reverse \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
