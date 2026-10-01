@@ -1,0 +1,26 @@
+{
+  "bead": "flapjack-w1a4.12.1",
+  "reviewer": "flapjack-luna-a",
+  "source_commit": "8e43beee151378e6974a9d3cfa24bfcec36fbb39",
+  "definition_blob": "8ffa90c6c3642c3832c173b4dd61238ac954a8a9",
+  "fixture_blob": "acbd379f0060f2a839d471635523d43bf7b3e18a",
+  "hol_source": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_declaration": "inj_on_state_def",
+  "hol_source_lines": [
+    1090,
+    1097
+  ],
+  "query": "scripts/hol-audits/parmove_inj_on_state_review.sml",
+  "expected_observations": {
+    "inj_support": "T",
+    "inj_pending_collision": "F",
+    "inj_active_collision": "F",
+    "inj_emitted_collision": "F",
+    "inj_none_empty": "F",
+    "inj_some_empty": "F"
+  },
+  "source_review": "Independent Option alpha/beta carriers; support-restricted endpoint injectivity over all three lists; separate global NONE iff. No global injectivity, decidable equality or scheduler premise.",
+  "kernel_review": "Exact immutable 17-line definition and entire 60-line fixtures independently checked over accepted canonical imports with lake lean. Definition has no axioms.",
+  "original_review": "Fresh DB.fetch full defining equation/type and direct original SIMP_CONV finite Option Bool/Unit boundary predicates. LET_DEF and FORALL_OPTION/FORALL_BOOL discharge residual finite quantifiers.",
+  "limits": "No independent full peer branch build or executable compiler parity. Finite observations do not prove cross-prover equivalence. Coordinator source acceptance and merged gates remain required."
+}
