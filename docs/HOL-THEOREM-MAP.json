@@ -49369,5 +49369,77 @@
     "lean_name": "spillRegisterInvariants",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2926-2945, five hypotheses and eight conclusion conjuncts in HOL order (int_beg/int_end before the colour-preservation clause, unlike the FILTER form). HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "edges_to_adjlist_step_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "edgesToAdjlistStep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2947-2955 edges_to_adjlist_step sth (a,b) acc: a = b → acc; ($< LEX $<=) (EL a sth.int_beg, a) (EL b sth.int_beg, b) → insert b (a :: the [] (lookup b acc)) acc; else insert a (b :: the [] (lookup a acc)) acc; type linear_scan_hidden_state -> num # num -> num list num_map -> num list num_map. noncomputable only because holEl is. HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "edges_to_adjlist_FOLDL",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "edgesToAdjlistFoldl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2957-2970. HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "forbidden_is_from_forced_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "forbiddenIsFromForced",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2972-2976, (reg ≠ reg2 ∧ (MEM (reg2,reg) forced ∨ MEM (reg,reg2) forced) ∧ LEX) ⇔ MEM reg2 forbidden, type (num # num) list -> int list -> num -> num list -> bool. HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "forbidden_is_from_forced_sublist_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "forbiddenIsFromForcedSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2978-2982, the same left side ⇔ (MEM reg2 forbidden ∧ MEM reg l). HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "forbidden_is_from_forced_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "forbiddenIsFromForcedList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2984-2989, polymorphic (α # α) list -> α list -> α -> α list -> bool as in HOL (TV=1). HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "forbidden_is_from_map_color_forced_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "forbiddenIsFromMapColorForced",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2991-2996, forbidden : num_set (NumSet), EL reg2 colors IN domain forbidden. HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "edges_to_adjlist_FOLDR_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "edgesToAdjlistFoldrOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2998-3060 ∀forced sth. ∀reg. forbidden_is_from_forced forced sth.int_beg reg (the [] (lookup reg (FOLDR (λpair acc. step sth pair acc) LN forced))). HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "edges_to_adjlist_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "edgesToAdjlistOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:3062-3071. HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/coretypes/pairScript.sml",
+    "hol_name": "LEX_DEF",
+    "lean_path": "Flapjack/Misc/Pair.lean",
+    "lean_name": "holLex",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: pairScript.sml:786-791 $LEX (R1:'a->'a->bool) (R2:'b->'b->bool) = \\(s,t) (u,v). R1 s u \\/ (s=u) /\\ R2 t v; relations rendered as α → α → Prop, the paired abstraction (UNCURRY) read through p.1/p.2: holLex R1 R2 p q = R1 p.1 q.1 ∨ (p.1 = q.1 ∧ R2 p.2 q.2). Same single clause; the Decidable instance is untagged Flapjack infrastructure."
   }
 ]
