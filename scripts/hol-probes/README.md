@@ -3210,3 +3210,14 @@ Two native erasure certificates prove that changing unused fields and their
 carriers leaves complete helper outputs unchanged. This does not establish
 cross-language equivalence, instrumentation correctness, or pass simulation.
 Selector: `HOL_PROBE_ONLY=word_to_stack_handler_frame_carriers_probeScript.sml`.
+
+### Native return-copy and performance no-shared-memory core
+
+`word_to_stack_no_shmemop_call_core_probeScript.sml` evaluates twelve original
+helper predicate claims: zero/one/repeated return copying and complete perf
+prefix/suffix syntax over widths1/32/64/80. All claims resolve T. The ordinary
+Load/Store instrumentation operations remain distinct from forbidden ShMemOp.
+`WordToStackNoShmemopCallCoreParity` replays identical inputs in the kernel and
+applies all three full public theorems with arbitrary inputs and positive width.
+These regressions do not establish cross-language equivalence or instrumentation
+evaluation correctness. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_call_core_probeScript.sml`.

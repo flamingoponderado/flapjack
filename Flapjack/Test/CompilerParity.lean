@@ -34,6 +34,7 @@ import Flapjack.Test.StackPropsForbiddenOperationsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.WordConvsLabelSafetyParity
 import Flapjack.Test.WordToStackNoShmemopHelpersParity
+import Flapjack.Test.WordToStackNoShmemopCallCoreParity
 import Flapjack.Test.WordToStackHandlerFrameCarriersParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity
