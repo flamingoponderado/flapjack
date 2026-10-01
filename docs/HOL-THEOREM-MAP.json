@@ -43636,5 +43636,13 @@
     "hol_name": "parmove_not_use_temp_before_assign",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison2026-10-01 .15.3.46: literal parmoveScript932-953, arbitrary register carrier and sole windmill premise. Exact optional first source-scratch index match, absent read True; present read requires present first destination-scratch index with not(i<=j). No initialized-output, final-state or target-run premise. Derives lifted wf_init from input windmill, accepted pmovNotUseTempBeforeAssign and unconditional pmov_final, then accepted first-index iff. Proof-irrelevant DecidableEq transport fixes the schedule and changes only equality decision dictionaries in first-index search; no extra HOL assumption. Fresh exported DB.fetch complete theorem plus eight whole-output/first-index/windmill/result observations from read-only original theories in temporary cwd. Six Nat valid cases, Bool swap, duplicate-input boundary F/T; all kernel-replayed plus full generic theorem and seven nonvacuous applications. Proof-only port; executed scheduler unchanged. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/StepMapInj.lean",
+    "lean_name": "stepMapInj",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "step_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-01 w1a4.15: full original1121-1178 forall source/target states, source primitive Step then inj_on_state f source imply mapped Step. Independent Option alpha to Option beta retained; no DecidableEq, global injectivity, wf, simulation, target result or safety premise. Same six literal Step constructors/carriers. Source-endpoint scoped injectivity derives mapped no-read conditions and head/last-source inequality; global NONE iff derives f NONE=NONE for save. Membership uses exact state_to_list pending/active/emitted order. Fresh exported DB.fetch original full theorem, six complete mapped source/target states Bool-to-Nat, and original proof of scoped injectivity for globally collapsing Option Nat-to-Option Bool map on singleton source support. Eleven kernel fixtures replay all six mapped pairs, all six genuine theorem applications, scoped-collapse/proof/application, and arbitrary input carrier identity with no equality instance. No external splitAtPki or unreviewed library theorem prerequisite, proof-only unchanged scheduler. Coordinator acceptance pending."
   }
 ]

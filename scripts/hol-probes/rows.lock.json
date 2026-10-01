@@ -3049,6 +3049,12 @@
       "sha256": "65e6947c4b078a5d0336e7ef1c66ed08141cbfe37d3b38d53960220bc716a02f"
     },
     {
+      "bytes": 740,
+      "out": "parmove_step_map_inj_probe.out",
+      "rows": 9,
+      "sha256": "aedf37a428f34bc8ca53cce3d6419386b124cc80660b0f50d101017d0be77667"
+    },
+    {
       "bytes": 75,
       "out": "parmove_steps_probe.out",
       "rows": 6,

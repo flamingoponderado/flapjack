@@ -1,0 +1,9 @@
+smi_original_statement=∀s1 s2. s1 ▷ s2 ⇒ inj_on_state f s1 ⇒ map_state f s1 ▷ map_state f s2
+smi_remove_self=(([(SOME 10,SOME 10)],[],[]),[],[],[])
+smi_start=(([(SOME 10,SOME 20)],[],[]),[],[(SOME 10,SOME 20)],[])
+smi_extend=(([(SOME 20,SOME 10)],[(SOME 10,SOME 20)],[]),[],[(SOME 20,SOME 10); (SOME 10,SOME 20)],[])
+smi_save=(([],[(SOME 10,SOME 20)],[]),[],[(SOME 10,NONE)],[(NONE,SOME 20)])
+smi_emit_head=(([],[(SOME 20,SOME 10); (SOME 10,SOME 10)],[]),[],[(SOME 10,SOME 10)],[(SOME 20,SOME 10)])
+smi_emit_last=(([],[(SOME 10,SOME 20)],[]),[],[],[(SOME 10,SOME 20)])
+smi_scoped_collapse=(([(SOME F,SOME F)],[],[]),T)
+smi_scoped_injectivity=inj_on_state (λx. case x of NONE => NONE | SOME n => SOME F) ([(SOME 3,SOME 3)],[],[])

@@ -3264,3 +3264,7 @@ run_probe parmove_scratch_order_wrapper_probeScript.sml parmove_scratch_order_wr
 run_probe wordconvs_name_mono_probeScript.sml wordconvs_name_mono_probe.out \
   nm_empty nm_single nm_both nm_invalid nm_guard_needed nm_original_theorem \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe parmove_step_map_inj_probeScript.sml parmove_step_map_inj_probe.out \
+  smi_original_statement smi_remove_self smi_start smi_extend smi_save smi_emit_head smi_emit_last smi_scoped_collapse smi_scoped_injectivity \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

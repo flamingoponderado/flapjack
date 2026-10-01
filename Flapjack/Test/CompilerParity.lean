@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveStepMapInjParity
 import Flapjack.Test.ParmoveScratchOrderWrapperParity
 import Flapjack.Test.WordConvsNameMonoParity
 import Flapjack.Test.AsmPropsPcCoverageParity
