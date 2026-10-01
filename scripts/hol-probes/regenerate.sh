@@ -3327,6 +3327,10 @@ run_probe ssa_locals_rel_probeScript.sml ssa_locals_rel_probe.out \
 run_probe ssa_rename_lookup_probeScript.sml ssa_rename_lookup_probe.out \
   rename_empty rename_overwrite rename_invalid rename_order rename_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_merge_moves_probeScript.sml ssa_merge_moves_probe.out \
+  merge_empty merge_missing_both merge_missing_left merge_missing_right merge_equal merge_unequal merge_tail_order merge_duplicate merge_invalid merge_big merge_definition merge_original_type \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe list_next_var_rename_lemma1_probeScript.sml list_next_var_rename_lemma1_probe.out \
   lnvr1_original_statement lnvr1_empty lnvr1_duplicates lnvr1_invalid lnvr1_collision lnvr1_zero_duplicates lnvr1_odd_start lnvr1_huge lnvr1_range \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

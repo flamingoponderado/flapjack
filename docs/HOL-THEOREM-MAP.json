@@ -43873,5 +43873,13 @@
     "hol_name": "asserts2_every",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 whole original source/type comparison (2026-10-01; .10.30.2): asmPropsScript209-259/277-309, fresh original kernel type/statement queries; accepted generic asserts/asserts2 from30.1. Arbitrary state and independent intermediate carrier where present, HOL predicates as Prop; source COUNT_LIST List.range, GENLIST range.map, REVERSE reverse, FOLDR foldr, FUNPOW iterate. Original forall n/state/j, asserts2 constant f and j<n imply P(FUNPOW(f compose g)j state)(g(same)). Full arbitrary mutually heterogeneous f/g, same composition and iteration order; no extra invariant or target-result premise. Full universal kernel proofs, local trajectory infrastructure explicitly not separate HOL ports. Six fresh DIRECT original theorem applications discharge all original premises with no theorem hypotheses and verify exact resulting conclusion before EVAL; six matching Lean theorem applications including off-bound function changes, noncommutative order and Nat/Bool carriers. No word/EL/LOG2/new trust; regressions not HOL-to-Lean equivalence. Coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "merge_moves_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAMergeMoves.lean",
+    "lean_name": "mergeMoves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source63-82 and fresh exported definition/type comparison: Nat list, independent native Spt Nat maps and natural next; complete five-product result. Tail recursion precedes current-key lookups in updated maps; explicit NONE/other, SOME/NONE, SOME/SOME branches and Nat equality retain recursive result or prepend two moves, increment four, insert both maps. Canonical native Spt constructors/lookup/insert are shared with reviewed source-shaped carrier; no width, wf, distinct-key or freshness premise. Ten fresh original full-result captures and kernel replays cover empty, all missing branches, equality, inequality, tail order, duplicate keys (one allocation), malformed BN LN LN, and unbounded naturals. Proof-side native definition is partial executable-port progress: production Allocator.wordSsaMergeMoves routing remains on linked bead .30.3.1; coordinator acceptance pending."
   }
 ]

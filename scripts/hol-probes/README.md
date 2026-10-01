@@ -3112,6 +3112,11 @@ register count and bitmap input. These are regression checks, not a
 HOL-to-Lean equivalence proof or whole compiler correctness acceptance.
 Selector: `HOL_PROBE_ONLY=word_to_stack_program_code_labels_probeScript.sml`.
 
+`ssa_merge_moves_probe.out` captures ten complete original merge_moves results,
+both maps included, plus the exported definition and full inferred type. Native
+`SSAMergeMovesParity` kernel-replays those results, including tail-first order,
+duplicate keys, malformed trees and unbounded naturals. Production routing
+remains separately tracked; these observations are not a cross-prover proof.
 `list_next_var_rename_lemma1_probe.out` records a fresh replay of the complete
 local original theorem and proof, plus eight full renaming observations with
 selected map lookups and all three arithmetic conclusions. Cases include
