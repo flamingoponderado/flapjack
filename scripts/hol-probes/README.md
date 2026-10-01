@@ -1932,6 +1932,7 @@ correctness remain open. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_get_writes_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
 `word_to_stack_stack_size_rel_probe.out` records six original frame-size relation
 observations (absent/present maximum, failed bound, absent local/frame sizes,
 and frame guard) from `word_to_stackProofTheory`. The exact kernel replay is
