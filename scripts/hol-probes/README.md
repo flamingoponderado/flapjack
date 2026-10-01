@@ -2057,3 +2057,5 @@ untouched values differ when the conditional premise is absent, and changed
 source values break equality. Empty and snapshot observations are included.
 `ParmoveEnvironmentParity.lean` replays the rows and applies the exact lemma
 with its original conjunction. Full scheduler preservation remains open.
+
+`labsem_arithmetic_probeScript.sml` captures 44 original observations across all eight LabSem integer-arithmetic constructors: Loc/self-OR guards, invalid shift/division writes, sticky failure, signed overflow and aliased destinations. Original arithmetic `DIV_0`/`MOD_0` simplify the otherwise unreduced zero-divisor cases after EVAL; no replacement arithmetic evaluator is defined. `Flapjack.Test.LabSemArithmeticParity` replays all rows by direct kernel reduction on otherwise arbitrary native source states.

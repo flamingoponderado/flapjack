@@ -703,3 +703,4 @@ elab "#emit_hol_type_hashes" : command => do
         liftIO <| IO.println (Json.mkObj fields).compress
 
 #emit_hol_type_hashes
+import Flapjack.Compiler.Backend.LabSem.Arithmetic
