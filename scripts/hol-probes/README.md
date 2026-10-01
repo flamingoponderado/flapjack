@@ -2211,3 +2211,11 @@ combinator port or completed functional scheduler simulation.
 
 
 `word_to_stack_programs_native_probeScript.sml` observes the literal native `compile_prog` and generic `compile_word_to_stack` in 21 original executions. Cases cover frame subtraction/MAX boundaries, widths1/8/64, perf, arbitrary identifiers, duplicate preservation, and left-to-right bitmap content/length across multiple programs and multiword insertions. `Flapjack/Test/WordToStackNativeProgramsParity.lean` replays identical inputs and results in the kernel. Native top-level compilation and production caller routing remain separate work.
+
+`parmove_dsteps_probeScript.sml` freshly proves nine observations from the original
+`reg_alloc/parmove` theory: all six deterministic rules, two guard boundaries,
+and Extend with a suffix that still reads the selected register. The last row
+checks the source prefix-only NoRead guard. `ParmoveDStepsParity.lean` replays
+the same inputs in Lean. These finite observations are regression evidence,
+not a cross-prover equivalence proof; the complete rules, induction and cases
+statements are source-reviewed in `Parmove/DSteps.lean`.
