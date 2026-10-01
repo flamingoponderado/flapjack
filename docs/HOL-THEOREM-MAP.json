@@ -42660,5 +42660,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-10-01; bead flapjack-xza2) against word_to_stackProofScript.sml:846-859: literal stack_rel with EVERY sorted_env, existential abs_stack result, handler equation guarded by is_handler_frame(EL ...) using handler_val(LASTN ...), and the stack_rel_aux conjunct; no added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "not_use_temp_before_assign_insert",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Insert.lean",
+    "lean_name": "notUseTempBeforeAssignInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-w1a4.1): exact port of HOL parmoveScript.sml:849-853 not_use_temp_before_assign_insert; source uses independent type variables for the destination and source option carriers and inserts (SOME x, SOME y); the Lean statement keeps {destination source : Type} as separate binders and the same Bool-equality guard/conclusion with no extra premise. Proof via the accepted not_use_temp_before_assign_append equivalence."
   }
 ]

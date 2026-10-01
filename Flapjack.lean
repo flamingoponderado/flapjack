@@ -22,6 +22,7 @@ import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CallNone
 import Flapjack.Misc.FindIndex.Bounds
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Append
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Insert
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
 import Flapjack.Compiler.Backend.WordAlloc.GetForced
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
