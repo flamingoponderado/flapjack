@@ -2888,3 +2888,21 @@ run_probe parmove_dstep_step_probeScript.sml parmove_dstep_step_probe.out \
 run_probe word_alloc_total_colour_probeScript.sml word_alloc_total_colour_probe.out \
   tc_absent_zero tc_absent_physical tc_absent_virtual tc_absent_large_physical tc_absent_large_virtual tc_mapped_physical tc_mapped_virtual tc_mapped_zero \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_alloc_even_locals_probeScript.sml word_alloc_even_locals_probe.out \
+  wa_even_empty wa_even_zero wa_even_even_holes wa_even_odd wa_even_mixed wa_even_overwrite \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe parmove_destination_wrapper_probeScript.sml parmove_destination_wrapper_probe.out \
+  dw_empty dw_self dw_chain dw_cycle dw_duplicate dw_order dw_nested_option \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_live_length_probeScript.sml word_to_stack_live_length_probe.out \
+  ll_zero ll_empty ll_slack ll_tree ll_nonwf ll_width8 \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_live_prefix_probeScript.sml word_to_stack_live_prefix_probe.out \
+  lp_zero lp_empty lp_slack lp_tree lp_nonwf lp_width8 lp_shortcount \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_insert_prefix_probeScript.sml word_to_stack_insert_prefix_probe.out \
+  ip_empty ip_append ip_nested ip_shortcount ip_slack ip_bool ip_option \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
