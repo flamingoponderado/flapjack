@@ -1,0 +1,10 @@
+load "bossLib";
+load "preamble";
+load "miscTheory";
+open HolKernel Parse;
+val _ = print "bytes_in_mem_type=";
+val _ = print_type (type_of ``misc$bytes_in_mem``);
+val _ = print "\n";
+val _ = print "bytes_in_mem_def_type=";
+val _ = print_thm miscTheory.bytes_in_mem_def;
+val _ = print "\n";

@@ -1,4 +1,34 @@
+import Flapjack.Test.WordConvsCodeLabelsParity
+import Flapjack.Test.ParmovePreservesMovesStepsParity
+import Flapjack.Test.StackPropsCodeLabelsParity
+import Flapjack.Test.BytesInMemParity
+import Flapjack.Test.RegAllocSortedMemParity
+import Flapjack.Test.RegAllocSortMovesRouteParity
+import Flapjack.Test.ParmovePreservesMovesStepParity
+import Flapjack.Test.ParmoveAllDistinctStepsParity
+import Flapjack.Test.RegAllocSortMovesParity
+import Flapjack.Test.ProductionThreeToTwoDomain
+import Flapjack.Test.RegAllocStatePartitionParity
+import Flapjack.Test.ParmoveMapStateParity
+import Flapjack.Test.ParmoveTempStepsParity
+import Flapjack.Test.ParmoveStateToListParity
+import Flapjack.Test.ParmoveAllDistinctStepParity
+import Flapjack.Test.RegAllocInitializationParity
+import Flapjack.Test.WordCopyCodecDomainParity
+import Flapjack.Test.CanonizeMovesParity
+import Flapjack.Test.MonadArrayLengthParity
+import Flapjack.Test.RegAllocStateMapParity
+import Flapjack.Test.MonadListPrimitivesParity
+import Flapjack.Test.CanonizeSortParity
+import Flapjack.Test.FindIndexAppendParity
+import Flapjack.Test.HeuProgParity
+import Flapjack.Test.WordToStackProgramMaximumParity
+import Flapjack.Test.WordToStackColourDomainParity
+import Flapjack.Test.WordToStackInstructionMaximumParity
 import Flapjack.Test.RegAllocRemapParity
+import Flapjack.Test.WordAllocCanonizeMovesAuxParity
+import Flapjack.Test.FindIndexShiftZeroParity
+import Flapjack.Test.ParmoveTempStepParity
 import Flapjack.Test.HeuCallParity
 import Flapjack.Test.MonadBaseParity
 import Flapjack.Test.RegAllocCarriers
@@ -6,13 +36,13 @@ import Flapjack.Test.HeuMaxParity
 import Flapjack.Test.WordToStackBitmapMixedParity
 import Flapjack.Test.HeuInstParity
 import Flapjack.Test.SptMapParity
-import Flapjack.Test.WordToStackInstructionMaximumParity
 import Flapjack.Test.WordToStackCutsetMaximumParity
 import Flapjack.Test.RetainedAllocatorColour
 import Flapjack.Test.WordToStackHandlerValGeneralityParity
 import Flapjack.Test.WordToStackAbsStackGeneralityParity
 import Flapjack.Test.WordToStackExpressionMaximumParity
 import Flapjack.Test.WordToStackCompLengthParity
+import Flapjack.Test.WordToStackProgramBitmapsParity
 import Flapjack.Test.WordAllocCheckerAssemblyParity
 import Flapjack.Test.SptMapiParity
 import Flapjack.Test.ParmoveIndependenceParity
@@ -56,14 +86,10 @@ import Flapjack.Test.WordToStackNativeConfigParity
 import Flapjack.Test.ParmoveDStepsParity
 import Flapjack.Test.WordAllocEvenLocalsParity
 import Flapjack.Test.ParmoveDStepStepParity
-
 import Flapjack.Test.WordToStackCompileKeysParity
 import Flapjack.Test.ParmoveDstepsClosureParity
 import Flapjack.Test.ParmoveSplitSourceParity
 import Flapjack.Test.ParmoveStepsCorrectParity
-import Flapjack.Test.ParmoveDStepsParity
-import Flapjack.Test.WordToStackNativeConfigParity
-
 import Flapjack.Test.ParmoveDestinationParity
 import Flapjack.Test.ParmoveSourceParity
 import Flapjack.Test.ParmoveFinalParity
@@ -103,7 +129,6 @@ import Flapjack.Test.ParmoveInvariantsParity
 import Flapjack.Test.WordToStackAbsStackLengthsParity
 import Flapjack.Test.WordToStackAbsStackPrefixParity
 import Flapjack.Test.WordToStackMapFstParity
-
 import Flapjack.Test.WordToStackBitmapAppendParity
 import Flapjack.Test.WordToStackIndexListParity
 import Flapjack.Test.WordToStackAbsStackParity
@@ -680,6 +705,10 @@ import Flapjack.Test.PanToCrepMakeVmapParity
 import Flapjack.Test.PanLangGeneratedSizeParity
 import Flapjack.Test.CrepLangGeneratedSizeParity
 import Flapjack.Test.PanSimpProgBridgeParity
+import Flapjack.Test.RegAllocStateForeachParity
+
+
+
 
 /-!
 # Pancake/RISC-V compiler parity tests
@@ -1484,6 +1513,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordToStackAbsStackParity.runChecks,
     Flapjack.Test.WordToStackFramesParity.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
+    Flapjack.Test.BytesInMemParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks,
     Flapjack.Test.LabToTargetEncodingParity.runChecks,
     Flapjack.Test.LabToTargetLabelsParity.runChecks,

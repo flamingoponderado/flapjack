@@ -1,7 +1,36 @@
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
+import Flapjack.Compiler.Backend.LabToTarget.Navigation
+import Flapjack.Compiler.Backend.LabToTarget.Memory
+import Flapjack.Compiler.Backend.LabToTarget.Fetch
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+import Flapjack.Compiler.Backend.StackProps.CodeLabels
+import Flapjack.Pancake.WordConvs.CodeLabels
+import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Steps
+import Flapjack.Compiler.Backend.RegAlloc.SortMoves
+import Flapjack.Compiler.Backend.WordToStack.ProductionThreeToTwoDomain
+import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+import Flapjack.Compiler.Backend.Parmove.MapState
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
+import Flapjack.Compiler.Backend.Parmove.StateToList
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
+import Flapjack.Compiler.Backend.RegAlloc.Initialization
+import Flapjack.RiscV.WordCopyCodecDomain
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
+import Flapjack.Translator.Monadic.MonadBase.ArrayLength
+import Flapjack.Compiler.Backend.RegAlloc.StateMap
+import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
+import Flapjack.Misc.FindIndex.Append
+import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
+import Flapjack.Misc.FindIndex.ShiftZero
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
 import Flapjack.Compiler.Backend.WordAlloc.HeuCall
 import Flapjack.Compiler.Backend.WordAlloc.HeuMax
-import Flapjack.Compiler.Backend.RegAlloc.Exceptions
 import Flapjack.Compiler.Backend.RegAlloc.Carriers
 import Flapjack.Compiler.Backend.WordAlloc.HeuInst
 import Flapjack.Misc.Sptree.Map
@@ -42,17 +71,18 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InsertBitmapPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LivePrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
 import Flapjack.Compiler.Backend.WordToStack.ProductionExpressionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
+import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep
-
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
 import Flapjack.Compiler.Backend.Parmove.PmovDsteps
 import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
-
 import Flapjack.Compiler.Backend.Parmove.DestinationMembership
 import Flapjack.Compiler.Backend.Parmove.FstepDstep
 import Flapjack.Compiler.Backend.Parmove.SourceMembership
@@ -968,9 +998,6 @@ import Flapjack.Test.LoopExactAssignedVarsParity
 import Flapjack.Test.LoopPropsCutSetsParity
 import Flapjack.Test.LoopPropsCompSyntaxOkParity
 import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
-/- The context-aware Crep-to-Loop correctness file is being updated alongside
-   the faithful `findLoopVar` lowering and is intentionally not in this
-   umbrella until its old identity-map assumptions are repaired. -/
 import Flapjack.LoopSemantics
 import Flapjack.MemOp
 import Flapjack.Word
@@ -1050,6 +1077,12 @@ import Flapjack.RiscV.LabDiagnostics
 import Flapjack.RiscV.WordDiagnostics
 import Flapjack.FfiHOL
 import Flapjack.FfiBridge
+import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+
+
+/- The context-aware Crep-to-Loop correctness file is being updated alongside
+   the faithful `findLoopVar` lowering and is intentionally not in this
+   umbrella until its old identity-map assumptions are repaired. -/
 
 /-!
 # Flapjack in Lean

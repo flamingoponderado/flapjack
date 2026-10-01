@@ -1,0 +1,369 @@
+ra_phase_do_simplify=∀k. do_simplify k =
+    st_ex_bind get_simp_wl
+      (λsimps.
+           if NULL simps then st_ex_return F
+           else
+             st_ex_ignore_bind (st_ex_FOREACH simps dec_degree)
+               (st_ex_ignore_bind (st_ex_FOREACH simps push_stack)
+                  (st_ex_ignore_bind (set_simp_wl [])
+                     (st_ex_ignore_bind (unspill k) (st_ex_return T)))))
+ra_phase_do_coalesce=∀k. do_coalesce k =
+    st_ex_bind get_avail_moves_wl
+      (λam.
+           st_ex_bind (st_ex_FIRST consistency_ok (bg_ok k) am [])
+             (λ(ores,unavail).
+                  st_ex_ignore_bind (add_unavail_moves_wl unavail)
+                    (case ores of
+                       NONE =>
+                         st_ex_ignore_bind (set_avail_moves_wl [])
+                           (st_ex_return F)
+                     | SOME ((x,y),(case1,case2),ms) =>
+                       st_ex_ignore_bind (set_avail_moves_wl ms)
+                         (st_ex_ignore_bind
+                            (do_coalesce_real x y case1 case2)
+                            (st_ex_ignore_bind (unspill k)
+                               (st_ex_ignore_bind (respill k x)
+                                  (st_ex_return T)))))))
+ra_phase_do_prefreeze=∀k. do_prefreeze k =
+    st_ex_bind get_freeze_wl
+      (λfwl_pre.
+           st_ex_bind (st_ex_FILTER is_not_coalesced fwl_pre [])
+             (λfwl.
+                  st_ex_bind get_spill_wl
+                    (λswl_pre.
+                         st_ex_bind
+                           (st_ex_FILTER is_not_coalesced swl_pre [])
+                           (λswl.
+                                st_ex_ignore_bind (set_spill_wl swl)
+                                  (st_ex_bind get_unavail_moves_wl
+                                     (λuam_pre.
+                                          st_ex_bind
+                                            (st_ex_FILTER
+                                               (λ(_0,x,y). consistency_ok x y)
+                                               uam_pre [])
+                                            (λuam.
+                                                 st_ex_ignore_bind
+                                                   (reset_move_related uam)
+                                                   (st_ex_bind
+                                                      (set_unavail_moves_wl
+                                                         uam)
+                                                      (λuam.
+                                                           st_ex_bind
+                                                             (st_ex_PARTITION
+                                                                move_related_sub
+                                                                fwl [] [])
+                                                             (λ(ltkfreeze,
+                                                                   ltksimp).
+                                                                  st_ex_ignore_bind
+                                                                    (add_simp_wl
+                                                                       ltksimp)
+                                                                    (st_ex_ignore_bind
+                                                                       (set_freeze_wl
+                                                                          ltkfreeze)
+                                                                       (do_simplify
+                                                                          k))))))))))))
+ra_phase_do_freeze=∀k. do_freeze k =
+    st_ex_bind get_freeze_wl
+      (λfreeze.
+           case freeze of
+             [] => st_ex_return F
+           | x::xs =>
+             st_ex_ignore_bind (dec_degree x)
+               (st_ex_ignore_bind (push_stack x)
+                  (st_ex_ignore_bind (set_freeze_wl xs)
+                     (st_ex_ignore_bind (unspill k) (st_ex_return T)))))
+ra_phase_do_spill=∀scostopt k.
+  do_spill scostopt k =
+  st_ex_bind get_spill_wl
+    (λspills.
+         st_ex_bind get_dim
+           (λd.
+                case spills of
+                  [] => st_ex_return F
+                | x::xs =>
+                  st_ex_bind (degrees_sub x)
+                    (λxv.
+                         st_ex_bind
+                           (case scostopt of
+                              NONE => st_ex_list_MAX_deg xs d x xv []
+                            | SOME scost =>
+                              st_ex_list_MIN_cost scost xs d x
+                                (safe_div (lookup_any x scost 0) xv) [])
+                           (λ(y,ys).
+                                st_ex_ignore_bind (dec_degree y)
+                                  (st_ex_ignore_bind (push_stack y)
+                                     (st_ex_ignore_bind (set_spill_wl ys)
+                                        (st_ex_ignore_bind (unspill k)
+                                           (st_ex_return T))))))))
+ra_phase_dec_deg=∀n. dec_deg n = st_ex_bind (degrees_sub n) (λcd. update_degrees n (cd − 1))
+ra_phase_dec_degree=∀n. dec_degree n =
+    st_ex_bind get_dim
+      (λd.
+           if n < d then
+             st_ex_bind (adj_ls_sub n) (λadjs. st_ex_FOREACH adjs dec_deg)
+           else st_ex_return ())
+ra_phase_push_stack=∀x. push_stack x =
+    st_ex_bind get_stack
+      (λswl.
+           st_ex_ignore_bind (update_degrees x 0)
+             (st_ex_ignore_bind (update_move_related x F)
+                (set_stack (x::swl))))
+ra_phase_is_not_coalesced=∀d. is_not_coalesced d =
+    st_ex_bind (coalesced_sub d) (λdt. st_ex_return (d = dt))
+ra_phase_split_degree=∀d k v.
+  split_degree d k v =
+  if v < d then
+    st_ex_bind (degrees_sub v)
+      (λvd. st_ex_bind (is_not_coalesced v) (λb. st_ex_return (vd < k ∧ b)))
+  else st_ex_return T
+ra_phase_sort_moves=∀ls. sort_moves ls = sort (λ(p,x) (p',x'). p > p') ls
+ra_phase_smerge=(∀ys. smerge [] ys = ys) ∧ (∀v3 v2. smerge (v2::v3) [] = v2::v3) ∧
+∀ys xs p' p m' m.
+  smerge ((p,m)::xs) ((p',m')::ys) =
+  if p ≥ p' then (p,m)::smerge xs ((p',m')::ys)
+  else (p',m')::smerge ((p,m)::xs) ys
+ra_phase_revive_moves=∀vs.
+  revive_moves vs =
+  st_ex_bind (st_ex_MAP adj_ls_sub vs)
+    (λnbs.
+         st_ex_bind get_unavail_moves_wl
+           (λuam.
+                st_ex_bind get_avail_moves_wl
+                  (λam.
+                       (let
+                          (rev,unavail) =
+                            PARTITION
+                              (λ(_0,x,y).
+                                   EXISTS (sorted_mem x) nbs ∨
+                                   EXISTS (sorted_mem y) nbs) uam;
+                          sorted = smerge (sort_moves rev) am
+                        in
+                          st_ex_ignore_bind (set_avail_moves_wl sorted)
+                            (set_unavail_moves_wl unavail)))))
+ra_phase_unspill=∀k. unspill k =
+    st_ex_bind get_dim
+      (λd.
+           st_ex_bind get_spill_wl
+             (λswl.
+                  st_ex_bind (st_ex_PARTITION (split_degree d k) swl [] [])
+                    (λ(ltk,gtk).
+                         st_ex_ignore_bind (revive_moves ltk)
+                           (st_ex_bind
+                              (st_ex_PARTITION move_related_sub ltk [] [])
+                              (λ(ltkfreeze,ltksimp).
+                                   st_ex_ignore_bind (set_spill_wl gtk)
+                                     (st_ex_ignore_bind (add_simp_wl ltksimp)
+                                        (add_freeze_wl ltkfreeze)))))))
+ra_phase_inc_deg=∀n d.
+  inc_deg n d = st_ex_bind (degrees_sub n) (λcd. update_degrees n (cd + d))
+ra_phase_is_Fixed=∀x. is_Fixed x =
+    st_ex_bind (node_tag_sub x)
+      (λxt. st_ex_return (case xt of Fixed n => T | Atemp => F | Stemp => F))
+ra_phase_is_Atemp=∀d. is_Atemp d = st_ex_bind (node_tag_sub d) (λdt. st_ex_return (dt = Atemp))
+ra_phase_is_Fixed_k=∀k x.
+  is_Fixed_k k x =
+  st_ex_bind (node_tag_sub x)
+    (λxt.
+         st_ex_return (case xt of Fixed n => n < k | Atemp => F | Stemp => F))
+ra_phase_considered_var=∀k x.
+  considered_var k x =
+  st_ex_bind (is_Atemp x)
+    (λbx. st_ex_bind (is_Fixed_k k x) (λfx. st_ex_return (bx ∨ fx)))
+ra_phase_deg_or_inf=∀k x.
+  deg_or_inf k x =
+  st_ex_bind (is_Fixed_k k x)
+    (λbx. if bx then st_ex_return k else degrees_sub x)
+ra_phase_bg_ok=∀k x y.
+  bg_ok k x y =
+  st_ex_bind (adj_ls_sub x)
+    (λadjx.
+         st_ex_bind (adj_ls_sub y)
+           (λadjy.
+                (let
+                   (case1,case2) = PARTITION (λv. sorted_mem v adjx) adjy
+                 in
+                   st_ex_bind (st_ex_FILTER (considered_var k) case1 [])
+                     (λcase1.
+                          st_ex_bind
+                            (st_ex_FILTER (considered_var k) case2 [])
+                            (λcase2.
+                                 st_ex_bind (st_ex_MAP (deg_or_inf k) case2)
+                                   (λcase2degs.
+                                        (let
+                                           c2len =
+                                             LENGTH
+                                               (FILTER (λx. x ≥ k) case2degs)
+                                         in
+                                           if c2len = 0 then
+                                             st_ex_return
+                                               (SOME (case1,case2))
+                                           else
+                                             (let
+                                                case3 =
+                                                  FILTER
+                                                    (λv. ¬sorted_mem v adjy)
+                                                    adjx
+                                              in
+                                                st_ex_bind
+                                                  (st_ex_FILTER
+                                                     (considered_var k) case3
+                                                     [])
+                                                  (λcase3.
+                                                       st_ex_bind
+                                                         (st_ex_MAP
+                                                            (deg_or_inf
+                                                               (k + 1)) case1)
+                                                         (λcase1degs.
+                                                              st_ex_bind
+                                                                (st_ex_MAP
+                                                                   (deg_or_inf
+                                                                      k)
+                                                                   case3)
+                                                                (λcase3degs.
+                                                                     st_ex_bind
+                                                                       (st_ex_return
+                                                                          (LENGTH
+                                                                             (FILTER
+                                                                                (λx.
+                                                                                     x −
+                                                                                     1 ≥
+                                                                                     k)
+                                                                                case1degs)))
+                                                                       (λc1len.
+                                                                            st_ex_bind
+                                                                              (st_ex_return
+                                                                                 (LENGTH
+                                                                                    (FILTER
+                                                                                       (λx.
+                                                                                            x ≥
+                                                                                            k)
+                                                                                       case3degs)))
+                                                                              (λc3len.
+                                                                                   if
+                                                                                     c1len +
+                                                                                     c2len +
+                                                                                     c3len <
+                                                                                     k
+                                                                                   then
+                                                                                     st_ex_return
+                                                                                       (SOME
+                                                                                          (case1,
+                                                                                           case2))
+                                                                                   else
+                                                                                     st_ex_return
+                                                                                       NONE)))))))))))))
+ra_phase_consistency_ok=∀x y.
+  consistency_ok x y =
+  if x = y then st_ex_return F
+  else
+    st_ex_bind (adj_ls_sub y)
+      (λadjy.
+           if sorted_mem x adjy then st_ex_return F
+           else
+             st_ex_bind (is_Fixed x)
+               (λbx.
+                    st_ex_bind (is_Fixed y)
+                      (λby.
+                           st_ex_bind (move_related_sub x)
+                             (λmovrelx.
+                                  st_ex_bind (move_related_sub y)
+                                    (λmovrely.
+                                         st_ex_return
+                                           ((bx ∨ movrelx) ∧ (by ∨ movrely) ∧
+                                            ¬(bx ∧ by)))))))
+ra_phase_coalesce_parent=∀x. coalesce_parent x =
+    st_ex_bind (coalesced_sub x)
+      (λxt.
+           st_ex_bind (is_Fixed xt)
+             (λbx.
+                  if bx then st_ex_return xt
+                  else if x ≤ xt then st_ex_return x
+                  else
+                    st_ex_bind (coalesce_parent xt)
+                      (λanc.
+                           st_ex_ignore_bind (update_coalesced x anc)
+                             (st_ex_return anc))))
+ra_phase_canonize_move=∀x y.
+  canonize_move x y =
+  st_ex_bind (is_Fixed x)
+    (λbx.
+         st_ex_bind (is_Fixed y)
+           (λby.
+                if by then st_ex_return (y,x)
+                else if bx then st_ex_return (x,y)
+                else if x < y then st_ex_return (x,y)
+                else st_ex_return (y,x)))
+ra_phase_st_ex_FIRST=(∀P Q unavail. st_ex_FIRST P Q [] unavail = st_ex_return (NONE,unavail)) ∧
+∀P Q m ms unavail.
+  st_ex_FIRST P Q (m::ms) unavail =
+  (let
+     (p,x,y) = m
+   in
+     st_ex_bind (coalesce_parent x)
+       (λx.
+            st_ex_bind (coalesce_parent y)
+              (λy.
+                   st_ex_bind (P x y)
+                     (λb1.
+                          if ¬b1 then st_ex_FIRST P Q ms unavail
+                          else
+                            st_ex_bind (canonize_move x y)
+                              (λ(x,y).
+                                   st_ex_bind (Q x y)
+                                     (λoptb2.
+                                          case optb2 of
+                                            NONE =>
+                                              st_ex_FIRST P Q ms
+                                                ((p,x,y)::unavail)
+                                          | SOME pr =>
+                                            st_ex_return
+                                              (SOME ((x,y),pr,ms),unavail)))))))
+ra_phase_respill=∀k x.
+  respill k x =
+  st_ex_bind (degrees_sub x)
+    (λxd.
+         if xd < k then st_ex_return ()
+         else
+           st_ex_bind get_freeze_wl
+             (λfreeze.
+                  if MEM x freeze then
+                    st_ex_ignore_bind (add_spill_wl [x])
+                      (set_freeze_wl (FILTER (λy. y ≠ x) freeze))
+                  else st_ex_return ()))
+ra_phase_reset_move_related=∀ls.
+  reset_move_related ls =
+  st_ex_bind get_dim
+    (λd.
+         st_ex_ignore_bind
+           (st_ex_FOREACH (COUNT_LIST d) (λx. update_move_related x F))
+           (st_ex_FOREACH ls
+              (λ(_0,x,y).
+                   st_ex_bind (is_Fixed x)
+                     (λbx.
+                          st_ex_bind (is_Fixed y)
+                            (λby.
+                                 st_ex_ignore_bind
+                                   (update_move_related x (¬bx))
+                                   (update_move_related y (¬by)))))))
+ra_phase_st_ex_list_MIN_cost=(∀scost d k v acc.
+   st_ex_list_MIN_cost scost [] d k v acc = st_ex_return (k,acc)) ∧
+∀scost x xs d k v acc.
+  st_ex_list_MIN_cost scost (x::xs) d k v acc =
+  if x < d then
+    st_ex_bind (degrees_sub x)
+      (λxv.
+           st_ex_bind (st_ex_return (safe_div (lookup_any x scost 0) xv))
+             (λcost.
+                  if v > cost then
+                    st_ex_list_MIN_cost scost xs d x cost (k::acc)
+                  else st_ex_list_MIN_cost scost xs d k v (x::acc)))
+  else st_ex_list_MIN_cost scost xs d k v acc
+ra_phase_st_ex_list_MAX_deg=(∀d k v acc. st_ex_list_MAX_deg [] d k v acc = st_ex_return (k,acc)) ∧
+∀x xs d k v acc.
+  st_ex_list_MAX_deg (x::xs) d k v acc =
+  if x < d then
+    st_ex_bind (degrees_sub x)
+      (λxv.
+           if v < xv then st_ex_list_MAX_deg xs d x xv (k::acc)
+           else st_ex_list_MAX_deg xs d k v (x::acc))
+  else st_ex_list_MAX_deg xs d k v acc

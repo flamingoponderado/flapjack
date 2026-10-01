@@ -1,0 +1,12 @@
+load "bossLib"; load "preamble"; load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+observe "stl_empty" ``state_to_list (([],[],[]) : (num) list # (num) list # (num) list) = []``;
+observe "stl_pending" ``state_to_list (([1;2],[],[]) : (num) list # (num) list # (num) list) = [1;2]``;
+observe "stl_active" ``state_to_list (([],[3;4],[]) : (num) list # (num) list # (num) list) = [3;4]``;
+observe "stl_emitted" ``state_to_list (([],[],[5;6]) : (num) list # (num) list # (num) list) = [5;6]``;
+observe "stl_order" ``state_to_list (([1;2],[3;4],[5;6]) : (num) list # (num) list # (num) list) = [1;2;3;4;5;6]``;
+observe "stl_duplicates" ``state_to_list (([2;2],[2],[2;2]) : (num) list # (num) list # (num) list) = [2;2;2;2;2]``;
+observe "stl_large" ``state_to_list (([18446744073709551617],[0],[18446744073709551618]) : (num) list # (num) list # (num) list) = [18446744073709551617;0;18446744073709551618]``;
+observe "stl_bool" ``state_to_list (([T],[F],[T;F]) : (bool) list # (bool) list # (bool) list) = [T;F;T;F]``;
+observe "stl_pairs" ``state_to_list (([(1,2)],[(3,4)],[(5,6)]) : (num # num) list # (num # num) list # (num # num) list) = [(1,2);(3,4);(5,6)]``;

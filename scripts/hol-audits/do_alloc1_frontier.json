@@ -1,0 +1,301 @@
+{
+  "audit_bead": "flapjack-pxn.18.5.11.5.10.5.8.1",
+  "target": "do_alloc1_success",
+  "status": "bounded direct-source audit; no port or complete transitive closure claimed",
+  "limitations": [
+    "Dispatcher phase theorem proofs and all nested helper dependencies remain unported/unexpanded.",
+    "Generated accessor bundle get_eqns/all_eqns and external msimps are genuine prerequisites, not counted as explicit local theorem declarations.",
+    "Implicit simplifier facts are not exhausted by this direct source frontier.",
+    "These direct phase proof references are source-read; helper proof closures remain assigned to the separate phase audit. No claim all named helper ports are individually ready."
+  ],
+  "dispatcher_order": [
+    "do_simplify",
+    "do_coalesce",
+    "do_prefreeze",
+    "do_freeze",
+    "do_spill"
+  ],
+  "verified_edges": {
+    "do_step_success": [
+      "do_step_def",
+      "do_simplify_success",
+      "do_coalesce_success",
+      "do_prefreeze_success",
+      "do_freeze_success",
+      "do_spill_success",
+      "is_subgraph_trans"
+    ],
+    "rpt_do_step_success": [
+      "rpt_do_step_def",
+      "do_step_success",
+      "is_subgraph_trans"
+    ],
+    "do_alloc1_success": [
+      "do_alloc1_def",
+      "init_alloc1_heu_def",
+      "st_ex_FILTER_considered_var",
+      "do_upd_coalesce_def",
+      "reset_move_related_success",
+      "st_ex_PARTITION_split_degree",
+      "st_ex_PARTITION_move_related_sub",
+      "rpt_do_step_success"
+    ],
+    "do_spill_def": [
+      "safe_div_def",
+      "st_ex_list_MIN_cost_def",
+      "st_ex_list_MAX_deg_def"
+    ],
+    "do_prefreeze_success": [
+      "do_prefreeze_def",
+      "st_ex_FILTER_is_not_coalesced",
+      "st_ex_FILTER_consistency_ok",
+      "reset_move_related_success",
+      "st_ex_PARTITION_move_related_sub",
+      "do_simplify_success"
+    ],
+    "do_simplify_success": [
+      "do_simplify_def",
+      "dec_degree_success",
+      "push_stack_success",
+      "unspill_success",
+      "is_subgraph_refl"
+    ],
+    "do_coalesce_success": [
+      "do_coalesce_def",
+      "st_ex_FIRST_consistency_ok_bg_ok",
+      "do_coalesce_real_success",
+      "unspill_success",
+      "respill_def",
+      "is_subgraph_trans"
+    ],
+    "do_freeze_success": [
+      "do_freeze_def",
+      "dec_degree_success",
+      "push_stack_success",
+      "unspill_success"
+    ],
+    "do_spill_success": [
+      "do_spill_def",
+      "st_ex_list_MAX_deg_success",
+      "st_ex_list_MIN_cost_success",
+      "dec_degree_success",
+      "push_stack_success",
+      "unspill_success"
+    ]
+  },
+  "statement_review": {
+    "do_alloc1_success": "Only good_ra_state and move endpoints below s.dim; existential successful list/post-state, good state, subgraph, preserved dimension and node_tag. Post-state facts proved, not premises.",
+    "rpt_do_step_success": "Literal binder sc is unused while scost remains free in HOL source; exact kernel free-variable/type audit required before eventual tag. Do not silently rename as repaired statement.",
+    "do_step_success": "Only good_ra_state, with arbitrary scost/k/state; all five phase successes needed, preserves good state/subgraph/dim/tags."
+  },
+  "source_declarations": [
+    {
+      "name": "safe_div_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "start": 774,
+      "end": 776,
+      "sha256": "f7f0f62e658ddc24433b6a64d745cd44f7f9e8ad436c18301419a661537b7faf"
+    },
+    {
+      "name": "st_ex_list_MIN_cost_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "start": 778,
+      "end": 792,
+      "sha256": "811b4a233b212473f5ee3c4b556878c5cfe90458da05988eeac5c75118212a1b"
+    },
+    {
+      "name": "st_ex_list_MAX_deg_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "start": 794,
+      "end": 807,
+      "sha256": "28470db4f911a24ac66658f7044d658fc9906f6b379df1c1c905df09dbe44dab"
+    },
+    {
+      "name": "do_spill_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "start": 809,
+      "end": 829,
+      "sha256": "83f234e3d6b76fe5694a7a256ddaa893930c5743f2388bd568f1ca88ed2bb983"
+    },
+    {
+      "name": "do_step_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "start": 831,
+      "end": 858,
+      "sha256": "26fe0101cdd7cad156ff3f0a4eda48fee16be502591b04843aa856ca3d7464ce"
+    },
+    {
+      "name": "rpt_do_step_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "start": 860,
+      "end": 867,
+      "sha256": "3e5907402e6ce32200bd0e50a4562839786ef6102fd6e1284aefcb5e650ff381"
+    },
+    {
+      "name": "do_upd_coalesce_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "start": 1251,
+      "end": 1254,
+      "sha256": "c9917bd1f402b5af92c72442031ac4f069ad1cca2d35109193f0f8e8fa78a851"
+    },
+    {
+      "name": "init_alloc1_heu_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "start": 1257,
+      "end": 1286,
+      "sha256": "148202e7ea920f72bea3a9ec978d621ea047dd6de15cafe7d3dd2c82eec79c36"
+    },
+    {
+      "name": "do_alloc1_def",
+      "path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+      "start": 1288,
+      "end": 1297,
+      "sha256": "cafe219b0bd498641e919f91c23f6196859d411db7fcde7719125fa36cb9f6d8"
+    },
+    {
+      "name": "do_simplify_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2262,
+      "end": 2283,
+      "sha256": "fafdea9ef69be6fa3c26b76f93b8b4f396c1f7a2f2ef92250965f4dfc020165d"
+    },
+    {
+      "name": "do_coalesce_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2606,
+      "end": 2643,
+      "sha256": "7dd1745cb815f0743f66870fd1dba1d1ab8db6d9b2a1254f067852df9ce0f23e"
+    },
+    {
+      "name": "do_prefreeze_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2684,
+      "end": 2724,
+      "sha256": "48d0b05a3967a5dbe851f159a4758604334115dc11f4a21c566880556804ac4c"
+    },
+    {
+      "name": "do_freeze_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2727,
+      "end": 2755,
+      "sha256": "8812e6c9a283521c106bba7e355641438782bab6c92f4aabeae8ff9b9faffd60"
+    },
+    {
+      "name": "do_spill_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2790,
+      "end": 2837,
+      "sha256": "122f9bc6541a79453e72a04ebe987b25afa371adb7df2816cee7977bd80c60c5"
+    },
+    {
+      "name": "do_step_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2839,
+      "end": 2860,
+      "sha256": "794fc86b6822ce1ba88bf273f941b05cdeda5be5a80c6bce9a2ebd492db621e0"
+    },
+    {
+      "name": "rpt_do_step_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2863,
+      "end": 2877,
+      "sha256": "f0390337d5481b6f8e3a8c14df8737c199dd89a3e2c1ef3867ddcd45c652f718"
+    },
+    {
+      "name": "reset_move_related_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2658,
+      "end": 2682,
+      "sha256": "b176ae50446b961650c88b6e1122f67c6e6b009660e7480c6025e663d920ddaf"
+    },
+    {
+      "name": "st_ex_PARTITION_split_degree",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2085,
+      "end": 2116,
+      "sha256": "9fe3c2f6874a962db03c47e8f1789a48b2e3a1edbd54472618dca1584644da45"
+    },
+    {
+      "name": "st_ex_PARTITION_move_related_sub",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2118,
+      "end": 2135,
+      "sha256": "ce55f942d4d167e6bda07e45862473c5487d9bd82d3b72ce6849d2986c0e7eb3"
+    },
+    {
+      "name": "st_ex_FILTER_considered_var",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2350,
+      "end": 2362,
+      "sha256": "40f275de437ec0bf55c40797206aaa54b9ad62cc2ed38f73d5874f8bb891182e"
+    },
+    {
+      "name": "is_subgraph_trans",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 1001,
+      "end": 1007,
+      "sha256": "5fd23ff5553719fe3f813a939c21e87953c7cb2ac0af1ff40b3ab4edd7b01d38"
+    },
+    {
+      "name": "do_alloc1_success",
+      "path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+      "start": 2918,
+      "end": 3022,
+      "sha256": "143ac70aa2bbc92801ab7ba9625179d3b2cd9e3d08b1f05495f351a37c830023"
+    }
+  ],
+  "tracked_slices": [
+    {
+      "id": "flapjack-pxn.18.5.11.5.10.5.8.2",
+      "title": "Port literal reg_alloc safe_div_def"
+    },
+    {
+      "id": "flapjack-pxn.18.5.11.5.10.5.8.3",
+      "title": "Port do_step dispatcher and literal success assembly"
+    },
+    {
+      "id": "flapjack-pxn.18.5.11.5.10.5.8.4",
+      "title": "Port rpt_do_step recursion and literal success theorem"
+    },
+    {
+      "id": "flapjack-pxn.18.5.11.5.10.5.8.5",
+      "title": "Port init_alloc1_heu definition and inline do_alloc1 initializer proof"
+    },
+    {
+      "id": "flapjack-pxn.18.5.11.5.10.5.8.6",
+      "title": "Audit and split five do_step phase definition and success closures"
+    }
+  ],
+  "phase_port_beads": [
+    {
+      "id": "flapjack-pxn.18.5.11.5.10.5.8.6.1",
+      "definition": "do_simplify_def",
+      "theorem": "do_simplify_success"
+    },
+    {
+      "id": "flapjack-pxn.18.5.11.5.10.5.8.6.2",
+      "definition": "do_coalesce_def",
+      "theorem": "do_coalesce_success"
+    },
+    {
+      "id": "flapjack-pxn.18.5.11.5.10.5.8.6.3",
+      "definition": "do_prefreeze_def",
+      "theorem": "do_prefreeze_success"
+    },
+    {
+      "id": "flapjack-pxn.18.5.11.5.10.5.8.6.4",
+      "definition": "do_freeze_def",
+      "theorem": "do_freeze_success"
+    },
+    {
+      "id": "flapjack-pxn.18.5.11.5.10.5.8.6.5",
+      "definition": "do_spill_def",
+      "theorem": "do_spill_success"
+    }
+  ],
+  "original_kernel_scope_check": {
+    "command": "HOL hol run loading reg_allocProofTheory and DB.fetch rpt_do_step_success",
+    "result": "Original session loaded; DB.fetch raises HOL_ERR for the local theorem. No kernel conclusion/free-variable observation obtained.",
+    "remaining": "Reconstruct or expose the original local proof outside the read-only CakeML tree before deciding literal binder generality; do not infer kernel scope from textual binder alone."
+  }
+}

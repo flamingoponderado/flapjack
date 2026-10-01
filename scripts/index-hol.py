@@ -18,6 +18,9 @@ from pathlib import Path
 HOL_RELN_TUPLES = runpy.run_path(
     str(Path(__file__).with_name("hol_sml_declarations.py"))
 )["hol_reln_tuple_declarations"]
+HOL_DEFINE_RUN = runpy.run_path(
+    str(Path(__file__).with_name("hol_sml_declarations.py"))
+)["define_run_declarations"]
 
 
 IDENT = r"[A-Za-z_][A-Za-z0-9_'$]*"
@@ -193,6 +196,10 @@ def parse_file(root: Path, path: Path) -> tuple[list[Entry], list[tuple[str, str
         start - 1: (names, end)
         for names, start, end in HOL_RELN_TUPLES(text)
     }
+    run_factories = {
+        start - 1: (carrier, runner, end)
+        for carrier, runner, start, end in HOL_DEFINE_RUN(text)
+    }
     relative = path.relative_to(root).as_posix()
     entries: list[Entry] = []
 
@@ -254,6 +261,13 @@ def parse_file(root: Path, path: Path) -> tuple[list[Entry], list[tuple[str, str
     i = 0
     while i < len(masked):
         line = masked[i]
+        if i in run_factories:
+            carrier, runner, end = run_factories[i]
+            entries.append(Entry("Datatype", carrier, relative, i + 1, end, theory))
+            entries.append(Entry("Definition", runner, relative, i + 1, end, theory))
+            recognized_style = True
+            i = end
+            continue
         if i in relation_tuples:
             names, end = relation_tuples[i]
             entries.extend(Entry("Theorem", name, relative, i + 1, end, theory) for name in names)
