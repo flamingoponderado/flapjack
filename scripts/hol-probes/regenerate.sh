@@ -2891,6 +2891,21 @@ run_probe word_alloc_total_colour_probeScript.sml word_alloc_total_colour_probe.
 run_probe word_alloc_even_locals_probeScript.sml word_alloc_even_locals_probe.out \
   wa_even_empty wa_even_zero wa_even_even_holes wa_even_odd wa_even_mixed wa_even_overwrite \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe parmove_destination_wrapper_probeScript.sml parmove_destination_wrapper_probe.out \
+  dw_empty dw_self dw_chain dw_cycle dw_duplicate dw_order dw_nested_option \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_live_length_probeScript.sml word_to_stack_live_length_probe.out \
+  ll_zero ll_empty ll_slack ll_tree ll_nonwf ll_width8 \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_live_prefix_probeScript.sml word_to_stack_live_prefix_probe.out \
+  lp_zero lp_empty lp_slack lp_tree lp_nonwf lp_width8 lp_shortcount \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_insert_prefix_probeScript.sml word_to_stack_insert_prefix_probe.out \
+  ip_empty ip_append ip_nested ip_shortcount ip_slack ip_bool ip_option \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
 run_probe target_sem_mapped_memory_probeScript.sml target_sem_mapped_memory_probe.out \
   tm_read_0 tm_read_0_wrong_opcode tm_read_1 tm_read_1_wrong_opcode tm_read_2 tm_read_2_wrong_opcode tm_read_4 tm_read_4_wrong_opcode tm_write_0 tm_write_0_wrong_opcode tm_write_1 tm_write_1_wrong_opcode tm_write_2 tm_write_2_wrong_opcode tm_write_4 tm_write_4_wrong_opcode tm_read_invalid_3 tm_read_invalid_8 tm_read_invalid_16 tm_read_invalid_255 tm_write_invalid_3 tm_write_invalid_8 tm_write_invalid_16 tm_write_invalid_255 tm_read_register_mismatch tm_read_base_mismatch tm_read_offset_mismatch tm_write_domain_gap tm_read_wrap tm_write_wrap tm_read_empty_domain tm_write_empty_domain tm_read_invalid_empty tm_read_byte_size_wrap tm_write_byte_size_wrap \
