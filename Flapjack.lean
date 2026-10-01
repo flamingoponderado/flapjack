@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.CutState
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Seq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ReadsLiveExpressions
