@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Inst
 import Flapjack.Pancake.WordLang.MaxVarExp
+import Flapjack.Compiler.Backend.Parmove.StepSem
 import Flapjack.Compiler.Backend.Parmove.StepSem.EmitHead
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstFp
 import Flapjack.Compiler.Backend.WordToStack.NativeLive
@@ -15,8 +16,6 @@ import Flapjack.Pancake.WordLang.CutsetsMax
 import Flapjack.Compiler.Backend.LabSem.FpUpdates
 import Flapjack.Compiler.Backend.LabSem.Arithmetic
 import Flapjack.Compiler.Backend.WordToStack.NativeReturn
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstAssign
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstArith
 import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
 import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
 import Flapjack.Compiler.Backend.WordToStack.NativeMoves
