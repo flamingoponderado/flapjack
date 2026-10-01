@@ -42748,6 +42748,14 @@
     "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead46.5: full literal source909-918 RTC invariant, input (wf and safety of REVERSE(active++emitted)) conjunct Steps implies both target wf and same safety, arbitrary alpha. Native ReflTransGen Step is reviewed exact RTC, chronology/order and Boolean=true translation unchanged. No target invariant/initialized scratch premise added. Tail induction invokes accepted wf_step and step_not_use_temp_before_assign with IH source conjuncts; reflexivity retains both. Twelve fresh original combined wf/safety observations plus genuine native RTC/kernel theorem applications cover all clauses, prior scratch, Bool, zero-step states and three-step cycle. No executed behavior change; pmov/full parmove remain open. Coordinator source comparison completed against the cited literal HOL clauses; fresh original observations replayed. Unified kernel gates and publication separately required."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapState.lean",
+    "lean_name": "mapState",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "map_state_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.11: literal source1086-1088 let m=MAP(f##f) in m##m##m. Native List.map(Prod.map f f) then right-associated Prod.map m (Prod.map m m) preserves both endpoints and all three list orders. Fresh original type audit independent alpha -> beta and raw pair-list triple input/output; generic native alpha/beta not specialized to Option registers, no equality/injectivity/NONE-preservation premise. Ten fresh original whole outputs paired with kernel fixtures include empty/each segment/order, noninjective constant, unbounded Nat, Bool, Nat->Bool different carriers and changing NONE. Definition proof support only, no executed behavior change; injective simulation obligations remain open. Coordinator source comparison completed against the cited literal HOL clauses; fresh original observations replayed. Unified kernel gates and publication separately required."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
     "lean_name": "lineSimilar",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
