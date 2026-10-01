@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
+import Flapjack.Pancake.LoopToWord.Proofs.LabelHandlers
 import Flapjack.Pancake.WordConvs.PredicateEquations
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectLeft

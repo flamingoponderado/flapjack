@@ -47069,5 +47069,49 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-01 flapjack-vki8: full original physical-target setVar5557-5571/list-insert5590-5609 wrappers, literal original proofs freshly replayed. HOL inferred st:(alpha,beta,gamma) and cst:(alpha,delta,epsilon) retained with four independent code/FFI Type0 binders and shared positive word width. All original mapOK/localsRel/physical-target premises retained, including EVERY and exact list length for list wrapper; full native locals relation conclusion unchanged. Native Spt locals and canonical alistInsert/setVar. Only standard BitVec width/NeZero word translation; no finite-map fields traversed and no extra premise, evaluation, result or simulated output assumed. Kernel wrappers use accepted physical insertion and full list induction; stronger untagged generic helper does not weaken the public statement. No executed compiler change. Original proof capture is regression evidence, not cross-language equivalence. Full gates and delivery tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoveLookups.lean",
+    "lean_name": "mergeMovesFrame3",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "merge_moves_frame3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-wma3): full HOL lines 4720-4745, arbitrary list/start/native num_map carriers and key; original absent-list OR outside-original-intersection guard and both unchanged lookup equalities. No allocation, well-formedness, distinctness or counter premise. Tail-first recursive definition and domain preservation from full frame2 match the source proof; consumer at line 5299. Literal original full frame2/frame3 proof replay and Lean kernel proof."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabelHandlers.lean",
+    "lean_name": "loopToWordCompLInvariant",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "comp_l_invariant",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-goq9): full source 2001-2007. Original comp equality premise and unchanged first label; arbitrary target program/final labels, no extra premise. Exact native HolLoopProg/WordLangProgHOL/Spt Nat and List carriers; only positive type-indexed word to BitVec width translation, NeZero retained. Reviewed good_handlers_def Bool=true corresponds to HOL predicate. Threaded output label equations transport ownership rather than assuming it. All four literal complete original proofs replayed; typed widths1/64/80 nested whole outputs and actual source theorem applications, duplicate-owner compiled program and false-owner sentinel have matching kernel fixtures. No executable compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabelHandlers.lean",
+    "lean_name": "loopToWordCompSndLE",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_SND_LE",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-goq9): full source 2039-2050. Original comp equality premise and nondecreasing second label; arbitrary labels/counter, no bound or freshness premise. Exact native HolLoopProg/WordLangProgHOL/Spt Nat and List carriers; only positive type-indexed word to BitVec width translation, NeZero retained. Reviewed good_handlers_def Bool=true corresponds to HOL predicate. Threaded output label equations transport ownership rather than assuming it. All four literal complete original proofs replayed; typed widths1/64/80 nested whole outputs and actual source theorem applications, duplicate-owner compiled program and false-owner sentinel have matching kernel fixtures. No executable compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabelHandlers.lean",
+    "lean_name": "loopToWordGoodHandlersComp",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "good_handlers_comp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-goq9): full source 2009-2018. Unconditional good_handlers on compiled FST at original initial FST; both nested Call continuations and ignored tail handler preserved. Exact native HolLoopProg/WordLangProgHOL/Spt Nat and List carriers; only positive type-indexed word to BitVec width translation, NeZero retained. Reviewed good_handlers_def Bool=true corresponds to HOL predicate. Threaded output label equations transport ownership rather than assuming it. All four literal complete original proofs replayed; typed widths1/64/80 nested whole outputs and actual source theorem applications, duplicate-owner compiled program and false-owner sentinel have matching kernel fixtures. No executable compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabelHandlers.lean",
+    "lean_name": "loopToWordGoodHandlers",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_good_handlers",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-goq9): full source 2020-2035. Original compile_prog equality premise and EVERY per-owner result on arbitrary list, rendered List.all=true; no uniqueness/arity/code/result assumption. Exact native HolLoopProg/WordLangProgHOL/Spt Nat and List carriers; only positive type-indexed word to BitVec width translation, NeZero retained. Reviewed good_handlers_def Bool=true corresponds to HOL predicate. Threaded output label equations transport ownership rather than assuming it. All four literal complete original proofs replayed; typed widths1/64/80 nested whole outputs and actual source theorem applications, duplicate-owner compiled program and false-owner sentinel have matching kernel fixtures. No executable compiler change."
   }
 ]
