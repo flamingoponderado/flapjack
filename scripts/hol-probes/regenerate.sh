@@ -3570,3 +3570,7 @@ run_probe ssa_merge_correct_left_probeScript.sml ssa_merge_correct_left_probe.ou
 run_probe ssa_physical_state_updates_probeScript.sml ssa_physical_state_updates_probe.out \
   ph_set_full ph_set_type_st ph_set_type_cst ph_list_full ph_list_type_st ph_list_type_cst \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_rename_property_wrappers_probeScript.sml ssa_rename_property_wrappers_probe.out \
+  rw_core_full rw_move_full rw_move_type rw_single_full \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

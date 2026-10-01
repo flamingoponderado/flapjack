@@ -47069,5 +47069,22 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-01 flapjack-vki8: full original physical-target setVar5557-5571/list-insert5590-5609 wrappers, literal original proofs freshly replayed. HOL inferred st:(alpha,beta,gamma) and cst:(alpha,delta,epsilon) retained with four independent code/FFI Type0 binders and shared positive word width. All original mapOK/localsRel/physical-target premises retained, including EVERY and exact list length for list wrapper; full native locals relation conclusion unchanged. Native Spt locals and canonical alistInsert/setVar. Only standard BitVec width/NeZero word translation; no finite-map fields traversed and no extra premise, evaluation, result or simulated output assumed. Kernel wrappers use accepted physical insertion and full list induction; stronger untagged generic helper does not weaken the public statement. No executed compiler change. Original proof capture is regression evidence, not cross-language equivalence. Full gates and delivery tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenamePropertyWrappers.lean",
+    "lean_name": "listNextVarRenameMoveProps",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_next_var_rename_move_props",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-01 flapjack-8cmf: full original move wrapper5780-5797 and single-name wrapper5799-5817, freshly replayed literal original class-add/core-renaming/wrapper proofs. Original producer equality then allocation-or-stack and mapOK premises, all four output bound/class/map conclusions retained. Arbitrary Nat names/counters, native Spt maps, no wf/distinct or extra safety/evaluation premise. Move result HOL alpha prog translated to reviewed positive BitVec width/NeZero native WordLangProgHOL; single-name theorem word-free exact. Kernel wrappers apply accepted full listNextVarRenameProps to actual native producer (singleton list for single-name). No executed compiler change; original proof/type evidence does not claim cross-language equivalence. Delivery gates tracked on bead.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenamePropertyWrappers.lean",
+    "lean_name": "nextVarRenameProps",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "next_var_rename_props",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-01 flapjack-8cmf: full original move wrapper5780-5797 and single-name wrapper5799-5817, freshly replayed literal original class-add/core-renaming/wrapper proofs. Original producer equality then allocation-or-stack and mapOK premises, all four output bound/class/map conclusions retained. Arbitrary Nat names/counters, native Spt maps, no wf/distinct or extra safety/evaluation premise. Move result HOL alpha prog translated to reviewed positive BitVec width/NeZero native WordLangProgHOL; single-name theorem word-free exact. Kernel wrappers apply accepted full listNextVarRenameProps to actual native producer (singleton list for single-name). No executed compiler change; original proof/type evidence does not claim cross-language equivalence. Delivery gates tracked on bead."
   }
 ]
