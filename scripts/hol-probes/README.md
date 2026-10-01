@@ -1,3 +1,13 @@
+`parmove_fstep_map_inj_probe.out` records the complete original
+`fstep_MAP_INJ` statement and eight pairs of complete original output trees.
+The Nat-to-Bool renaming collapses registers outside the state support while
+preserving NONE; the probe proves each `inj_on_state` premise before reporting
+T. Cases cover empty/self/start/search/emit/cycle/non-cycle/existing scratch.
+`ParmoveFstepMapInjParity` kernel-replays both outputs and applies the actual
+generic theorem with each proved local-support premise. The theorem retains
+independent input/output register carriers and no global injectivity or safety
+premise. This is deterministic-step renaming, not full compiler correctness.
+
 `wordconvs_program_mono_probe.out` prints the complete original `every_var_mono`
 and eleven same-input predicate pairs replayed by `WordConvsProgramMonoParity`.
 These include Call NONE ignoring its populated handler, returning Calls with and
