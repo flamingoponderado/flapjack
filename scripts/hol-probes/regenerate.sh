@@ -3182,3 +3182,7 @@ run_probe reg_alloc_state_foreach_probeScript.sml reg_alloc_state_foreach_probe.
 run_probe parmove_preserves_moves_pmov_probeScript.sml parmove_preserves_moves_pmov_probe.out \
   pmv_terminal pmv_pending pmv_output \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_preserves_moves_parmove_probeScript.sml parmove_preserves_moves_parmove_probe.out \
+  pmm_shared pmm_cycle pmm_bool pmm_output pmm_self pmm_empty \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

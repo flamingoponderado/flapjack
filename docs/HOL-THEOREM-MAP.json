@@ -43177,5 +43177,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.10): full original word_to_stackProofScript.sml:11738-11746 and underlying word_to_stackScript.sml:52-55,252-262,286-291,417-451 compared with getCodeHandlerLabelsCopyRet. Retains both performance and handler flags, full frame triple, arbitrary return-value payload type/list and native continuation, with both original label-set preservation equalities. The actual reviewed wStackLoadNative/wLiveNative/stackMoveNative/copyRetAuxNative/copyRetNative definitions and accepted StackProps label extractors are used. Exact HolProg width preserves original constructor payloads; sole word-carrier translation is positive HOL dimension to BitVec width with NeZero width. HOL sets use Lean Set (Nat x Nat); list pairs remain List, cutsets remain Spt Unit, bitmaps remain AppList (BitVec width) x Nat. Return-list payload type is independent, as in original LENGTH-only definition. Zero/successor induction for copy_ret_aux matches source n=0/n-1 guarded recursion. No frame/register bound, convention, caller success, supplied target-label relation, evaluator/output predicate beyond the original wLive equation, or total HD/EL default is added. Fourteen fresh original complete-set assertions all evaluate to T and identical inputs are kernel-replayed, including nonempty owned handler/code sets, flags, loops, irregular counts and width one. This helper theorem does not establish the full word_to_stack_comp_code_labels statement or source-to-RISC-V correctness; cross-language source review remains distinct from kernel checking."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PreservesMoves/Parmove.lean",
+    "lean_name": "parmovePreservesMoves",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "parmove_preserves_moves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 w1a4.10: original1063-1084 and fresh original full theorem type. Arbitrary alpha pair list, original windmill/member/nonself conjunction, SOME destination membership in actual parmove output. Inherited computational DecidableEq uses propositional equality without extra equality laws. Derives lifted initial wf through SOME injectivity and wf_init, applies accepted pmovPreservesMoves, derives terminal emitted output via unconditional pmov_final, transports membership through wrapper reverse. No supplied output, scratch safety, RTC or extra invariant premise. Coordinator acceptance pending."
   }
 ]

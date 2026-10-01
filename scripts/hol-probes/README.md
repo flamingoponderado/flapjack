@@ -1,3 +1,11 @@
+`parmove_preserves_moves_parmove_probe.out` contains six direct original scheduler
+observations for shared sources, a cycle, Bool registers, emitted order, self moves
+and empty input. `ParmovePreservesMovesParmoveParity` replays the rows and applies
+the full preservation theorem with internally checked original premises. These
+fixtures are regression evidence, not a cross-prover equivalence proof. Regenerate
+with `HOL_PROBE_ONLY=parmove_preserves_moves_parmove_probeScript.sml` and the
+read-only prebuilt CakeML register-allocation theory directory.
+
 `word_to_stack_comp_native_probe.out` contains 19 direct original comp_def observations,
 kernel-replayed by WordToStackNativeCompileParity. Includes recursive returning/handled
 Calls, valid/invalid immediates and Seq/If/Call bitmap threading. The complete

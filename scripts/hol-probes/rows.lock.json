@@ -2929,6 +2929,12 @@
       "sha256": "8acca401164b2a25b67279049d2a1ce3bf09029e8cbeb85f6ba764c4232fd8dd"
     },
     {
+      "bytes": 72,
+      "out": "parmove_preserves_moves_parmove_probe.out",
+      "rows": 6,
+      "sha256": "66de50f4ff2e283dff6d24dbc23d737709d3ddb6b54b5e3f3856c00f7fb51db0"
+    },
+    {
       "bytes": 42,
       "out": "parmove_preserves_moves_pmov_probe.out",
       "rows": 3,
