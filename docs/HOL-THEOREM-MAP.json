@@ -43899,6 +43899,15 @@
     "reviewer": "flapjack-luna-c exact source5708-5724: arbitrary Nat next, only original allocation/stack predicate premise, same predicate at next+4. Reuses reviewed native isAllocVar/isStackVar MOD4 residues1/3, no bound/wf/distinct/word-width or SSA-state premise. Actual source use list_next_var_rename_props5768/5776 tracked6->7. Eight fresh direct original predicate observations incl physical-register and large Nat boundaries, six kernel theorem applications. The original local proofs are replayed literally in the Flapjack-side HOL probe and separately labeled source_replay, not claimed exported DB theorems. No executable behavior change. Coordinator acceptance pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/LimitVar.lean",
+    "lean_name": "limitVar",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "limit_var_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-01: full original1816-1820 definition accepts arbitrary native wordLang program, let x=reviewed max_var prog then x+(4-(x MOD4))+1 with identical associativity and natural subtraction. Full actual native maxVarHOL, MlString/Spt/native instruction carriers, including width64-dependent FP, absent-return ignored handler and ignored Load16 registers. Only positive-width BitVec carrier translation; NeZero retained, no wf/limit/success premise. Fresh original full exported definition/type plus12 same-input maximum/limit/class/strict-bound tuples,13 kernel fixtures all4residues/zero/multiples/widths1-32-64-80/hugeNat/Call/ignoredLoad16. Body/type pinned; no executed compiler change. Actual production uses numeric helper/upstream distinct carrier; linked .30.1.2.1 remainsOPEN until native routing or measured exception accepted. Definition inventory remainsOPEN; coordinator source review pending."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/HandlerLabels.lean",
     "lean_name": "wordToStackGoodHandlerLabelsIncr",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
