@@ -1,5 +1,6 @@
 import Flapjack.HolRef
 import Flapjack.Pancake.WordLang
+import Flapjack.Pancake.WordLang.OccurrencesExact
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Compiler.Backend.RegAlloc
 
@@ -490,6 +491,16 @@ def postAllocConventions {width : Nat} (k : Nat) (program : WordLangProg (BitVec
   everyVar isPhyVar program ∧
     everyStackVar (fun name => decide (name ≥ 2 * k)) program ∧
     callArgConvention program
+
+/-- Literal post-allocation convention over the faithful Spt-backed program.
+The positive-width word translation is the sole carrier difference. -/
+@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "post_alloc_conventions_def"
+  (words_as_type_indexed_bitvec)]
+def postAllocConventionsHOL {width : Nat} [NeZero width]
+    (k : Nat) (program : WordLangProgHOL (BitVec width)) : Bool :=
+  everyVarHOL isPhyVar program &&
+    (everyStackVarHOL (fun name => decide (name ≥ 2 * k)) program &&
+      callArgConventionHOL program)
 
 /-- Exact HOL port of the positive-dimensional word-type declaration
 HOL `distinct_tar_reg_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`),
