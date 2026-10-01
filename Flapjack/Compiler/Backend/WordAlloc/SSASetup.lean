@@ -23,13 +23,16 @@ def listNextVarRename (names : List Nat) (ssa : Spt Nat) (next : Nat) :
     (name :: names, ssa'', next'')
 
 /-- Literal native SSA prologue. The source body argument is unused, but
-retains its full native carrier. Executed list-state setup remains tracked
+retains its full native carrier. Its input and output word dimensions are
+independently quantified in HOL and in this definition. Executed list-state
+setup remains tracked
 separately; this definition alone does not complete that route. -/
 @[hol "cakeml/compiler/backend/word_allocScript.sml" "setup_ssa_def"
   (words_as_type_indexed_bitvec)]
-def setupSSA {width : Nat} [NeZero width] (count limit : Nat)
-    (_program : WordLangProgHOL (BitVec width)) :
-    WordLangProgHOL (BitVec width) × Spt Nat × Nat :=
+def setupSSA {inputWidth : Nat} {outputWidth : Nat}
+    [NeZero inputWidth] [NeZero outputWidth] (count limit : Nat)
+    (_program : WordLangProgHOL (BitVec inputWidth)) :
+    WordLangProgHOL (BitVec outputWidth) × Spt Nat × Nat :=
   let arguments := evenList count
   let (names, ssa, next) := listNextVarRename arguments .ln limit
   (.move 1 (names.zip arguments), ssa, next)

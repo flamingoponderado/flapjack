@@ -15,3 +15,7 @@ val _ = (print "even_list_def=";print_thm(DB.fetch "word_alloc" "even_list_def")
 val _ = (print "next_var_rename_def=";print_thm(DB.fetch "word_alloc" "next_var_rename_def");print "\n");
 val _ = (print "list_next_var_rename_def=";print_thm(DB.fetch "word_alloc" "list_next_var_rename_def");print "\n");
 val _ = (print "setup_ssa_def=";print_thm(DB.fetch "word_alloc" "setup_ssa_def");print "\n");
+val _ = out "ss_setup_1_to_80" ``let (p,t,n) = (setup_ssa 3 5 (Assign 999 (Var 999):1 wordLang$prog):80 wordLang$prog # num num_map # num) in (p,MAP (\k.lookup k t) [0;2;4;6],n)``;
+val _ = out "ss_setup_80_to_1" ``let (p,t,n) = (setup_ssa 3 101 (Assign 999 (Var 999):80 wordLang$prog):1 wordLang$prog # num num_map # num) in (p,MAP (\k.lookup k t) [0;2;4;6],n)``;
+val setup_type_text = type_to_string(type_of ``setup_ssa``);
+val _ = print ("ss_setup_original_type=" ^ setup_type_text ^ "\n");

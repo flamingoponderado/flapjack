@@ -24,3 +24,6 @@ setup_ssa_def=⊢ ∀n lim prog.
        (new_ls,ssa',n') = list_next_var_rename args LN lim
      in
        (Move1 (ZIP (new_ls,args)),ssa',n'))
+ss_setup_1_to_80=(Move1 [(5,0); (9,2); (13,4)],[SOME 5; SOME 9; SOME 13; NONE],17)
+ss_setup_80_to_1=(Move1 [(101,0); (105,2); (109,4)],[SOME 101; SOME 105; SOME 109; NONE],113)
+ss_setup_original_type=:num -> num -> α prog -> β prog # num sptree$num_map # num

@@ -16,7 +16,7 @@ example : let r := nextVarRename 9 (sptFromAList [(9,99),(1,88)]) 101
     (101,[some 88,some 101],105) := by decide +kernel
 private def setupObservation {width : Nat} [NeZero width] (n start : Nat)
     (p : WordLangProgHOL (BitVec width)) :=
-  let r := setupSSA n start p
+  let r := setupSSA (outputWidth := width) n start p
   (match r.1 with | .move tag moves => (tag,moves) | _ => (0,[]), [0,2,4,6].map (fun k => sptLookup k r.2.1),r.2.2)
 example : setupObservation 0 7 (.skip : WordLangProgHOL (BitVec 1)) =
   ((1, []),[none,none,none,none],7) := by decide +kernel
@@ -26,4 +26,23 @@ example : setupObservation 3 5 (.skip : WordLangProgHOL (BitVec 64)) =
   ((1, [(5,0),(9,2),(13,4)]),[some 5,some 9,some 13,none],17) := by decide +kernel
 example : setupObservation 3 101 (.assign 999 (.var 999) : WordLangProgHOL (BitVec 80)) =
   ((1, [(101,0),(105,2),(109,4)]),[some 101,some 105,some 109,none],113) := by decide +kernel
+private def heterogeneousObservation {inputWidth outputWidth : Nat}
+    [NeZero inputWidth] [NeZero outputWidth] (n start : Nat)
+    (p : WordLangProgHOL (BitVec inputWidth)) :=
+  let r := setupSSA (outputWidth := outputWidth) n start p
+  (match r.1 with | .move tag moves => (tag,moves) | _ => (0,[]),
+    [0,2,4,6].map (fun k => sptLookup k r.2.1),r.2.2)
+example : heterogeneousObservation (outputWidth := 80) 3 5
+    (.assign 999 (.var 999) : WordLangProgHOL (BitVec 1)) =
+    ((1,[(5,0),(9,2),(13,4)]),[some 5,some 9,some 13,none],17) := by decide +kernel
+example : heterogeneousObservation (outputWidth := 1) 3 101
+    (.assign 999 (.var 999) : WordLangProgHOL (BitVec 80)) =
+    ((1,[(101,0),(105,2),(109,4)]),[some 101,some 105,some 109,none],113) := by decide +kernel
+-- The unused input carrier must not constrain the independently typed output.
+example : (setupSSA (outputWidth := 80) 3 5
+    (.assign 999 (.var 999) : WordLangProgHOL (BitVec 1))).1 =
+    (.move 1 [(5,0),(9,2),(13,4)] : WordLangProgHOL (BitVec 80)) := by rfl
+example : (setupSSA (outputWidth := 1) 3 101
+    (.assign 999 (.var 999) : WordLangProgHOL (BitVec 80))).1 =
+    (.move 1 [(101,0),(105,2),(109,4)] : WordLangProgHOL (BitVec 1)) := by rfl
 end Flapjack.Test.SSASetupParity
