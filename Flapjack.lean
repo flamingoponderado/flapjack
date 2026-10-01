@@ -1,8 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Heuristics
-import Flapjack.Compiler.Backend.Parmove.DStepsSteps
 import Flapjack.Compiler.Backend.WordAlloc.StackOnly
+import Flapjack.Compiler.Backend.WordAlloc.Heuristics
+import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
+import Flapjack.Misc.FindIndex
 import Flapjack.Compiler.Backend.WordAlloc.TotalColour
 import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
+import Flapjack.Compiler.Backend.Parmove.DStepsSteps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InsertBitmapPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LivePrefix
@@ -265,6 +268,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Colour
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetDeletion
+import Flapjack.Compiler.Backend.RegAlloc.Proofs
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Leaves
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckCol
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetInsertion
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
