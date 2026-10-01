@@ -3528,6 +3528,17 @@ run_probe word_convs_code_label_carriers_probeScript.sml word_convs_code_label_c
   clc_bool clc_unit clc_list clc_option \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe word_convs_no_alloc_def_probeScript.sml word_convs_no_alloc_def_probe.out \
+  wcna_01_mt wcna_02_seq wcna_03_loop wcna_04_if wcna_05_call wcna_06_alloc wcna_07_loc wcna_08_share wcna_09_install wcna_10_skip wcna_11_move wcna_12_inst wcna_13_assign wcna_14_get wcna_15_set wcna_16_store wcna_17_consts wcna_18_raise wcna_19_return wcna_20_break wcna_21_continue wcna_22_tick wcna_23_heap wcna_24_code wcna_25_data wcna_26_ffi wcna_call_none_none_width1 wcna_call_return_only_width1 wcna_call_both_present_width1 \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_convs_no_mt_def_probeScript.sml word_convs_no_mt_def_probe.out \
+  wcnm_01_mt wcnm_02_seq wcnm_03_loop wcnm_04_if wcnm_05_call wcnm_06_alloc wcnm_07_loc wcnm_08_share wcnm_09_install wcnm_10_skip wcnm_11_move wcnm_12_inst wcnm_13_assign wcnm_14_get wcnm_15_set wcnm_16_store wcnm_17_consts wcnm_18_raise wcnm_19_return wcnm_20_break wcnm_21_continue wcnm_22_tick wcnm_23_heap wcnm_24_code wcnm_25_data wcnm_26_ffi wcnm_call_none_none_width1 wcnm_call_return_only_width1 wcnm_call_both_present_width1 \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_convs_no_share_inst_def_probeScript.sml word_convs_no_share_inst_def_probe.out \
+  wcns_01_mt wcns_02_seq wcns_03_loop wcns_04_if wcns_05_call wcns_06_alloc wcns_07_loc wcns_08_share wcns_09_install wcns_10_skip wcns_11_move wcns_12_inst wcns_13_assign wcns_14_get wcns_15_set wcns_16_store wcns_17_consts wcns_18_raise wcns_19_return wcns_20_break wcns_21_continue wcns_22_tick wcns_23_heap wcns_24_code wcns_25_data wcns_26_ffi wcns_call_none_none_width1 wcns_call_return_only_width1 wcns_call_both_present_width1 \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe word_to_stack_no_shmemop_return_probeScript.sml word_to_stack_no_shmemop_return_probe.out \
   cr_0_safe cr_0_forbidden cr_1_safe cr_1_forbidden cr_2_safe cr_2_forbidden cr_3_safe cr_3_forbidden cr_4_safe cr_4_forbidden cr_5_safe cr_5_forbidden cr_6_safe cr_6_forbidden cr_7_safe cr_7_forbidden \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
@@ -3535,6 +3546,29 @@ run_probe word_to_stack_no_shmemop_return_probeScript.sml word_to_stack_no_shmem
 run_probe word_to_stack_no_shmemop_inst_probeScript.sml word_to_stack_no_shmemop_inst_probe.out \
   ci_skip ci_const ci_binop_imm ci_binop_reg ci_shift_imm ci_shift_reg ci_div ci_long_mul ci_long_div ci_carry ci_add_overflow ci_sub_overflow ci_load ci_load8 ci_load16 ci_load32 ci_store ci_store8 ci_store16 ci_store32 ci_fpless ci_fplessequal ci_fpequal ci_fpabs ci_fpneg ci_fpsqrt ci_fpadd ci_fpsub ci_fpmul ci_fpdiv ci_fpfma ci_fpmov ci_fpmovtoreg ci_fpmovfromreg ci_fptoint ci_fpfromint ci_fpmovtoreg1 ci_fpmovfromreg1 ci_fpmovtoreg32 ci_fpmovfromreg32 ci_fpmovtoreg80 ci_fpmovfromreg80 \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+run_probe ssa_map_bounds_probeScript.sml ssa_map_bounds_probe.out \
+  mb_empty mb_valid mb_same mb_bound mb_physical mb_invalid mb_large_physical mb_large mb_overwrite mb_more \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_insert_probeScript.sml ssa_locals_insert_probe.out \
+  fi_full fi_source_type fi_target_type fi_value_type fi_set_var_full fi_empty fi_preserve \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_map_step_probeScript.sml ssa_map_step_probe.out \
+  ml_full ml_empty ml_valid ml_rejected ml_physical ml_invalid ml_large \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_merge_correct_right_probeScript.sml ssa_merge_correct_right_probe.out \
+  mr_full mr_type_ls mr_type_na mr_type_ssaL mr_type_ssaR mr_type_stR mr_type_cstR mr_type_pri \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_merge_correct_left_probeScript.sml ssa_merge_correct_left_probe.out \
+  mlc_full mlc_type_ls mlc_type_na mlc_type_ssaL mlc_type_ssaR mlc_type_stL mlc_type_cstL mlc_type_pri \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_physical_state_updates_probeScript.sml ssa_physical_state_updates_probe.out \
+  ph_set_full ph_set_type_st ph_set_type_cst ph_list_full ph_list_type_st ph_list_type_cst \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_no_shmemop_flat_probeScript.sml word_to_stack_no_shmemop_flat_probe.out \
   fe_move_1 fe_return_1 fe_heap_1 fe_set_1 fe_get_1 fe_alloc_1 fe_consts_1 fe_loc_1 fe_install_1 fe_code_1 fe_data_1 fe_ffi_1 fe_move_32 fe_return_32 fe_heap_32 fe_set_32 fe_get_32 fe_alloc_32 fe_consts_32 fe_loc_32 fe_install_32 fe_code_32 fe_data_32 fe_ffi_32 fe_move_64 fe_return_64 fe_heap_64 fe_set_64 fe_get_64 fe_alloc_64 fe_consts_64 fe_loc_64 fe_install_64 fe_code_64 fe_data_64 fe_ffi_64 fe_move_80 fe_return_80 fe_heap_80 fe_set_80 fe_get_80 fe_alloc_80 fe_consts_80 fe_loc_80 fe_install_80 fe_code_80 fe_data_80 fe_ffi_80 fe_set_bitmap fe_set_const fe_set_lookup fe_set_load fe_set_op fe_set_shift \
