@@ -2160,9 +2160,14 @@ FP comparison results, both 32/64-bit transfer branches, and the FP default.
 They support regression review, not a cross-prover equivalence proof or
 production compiler routing claim.
 
+`word_lang_max_var_exp_probeScript.sml` captures eight original expression frame bounds: variables, nested loads, empty and nested operators, shifts, constants, lookups and mixed expressions. `WordLangMaxVarExpParity.lean` kernel-replays identical inputs. Full program max_var and native compiler wrapper routing remain separate work.
 `wordlang_cutsets_max_probeScript.sml` captures eight original `cutsets_max`
 equations over both Spt components, including raw and non-well-formed trees.
 `WordLangCutsetsMaxParity.lean` kernel-replays the same inputs. These rows are
 regression evidence, not a full compiler or cross-prover equivalence proof.
-
-`word_lang_max_var_exp_probeScript.sml` captures eight original expression frame bounds: variables, nested loads, empty and nested operators, shifts, constants, lookups and mixed expressions. `WordLangMaxVarExpParity.lean` kernel-replays identical inputs. Full program max_var and native compiler wrapper routing remain separate work.
+`parmove_emithead_probeScript.sml` captures 26 fresh original sem values, paired
+with kernel checks: reversed history, a three-move active path and valid final
+NONE source. Two wf-valid boundaries violate the constructor guards: closing
+a cycle changes register2 from17 to27; a pending read changes register4 from17
+to27. These are not accepted steps. The proof derives active no-read and retains
+both original guards. Full step_sem/RTC/scheduler assembly remains open.

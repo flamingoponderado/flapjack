@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveEmitHeadParity
 import Flapjack.Test.ParmoveSaveParity
 import Flapjack.Test.WordLangMaxVarExpParity
 import Flapjack.Test.ParmoveRemoveLastParity
