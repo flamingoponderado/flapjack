@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
 import Flapjack.Compiler.Backend.WordAlloc.HeuCall
