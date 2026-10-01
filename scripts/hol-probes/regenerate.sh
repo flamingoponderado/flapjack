@@ -3097,3 +3097,7 @@ run_probe word_alloc_canonize_sort_probeScript.sml word_alloc_canonize_sort_prob
 run_probe word_to_stack_unreach_codec_probeScript.sml word_to_stack_unreach_codec_probe.out \
   uc_skip uc_skip_seq uc_raise uc_return uc_break uc_continue uc_tail uc_merge uc_overlap uc_rest uc_assoc uc_loop uc_must uc_if uc_tail_handler uc_both \
   "$cake_dir/compiler/backend/word_unreachScript.sml" "$cake_dir/compiler/backend"
+
+run_probe reg_alloc_safe_div_probeScript.sml reg_alloc_safe_div_probe.out \
+  sd_0 sd_1 sd_2 sd_3 sd_4 sd_5 sd_6 sd_7 sd_8 sd_9 sd_10 sd_11 sd_12 sd_13 \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"

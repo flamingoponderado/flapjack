@@ -42642,5 +42642,13 @@
   "hol_name": "step_not_use_temp_before_assign",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead46.4: full original879-907 primitive Step preservation of not_use_temp_before_assign(REVERSE(active++emitted)). Same arbitrary generic register carrier and all six exact Step clauses, source wf and source Boolean safety only; no target wf/safety/initialization hypothesis. RemoveSelf leaves chronology unchanged; Start/Extend derive ordinary inserted move from pending wf; Save uses exact append equivalence and option split, including prior scratch initialization; EmitHead derives ordinary head from active FRONT source and destination wf and removes/reinserts it; EmitLast has identical chronology. Local untagged neutral-move equation is documented Flapjack infrastructure, no extra premise. Nine fresh original combined wf/source/target observations paired with genuine native Step theorem applications cover every constructor, cycle save, prior-written scratch read/save, and Bool carrier. Full RTC/pmov/Move/compiler results remain open. Coordinator source acceptance pending."
-}
+},
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SafeDiv.lean",
+    "lean_name": "safeDiv",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "safe_div_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-10-01 bead .11.5.10.5.8.2: original reg_allocScript774-776 safe_div x v = if v=0 then0 else x DIV v over arbitrary HOL num/Lean Nat. Literal guard, both branches and parameter order retained without positivity/range/success premise; ordinary Nat division agrees on nonzero denominators. Production cakeSafeDiv now delegates definitionally to this reviewed counterpart and actual spill-cost scan/selection continue through that wrapper. Fresh original fourteen zero/nonzero/remainder/large-numeral equations and same-input kernel replay, plus universal wrapper equation; full gates and coordinator source review required."
+  }
 ]

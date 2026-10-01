@@ -506,6 +506,7 @@
     {"bytes":258,"out":"reg_alloc_mk_bij_probe.out","rows":12,"sha256":"b7e9c9c4909dc012f2c85516433cd7f367f106375d48aa788b3de726c16f85c8"},
     {"bytes":983,"out":"reg_alloc_probe.out","rows":22,"sha256":"be65ef0dafe928cbd259cc02ee07758c789422e27b06c02ac3a107c69801c074"},
     {"bytes":185,"out":"reg_alloc_remap_probe.out","rows":12,"sha256":"3852b3f4916d853750298109c8af0bd0d2b7c5dbf3d0eac4067d4762abf12459"},
+    {"bytes":102,"out":"reg_alloc_safe_div_probe.out","rows":14,"sha256":"77be640a211ee71d7697652674ce16af134f9ee40705464891333e6572e53858"},
     {"bytes":131,"out":"reg_alloc_var_partition_probe.out","rows":10,"sha256":"3849b94bf71b14b9de020a777d210f9e4bebfdd343aa2a9cf03afdcb7ea25e55"},
     {"bytes":124,"out":"ret_hdl_probe.out","rows":5,"sha256":"01ead513f14fc6573dd9c190b816377cd5db837a1a08afbf1aa29c74f27eaf46"},
     {"bytes":212,"out":"ret_to_tail_probe.out","rows":4,"sha256":"af5f7346760b8e3960804864cfeade42c17635afa3a91b6d0dfa57ebbba45fc3"},
