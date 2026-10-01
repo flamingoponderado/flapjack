@@ -3130,3 +3130,7 @@ run_probe parmove_temp_steps_probeScript.sml parmove_temp_steps_probe.out \
 run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe reg_alloc_sorted_mem_probeScript.sml reg_alloc_sorted_mem_probe.out \
+  sorted_mem_empty sorted_mem_singleton sorted_mem_above sorted_mem_middle sorted_mem_gap sorted_mem_below sorted_mem_tail sorted_mem_duplicate sorted_mem_unsorted_stop sorted_mem_unsorted_continue sorted_mem_zero sorted_mem_large \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"

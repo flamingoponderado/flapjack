@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.RegAlloc.SortedMem
 import Flapjack.Compiler.Backend.RegAlloc.Initialization
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
 import Flapjack.Translator.Monadic.MonadBase.ArrayLength
