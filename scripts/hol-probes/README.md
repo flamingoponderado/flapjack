@@ -1,3 +1,8 @@
+`wordconvs_name_mono_probe.out` prints the complete original theorem and
+five matching cut-set/predicate fixtures in `WordConvsNameMonoParity`, including
+a non-well-formed tree and a failed implication sentinel. Regenerate with
+`HOL_PROBE_ONLY=wordconvs_name_mono_probeScript.sml` using the read-only original tree.
+
 `wordconvs_exp_mono_probe.out` freshly prints original every_var_exp_mono
 and eight same-expression predicate observations. Registered WordConvsExpMonoParity
 fixtures apply the full implication non-vacuously at widths1/32/64/80 for

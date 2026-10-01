@@ -3257,3 +3257,6 @@ run_probe word_convs_every_var_inst_mono_probeScript.sml word_convs_every_var_in
 run_probe parmove_scratch_order_wrapper_probeScript.sml parmove_scratch_order_wrapper_probe.out \
   pso_original_statement pso_empty pso_self pso_chain pso_swap pso_cycle pso_shared_source pso_bool_swap pso_duplicate_boundary \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe wordconvs_name_mono_probeScript.sml wordconvs_name_mono_probe.out \
+  nm_empty nm_single nm_both nm_invalid nm_guard_needed nm_original_theorem \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
