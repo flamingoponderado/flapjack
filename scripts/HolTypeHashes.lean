@@ -255,6 +255,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Leaves
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Inst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Control
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CutSets
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckCol
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetInsertion
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
