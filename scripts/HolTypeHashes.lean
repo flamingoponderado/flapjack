@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.Parmove.Independence
 import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
 import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
+import Flapjack.Compiler.Backend.WordAlloc.OracleColour
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ReturnNoHandler
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
 import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
