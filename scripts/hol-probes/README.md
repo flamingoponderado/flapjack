@@ -2591,3 +2591,10 @@ cross-language equivalence or source-to-RISC-V correctness. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_to_stack_program_bitmaps_probeScript.sml
 scripts/hol-probes/regenerate.sh` from the read-only prebuilt backend theory.
+`parmove_all_distinct_step_probe`, `parmove_state_to_list_probe`, and
+`parmove_temp_steps_probe` capture original observations replayed by the
+corresponding Lean parity modules. They cover primitive real-destination
+distinctness, generic three-list flattening, and RTC scratch safety respectively.
+`parmove_preservation_shape_probe` records the original preservation and
+renaming statements/types as an audit aid, not a port or equivalence proof.
+Its capture omits blank separator lines between printed HOL clauses.
