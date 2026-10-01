@@ -285,8 +285,10 @@ theorem cakeLprefix_iff_lprefix {xs : List α} {t : CakeLazyList α} :
     rw [List.getElem?_eq_getElem hi]
     exact hreads
 
-/-- The finite-list prefix relation `cakeListPrefix` is HOL's `isPREFIX`
-    (`≼` on event lists in `extend_with_resource_limit`). -/
+/-- Local Lean fact: the finite-list prefix relation `cakeListPrefix`
+    coincides with `List.IsPrefix` (`<+:`) on the same two lists. Whether this
+    corresponds to HOL's `isPREFIX`/`extend_with_resource_limit` is the external
+    review tracked by `flapjack-pxn.18.5.15.10.1`. -/
 theorem cakeListPrefix_iff_prefix {xs ys : List α} :
     cakeListPrefix xs ys ↔ xs <+: ys := by
   constructor

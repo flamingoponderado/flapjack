@@ -47,8 +47,9 @@ theorem implements_prime_trans_regression {source middle target : CakeBehaviourS
   cakeImplements'_trans hmiddle hsource
 
 /-! Representation-bridge regressions: the `CakeLazyList` carrier round-trips
-to `Flapjack.HolLList`, and `cakeLprefix`/`cakeListPrefix` agree with the HOL
-`LPREFIX (fromList _)`/`isPREFIX` relations on the related representation. -/
+to `Flapjack.HolLList`, and `cakeLprefix`/`cakeListPrefix` are the local Lean
+counterparts of the `HolLList.lprefix (fromList _)`/`List.IsPrefix` relations
+on the related representation. -/
 
 open Flapjack.HolLList in
 example (ll : HolLList Nat) : (cakeLazyListOfHolLList ll).toHolLList = ll :=
