@@ -3922,3 +3922,20 @@ and applies all eight full original-shaped cases. The rejected ShareInst proof
 uses only its original false source guard, with no target safety premise.
 These regressions do not establish cross-language equivalence or full compiler correctness.
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_primitives_probeScript.sml`.
+
+### Full arbitrary-program comp no-shared-memory preservation
+
+`word_to_stack_comp_no_shmemop_probeScript.sml` freshly captures the exported
+original `comp_no_shmemop` theorem and all seven original input/output carrier
+types. Twelve original predicate pairs cover deeply nested Loop, MustTerminate,
+Seq, If and returning/handled Calls with actual bitmap-producing children over
+widths1/32/64/80 and both perf and immediate-validation branches. Ignored tail
+handlers retain false-source/true-target sentinels.
+`WordToStackCompNoShmemopParity` kernel-reduces identical inputs and applies the
+full arbitrary-program theorem, including its actual compiler projections.
+The public statement has only the original source guard and compilation equality;
+all26 constructor cases and their genuine child IH are discharged internally.
+Structural size termination retains complete Call tuple equalities. The captured
+exported theorem is not a new literal replay of its original proof. These
+regressions do not prove HOL-to-Lean equivalence or whole compiler semantics.
+Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_shmemop_probeScript.sml`.
