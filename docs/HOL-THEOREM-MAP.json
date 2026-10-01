@@ -39032,5 +39032,226 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.43: literal1188-1195 forall bitmap/sourceframes/targetstack/lens/result, only abs_stack success premise, identical conjunction result.length=frames.length AND lens.length=frames.length. Same exact absStack/frame/WordLocW at one positive sourcewordwidth BitVec/NeZero translation. Structural frame induction extracts successful recursive result and original reconstructed result equality for ordinary and handler branches; fallback success contradictions match source. No extra guard, totalHD/default, evaluator or finite-map premise. Freshoriginal five framecountrows and kernel replay also check concrete lens counts. Actual compilerproofuses1436/1947/2022/2212/2511/2545/2725/5265; full relation/simulation separate."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree/InsertUnchanged.lean",
+  "lean_name": "sptInsertUnchanged",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "insert_unchanged",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.4.4.2): original2255-2264 generic tree/key/value; sole lookup=some value premise, full structural insert equality, no wf premise. Literal four constructors and recursive parity/address arithmetic. Needed by check_partial_col_INJ existing-key branch2667-2683. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+  "lean_name": "wMove",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wMove_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.5: exact83-86 maps DIV2 over both Nat coordinates, actual reviewed parmove scheduler, maps format_var k over both Option coordinates, then exact wMoveAux with unchanged k/f/fprime triple. Output ProgM(BitVec width) uses single shared positive word dimension and faithful MlString; qualifier only type-indexed word translation. No fuel/simulation premise or alternative executed scheduler. Eleven fresh direct original64-bit equality rows cover all formatting branches, register/spill swap cycles, odd DIV2/collision, underflow and fprime; width32 empty case kernel checked. Production comp/compile wiring tracked25 remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CheckPartialCol.lean",
+  "lean_name": "checkPartialColInj",
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "check_partial_col_INJ",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.4.4), original2632-2683: same generic colouring f, numeric name list, four unit Spt maps, original wf live/domain flive=image/scoped INJ/checker-success premises only. Full conjunction wf output/liveprime literal numset_list_insert/scoped INJ/full image-domain equality. Existing-name branch uses accepted insert_unchanged; new-name branch derives collision exclusion from input image and absent colour, preserves wf and image. No wf coloured, global injection or simulation assumption added. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_Skip",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[Skip] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the Skip constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_Tick",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[Tick] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the Tick constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_Break",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[Break] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the Break constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_Continue",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[Continue] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the Continue constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_Assign",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[Assign] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the Assign constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_Get",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[Get] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the Get constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_Set",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[Set] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the Set constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_LocValue",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[LocValue] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the LocValue constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_Raise",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[Raise] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the Raise constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_Store",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[Store] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the Store constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_Return",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[Return] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the Return constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_CodeBufferWrite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[CodeBufferWrite] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the CodeBufferWrite constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_DataBufferWrite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[DataBufferWrite] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the DataBufferWrite constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Leaves.lean",
+  "lean_name": "evaluateApplyColour_OpCurrHeap",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.23): HOL Resume evaluate_apply_colour[OpCurrHeap] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem with prog fixed to the OpCurrHeap constructor: same binders st cst f live lt, the three HOL premises (colouring_ok f prog live lt, word_state_eq_rel st cst, strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals) and the HOL existential conclusion (applyColourPost: ?perm'. source run with permute perm' is SOME Error or agrees with the coloured run on result, word_state_eq_rel and the result-selected live-scoped locals relation). No induction hypothesis (no sub-programs) and no extra premise. Finite maps via fmap_as_finite_support, width via words_as_type_indexed_bitvec. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+  "inherits_reals_as_rational_cuts": true
 }
 ]

@@ -2714,12 +2714,12 @@ run_probe reg_alloc_clash_tree_probeScript.sml reg_alloc_clash_tree_probe.out \
   delete_names col_collision partial_existing partial_collision delta_discard_writes seq_right_first branch_merge branch_fixed_collision \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
-run_probe word_to_stack_map_fst_probeScript.sml word_to_stack_map_fst_probe.out \
-  mf_empty mf_keys mf_collision mf_values \
-  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe parmove_invariants_probeScript.sml parmove_invariants_probe.out \
   iv_empty_path iv_single_path iv_chain_path iv_bad_path iv_empty_wf iv_pending_wf iv_repeated iv_pending_dest iv_pending_source iv_active_last_temp iv_active_front_temp iv_active_dest iv_active_path \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe word_to_stack_map_fst_probeScript.sml word_to_stack_map_fst_probe.out \
+  mf_empty mf_keys mf_collision mf_values \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_bitmap_append_probeScript.sml word_to_stack_bitmap_append_probe.out \
   ba_terminal ba_continuation ba_full_one ba_full_two \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -2731,3 +2731,6 @@ run_probe word_to_stack_abs_stack_prefix_probeScript.sml word_to_stack_abs_stack
 run_probe word_to_stack_abs_stack_lengths_probeScript.sml word_to_stack_abs_stack_lengths_probe.out \
   al_base al_plain al_handler al_nested al_mixed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_wmove_probeScript.sml word_to_stack_wmove_probe.out \
+  wm_empty wm_self wm_reg wm_load wm_store wm_spill wm_swap wm_spill_swap wm_odd wm_underflow wm_fprime \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

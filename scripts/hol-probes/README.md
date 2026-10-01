@@ -2009,9 +2009,6 @@ three-cycle and repeated destinations. `ParmoveFstepParity.lean` replays them.
 The recursion uses the original measure, not fuel. Full semantic correctness
 and the executed Word-to-Stack wrapper remain open.
 
-- `word_to_stack_abs_stack_prefix_probeScript.sml`: successful bitmap prefix preservation for base, ordinary, handler, recursive and mixed frames.
-
-- `word_to_stack_abs_stack_lengths_probeScript.sml`: exact successful abstraction frame counts for base, ordinary, handler, recursive and mixed frames.
 ### Parallel-move invariant group
 
 `parmove_invariants_probeScript.sml` captures thirteen original path/wf rows:
@@ -2020,3 +2017,14 @@ pending missing source/destination; allowed final temporary source; rejected
 FRONT temporary source, active temporary destination and broken active path.
 `ParmoveInvariantsParity.lean` kernel replays all rows. `wf_step`/`wf_steps` and
 full `parmove_correct` remain open.
+- `word_to_stack_abs_stack_prefix_probeScript.sml`: successful bitmap prefix preservation for base, ordinary, handler, recursive and mixed frames.
+
+- `word_to_stack_abs_stack_lengths_probeScript.sml`: exact successful abstraction frame counts for base, ordinary, handler, recursive and mixed frames.
+
+### Literal Word-to-Stack move wrapper
+
+`word_to_stack_wmove_probeScript.sml` captures eleven original64-bit equality
+rows for exact DIV2/parmove/format_var/wMoveAux composition. All formatting
+branches, register and spill swaps, odd indices and DIV2 collision, truncated
+offsets and fprime are replayed by `literalWMoveParityGuard` in the normal
+compiler parity suite. Production comp/compile wiring remains open.
