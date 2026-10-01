@@ -41313,6 +41313,14 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead flapjack-pxn.18.5.11.1.29.2): literal HOL evaluate_apply_colour Install Resume word_allocProofScript2133-2162 and original motive1105-1130. Original colouring_ok/state equality/scoped locals premises and full existential; no extra successful-installation, compilation, callback, target-run, or alias premise. Exact native evaluator clause WordSem Evaluate211-240 matches wordSemScript1118-1152: cut_env first, four Word reads, oracle0 config/program list, both buffer flushes, compile success/nonempty program, bytes/data/next-config checks, left-biased old-code union, ptr Loc head-label insertion, empty fp_regs, shifted oracle, stack_max NONE and stack_size LN. All errors use only original source Error alternative. Cut injectivity and write/live injectivity are derived from colouring_ok; locals extension uses the exact cut domain. Canonical imported exact fpRegs/store finite support maps and positive type-indexed BitVec width with universe-0 C/F; no sptree field is misclassified as finite map. No direct IEEE rendering call; full evaluator dependency inherits reals_as_rational_cuts and SOUNDNESS item 8. Full Install/FFI/ShareInst parent and overall correctness remain open pending coordinator acceptance."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepsCorrect.lean",
+  "lean_name": "steps_correct",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "steps_correct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.7: literal459-473 allfouroriginalpremises retained: windmill pending, EVERY IS_SOME mappedFST/SND renderedforallmemberisSome=true, actualSteps(initialemptyactive/history,finalemptypending/active). Conclusionforallenv originaleqenv(parsempendingenv)(seqsemreverseemittedenv). wf is derived and acceptedsteps_sem plus literal sem_init/sem_final gives result; no stronger premise, assumedalgorithm simulation or targetresult. Same Option/List/function/genericvaluecarriers. Kernelconstructed five-step cycle and four-step chain discharge genuineStepclosure, freshoriginalparallel/sequential values paired including changedtemporary excludedbyeqenv. Fullpmov->DSteps->Steps correctness remains open."
 }
 ,
   {
@@ -41342,13 +41350,5 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.29.3): HOL Resume evaluate_apply_colour[ShareInst] (word_allocProofScript.sml:2207 onward), i.e. the HOL theorem at ShareInst op v exp: same binders st cst f live lt, the three HOL premises and the HOL existential conclusion (applyColourPost, with the source oracle as HOL's exists_tac), no sub-program, no IH and no extra premise. Proof follows the HOL case over all eight operations: apply_colour_exp_lemma for the address; stores use strong_locals_rel_get_var for the stored variable (live by the Store branch of get_live) and keep the locals; loads go through sh_mem_set_var with strong_locals_rel_insert (INJ on get_writes UNION live from colouring_ok) and strong_locals_rel_subset; sh_mdomain and ffi are related by word_state_eq_rel; FinalFFI flushes both states. Untagged shStoreGen is the common unfolding of the four sh_mem_store* definitions (Flapjack infrastructure). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/Parmove/StepsCorrect.lean",
-    "lean_name": "steps_correct",
-    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
-    "hol_name": "steps_correct",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.7: literal459-473 allfouroriginalpremises retained: windmill pending, EVERY IS_SOME mappedFST/SND renderedforallmemberisSome=true, actualSteps(initialemptyactive/history,finalemptypending/active). Conclusionforallenv originaleqenv(parsempendingenv)(seqsemreverseemittedenv). wf is derived and acceptedsteps_sem plus literal sem_init/sem_final gives result; no stronger premise, assumedalgorithm simulation or targetresult. Same Option/List/function/genericvaluecarriers. Kernelconstructed five-step cycle and four-step chain discharge genuineStepclosure, freshoriginalparallel/sequential values paired including changedtemporary excludedbyeqenv. Fullpmov->DSteps->Steps correctness remains open."
   }
 ]

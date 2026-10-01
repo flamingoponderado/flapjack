@@ -2194,6 +2194,7 @@ inputs deliberately exceed wf: pmov_final is unconditional. It proves empty
 pending/active lists and an existential emitted history, not semantic correctness.
 
 `labsem_evaluate_probeScript.sml` checks all full native evaluator branches in 57 whole executions, including installed-code execution, byte/configuration guard rejection, failed-instruction rollback, clock exhaustion, shared-memory sequence shifts, external-call register/FP havoc and exact return/final events. The paired kernel fixtures live in `Flapjack/Test/LabSemEvaluateParity.lean`. Constructor-specific `loc_to_pc` computation equations are derived with `SIMP_CONV [Once loc_to_pc_def]` in the HOL kernel to eliminate the original existential label guard before recursive execution; these preserve the original evaluator and inputs.
+
 `parmove_stepscorrect_probeScript.sml` captures12fresh original parallel and
 reversed-sequential values for a cycle and chain. Kernel tests construct the
 actual five-step cycle and four-step chain relations and apply steps_correct
