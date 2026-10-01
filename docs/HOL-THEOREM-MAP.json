@@ -39131,7 +39131,7 @@
   {
     "hol_path": "cakeml/misc/miscScript.sml",
     "hol_name": "asm_write_bytearray_def",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/PostAsm.lean",
+    "lean_path": "Flapjack/Misc/AsmWriteBytearray.lean",
     "lean_name": "asmWriteBytearrayHOL",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,

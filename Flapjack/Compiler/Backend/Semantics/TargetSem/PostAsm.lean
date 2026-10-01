@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.Semantics.TargetSem.State
 import Flapjack.Compiler.Encoders.AsmSem.State
+import Flapjack.Misc.AsmWriteBytearray
 
 /-!
 # Exact targetSem post-FFI / post-cache-clear successor asm states
@@ -9,10 +10,11 @@ Counterpart of `cakeml/compiler/backend/semantics/targetSemScript.sml`'s
 the exact carriers `MachineConfig`, `HolAsmTarget` and `AsmState`.
 
 Both definitions refresh caller-saved registers and all FP registers from the
-machine state, write the returned bytes with `asm_write_bytearray`, and set the
-program counter to the link-register value.  The helper
-`asm_write_bytearray_def` (`cakeml/misc/miscScript.sml:3758-3760`) is ported
-here as its only consumer in this lane.
+machine state and set the program counter to the link-register value.
+`postFfiAsmHOL` additionally writes the returned bytes to memory with
+`asm_write_bytearray` (ported in `Flapjack.Misc.AsmWriteBytearray`), whereas
+`postCcacheAsmHOL` leaves memory unchanged and instead preserves the pointer
+register.
 
 `'a word` is rendered as `BitVec width` with the reviewed `[NeZero width]`
 discharge; `word8` is `BitVec 8`.  These modules supply definitions only, no
@@ -22,16 +24,6 @@ evaluator.
 namespace Flapjack
 
 open Flapjack.Compiler.Encoders.Asm
-
-/-- Exact HOL `asm_write_bytearray_def` (`cakeml/misc/miscScript.sml:3758-3760`):
-    `asm_write_bytearray a [] m = m` and
-    `asm_write_bytearray a (x::xs) m = (a =+ x) (asm_write_bytearray (a+1w) xs m)`. -/
-@[hol "cakeml/misc/miscScript.sml" "asm_write_bytearray_def" (words_as_type_indexed_bitvec)]
-def asmWriteBytearrayHOL {width : Nat} [NeZero width] (address : BitVec width)
-    (bytes : List (BitVec 8)) (memory : BitVec width → BitVec 8) : BitVec width → BitVec 8 :=
-  match bytes with
-  | [] => memory
-  | x :: xs => fun k => if k = address then x else asmWriteBytearrayHOL (address + 1) xs memory k
 
 /-- Exact HOL `post_ffi_asm_def` (`cakeml/compiler/backend/semantics/targetSemScript.sml:395-408`).
     Caller-saved registers and all FP registers come from the machine state;
