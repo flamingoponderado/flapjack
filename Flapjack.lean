@@ -1104,6 +1104,7 @@ import Flapjack.Compiler.Backend.RegAlloc.StateFilter
 import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
 import Flapjack.Compiler.Backend.RegAlloc.TagColour
 import Flapjack.Compiler.Backend.RegAlloc.MoveTable
+import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside

@@ -2728,6 +2728,15 @@ the finite fixtures do not prove cross-assistant equivalence.
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
 
+`reg_alloc_graph_construction_probe` captures 20 original EVAL results of
+`insert_edge`, `list_insert_edge`, `clique_insert_edge`, `extend_clique`,
+`mk_tags`, `mk_graph` (Delta/Set/Branch NONE/Branch SOME/Seq), `extend_graph`
+(Bool endpoints) and `init_ra_state` over literal `ra_state` records, with
+full result states including `Subscript` failures and their partial updates.
+`RegAllocGraphConstructionParity` kernel-replays every row. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_graph_construction_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_move_table_probe` captures the original types and 25 EVAL results
 of `tag_col`, `extract_tag`, `unbound_colour` (gaps, duplicates, unsorted
 inputs, large naturals), `pri_move_insert`, `undir_move_insert`, `moves_to_sp`

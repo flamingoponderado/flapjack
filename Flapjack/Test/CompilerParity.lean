@@ -19,6 +19,7 @@ import Flapjack.Test.WordToStackSsaCodecParity
 import Flapjack.Test.RegAllocSortedMemParity
 import Flapjack.Test.RegAllocListHelpersParity
 import Flapjack.Test.RegAllocMoveTableParity
+import Flapjack.Test.RegAllocGraphConstructionParity
 import Flapjack.Test.RegAllocSortMovesRouteParity
 import Flapjack.Test.ParmovePreservesMovesStepParity
 import Flapjack.Test.ParmoveAllDistinctStepsParity

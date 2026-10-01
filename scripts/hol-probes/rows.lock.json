@@ -3133,6 +3133,12 @@
       "sha256": "01dfe94275cdc543b9e92b6bab355cc1040aaca5f6eddaa6d43113feeb1f0a15"
     },
     {
+      "bytes": 6103,
+      "out": "reg_alloc_graph_construction_probe.out",
+      "rows": 20,
+      "sha256": "34edfa69d1a2c812c9da039cee5b9629f9020a73b1ffa506e3632fe4f960e22b"
+    },
+    {
       "bytes": 347,
       "out": "reg_alloc_in_clash_tree_probe.out",
       "rows": 18,

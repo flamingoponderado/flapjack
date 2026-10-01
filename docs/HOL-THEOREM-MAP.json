@@ -45404,5 +45404,69 @@
     "lean_name": "resortMoves",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.11.1): reg_allocScript.sml:1341-1343 resort_moves acc = map (λls. MAP SND (sort_moves ls)) acc. Lean: the reviewed sptMap of (sortMoves ls).map Prod.snd, using the accepted reg_alloc sortMoves; original type (num # α) list num_map -> α list num_map, {α : Type}. Executed cakeResortMovesSp over node arrays is not claimed here. Original EVAL rows in scripts/hol-probes/reg_alloc_move_table_probe.out kernel-replayed in Flapjack.Test.RegAllocMoveTableParity. No extra premise. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "insert_edge_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/GraphConstruction.lean",
+    "lean_name": "insertEdge",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.5.3): reg_allocScript.sml:201-212 insert_edge x y = do adjx <- adj_ls_sub x; adjy <- adj_ls_sub y; update_adj_ls x (sorted_insert y [] adjx); update_adj_ls y (sorted_insert x [] adjy) od; type num -> num -> ra_state -> (unit, state_exn) exc # ra_state. Lean: same sequence with adjLsSub/updateAdjLs and the reviewed sortedInsert; both reads precede both writes. HOL do-blocks rendered by the accepted MonadBase bind/ignoreBind/ret, literal `x <- return e` binders as bind (ret e). Accessors are the generated ra_state accessors of .10.5.2 (opus-wordsem e234f6ad2, pending coordinator acceptance). Original type confirmed by type_of; original EVAL rows with full ra_state results in scripts/hol-probes/reg_alloc_graph_construction_probe.out kernel-replayed in Flapjack.Test.RegAllocGraphConstructionParity. No extra premise. Proof-side port; the executed allocator builds its graph through CakeRegAlloc and is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "list_insert_edge_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/GraphConstruction.lean",
+    "lean_name": "listInsertEdge",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.5.3): reg_allocScript.sml:214-221 list_insert_edge x [] = return (); list_insert_edge x (y::ys) = do insert_edge x y; list_insert_edge x ys od. Lean: same clauses. HOL do-blocks rendered by the accepted MonadBase bind/ignoreBind/ret, literal `x <- return e` binders as bind (ret e). Accessors are the generated ra_state accessors of .10.5.2 (opus-wordsem e234f6ad2, pending coordinator acceptance). Original type confirmed by type_of; original EVAL rows with full ra_state results in scripts/hol-probes/reg_alloc_graph_construction_probe.out kernel-replayed in Flapjack.Test.RegAllocGraphConstructionParity. No extra premise. Proof-side port; the executed allocator builds its graph through CakeRegAlloc and is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "clique_insert_edge_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/GraphConstruction.lean",
+    "lean_name": "cliqueInsertEdge",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.5.3): reg_allocScript.sml:223-229 clique_insert_edge [] = return (); clique_insert_edge (x::xs) = do list_insert_edge x xs; clique_insert_edge xs od. Lean: same clauses. HOL do-blocks rendered by the accepted MonadBase bind/ignoreBind/ret, literal `x <- return e` binders as bind (ret e). Accessors are the generated ra_state accessors of .10.5.2 (opus-wordsem e234f6ad2, pending coordinator acceptance). Original type confirmed by type_of; original EVAL rows with full ra_state results in scripts/hol-probes/reg_alloc_graph_construction_probe.out kernel-replayed in Flapjack.Test.RegAllocGraphConstructionParity. No extra premise. Proof-side port; the executed allocator builds its graph through CakeRegAlloc and is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "extend_clique_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/GraphConstruction.lean",
+    "lean_name": "extendClique",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.5.3): reg_allocScript.sml:235-245 extend_clique [] cli = return cli; extend_clique (x::xs) cli = if MEM x cli then extend_clique xs cli else do list_insert_edge x cli; extend_clique xs (x::cli) od. Lean: same clauses, MEM as decidable list membership. HOL do-blocks rendered by the accepted MonadBase bind/ignoreBind/ret, literal `x <- return e` binders as bind (ret e). Accessors are the generated ra_state accessors of .10.5.2 (opus-wordsem e234f6ad2, pending coordinator acceptance). Original type confirmed by type_of; original EVAL rows with full ra_state results in scripts/hol-probes/reg_alloc_graph_construction_probe.out kernel-replayed in Flapjack.Test.RegAllocGraphConstructionParity. No extra premise. Proof-side port; the executed allocator builds its graph through CakeRegAlloc and is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "mk_tags_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/GraphConstruction.lean",
+    "lean_name": "mkTags",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.5.3): reg_allocScript.sml:1159-1176 mk_tags n fs fa = do inds <- return (GENLIST (\\x.x) n); st_ex_FOREACH inds (λi. let v = fa i in let remainder = v MOD 4 in if remainder = 1 then (case lookup v fs of NONE => update_node_tag i Atemp | SOME () => update_node_tag i Stemp) else if remainder = 3 then update_node_tag i Stemp else update_node_tag i (Fixed (v DIV 2))) od; type num -> num_set -> (num -> num) -> ra_state -> .... Lean: GENLIST (\\x.x) n as List.range n, the accepted stExForeach, sptLookup, updateNodeTag, % and /. HOL do-blocks rendered by the accepted MonadBase bind/ignoreBind/ret, literal `x <- return e` binders as bind (ret e). Accessors are the generated ra_state accessors of .10.5.2 (opus-wordsem e234f6ad2, pending coordinator acceptance). Original type confirmed by type_of; original EVAL rows with full ra_state results in scripts/hol-probes/reg_alloc_graph_construction_probe.out kernel-replayed in Flapjack.Test.RegAllocGraphConstructionParity. No extra premise. Proof-side port; the executed allocator builds its graph through CakeRegAlloc and is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "mk_graph_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/GraphConstruction.lean",
+    "lean_name": "mkGraph",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.5.3): reg_allocScript.sml:1179-1217 mk_graph, four clauses on clash_tree (Delta: wta/rta maps, extend_clique wta liveout, FILTER (λx. ¬MEM x wta), extend_clique rta; Set: MAP ta (MAP FST (toAList t)) then clique_insert_edge, liveout ignored; Branch: t1 then t2 from the same liveout, NONE extends t1_live by t2_live, SOME t cliques MAP ta (MAP FST (toAList t)); Seq: t2 first then t1 on its live set); type (num -> num) -> clash_tree -> num list -> ra_state -> (num list, state_exn) exc # ra_state. Lean: same structural recursion over the reviewed ClashTree with sptToAList, List.filter with decide. HOL do-blocks rendered by the accepted MonadBase bind/ignoreBind/ret, literal `x <- return e` binders as bind (ret e). Accessors are the generated ra_state accessors of .10.5.2 (opus-wordsem e234f6ad2, pending coordinator acceptance). Original type confirmed by type_of; original EVAL rows with full ra_state results in scripts/hol-probes/reg_alloc_graph_construction_probe.out kernel-replayed in Flapjack.Test.RegAllocGraphConstructionParity. No extra premise. Proof-side port; the executed allocator builds its graph through CakeRegAlloc and is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "extend_graph_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/GraphConstruction.lean",
+    "lean_name": "extendGraph",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.5.3): reg_allocScript.sml:1224-1230 extend_graph ta [] = return (); extend_graph ta ((x,y)::xs) = do insert_edge (ta x) (ta y); extend_graph ta xs od; original type (α -> num) -> (α # α) list -> ra_state -> ..., so the endpoint carrier is an arbitrary {α : Type}. HOL do-blocks rendered by the accepted MonadBase bind/ignoreBind/ret, literal `x <- return e` binders as bind (ret e). Accessors are the generated ra_state accessors of .10.5.2 (opus-wordsem e234f6ad2, pending coordinator acceptance). Original type confirmed by type_of; original EVAL rows with full ra_state results in scripts/hol-probes/reg_alloc_graph_construction_probe.out kernel-replayed in Flapjack.Test.RegAllocGraphConstructionParity. No extra premise. Proof-side port; the executed allocator builds its graph through CakeRegAlloc and is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "init_ra_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/GraphConstruction.lean",
+    "lean_name": "initRaState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.5.3): reg_allocScript.sml:1241-1248 init_ra_state ct forced fs (ta,fa,n) = do mk_graph (sp_default ta) ct []; extend_graph (sp_default ta) forced; mk_tags n fs (sp_default fa) od; type clash_tree -> (num # num) list -> num_set -> num num_map # num num_map # num -> ra_state -> (unit, state_exn) exc # ra_state. Lean: same sequence with the accepted spDefault, the tuple argument as a pattern-matched product. HOL do-blocks rendered by the accepted MonadBase bind/ignoreBind/ret, literal `x <- return e` binders as bind (ret e). Accessors are the generated ra_state accessors of .10.5.2 (opus-wordsem e234f6ad2, pending coordinator acceptance). Original type confirmed by type_of; original EVAL rows with full ra_state results in scripts/hol-probes/reg_alloc_graph_construction_probe.out kernel-replayed in Flapjack.Test.RegAllocGraphConstructionParity. No extra premise. Proof-side port; the executed allocator builds its graph through CakeRegAlloc and is not routed through it. Coordinator source acceptance pending."
   }
 ]
