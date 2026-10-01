@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackProps.LabelSafety
 import Flapjack.Pancake.WordConvs.EveryVarInstMono
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
 import Flapjack.Compiler.Backend.BackendProps

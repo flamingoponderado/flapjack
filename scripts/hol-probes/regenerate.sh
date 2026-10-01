@@ -3242,3 +3242,7 @@ run_probe parmove_preserves_moves_parmove_probeScript.sml parmove_preserves_move
 run_probe word_convs_every_var_inst_mono_probeScript.sml word_convs_every_var_inst_mono_probe.out \
   im_original_theorem im_skip im_const im_binreg im_binimm im_shift im_div im_longdiv im_load8 im_load16_ignored im_fpless im_fp64_to im_fp32_to im_fp80_from im_fpignored im_fp32_reject \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stackprops_label_safety_probeScript.sml stackprops_label_safety_probe.out \
+  safety_empty safety_self_zero safety_self_one safety_missing_zero safety_external_zero safety_external_one safety_missing_one safety_higher_entry safety_owned_handler safety_foreign_handler \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"

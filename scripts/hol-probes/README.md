@@ -2868,3 +2868,10 @@ observations: terminal scratch destination, pending destination, and full pendin
 output. ParmovePreservesMovesPmovParity kernel-replays the same inputs and applies
 the source-shaped preservation theorem with internally discharged well-formedness.
 Finite observations are regression evidence, not cross-prover equivalence.
+
+`stackprops_label_safety_probe.out` records ten original whole-program code/handler
+safety predicate pairs, including entry zero/one, missing/external labels, infinite
+external labels and owned versus foreign handlers. Kernel fixtures replay the
+full predicates; these observations are regression evidence, not cross-language
+equivalence. Regenerate with HOL_PROBE_ONLY=stackprops_label_safety_probeScript.sml
+and the read-only prebuilt backend semantics theories.

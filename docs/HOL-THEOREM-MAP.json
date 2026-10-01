@@ -43461,5 +43461,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison 2026-10-01 .18.5.15.2.30.1.1.6: full original13-22/exported DB.fetch universal theorem. Arbitrary Bool predicates P/Q, original pointwise implication AND every_var_inst P inst imply every_var_inst Q inst. Explicit positive-width WordLangInst BitVec carrier compared constructor-for-constructor with original asm arithmetic/memory/FP and wordLang98-133, including width64 transfer and Load16/Store16 catchalls; no independent payload specialization. words_as_type_indexed_bitvec retains shared original word dimension and NeZero positivity. All native constructors checked, immediate implication internally derived; no extra bound, target evaluation or successful pass premise. Original14positive predicate pairs and non64 negative guard kernel replayed. Proof axioms propext only. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/LabelSafety.lean",
+    "lean_name": "stackGoodCodeLabels",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "stack_good_code_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/LabelSafety.lean",
+    "lean_name": "stackGoodHandlerLabels",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "stack_good_handler_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
   }
 ]

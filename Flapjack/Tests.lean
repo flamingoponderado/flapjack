@@ -1,3 +1,4 @@
+import Flapjack.Test.StackPropsLabelSafetyParity
 import Flapjack.Test.WordConvsEveryVarInstMonoParity
 import Flapjack.Test.ParmovePreservesMovesParmoveParity
 import Flapjack.Test.WordConvsExpMonoParity
