@@ -4391,6 +4391,12 @@
       "out": "wrap_rt_probe.out",
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
+    },
+    {
+      "bytes": 267,
+      "out": "stackprops_code_labels_probe.out",
+      "rows": 15,
+      "sha256": "0951919b9c2820704747f40b352ab0cf70ab9bb1ee3a2535536992f1814929e6"
     }
   ],
   "version": 1
