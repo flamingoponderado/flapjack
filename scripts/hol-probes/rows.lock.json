@@ -4745,6 +4745,12 @@
       "out": "ssa_merge_route_probe.out",
       "rows": 8,
       "sha256": "834e72ddfaa838a17bb10f797229b6ffcf3bfcabdb91e687d0fd5bdeb31f5f08"
+    },
+    {
+      "bytes": 102,
+      "out": "word_max_inst_route_probe.out",
+      "rows": 7,
+      "sha256": "88c462e6d11ff3e7ab23a52b8072506af82a945789b7bcb8a3db0c997d04f578"
     }
   ],
   "version": 1

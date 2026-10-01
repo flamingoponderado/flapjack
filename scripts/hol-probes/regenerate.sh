@@ -3366,3 +3366,7 @@ run_probe word_alloc_limit_var_probeScript.sml word_alloc_limit_var_probe.out \
 run_probe ssa_rename_properties_probeScript.sml ssa_rename_properties_probe.out \
   rp_empty_alloc rp_empty_stack rp_alloc_duplicates rp_stack_duplicates rp_existing rp_overwrite rp_invalid rp_huge rp_full_source_replay \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_max_inst_route_probeScript.sml word_max_inst_route_probe.out \
+  load16_max store16_max load32_max store8_max load16_limit store16_limit load32_limit \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
