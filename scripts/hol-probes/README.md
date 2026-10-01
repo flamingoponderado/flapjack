@@ -2421,3 +2421,12 @@ empty internal nodes (which must be retained), nested raw trees and independent
 Bool/Nat/Unit payload types are covered. These finite observations do not
 establish cross-prover equivalence or route the executed allocator. Regenerate
 read-only with `HOL_PROBE_ONLY=spt_map_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_heu_inst_probe.out` contains fifty direct original instruction
+heuristic observations, kernel-replayed as explicit numeric counter trees by
+`HeuInstParity`. Every counted clause and FP catchall is covered, including
+aliasing, ignored addresses, raw trees, unchanged keys, large Nat counters and
+FP moves at widths1/32/64/128 (both integer registers counted at every width).
+Finite observations do not establish cross-prover equivalence or route the
+executed allocator. Regenerate read-only with
+`HOL_PROBE_ONLY=word_alloc_heu_inst_probeScript.sml scripts/hol-probes/regenerate.sh`.
