@@ -508,6 +508,7 @@
     {"bytes": 259, "out": "shrink_leaf_probe.out", "rows": 7, "sha256": "f0585ac0b5833d875bcfd05635e7d46487772342308b3f0bc74e087b32a19adb"},
     {"bytes": 78, "out": "smart_seq_probe.out", "rows": 4, "sha256": "3f1dbbfd4a309826007a398e2bf0ea085fb506b5dcbc0e48ce0d1ca0f3e998ea"},
     {"bytes": 234, "out": "sort_moves_probe.out", "rows": 5, "sha256": "ac8aa6095a996c4a75a0ecd112dc0c8a2992fe037d6c71f47cca6f74d20250bc"},
+    {"bytes": 930, "out": "spt_union_algebra_probe.out", "rows": 32, "sha256": "c740b8fc9984cee60ccc0ca30d3bf9be115dccd8e3f0f317b834b59da49f1394"},
     {"bytes": 568, "out": "sptree_difference_probe.out", "rows": 16, "sha256": "142a1129f00d9f0967b4f5bf2c0eb92ccb1bd027820f6cca3a942417846a927c"},
     {"bytes": 95, "out": "sptree_inter_mixed_probe.out", "rows": 4, "sha256": "9934887bf1e1502a411496fcd137c1ec0fc918fb5b563537aa3d12e2d59496f2"},
     {"bytes": 201, "out": "sptree_set_ops_probe.out", "rows": 10, "sha256": "b9997b14d8aa5eff0556183a9843de3a65ef2c968c5d8be262358beebf800841"},

@@ -1,3 +1,4 @@
+import Flapjack.Test.SptUnionAlgebraParity
 import Flapjack.Test.WordAllocEvenColourParity
 import Flapjack.Test.TargetSemMappedMemoryParity
 import Flapjack.Test.WordToStackNativeConfigParity

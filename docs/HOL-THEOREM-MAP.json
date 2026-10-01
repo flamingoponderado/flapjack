@@ -41610,4 +41610,37 @@
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.5.5: literal every_even_colour_def1586-1588, EVERY lambda(x,y) if is_phy_var x then y=x DIV2 else T over actual original Spt toAList. Exact constructor-for-constructor Spt Nat, native sptToAList mixed enumeration and tagged isPhyVar modulo2; List.all and Bool Nat equality compute original EVERY/equality, no generic BEq law premise. All arbitrary trees allowed, including BN LN LN; no wellformedness, bijection, domain or successful-oracle assumption. Twenty fresh original observations allT and same-input Lean kernel checks cover empty/physical/virtual/mixed, bad colours, unbounded natural keys beyond64bits, first-entry duplicate precedence and malformed/raw trees. Production oracle checker and native word_alloc remain separately dependency-linked open; no executed compiler routing claim."
 }
+,
+{
+  "lean_path": "Flapjack/Misc/Sptree/UnionAlgebra.lean",
+  "lean_name": "sptInsert_union",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "insert_union",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.4.11 original sptreeScript:939: Same key/value/arbitrary tree; insertion equals left union with singleton. Proof follows source smaller numeric key recursion, with one-step unfolding and no wf assumption. Exact constructor-for-constructor native Spt/Nat values; no carrier qualifier, wf, domain/disjointness, simulation or result premise added. Original kernel accepts four literal universally quantified statements via source theorem proof terms, plus28 same-input concrete raw-tree/overlap/left-bias observations allT. Lean fixtures apply all four universal interfaces and check same boundaries; Nat-valued union explicitly remains noncommutative. Existing approved externalSpt provenance reused unchanged, no listScript/trust-policy expansion. Genuine ShareInst clash-tree correctness prerequisite; full soundness/compiler theorem remains open."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree/UnionAlgebra.lean",
+  "lean_name": "sptUnion_assoc",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "union_assoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.4.11 original sptreeScript:1380: Same three arbitrary generic-valued trees and original right-nested equals left-nested orientation. Structural induction and all constructor cases, not lookup/domain equality only. Exact constructor-for-constructor native Spt/Nat values; no carrier qualifier, wf, domain/disjointness, simulation or result premise added. Original kernel accepts four literal universally quantified statements via source theorem proof terms, plus28 same-input concrete raw-tree/overlap/left-bias observations allT. Lean fixtures apply all four universal interfaces and check same boundaries; Nat-valued union explicitly remains noncommutative. Existing approved externalSpt provenance reused unchanged, no listScript/trust-policy expansion. Genuine ShareInst clash-tree correctness prerequisite; full soundness/compiler theorem remains open."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree/UnionAlgebra.lean",
+  "lean_name": "sptUnion_numSet_sym",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "union_num_set_sym",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.4.11 original sptreeScript:1893: Same unit-valued Spt number sets, arbitrary/malformed trees; structural induction. Value type specifically Unit, not a false generic-valued commutativity assertion. Exact constructor-for-constructor native Spt/Nat values; no carrier qualifier, wf, domain/disjointness, simulation or result premise added. Original kernel accepts four literal universally quantified statements via source theorem proof terms, plus28 same-input concrete raw-tree/overlap/left-bias observations allT. Lean fixtures apply all four universal interfaces and check same boundaries; Nat-valued union explicitly remains noncommutative. Existing approved externalSpt provenance reused unchanged, no listScript/trust-policy expansion. Genuine ShareInst clash-tree correctness prerequisite; full soundness/compiler theorem remains open."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree/UnionAlgebra.lean",
+  "lean_name": "sptUnion_insert_ln",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "union_insert_LN",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.4.11 original sptreeScript:1523: Same key/value/arbitrary tree, singleton union equals insertion; unconditional reverse of exact insert_union, matching source equation. Exact constructor-for-constructor native Spt/Nat values; no carrier qualifier, wf, domain/disjointness, simulation or result premise added. Original kernel accepts four literal universally quantified statements via source theorem proof terms, plus28 same-input concrete raw-tree/overlap/left-bias observations allT. Lean fixtures apply all four universal interfaces and check same boundaries; Nat-valued union explicitly remains noncommutative. Existing approved externalSpt provenance reused unchanged, no listScript/trust-policy expansion. Genuine ShareInst clash-tree correctness prerequisite; full soundness/compiler theorem remains open."
+}
 ]
