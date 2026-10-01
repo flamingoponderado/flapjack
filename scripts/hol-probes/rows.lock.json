@@ -263,6 +263,7 @@
     {"bytes": 368, "out": "mark_all_probe.out", "rows": 7, "sha256": "9655f4e7678e0d4640f4476944549070c33ba3a2a1a2d5e020fffe869c7f40a3"},
     {"bytes": 142, "out": "misc_app_list_probe.out", "rows": 6, "sha256": "fb4a280f0acd4ecd2b73b61d927fe830afcd31f0b24c963da8ea273d640455a8"},
     {"bytes": 55, "out": "misc_asm_write_bytearray_probe.out", "rows": 4, "sha256": "7d52f82bcd1d6224d7c237c70ff3904239ff20500d83a6c22595d6729966f8e7"},
+    {"bytes": 130, "out": "misc_lookup_any_find_index_probe.out", "rows": 8, "sha256": "aaadadfbc8d7d60e1cdf7160f55ce144944e48f7107fef7f234c06232f1442dd"},
     {"bytes": 628, "out": "mk_bij_probe.out", "rows": 8, "sha256": "5fd8c573d7dbea3c7f4de5f8fe4484dbb775705031987f2c9eb6bfdb608c314b"},
     {"bytes": 125, "out": "mkleaf_probe.out", "rows": 2, "sha256": "a97522da8985a4e1c2bb240ebbe50924a46d01f8c4c46392900b8067d1e65527"},
     {"bytes": 344, "out": "mknode_probe.out", "rows": 3, "sha256": "28c4ad224cbd50e28ce00412f7d61105bae92a4a8d3dea9457d2646badbc3009"},

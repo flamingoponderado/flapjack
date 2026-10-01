@@ -2007,6 +2007,17 @@ run_probe num_set_audit_probeScript.sml num_set_audit_probe.out \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
+# Direct original observations of misc$lookup_any (an spt lookup with a default
+# on a missing key) and misc$find_index (first-match search with a starting
+# offset): hit / hit at key 0 / miss-default / empty for lookup_any, and
+# hit-at-0 / later-hit / miss / earlier-duplicate for find_index (bead
+# flapjack-pxn.18.5.15.10.10).
+run_probe misc_lookup_any_find_index_probeScript.sml misc_lookup_any_find_index_probe.out \
+  lu_hit lu_hit_zero lu_miss_default lu_empty_default \
+  fi_zero fi_middle fi_absent fi_duplicate \
+  "$cake_dir/misc/miscScript.sml" \
+  "$cake_dir/misc"
+
 # Every name/var/stack-var predicates (num_set domain model): the probe also
 # shows every_stack_var ignores the scalar FFI registers (only every_name / body).
 run_probe word_lang_every_name_probeScript.sml word_lang_every_name_probe.out \

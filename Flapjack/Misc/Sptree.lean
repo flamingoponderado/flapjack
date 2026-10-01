@@ -1521,4 +1521,11 @@ def sptFromList2 {α : Type} (values : List α) : Spt α :=
   (values.foldl (fun (acc : Nat × Spt α) value => (acc.1 + 2, sptInsert acc.1 value acc.2))
     (0, .ln)).2
 
+/-- Exact HOL `misc$lookup_any_def` (`cakeml/misc/miscScript.sml:344-350`):
+    `lookup_any x sp d = case lookup x sp of NONE => d | SOME m => m`, i.e. an
+    `sptLookup` with a default returned on a missing key. -/
+@[hol "cakeml/misc/miscScript.sml" "lookup_any_def"]
+def lookupAny {α : Type} (key : Nat) (tree : Spt α) (default : α) : α :=
+  (sptLookup key tree).getD default
+
 end Flapjack

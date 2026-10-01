@@ -2318,3 +2318,22 @@ evidence, not a cross-prover equivalence or whole-compiler correctness proof.
 `word_alloc_merge_stack_only_probeScript.sml` captures nine original full-tree equations for every move-analysis branch: present alloc/physical/stack source, absent stack alloc/physical source, missing/root deletion, fixed overwrite, and raw non-wf trees. Same-input kernel fixtures are registered in actual CompilerParity. This helper is not full stack analysis or allocator correctness.
 
 `parmove_correct_probeScript.sml` kernel-proves seven universal-environment instances of original `parmove_correct`, deriving the windmill premise by EVAL: empty, self, chain, cycle, fan-out, reordered chain and Boolean register/value carriers. Matching Lean kernel applications are imported by CompilerParity; this is theorem replay, not an executable compiler parity measurement.
+
+`misc_lookup_any_find_index_probeScript.sml` records direct original-HOL `EVAL`
+rows for the two misc prerequisites of the lab_to_target position lookups:
+`misc$lookup_any` (`cakeml/misc/miscScript.sml:344-350`, an `spt` lookup
+returning a default on a missing key) and `misc$find_index`
+(`cakeml/misc/miscScript.sml:1055-1058`, a first-match list search from a
+starting offset). The four `lookup_any` rows cover a hit, a hit at key 0, a
+miss returning the default, and the empty map; the four `find_index` rows cover
+a hit at offset 0, a hit at an offset greater than 0, a miss returning `NONE`,
+and an earlier duplicate that must win. The kernel replay is
+`Flapjack.Test.MiscLookupAnyFindIndexParity`, registered in the lake test root
+`Flapjack/Test/CompilerParity.lean`. The Lean ports are `lookupAny` in
+`Flapjack/Misc/Sptree.lean` and `findIndex` in `Flapjack/Misc/FindIndex.lean`;
+HOL `=` is rendered by Lean's standard `DecidableEq` for the generic element
+type (bead `flapjack-pxn.18.5.15.10.10`). Regenerate with
+`HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=misc_lookup_any_find_index_probeScript.sml
+scripts/hol-probes/regenerate.sh`. These finite observations are regression
+evidence, not a cross-prover equivalence proof.

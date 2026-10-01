@@ -2,6 +2,7 @@ import Flapjack.Test.ParmoveCorrectParity
 import Flapjack.Test.WordAllocMergeStackSetsParity
 import Flapjack.Test.ParmoveTempBeforeAssignParity
 import Flapjack.Test.FindIndexParity
+import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.WordAllocMergeStackOnlyParity
 import Flapjack.Test.ParmoveDStepsSteps
 import Flapjack.Test.WordAllocRemoveTempStackParity
@@ -1440,7 +1441,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks,
     Flapjack.Test.LabToTargetEncodingParity.runChecks,
-    Flapjack.Test.LabToTargetLabelsParity.runChecks
+    Flapjack.Test.LabToTargetLabelsParity.runChecks,
+    Flapjack.Test.MiscLookupAnyFindIndexParity.runChecks
     ].mapM id
   unless results.all id do
     IO.Process.exit 1
