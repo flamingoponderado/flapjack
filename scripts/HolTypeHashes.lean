@@ -2,7 +2,9 @@ import Flapjack.Pancake.WordLang.MaxVar
 import Flapjack.Pancake.WordLang.CutsetsMax
 import Flapjack.Pancake.WordLang.MaxVarInst
 import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.FFI
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Inst
+import Flapjack.Compiler.Backend.Parmove.StepsSem
 import Flapjack.Pancake.WordLang.MaxVarExp
 import Flapjack.Compiler.Backend.Parmove.StepSem
 import Flapjack.Compiler.Backend.Parmove.StepSem.EmitHead
