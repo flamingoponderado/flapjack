@@ -2462,6 +2462,9 @@ Finite observations do not establish cross-prover equivalence or executed
 allocator routing. Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_call_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `word_to_stack_full_read_bitmap_mixed_probeScript.sml` captures six original universal success-preservation applications at independently chosen bitmap/descriptor widths (8/1, 8/16, 1/32, 16/8, offset 8/32 and same-width 8/8), plus four actual success/zero/location guard equalities. Matching kernel applications include arbitrary independent positive widths. This repairs full_read_bitmap_append type generality; its proof and executed fullReadBitmap definition are unchanged.
+`word_to_stack_cutset_maximum_probe` captures twelve original cutset maxima, including duplicate/root keys, reordered and overlapping lists, sparse names and naturals above 2^80. Kernel fixtures replay the same inputs and apply the unconditional full list-to-Spt maximum correspondence. The production frame and compiler route remain separate dependency-linked work.
+
+`word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
 
 `reg_alloc_remap_probe.out` captures twelve fresh original list remapping and
 bijection traversal observations, kernel-replayed by `RegAllocRemapParity`.
