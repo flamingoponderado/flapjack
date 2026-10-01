@@ -142,6 +142,14 @@ open separate PRs; the coordinator merges reviewed work into the integration
 branch. Merge the updated integration branch back into agent branches with
 ordinary merges. Do not rebase or cherry-pick shared work.
 
+Ordinary-merge a peer's pushed branch when it supplies a dependency needed for
+your work; do not wait for coordinator integration just to consume that
+dependency. Coordinate overlapping file ownership, inspect the peer's reported
+verification scope, and run affected checks after merging. Record the peer
+branch and commit on your bead and in your next batch report. A peer merge does
+not close its beads or certify its ports: coordinator acceptance and the usual
+source-comparison requirements still apply.
+
 Before reporting a port complete, build affected Lean modules, run `lake test`,
 `scripts/check-hol-refs.py`, and `scripts/check-warnings.sh`. For executable
 compiler changes, compare the executed output with original Pancake where an

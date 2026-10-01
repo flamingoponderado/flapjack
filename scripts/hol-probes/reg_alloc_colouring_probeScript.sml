@@ -1,0 +1,34 @@
+load "bossLib";
+load "preamble";
+load "reg_allocTheory";
+open bossLib HolKernel Parse preamble reg_allocTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val s0 = ``<| adj_ls := [[1];[0;2];[1]]; node_tag := [Fixed 0; Atemp; Stemp]; degrees := [1;2;1]; dim := 3;
+  simp_wl := []; spill_wl := []; freeze_wl := []; avail_moves_wl := []; unavail_moves_wl := [];
+  coalesced := [0;1;2]; move_related := [F;F;F]; stack := [] |>``;
+val s1 = ``<| adj_ls := [[1;2];[0];[0];[]]; node_tag := [Fixed 1; Atemp; Atemp; Atemp]; degrees := [2;1;1;0]; dim := 4;
+  simp_wl := []; spill_wl := []; freeze_wl := []; avail_moves_wl := []; unavail_moves_wl := [];
+  coalesced := [0;1;2;3]; move_related := [F;F;F;F]; stack := [] |>``;
+val pnone = ``\(n:num) (ks:num list) (s:ra_state). ((M_success NONE):(num option, state_exn) exc, s)``;
+val plast = ``\(n:num) (ks:num list) (s:ra_state). ((M_success (SOME (LAST ks))):(num option, state_exn) exc, s)``;
+fun s t = subst [``S0:ra_state`` |-> s0, ``S1:ra_state`` |-> s1,
+  ``PNONE:num -> num list -> ra_state -> (num option, state_exn) exc # ra_state`` |-> pnone,
+  ``PLAST:num -> num list -> ra_state -> (num option, state_exn) exc # ra_state`` |-> plast] t;
+val _ = observe "rc_empty_ks" (s ``FST (remove_colours [0;1] [] (S0:ra_state))``);
+val _ = observe "rc_no_nodes" (s ``FST (remove_colours [] [3;4] (S0:ra_state))``);
+val _ = observe "rc_fixed" (s ``FST (remove_colours [0;1] [0;1;2] (S0:ra_state))``);
+val _ = observe "rc_dup_colours" (s ``FST (remove_colours [0] [0;0;1] (S0:ra_state))``);
+val _ = observe "rc_oob" (s ``FST (remove_colours [5] [1] (S0:ra_state))``);
+val _ = observe "rc_oob_after_empty" (s ``FST (remove_colours [0;5] [0] (S0:ra_state))``);
+val _ = observe "aat_none" (s ``(SND (assign_Atemp_tag [0;1;2] PNONE 1 (S0:ra_state))).node_tag``);
+val _ = observe "aat_pref" (s ``(SND (assign_Atemp_tag [0;1;2] PLAST 1 (S0:ra_state))).node_tag``);
+val _ = observe "aat_stemp" (s ``(SND (assign_Atemp_tag [0] PNONE 1 (S0:ra_state))).node_tag``);
+val _ = observe "aat_non_atemp" (s ``assign_Atemp_tag [0;1;2] PNONE 0 (S0:ra_state) = (M_success (), S0)``);
+val _ = observe "aat_oob" (s ``FST (assign_Atemp_tag [0;1;2] PNONE 5 (S0:ra_state))``);
+val _ = observe "aa_all" (s ``(FST (assign_Atemps 3 [2;9;1] PNONE (S1:ra_state)), (SND (assign_Atemps 3 [2;9;1] PNONE (S1:ra_state))).node_tag)``);
+val _ = observe "aa_pref" (s ``(SND (assign_Atemps 3 [] PLAST (S1:ra_state))).node_tag``);
+val _ = observe "aa_one_colour" (s ``(SND (assign_Atemps 1 [3] PNONE (S1:ra_state))).node_tag``);
+val _ = observe "fmc_hit" (s ``FST (first_match_col [1;0] [1;0] (S0:ra_state))``);
+val _ = observe "fmc_not_in_ks" (s ``FST (first_match_col [5] [0;1] (S0:ra_state))``);
+val _ = observe "fmc_empty" (s ``FST (first_match_col [0] [] (S0:ra_state))``);
+val _ = observe "fmc_oob" (s ``FST (first_match_col [0] [36893488147419103232] (S0:ra_state))``);

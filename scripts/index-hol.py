@@ -24,6 +24,9 @@ HOL_DEFINE_RUN = runpy.run_path(
 HOL_MONAD_ACCESSORS = runpy.run_path(
     str(Path(__file__).with_name("hol_sml_declarations.py"))
 )["monad_accessor_declarations"]
+HOL_MONAD_EXCEPTIONS = runpy.run_path(
+    str(Path(__file__).with_name("hol_sml_declarations.py"))
+)["monad_exception_declarations"]
 
 
 IDENT = r"[A-Za-z_][A-Za-z0-9_'$]*"
@@ -205,7 +208,7 @@ def parse_file(root: Path, path: Path) -> tuple[list[Entry], list[tuple[str, str
     }
     accessor_factories = {
         start - 1: (names, end)
-        for names, start, end in HOL_MONAD_ACCESSORS(text)
+        for names, start, end in HOL_MONAD_ACCESSORS(text) + HOL_MONAD_EXCEPTIONS(text)
     }
     relative = path.relative_to(root).as_posix()
     entries: list[Entry] = []
