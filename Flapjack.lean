@@ -22,6 +22,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
 import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
@@ -103,6 +104,9 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
+import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
+import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
+import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorPrelude
 import Flapjack.Compiler.Backend.WordToStack.ProductionSsaCodecDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionDeadCodecDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionCseCodecDomain

@@ -774,6 +774,19 @@ run_probe pan_lang_exceptions_probeScript.sml pan_lang_exceptions_probe.out \
   empty exception "$cake_dir/pancake/panLangScript.sml"
 run_probe pan_lang_fun_ids_probeScript.sml pan_lang_fun_ids_probe.out \
   empty call handler dec_call "$cake_dir/pancake/panLangScript.sml"
+run_probe word_to_stack_retained_frame_probeScript.sml word_to_stack_retained_frame_probe.out \
+  retained_frame_empty retained_frame_register_edge retained_frame_first_spill \
+  retained_frame_second_spill retained_frame_args_dominate retained_frame_equal_demand \
+  retained_frame_zero_registers retained_frame_large_name \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_allocator_stages_probeScript.sml word_to_stack_allocator_stages_probe.out \
+  allocator_stages_skip allocator_stages_tick allocator_stages_raise allocator_stages_tail_call \
+  "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_selector_prelude_probeScript.sml word_to_stack_selector_prelude_probe.out \
+  selector_prelude_const selector_prelude_var selector_prelude_lookup selector_prelude_load \
+  selector_prelude_add selector_prelude_shift selector_prelude_shift_oob selector_prelude_heap \
+  selector_prelude_load_offset selector_prelude_load_large_offset \
+  "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
 run_probe word_stack_frame_probeScript.sml word_stack_frame_probe.out \
   maxvar_skip limit_seq later_pair_f later_pair_alloc later_pair_slot_44 \
   later_pair_slot_46 later_pair_bounded \
@@ -3196,6 +3209,9 @@ run_probe wordconvs_code_labels_probeScript.sml wordconvs_code_labels_probe.out 
 
 run_probe word_to_stack_code_labels_probeScript.sml word_to_stack_code_labels_probe.out \
   lh_load_empty lh_load_many lh_move_zero lh_move_many lh_aux_zero lh_aux_many lh_ret_zero lh_ret_plain lh_ret_handler lh_ret_perf lh_ret_width_one lh_live_zero lh_live_frame lh_live_width_one \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_comp_code_labels_probeScript.sml word_to_stack_comp_code_labels_probe.out \
+  cl_skip cl_loc_spilled cl_raise cl_store cl_sequence cl_loop cl_tail_drops_handler cl_indirect_empty cl_indirect_nonempty cl_returning cl_owned_handler cl_wrong_owner cl_zero_frame cl_width_one \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 run_probe parmove_preserves_moves_step_probeScript.sml parmove_preserves_moves_step_probe.out \
   preserve_4_before preserve_4_after preserve_6_before preserve_6_after preserve_1_before preserve_1_after preserve_8_before preserve_8_after preserve_scratch_before preserve_scratch_after \
