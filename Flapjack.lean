@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.LabSem.Updates
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckPartialCol
+import Flapjack.Misc.Sptree.InsertUnchanged
 import Flapjack.Compiler.Backend.LabSem.Classifier
 import Flapjack.Compiler.Encoders.AsmSem
 import Flapjack.Compiler.Backend.LabSem.State
@@ -143,6 +145,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.PushPopEnv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.PermuteSwap
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColouringOk
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Motive
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
@@ -163,10 +168,13 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
 import Flapjack.Compiler.Backend.WordAlloc.InstructionWrites
+import Flapjack.Compiler.Backend.WordAlloc.ReadsExp
 import Flapjack.Compiler.Backend.WordAlloc.ProgramWrites
 import Flapjack.Compiler.Backend.WordAlloc.Colour
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckCol
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetInsertion
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.HolRef
@@ -787,6 +795,7 @@ import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.WordAllocLiveExpressionParity
 import Flapjack.Test.WordAllocProgramLivenessParity
 import Flapjack.Test.WordAllocInstructionWritesParity
+import Flapjack.Test.WordAllocReadsExpParity
 import Flapjack.Test.WordAllocProgramWritesParity
 import Flapjack.Test.WordAllocApplyColourExactParity
 import Flapjack.Test.CrepToLoopCompileExpExactParity
@@ -857,10 +866,16 @@ import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.Parmove
 import Flapjack.Compiler.Backend.Parmove.Semantics
+import Flapjack.Compiler.Backend.Parmove.Invariants
 import Flapjack.RiscV.CakeAllocatorBitsBridge
 import Flapjack.StackAlloc
 import Flapjack.StackAlloc.Runtime
