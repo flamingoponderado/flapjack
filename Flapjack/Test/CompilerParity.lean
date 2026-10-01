@@ -10,6 +10,15 @@ import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.StackPropsCodeLabelsParity
 import Flapjack.Test.BytesInMemParity
+import Flapjack.Test.ParmoveAllDistinctPmovParity
+import Flapjack.Test.ParmoveTempPmovParity
+import Flapjack.Test.ParmoveInjOnStateParity
+import Flapjack.Test.ParmoveFirstIndexParity
+import Flapjack.Test.RegAllocSafeDivParity
+import Flapjack.Test.WordToStackUnreachCodecParity
+import Flapjack.Test.WordToStackCseCodecParity
+import Flapjack.Test.WordToStackDeadCodecParity
+import Flapjack.Test.WordToStackSsaCodecParity
 import Flapjack.Test.RegAllocSortedMemParity
 import Flapjack.Test.RegAllocSortMovesRouteParity
 import Flapjack.Test.ParmovePreservesMovesStepParity

@@ -1,0 +1,12 @@
+{
+  "source_sha": "161c881ea61c6e21ead4fc6bd3eaa8f37fc953d9",
+  "imports": 1097,
+  "pins": 2578,
+  "candidate_names": 208,
+  "audit_sha256": "6e1836c7a8a6ad5b4df1d74f55e9608ad3a4aec7e45736bae4fb2caf756029b5",
+  "imports_source_sha256": {
+    "scripts/HolTypeHashes.lean": "713c87dd0822b27baad703d6fa47b9b367edf813399436ee480715ea0c0f2253",
+    "Flapjack.lean": "c8cfcf5ab70c706bf5dd1ba07f85ac8c8d82fee15c813892caf937cbe7e489c0",
+    "docs/HOL-TYPE-HASHES.json": "01fdb87a036a636a0dda664ab007d943b46bc8c67bc460cd862780123358f9f1"
+  }
+}
