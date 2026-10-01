@@ -88,6 +88,7 @@ import Flapjack.Compiler.Backend.WordAlloc.RemoveDead
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Motive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Loop
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Leaves
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
 import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
