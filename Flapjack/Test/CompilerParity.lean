@@ -511,6 +511,7 @@ import Flapjack.Test.WordAllocProgramLivenessParity
 import Flapjack.Test.WordAllocApplyColourExactParity
 import Flapjack.Test.WordAllocCutEnvLemmaParity
 import Flapjack.Test.WordAllocInstructionWritesParity
+import Flapjack.Test.WordAllocProgramWritesParity
 import Flapjack.Test.CakeSsaSharedParity
 import Flapjack.Test.CakeSsaMemoryParity
 import Flapjack.Test.CakeSsaLeafParity
