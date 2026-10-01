@@ -1,0 +1,11 @@
+load "bossLib"; load "preamble"; load "word_to_stackProofTheory";
+open HolKernel Parse bossLib preamble word_to_stackProofTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "hvg_empty" ``handler_val ([]:(bool option # num # num list) list) = 1``;
+val _ = out "hvg_plain_empty" ``handler_val [(NONE:bool option,77:num,[]:num list)] = 2``;
+val _ = out "hvg_handler_empty" ``handler_val [(SOME F,77:num,[]:num list)] = 5``;
+val _ = out "hvg_plain_three" ``handler_val [(NONE:bool option,11:num,[1;2;3]:num list)] = 5``;
+val _ = out "hvg_handler_two" ``handler_val [(SOME T,11:num,[7;9]:num list)] = 7``;
+val _ = out "hvg_mixed" ``handler_val [(NONE:bool option,11:num,[1;2]:num list);(SOME F,77,[]);(NONE,0,[3])] = 10``;
+val _ = out "hvg_middle_function" ``handler_val [(NONE:bool option,(\n:num. n+1),[9]:num list)] = 3``;
+val _ = out "hvg_frame_functions" ``handler_val [(SOME F,T,[(\n:num. n);(\n:num. n+1)])] = 7``;

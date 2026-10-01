@@ -45,11 +45,12 @@ def isSomeWord {width : Nat} [NeZero width] : Option (WordLoc (BitVec width)) �
   | some (.word _) => true
   | _ => false
 
-/-- HOL `read_mem` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml:2739-2742`). -/
+/-- HOL `read_mem` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml:2739-2742`),
+for an arbitrary memory codomain as in HOL (`m : 'a word -> 'b`). -/
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "read_mem_def"
   (words_as_type_indexed_bitvec)]
-def readMem {width : Nat} [NeZero width] (address : BitVec width)
-    (memory : BitVec width → WordLoc (BitVec width)) : Nat → List (WordLoc (BitVec width))
+def readMem {width : Nat} [NeZero width] {β : Type} (address : BitVec width)
+    (memory : BitVec width → β) : Nat → List β
   | 0 => []
   | n + 1 => memory address :: readMem (address + bytesInWord width) memory n
 
@@ -64,8 +65,8 @@ def addresses {width : Nat} [NeZero width] (address : BitVec width) : Nat → (B
 /-- HOL `LENGTH_read_mem`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "LENGTH_read_mem"
   (words_as_type_indexed_bitvec)]
-theorem length_readMem {width : Nat} [NeZero width] (n : Nat) (address : BitVec width)
-    (memory : BitVec width → WordLoc (BitVec width)) :
+theorem length_readMem {width : Nat} [NeZero width] {β : Type} (n : Nat) (address : BitVec width)
+    (memory : BitVec width → β) :
     (readMem address memory n).length = n := by
   induction n generalizing address with
   | zero => rfl

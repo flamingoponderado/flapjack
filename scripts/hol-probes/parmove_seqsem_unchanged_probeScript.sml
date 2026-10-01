@@ -1,0 +1,13 @@
+load "bossLib";
+load "preamble";
+load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun observe label term = let val th = EVAL term in print(label ^ "="); print_term(rhs(concl th)); print "\n" end;
+val _ = observe "su_empty" ``let r = (\n:num. n+10) in (seqsem [] r 9,seqsem [] r 9 = r 9)``;
+val _ = observe "su_chain" ``let r = (\n:num. n+10) in (seqsem [(1,2);(2,3)] r 9,seqsem [(1,2);(2,3)] r 9 = r 9)``;
+val _ = observe "su_cycle" ``let r = (\n:num. n+10) in (seqsem [(1,2);(2,1)] r 9,seqsem [(1,2);(2,1)] r 9 = r 9)``;
+val _ = observe "su_repeat" ``let r = (\n:num. n+10) in (seqsem [(1,2);(1,3)] r 9,seqsem [(1,2);(1,3)] r 9 = r 9)``;
+val _ = observe "su_source" ``let r = (\n:num. n+10) in (seqsem [(1,9)] r 9,seqsem [(1,9)] r 9 = r 9)``;
+val _ = observe "su_written" ``let r = (\n:num. n+10) in (seqsem [(1,2)] r 1,seqsem [(1,2)] r 1 = r 1)``;
+val _ = observe "su_self" ``let r = (\n:num. n+10) in (seqsem [(1,1)] r 1,seqsem [(1,1)] r 1 = r 1)``;
+val _ = observe "su_bool" ``let r = (\b:bool. if b then (7:num) else 3) in (seqsem [(T,F)] r F,seqsem [(T,F)] r F = r F)``;

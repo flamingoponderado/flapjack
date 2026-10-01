@@ -1,0 +1,15 @@
+load "bossLib"; load "preamble"; load "wordLangTheory"; load "loop_to_wordTheory";
+open HolKernel Parse bossLib preamble wordLangTheory loop_to_wordTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "cs_empty" ``cutsets_max (toNumSet ([]:num list),toNumSet ([]:num list)) = 0``;
+val _ = out "cs_root" ``cutsets_max (toNumSet ([0]:num list),toNumSet ([]:num list)) = 0``;
+val _ = out "cs_left" ``cutsets_max (toNumSet ([7]:num list),toNumSet ([]:num list)) = 7``;
+val _ = out "cs_right" ``cutsets_max (toNumSet ([]:num list),toNumSet ([7]:num list)) = 7``;
+val _ = out "cs_duplicates" ``cutsets_max (toNumSet ([5;5;1]:num list),toNumSet ([2;2]:num list)) = 5``;
+val _ = out "cs_left_max" ``cutsets_max (toNumSet ([1;9;3]:num list),toNumSet ([8;2]:num list)) = 9``;
+val _ = out "cs_reordered" ``cutsets_max (toNumSet ([3;9;1]:num list),toNumSet ([2;8]:num list)) = 9``;
+val _ = out "cs_root_duplicates" ``cutsets_max (toNumSet ([0;17;17;4]:num list),toNumSet ([18;18;0]:num list)) = 18``;
+val _ = out "cs_large" ``cutsets_max (toNumSet ([1208925819614629174706176;3]:num list),toNumSet ([1208925819614629174706177]:num list)) = 1208925819614629174706177``;
+val _ = out "cs_overlap" ``cutsets_max (toNumSet ([7;2;7]:num list),toNumSet ([7;1]:num list)) = 7``;
+val _ = out "cs_range" ``cutsets_max (toNumSet ([0;1;2;3;4;5;6;7;8;9]:num list),toNumSet ([]:num list)) = 9``;
+val _ = out "cs_sparse" ``cutsets_max (toNumSet ([10000;2;10000]:num list),toNumSet ([9999]:num list)) = 10000``;
