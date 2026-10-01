@@ -109,6 +109,10 @@ run_probe stackprops_expression_clock_probeScript.sml stackprops_expression_cloc
   ec_store_statement ec_store_types ec_word_statement ec_word_types ec_assign_statement ec_assign_types ec_const ec_var_word ec_var_loc ec_var_missing ec_lookup_word ec_lookup_loc ec_lookup_missing ec_load_word ec_load_loc ec_load_oob ec_load_bad_address ec_op_empty_and ec_op_add_wrap ec_op_sub_bad_arity ec_op_bad_operand ec_shift_valid ec_shift_oob ec_shift_bad_right ec_assign_success ec_assign_failure ec_store_success ec_store_failure \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe stackprops_instruction_constants_probeScript.sml stackprops_instruction_constants_probe.out \
+  ic_fields ic_fields_types ic_map ic_map_types ic_clock ic_clock_types ic_ffi ic_ffi_types ic_const_clock ic_const_clock_zero ic_div_failure ic_or_location ic_store_success ic_store_failure ic_fp_abs ic_fp_missing ic_const_ffi ic_none_ffi \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stackprops_clock_support_probeScript.sml stackprops_clock_support_probe.out \
   cp_asm_const_type cp_clock_neutral_type cp_1 cp_1_types cp_2 cp_2_types cp_3 cp_3_types cp_4 cp_4_types cp_5 cp_5_types cp_6 cp_6_types cp_skip64 cp_sqrt1 cp_halt16 cp_loc1 cp_seq_good64 cp_seq_tick16 cp_if_good1 cp_if_bad64 cp_loop_skip64 cp_call_skip1 \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -3053,6 +3057,10 @@ run_probe lab_to_target_removelabels_probeScript.sml lab_to_target_removelabels_
   LineBytesLabAsm ProgToBytesEmpty ProgToBytesConcrete RemoveLabelsLoopZero \
   RemoveLabelsLoopOne RemoveLabelsZero \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_padding_length_probeScript.sml lab_to_target_padding_length_probe.out \
+  OriginalLengthPadBytes PadLengthExtend PadLengthMultiNop PadLengthExact PadLengthZero \
+  PadLengthGenericBool PadLengthEmptyNopOutsidePremise \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_maplemmas_probeScript.sml lab_to_target_maplemmas_probe.out \
   PadCodeMapEmptyEq PadCodeMapConcreteEq PadCodeMapConcreteLhs PadCodeMapConcreteRhs \
   ProgToBytesMapEmptyEq ProgToBytesMapConcreteEq ProgToBytesMapConcreteLhs \
@@ -3866,5 +3874,20 @@ run_probe ssa_rename_shifted_properties_probeScript.sml ssa_rename_shifted_prope
 
 run_probe ssa_cc_trans_props_move_probeScript.sml ssa_cc_trans_props_move_probe.out \
   spm_full spm_type_pri spm_type_ls spm_type_ssa spm_type_na spm_type_lt spm_type_progOut spm_type_ssaOut spm_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe word_props_no_install_code_probeScript.sml word_props_no_install_code_probe.out \
+  nic_def nic_code_type nic_program_type nic_argument_type nic_empty_1 nic_leaf_zero_1 nic_leaf_missing_1 nic_bad_leaf_1 nic_malformed_empty_1 nic_malformed_value_1 nic_nested_left_1 nic_nested_right_1 nic_empty_80 nic_leaf_zero_80 nic_leaf_missing_80 nic_bad_leaf_80 nic_malformed_empty_80 nic_malformed_value_80 nic_nested_left_80 nic_nested_right_80 \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_to_stack_no_install_top_probeScript.sml word_to_stack_no_install_top_probe.out \
+  nt_full nt_conf_type nt_source_type nt_bitmaps_type nt_config_type nt_frames_type nt_outputs_type nt_empty_1 nt_safe_1 nt_shadow_1 nt_bad_1 nt_empty_32 nt_safe_32 nt_shadow_32 nt_bad_32 nt_empty_64 nt_safe_64 nt_shadow_64 nt_bad_64 nt_empty_80 nt_safe_80 nt_shadow_80 nt_bad_80 nt_code_empty nt_code_safe nt_code_shadow \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_allocation_probeScript.sml ssa_cc_trans_props_allocation_probe.out \
+  spa_alloc_full spa_alloc_type_num spa_alloc_type_numset spa_alloc_type_ssa spa_alloc_type_na spa_alloc_type_lt spa_alloc_type_progOut spa_alloc_type_ssaOut spa_alloc_type_naOut \
+  spa_install_full spa_install_type_ptr spa_install_type_len spa_install_type_dptr spa_install_type_dlen spa_install_type_numset spa_install_type_ssa spa_install_type_na spa_install_type_lt \
+  spa_install_type_progOut spa_install_type_ssaOut spa_install_type_naOut spa_ffi_full spa_ffi_type_ffi_index spa_ffi_type_ptr1 spa_ffi_type_len1 spa_ffi_type_ptr2 spa_ffi_type_len2 \
+  spa_ffi_type_numset spa_ffi_type_ssa spa_ffi_type_na spa_ffi_type_lt spa_ffi_type_progOut spa_ffi_type_ssaOut spa_ffi_type_naOut \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
