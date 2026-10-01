@@ -42407,5 +42407,13 @@
   "hol_name": "canonize_moves_aux_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead11.5.3.2.4.1: literal HOL1641-1648 all two equations and both nonempty branches. Nat priorities/counters and polymorphic move carrier alpha with exact equality with right-associated triple output and arbitrary accumulator match source. Empty remainder always emits current group, including counter0; equality compares the whole arbitrary move, MAX retains largest priority, equal branch increments counter, unequal branch resets1 and prepends old triple. Input need not be sorted or canonical; no word-width bound, extra premise, callback or changed list order. Twelve fresh original equations paired with kernel fixtures cover all branches, accumulator/order, unsorted/reversed/self moves and Naturals above2^64 and independent Boolean move carrier. Native proof-side helper only: full canonize_moves sort prerequisite and production routing remain open; coordinator acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Misc/FindIndex/ShiftZero.lean",
+  "lean_name": "findIndexShiftZero",
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "find_index_shift_0",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead46.10: entire misc1241-1256 arbitrary list, target and Nat offset equality to OPTION_MAP(lambda index.index+offset) at zero-offset search. Preserves generic alpha equality, first occurrence, NONE and duplicates; no success, uniqueness, range or bounded-offset premise. Induction follows source head equality split, uses tail law at offset+1 and1, cases on tail Option result, Nat associativity. Ten fresh original whole equations matched by kernel theorem applications across Nat/Bool, empty/head/interior/last/missing/duplicates/zero, unbounded offsets and identifiers; extra ground kernel first-duplicate guard. Required first-index characterization and full Move/pass correctness remain open. Coordinator acceptance pending."
 }
 ]

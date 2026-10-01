@@ -2454,3 +2454,10 @@ changed groups, reverse flush order, unsorted/reversed/self moves, and unbounded
 Nat counters/priorities/registers. Kernel pairs live in
 `Flapjack/Test/WordAllocCanonizeMovesAuxParity.lean`; this does not establish
 the separate sort prerequisite or executed allocator routing.
+
+`misc_find_index_shift_zero_probeScript.sml` / `.out` compares ten whole
+original offset-shift equations with kernel theorem applications in
+`Flapjack/Test/FindIndexShiftZeroParity.lean`: empty, head/interior/last, missing,
+duplicates, zero and unbounded offsets/identifiers, and Boolean carriers.
+This supports the Move first-index characterization; it does not establish
+the full pass-correctness result.

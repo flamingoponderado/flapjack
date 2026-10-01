@@ -3041,3 +3041,7 @@ run_probe word_to_stack_full_read_bitmap_mixed_probeScript.sml word_to_stack_ful
 run_probe word_alloc_canonize_moves_aux_probeScript.sml word_alloc_canonize_moves_aux_probe.out \
   cma_empty cma_acc cma_same_up cma_same_down cma_same_equal cma_different cma_groups cma_unsorted cma_reversed cma_self cma_large cma_bool \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe misc_find_index_shift_zero_probeScript.sml misc_find_index_shift_zero_probe.out \
+  fiz_empty fiz_head fiz_middle fiz_last fiz_absent fiz_zero fiz_large_offset fiz_large_value fiz_bool fiz_bool_absent \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
