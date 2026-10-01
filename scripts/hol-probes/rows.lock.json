@@ -55,6 +55,12 @@
       "sha256": "ba826808f31edd34c54e4f69e91dfdebf3fe41f9c3673bd5e242fd43039fe0bd"
     },
     {
+      "bytes": 180,
+      "out": "bytes_in_mem_probe.out",
+      "rows": 11,
+      "sha256": "aef4113ab38533177acbfc7924d7bcb3aaea556c90a5c8497e5f662f7fe1d037"
+    },
+    {
       "bytes": 307,
       "out": "cake_ssa_temp_probe.out",
       "rows": 6,

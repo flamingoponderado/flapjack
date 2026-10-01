@@ -17,4 +17,3 @@ val _ = out "lh_ret_width_one" ``let p = (copy_ret T F (0,7,17) [T;F] (Call (SOM
 val _ = out "lh_live_zero" ``let p = (FST (wLive (LN,LN) (Nil,99) (0,0,17)) : 64 stackLang$prog) in (get_code_labels p, stack_get_handler_labels 7 p) = ({},{})``;
 val _ = out "lh_live_frame" ``let p = (FST (wLive (LN,LN) (List [8w;2w],1) (0,4,3)) : 64 stackLang$prog) in (get_code_labels p, stack_get_handler_labels 7 p) = ({},{})``;
 val _ = out "lh_live_width_one" ``let p = (FST (wLive (LN,LN) (List [8w;2w],99) (4,7,3)) : 1 stackLang$prog) in (get_code_labels p, stack_get_handler_labels 7 p) = ({},{})``;
-

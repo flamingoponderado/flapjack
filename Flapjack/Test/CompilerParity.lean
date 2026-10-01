@@ -1,6 +1,7 @@
 import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.StackPropsCodeLabelsParity
+import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.RegAllocSortedMemParity
 import Flapjack.Test.RegAllocSortMovesRouteParity
 import Flapjack.Test.ParmovePreservesMovesStepParity
@@ -1500,6 +1501,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordToStackAbsStackParity.runChecks,
     Flapjack.Test.WordToStackFramesParity.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
+    Flapjack.Test.BytesInMemParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
     ].mapM id
   unless results.all id do
