@@ -43924,5 +43924,59 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .26.18: complete good_code_labels_def retains arbitrary Nat owner/argument/native program rows, EVERY good_handlers, BIGUNION of the source get_code_labels images, and inclusion in MAP FST program owners union arbitrary external Set Nat. No finite external set, unique owner, evaluation, simulation or successful compilation assumption. Exact native WordLangProgHOL and accepted source getters/handler guard retained; only positive HOL word dimension translated to BitVec width/NeZero. Fourteen freshly regenerated original HOL predicate equality claims resolve T, including three false-predicate cases, infinite UNIV, duplicate owners, return/absent-return handler boundaries and width one. Local finite-union normalization is proved in HOL, original predicate evaluated, and missing-label negative observations use concrete witness 8; no compiler correctness theorem assumed. Matching kernel fixtures plus arbitrary positive width and unrestricted external-set singleton equation pass. Regression evidence does not establish HOL-to-Lean equivalence or full pass correctness; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopHelpers.lean",
+    "lean_name": "wMoveAuxNoShmemop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wMoveAux_no_shmemop_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .48.1: full original12151-12200 six helper theorem group. Complete native move lists, load lists and continuation, pointwise register program function and original forall-reg safety guard, full Nat frame triple explicitly typed by source helper definitions, exact Spt cutset pair and entire AppList bitmap state, arbitrary stack count/start/offset/register and continuation retained. Bool truth/equality follows literal StackProps no_shmemop. No bounds/frame validity/scheduler/evaluation/output/target-safety premise beyond original pointwise write guard. HOL positive word dimension is translated to BitVec width/NeZero; exact native asm and StackLang carriers retained. Six kernel proofs preserve full original statements; 22 fresh original EVAL claims and matching rfl kernel fixtures cover four move classes, empty/multiple lists, saturated frames, both write branches, width one, bitmap branches, and false forbidden continuations. Unrestricted theorem applications retain arbitrary payload functions and dimensions. Regression evidence is not cross-language equivalence/full compiler preservation; integration acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopHelpers.lean",
+    "lean_name": "wStackLoadNoShmemop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wStackLoad_no_shmemop_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .48.1: full original12151-12200 six helper theorem group. Complete native move lists, load lists and continuation, pointwise register program function and original forall-reg safety guard, full Nat frame triple explicitly typed by source helper definitions, exact Spt cutset pair and entire AppList bitmap state, arbitrary stack count/start/offset/register and continuation retained. Bool truth/equality follows literal StackProps no_shmemop. No bounds/frame validity/scheduler/evaluation/output/target-safety premise beyond original pointwise write guard. HOL positive word dimension is translated to BitVec width/NeZero; exact native asm and StackLang carriers retained. Six kernel proofs preserve full original statements; 22 fresh original EVAL claims and matching rfl kernel fixtures cover four move classes, empty/multiple lists, saturated frames, both write branches, width one, bitmap branches, and false forbidden continuations. Unrestricted theorem applications retain arbitrary payload functions and dimensions. Regression evidence is not cross-language equivalence/full compiler preservation; integration acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopHelpers.lean",
+    "lean_name": "wRegWrite1NoShmemop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite1_no_shmemop_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .48.1: full original12151-12200 six helper theorem group. Complete native move lists, load lists and continuation, pointwise register program function and original forall-reg safety guard, full Nat frame triple explicitly typed by source helper definitions, exact Spt cutset pair and entire AppList bitmap state, arbitrary stack count/start/offset/register and continuation retained. Bool truth/equality follows literal StackProps no_shmemop. No bounds/frame validity/scheduler/evaluation/output/target-safety premise beyond original pointwise write guard. HOL positive word dimension is translated to BitVec width/NeZero; exact native asm and StackLang carriers retained. Six kernel proofs preserve full original statements; 22 fresh original EVAL claims and matching rfl kernel fixtures cover four move classes, empty/multiple lists, saturated frames, both write branches, width one, bitmap branches, and false forbidden continuations. Unrestricted theorem applications retain arbitrary payload functions and dimensions. Regression evidence is not cross-language equivalence/full compiler preservation; integration acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopHelpers.lean",
+    "lean_name": "wRegWrite2NoShmemop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite2_no_shmemop_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .48.1: full original12151-12200 six helper theorem group. Complete native move lists, load lists and continuation, pointwise register program function and original forall-reg safety guard, full Nat frame triple explicitly typed by source helper definitions, exact Spt cutset pair and entire AppList bitmap state, arbitrary stack count/start/offset/register and continuation retained. Bool truth/equality follows literal StackProps no_shmemop. No bounds/frame validity/scheduler/evaluation/output/target-safety premise beyond original pointwise write guard. HOL positive word dimension is translated to BitVec width/NeZero; exact native asm and StackLang carriers retained. Six kernel proofs preserve full original statements; 22 fresh original EVAL claims and matching rfl kernel fixtures cover four move classes, empty/multiple lists, saturated frames, both write branches, width one, bitmap branches, and false forbidden continuations. Unrestricted theorem applications retain arbitrary payload functions and dimensions. Regression evidence is not cross-language equivalence/full compiler preservation; integration acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopHelpers.lean",
+    "lean_name": "wLiveNoShmemop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wLive_no_shmemop_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .48.1: full original12151-12200 six helper theorem group. Complete native move lists, load lists and continuation, pointwise register program function and original forall-reg safety guard, full Nat frame triple explicitly typed by source helper definitions, exact Spt cutset pair and entire AppList bitmap state, arbitrary stack count/start/offset/register and continuation retained. Bool truth/equality follows literal StackProps no_shmemop. No bounds/frame validity/scheduler/evaluation/output/target-safety premise beyond original pointwise write guard. HOL positive word dimension is translated to BitVec width/NeZero; exact native asm and StackLang carriers retained. Six kernel proofs preserve full original statements; 22 fresh original EVAL claims and matching rfl kernel fixtures cover four move classes, empty/multiple lists, saturated frames, both write branches, width one, bitmap branches, and false forbidden continuations. Unrestricted theorem applications retain arbitrary payload functions and dimensions. Regression evidence is not cross-language equivalence/full compiler preservation; integration acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopHelpers.lean",
+    "lean_name": "stackMoveNoShmemop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_no_shmemop_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .48.1: full original12151-12200 six helper theorem group. Complete native move lists, load lists and continuation, pointwise register program function and original forall-reg safety guard, full Nat frame triple explicitly typed by source helper definitions, exact Spt cutset pair and entire AppList bitmap state, arbitrary stack count/start/offset/register and continuation retained. Bool truth/equality follows literal StackProps no_shmemop. No bounds/frame validity/scheduler/evaluation/output/target-safety premise beyond original pointwise write guard. HOL positive word dimension is translated to BitVec width/NeZero; exact native asm and StackLang carriers retained. Six kernel proofs preserve full original statements; 22 fresh original EVAL claims and matching rfl kernel fixtures cover four move classes, empty/multiple lists, saturated frames, both write branches, width one, bitmap branches, and false forbidden continuations. Unrestricted theorem applications retain arbitrary payload functions and dimensions. Regression evidence is not cross-language equivalence/full compiler preservation; integration acceptance pending."
   }
 ]

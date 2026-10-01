@@ -3186,3 +3186,14 @@ the concrete label 8. Matching kernel fixtures and an arbitrary positive-width,
 unrestricted external-set equation live in `WordConvsLabelSafetyParity`.
 These checks do not establish cross-language equivalence or full compiler
 preservation. Selector: `HOL_PROBE_ONLY=wordconvs_label_safety_probeScript.sml`.
+
+### Native Word-to-Stack no-shared-memory helpers
+
+`word_to_stack_no_shmemop_helpers_probeScript.sml` evaluates 22 original
+helper predicate claims. All resolve T, including four move representations,
+empty/multiple lists, both register-write branches, width one, zero/nonzero
+bitmap frames, and forbidden continuations whose predicate stays false.
+`WordToStackNoShmemopHelpersParity` kernel-replays identical inputs and applies
+the full public theorems with unrestricted inputs and original hypotheses.
+These regressions do not establish cross-language equivalence or full compiler
+preservation. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_helpers_probeScript.sml`.

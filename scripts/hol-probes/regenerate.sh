@@ -3353,3 +3353,7 @@ run_probe word_to_stack_handler_safety_probeScript.sml word_to_stack_handler_saf
 run_probe wordconvs_label_safety_probeScript.sml wordconvs_label_safety_probe.out \
   wcs_empty wcs_skip wcs_self wcs_missing wcs_external wcs_univ wcs_duplicates wcs_cross wcs_owned wcs_wrong_owner wcs_tail_foreign wcs_tail_missing wcs_nested wcs_width_one \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_to_stack_no_shmemop_helpers_probeScript.sml word_to_stack_no_shmemop_helpers_probe.out \
+  nsh_move_empty nsh_move_rr nsh_move_rs nsh_move_sr nsh_move_ss nsh_move_multi nsh_move_width1 nsh_load_empty nsh_load_loads nsh_load_forbidden nsh_write1_register nsh_write1_stack nsh_write1_forbidden nsh_write2_register nsh_write2_stack nsh_write2_forbidden nsh_live_zero nsh_live_nonzero nsh_live_width1 nsh_stack_zero nsh_stack_positive nsh_stack_forbidden \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

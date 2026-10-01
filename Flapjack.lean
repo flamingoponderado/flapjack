@@ -38,6 +38,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Pancake.WordConvs.LabelSafety
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
