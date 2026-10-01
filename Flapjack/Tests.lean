@@ -38,6 +38,9 @@ import Flapjack.Test.ParmoveDestinationWrapperParity
 import Flapjack.Test.ParmoveDStepStepParity
 
 import Flapjack.Test.WordToStackCompileKeysParity
+import Flapjack.Test.WordToStackRetainedFrameParity
+import Flapjack.Test.WordToStackAllocatorCodecParity
+import Flapjack.Test.WordToStackSelectorPreludeParity
 import Flapjack.Test.WordToStackNativeConfigParity
 import Flapjack.Test.ParmoveDStepsParity
 import Flapjack.Test.WordLangMaxVarParity

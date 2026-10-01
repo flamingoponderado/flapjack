@@ -1,0 +1,4 @@
+allocator_stages_skip=Skip
+allocator_stages_tick=Tick
+allocator_stages_raise=Seq (Move1 [(2,2)]) (Raise 2)
+allocator_stages_tail_call=Seq (Move1 [(0,0); (2,2)]) (Call NONE (SOME 7) [0; 2] NONE)
