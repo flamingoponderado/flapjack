@@ -3607,3 +3607,10 @@ run_probe ssa_rename_move_preserve_weak_probeScript.sml ssa_rename_move_preserve
   rmw_full rmw_type_st rmw_type_cst rmw_type_ssa rmw_type_na rmw_type_ls \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_get_set_vars_probeScript.sml ssa_get_set_vars_probe.out \
+  get_vars_list_insert_eq_gen_full get_vars_set_vars_eq_full \
+  gvi_type_st gvi_type_ls gvi_type_x gvi_type_locs gvi_type_a gvi_type_b \
+  gsv_type_cst gsv_type_ls gsv_type_x \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
