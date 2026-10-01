@@ -40072,5 +40072,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison2026-10-01 beadv23t: SeqStackFree260-262 retains zero body/nonzero Seq(StackFree n)body. copy_ret_aux429-441 retains zero Skip, positive predecessor n-1, load slotn-1/store slotn-1+f and recursive copy through list_Seq. Existing StackLang.listSeq specialization on HolProg width compared to original stackLangScript86-90: empty Skip, singleton identity, longer right Seq recursion; no extra trailing Skip introduced. copy_ret443-451 retains num_stack_ret k vs, zero continuation, copy offset f+handler_slots perf only if is_handle, then SeqStackFree n kont. Return list element carrier beta independent of positive-width native continuation, no added bounds/success/result/evaluation premise. HolProg width uses reviewed exact payload/MlString carrier; words_as_type_indexed_bitvec records only BitVec width/NeZero translation. Three universal kernel codec relations to accepted generic helpers establish representation transport, not return simulation. Actual compiler/production path parent25 stays open; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/NoRead.lean",
+  "lean_name": "parsem_NoRead",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_NoRead",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.3: original267-283 exact sole NoRead moves x premise (local overload notMEM x MAP SND), conclusion full function equality parsem((x,y)::moves)env=parsem moves((x=+env y)env). Generic same-component pair/List and function environments retained; no windmill/no-write/global environment equality premise. Tail source-map equality follows because every source differs from x; update-list definition then yields original equation. Repeated destinations allowed, snapshot vs updated-read boundary covered by8fresh original rows and Lean guards/full-function generic use. step_sem429/443 actual prerequisite; whole semantic preservation remains open."
 }
 ]
