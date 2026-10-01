@@ -68,7 +68,7 @@ private theorem perm_take_of_agree {α : Type} [Nonempty α] {a b : List α} {r 
   exact List.perm_append_right_iff _ |>.mp h
 
 /-- `holEl` reads the same cell of a prefix. -/
-private theorem holEl_take {α : Type} [Nonempty α] (l : List α) (n i : Nat) (hi : i < n) :
+theorem holEl_take {α : Type} [Nonempty α] (l : List α) (n i : Nat) (hi : i < n) :
     holEl i (l.take n) = holEl i l := by
   by_cases h : i < l.length
   · rw [holEl_eq_getElem _ _ (by simp; omega), holEl_eq_getElem _ _ h, List.getElem_take]

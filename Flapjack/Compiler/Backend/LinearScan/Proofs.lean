@@ -8,6 +8,7 @@ import Flapjack.Compiler.Backend.LinearScan.Proofs.EdgesToAdjlist
 import Flapjack.Compiler.Backend.LinearScan.Proofs.ColorRegister
 import Flapjack.Compiler.Backend.LinearScan.Proofs.PassInvariants
 import Flapjack.Compiler.Backend.LinearScan.Proofs.SortCorrect
+import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalsCorrect
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalMonad
@@ -42,6 +43,8 @@ order:
   steps, `intbeg_less`, and the `st_ex_FOLDL` pass invariants.
 * `SortCorrect`: `linear_scanProofScript.sml:3821-4330`, the in-array
   quicksort of registers and moves.
+* `IntervalsCorrect`: `linear_scanProofScript.sml:4332-4572`, the pass
+  initial states and array/list conversions used by `linear_reg_alloc_intervals`.
 * `Bijection`: `linear_scanProofScript.sml:4997-5204`, the register
   bijection invariants.
 * `ApplyBijection`: `linear_scanProofScript.sml:5565-6006`, checking a
