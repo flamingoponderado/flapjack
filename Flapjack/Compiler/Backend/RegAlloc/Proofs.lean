@@ -396,4 +396,15 @@ theorem checkClashTreeInj :
       dsimp only
       exact ihl f g ro rc grc ⟨hinj, hdrc⟩
 
+/-- HOL `GT_TRANS` (`reg_allocProofScript.sml:1014-1018`); `a b c` are free
+naturals. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "GT_TRANS"]
+theorem gtTrans (a b c : Nat) : a > b ∧ b > c → a > c := by omega
+
+/-- HOL `opt_split` (`reg_allocProofScript.sml:3094-3098`) for the `unit option`
+lookups of a `num_set`; `a` is free. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "opt_split"]
+theorem optSplit (a : Option Unit) : a ≠ none ↔ a = some () := by
+  cases a <;> simp
+
 end Flapjack.RegAlloc

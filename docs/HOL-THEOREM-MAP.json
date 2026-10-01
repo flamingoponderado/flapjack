@@ -46284,5 +46284,29 @@
     "lean_name": "checkClashTreeSameDom",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.7.1): reg_allocProofScript.sml:3052-3092 ∀ct f g live flive. (∀x. in_clash_tree ct x ∨ x ∈ domain live ⇒ f x = g x) ⇒ check_clash_tree f ct live flive = check_clash_tree g ct live flive; structural induction as in HOL, using check_clash_tree_domain for the Branch-NONE and Seq cases and a Flapjack check_col congruence helper. HOL sets rendered as predicates (IMAGE as ∃, DIFF as negated conjunct, ∪ as ∨, ⊆ as bounded implication, set l as list membership); INJ f s t as its definition (map-into conjunct plus scoped injectivity), the trivial UNIV map-into conjunct omitted (accepted scoped-injectivity rendering). Kernel-checked; no holEl in the proof closure. No extra premise. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "st_ex_FOREACH_update_move_related",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/MoveRelatedForeach.lean",
+    "lean_name": "stExForeachUpdateMoveRelated",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.14): reg_allocProofScript.sml:2645-2656 ∀ls s b. EVERY (λv. v < LENGTH s.move_related) ls ⇒ ∃lss. st_ex_FOREACH ls (λx. update_move_related x b) s = (M_success (), s with move_related := lss) ∧ LENGTH lss = LENGTH s.move_related. Lean: same statement over the accepted stExForeach and generated updateMoveRelated (.10.5.2), EVERY as bounded ∀, record update as structure update; proof via the exact update_move_related_eqn (LUPDATE as List.set). Kernel-checked; no holEl in the proof closure. No extra premise. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "GT_TRANS",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "gtTrans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.14): reg_allocProofScript.sml:1014-1018 a:num > b ∧ b > c ⇒ a > c, free variables as explicit Nat arguments. Kernel-checked; no holEl in the proof closure. No extra premise. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "opt_split",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "optSplit",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.14): reg_allocProofScript.sml:3094-3098 a ≠ NONE ⇔ a = SOME (), a : unit option (forced by SOME ()), free variable as explicit argument. Kernel-checked; no holEl in the proof closure. No extra premise. Coordinator source acceptance pending."
   }
 ]

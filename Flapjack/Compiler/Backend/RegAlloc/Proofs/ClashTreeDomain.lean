@@ -278,4 +278,5 @@ theorem checkClashTreeSameDom :
           · exact hfg x (Or.inr h)
           · exact hfg x (Or.inl (Or.inr h))
 
+
 end Flapjack.RegAlloc
