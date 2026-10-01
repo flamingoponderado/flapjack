@@ -2,6 +2,8 @@ import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Pmov
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
 import Flapjack.Compiler.Backend.Parmove.InjOnState
+import Flapjack.Pancake.WordConvs.EveryVarInstMono
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
 import Flapjack.Compiler.Backend.BackendProps
 
 import Flapjack.Compiler.Backend.LabToTarget.Interference
