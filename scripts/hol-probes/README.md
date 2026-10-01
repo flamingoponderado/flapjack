@@ -2470,3 +2470,13 @@ These finite observations do not establish general cross-prover equivalence or
 production allocator routing. Regenerate read-only with
 `HOL_PROBE_ONLY=reg_alloc_remap_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `word_to_stack_cutset_maximum_probe` captures twelve original cutset maxima, including duplicate/root keys, reordered and overlapping lists, sparse names and naturals above 2^80. Kernel fixtures replay the same inputs and apply the unconditional full list-to-Spt maximum correspondence. The production frame and compiler route remain separate dependency-linked work.
+
+`word_alloc_heu_prog_probe.out` captures fifty-two fresh original program
+heuristic observations, replayed by `HeuProgParity` in the kernel. Every
+program clause and catchall, all shared-memory widths, same-input If joins,
+forward Seq, self/other/indirect calls, ignored tail handlers and the source
+returning-call no-handler discard are covered. Fixtures also cover raw trees,
+unbounded names/counters and widths 1/64/128. These finite observations do not
+establish general cross-prover equivalence or production allocator routing.
+Regenerate read-only with
+`HOL_PROBE_ONLY=word_alloc_heu_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.

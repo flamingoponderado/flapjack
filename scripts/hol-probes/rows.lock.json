@@ -606,6 +606,7 @@
     {"bytes":408,"out":"word_alloc_heu_counters_probe.out","rows":20,"sha256":"b0fe869eb0ac469e6d15ee74e094f7feee6dd8322abc1896cb94ba9a8af9b231"},
     {"bytes":686,"out":"word_alloc_heu_inst_probe.out","rows":50,"sha256":"505e4316cea50510be2a22eeeff871f8f88afa8c03f157eab88082e1c3927291"},
     {"bytes":301,"out":"word_alloc_heu_max_probe.out","rows":20,"sha256":"6be2905087e65d1094b101543600a29e98edb27e84e19d4d019502250c9e361c"},
+    {"bytes":810,"out":"word_alloc_heu_prog_probe.out","rows":52,"sha256":"8a300a8ac1541f1eeb5a4af7398f7ab9f387511a0ee096178f048e9cb9f1c509"},
     {"bytes":229,"out":"word_alloc_heuristic_probe.out","rows":3,"sha256":"0ac8fe0bb58030b5d9e8a7e5e4c647968e2d728be7a062c1d8a75dc090f21102"},
     {"bytes":77,"out":"word_alloc_key_map_probe.out","rows":3,"sha256":"2490079b54edb7cbe00ffe7717a06275637536c4c88d66d448cd7c12471631f9"},
     {"bytes":134,"out":"word_alloc_live_colour_noalias_probe.out","rows":4,"sha256":"09f190b9b1848db59b4a76bbee72757ad6c08a648ace6123b5374083230d3cb8"},
