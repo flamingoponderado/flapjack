@@ -1,4 +1,5 @@
 import Flapjack.Test.FindIndexAppendParity
+import Flapjack.Test.HeuProgParity
 import Flapjack.Test.RegAllocRemapParity
 import Flapjack.Test.HeuCallParity
 import Flapjack.Test.MonadBaseParity
