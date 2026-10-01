@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
 import Flapjack.Compiler.Backend.WordCse.Proofs.ArithmeticKeys
 import Flapjack.Compiler.Backend.WordCse.Proofs.InsertEquality
 import Flapjack.Compiler.Backend.WordCse.Proofs.KeyInjectivity

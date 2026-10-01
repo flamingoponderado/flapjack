@@ -48725,5 +48725,47 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-arith-keys: entire original1174-1202 quantified a1/a2, conjunction of can_mem_arith a1 and key equality, both eligibility/reads conclusions, and forall faithful state/value original source evaluation implies destination-adjusted target evaluation are retained. No successful pass, target result, output relation, extra IH, width/range/wf or operand premise. Public guard excludes all multi-output cases exactly as original. Internal keyDestination derives full source constructor/operator/operand equality (all eight constructors considered); internal resultTransfer uses actual faithful evaluate Inst and set_var, with unrestricted insert_eq recovering the computed value. Binop both reg/imm, immediate Shift and signed Div transport internally, no simplified tagged evaluator. Native HolArith-to-WordLangArith codecs are constructor-for-constructor; state words translate to positive BitVec/[NeZero], C and F retain arbitrary universe-0 host types. fmap_as_finite_support_relation names only reviewed owning WordSemStateFiniteExact.fpRegs/store; locals/code are original Spt num_map and unqualified. Imported owner is not duplicated, same-module witness reuses genuine reviewed broad/exact roundtrip. Inherits reals_as_rational_cuts through faithful evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Literal complete original proof replay and original complete statement/carrier types plus60 full theorem applications across widths1/32/64/80, with arbitrary config/FFI/state/value quantification; matching60 full kernel theorem applications plusone arbitrary-width evaluation transfer. Source/kernel regression evidence is not cross-language equivalence; CSE knowledge invariant and whole pass/compiler chain remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/LoadEvaluation.lean",
+    "lean_name": "evaluateLoadAnyDest",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_any_dest",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-load-evaluation, original221-270: Original op/r0/address/offset/value/state/target-destination binders and only not-store plus original successful source evaluation guard; derives target evaluation at any destination, including destination equal to address. All8memop constructor cases considered, stores excluded by original guard; Load16 retained and source-success impossible exactly as faithful native inst. Private loadValue is only factoring of actual native memory clauses, instLoadMap proves agreement under original guard; public statements use complete clocked evaluate. Generic assignment result iff recovers loaded value using full insert_eq internally on arbitrary sparse trees. No extra wf/range/width/clock/heap-domain hypothesis. fmap_as_finite_support_relation names reviewed owning WordSemStateFiniteExact.fpRegs/store, transitive original owner not duplicated and same-module LoadEvaluationWitness gives genuine broad/exact roundtrip; locals/code are original Spt num_map. words_as_type_indexed_bitvec records only positive-width words with NeZero and arbitrary universe-0 configuration/FFI hosts. Inherits reals_as_rational_cuts through evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Original full literal proof replays with hyp=[] including local address theorem, four inferred types and80complete whole theorem applications at1/32/64/80; matching80kernel applications include write/destination alias and target/address alias. Full CSE invariant/pass and compiler theorem remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/LoadEvaluation.lean",
+    "lean_name": "evaluateLoadSetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-load-evaluation, original221-270: Original op/destination/address/offset/write-register/input-value/output-value/state binders; only not-store and address != write-register guard; full bidirectional equivalence, including write-register = destination. No disjoint-destination premise added. All8memop constructor cases considered, stores excluded by original guard; Load16 retained and source-success impossible exactly as faithful native inst. Private loadValue is only factoring of actual native memory clauses, instLoadMap proves agreement under original guard; public statements use complete clocked evaluate. Generic assignment result iff recovers loaded value using full insert_eq internally on arbitrary sparse trees. No extra wf/range/width/clock/heap-domain hypothesis. fmap_as_finite_support_relation names reviewed owning WordSemStateFiniteExact.fpRegs/store, transitive original owner not duplicated and same-module LoadEvaluationWitness gives genuine broad/exact roundtrip; locals/code are original Spt num_map. words_as_type_indexed_bitvec records only positive-width words with NeZero and arbitrary universe-0 configuration/FFI hosts. Inherits reals_as_rational_cuts through evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Original full literal proof replays with hyp=[] including local address theorem, four inferred types and80complete whole theorem applications at1/32/64/80; matching80kernel applications include write/destination alias and target/address alias. Full CSE invariant/pass and compiler theorem remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/LoadEvaluation.lean",
+    "lean_name": "evaluateLoadChangeAddr",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_change_addr",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-load-evaluation, original221-270: Complete local original declaration retained: only not-store, actual input lookup equality and original source evaluation guard; derives evaluation at replaced address. No successful target, word-valued lookup or canonical-map invariant premise. All8memop constructor cases considered, stores excluded by original guard; Load16 retained and source-success impossible exactly as faithful native inst. Private loadValue is only factoring of actual native memory clauses, instLoadMap proves agreement under original guard; public statements use complete clocked evaluate. Generic assignment result iff recovers loaded value using full insert_eq internally on arbitrary sparse trees. No extra wf/range/width/clock/heap-domain hypothesis. fmap_as_finite_support_relation names reviewed owning WordSemStateFiniteExact.fpRegs/store, transitive original owner not duplicated and same-module LoadEvaluationWitness gives genuine broad/exact roundtrip; locals/code are original Spt num_map. words_as_type_indexed_bitvec records only positive-width words with NeZero and arbitrary universe-0 configuration/FFI hosts. Inherits reals_as_rational_cuts through evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Original full literal proof replays with hyp=[] including local address theorem, four inferred types and80complete whole theorem applications at1/32/64/80; matching80kernel applications include write/destination alias and target/address alias. Full CSE invariant/pass and compiler theorem remain unfinished."
   }
 ]

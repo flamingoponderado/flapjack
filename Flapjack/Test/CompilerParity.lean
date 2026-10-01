@@ -1,3 +1,4 @@
+import Flapjack.Test.WordCseLoadEvaluationParity
 import Flapjack.Test.WordCseArithmeticKeysParity
 import Flapjack.Test.WordCseInsertEqualityParity
 import Flapjack.Test.WordCseRegisterKeysParity

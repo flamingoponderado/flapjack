@@ -4111,3 +4111,20 @@ implication, plus both read/eligibility conclusions.
 clocked WordSem evaluator, its reviewed finite-support state and its inherited
 IEEE rational-cut assumption (SOUNDNESS item 8). This is a CSE simulation
 prerequisite, not the entire CSE invariant/pass or compiler theorem.
+
+## Full Word CSE load evaluation transports
+
+`word_cse_load_evaluation_probeScript.sml` literally replays all three original
+proofs at word_cseProofScript221-270, including the local address-substitution
+theorem, and captures their complete conclusions with no open hypotheses. Four
+original inferred types and 80 complete theorem applications cover word/byte/16/32
+loads at widths 1/32/64/80, both target/address aliasing and write/destination
+aliasing. Store cases are excluded only by the original guard; Load16 remains
+quantified with the same impossible source-success premise.
+`WordCseLoadEvaluationParity.lean` applies the full kernel theorems in all 80
+cases on arbitrary host/state/value inputs. The proofs use actual clocked WordSem
+evaluation and internally derive the loaded value from insertion equality;
+no target evaluation or memory-domain premise is added. Native finite-map/word
+translations and the evaluator's inherited IEEE rational-cut assumption
+(SOUNDNESS item 8) are retained. These are invariant-update prerequisites,
+not a completed CSE/compiler correctness proof.
