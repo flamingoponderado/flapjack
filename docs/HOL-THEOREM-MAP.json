@@ -40770,5 +40770,32 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.3): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the If case of evaluate_ind: same binder s, the HOL case-split conclusion rendered by the untagged stackSwapPost, and as premises exactly the If induction hypotheses of the tagged Lean evaluate_ind (wordSemScript.sml evaluate_ind rebound without fix_clock): c1 under the guard getVar/get_var_imm/word_cmp = SOME T and c2 under SOME F, in the HOL evaluate_ind variable form. No extra premise. Proof follows HOL (wordPropsScript.sml:2529-2532): the guard reads only locals, so the stack-swapped run takes the same branch. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "StackHandlerArgs_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
+  "lean_name": "stackHandlerArgsNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "PopHandler_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
+  "lean_name": "popHandlerNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "PushHandler_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
+  "lean_name": "pushHandlerNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
 }
 ]
