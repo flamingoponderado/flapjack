@@ -1,0 +1,10 @@
+mb_empty=(T,T)
+mb_valid=(T,T)
+mb_same=(T,T)
+mb_bound=(F,T)
+mb_physical=(F,F)
+mb_invalid=(T,T)
+mb_large_physical=(F,F)
+mb_large=(T,T)
+mb_overwrite=(T,T)
+mb_more=⊢ ∀na ssa na'. ssa_map_ok na ssa ∧ na ≤ na' ⇒ ssa_map_ok na' ssa
