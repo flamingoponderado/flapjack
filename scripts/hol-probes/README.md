@@ -4000,6 +4000,15 @@ payloads. Together with freshly regenerated movement/sign, arithmetic and
 conversion captures, these support the i81m source review. Generic machine,
 compile and FFI carriers and fixed word64 FP registers are preserved.
 Captures are regression evidence, not a HOL-to-Lean equivalence proof.
+`word_to_stack_scheduler_route_probe.out` captures six fresh original rows:
+empty/swap/duplicate-destination scheduling, the actual k=22 NONE slot23, and
+full spill-cycle trees at frame3 and frame0. ProductionScheduler kernel-replays
+all six numeric observations, plus identity and mixed-location cycles. Its
+all-input proof establishes the actual option scheduler equals native parmove,
+deriving fuel sufficiency from the source measure. The native wMove tree
+fixtures retain both temporary registers and natural frame subtraction; they
+do not establish actual move materialization or complete compiler equivalence.
+Regenerate with `HOL_PROBE_ONLY=word_to_stack_scheduler_route_probeScript.sml`.
 `ssa_locals_list_rename_probe.out` freshly replays the full original generic list-renaming locals relation, its three local theorem prerequisites and source physical-class tactic, with nine original inferred types confirming generic payload alpha and native tree/list carriers. All seven original premises are retained.
 
 `ssa_setup_props_probe.out` freshly replays the complete original setup-SSA proof, six local prerequisite proofs and two ML tactics, plus four inferred types. State/program/move share their word dimension. The tagged native theorem retains the original allocation/domain premises and all six actual evaluator conclusions; executed setup routing is tracked separately.

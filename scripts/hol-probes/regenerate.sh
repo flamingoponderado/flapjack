@@ -3689,6 +3689,10 @@ run_probe word_to_stack_no_shmemop_primitives_probeScript.sml word_to_stack_no_s
 run_probe stack_to_lab_full_encoding_probeScript.sml stack_to_lab_full_encoding_probe.out \
   full_flatten_source_proof full_compile_all_source_statement full_compile_all_application full_compile_all_sections \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+# Actual scheduler route and native temporary/frame sentinels.
+run_probe word_to_stack_scheduler_route_probeScript.sml word_to_stack_scheduler_route_probe.out \
+  sr_order_empty sr_order_swap sr_order_duplicate sr_none_slot sr_spill_cycle sr_spill_zero_frame \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 run_probe ssa_get_set_vars_probeScript.sml ssa_get_set_vars_probe.out \
   get_vars_list_insert_eq_gen_full get_vars_set_vars_eq_full \
   gvi_type_st gvi_type_ls gvi_type_x gvi_type_locs gvi_type_a gvi_type_b \
