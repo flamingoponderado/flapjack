@@ -77,9 +77,12 @@ it is kernel-proved by `compileProgTopHOLOfExact_declToHOL` using the
 This is the kernel-checked bridge from the parser output to the exact carrier.
 The production source entrypoints compose its premise through entry relocation,
 `pan_simp`, struct compilation, and `compile_top`, then pass the resulting proof
-to `compileProgTopHOLWithMetadataOfExact` in `compileFlapjackEntryCake`. The
-source-shaped Crep output remains a documented carrier mismatch, so this
-routing does not claim an exact HOL `compile_prog` theorem. Direct
+to `compileProgNativeWithMetadataRouted` in `compileFlapjackEntryCake`.
+With the CLI's standard BitVec literals, this selects `compileProgDeclsHOLW`
+and its exact inliner, then decodes the output and retains metadata.
+`CompileProgCorrespondence.lean` proves complete output agreement at this
+byte-range boundary. This codec agreement does not establish pass simulation
+or the end-to-end compiler correctness theorem. Direct
 original-Pancake parity evidence for the executed boundary is
 `python3 scripts/check-parity-goldens.py` (wide_constants.pnk, parity
 goldens=1, failures=0). -/

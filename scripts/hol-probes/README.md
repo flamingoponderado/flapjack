@@ -1,3 +1,30 @@
+`word_to_stack_comp_native_probe.out` contains 19 direct original comp_def observations,
+kernel-replayed by WordToStackNativeCompileParity. Includes recursive returning/handled
+Calls, valid/invalid immediates and Seq/If/Call bitmap threading. The complete
+native traversal is source-reviewed; these rows do not prove cross-prover
+equivalence or establish production routing/compiler correctness. Regenerate
+with HOL_PROBE_ONLY=word_to_stack_comp_native_probeScript.sml and the read-only
+prebuilt CakeML backend theory directory.
+
+`word_to_stack_write_bitmap_type.sml` queries the original HOL constant type
+(`α sptree$num_map -> num -> num -> β word list`) from the prebuilt
+`word_to_stackTheory`; run `HOL/bin/hol run <absolute script path>` from the
+original `cakeml/compiler/backend` theory directory. The payload is generic;
+only wLive specializes it to unit cutsets. `word_to_stack_write_bitmap_probe`
+also captures `wb_payload_nat` and `wb_payload_bool`, replayed by
+`WordToStackLiveBitmapParity`. Existing unit bitmap rows are preserved.
+
+`loop_sem_store_narrow_probe.out` captures sixteen direct original Loop
+Store32/StoreByte `evaluate_def` observations at width64 (clauses325-337).
+It registers the original recursive theorem with the HOL compset, without a
+surrogate evaluator. Rows cover 64-to-32/8 narrowing, both endian placements,
+upper-half Store32, alignment/domain/type/memory errors, unchanged other memory
+and clock. Every guard in `Flapjack.Test.LoopStoreNarrowParity` cites its row;
+missing production memory totalizes to the original Loc0 0 sentinel. These are
+adapter checks, not full runtime hook-bundle wiring. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=loop_sem_store_narrow_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `stacksem_loop_recursive_probe.out` contains eleven fresh direct original
 `stackSem$evaluate (Loop body, state)` observations (stackSemScript.sml:833-837).
 The original evaluator performs all recursive re-entry. The Lean replay
@@ -12,6 +39,27 @@ This restricted test evaluator is not the total evaluate_def port. Regenerate
 with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 # Original Pancake HOL probes
+
+`labsem_fp_updates_probe.out` records 29 direct original `labSem$fp_upd`
+observations, paired with kernel checks in `LabSemFpUpdatesParity`. All sixteen
+constructors are exercised. Cases include NaN/sign payloads, signed zero,
+rounding ties, FMA operand order, aliased destinations, failure with retained
+overflow writes, odd-half insertion, and actual widths8/32/64/128. The IEEE
+definitions and conversions are registered in HOL's EVAL compset as in the
+existing machine IEEE probes. These finite observations do not establish full
+LabSem evaluator routing or cross-language IEEE equivalence. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=labsem_fp_updates_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_clash_tree_probe.out` captures eight direct original register
+allocator checker observations: repeated deletion, duplicate colours,
+existing-name skips, partial collisions, Delta's discarded write result,
+right-first Seq traversal, Branch merging and fixed-set collisions.
+`Flapjack.Test.RegAllocClashTreeParity` kernel-replays the identical inputs and
+full output trees. These finite regressions do not prove allocator soundness
+or wire the checker into the executed compiler. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_clash_tree_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `stacksem_call_indirect_probe.out` captures ten direct original `stackSem$evaluate`
 Call INR observations (find_code645-651, returning Call861-892): indirect and
@@ -1402,6 +1450,19 @@ with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_live_exp_probeScript.sml
 scripts/hol-probes/regenerate.sh` after building original CakeML theories.
 
+`word_alloc_reads_exp_probe.out` records direct original `get_reads_exp_def`
+observations (`word_allocScript.sml:1122-1128`) for a single `Var` read, a
+`Load` of a `Var`, an `Op` whose nested read lists flatten in argument order,
+a `Shift` that concatenates its left operand's reads before its right
+operand's, the `Const`/`Lookup` catch-all empty list, and a mixed nested
+`Op`/`Load`/`Shift` expression. `Flapjack.Test.WordAllocReadsExpParity`
+kernel-replays all seven rows through the exact polymorphic
+`getReadsExpHOL`. This proof-side port does not yet replace the executed
+caller. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_reads_exp_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `word_sem_cut_names_type_probe.out` prints the original HOL `cut_names`
 constant types for `cut_names`, `cut_envs`, and `cut_env` from `wordSemTheory`: independent name-map and environment-map
 payload parameters in the first, and generic environment payloads in the latter two. It guards the carrier review of `wordSemCutNames` against
@@ -1879,3 +1940,379 @@ logical-register/address, two-register arithmetic, and FP alias failures.
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stack_props_inst_name_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.StackPropsInstructionNames` kernel-replays all ten rows.
+
+`word_alloc_get_live_probe.out` contains three fresh direct original full-program
+liveness observations: StoreConsts deletes registers1/2 while adding3/4 and
+retaining9; an out-of-range Break returns LN; Return inserts repeated value2
+as a set entry. The StoreConsts row distinguishes the earlier compiled clause
+from the shadowed duplicate source row. `WordAllocProgramLivenessParity`
+kernel-replays the identical inputs. Regenerate using the byte-identical built
+original tree with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_get_live_probeScript.sml scripts/hol-probes/regenerate.sh`.
+These observations supplement clause review; they do not establish whole-pass
+correctness or the pending production liveness route.
+
+### Parallel-move deterministic step
+
+`parmove_fstep_probeScript.sml` directly evaluates original `parmove$fstep`
+(parmoveScript.sml:526-546) at option-number registers. Ten equalities cover
+every branch, first matching source, cycle save order, and temporary-register
+cases without a well-formedness assumption. The output is replayed by
+`Flapjack/Test/ParmoveFstepParity.lean`; complete pmov semantics and executed
+compiler wiring are separate open tasks.
+
+`word_alloc_get_writes_inst_probe.out` captures seven direct original
+`get_writes_inst_def` observations (word_allocScript.sml681-703). Full-tree
+equalities cover Const, AddCarry, LongDiv, the literal Load16 catchall,
+FPMovToReg at64/32, and the FPMovFromReg catchall. The identical inputs and
+outputs are kernel replayed by `Flapjack.Test.WordAllocInstructionWritesParity`.
+These regression rows do not establish cross-language equivalence or complete
+the production route. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_get_writes_inst_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_get_writes_probe.out` records seven direct original
+`get_writes_def` observations (word_allocScript.sml1009-1023). Identical
+full-tree inputs/outputs are kernel replayed in
+`Flapjack.Test.WordAllocProgramWritesParity`: duplicate Move destinations,
+StoreConsts insert order, instruction/shared Load16 distinction, shared-store
+fallback, compound Seq fallback, and Install's first destination only.
+These rows are regression evidence; the executed compiler route and allocator
+correctness remain open. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_get_writes_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`word_to_stack_stack_size_rel_probe.out` records six original frame-size relation
+observations (absent/present maximum, failed bound, absent local/frame sizes,
+and frame guard) from `word_to_stackProofTheory`. The exact kernel replay is
+`Flapjack.Test.WordToStackStackSizeParity`. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_stack_size_rel_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_lang_occurrences_exact_probe.out` records twelve original `every_name`,
+`every_var` and `every_stack_var` observations, including exact Spt cutsets,
+Loop live-set scope and Call handlers under NONE/SOME returns.
+`Flapjack.Test.WordLangOccurrencesExactParity` invokes all three new tagged
+predicates and kernel-replays each row. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+- `word_to_stack_frames_probeScript.sml`: original `handler_val`,
+  `is_handler_frame`, and `sorted_env` rows for exact stack-frame predicates.
+
+- `word_to_stack_abs_stack_probeScript.sml`: original abstraction success and failure branches.
+
+- `word_to_stack_index_list_probeScript.sml`: descending indices, value/key projections, guarded first/last lookup, and physical-name division.
+
+- `word_to_stack_bitmap_append_probeScript.sml`: successful bitmap decoding remains unchanged after appending words.
+### Parallel-move state semantics
+
+`parmove_semantics_probeScript.sml` captures twelve direct original
+windmill/parsem/seqsem/sem/eqenv observations. Function updates use original
+`UPDATE_LIST_THM` precedence (last repeated destination wins); parallel sources
+are snapshotted, sequential sources are updated, emitted moves are reversed,
+and eqenv ignores only NONE. The two eqenv rows use the original
+`eqenv_def` and `FORALL_OPTION` simplification; the other rows use EVAL.
+`ParmoveSemanticsParity.lean` checks every captured observation; no windmill
+premise is imposed on repeated destinations. Full scheduler correctness and
+production wiring remain open.
+
+`labsem_updates_probeScript.sml` observes the original LabSem total register/memory updates, sticky assertion failure with retained writes, PC/clock updates, register/immediate decoding, and fixed64 FP register payloads. Its 17 rows are kernel-replayed in `Flapjack.Test.LabSemUpdatesParity`; it does not claim FP arithmetic or a full evaluator port.
+- `word_to_stack_map_fst_probeScript.sml`: exact pair-key mapping, collision retention and value projection.
+### Literal parallel-move scheduler
+
+`parmove_scheduler_probeScript.sml` captures nine original pmov/parmove outputs:
+final emitted suffix, temporary self-move, empty/self/single moves, chain, swap,
+three-cycle and repeated destinations. `ParmoveFstepParity.lean` replays them.
+The recursion uses the original measure, not fuel. Full semantic correctness
+and the executed Word-to-Stack wrapper remain open.
+
+### Parallel-move invariant group
+
+`parmove_invariants_probeScript.sml` captures thirteen original path/wf rows:
+empty/single/valid/invalid paths; empty/pending state; repeated destinations;
+pending missing source/destination; allowed final temporary source; rejected
+FRONT temporary source, active temporary destination and broken active path.
+`ParmoveInvariantsParity.lean` kernel replays all rows. `wf_step`/`wf_steps` and
+full `parmove_correct` remain open.
+- `word_to_stack_abs_stack_prefix_probeScript.sml`: successful bitmap prefix preservation for base, ordinary, handler, recursive and mixed frames.
+
+- `word_to_stack_abs_stack_lengths_probeScript.sml`: exact successful abstraction frame counts for base, ordinary, handler, recursive and mixed frames.
+
+### Literal Word-to-Stack move wrapper
+
+`word_to_stack_wmove_probeScript.sml` captures eleven original64-bit equality
+rows for exact DIV2/parmove/format_var/wMoveAux composition. All formatting
+branches, register and spill swaps, odd indices and DIV2 collision, truncated
+offsets and fprime are replayed by `literalWMoveParityGuard` in the normal
+compiler parity suite. Production comp/compile wiring remains open.
+
+### Parallel-move update lemmas
+
+`parmove_updates_probeScript.sml` captures eight original parallel environment
+lookups and two temporary-insensitive equivalence directions. Fresh insertion,
+snapshot sources, untouched/empty/self/swap cases and repeated-destination
+freshness failure are replayed by `ParmoveUpdateLemmasParity.lean`, alongside
+generic freshness/windmill theorem applications. Full step invariance and
+`parmove_correct` remain open.
+`labsem_navigation_probeScript.sml` captures 23 original LabSem fetch, instruction-count, section-entry/positive-label lookup, and following-return-label observations across empty sections. Encoded metadata lengths deliberately differ from instruction positions. The probe simplifies the original existential label guard before EVAL; it defines no substitute evaluator. `Flapjack.Test.LabSemNavigationParity` kernel replays the native definitions using the reviewed classifier.
+
+### Parallel-move path preservation prerequisites
+
+`parmove_path_probeScript.sml` captures ten original SNOC-path and windmill
+observations. Empty/single/chain/cycle paths, changed-final-destination and
+broken-prefix failures, and fresh/repeated destinations with repeated sources
+are replayed in the kernel by `ParmovePathParity.lean`. Generic source-shaped
+path_change_start/windmill_cons applications retain the original premises.
+Full wf preservation and scheduler correctness remain open.
+
+### ParMove environment-change observations
+
+`parmove_environment_probeScript.sml` evaluates eight direct original HOL rows.
+Repeated destinations with equal source maps overwrite differing input values;
+untouched values differ when the conditional premise is absent, and changed
+source values break equality. Empty and snapshot observations are included.
+`ParmoveEnvironmentParity.lean` replays the rows and applies the exact lemma
+with its original conjunction. Full scheduler preservation remains open.
+
+`labsem_arithmetic_probeScript.sml` captures 44 original observations across all eight LabSem integer-arithmetic constructors: Loc/self-OR guards, invalid shift/division writes, sticky failure, signed overflow and aliased destinations. Original arithmetic `DIV_0`/`MOD_0` simplify the otherwise unreduced zero-divisor cases after EVAL; no replacement arithmetic evaluator is defined. `Flapjack.Test.LabSemArithmeticParity` replays all rows by direct kernel reduction on otherwise arbitrary native source states.
+
+### ParMove permutation observations
+
+`parmove_permutation_probeScript.sml` captures ten direct original HOL values.
+Three destination lookups agree under reversal with shared sources; snapshot,
+swap, and empty examples are included. Repeated destinations give 13 versus 12
+under reversal, showing why the original windmill premise cannot be removed.
+`ParmovePermutationParity.lean` replays all values and checks the full-function
+lemma with a genuine list permutation. Full scheduler correctness remains open.
+
+### ParMove generated relation witnesses
+
+`parmove_steps_probeScript.sml` proves one concrete instance of each of the
+six original `step_rules` conjuncts in HOL. A T row is emitted only after
+`prove` returns a theorem with exactly the requested conclusion; these are
+kernel-derived positive witnesses, not EVAL or production compiler parity.
+`ParmoveStepsParity.lean` checks the same six rules and standard RTC reflexivity
+and a start/emit two-step chain. Rules, leastness, and exhaustive cases were
+also compared against the actual generated HOL theorem conclusions.
+Well-formedness and semantic preservation are separate unfinished proofs.
+
+
+### ParMove no-read observations
+
+`parmove_noread_probeScript.sml` captures eight direct original HOL values.
+Paired observations include repeated writes, untouched keys, and self moves.
+When the tail reads the changed destination, the two sides give 11 versus 12,
+showing the no-read premise is necessary. `ParmoveNoReadParity.lean` replays
+all rows and checks the full-function lemma with the original sole premise.
+The source function update is expressed as the equivalent conditional.
+Full scheduler semantic preservation remains open.
+
+### ParMove well-formedness preservation observations
+
+`parmove_wf_steps_probeScript.sml` evaluates fourteen original HOL states: each
+of the six relation rules has a valid pre/post example, and pending temporary
+source and broken path examples are false. `ParmoveWfStepsParity.lean` replays
+the states and kernel-checks generic one-step/RTC theorem applications plus
+a start/emit chain. These observations support state-shape review; the full
+universally quantified preservation proofs are independently kernel-checked.
+Full scheduler semantic correctness remains open.
+`labsem_memory_probeScript.sml` captures 46 original ordinary-memory observations across all eight mem_op cases: retained failed Load/Store writes, narrow type/alignment/aligned-domain checks, endian and resizing, unsupported16 operations, address wrap, sticky failure, and one-/eight-bit dimensions. `LabSemMemoryParity` replays them with targeted simplification and kernel computation. The original unused `is_Loc` classifies `semanticPrimitives.v` (Loc Bool/Nat), not `wordLang.word_loc`, and is tracked separately on `flapjack-og0v`; it is absent from these memory operations.
+
+`parmove_start_extend_probeScript.sml` captures 14 direct original HOL `sem`
+values for the Start and Extend states, with nonempty reversed emitted histories,
+shared sources and snapshot reads. The final pair deliberately repeats a
+destination and differs (27 versus 37): it is outside `wf`, not a valid-step
+semantic-equivalence claim. Lean kernel examples replay all rows; the generic
+case proofs establish the original quantified `eqenv` conclusion under `wf`.
+The other four cases and full `step_sem` assembly remain open.
+`labsem_shared_memory_probeScript.sml` evaluates original LabSem shared-memory load/store/op equations (429–488). Its 39 rows check all eight operations and actual mappedRead/mappedWrite configuration and little-endian payloads against guarded canonical FFI oracles. They cover returned host/events/register/PC/clock state, unchanged final state, invalid return length, domain and Loc errors, aliasing, clock zero, width24 LOG2 alignment, width8/1 boundaries, TAKE beyond the word length, size256 configuration truncation, ignored ordinary-memory endianness, and address wrap. Generic-width byte results unfold the original library set_byte definition after EVAL. `Flapjack/Test/LabSemSharedMemoryParity.lean` replays every row in the kernel on an arbitrary remaining source state. Full native evaluate and production routing remain separate work.
+
+`parmove_remove_last_probeScript.sml` captures 16 direct original HOL `sem`
+values for RemoveSelf and EmitLast, including nonempty reversed emitted history
+and parallel snapshot reads. Two deliberately invalid pairs differ: a repeated
+destination fails `wf` (17 versus 37), and a pending source reads the emitted
+destination despite valid `wf` (17 versus 27). Lean checks every row and these
+premise boundaries. The generic case proofs retain both original premises;
+Save, EmitHead and the full semantic-preservation assembly remain open.
+
+`target_sem_encoded_bytes_probeScript.sml` captures ten component observations
+and proves the whole `encoded_bytes_in_mem` predicate on the same configuration,
+memory and domain. The eleventh row is printed only after checking the theorem's
+exact conclusion and empty hypothesis list. `TargetSemEncodedBytesParity.lean`
+replays each row, using the same `Jump 0w` and block-index `1` witnesses for the
+whole predicate. These concrete checks do not prove compiler correctness.
+`labsem_inst_probeScript.sml` checks original native asm_inst dispatch for all five constructors in fourteen direct rows: Skip/Const, Loc-sensitive arithmetic, failed division/shift writes, Loc memory and failed Store updates, unsupported ordinary16, and raw FP payload/sign/register-error paths. `Flapjack/Test/LabSemInstParity.lean` replays identical inputs and expected results in the kernel. `LabSem/Inst.lean` separately proves the full unconditional thirteen-conjunct original asm_inst_consts by unfolding every actual native Arith/Mem/FP case. The FP dependency inherits the existing real-number translation assurance boundary; full native evaluate and production routing remain separate work.
+`parmove_save_probeScript.sml` captures 20 original HOL `sem` values for Save,
+including a cycle, reversed nonempty emitted history, and the permitted final
+`NONE` source. The temporary may change (99 to 67) while real-register results
+agree. A deliberately invalid pending `NONE` source yields 99 versus 27 and
+fails `wf`; no equivalence is claimed for it. Lean checks all observations and
+the input invariants. Save's generic theorem proves the original real-register
+equivalence from the full source `wf`, with no extra agreement premise.
+
+`wordlang_max_var_inst_probeScript.sml` captures 26 direct original
+`max_var_inst` equations, covering every arithmetic and memory clause, integer
+FP comparison results, both 32/64-bit transfer branches, and the FP default.
+`WordLangMaxVarInstParity.lean` replays these finite observations in the kernel.
+They support regression review, not a cross-prover equivalence proof or
+production compiler routing claim.
+
+`word_lang_max_var_exp_probeScript.sml` captures eight original expression frame bounds: variables, nested loads, empty and nested operators, shifts, constants, lookups and mixed expressions. `WordLangMaxVarExpParity.lean` kernel-replays identical inputs. Full program max_var and native compiler wrapper routing remain separate work.
+`wordlang_cutsets_max_probeScript.sml` captures eight original `cutsets_max`
+equations over both Spt components, including raw and non-well-formed trees.
+`WordLangCutsetsMaxParity.lean` kernel-replays the same inputs. These rows are
+regression evidence, not a full compiler or cross-prover equivalence proof.
+`parmove_emithead_probeScript.sml` captures 26 fresh original sem values, paired
+with kernel checks: reversed history, a three-move active path and valid final
+NONE source. Two wf-valid boundaries violate the constructor guards: closing
+a cycle changes register2 from17 to27; a pending read changes register4 from17
+to27. These are not accepted steps. The proof derives active no-read and retains
+both original guards. Full step_sem/RTC/scheduler assembly remains open.
+
+`parmove_stepssem_probeScript.sml` freshly captures 12 original semantic
+observations along a three-step cycle chain (Save, EmitHead, EmitLast), paired
+with kernel computations and an actual RTC constructor proof. Real registers
+remain27/17, while NONE changes99 to17. The theorem uses original eqenv,
+not equality at the temporary; reflexive closure is kernel checked separately.
+No functional scheduler or production-route correctness is inferred.
+
+`wordlang_max_var_probeScript.sml` captures 37 direct original full-program
+`max_var` equations. Cases include every constructor, tail-call handler
+suppression, returning and exceptional continuations, both Loop cut sets,
+and 32/64-bit instruction transfer branches. `WordLangMaxVarParity.lean`
+kernel-replays the same inputs. These finite rows support source review;
+they do not establish a cross-prover equivalence or production route.
+
+`parmove_final_probeScript.sml` freshly captures seven full original pmov
+results: terminal history preservation, self move, dependency chain, cycle,
+scratch-register inputs, duplicate destinations and nonempty active/history.
+Every full state is kernel paired in ParmoveFinalParity. Scratch and duplicate
+inputs deliberately exceed wf: pmov_final is unconditional. It proves empty
+pending/active lists and an existential emitted history, not semantic correctness.
+
+`labsem_evaluate_probeScript.sml` checks all full native evaluator branches in 57 whole executions, including installed-code execution, byte/configuration guard rejection, failed-instruction rollback, clock exhaustion, shared-memory sequence shifts, external-call register/FP havoc and exact return/final events. The paired kernel fixtures live in `Flapjack/Test/LabSemEvaluateParity.lean`. Constructor-specific `loc_to_pc` computation equations are derived with `SIMP_CONV [Once loc_to_pc_def]` in the HOL kernel to eliminate the original existential label guard before recursive execution; these preserve the original evaluator and inputs.
+
+`parmove_stepscorrect_probeScript.sml` captures12fresh original parallel and
+reversed-sequential values for a cycle and chain. Kernel tests construct the
+actual five-step cycle and four-step chain relations and apply steps_correct
+for arbitrary environments. The temporary changes99to27 on the cycle; original
+eqenv excludes it. No pmov-to-Step relationship is assumed or claimed.
+
+
+`word_to_stack_programs_native_probeScript.sml` observes the literal native `compile_prog` and generic `compile_word_to_stack` in 21 original executions. Cases cover frame subtraction/MAX boundaries, widths1/8/64, perf, arbitrary identifiers, duplicate preservation, and left-to-right bitmap content/length across multiple programs and multiword insertions. `Flapjack/Test/WordToStackNativeProgramsParity.lean` replays identical inputs and results in the kernel. Native top-level compilation and production caller routing remain separate work.
+
+
+`parmove_destination_probeScript.sml` observes the real/temporary destinations
+of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
+states. `ParmoveDestinationParity` replays each row and applies the unconditional
+original destination-membership theorem, including malformed states.
+
+`parmove_source_probeScript.sml` observes native `pmov` source-register maps
+on eight arbitrary states, including scratch/duplicate/active and real history.
+`ParmoveSourceParity` replays each row and applies the unconditional original
+source-membership theorem; the cycle-save source is justified from active LAST.
+
+`parmove_dsteps_probeScript.sml` freshly proves nine observations from the original
+`reg_alloc/parmove` theory: all six deterministic rules, two guard boundaries,
+and Extend with a suffix that still reads the selected register. The last row
+checks the source prefix-only NoRead guard. `ParmoveDStepsParity.lean` replays
+the same inputs in Lean. These finite observations are regression evidence,
+not a cross-prover equivalence proof; the complete rules, induction and cases
+statements are source-reviewed in `Parmove/DSteps.lean`.
+
+`parmove_split_source_probeScript.sml` freshly evaluates original splitAtPki
+with the index-independent source predicate and pair callback used by fstep.
+Seven full partition outputs are kernel paired with actual splitSource: empty,
+first/middle/absent matches, NONE, duplicate destinations and late zero. Generic
+untagged SplitSource laws derive prefixNoRead, suffixheadmatch and empty-suffix
+NoRead equivalence. They are Flapjack infrastructure, not a general indexed
+combinator port or completed functional scheduler simulation.
+
+`word_to_stack_native_config_probeScript.sml` captures seven fresh original
+configuration record projections and updates. Empty, singleton, raw BS and
+non-well-formed BN trees are retained without a validity restriction.
+`WordToStackNativeConfigParity.lean` kernel-replays the same records. This
+carrier prerequisite does not establish the top compiler or its executed route;
+those remain tracked on the WordToStack compiler beads.
+
+`parmove_destination_probeScript.sml` observes the real/temporary destinations
+of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
+states. `ParmoveDestinationParity` replays each row and applies the unconditional
+original destination-membership theorem, including malformed states.
+
+
+`labsem_semantics_probeScript.sml` proves four whole behavior observations through original `semantics_def`: Error, success, resource limit, and self-loop divergence with the entire arbitrary input trace retained. Evaluator equations are derived in the original HOL kernel and record-update left-hand sides normalized before rewriting the quantified clocks. The loop equation covers every natural clock by induction; the divergent trace uses the actual constant-image and prefix-chain/LUB uniqueness theorems. `Flapjack/Test/LabSemSemanticsParity.lean` proves the corresponding native observations, including arbitrary Halt word values. Neither side substitutes a finite timeout for divergence.
+
+`parmove_dstep_step_probeScript.sml` captures six original wf premises and nine cycle semantic values before Save, after Save, and after EmitHead. Kernel fixtures prove all six actual DStep-to-Steps applications with the original wf premise. The temporary changes99to17 on Save; no functional scheduler simulation is assumed.
+
+`word_to_stack_compile_keys_probeScript.sml` captures seven fresh original
+key-list projections of the actual recursive compiler, retaining empty, generic,
+duplicate and reordered identifiers, bitmap-changing bodies and width-one
+inputs. `WordToStackCompileKeysParity.lean` applies the full reviewed theorem
+to the same actual compiler results. The source theorem preserves the entire
+key list; it does not establish pass simulation or final binary correctness.
+
+
+`word_alloc_total_colour_probeScript.sml` records eight direct original
+`total_colour` lookups: absent physical/virtual keys (including large keys),
+mapped physical/virtual keys, and a mapped zero colour. Same-input kernel
+fixtures are registered in the actual CompilerParity test root.
+`word_alloc_even_locals_probeScript.sml` computes the original starting-local domain predicate on six full native word/location trees: empty, zero, sparse even keys, odd, mixed and duplicate overwrite. Standard finite-domain logical rewrites normalize its universal quantifier; actual Spt insertion-domain lemmas replay the same six inputs in kernel fixtures imported by CompilerParity. This predicate is a prerequisite, not the whole allocator theorem.
+`parmove_destination_wrapper_probeScript.sml` freshly captures seven whole
+public-wrapper destination lists. Self removal and duplicate destinations are
+unrestricted; the cycle emits scratch NONE while nested-option registers
+include the distinct real identifier SOME NONE.
+`ParmoveDestinationWrapperParity.lean` kernel-computes the same lists and
+applies the full source one-way membership theorem to each input. It is
+imported by the actual Lake test driver as well as the umbrella. These rows
+support regression review, not a cross-prover equivalence or algorithm
+semantic-correctness claim.
+
+`word_to_stack_live_length_probeScript.sml` observes the full native frame
+bitmap length bound and preserved count-minus-flattened-length equation on six
+inputs: zero frame, empty bitmap, positive slack, nested AppList, raw non-wf
+Spt and width-eight packing. `WordToStackLiveLengthParity` kernel-applies the
+full source theorem to the same actual native outputs; it is imported in the
+actual CompilerParity test driver. These finite observations are regression
+evidence, not a cross-prover equivalence or compiler-correctness proof.
+
+`word_to_stack_live_prefix_probeScript.sml` freshly observes the actual frame
+bitmap prefix on seven inputs, including zero frame, nested AppList, raw
+non-wf Spt, width-eight packing and an input count below flattened length.
+`WordToStackLivePrefixParity` applies the full source theorem to the same
+actual native outputs in the real CompilerParity test driver. No input count
+bound is needed. These observations provide regression evidence, not a
+cross-prover equivalence or whole-compiler correctness proof.
+
+`word_to_stack_insert_prefix_probeScript.sml` freshly observes seven insertion
+prefix equations over the original payload-polymorphic operation: empty and
+nested trees, a count below flattened length, positive slack, Bool and Option
+Nat payloads. `WordToStackInsertPrefixParity` kernel-applies the full original
+statement to the same actual insertion outputs in the CompilerParity driver.
+No word dimension or count bound is required. These observations are regression
+evidence, not a cross-prover equivalence or whole-compiler correctness proof.
+
+`word_alloc_merge_stack_sets_probeScript.sml` evaluates eight literal full-tree merge equations: empty, retained right payload, left-biased new entries, right-only entries, removal, fixed-set bias, malformed tree, and generic payloads. Same-input kernel fixtures are imported by CompilerParity. This helper does not establish the whole allocator theorem.
+`word_alloc_remove_temp_stack_probeScript.sml` captures eight original full-tree deletion equations: empty, root key, duplicate, missing, untouched fixed tree, raw non-wf tree, and two generalized payload/second-component inputs. The native right fold and same-input kernel fixtures preserve arbitrary payload/second-component generality; actual CompilerParity registers them. This helper does not establish allocator correctness or executed compiler routing.
+
+`word_alloc_merge_stack_only_probeScript.sml` captures nine original full-tree equations for every move-analysis branch: present alloc/physical/stack source, absent stack alloc/physical source, missing/root deletion, fixed overwrite, and raw non-wf trees. Same-input kernel fixtures are registered in actual CompilerParity. This helper is not full stack analysis or allocator correctness.
+
+`parmove_correct_probeScript.sml` kernel-proves seven universal-environment instances of original `parmove_correct`, deriving the windmill premise by EVAL: empty, self, chain, cycle, fan-out, reordered chain and Boolean register/value carriers. Matching Lean kernel applications are imported by CompilerParity; this is theorem replay, not an executable compiler parity measurement.
+`target_sem_mapped_memory_probeScript.sml` checks both literal mapped instruction templates in original HOL: all eight size/opcode choices, invalid sizes, mismatched register/address/bytes, missing domain, wrapped addresses, empty encodings and word8 size wrap. The ignored return-PC parameter remains independently polymorphic. `TargetSemMappedMemoryParity` checks the same 35 observations in the Lean kernel.
+
+`word_alloc_even_colour_probeScript.sml` compares the actual sparse-tree physical-colour constraint with twenty original observations: physical keys require half their key, virtual values are unrestricted, duplicate entries use original first precedence, arbitrary large natural keys and malformed trees remain accepted inputs. `WordAllocEvenColourParity` checks the same results in the Lean kernel; no well-formedness or complete-domain assumption is added.
+
+`spt_union_algebra_probeScript.sml` checks all four literal universal Spt union/insert statements using their original kernel theorem proofs, then 28 concrete original raw-tree observations. `SptUnionAlgebraParity` applies the matching universal Lean theorems and checks malformed trees, singleton overwrites and left bias. Commutativity is restricted to unit-valued number sets; a Nat-valued counterexample is also checked. Concrete stored numerals are explicitly Nat on both sides.
+
+`word_to_stack_native_top_probeScript.sml` audits the original compile type and checks 24 full top-level result tuples. `WordToStackNativeTopParity` checks identical bitmap words, exact sparse frame maps, complete frame lists and ordered stub/program bodies in the kernel. Boundaries include both performance seeds and narrow wrap, natural register subtraction, duplicate avoid entries/identifiers, unbounded natural IDs, zero frames and ordered multiword bitmap threading. Expected stub subterms use the independently reviewed original/native stub definitions; body and bitmap values are otherwise literal expectations. Executed compiler routing remains separately tracked.
+`word_to_stack_comp_prefix_probeScript.sml` freshly observes nine whole
+compiler-prefix equations: Skip, Alloc, MustTerminate, Seq, If, Loop, returning
+Call with perf enabled, returning Call with handler, and StoreConsts. Every
+input starts from a nested AppList whose count is deliberately below its
+flattened length. `WordToStackCompilePrefixParity` applies the full original
+output-equation theorem to the same actual compiler outputs in the real Lake
+test driver. These observations are regression evidence, not a cross-prover
+equivalence or whole-compiler correctness proof.

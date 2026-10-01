@@ -1,4 +1,5 @@
 import Flapjack.HolRef
+import Flapjack.Compiler.Backend.Parmove
 import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Compiler.Backend.StackLang.Prog
 import Flapjack.Compiler.Backend.WordToStack
@@ -192,6 +193,19 @@ def wMoveAux {α : Type} : List (Sum Nat Nat × Sum Nat Nat) → Nat × Nat × N
   | [xy], kf => wMoveSingle xy kf
   | xy :: xys, kf => .seq (wMoveSingle xy kf) (wMoveAux xys kf)
 
+/-- Literal HOL `wMove`: divide both variable indices by two, schedule the
+parallel moves, format both optional registers using the same k, and lower
+through wMoveAux with the unchanged (k,f,f') triple. The temporary is NONE and
+is therefore formatted as register k+1. No alternative production scheduler
+or fuel bound is used. Executed compiler migration remains separately tracked. -/
+@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wMove_def"
+  (words_as_type_indexed_bitvec)]
+def wMove {width : Nat} [NeZero width] (moves : List (Nat × Nat))
+    (kf : Nat × Nat × Nat) : ProgM (BitVec width) :=
+  let scheduled := Flapjack.Compiler.Backend.Parmove.parmove
+    (moves.map (fun move => (move.1 / 2, move.2 / 2)))
+  wMoveAux (scheduled.map (fun move => (formatVar kf.1 move.1, formatVar kf.1 move.2))) kf
+
 /-- Exact port of HOL `copy_ret_aux_def`
     (`cakeml/compiler/backend/word_to_stackScript.sml:429-441`):
 
@@ -277,9 +291,11 @@ StackHandlerArgs perf dest arg_count (k,f,f') =
 ```
 
     `'a` is arbitrary in HOL (no word operation and no `dimindex (:'a)`), so the
-    generic-`α` statement over the shared-word carrier `ProgM` is exact. -/
+    generic-`α` statement over the shared-word carrier `ProgM` is exact.
+    The two destination payload types are independently quantified by HOL;
+    neither is restricted to the output program carrier or to natural numbers. -/
 @[hol "cakeml/compiler/backend/word_to_stackScript.sml" "StackHandlerArgs_def"]
-def stackHandlerArgs {α : Type} (perf : Bool) (dest : Sum Nat Nat) (arg_count : Nat)
+def stackHandlerArgs {α δ ε : Type} (perf : Bool) (dest : Sum δ ε) (arg_count : Nat)
     (kf : Nat × Nat × Nat) : ProgM α :=
   stackArgs dest arg_count
     (kf.1,
@@ -495,5 +511,111 @@ def wShareInst {α : Type} (op : WordMemOp) (v : Nat)
       let l2 := wReg2 v kf
       Flapjack.Compiler.Backend.WordToStack.wStackLoad (l1.1 ++ l2.1)
         (.shMemOp .store32 l2.2 (.addr l1.2 offset))
+
+/-- Exact port of HOL `wInst_def`
+    (`cakeml/compiler/backend/word_to_stackScript.sml:88-175`).
+
+Every clause is mirrored, with `dimindex (:'a) = 64` becoming `width = 64`.
+`Load16`/`Store16` are not handled by HOL and fall to the `Skip` catch-all, as
+in the source. The positive-width BitVec translation is recorded explicitly;
+this helper is not yet wired into the executed compiler (bead 15.3.25). -/
+@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wInst_def"
+  (words_as_type_indexed_bitvec)]
+def wInst {width : Nat} [NeZero width] (i : WordLangInst (BitVec width))
+    (kf : Nat × Nat × Nat) : ProgM (BitVec width) :=
+  match i with
+  | .const n c =>
+      wRegWrite1 (fun n => .inst (.const n c)) n kf
+  | .arith (.binop bop n1 n2 (.imm imm)) =>
+      let l := wReg1 n2 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad l.1
+        (wRegWrite1 (fun n1 => .inst (.arith (.binop bop n1 l.2 (.imm imm)))) n1 kf)
+  | .arith (.binop bop n1 n2 (.reg n3)) =>
+      let l := wReg1 n2 kf
+      let l' := wReg2 n3 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad (l.1 ++ l'.1)
+        (wRegWrite1 (fun n1 => .inst (.arith (.binop bop n1 l.2 (.reg l'.2)))) n1 kf)
+  | .arith (.shift sh n1 n2 (.imm imm)) =>
+      let l := wReg1 n2 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad l.1
+        (wRegWrite1 (fun n1 => .inst (.arith (.shift sh n1 l.2 (.imm imm)))) n1 kf)
+  | .arith (.shift sh n1 n2 (.reg n3)) =>
+      let l := wReg1 n2 kf
+      let l' := wReg2 n3 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad (l.1 ++ l'.1)
+        (wRegWrite1 (fun n1 => .inst (.arith (.shift sh n1 l.2 (.reg l'.2)))) n1 kf)
+  | .arith (.div n1 n2 n3) =>
+      let l := wReg1 n2 kf
+      let l' := wReg2 n3 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad (l.1 ++ l'.1)
+        (wRegWrite1 (fun n1 => .inst (.arith (.div n1 l.2 l'.2))) n1 kf)
+  | .arith (.addCarry n1 n2 n3 n4) =>
+      let l := wReg1 n2 kf
+      let l' := wReg2 n3 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad (l.1 ++ l'.1)
+        (wRegWrite1 (fun n1 => .inst (.arith (.addCarry n1 l.2 l'.2 n4))) n1 kf)
+  | .arith (.addOverflow n1 n2 n3 n4) =>
+      let l := wReg1 n2 kf
+      let l' := wReg2 n3 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad (l.1 ++ l'.1)
+        (wRegWrite1 (fun n1 => .inst (.arith (.addOverflow n1 l.2 l'.2 n4))) n1 kf)
+  | .arith (.subOverflow n1 n2 n3 n4) =>
+      let l := wReg1 n2 kf
+      let l' := wReg2 n3 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad (l.1 ++ l'.1)
+        (wRegWrite1 (fun n1 => .inst (.arith (.subOverflow n1 l.2 l'.2 n4))) n1 kf)
+  | .arith (.longMul _ _ _ _) =>
+      .inst (.arith (.longMul 3 0 0 2))
+  | .arith (.longDiv _ _ _ _ n5) =>
+      let l := wReg1 n5 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad l.1
+        (.inst (.arith (.longDiv 0 3 3 0 l.2)))
+  | .mem .load n1 (.addr n2 offset) =>
+      let l := wReg1 n2 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad l.1
+        (wRegWrite1 (fun n1 => .inst (.mem .load n1 (.addr l.2 offset))) n1 kf)
+  | .mem .store n1 (.addr n2 offset) =>
+      let l1 := wReg1 n2 kf
+      let l2 := wReg2 n1 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad (l1.1 ++ l2.1)
+        (.inst (.mem .store l2.2 (.addr l1.2 offset)))
+  | .mem .load8 n1 (.addr n2 offset) =>
+      let l := wReg1 n2 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad l.1
+        (wRegWrite1 (fun n1 => .inst (.mem .load8 n1 (.addr l.2 offset))) n1 kf)
+  | .mem .store8 n1 (.addr n2 offset) =>
+      let l1 := wReg1 n2 kf
+      let l2 := wReg2 n1 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad (l1.1 ++ l2.1)
+        (.inst (.mem .store8 l2.2 (.addr l1.2 offset)))
+  | .mem .load32 n1 (.addr n2 offset) =>
+      let l := wReg1 n2 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad l.1
+        (wRegWrite1 (fun n1 => .inst (.mem .load32 n1 (.addr l.2 offset))) n1 kf)
+  | .mem .store32 n1 (.addr n2 offset) =>
+      let l1 := wReg1 n2 kf
+      let l2 := wReg2 n1 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad (l1.1 ++ l2.1)
+        (.inst (.mem .store32 l2.2 (.addr l1.2 offset)))
+  | .fp (.fpLess r f1 f2) =>
+      wRegWrite1 (fun r => .inst (.fp (.fpLess r f1 f2))) r kf
+  | .fp (.fpLessEqual r f1 f2) =>
+      wRegWrite1 (fun r => .inst (.fp (.fpLessEqual r f1 f2))) r kf
+  | .fp (.fpEqual r f1 f2) =>
+      wRegWrite1 (fun r => .inst (.fp (.fpEqual r f1 f2))) r kf
+  | .fp (.fpMovToReg r1 r2 d) =>
+      if width = 64 then
+        wRegWrite1 (fun r1 => .inst (.fp (.fpMovToReg r1 0 d))) r1 kf
+      else
+        wRegWrite2
+          (fun r2 => wRegWrite1 (fun r1 => .inst (.fp (.fpMovToReg r1 r2 d))) r1 kf)
+          r2 kf
+  | .fp (.fpMovFromReg d r1 r2) =>
+      let l := wReg1 r1 kf
+      let l' := if width = 64 then ([], 0) else wReg2 r2 kf
+      Flapjack.Compiler.Backend.WordToStack.wStackLoad (l.1 ++ l'.1)
+        (.inst (.fp (.fpMovFromReg d l.2 l'.2)))
+  | .fp f => .inst (.fp f)
+  | _ => .inst .skip
 
 end Flapjack.Compiler.Backend.WordToStackRegFormat

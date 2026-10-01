@@ -404,6 +404,35 @@ example : wMoveSingle (α := BitVec 64) (Sum.inl 3, Sum.inl 5) (2, 7, 9) =
     .inst (.arith (.binop .or 3 5 (.reg 5))) := rfl
 example : wMoveAux (α := BitVec 64) [] (2, 7, 9) = .skip := rfl
 
+/-! ## Literal wMove wrapper
+Eleven direct original HOL equality rows at 64-bit syntax, in
+`word_to_stack_wmove_probe.out`. These cover all formatted move cases, register
+and spill cycles, DIV2 collision/odd inputs, truncated offsets and fprime.
+The existing structural comparator covers exactly these generated constructors.
+No production compiler call to wMove is claimed. -/
+def literalWMoveParityGuard : Bool :=
+  wMoveProgBEq (wMove (width := 64) [] (3, 8, 0)) .skip &&
+  wMoveProgBEq (wMove (width := 64) [(2, 3)] (3, 8, 0)) .skip &&
+  wMoveProgBEq (wMove (width := 64) [(2, 4)] (3, 8, 0)) (wmsOr 1 2) &&
+  wMoveProgBEq (wMove (width := 64) [(2, 8)] (3, 8, 0)) (smLoad 1 6) &&
+  wMoveProgBEq (wMove (width := 64) [(8, 2)] (3, 8, 0)) (smStore 1 6) &&
+  wMoveProgBEq (wMove (width := 64) [(8, 10)] (3, 8, 0))
+    (smSeq (smLoad 3 5) (smStore 3 6)) &&
+  wMoveProgBEq (wMove (width := 64) [(2, 4), (4, 2)] (3, 8, 0))
+    (smSeq (wmsOr 4 2) (smSeq (wmsOr 2 1) (wmsOr 1 4))) &&
+  wMoveProgBEq (wMove (width := 64) [(8, 10), (10, 8)] (3, 8, 0))
+    (smSeq (smLoad 4 5) (smSeq (smSeq (smLoad 3 6) (smStore 3 5)) (smStore 4 6))) &&
+  wMoveProgBEq (wMove (width := 64) [(3, 5)] (3, 8, 0)) (wmsOr 1 2) &&
+  wMoveProgBEq (wMove (width := 64) [(2, 8)] (3, 0, 0)) (smLoad 1 0) &&
+  wMoveProgBEq (wMove (width := 64) [(8, 10)] (3, 8, 99))
+    (smSeq (smLoad 3 5) (smStore 3 6))
+
+#guard literalWMoveParityGuard
+-- A second positive width checks that the wrapper retains its generic syntax.
+example : wMove (width := 32) [] (3, 8, 0) = .skip := by
+  simp [wMove, Flapjack.Compiler.Backend.Parmove.parmove,
+    Flapjack.Compiler.Backend.Parmove.pmov, wMoveAux]
+
 /-! ## Executable bitmap recursion ↔ tagged recursion
 
 Untagged bridge (bead `flapjack-pxn.18.5.15.3.1.1`): the executed
@@ -720,11 +749,11 @@ def handlerParityGuard : Bool :=
   (Flapjack.Compiler.Backend.WordToStack.handlerSlots false == 3) &&
   (Flapjack.Compiler.Backend.WordToStack.handlerSlots true == 5) &&
   handlerProgBEq
-    (stackHandlerArgs (α := BitVec 64)
+    (stackHandlerArgs (α := BitVec 64) (δ := Nat) (ε := Nat)
       false (Sum.inl 4) 7 (2, 7, 9))
     (stackArgs (α := Nat) (β := Nat) (γ := BitVec 64) (Sum.inl 4) 7 (2, 10, 12)) &&
   handlerProgBEq
-    (stackHandlerArgs (α := BitVec 64)
+    (stackHandlerArgs (α := BitVec 64) (δ := Nat) (ε := Nat)
       true (Sum.inr 4) 7 (2, 7, 9))
     (stackArgs (α := Nat) (β := Nat) (γ := BitVec 64) (Sum.inr 4) 7 (2, 12, 14)) &&
   handlerProgBEq
@@ -747,7 +776,7 @@ def handlerParityGuard : Bool :=
 #eval handlerParityGuard
 #guard handlerParityGuard
 
-example : stackHandlerArgs (α := BitVec 64)
+example : stackHandlerArgs (α := BitVec 64) (δ := Nat) (ε := Nat)
     false (Sum.inl 4) 7 (2, 7, 9)
     = stackArgs (α := Nat) (β := Nat) (γ := BitVec 64) (Sum.inl 4) 7 (2, 10, 12) := rfl
 example : popHandler (α := BitVec 64) false (1, 2, 3) .skip
@@ -922,6 +951,96 @@ example : wShareInst (α := BitVec 64) .load 5 (.addr 3 9) (2, 7, 9)
 example : wShareInst (α := BitVec 64) .store 5 (.addr 3 9) (2, 7, 9)
     = wsStore .store := rfl
 
+/-! ## `wInst` oracle parity
+
+Structural comparison and rows reproducing `word_to_stack_winst_probe.out` for
+the instruction helper `wInst` (`word_to_stackScript.sml:88-185`). These are
+representative 64-bit observations, including `FPMovToReg`/`FPMovFromReg` and
+the `Load16` `Skip` catch-all. `Store16` and non-64-bit FP branches were
+source-reviewed but are not covered by these fourteen rows. -/
+
+private def winstInstBEq : WordLangInst (BitVec 64) → WordLangInst (BitVec 64) → Bool
+  | .const r v, .const r' v' => r == r' && v == v'
+  | .arith (.binop op d a (.imm v)), .arith (.binop op' d' a' (.imm v')) =>
+      op == op' && d == d' && a == a' && v == v'
+  | .arith (.binop op d a (.reg n)), .arith (.binop op' d' a' (.reg n')) =>
+      op == op' && d == d' && a == a' && n == n'
+  | .arith (.div d x y), .arith (.div d' x' y') => d == d' && x == x' && y == y'
+  | .arith (.addCarry d c l r), .arith (.addCarry d' c' l' r') =>
+      d == d' && c == c' && l == l' && r == r'
+  | .arith (.longMul a b c d), .arith (.longMul a' b' c' d') =>
+      a == a' && b == b' && c == c' && d == d'
+  | .arith (.longDiv a b c d e), .arith (.longDiv a' b' c' d' e') =>
+      a == a' && b == b' && c == c' && d == d' && e == e'
+  | .mem op dst (.addr b o), .mem op' dst' (.addr b' o') =>
+      op == op' && dst == dst' && b == b' && o == o'
+  | .fp (.fpLess r f1 f2), .fp (.fpLess r' f1' f2') =>
+      r == r' && f1 == f1' && f2 == f2'
+  | .fp (.fpMovToReg r1 r2 d), .fp (.fpMovToReg r1' r2' d') =>
+      r1 == r1' && r2 == r2' && d == d'
+  | .fp (.fpMovFromReg d r1 r2), .fp (.fpMovFromReg d' r1' r2') =>
+      d == d' && r1 == r1' && r2 == r2'
+  | .fp (.fpAdd d l r), .fp (.fpAdd d' l' r') => d == d' && l == l' && r == r'
+  | .skip, .skip => true
+  | _, _ => false
+
+private def winstProgBEq : StackMoveProg → StackMoveProg → Bool
+  | .seq a b, .seq c d => winstProgBEq a c && winstProgBEq b d
+  | .inst i, .inst j => winstInstBEq i j
+  | .stackLoad r i, .stackLoad s j => r == s && i == j
+  | .stackStore r i, .stackStore s j => r == s && i == j
+  | .skip, .skip => true
+  | _, _ => false
+
+private def wiInstConst (r v : Nat) : StackMoveProg := .inst (.const r (BitVec.ofNat 64 v))
+private def wiInstBinopImm (d a v : Nat) : StackMoveProg :=
+  .inst (.arith (.binop .add d a (.imm (BitVec.ofNat 64 v))))
+private def wiInstBinopReg (d a n : Nat) : StackMoveProg :=
+  .inst (.arith (.binop .add d a (.reg n)))
+private def wiInstDiv (d x y : Nat) : StackMoveProg := .inst (.arith (.div d x y))
+private def wiInstAddCarry (d c l r : Nat) : StackMoveProg :=
+  .inst (.arith (.addCarry d c l r))
+private def wiInstLongMul : StackMoveProg := .inst (.arith (.longMul 3 0 0 2))
+private def wiInstLongDiv (q : Nat) : StackMoveProg := .inst (.arith (.longDiv 0 3 3 0 q))
+private def wiInstStore (r b : Nat) : StackMoveProg := .inst (.mem .store r (.addr b 9))
+private def wiInstFpLess (r : Nat) : StackMoveProg := .inst (.fp (.fpLess r 1 2))
+private def wiInstFpMovToReg (r1 : Nat) : StackMoveProg := .inst (.fp (.fpMovToReg r1 0 0))
+private def wiInstFpMovFromReg (d r1 : Nat) : StackMoveProg :=
+  .inst (.fp (.fpMovFromReg d r1 0))
+private def wiInstFpAdd : StackMoveProg := .inst (.fp (.fpAdd 1 2 3))
+private def wiInstSkip : StackMoveProg := .inst .skip
+
+def wInstParityGuard : Bool :=
+  winstProgBEq (wInst (width := 64) (.const 7 5) (2, 7, 9))
+    (.seq (wiInstConst 2 5) (.stackStore 2 5)) &&
+  winstProgBEq (wInst (width := 64) (.arith (.binop .add 4 3 (.imm 9))) (2, 7, 9))
+    (.seq (wiInstBinopImm 2 1 9) (.stackStore 2 6)) &&
+  winstProgBEq (wInst (width := 64) (.arith (.binop .add 4 3 (.reg 5))) (2, 7, 9))
+    (.seq (.stackLoad 3 6) (.seq (wiInstBinopReg 2 1 3) (.stackStore 2 6))) &&
+  winstProgBEq (wInst (width := 64) (.arith (.div 4 3 5)) (2, 7, 9))
+    (.seq (.stackLoad 3 6) (.seq (wiInstDiv 2 1 3) (.stackStore 2 6))) &&
+  winstProgBEq (wInst (width := 64) (.arith (.addCarry 4 3 5 6)) (2, 7, 9))
+    (.seq (.stackLoad 3 6) (.seq (wiInstAddCarry 2 1 3 6) (.stackStore 2 6))) &&
+  winstProgBEq (wInst (width := 64) (.arith (.longMul 1 2 3 4)) (2, 7, 9))
+    wiInstLongMul &&
+  winstProgBEq (wInst (width := 64) (.arith (.longDiv 1 2 3 4 5)) (2, 7, 9))
+    (.seq (.stackLoad 2 6) (wiInstLongDiv 2)) &&
+  winstProgBEq (wInst (width := 64) (.mem .load16 4 (.addr 3 9)) (2, 7, 9))
+    wiInstSkip &&
+  winstProgBEq (wInst (width := 64) (.mem .store 4 (.addr 3 9)) (2, 7, 9))
+    (.seq (.stackLoad 3 6) (wiInstStore 3 1)) &&
+  winstProgBEq (wInst (width := 64) (.fp (.fpLess 4 1 2)) (2, 7, 9))
+    (.seq (wiInstFpLess 2) (.stackStore 2 6)) &&
+  winstProgBEq (wInst (width := 64) (.fp (.fpMovToReg 4 3 0)) (2, 7, 9))
+    (.seq (wiInstFpMovToReg 2) (.stackStore 2 6)) &&
+  winstProgBEq (wInst (width := 64) (.fp (.fpMovFromReg 0 4 3)) (2, 7, 9))
+    (.seq (.stackLoad 2 6) (wiInstFpMovFromReg 0 2)) &&
+  winstProgBEq (wInst (width := 64) (.fp (.fpAdd 1 2 3)) (2, 7, 9)) wiInstFpAdd &&
+  winstProgBEq (wInst (width := 64) .skip (2, 7, 9)) wiInstSkip
+
+#eval wInstParityGuard
+#guard wInstParityGuard
+
 def runChecks : IO Bool := do
   IO.println "PASS Word-to-Stack HOL bitmap, stack-slot, and program-combinator oracle rows"
   IO.println "PASS executable Cake bitmap recursion and name-set map to tagged bitsToWordW/wordListW/writeBitmapHOL"
@@ -932,6 +1051,21 @@ def runChecks : IO Bool := do
     progCombinatorsParityGuard && storeNameParityGuard && regFormatParityGuard &&
     stackMoveParityGuard && wMoveParityGuard && copyRetParityGuard &&
     copyRetIndependentGuard && wLiveParityGuard && handlerParityGuard &&
-    callDestParityGuard && stubParityGuard && wShareInstParityGuard)
+    callDestParityGuard && stubParityGuard && wShareInstParityGuard &&
+    wInstParityGuard && literalWMoveParityGuard)
 
 end Flapjack.Test.WordToStackBitsParity
+
+namespace Flapjack.Test.HandlerDestinationPolymorphism
+open Flapjack.Compiler.Backend.WordToStackRegFormat
+example {Word Left Right : Type} (perf : Bool) (dest : Sum Left Right)
+    (count k f scratch : Nat) :
+    stackHandlerArgs (α := Word) perf dest count (k,f,scratch) =
+      stackArgs dest count
+        (k, f + Flapjack.Compiler.Backend.WordToStack.handlerSlots perf,
+         scratch + Flapjack.Compiler.Backend.WordToStack.handlerSlots perf) := rfl
+example : stackHandlerArgs (α := Nat) (ε := Unit) false (Sum.inl true) 7 (2,7,9) =
+    stackArgs (γ := Nat) (β := Unit) (Sum.inl true) 7 (2,10,12) := rfl
+example : stackHandlerArgs (α := Nat) (δ := Bool) true (Sum.inr ()) 7 (2,7,9) =
+    stackArgs (γ := Nat) (α := Bool) (Sum.inr ()) 7 (2,12,14) := rfl
+end Flapjack.Test.HandlerDestinationPolymorphism

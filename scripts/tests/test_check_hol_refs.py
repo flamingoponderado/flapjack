@@ -2,6 +2,7 @@
 
 import os
 import runpy
+import shutil
 import tempfile
 import unittest
 import contextlib
@@ -1903,6 +1904,88 @@ noncomputable def cmp : FpCmp -> Bool
 DECL = CHECKER["hol_declaration_lines"]
 
 
+class HolRelnTupleDeclarationsTest(unittest.TestCase):
+    def fixture(self, text):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        path = Path(directory.name) / "fixtureScript.sml"
+        path.write_text(text)
+        return path
+
+    def test_direct_generated_triple_and_exact_line(self):
+        path = self.fixture("Theory fixture\nval (step_rules, step_ind, step_cases) = Hol_reln`\n  step x y\n`;\n")
+        for name in ("step_rules", "step_ind", "step_cases"):
+            self.assertEqual(DECL(path, {})[name], [2])
+            self.assertIsNone(REF_ERROR(path, name, 2, {}))
+            self.assertIn("not at line", REF_ERROR(path, name, 3, {}))
+
+    def test_actual_parmove_composition_bindings(self):
+        path = CHECKER["ROOT"] / "cakeml/compiler/backend/reg_alloc/parmoveScript.sml"
+        for stem, line in (("step", 29), ("dstep", 478)):
+            for suffix in ("_rules", "_ind", "_cases"):
+                self.assertEqual(DECL(path, {})[stem + suffix], [line])
+                self.assertIsNone(REF_ERROR(path, stem + suffix, line, {}))
+
+    def test_repeated_generated_name_requires_line(self):
+        binding = "val (step_rules,step_ind,step_cases) = Hol_reln`step x y`;\n"
+        path = self.fixture(binding + binding)
+        self.assertEqual(DECL(path, {})["step_rules"], [1, 2])
+        self.assertIn("multiple lines", REF_ERROR(path, "step_rules", None, {}))
+        self.assertIsNone(REF_ERROR(path, "step_rules", 2, {}))
+
+    def test_generated_and_modern_collision_requires_line(self):
+        path = self.fixture(
+            "val (step_rules,step_ind,step_cases) = Hol_reln`step x y`;\n"
+            "Theorem step_rules: T Proof simp[] QED\n"
+        )
+        self.assertEqual(DECL(path, {})["step_rules"], [1, 2])
+        self.assertIn("multiple lines", REF_ERROR(path, "step_rules", None, {}))
+        self.assertIsNone(REF_ERROR(path, "step_rules", 1, {}))
+        self.assertIsNone(REF_ERROR(path, "step_rules", 2, {}))
+
+    def test_arbitrary_tuple_alias_and_inconsistent_names_rejected(self):
+        for rhs in ("other_generator`step x y`", "make (Hol_reln`step x y`)", "Hol_reln_alias`step x y`"):
+            with self.subTest(rhs=rhs):
+                path = self.fixture("val (step_rules,step_ind,step_cases) = " + rhs + ";\n")
+                self.assertNotIn("step_rules", DECL(path, {}))
+        path = self.fixture("val (step_rules,other_ind,step_cases) = Hol_reln`step x y`;\n")
+        self.assertNotIn("step_rules", DECL(path, {}))
+
+    def test_comment_string_quotation_and_local_binding_rejected(self):
+        binding = "val (step_rules,step_ind,step_cases) = Hol_reln`step x y`;"
+        texts = (
+            "(* outer (* nested *)\n" + binding + "\n*)\n",
+            'val text = "\n' + binding + '\n";\n',
+            "val term = ``\n" + binding + "\n``;\n",
+            "val term = “\n" + binding + "\n”;\n",
+            "val term = ‘\n" + binding + "\n’;\n",
+            "  " + binding + "\n",
+        )
+        for text in texts:
+            with self.subTest(text=text):
+                self.assertNotIn("step_rules", DECL(self.fixture(text), {}))
+
+    def test_unterminated_quote_and_unterminated_binding_rejected(self):
+        for ending in ("step x y", "step x y`"):
+            path = self.fixture("val (step_rules,step_ind,step_cases) = Hol_reln`" + ending)
+            self.assertNotIn("step_rules", DECL(path, {}))
+
+    def test_unindented_nested_sml_bindings_rejected(self):
+        binding = "val (step_rules,step_ind,step_cases) = Hol_reln`step x y`;\n"
+        for opening, closing in (
+            ("local\n", "in\nval exported = 1;\nend;\n"),
+            ("val value = let\n", "in 1 end;\n"),
+            ("structure Hidden = struct\n", "end;\n"),
+            ("local\nlocal\n", "in end\nin end;\n"),
+        ):
+            with self.subTest(opening=opening):
+                path = self.fixture(opening + binding + closing)
+                self.assertNotIn("step_rules", DECL(path, {}))
+                # Recognition resumes after the containing scope ends.
+                path = self.fixture(opening + binding + closing + binding)
+                self.assertEqual(len(DECL(path, {})["step_rules"]), 1)
+
+
 class HolDatatypeDeclarationsTest(unittest.TestCase):
     def _write_sml(self, text):
         handle = tempfile.NamedTemporaryFile(
@@ -2781,6 +2864,57 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         )
 
 
+class QualifiedWordsCarrierResolutionTest(unittest.TestCase):
+    def _run(self, carrier="Flapjack.Source.State", *, source_positive=True,
+             source_word=True, local_shadow=False):
+        positive = " [NeZero width]" if source_positive else ""
+        payload = "BitVec width" if source_word else "Nat"
+        source = ("namespace Flapjack\nnamespace Source\nsection CarrierScope\n"
+                  f"structure State (width : Nat){positive} where\n"
+                  f"  word : {payload}\nend CarrierScope\nend Source\nend Flapjack\n")
+        target = ("namespace Flapjack.Target\n"
+                  "structure State (width : Nat) [NeZero width] where\n"
+                  "  clock : Nat\nend Flapjack.Target\n")
+        shadow = ("namespace Flapjack.Source\n"
+                  "structure State (width : Nat) [NeZero width] where\n"
+                  "  word : BitVec width\nend Flapjack.Source\n") if local_shadow else ""
+        declaration = ("def checkCarrier {width : Nat} [NeZero width]\n"
+                       f"    (state : {carrier} width) : Nat := width")
+        consumer = ("import Flapjack.Carriers.A\nimport Flapjack.Carriers.B\n"
+                    + shadow + declaration + "\n")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for module, text in [("Flapjack/Carriers/A.lean", source),
+                                 ("Flapjack/Carriers/B.lean", target),
+                                 ("Flapjack/Consumer.lean", consumer)]:
+                path = root / module
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(text, encoding="utf-8")
+            return CHECKER["words_as_type_indexed_bitvec_errors"](
+                declaration, "checkCarrier", module="Flapjack.Consumer",
+                root=str(root), lines=consumer.splitlines())
+
+    def test_selects_source_namespace_not_module_filename(self):
+        self.assertEqual(self._run(), [])
+
+    def test_bare_same_named_imports_remain_ambiguous(self):
+        errors = self._run("State")
+        self.assertTrue(any("ambiguous same-named owners" in e for e in errors), errors)
+
+    def test_qualified_owner_without_word_cannot_borrow_other_payload(self):
+        self.assertTrue(self._run("Flapjack.Target.State"))
+
+    def test_qualified_owner_without_positivity_cannot_borrow_other_header(self):
+        self.assertTrue(self._run(source_positive=False))
+
+    def test_qualified_owner_with_no_word_remains_ineligible(self):
+        self.assertTrue(self._run(source_word=False))
+
+    def test_same_full_name_local_shadow_remains_ambiguous(self):
+        errors = self._run(local_shadow=True)
+        self.assertTrue(any("ambiguous same-named owners" in e for e in errors), errors)
+
+
 class RealCrepPropsWordCarrierResolutionTest(unittest.TestCase):
     """The real CrepProps imports must resolve the exact state carrier."""
 
@@ -3044,6 +3178,86 @@ class FmapEqualityStrictnessTest(unittest.TestCase):
             "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
         ]
         self.assertEqual(self._errors(declaration, lines), [])
+
+
+class HolMlBindingClassificationTest(unittest.TestCase):
+    """Header declarations and ML ``val NAME =`` bindings resolve by syntax.
+
+    The scanner accepts any ``val NAME =`` binding and does not check whether
+    the value is a proof, so these tests pin the scanner's evidence only; the
+    theorem-status rule is enforced by source review.
+    """
+
+    def _fixture(self, text):
+        root = Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: shutil.rmtree(root, ignore_errors=True))
+        path = root / "FixtureScript.sml"
+        path.write_text(text)
+        return path, {}
+
+    def test_theorem_valued_qprove_binding_is_a_declaration(self):
+        path, cache = self._fixture(
+            "val llist_shorter_lnth = Q.prove (\n"
+            "  ``!ll1 ll2. T``,\n"
+            "  simp[]);\n"
+        )
+        self.assertIsNone(REF_ERROR(path, "llist_shorter_lnth", None, cache))
+        self.assertIsNone(REF_ERROR(path, "llist_shorter_lnth", 1, cache))
+
+    def test_val_binding_does_not_register_quoted_goal_names(self):
+        path, cache = self._fixture(
+            "val proved_lemma = Q.prove (``!x. x = x``, simp[]);\n"
+        )
+        self.assertIsNone(REF_ERROR(path, "proved_lemma", None, cache))
+        self.assertEqual(
+            REF_ERROR(path, "goal", None, cache), "declares no `goal`"
+        )
+
+    def test_quoted_goal_term_without_binding_is_rejected(self):
+        path, cache = self._fixture("val shared = build_goal goal names;\n")
+        self.assertEqual(
+            REF_ERROR(path, "goal", None, cache), "declares no `goal`"
+        )
+
+    def test_arbitrary_val_binding_resolves_syntactically(self):
+        # Scanner evidence only: every ``val NAME =`` binds the name, whether or
+        # not the value is a proof.  Theorem status is a source-review rule the
+        # checker does not enforce.
+        path, cache = self._fixture("val goal = ``!x. x = x``;\n")
+        self.assertIsNone(REF_ERROR(path, "goal", None, cache))
+
+    def test_header_keyword_declaration_resolves(self):
+        path, cache = self._fixture("Theorem LPREFIX_TRANS:\n  T\nProof simp[] QED\n")
+        self.assertIsNone(REF_ERROR(path, "LPREFIX_TRANS", None, cache))
+
+    def test_unknown_name_rejected(self):
+        path, cache = self._fixture("Theorem Known:\n  T\nProof simp[] QED\n")
+        self.assertEqual(REF_ERROR(path, "Missing", None, cache), "declares no `Missing`")
+
+    def test_wrong_source_line_rejected(self):
+        path, cache = self._fixture(
+            "val proved_lemma = Q.prove (``T``, simp[]);\n"
+        )
+        self.assertEqual(
+            REF_ERROR(path, "proved_lemma", 2, cache),
+            "declares `proved_lemma` at [1], not at line 2",
+        )
+
+
+class PinnedPathAllowlistAlignmentTest(unittest.TestCase):
+    """The Lean tag elaborator and the Python checker must allow the same pins."""
+
+    def test_lean_allowlist_matches_python_pins(self):
+        import re
+        holref = (CHECKER["ROOT"] / "Flapjack/HolRef.lean").read_text()
+        lean_paths = set(
+            re.findall(r'path == "(hol4/[^"]+\.sml)"', holref)
+        )
+        self.assertEqual(lean_paths, set(CHECKER["EXTERNAL_HOL_PATHS"]))
+
+    def test_every_python_pin_is_snapshotted(self):
+        for path in CHECKER["EXTERNAL_HOL_PATHS"]:
+            self.assertTrue((CHECKER["ROOT"] / path).is_file(), path)
 
 
 if __name__ == "__main__":

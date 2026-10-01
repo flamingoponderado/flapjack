@@ -1,0 +1,8 @@
+rts_empty=T
+rts_zero=T
+rts_duplicate=T
+rts_missing=T
+rts_fixed=T
+rts_raw=T
+rts_generic_payload=T
+rts_generic_fixed=T

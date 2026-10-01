@@ -10,16 +10,21 @@ from __future__ import annotations
 
 import argparse
 import re
+import runpy
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
+
+HOL_RELN_TUPLES = runpy.run_path(
+    str(Path(__file__).with_name("hol_sml_declarations.py"))
+)["hol_reln_tuple_declarations"]
 
 
 IDENT = r"[A-Za-z_][A-Za-z0-9_'$]*"
 TOP_LEVEL = re.compile(
     r"^\s*(?:Theory\b|Ancestors\b|Libs\b|Type\b|Datatype:\b|"
     r"Definition\b|Theorem\b|Triviality\b|Termination\b|"
-    r"val\s+_\s*=\s*new_theory\b|val\s+" + IDENT + r"\s*=)"
+    r"val\s+_\s*=\s*new_theory\b|val\s*\(|val\s+" + IDENT + r"\s*=)"
 )
 DECL_RE = re.compile(
     r"^\s*(Theorem|Triviality|Definition)\s+(\S+?)\s*(?::|=)"
@@ -172,6 +177,10 @@ def parse_file(root: Path, path: Path) -> tuple[list[Entry], list[tuple[str, str
     text = path.read_text(encoding="utf-8", errors="replace")
     lines = text.splitlines(keepends=True)
     masked = mask_comments(lines)
+    relation_tuples = {
+        start - 1: (names, end)
+        for names, start, end in HOL_RELN_TUPLES(text)
+    }
     relative = path.relative_to(root).as_posix()
     entries: list[Entry] = []
 
@@ -233,6 +242,12 @@ def parse_file(root: Path, path: Path) -> tuple[list[Entry], list[tuple[str, str
     i = 0
     while i < len(masked):
         line = masked[i]
+        if i in relation_tuples:
+            names, end = relation_tuples[i]
+            entries.extend(Entry("Theorem", name, relative, i + 1, end, theory) for name in names)
+            recognized_style = True
+            i = end
+            continue
         match = DECL_RE.match(line)
         if match:
             kind, raw_name = match.groups()

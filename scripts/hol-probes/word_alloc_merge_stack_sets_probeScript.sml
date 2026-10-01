@@ -1,0 +1,13 @@
+load "bossLib";
+load "preamble";
+load "word_allocTheory";
+open bossLib HolKernel Parse preamble word_allocTheory;
+fun observe label term = let val th = EVAL term in print(label ^ "="); print_term(rhs(concl th)); print "\n" end;
+val _ = observe "mss_empty" ``merge_stack_sets (LN:bool num_map,0:num) (LN:num num_map,LN:num num_map) (LN:num num_map,LN:num num_map) = (LN:num num_map,LN:num num_map)``;
+val _ = observe "mss_retained_right" ``merge_stack_sets (LS T,0:num) (LS 10,LN:num num_map) (LS 20,LN:num num_map) = (LS 20,LN:num num_map)``;
+val _ = observe "mss_new_left_bias" ``merge_stack_sets (LN:bool num_map,0:num) (LS 10,LN:num num_map) (LS 20,LN:num num_map) = (LS 10,LN:num num_map)``;
+val _ = observe "mss_new_right" ``merge_stack_sets (LN:bool num_map,0:num) (LN:num num_map,LN:num num_map) (LS 20,LN:num num_map) = (LS 20,LN:num num_map)``;
+val _ = observe "mss_removed" ``merge_stack_sets (LS T,0:num) (LS 10,LN:num num_map) (LN:num num_map,LN:num num_map) = (LN:num num_map,LN:num num_map)``;
+val _ = observe "mss_fixed_left_bias" ``merge_stack_sets (LN:bool num_map,0:num) (LN:num num_map,LS 3) (LN:num num_map,LS 4) = (LN:num num_map,LS 3)``;
+val _ = observe "mss_raw" ``merge_stack_sets (LN:bool num_map,0:num) (BN LN LN,LN:num num_map) (LN:num num_map,LN:num num_map) = (BN LN LN,LN:num num_map)``;
+val _ = observe "mss_generic" ``merge_stack_sets (LS T,F) (LS 10,LS T) (LS 20,LS F) = (LS 20,LS T)``;

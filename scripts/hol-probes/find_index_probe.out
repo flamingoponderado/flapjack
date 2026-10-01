@@ -1,0 +1,8 @@
+fi_empty=NONE
+fi_head=SOME 7
+fi_middle=SOME 8
+fi_absent=NONE
+fi_duplicate=SOME 4
+fi_zero=SOME 0
+fi_large_offset=SOME 4294967297
+fi_last=SOME 12

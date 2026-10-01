@@ -29,6 +29,19 @@ state-transition, error, hypothesis, and conclusion details must still match
 HOL. See [`AGENTS.md`](../AGENTS.md#qualify-only-named-list-to-array-state-fields)
 for the review rule.
 
+## ML bindings versus declarations
+
+`scripts/check-hol-refs.py` recognizes a HOL declaration in two forms: a
+definition/theorem header (`Theorem`, `Triviality`, `Definition`, `Datatype`,
+`Inductive`, `CoInductive`, `Overload`, `Type`) or an ML `val NAME = ...`
+binding. A theorem-valued binding such as
+`val llist_shorter_lnth = Q.prove (...)` is a proved result, so a Lean
+counterpart may cite it from `@[hol]`. The scanner accepts every
+`val NAME =` line and cannot distinguish a proved binding from an arbitrary ML
+value, so it does not enforce theorem status: source review is responsible for
+never tagging a non-theorem value, and the reference checker only verifies that
+the cited name occurs in one of the two syntactic forms.
+
 | HOL script | Lean counterpart |
 | --- | --- |
 | `panLangScript.sml` | `Flapjack/Pancake/PanLang.lean` (exact `mlstring`-named syntax over the faithful carriers in `Flapjack/Pancake/PanLang/Shape.lean`, `Flapjack/Pancake/PanLang/Exp.lean` and `Flapjack/Pancake/PanLang/Prog.lean` and `Flapjack/Pancake/PanLang/Decl.lean` (`fun_decl`, `decl`, `struct_info`, byte-ranged production roundtrips and the MlString-keyed struct-context pass-boundary bridge), and follow-ups) |
@@ -60,7 +73,9 @@ for the review rule.
 | `compiler/backend/proofs/stack_removeProofScript.sml` | `Flapjack/Compiler/Backend/StackRemove.lean` (`is_SOME_Word`, `read_mem`/`LENGTH_read_mem`, `addresses`/`IN_addresses`; `names_ok` Prop-shaped tag) |
 | `compiler/backend/stack_allocScript.sml` | `Flapjack/Compiler/Backend/StackAlloc.lean` (`next_lab`; executable pass counterpart remains `Flapjack/StackAlloc.lean`) |
 | `compiler/backend/stack_to_labScript.sml` | `Flapjack/Compiler/Backend/StackToLab.lean` (`flatten` and `prog_to_section`; `compile` remains open) |
+| `compiler/backend/reg_alloc/parmoveScript.sml` | `Flapjack/Compiler/Backend/Parmove.lean` |
 | `compiler/backend/word_to_stackScript.sml` | `Flapjack/Compiler/Backend/WordToStack.lean`, `Flapjack/Compiler/Backend/WordToStackRegFormat.lean` |
+| `compiler/backend/proofs/word_to_stackProofScript.sml` | `Flapjack/Compiler/Backend/WordToStack/Proofs/` (theorem groups, including `StackSize.lean`) |
 | `panStaticScript.sml` | `Flapjack/Pancake/PanStatic.lean` |
 | `pan_simpScript.sml` | `Flapjack/Pancake/PanSimp.lean` |
 | `pan_structsScript.sml` | `Flapjack/Pancake/PanStructs.lean` |
@@ -104,6 +119,7 @@ has been established. For declaration-level provenance, use
 [GitHub issues](https://github.com/pirapira/flapjack/issues), not in this
 layout guide.
 | compiler/backend/reg_alloc/reg_allocScript.sml | Flapjack/Compiler/Backend/RegAlloc.lean |
+| compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml | Flapjack/Compiler/Backend/RegAlloc/Proofs.lean |
 
 The pinned external `hol4/src/coretypes/optionScript.sml` counterpart is
 `Flapjack/Misc/Option.lean`.

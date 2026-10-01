@@ -1,4 +1,5 @@
 import Flapjack.Ffi
+import Flapjack.Misc.LList
 
 /-!
 # CakeML generic behavior semantics
@@ -16,11 +17,10 @@ possibly finite sequences with no gaps.
 namespace Flapjack
 
 /- Port status: these definitions follow the HOL constructor and relation
-   clauses, but they are not tagged as exact ports. The Lean `CakeLazyList`
-   representation below has no checked bridge to HOL's `llist`, and there is
-   no verified source-to-Lean representation relation for this behavior
-   carrier. `cakeImplements'_trans` is therefore a kernel-checked structural
-   analogue until those carrier correspondences are established. -/
+   clauses, but they are not tagged as exact ports. The representation lemmas
+   below relate the two Lean lazy-list carriers; they do not prove equivalence
+   with HOL artifacts. The event and behavior carriers still need source-level
+   review, so `cakeImplements'_trans` remains a Flapjack structural analogue. -/
 /-- A HOL lazy list (`llist`): a finite prefix may end, after which all reads
     are absent, or the list may continue indefinitely. -/
 structure CakeLazyList (α : Type u) where
@@ -193,5 +193,110 @@ theorem cakeImplements'_trans {compiled intermediate source : CakeBehaviourSet}
     (hcompiledSubset result hresult)
   exact cakeExtendWithResourceLimit'_idempotent precise source
     result hcompiledExtended
+
+/-! ## Representation bridge to HOL `llist`
+
+The Cake generic behavior carrier `CakeLazyList` reads through its `get?`
+function with a downward-closed `none` suffix. HOL's `llist` carrier
+(`Flapjack.HolLList`, the `llist_abs` subtype with the `lrep_ok` invariant)
+reads through its `rep` function with the same downward-closed `none` property
+`HolLrepOk`. They are related by the identity on reads
+(`CakeLazyListRepresents`); this section records that correspondence and the
+fact that `cakeLprefix` matches `HolLList.lprefix (fromList events)` of the
+related representation. These declarations
+remain untagged as local representation/transport infrastructure: there is no
+independently reviewed exact HOL declaration with these statements, and the
+mapping of the `FfiEvent` carrier still awaits review (tracked by
+`flapjack-pxn.18.5.15.10.1`). -/
+
+/-- Local representation relation between the two Lean lazy-list carriers:
+    both read the same values at every index. -/
+def CakeLazyListRepresents (t : CakeLazyList α) (ll : HolLList α) : Prop :=
+  t.get? = ll.rep
+
+/-- A `CakeLazyList` viewed as the HOL `llist` subtype: its `get?` function is
+    `HolLrepOk` (downward-closed `none` reads). -/
+def CakeLazyList.toHolLList (t : CakeLazyList α) : HolLList α :=
+  ⟨t.get?, fun n h => by
+    rw [Option.isSome_iff_ne_none] at h ⊢
+    intro hnone
+    exact h (t.none_suffix n hnone (n + 1) (Nat.le_succ n))⟩
+
+/-- A HOL `llist` viewed as a `CakeLazyList`. -/
+def cakeLazyListOfHolLList (ll : HolLList α) : CakeLazyList α :=
+  ⟨ll.rep, fun _i h _later hle => HolLList.rep_none_of_le ll h hle⟩
+
+/-- `CakeLazyList` extensionality: equal reads give equal carriers. -/
+theorem CakeLazyList.ext {a b : CakeLazyList α} (h : a.get? = b.get?) : a = b := by
+  cases a with
+  | mk ga pa =>
+    cases b with
+    | mk gb pb =>
+      simp only at h
+      subst h
+      exact congrArg (fun p => (⟨ga, p⟩ : CakeLazyList α)) (Subsingleton.elim pa pb)
+
+theorem cakeLazyListRepresents_toHolLList (t : CakeLazyList α) :
+    CakeLazyListRepresents t t.toHolLList := rfl
+
+theorem cakeLazyListRepresents_ofHolLList (ll : HolLList α) :
+    CakeLazyListRepresents (cakeLazyListOfHolLList ll) ll := rfl
+
+theorem cakeLazyListOfHolLList_toHolLList (ll : HolLList α) :
+    (cakeLazyListOfHolLList ll).toHolLList = ll :=
+  HolLList.ext_of_rep (fun _ => rfl)
+
+theorem toHolLList_cakeLazyListOfHolLList (t : CakeLazyList α) :
+    cakeLazyListOfHolLList t.toHolLList = t :=
+  CakeLazyList.ext rfl
+
+/-- `CakeLazyList` is a total, functional representation of HOL `llist`. -/
+theorem cakeLazyListRepresents_iff_eq (t : CakeLazyList α) (ll : HolLList α) :
+    CakeLazyListRepresents t ll ↔ t = cakeLazyListOfHolLList ll := by
+  constructor
+  · intro h
+    apply CakeLazyList.ext
+    exact h
+  · intro h
+    rw [h]
+    exact cakeLazyListRepresents_ofHolLList ll
+
+/-- Flapjack representation fact: `cakeLprefix xs t` holds exactly when
+    `HolLList.fromList xs` is an `lprefix` of the related lazy list.  Untagged
+    local representation/transport infrastructure (no independently reviewed
+    exact HOL declaration for this statement); whether the external
+    `LPREFIX`/`extend_with_resource_limit` correspondence holds is the
+    follow-up review tracked by `flapjack-pxn.18.5.15.10.1`. -/
+theorem cakeLprefix_iff_lprefix {xs : List α} {t : CakeLazyList α} :
+    cakeLprefix xs t ↔ HolLList.lprefix (HolLList.fromList xs) t.toHolLList := by
+  constructor
+  · intro h
+    refine HolLList.lprefix_of_rep_agree (fun n x hx => ?_)
+    have hn : n < xs.length := HolLList.fromList_rep_lt hx
+    rw [HolLList.fromList_rep] at hx
+    show t.get? n = some x
+    rw [h n hn, hx]
+  · intro h i hi
+    have hrep : (HolLList.fromList xs).rep i = some xs[i] := by
+      rw [HolLList.fromList_rep, List.getElem?_eq_getElem hi]
+    have hreads := HolLList.lprefix_rep h hrep
+    show t.get? i = xs[i]?
+    rw [List.getElem?_eq_getElem hi]
+    exact hreads
+
+/-- Local Lean fact: the finite-list prefix relation `cakeListPrefix`
+    coincides with `List.IsPrefix` (`<+:`) on the same two lists. Whether this
+    corresponds to HOL's `isPREFIX`/`extend_with_resource_limit` is the external
+    review tracked by `flapjack-pxn.18.5.15.10.1`. -/
+theorem cakeListPrefix_iff_prefix {xs ys : List α} :
+    cakeListPrefix xs ys ↔ xs <+: ys := by
+  constructor
+  · intro h
+    rw [List.prefix_iff_getElem?]
+    intro i hi
+    rw [← h.2 i hi, List.getElem?_eq_getElem hi]
+  · intro h
+    refine ⟨h.length_le, fun i hi => ?_⟩
+    rw [List.getElem?_eq_getElem hi, (List.prefix_iff_getElem?.mp h) i hi]
 
 end Flapjack

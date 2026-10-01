@@ -1,0 +1,7 @@
+ck_empty=T
+ck_single=T
+ck_generic=T
+ck_duplicate=T
+ck_order=T
+ck_bitmap=T
+ck_width_one=T

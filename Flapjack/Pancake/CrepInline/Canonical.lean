@@ -6,10 +6,12 @@ import Flapjack.Pancake.CrepInline.Pass
 This module contains the tagged `inlineProgHOLExact` port of HOL
 `inline_prog_def`, its Flapjack-specific termination core and support helpers,
 and the tagged `compileInlTopHOLExact` wrapper for HOL `compile_inl_top_def`.
-The production compiler does not execute `compileInlTopHOLExact` yet: its
-parser-backed route inlines with the proved production `compileInlTopHOL`.
-`compileProgTopHOLProductionExactInline` runs the exact wrapper as a tested
-alternative until an output-equality theorem is proved (PR #1174 review).
+The parser-proved compiler entrypoint executes `compileInlTopHOLExact` through
+`compileProgNativeWithMetadataRouted`, `compileProgNativeWithMetadata`, and
+`compileProgDeclsHOLW`. Standard BitVec zero/one dictionaries select this native
+route; custom literal dictionaries retain the compatibility compiler.
+`CompileProgCorrespondence.lean` proves complete decoded output and metadata
+agreement at the parser-supplied declaration byte-range boundary.
 
 The Flapjack-specific recursive core implementing the HOL `inline_prog`
 equations (`cakeml/pancake/crep_inlineScript.sml:203-257`) uses the canonical
@@ -704,9 +706,10 @@ noncomputable def compileInlProgHOLExact
     does not occur in the signature, and the finite support is derived from the
     filtered alist's keys. The word-indexed representation is recorded by the
     qualifier; source membership, alist first-binding behavior, and recursive
-    inlining are checked by `canonicalOracleGuard`. The tested alternative
-    `compileProgTopHOLProductionExactInline` invokes this exact wrapper; the
-    executed compiler still inlines with the proved production route. -/
+    inlining are checked by `canonicalOracleGuard`. The standard parser-proved
+    compiler route executes this wrapper via `compileProgDeclsHOLW` and
+    `compileProgNativeWithMetadataRouted`; complete output agreement with the
+    compatibility route is proved in `CompileProgCorrespondence.lean`. -/
 @[hol "cakeml/pancake/crep_inlineScript.sml" "compile_inl_top_def"
   (words_as_type_indexed_bitvec)]
 def compileInlTopHOLExact

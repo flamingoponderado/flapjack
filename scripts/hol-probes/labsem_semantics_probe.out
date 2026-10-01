@@ -1,0 +1,4 @@
+lab_semantics_empty_error=T
+lab_semantics_halt_success=T
+lab_semantics_halt_resource=T
+lab_semantics_loop_diverge=T

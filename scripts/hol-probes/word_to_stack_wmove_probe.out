@@ -1,0 +1,11 @@
+wm_empty=T
+wm_self=T
+wm_reg=T
+wm_load=T
+wm_store=T
+wm_spill=T
+wm_swap=T
+wm_spill_swap=T
+wm_odd=T
+wm_underflow=T
+wm_fprime=T
