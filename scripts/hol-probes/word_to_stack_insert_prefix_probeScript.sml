@@ -1,0 +1,11 @@
+load "preamble";
+load "word_to_stackTheory";
+open bossLib HolKernel Parse preamble word_to_stackTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "ip_empty" ``let bs = (Nil:num app_list,0) in append (FST bs) ≼ append (FST (FST (insert_bitmap ([]:num list) bs)))``;
+val _ = out "ip_append" ``let bs = (List [4;7],2) in append (FST bs) ≼ append (FST (FST (insert_bitmap [8;9] bs)))``;
+val _ = out "ip_nested" ``let bs = (Append (List [4]) (Append Nil (List [7;8])),3) in append (FST bs) ≼ append (FST (FST (insert_bitmap [9] bs)))``;
+val _ = out "ip_shortcount" ``let bs = (List [4;7],0) in append (FST bs) ≼ append (FST (FST (insert_bitmap [8;9] bs)))``;
+val _ = out "ip_slack" ``let bs = (List [4;7],99) in append (FST bs) ≼ append (FST (FST (insert_bitmap [] bs)))``;
+val _ = out "ip_bool" ``let bs = (List [T;F],0) in append (FST bs) ≼ append (FST (FST (insert_bitmap [F;T;T] bs)))``;
+val _ = out "ip_option" ``let bs = (List [NONE;SOME 1],1) in append (FST bs) ≼ append (FST (FST (insert_bitmap [SOME 2;NONE] bs)))``;
