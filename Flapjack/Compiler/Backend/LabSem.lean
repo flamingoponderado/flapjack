@@ -2,22 +2,21 @@ import Flapjack.Compiler.Backend.LabLang
 import Flapjack.HolRef
 
 /-!
-# Cake LabLang semantics helpers
+# Generic LabLang classification utility
 
-Ports of the syntactic helpers from `cakeml/compiler/backend/semantics/labSemScript.sml`
-used by the LabLang/LabProps preconditions. Currently this is `is_Label`
-(`labSemScript.sml:47`), the line classifier consumed by `sec_ends_with_label`
-(`labPropsScript.sml:81`).
+The generic classifier is retained for compatibility callers. Its arbitrary
+ASM and word payload types are broader than HOL's actual LabLang carrier,
+even though the classification ignores those payloads. It is therefore not
+a tagged HOL port. The faithful native classifier lives in `LabSem.Classifier`.
 -/
 
 namespace Flapjack.Compiler.Backend.LabSem
 
 open Flapjack.Compiler.Backend.LabLang
 
-/-- HOL `labSem$is_Label_def` (`labSemScript.sml:47`): true exactly on `Label`
-lines. The imported asm carriers are explicit type parameters, as elsewhere in
-this tree; the classification does not inspect them. -/
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "is_Label_def"]
+/-- Flapjack-specific generic classifier: true exactly on label constructors.
+It generalizes the payload carriers beyond HOL and has no HOL declaration at
+this arbitrary-type signature. The native restriction is checked separately. -/
 def isLabel {AsmOrCbw AsmWithLab Word : Type}
     (line : Line AsmOrCbw AsmWithLab Word) : Bool :=
   match line with
