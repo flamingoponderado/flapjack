@@ -1,50 +1,51 @@
 /-
-Reproducible audit: list every constant of the linear-scan port modules whose
-type or value (transitively through Flapjack constants) mentions the untagged
-total HOL `EL` rendering (`holEl`, `holHd`, `holHdNil`).
+Reproducible audit: list every constant of every `Flapjack` module whose type
+or value -- including theorem proof terms (`value? (allowOpaque := true)`) --
+transitively through Flapjack constants mentions the untagged total HOL `EL`
+rendering (`holEl`, `holHd`, `holHdNil`).
 
 Run: `lake lean scripts/el-dependency-audit.lean`
 
 Every reported constant must be untagged (provisional) while the HOL
 `listScript` provenance review (bead flapjack-pxn.18.5.15.3.38.1) is open.
 -/
-import Flapjack.Compiler.Backend.LinearScan.Proofs
-import Flapjack.Compiler.Backend.LinearScan.TopLevel
-import Flapjack.Translator.Monadic.MonadBase.Arrays
-open Lean Meta Elab Command
+import Flapjack
+open Lean Elab Command
 
-partial def closure (env : Environment) (todo : List Name) (seen : NameSet) : NameSet := Id.run do
-  let mut todo := todo
-  let mut seen := seen
-  while !todo.isEmpty do
-    let n := todo.head!
-    todo := todo.tail!
-    if seen.contains n then continue
-    seen := seen.insert n
-    if !(n.toString.startsWith "Flapjack") then continue
-    match env.find? n with
-    | some ci =>
-      let cs := ci.type.getUsedConstants ++ (match ci.value? with | some v => v.getUsedConstants | none => #[])
-      for c in cs do
-        if !seen.contains c then todo := c :: todo
-    | none => pure ()
-  return seen
+/-- Memoised reachability of the held renderings from `n` through Flapjack constants. -/
+partial def elReaches (env : Environment) (bad : NameSet) (n : Name) :
+    StateM (Std.HashMap Name Bool) Bool := do
+  if let some b := (← get).get? n then return b
+  if bad.contains n then
+    modify (·.insert n true); return true
+  if !(`Flapjack).isPrefixOf n then
+    modify (·.insert n false); return false
+  -- provisionally false to cut cycles
+  modify (·.insert n false)
+  let some ci := env.find? n | return false
+  let cs := ci.type.getUsedConstants ++
+    (match ci.value? (allowOpaque := true) with | some v => v.getUsedConstants | none => #[])
+  let mut r := false
+  for c in cs do
+    if ← elReaches env bad c then
+      r := true
+      break
+  modify (·.insert n r)
+  return r
 
-elab "#elaudit" : command => do
+elab "#el_dependency_audit" : command => do
   let env ← getEnv
-  let mods := ["Flapjack.Compiler.Backend.LinearScan", "Flapjack.Translator.Monadic.MonadBase.Arrays", "Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts", "Flapjack.Misc.Sptree.Foldi", "Flapjack.Misc.Sptree.ToAList", "Flapjack.Compiler.Backend.RegAlloc.Proofs", "Flapjack.Misc.Option", "Flapjack.Misc.MiscThe"]
-  let bad := [`Flapjack.holEl, `Flapjack.holHdNil, `Flapjack.holHd]
-  let names : Array Name := env.constants.fold (fun acc n _ => acc.push n) #[]
-  let mut out : Array Name := #[]
-  for n in names do
-    let some idx := env.getModuleIdxFor? n | continue
-    let modName := env.header.moduleNames[idx.toNat]!
-    if !(mods.any fun m => modName.toString.startsWith m) then continue
-    -- tagged?  use docstring absence heuristic: check hol attribute via `Flapjack.holRefAttr`? fall back on all theorems/defs
-    let cl := closure env [n] {}
-    if bad.any (fun b => cl.contains b) then
-      out := out.push n
-  for n in out do
+  let bad : NameSet := NameSet.empty |>.insert `Flapjack.holEl |>.insert `Flapjack.holHdNil
+    |>.insert `Flapjack.holHd
+  let names : Array Name := env.constants.fold (fun acc n _ =>
+    if (`Flapjack).isPrefixOf n then acc.push n else acc) #[]
+  let act : StateM (Std.HashMap Name Bool) (Array Name) :=
+    names.foldlM (init := #[]) fun acc n => do
+      if ← elReaches env bad n then return acc.push n else return acc
+  let hits : Array Name := (act.run {}).1
+  let sorted := hits.qsort (fun a b => a.toString < b.toString)
+  for n in sorted do
     logInfo m!"EL-dependent: {n}"
-  logInfo m!"total EL-dependent constants: {out.size}"
-#elaudit
+  logInfo m!"total EL-dependent constants: {hits.size} of {names.size} Flapjack constants"
+
+#el_dependency_audit
