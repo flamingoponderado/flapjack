@@ -1943,3 +1943,15 @@ Loop live-set scope and Call handlers under NONE/SOME returns.
 predicates and kernel-replays each row. Regenerate read-only with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Parallel-move state semantics
+
+`parmove_semantics_probeScript.sml` captures twelve direct original
+windmill/parsem/seqsem/sem/eqenv observations. Function updates use original
+`UPDATE_LIST_THM` precedence (last repeated destination wins); parallel sources
+are snapshotted, sequential sources are updated, emitted moves are reversed,
+and eqenv ignores only NONE. The two eqenv rows use the original
+`eqenv_def` and `FORALL_OPTION` simplification; the other rows use EVAL.
+`ParmoveSemanticsParity.lean` checks every captured observation; no windmill
+premise is imposed on repeated destinations. Full scheduler correctness and
+production wiring remain open.

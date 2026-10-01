@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveSemanticsParity
 import Flapjack.Test.ParmoveFstepParity
 import Flapjack.Test.WordConvsPostAllocExactParity
 import Flapjack.Test.PanGlobalsBlockAlignmentParity
