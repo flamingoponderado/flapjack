@@ -1,0 +1,8 @@
+su_empty=(19,T)
+su_chain=(19,T)
+su_cycle=(19,T)
+su_repeat=(19,T)
+su_source=(19,T)
+su_written=(12,F)
+su_self=(11,T)
+su_bool=(3,T)

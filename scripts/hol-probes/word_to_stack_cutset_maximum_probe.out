@@ -1,0 +1,12 @@
+cs_empty=T
+cs_root=T
+cs_left=T
+cs_right=T
+cs_duplicates=T
+cs_left_max=T
+cs_reordered=T
+cs_root_duplicates=T
+cs_large=T
+cs_overlap=T
+cs_range=T
+cs_sparse=T

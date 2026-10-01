@@ -1,0 +1,13 @@
+load "bossLib";
+load "preamble";
+load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun observe label term = let val th = EVAL term in print(label ^ "="); print_term(rhs(concl th)); print "\n" end;
+val _ = observe "pi_one" ``let f = (\n:num. n+10) in let r = (\n:num. n+10) in let ms = [(0,1)] in (parsem (MAP (f ## f) ms) r (f 0),parsem ms (r o f) 0,parsem (MAP (f ## f) ms) r (f 0) = parsem ms (r o f) 0)``;
+val _ = observe "pi_chain" ``let f = (\n:num. n+10) in let r = (\n:num. n+10) in let ms = [(0,1);(1,2)] in (parsem (MAP (f ## f) ms) r (f 0),parsem ms (r o f) 0,parsem (MAP (f ## f) ms) r (f 0) = parsem ms (r o f) 0)``;
+val _ = observe "pi_cycle" ``let f = (\n:num. n+10) in let r = (\n:num. n+10) in let ms = [(0,1);(1,0)] in (parsem (MAP (f ## f) ms) r (f 1),parsem ms (r o f) 1,parsem (MAP (f ## f) ms) r (f 1) = parsem ms (r o f) 1)``;
+val _ = observe "pi_shared_source" ``let f = (\n:num. n+10) in let r = (\n:num. n+10) in let ms = [(0,2);(1,2)] in (parsem (MAP (f ## f) ms) r (f 1),parsem ms (r o f) 1,parsem (MAP (f ## f) ms) r (f 1) = parsem ms (r o f) 1)``;
+val _ = observe "pi_self" ``let f = (\n:num. n+10) in let r = (\n:num. n+10) in let ms = [(0,0)] in (parsem (MAP (f ## f) ms) r (f 0),parsem ms (r o f) 0,parsem (MAP (f ## f) ms) r (f 0) = parsem ms (r o f) 0)``;
+val _ = observe "pi_high" ``let f = (\n:num. n+10) in let r = (\n:num. n+10) in let ms = [(1000000000000000000000000,3)] in (parsem (MAP (f ## f) ms) r (f 1000000000000000000000000),parsem ms (r o f) 1000000000000000000000000,parsem (MAP (f ## f) ms) r (f 1000000000000000000000000) = parsem ms (r o f) 1000000000000000000000000)``;
+val _ = observe "pi_mixed" ``let f = (\n:num. n=0) in let r = (\b:bool. if b then (7:num) else 3) in (parsem (MAP (f ## f) [(0,1)]) r (f 0),parsem [(0,1)] (r o f) 0,parsem (MAP (f ## f) [(0,1)]) r (f 0) = parsem [(0,1)] (r o f) 0)``;
+val _ = observe "pi_collision" ``let f = (\n:num. n MOD 2) in let r = (\n:num. n+10) in (parsem (MAP (f ## f) [(0,1);(2,2)]) r (f 0),parsem [(0,1);(2,2)] (r o f) 0,parsem (MAP (f ## f) [(0,1);(2,2)]) r (f 0) = parsem [(0,1);(2,2)] (r o f) 0)``;
