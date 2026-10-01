@@ -38851,5 +38851,37 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.22) against word_allocProofScript.sml:836-851: (!st'. evaluate (prog,st) = (SOME Error,st') ==> P (SOME Error,st')) /\\ (?perm. P ((I ## (λs. s with permute := perm)) (evaluate (prog,st)))) ==> ?perm. P (evaluate (prog, st with permute := perm)); free prog st P as explicit binders, I ## g rendered as the pair map (p.1, g p.2). Exact; proof from tagged permute_swap_lemma as in HOL. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
   "inherits_reals_as_rational_cuts": true
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "path",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "path_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source57-62: generic pair list; empty/singleton true; earlier source equals next destination and recurse on tail, same equality orientation."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "path_tail",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "path_tail",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source75-80: universally quantified generic tail/head; path cons implies path tail without further hypotheses."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "wf",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "wf_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source120-129: generic Option-register pending/active lists and independent arbitrary emitted carrier; all six conjuncts in source order; windmill pending++active; both pending coordinates SOME; nonempty active FRONT sources SOME; all active destinations SOME; path active. Lean List dropLast equals HOL FRONT on nonempty list guarded exactly as HOL; emitted moves unconstrained. Bounded universal membership is EVERY/MAP, no added side condition."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "wf_init",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "wf_init",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source132-139: exact conjunction windmill pending and both pending coordinates SOME implies wf(pending,[],[]), final empty list has independent generic element carrier, no extra premise. Full invariant preservation and parmove_correct remain open."
 }
 ]

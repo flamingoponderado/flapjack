@@ -1992,3 +1992,12 @@ final emitted suffix, temporary self-move, empty/self/single moves, chain, swap,
 three-cycle and repeated destinations. `ParmoveFstepParity.lean` replays them.
 The recursion uses the original measure, not fuel. Full semantic correctness
 and the executed Word-to-Stack wrapper remain open.
+
+### Parallel-move invariant group
+
+`parmove_invariants_probeScript.sml` captures thirteen original path/wf rows:
+empty/single/valid/invalid paths; empty/pending state; repeated destinations;
+pending missing source/destination; allowed final temporary source; rejected
+FRONT temporary source, active temporary destination and broken active path.
+`ParmoveInvariantsParity.lean` kernel replays all rows. `wf_step`/`wf_steps` and
+full `parmove_correct` remain open.
