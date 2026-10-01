@@ -201,9 +201,10 @@ The Cake generic behavior carrier `CakeLazyList` reads through its `get?`
 function with a downward-closed `none` suffix. HOL's `llist` carrier
 (`Flapjack.HolLList`, the `llist_abs` subtype with the `lrep_ok` invariant)
 reads through its `rep` function with the same downward-closed `none` property
-`HolLrepOk`. The two carriers are therefore isomorphic under the identity on
-reads (`CakeLazyListRepresents`), and `cakeLprefix` is exactly HOL
-`LPREFIX (fromList events)` on the related representation. These declarations
+`HolLrepOk`. They are related by the identity on reads
+(`CakeLazyListRepresents`); this section records that correspondence and the
+fact that `cakeLprefix` matches `HolLList.lprefix (fromList events)` of the
+related representation. These declarations
 remain untagged: HOL `llist`/`LPREFIX`/`fromList` live in the external HOL
 list library `hol4/src/coalgebras/llistScript.sml`, and the mapping of the
 `FfiEvent` carrier still awaits review (tracked by `flapjack-pxn.18.5.15.10.1`). -/
@@ -260,9 +261,11 @@ theorem cakeLazyListRepresents_iff_eq (t : CakeLazyList α) (ll : HolLList α) :
     rw [h]
     exact cakeLazyListRepresents_ofHolLList ll
 
-/-- HOL `LPREFIX (fromList xs)` correspondence: `cakeLprefix xs t` holds
-    exactly when `fromList xs` is the HOL `LPREFIX` of the related lazy list
-    (`llistScript.sml:2655-2662`, used by `extend_with_resource_limit`). -/
+/-- Flapjack representation fact: `cakeLprefix xs t` holds exactly when
+    `HolLList.fromList xs` is an `lprefix` of the related lazy list.  Untagged
+    (the HOL `llist` source is outside the cakeml submodule); whether the
+    external `LPREFIX`/`extend_with_resource_limit` correspondence holds is the
+    follow-up review tracked by `flapjack-pxn.18.5.15.10.1`. -/
 theorem cakeLprefix_iff_lprefix {xs : List α} {t : CakeLazyList α} :
     cakeLprefix xs t ↔ HolLList.lprefix (HolLList.fromList xs) t.toHolLList := by
   constructor

@@ -208,9 +208,10 @@ theorem lprefix_fromList (xs ys : List α) :
     lprefix (fromList xs) (fromList ys) ↔ xs <+: ys := by
   unfold lprefix; rw [toList_fromList, toList_fromList]
 
-/-- HOL `LNTH (fromList l) n = if n < LENGTH l then SOME (EL n l) else NONE`
-    (`llistScript.sml:1154-1156` `fromList_LNTH`), i.e. the representation of
-    `fromList` reads the list and is absent beyond its end. -/
+/-- Flapjack representation fact about the local `HolLList.fromList`:
+    `(fromList l).rep n = l[n]?`, i.e. `fromList` reads the list and is absent
+    beyond its end.  Untagged infrastructure (the HOL `llist` library is
+    outside the cakeml submodule, so there is no taggable original). -/
 theorem fromList_rep (l : List α) (n : Nat) : (fromList l).rep n = l[n]? := by
   induction l generalizing n with
   | nil => rfl
