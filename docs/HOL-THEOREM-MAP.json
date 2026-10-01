@@ -43179,6 +43179,129 @@
     "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.10): full original word_to_stackProofScript.sml:11738-11746 and underlying word_to_stackScript.sml:52-55,252-262,286-291,417-451 compared with getCodeHandlerLabelsCopyRet. Retains both performance and handler flags, full frame triple, arbitrary return-value payload type/list and native continuation, with both original label-set preservation equalities. The actual reviewed wStackLoadNative/wLiveNative/stackMoveNative/copyRetAuxNative/copyRetNative definitions and accepted StackProps label extractors are used. Exact HolProg width preserves original constructor payloads; sole word-carrier translation is positive HOL dimension to BitVec width with NeZero width. HOL sets use Lean Set (Nat x Nat); list pairs remain List, cutsets remain Spt Unit, bitmaps remain AppList (BitVec width) x Nat. Return-list payload type is independent, as in original LENGTH-only definition. Zero/successor induction for copy_ret_aux matches source n=0/n-1 guarded recursion. No frame/register bound, convention, caller success, supplied target-label relation, evaluator/output predicate beyond the original wLive equation, or total HD/EL default is added. Fourteen fresh original complete-set assertions all evaluate to T and identical inputs are kernel-replayed, including nonempty owned handler/code sets, flags, loops, irregular counts and width one. This helper theorem does not establish the full word_to_stack_comp_code_labels statement or source-to-RISC-V correctness; cross-language source review remains distinct from kernel checking."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/GetHeuristics.lean",
+    "lean_name": "getHeuristics",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_heuristics_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead.11.5.3.2: literal word_allocScript1683-1694 arbitrary Nat algorithm/functionName/native WordLangProgHOL positive-width BitVec. Odd MOD2=1 uses reviewed getHeu on LN pair, reviewed getPrefs empty list, exact external sptMapi with getSpillCost and lookup-key calls NONE, reviewed canonizeMoves and MAP getCoalesceCost. Even branch returns raw getPrefs and NONE; no callback, successful allocator, range, well-formedness or output premise. Literal Nat/List/Spt/Option constructors retained; words_as_type_indexed_bitvec records only original word dimension translation. All helper prerequisites accepted; sptMapi0 and smart constructors reviewed in external sptree counterpart. Ten fresh full original EVAL results and four whole structural insert equalities replayed by kernel-checked fixtures, including self/other call cost, duplicate/reversed moves, even raw priority, empty odd SOME LN,80bit algorithms and16/64word dimensions. This native source composition does not claim full allocator correctness or executed route; parent.5.3 retains production obligations. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompileLookup.lean",
+    "lean_name": "compileWordToStackImpALookup",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_IMP_ALOOKUP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.26.8), HOL lines 5692-5719: full original list-compilation and first-match source ALOOKUP equations, initial flattened-length bound, gap bound and final prefix of DROP gap x retained. Existential intermediate start/end bitmap states, frame and body retain compile_prog equation, bound, gap, prefix and compiled first-match ALOOKUP conclusion. ac/perf, register/argument counts, arbitrary independent identifier type and x retained. DecidableEq computes propositional equality in existing literal nil/cons panPropsALookupEq, not BEq or a unique-key premise. Reviewed native compileProgNative/compileWordToStackNative carriers; only positive HOL word dimension translated to BitVec width with NeZero. Head proof uses accepted tail prefix transitivity; tail proof uses accepted compileProgLength bound and exact gap equality. No target lookup/evaluation, frame, sorting, uniqueness or pass-success premise added. Fresh original duplicate-key/later-threaded/missing/Bool-key probes and Lean kernel replays accompany the theorem. Production route and full pass correctness remain separate open beads; coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterLabels.lean",
+    "lean_name": "getCodeLabelsWReg",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_code_labels_wReg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead26.13: original proved val word_to_stackProofScript.sml11698-11703 including final SIMP_RULE std_ss [IMP_CONJ_THM]. Fresh original Q.prove reconstruction kernel-proves and prints conjunction of two implications, matched literally by Lean. Arbitrary callback Nat -> HolProg width, register and entire three-Nat frame tuple retained; each sole premise universally requires empty get_code_labels of callback. Both conclusions concern actual reviewed wRegWrite1Native/2Native and accepted literal StackProps.getCodeLabels, including stackStore empty labels on spilled paths, with no frame bounds, register convention, desired output or execution premise. Only HOL positive word dimension translated to BitVec width with NeZero. Fresh six original probes cover physical/boundary/spilled/zero/80-bit register and labelled-callback sentinel; registered kernel fixtures non-vacuously apply both implications. Standard Lean axioms only; no native_decide, EL, opaque choice of program or new axiom. This helper is explicitly used in original full code-label proof11784/11796; that theorem and executable production route remain open. Coordinator source acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SafeDiv.lean",
+    "lean_name": "safeDiv",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "safe_div_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-10-01 bead .11.5.10.5.8.2: original reg_allocScript774-776 safe_div x v = if v=0 then0 else x DIV v over arbitrary HOL num/Lean Nat. Literal guard, both branches and parameter order retained without positivity/range/success premise; ordinary Nat division agrees on nonzero denominators. Production cakeSafeDiv now delegates definitionally to this reviewed counterpart and actual spill-cost scan/selection continue through that wrapper. Fresh original fourteen zero/nonzero/remainder/large-numeral equations and same-input kernel replay, plus universal wrapper equation; full gates and coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/FirstIndex.lean",
+    "lean_name": "notUseTempBeforeAssignFirstIndex",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "not_use_temp_before_assign_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-10-01 bead .15.3.46.3: complete original858-877 predicate equality translated as predicate=true iff forall firstreadindex i, source find_index NONE (MAP SND ls)0=SOME i implies exists firstwriteindex j with destination find_index NONE (MAP FST ls)0=SOME j and j<i. Independent arbitrary destination/source Type carriers, all Option-pair lists and both literal offset0 searches retained. No validity/distinctness/success/targetrun premise; local classical DecidableEq implements HOL equality without adding public caller typeclass binders. Structural list/Option cases and accepted arbitrary-offset shift_0 derive strict order, including simultaneous NONE/NONE failure. Fresh fifteen original full predicate/read/write equations include duplicates, absent reads/writes, mixed Bool/Nat and function-valued source; identical-input kernel replay plus unrestricted public theorem fixture. Coordinator review and complete compiler/move safety assembly remain required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/InjOnState.lean",
+    "lean_name": "injOnState",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "inj_on_state_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-01; bead flapjack-w1a4.12): Original1090-1097 lets ls0=state_to_list p, ls=MAP FST ls0++MAP SND ls0, then support-restricted injectivity on both endpoints and global (f x=NONE iff x=NONE). Lean preserves both independent Option alpha/Option beta carriers, full pending/active/emitted state flattening through reviewed stateToList, exact conjunction and implication, no global injectivity/DecidableEq/safety premise. Existing original parmove_preservation_shape_probe.out pm_audit_inj_on_state_def and pm_audit_type_inj_on_state capture full equation and type. Kernel fixtures distinguish globally collapsing map accepted on singleton support, collision rejection in each state segment, global NONE failure on empty support, arbitrary/function-valued identity and generic full defining equation. No fresh original HOL execution claimed; read-only isolation unavailable, CakeML untouched. Proof-side scheduler predicate, no executable production duplicate or output change. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Pmov.lean",
+    "lean_name": "pmovNotUseTempBeforeAssign",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "pmov_not_use_temp_before_assign",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-01; bead .15.3.46.6): Literal920-930 forall p i, wf p and scratch-safety on REVERSE(active++emitted) imply same predicate on actual pmov p. Retains unused i at its own arbitrary independent Type carrier iota, not omitted or specialized; register carrier alpha arbitrary with the accepted scheduler DecidableEq implementation parameter. Sole source conjunction preserved. Derives actual reachability through unconditional pmovDsteps then dsteps_steps under initial wf; accepted stepsNotUseTempBeforeAssign supplies target wf/safety, only proved safety projected. No supplied scheduler/result/target invariant assumption. Existing original pm_audit_pmov_not_use_temp_before_assign captures full quantified statement; existing parmove_final outputs self/chain/cycle/active are kernel-replayed with full output equality and non-vacuous theorem applications, plus empty/prior scratch/initialized history/Bool and invalid input boundaries. Function-valued i verifies independent unused carrier. No fresh original HOL execution claimed; CakeML remains read-only. Coordinator source acceptance and full compiler theorem unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/AllDistinct/Pmov.lean",
+    "lean_name": "allDistinctPmov",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "ALL_DISTINCT_pmov",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-01; bead flapjack-w1a4.4): Full original991-1001 forall p, wf p and ALL_DISTINCT(FILTER IS_SOME(MAP FST(pending++active++emitted))) imply identical predicate on actual pmov p. Lean retains arbitrary Option alpha moves and all three lists in source order; Bool Option.isSome implements IS_SOME, Nodup implements ALL_DISTINCT. Accepted scheduler DecidableEq parameter retained, no scratch safety, target result, simulation or target invariant premise. Unconditional pmovDsteps, dsteps_steps with initial wf, then allDistinctSteps derive output. Both real proof prerequisites are represented on the bead graph (closure already CLOSED). Existing original pm_audit_ALL_DISTINCT_pmov captures full statement; five complete existing original outputs terminal/self/chain/cycle/active are kernel-replayed with non-vacuous theorem applications, plus empty/Bool/repeated scratch and duplicate emitted-history boundaries. Unsafe scratch read is intentionally admissible here because HOL does not require scratch safety. No fresh original HOL invocation claimed, CakeML read-only. Full scheduler and compilation correctness unfinished; coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "restrictNonzero",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "restrict_nonzero_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.16.1): complete backendPropsScript.sml:359-362 compared directly. Retains unconditional set comprehension retaining membership and excluding exactly second-component zero. HOL num pairs are exactly Nat x Nat; HOL sets and sets of sets use standard Lean Set with extensional membership, union, image and Set.sUnion. All arbitrary set binders and original subset premises are retained; no finiteness, width parameter, canonical representation, valid program or supplied conclusion premise is added. The filter tests the entry index (SND), not the first label. Six source theorem statements are fully proved over this actual definition; the BIGUNION proof preserves the existential member-set witness in both directions. Fresh original observations and identical-input kernel replays cover zero/mixed/duplicate entries, first label zero, >64-bit naturals, genuinely true union/subset premises with theorem applications, overlapping/empty set families, membership in the infinite UNIV set, and a false subset-premise sentinel. This is a set-support port for StackProps and original Word-to-Stack handler-label proofs11918/11923/11926 and11944/11949/11952, not an assumption of compiler correctness or a cross-language equivalence proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "restrictNonzeroSubset",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "restrict_nonzero_SUBSET",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.16.1): complete backendPropsScript.sml:364-368 compared directly. Retains unconditional restricted-set inclusion in the original arbitrary set. HOL num pairs are exactly Nat x Nat; HOL sets and sets of sets use standard Lean Set with extensional membership, union, image and Set.sUnion. All arbitrary set binders and original subset premises are retained; no finiteness, width parameter, canonical representation, valid program or supplied conclusion premise is added. The filter tests the entry index (SND), not the first label. Six source theorem statements are fully proved over this actual definition; the BIGUNION proof preserves the existential member-set witness in both directions. Fresh original observations and identical-input kernel replays cover zero/mixed/duplicate entries, first label zero, >64-bit naturals, genuinely true union/subset premises with theorem applications, overlapping/empty set families, membership in the infinite UNIV set, and a false subset-premise sentinel. This is a set-support port for StackProps and original Word-to-Stack handler-label proofs11918/11923/11926 and11944/11949/11952, not an assumption of compiler correctness or a cross-language equivalence proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "restrictNonzeroSubsetLeft",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "restrict_nonzero_SUBSET_left",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.16.1): complete backendPropsScript.sml:370-375 compared directly. Retains original s subset t premise and restricted s subset t conclusion. HOL num pairs are exactly Nat x Nat; HOL sets and sets of sets use standard Lean Set with extensional membership, union, image and Set.sUnion. All arbitrary set binders and original subset premises are retained; no finiteness, width parameter, canonical representation, valid program or supplied conclusion premise is added. The filter tests the entry index (SND), not the first label. Six source theorem statements are fully proved over this actual definition; the BIGUNION proof preserves the existential member-set witness in both directions. Fresh original observations and identical-input kernel replays cover zero/mixed/duplicate entries, first label zero, >64-bit naturals, genuinely true union/subset premises with theorem applications, overlapping/empty set families, membership in the infinite UNIV set, and a false subset-premise sentinel. This is a set-support port for StackProps and original Word-to-Stack handler-label proofs11918/11923/11926 and11944/11949/11952, not an assumption of compiler correctness or a cross-language equivalence proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "restrictNonzeroLeftUnion",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "restrict_nonzero_left_union",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.16.1): complete backendPropsScript.sml:377-382 compared directly. Retains original restricted s subset a union b premise and restricted s subset restricted a union b conclusion. HOL num pairs are exactly Nat x Nat; HOL sets and sets of sets use standard Lean Set with extensional membership, union, image and Set.sUnion. All arbitrary set binders and original subset premises are retained; no finiteness, width parameter, canonical representation, valid program or supplied conclusion premise is added. The filter tests the entry index (SND), not the first label. Six source theorem statements are fully proved over this actual definition; the BIGUNION proof preserves the existential member-set witness in both directions. Fresh original observations and identical-input kernel replays cover zero/mixed/duplicate entries, first label zero, >64-bit naturals, genuinely true union/subset premises with theorem applications, overlapping/empty set families, membership in the infinite UNIV set, and a false subset-premise sentinel. This is a set-support port for StackProps and original Word-to-Stack handler-label proofs11918/11923/11926 and11944/11949/11952, not an assumption of compiler correctness or a cross-language equivalence proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "restrictNonzeroRightUnion",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "restrict_nonzero_right_union",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.16.1): complete backendPropsScript.sml:384-389 compared directly. Retains original restricted s subset a union b premise and restricted s subset a union restricted b conclusion. HOL num pairs are exactly Nat x Nat; HOL sets and sets of sets use standard Lean Set with extensional membership, union, image and Set.sUnion. All arbitrary set binders and original subset premises are retained; no finiteness, width parameter, canonical representation, valid program or supplied conclusion premise is added. The filter tests the entry index (SND), not the first label. Six source theorem statements are fully proved over this actual definition; the BIGUNION proof preserves the existential member-set witness in both directions. Fresh original observations and identical-input kernel replays cover zero/mixed/duplicate entries, first label zero, >64-bit naturals, genuinely true union/subset premises with theorem applications, overlapping/empty set families, membership in the infinite UNIV set, and a false subset-premise sentinel. This is a set-support port for StackProps and original Word-to-Stack handler-label proofs11918/11923/11926 and11944/11949/11952, not an assumption of compiler correctness or a cross-language equivalence proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "restrictNonzeroMono",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "restrict_nonzero_mono",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.16.1): complete backendPropsScript.sml:391-396 compared directly. Retains original s subset t premise and restricted s subset restricted t conclusion. HOL num pairs are exactly Nat x Nat; HOL sets and sets of sets use standard Lean Set with extensional membership, union, image and Set.sUnion. All arbitrary set binders and original subset premises are retained; no finiteness, width parameter, canonical representation, valid program or supplied conclusion premise is added. The filter tests the entry index (SND), not the first label. Six source theorem statements are fully proved over this actual definition; the BIGUNION proof preserves the existential member-set witness in both directions. Fresh original observations and identical-input kernel replays cover zero/mixed/duplicate entries, first label zero, >64-bit naturals, genuinely true union/subset premises with theorem applications, overlapping/empty set families, membership in the infinite UNIV set, and a false subset-premise sentinel. This is a set-support port for StackProps and original Word-to-Stack handler-label proofs11918/11923/11926 and11944/11949/11952, not an assumption of compiler correctness or a cross-language equivalence proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "restrictNonzeroBigUnion",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "restrict_nonzero_BIGUNION",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.16.1): complete backendPropsScript.sml:398-408 compared directly. Retains unconditional equality of restriction of BIGUNION ss and BIGUNION of the image of restriction over ss, for arbitrary sets of sets. HOL num pairs are exactly Nat x Nat; HOL sets and sets of sets use standard Lean Set with extensional membership, union, image and Set.sUnion. All arbitrary set binders and original subset premises are retained; no finiteness, width parameter, canonical representation, valid program or supplied conclusion premise is added. The filter tests the entry index (SND), not the first label. Six source theorem statements are fully proved over this actual definition; the BIGUNION proof preserves the existential member-set witness in both directions. Fresh original observations and identical-input kernel replays cover zero/mixed/duplicate entries, first label zero, >64-bit naturals, genuinely true union/subset premises with theorem applications, overlapping/empty set families, membership in the infinite UNIV set, and a false subset-premise sentinel. This is a set-support port for StackProps and original Word-to-Stack handler-label proofs11918/11923/11926 and11944/11949/11952, not an assumption of compiler correctness or a cross-language equivalence proof."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionNavigation.lean",
     "lean_name": "secLocToPc",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
