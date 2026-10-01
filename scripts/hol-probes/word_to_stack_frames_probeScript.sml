@@ -1,0 +1,12 @@
+load "bossLib"; load "preamble"; load "word_to_stackProofTheory";
+open HolKernel Parse bossLib preamble word_to_stackProofTheory;
+fun print_eval label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = print_eval "hv_empty" ``handler_val ([]:((8 wordLang$word_loc # 8 wordLang$word_loc) option # bool list # 8 wordLang$word_loc list) list)``;
+val _ = print_eval "hv_plain" ``handler_val [(NONE, [T;F], [wordLang$Word (0w:8 word);wordLang$Loc 1 2])]``;
+val _ = print_eval "hv_handler" ``handler_val [(SOME (wordLang$Loc 1 2,wordLang$Word (0w:8 word)), [], [wordLang$Word (0w:8 word)])]``;
+val _ = print_eval "hf_none" ``is_handler_frame (wordSem$StackFrame NONE [] [] NONE :8 wordSem$stack_frame)``;
+val _ = print_eval "hf_some" ``is_handler_frame (wordSem$StackFrame NONE [] [] (SOME(0,1,2)) :8 wordSem$stack_frame)``;
+val _ = print_eval "se_empty" ``sorted_env (wordSem$StackFrame NONE [] [] NONE :8 wordSem$stack_frame)``;
+val _ = print_eval "se_desc" ``sorted_env (wordSem$StackFrame NONE [] [(6,wordLang$Word 0w);(4,wordLang$Word 0w);(2,wordLang$Word 0w)] NONE :8 wordSem$stack_frame)``;
+val _ = print_eval "se_equal" ``sorted_env (wordSem$StackFrame NONE [] [(2,wordLang$Word 0w);(2,wordLang$Word 0w)] NONE :8 wordSem$stack_frame)``;
+val _ = print_eval "se_asc" ``sorted_env (wordSem$StackFrame NONE [] [(2,wordLang$Word 0w);(4,wordLang$Word 0w)] NONE :8 wordSem$stack_frame)``;
