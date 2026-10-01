@@ -41679,6 +41679,51 @@
     "reviewer": "flapjack-luna-b source comparison (2026-10-01), original3304-3307: forall natural key in actual locals domain, reviewed is_phy_var. Native Spt(WordLocW width) retains HOL word/location payload and sptree domain via lookup presence, no consecutive-key assumption or map substitution, no state/evaluation premise. Only positive type-indexed HOL word translated to BitVec width with NeZero. Six fresh original empty/zero/sparse-even/odd/mixed/overwrite domain observations kernel paired using actual insertion-domain equivalence, payload ignored exactly as source. Native definition only; whole word_alloc_correct and production composition remain open; coordinator source review pending."
   },
 {
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DStepsSteps.lean",
+  "lean_name": "dsteps_steps",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "dsteps_steps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison (2026-10-01), original517-523: forall native arbitrary Option/List move states, RTC DStep first second implies original whole wf first implies RTC Step first second. Same State/Step/DStep/wf carriers, no equality instance or output/intermediate-state hypothesis. RTC induction composes accepted dstep_step with wf_steps derived from accumulated primitive closure, matching original proof dependencies. Kernel reflexive/history, start-emit and cycle-save-emit closure fixtures registered actual CompilerParity. Coordinator source review pending; full parmove/compiler correctness remains open."
+}
+,
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DestinationWrapper.lean",
+  "lean_name": "memMapFstParmove",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "MEM_MAP_FST_parmove",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: source753-762 compared literally. Arbitrary generic register type, List pair input, exact Option-register output from actual tagged parmove, sole SOME x output-destination membership premise and input-destination membership conclusion. DecidableEq realizes HOL polymorphic equality, no changed equality or word-width carrier. Uses accepted unconditional pmov destination theorem on actual lifted input plus original reverse; no windmill/termination/success/output-shape premise. Seven fresh original full destination lists kernel paired, including duplicate inputs, self removal, scratch NONE and a real optional register SOME NONE. Actual lake test driver imports the replay module; full compiler correctness remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LiveLength.lean",
+  "lean_name": "wLiveLength",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "wLive_LENGTH",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a: source5618-5635 full arbitrary cutsets/frame/bitmap and output equation plus sole input length bound compared to native wLive. Exact Spt Unit pair, AppList and Nat pair, native HolProg, right-associated frame tuple; words_as_type_indexed_bitvec only translates positive source dimension. Conclusion preserves both output bound and count-minus-flat-length equality. Proof projects actual insertion, uses accepted append_thm and natural subtraction arithmetic; no wellformedness, success or evaluation premise. Six fresh original same-input observations and actual CompilerParity kernel replay; compiler correctness remains open."
+}
+,
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LivePrefix.lean",
+  "lean_name": "wLiveIsPrefix",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "wLive_isPREFIX",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a: full source2805-2816 compared binder by binder: arbitrary Spt Unit cutset pair, AppList word/count pair, right-associated natural frame triple, actual native HolProg output and bitmap output; sole actual wLive output equation implies flattened input prefix of flattened output. List.IsPrefix is the original existential suffix equality. No input count bound, wellformedness or evaluation premise; words_as_type_indexed_bitvec only translates positive source dimension. Direct proof follows actual insertBitmap and accepted append_thm. Seven fresh original same-input observations include count below flattened length and malformed Spt; fixture imported by actual CompilerParity driver. This prerequisite does not establish whole comp/compiler correctness."
+}
+,
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InsertBitmapPrefix.lean",
+  "lean_name": "insertBitmapIsPrefix",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "insert_bitmap_isPREFIX",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: full source2797-2803 arbitrary payload list bm, AppList/count input and output, index and sole insertion output equation imply flattened-input prefix of flattened-output. Original insert_bitmap is payload-polymorphic (no word operations); generic alpha matches its accepted definition and AppList constructors exactly. No width qualifier, count bound, wellformedness or success premise. List.IsPrefix is the same existential suffix equality; proof projects actual insertion and uses accepted append_thm. Seven fresh original observations on empty/nested/short-count/slack/Bool/Option Nat cases replayed by kernel theorem applications in actual CompilerParity driver. Native comp/compiler correctness remains open."
+},
+{
   "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign.lean",
   "lean_name": "notUseTempBeforeAssign",
   "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
