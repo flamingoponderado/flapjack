@@ -101,6 +101,9 @@ run_probe() {
   done
 }
 
+run_probe bytes_in_mem_probeScript.sml bytes_in_mem_probe.out \
+  empty_ignores_guards nat_wrap excluded_head excluded_tail domain_head domain_tail wrong_value bool_payload update_off_region update_hit_region append_wrapped \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
 run_probe pan_globals_fperm_code_probeScript.sml pan_globals_fperm_code_probe.out \
   swap_f swap_g other missing equal_names \
   "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" "$cake_dir/pancake/proofs"
@@ -3142,6 +3145,9 @@ run_probe parmove_temp_steps_probeScript.sml parmove_temp_steps_probe.out \
   ptr_remove ptr_start ptr_extend ptr_save_cycle ptr_emit_head ptr_emit_last ptr_save_none ptr_emit_scratch ptr_bool ptr_refl_empty ptr_refl_scratch ptr_cycle_three \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe stackprops_code_labels_probeScript.sml stackprops_code_labels_probe.out \
+  sl_skip sl_jump sl_raw sl_location sl_store_none sl_store_some sl_direct_tail sl_indirect_tail_handler sl_direct_tail_handler sl_return_owner sl_return_other_owner sl_return_no_handler sl_sequence_duplicate sl_if_loop sl_nested_handlers \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3160,4 +3166,8 @@ run_probe reg_alloc_sort_moves_probeScript.sml reg_alloc_sort_moves_probe.out \
 
 run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_probe.out \
   adrtc_scratch adrtc_first adrtc_middle adrtc_last \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_preserves_moves_step_probeScript.sml parmove_preserves_moves_step_probe.out \
+  preserve_4_before preserve_4_after preserve_6_before preserve_6_after preserve_1_before preserve_1_after preserve_8_before preserve_8_after preserve_scratch_before preserve_scratch_after \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
