@@ -41258,5 +41258,13 @@
   "hol_name": "steps_sem",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 child25.6.6: literal source446-456, forall states actual RTCStep and entire inputwf conjunction -> forallenv originaleqenv. Same Option/List/function/arbitraryvaluecarrier; reflexive case equality and tail induction using actualwf_steps transport thenfullstep_sem. No assumed intermediate/targetequivalence or omitted sourcecondition. Kernel chain includes Save/EmitHead/EmitLast on a cycle with literalNONE scratch, plus reflexive closure; original semantic values freshly captured. One-step fullassembly independentreview pending; no compilerexecution/fullschedulerclaim."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/PmovFinal.lean",
+  "lean_name": "pmov_final",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "pmov_final",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.13: literal655-663 originalforallstate exists emitted actualpmovstate=([],[],emitted). Unconditional, no wf/windmill/algorithmrelation/assumedterminalresult; original Option/List statecarrier and all histories retained. Generated functional induction of actualreviewedpmov: terminalclause preserves history, nonterminalclause inherits existential at actualfstepstate. Source-decreasing termination alreadypart of revieweddefinition, no fuel restriction. Original terminal/self/chain/cycle/scratch/duplicate/active observations freshly captured; malformed inputs included because theoremunconditional. This proves shape only, not semantic or deterministicSteps correctness."
 }
 ]

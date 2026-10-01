@@ -2178,3 +2178,10 @@ with kernel computations and an actual RTC constructor proof. Real registers
 remain27/17, while NONE changes99 to17. The theorem uses original eqenv,
 not equality at the temporary; reflexive closure is kernel checked separately.
 No functional scheduler or production-route correctness is inferred.
+
+`parmove_final_probeScript.sml` freshly captures seven full original pmov
+results: terminal history preservation, self move, dependency chain, cycle,
+scratch-register inputs, duplicate destinations and nonempty active/history.
+Every full state is kernel paired in ParmoveFinalParity. Scratch and duplicate
+inputs deliberately exceed wf: pmov_final is unconditional. It proves empty
+pending/active lists and an existential emitted history, not semantic correctness.
