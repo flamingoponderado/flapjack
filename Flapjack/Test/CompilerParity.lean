@@ -1,3 +1,4 @@
+import Flapjack.Test.SSAMapStepParity
 import Flapjack.Test.SSALocalsInsertParity
 import Flapjack.Test.SSAMapBoundsParity
 import Flapjack.Test.WordAllocLimitArithmeticParity

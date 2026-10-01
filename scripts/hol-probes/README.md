@@ -3384,3 +3384,8 @@ Load/Store instrumentation operations remain distinct from forbidden ShMemOp.
 applies all three full public theorems with arbitrary inputs and positive width.
 These regressions do not establish cross-language equivalence or instrumentation
 evaluation correctness. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_call_core_probeScript.sml`.
+
+`ssa_map_step_probe.out` replays the original local plus-two bound proof
+using a freshly replayed original local monotonicity proof. Its six complete
+predicate pairs are kernel matched in `SSAMapStepParity`, including the
+rejected-bound/physical cases, malformed tree and unbounded natural values.

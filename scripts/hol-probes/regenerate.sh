@@ -3424,3 +3424,7 @@ run_probe ssa_locals_swap_probeScript.sml ssa_locals_swap_probe.out \
 run_probe ssa_locals_insert_probeScript.sml ssa_locals_insert_probe.out \
   fi_full fi_source_type fi_target_type fi_value_type fi_set_var_full fi_empty fi_preserve \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_map_step_probeScript.sml ssa_map_step_probe.out \
+  ml_full ml_empty ml_valid ml_rejected ml_physical ml_invalid ml_large \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
