@@ -41915,11 +41915,79 @@
   "reviewer": "flapjack-luna-c source672-694: whole generic theorem, original windmill premise only; all environments and real-register eqenv conclusion, actual parmove/parsem. Derives terminal emitted list, deterministic RTC, initial wf from some-lifted unique destinations and real fields, primitive RTC and final semantic consequence; no assumed output/simulation premise. Seven universal original theorem applications and matching Lean kernel applications, Bool carriers included. Full compiler theorem remains separate."
 },
 {
+<<<<<<< HEAD
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Heuristics.lean",
   "lean_name": "getSpillCost",
   "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
   "hol_name": "get_spillcost_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison (2026-10-01), original1666-1670: five right-associated Nat counters c,lr,lm,rr,rm retain exact product order; weighted natural sum c+2lr+4lm+2rr+4rm multiplied in entirety by Bool tail branch 5 or 1. Exact unbounded Nat arithmetic, no machine-word conversion, overflow, success or range premise. Ten freshly captured original numeric rows/kernel identical inputs include each individual counter weight, asymmetric both tail branches, zero and 2^64 fifth counter; actual CompilerParity import. Coordinator source review pending; native get_heuristics/full word_alloc/executed production remain open."
+=======
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/MappedMemory.lean",
+  "lean_name": "isValidMappedRead",
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "is_valid_mapped_read_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison 2026-10-01 targetSem80-116: literal size word8 branch order1/0/2/4, exact Load8/Load/Load16/Load32 or Store templates, target.config.encode and bytesInMemoryHOL getByte/domain, other sizes False. Original elaborated types confirm ignored return-PC is independently polymorphic beta, retained generic returnPc Type. Positive word carrier only qualifier; arbitrary target state/projection, address and register preserved. No added stateOk, PC, alignment or return-PC guard. Original 35 byte/domain/wrap observations paired with Lean kernel fixtures. Full target evaluator and compiler production correctness remain separate dependency beads."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/MappedMemory.lean",
+  "lean_name": "isValidMappedWrite",
+  "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+  "hol_name": "is_valid_mapped_write_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison 2026-10-01 targetSem80-116: literal size word8 branch order1/0/2/4, exact Load8/Load/Load16/Load32 or Store templates, target.config.encode and bytesInMemoryHOL getByte/domain, other sizes False. Original elaborated types confirm ignored return-PC is independently polymorphic beta, retained generic returnPc Type. Positive word carrier only qualifier; arbitrary target state/projection, address and register preserved. No added stateOk, PC, alignment or return-PC guard. Original 35 byte/domain/wrap observations paired with Lean kernel fixtures. Full target evaluator and compiler production correctness remain separate dependency beads."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/EvenColour.lean",
+  "lean_name": "everyEvenColour",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "every_even_colour_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.5.5: literal every_even_colour_def1586-1588, EVERY lambda(x,y) if is_phy_var x then y=x DIV2 else T over actual original Spt toAList. Exact constructor-for-constructor Spt Nat, native sptToAList mixed enumeration and tagged isPhyVar modulo2; List.all and Bool Nat equality compute original EVERY/equality, no generic BEq law premise. All arbitrary trees allowed, including BN LN LN; no wellformedness, bijection, domain or successful-oracle assumption. Twenty fresh original observations allT and same-input Lean kernel checks cover empty/physical/virtual/mixed, bad colours, unbounded natural keys beyond64bits, first-entry duplicate precedence and malformed/raw trees. Production oracle checker and native word_alloc remain separately dependency-linked open; no executed compiler routing claim."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree/UnionAlgebra.lean",
+  "lean_name": "sptInsert_union",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "insert_union",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.4.11 original sptreeScript:939: Same key/value/arbitrary tree; insertion equals left union with singleton. Proof follows source smaller numeric key recursion, with one-step unfolding and no wf assumption. Exact constructor-for-constructor native Spt/Nat values; no carrier qualifier, wf, domain/disjointness, simulation or result premise added. Original kernel accepts four literal universally quantified statements via source theorem proof terms, plus28 same-input concrete raw-tree/overlap/left-bias observations allT. Lean fixtures apply all four universal interfaces and check same boundaries; Nat-valued union explicitly remains noncommutative. Existing approved externalSpt provenance reused unchanged, no listScript/trust-policy expansion. Genuine ShareInst clash-tree correctness prerequisite; full soundness/compiler theorem remains open."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree/UnionAlgebra.lean",
+  "lean_name": "sptUnion_assoc",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "union_assoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.4.11 original sptreeScript:1380: Same three arbitrary generic-valued trees and original right-nested equals left-nested orientation. Structural induction and all constructor cases, not lookup/domain equality only. Exact constructor-for-constructor native Spt/Nat values; no carrier qualifier, wf, domain/disjointness, simulation or result premise added. Original kernel accepts four literal universally quantified statements via source theorem proof terms, plus28 same-input concrete raw-tree/overlap/left-bias observations allT. Lean fixtures apply all four universal interfaces and check same boundaries; Nat-valued union explicitly remains noncommutative. Existing approved externalSpt provenance reused unchanged, no listScript/trust-policy expansion. Genuine ShareInst clash-tree correctness prerequisite; full soundness/compiler theorem remains open."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree/UnionAlgebra.lean",
+  "lean_name": "sptUnion_numSet_sym",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "union_num_set_sym",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.4.11 original sptreeScript:1893: Same unit-valued Spt number sets, arbitrary/malformed trees; structural induction. Value type specifically Unit, not a false generic-valued commutativity assertion. Exact constructor-for-constructor native Spt/Nat values; no carrier qualifier, wf, domain/disjointness, simulation or result premise added. Original kernel accepts four literal universally quantified statements via source theorem proof terms, plus28 same-input concrete raw-tree/overlap/left-bias observations allT. Lean fixtures apply all four universal interfaces and check same boundaries; Nat-valued union explicitly remains noncommutative. Existing approved externalSpt provenance reused unchanged, no listScript/trust-policy expansion. Genuine ShareInst clash-tree correctness prerequisite; full soundness/compiler theorem remains open."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree/UnionAlgebra.lean",
+  "lean_name": "sptUnion_insert_ln",
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "union_insert_LN",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.4.11 original sptreeScript:1523: Same key/value/arbitrary tree, singleton union equals insertion; unconditional reverse of exact insert_union, matching source equation. Exact constructor-for-constructor native Spt/Nat values; no carrier qualifier, wf, domain/disjointness, simulation or result premise added. Original kernel accepts four literal universally quantified statements via source theorem proof terms, plus28 same-input concrete raw-tree/overlap/left-bias observations allT. Lean fixtures apply all four universal interfaces and check same boundaries; Nat-valued union explicitly remains noncommutative. Existing approved externalSpt provenance reused unchanged, no listScript/trust-policy expansion. Genuine ShareInst clash-tree correctness prerequisite; full soundness/compiler theorem remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeTopCompile.lean",
+  "lean_name": "compileNative",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "compile_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead25.16 original603-619: entire compile_def, regCount-(5+LENGTH avoidRegs) natural subtraction without validity assumptions; perf seed(List[16w],1) else(List[4w],1); actual reviewed compileWordToStackNative; exact Spt fromAList of MAP ((id,body),frame)->(id,frame) over ZIP compiled bodies/frames, retaining order/first duplicate precedence; full appended bitmap list, two-field exact Config, 0::frames, raise stub then constant-store stub then compiled bodies. Original elaborated type independently confirms Nat identifiers and full word list/config/frame list/program list tuple. Arbitrary exact AsmConfig at positive word width retained, with no precomputed compiler result/callback/width or calling convention hypothesis. Twenty-four fresh original entire-tuple observations allT plus same-input warning0 Lean kernel fixtures: perf/nonperf and narrow seed wrap includingwidth1/4, register subtraction underflow, duplicate avoid entries counted by LENGTH, frames/IDs/source body order/duplicate frame map, large Nat IDs, both exact stubs, bitmap seed/threading/order/multiword and zero-frame suppression; expected bodies/words/frames literal, stub terms reuse independently reviewed stub definitions. Qualifier only conventional positive-width words, no Spt/fmap or names difference. Proof-side native definition does not yet replace executed RiscV WordToStack fused WordProg/StackProg hardware-ABI route; remaining faithful codec/caller or measured exception work linked as25.17 and inventory25 remainsOPEN. Full compiler correctness not established."
+>>>>>>> origin/fleet-integration-post-1185-stack
 }
 ]

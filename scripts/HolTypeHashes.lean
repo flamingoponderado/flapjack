@@ -5,6 +5,10 @@ import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
 import Flapjack.Misc.FindIndex
 import Flapjack.Compiler.Backend.Parmove.DStepsSteps
 import Flapjack.Compiler.Backend.WordAlloc.StackOnly
+import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+import Flapjack.Misc.Sptree.UnionAlgebra
+import Flapjack.Compiler.Backend.WordAlloc.EvenColour
+import Flapjack.Compiler.Backend.Semantics.TargetSem.MappedMemory
 import Flapjack.Compiler.Backend.WordAlloc.TotalColour
 import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals
