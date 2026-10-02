@@ -5263,3 +5263,12 @@ and both input-domain subset conclusions, derived from actual cut_names guards.
 Original theorem capture/manual source comparison, not isolated tactic replay or
 equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cut_envs_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_rename_move_distinct_probe` captures the original full scoped injection
+theorem6405–6423 and six inferred carriers. `SSARenameMoveDistinct.lean` retains
+the producer equation, distinct input names, both memberships, and equal selectors;
+distinct generated names plus the existing successful-lookup theorem derive
+input equality. Standard positive indexed-word program translation is explicit.
+Original theorem capture/manual source comparison, not isolated tactic replay
+or equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_rename_move_distinct_probeScript.sml scripts/hol-probes/regenerate.sh`.

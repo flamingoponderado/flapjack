@@ -4688,3 +4688,7 @@ run_probe ssa_cc_trans_correct_store_consts_probeScript.sml ssa_cc_trans_correct
 run_probe ssa_cut_envs_domain_probeScript.sml ssa_cut_envs_domain_probe.out \
   cut_envs_domain_full cut_envs_type_first cut_envs_type_second cut_envs_type_locals cut_envs_type_output \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_rename_move_distinct_probeScript.sml ssa_rename_move_distinct_probe.out \
+  rename_move_distinct_full rename_move_distinct_type_input rename_move_distinct_type_output rename_move_distinct_type_names rename_move_distinct_type_move rename_move_distinct_type_next rename_move_distinct_type_key \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
