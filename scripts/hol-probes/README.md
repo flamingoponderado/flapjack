@@ -4569,6 +4569,14 @@ live in `Flapjack/Test/StackPropsOrderedLabelsParity.lean`.
 `ssa_cc_trans_correct_primitives_probe.out` replays the literal original Skip/Tick semantic correctness proofs and original exists_tac against their complete original theorem specializations. All six premises, full existential postconditions and five native carrier types are captured; Tick retains both zero/positive-clock paths in Lean.
 
 `ssa_locals_get_var_probe.out` replays the complete original SSA get_var lookup transport and captures six original types, including independently arbitrary source/target configuration and FFI hosts. It supports expression-producing SSA semantic cases without adding a target-read-success premise.
+
+`stackprops_allocation_constants_probe.out` replays the five complete original
+StackProps allocation/GC/constant-store field and clock proofs, their full types,
+and the original generic-result `store_const_sem_def`. Six allocation and five
+copy/error branches check all original fields and full clock commutation, with
+four direct GC clock cases and explicit state1/result80 and state80/result1
+operation checks (51 rows). Native applications/outcomes are kernel
+checked in `Flapjack/Test/StackPropsAllocationConstantsParity.lean`.
 `word_cse_list_order_probeScript.sml` captures original `listCmp_def`, replays
 the complete equality, antisymmetry and transitivity proof bodies with no open
 hypotheses, evaluates 64 independent empty/prefix/long-prefix/large-numeral

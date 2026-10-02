@@ -710,6 +710,7 @@
     {"bytes": 7335, "out": "stack_to_lab_native_probe.out", "rows": 46, "sha256": "9d0a065df6dc3d311c4543318e4907ad57fe4ac2d16a850ced470e8213b3845f"},
     {"bytes": 241, "out": "stack_to_lab_nonrecursive_validity_probe.out", "rows": 3, "sha256": "74fe1adcec42b08218314055e1e5d94f154cb49d188c6aac6af6fa6bbee12e88"},
     {"bytes": 2313, "out": "stacklang_inst_builders_probe.out", "rows": 62, "sha256": "7d4f91ed410d30cf268c9e7eafc1c1a5af7a7ca5c796aec689131a61caea22cf"},
+    {"bytes": 5223, "out": "stackprops_allocation_constants_probe.out", "rows": 51, "sha256": "a5eddb50a5af9cf3264f64b6d1e37bf83172dbce2a12175db04d0089236b9b23"},
     {"bytes": 5226, "out": "stackprops_clock_support_probe.out", "rows": 24, "sha256": "5ed33e13f64a4972311c80750d1740ddc36c6425e43153086eebc526220b9dc4"},
     {"bytes": 267, "out": "stackprops_code_labels_probe.out", "rows": 15, "sha256": "0951919b9c2820704747f40b352ab0cf70ab9bb1ee3a2535536992f1814929e6"},
     {"bytes": 1361, "out": "stackprops_expression_clock_probe.out", "rows": 28, "sha256": "d31f8fa23026f95b712ff40528470b3641f5e6836da145849b764d4833dd06f7"},
