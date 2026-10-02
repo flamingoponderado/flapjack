@@ -1,16 +1,19 @@
 import Flapjack.Compiler.Backend.WordGcFunctions
+import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
 
 /-!
 # `word_gcFunctions`: original-oracle rows
 
 Kernel replay of the rows of `scripts/hol-probes/word_gc_functions_probe.out`
-(original HOL `EVAL` of the `word_gcFunctionsScript.sml` definitions at
+(original HOL `EVAL` of the `word_gcFunctionsScript.sml` definitions, and of
+`is_gc_const`/`is_gc_word_const`, at
 `:64` words).  Memory results are compared at the probed addresses.
 -/
 
 namespace Flapjack.Test.WordGcFunctionsParity
 
 open Flapjack Flapjack.Compiler.Backend.DataToWord Flapjack.Compiler.Backend.WordGcFunctions
+  Flapjack.Compiler.Backend.WordSimp
 
 private def conf : Config :=
   { tagBits := 1, lenBits := 2, padBits := 3, lenSize := 16, hasDiv := false,
@@ -148,9 +151,17 @@ example : newTrig (1000 : BitVec 64) 200 [1] = 200 := by
 -- gc_new_trig_unaligned=1000w
 example : newTrig (1000 : BitVec 64) 201 [1] = 1000 := by
   simp [newTrig, getGenSize, wordSemBytesInWord, gcByteAligned]
+-- gc_is_gc_const_even=T
+example : isGcConst (6 : BitVec 64) = true := by decide
+-- gc_is_gc_const_odd=F
+example : isGcConst (7 : BitVec 64) = false := by decide
+-- gc_is_gc_word_const_loc=T
+example : isGcWordConst (.loc 1 2 : WordLocW 64) = true := rfl
+-- gc_is_gc_word_const_odd=F
+example : isGcWordConst (.word 7 : WordLocW 64) = false := by decide
 
 def runChecks : IO Bool := do
-  IO.println "PASS word_gcFunctions GC definitions match 24 original HOL rows"
+  IO.println "PASS word_gcFunctions GC definitions and is_gc_const/is_gc_word_const match 28 original HOL rows"
   pure true
 
 end Flapjack.Test.WordGcFunctionsParity

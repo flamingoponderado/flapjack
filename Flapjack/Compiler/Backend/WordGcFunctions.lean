@@ -76,7 +76,7 @@ theorem bitVec_toNat_sub_one_lt {width : Nat} {w : BitVec width} (h : w ≠ 0) :
   rw [this, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]
   omega
 
-/-- Exact HOL `bytes_in_word_mul_eq_shift` (`word_gcFunctionsScript.sml:14-20`). -/
+/-- Exact HOL `bytes_in_word_mul_eq_shift` (`word_gcFunctionsScript.sml:15-21`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "bytes_in_word_mul_eq_shift"
   (words_as_type_indexed_bitvec)]
 theorem bytesInWord_mul_eq_shift {width : Nat} [NeZero width] (w : BitVec width) :
@@ -86,7 +86,7 @@ theorem bytesInWord_mul_eq_shift {width : Nat} [NeZero width] (w : BitVec width)
   congr 1
   rcases h with rfl | rfl <;> rfl
 
-/-- Exact HOL `word_or_eq_0` (`word_gcFunctionsScript.sml:22-27`). -/
+/-- Exact HOL `word_or_eq_0` (`word_gcFunctionsScript.sml:23-28`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_or_eq_0"
   (words_as_type_indexed_bitvec)]
 theorem word_or_eq_0 {width : Nat} [NeZero width] (w v : BitVec width) :
@@ -103,26 +103,26 @@ theorem word_or_eq_0 {width : Nat} [NeZero width] (w v : BitVec width) :
   · rintro ⟨rfl, rfl⟩
     simp
 
-/-- Exact HOL `shift_length_has_fp_ops` (`word_gcFunctionsScript.sml:31-35`). -/
+/-- Exact HOL `shift_length_has_fp_ops` (`word_gcFunctionsScript.sml:32-36`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "shift_length_has_fp_ops"]
 theorem shiftLength_hasFpOps (conf : Config) (b1 b2 : Bool) :
     shiftLength { conf with hasFpOps := b1, hasFpTern := b2 } = shiftLength conf := rfl
 
-/-- Exact HOL `ptr_to_addr_def` (`word_gcFunctionsScript.sml:41-44`). -/
+/-- Exact HOL `ptr_to_addr_def` (`word_gcFunctionsScript.sml:42-45`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "ptr_to_addr_def"
   (words_as_type_indexed_bitvec)]
 def ptrToAddr {width : Nat} [NeZero width] (conf : Config) (base w : BitVec width) :
     BitVec width :=
   base + ((w >>> shiftLength conf) * wordSemBytesInWord)
 
-/-- Exact HOL `update_addr_def` (`word_gcFunctionsScript.sml:46-50`). -/
+/-- Exact HOL `update_addr_def` (`word_gcFunctionsScript.sml:47-51`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "update_addr_def"
   (words_as_type_indexed_bitvec)]
 def updateAddr {width : Nat} [NeZero width] (conf : Config) (fwdPtr oldAddr : BitVec width) :
     BitVec width :=
   (fwdPtr <<< shiftLength conf) ||| gcWordBitsLow (smallShiftLength conf - 1) oldAddr
 
-/-- Exact HOL `memcpy_def` (`word_gcFunctionsScript.sml:52-58`). -/
+/-- Exact HOL `memcpy_def` (`word_gcFunctionsScript.sml:53-59`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "memcpy_def"
   (words_as_type_indexed_bitvec)]
 def memcpy {width : Nat} [NeZero width] (w a b : BitVec width)
@@ -148,14 +148,14 @@ theorem memcpy_of_ne {width : Nat} [NeZero width] {w : BitVec width} (h : w ≠ 
        (b1, m1, c1 && (dm a && dm b))) := by
   rw [memcpy, if_neg h]
 
-/-- Exact HOL `decode_length_def` (`word_gcFunctionsScript.sml:60-62`). -/
+/-- Exact HOL `decode_length_def` (`word_gcFunctionsScript.sml:61-63`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "decode_length_def"
   (words_as_type_indexed_bitvec)]
 def decodeLength {width : Nat} [NeZero width] (conf : Config) (w : BitVec width) :
     BitVec width :=
   w >>> (width - conf.lenSize)
 
-/-- Exact HOL `word_gc_move_def` (`word_gcFunctionsScript.sml:64-81`). -/
+/-- Exact HOL `word_gc_move_def` (`word_gcFunctionsScript.sml:65-82`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gc_move_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGcMove {width : Nat} [NeZero width] (conf : Config) :
@@ -179,7 +179,7 @@ noncomputable def wordGcMove {width : Nat} [NeZero width] (conf : Config) :
           let m1 := gcUpdate headerAddr (.word (i <<< 2)) m1
           (.word (updateAddr conf i w), v, pa1, m1, c)
 
-/-- Exact HOL `word_gen_gc_partial_move_def` (`word_gcFunctionsScript.sml:83-103`). -/
+/-- Exact HOL `word_gen_gc_partial_move_def` (`word_gcFunctionsScript.sml:84-105`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gen_gc_partial_move_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcPartialMove {width : Nat} [NeZero width] (conf : Config) :
@@ -207,7 +207,7 @@ noncomputable def wordGenGcPartialMove {width : Nat} [NeZero width] (conf : Conf
             let m1 := gcUpdate headerAddr (.word (i <<< 2)) m1
             (.word (updateAddr conf i w), v, pa1, m1, c)
 
-/-- Exact HOL `word_gc_move_roots_def` (`word_gcFunctionsScript.sml:105-111`). -/
+/-- Exact HOL `word_gc_move_roots_def` (`word_gcFunctionsScript.sml:107-113`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gc_move_roots_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGcMoveRoots {width : Nat} [NeZero width] (conf : Config) :
@@ -221,7 +221,7 @@ noncomputable def wordGcMoveRoots {width : Nat} [NeZero width] (conf : Config) :
       (w1 :: ws2, i2, pa2, m2, c1 && c2)
 termination_by x => x.1.length
 
-/-- Exact HOL `word_gc_move_list_def` (`word_gcFunctionsScript.sml:113-121`). -/
+/-- Exact HOL `word_gc_move_list_def` (`word_gcFunctionsScript.sml:115-123`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gc_move_list_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGcMoveList {width : Nat} [NeZero width] (conf : Config) :
@@ -256,7 +256,7 @@ theorem wordGcMoveList_of_ne {width : Nat} [NeZero width] (conf : Config)
        (a2, i2, pa2, m2, dm a && (c1 && c2))) := by
   rw [wordGcMoveList, if_neg h]
 
-/-- Exact HOL `word_gen_gc_partial_move_roots_def` (`word_gcFunctionsScript.sml:123-129`). -/
+/-- Exact HOL `word_gen_gc_partial_move_roots_def` (`word_gcFunctionsScript.sml:125-131`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
   "word_gen_gc_partial_move_roots_def" (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcPartialMoveRoots {width : Nat} [NeZero width] (conf : Config) :
@@ -271,7 +271,7 @@ noncomputable def wordGenGcPartialMoveRoots {width : Nat} [NeZero width] (conf :
       (w1 :: ws2, i2, pa2, m2, c1 && c2)
 termination_by x => x.1.length
 
-/-- Exact HOL `word_gen_gc_partial_move_list_def` (`word_gcFunctionsScript.sml:131-139`). -/
+/-- Exact HOL `word_gen_gc_partial_move_list_def` (`word_gcFunctionsScript.sml:133-141`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
   "word_gen_gc_partial_move_list_def" (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcPartialMoveList {width : Nat} [NeZero width] (conf : Config) :
@@ -289,7 +289,7 @@ noncomputable def wordGenGcPartialMoveList {width : Nat} [NeZero width] (conf : 
 termination_by x => x.2.1.toNat
 decreasing_by apply bitVec_toNat_sub_one_lt; assumption
 
-/-- Exact HOL `word_gen_gc_partial_move_list_zero` (`word_gcFunctionsScript.sml:141-145`). -/
+/-- Exact HOL `word_gen_gc_partial_move_list_zero` (`word_gcFunctionsScript.sml:143-147`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
   "word_gen_gc_partial_move_list_zero" (words_as_type_indexed_bitvec)]
 theorem wordGenGcPartialMoveList_zero {width : Nat} [NeZero width] (conf : Config)
@@ -298,7 +298,7 @@ theorem wordGenGcPartialMoveList_zero {width : Nat} [NeZero width] (conf : Confi
     wordGenGcPartialMoveList conf (a, 0, i, pa, old, m, dm, gs, rs) = (a, i, pa, m, true) := by
   rw [wordGenGcPartialMoveList]; simp
 
-/-- Exact HOL `word_gen_gc_partial_move_list_suc` (`word_gcFunctionsScript.sml:147-159`). -/
+/-- Exact HOL `word_gen_gc_partial_move_list_suc` (`word_gcFunctionsScript.sml:149-160`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
   "word_gen_gc_partial_move_list_suc" (words_as_type_indexed_bitvec)]
 theorem wordGenGcPartialMoveList_suc {width : Nat} [NeZero width] (conf : Config)
@@ -318,7 +318,7 @@ theorem wordGenGcPartialMoveList_suc {width : Nat} [NeZero width] (conf : Config
   simp only [hsub]
 
 /-- Exact HOL `word_gen_gc_partial_move_list_append`
-(`word_gcFunctionsScript.sml:161-177`). -/
+(`word_gcFunctionsScript.sml:162-178`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
   "word_gen_gc_partial_move_list_append" (words_as_type_indexed_bitvec)]
 theorem wordGenGcPartialMoveList_append {width : Nat} [NeZero width] :
@@ -370,7 +370,7 @@ theorem wordGenGcPartialMoveList_append {width : Nat} [NeZero width] :
             obtain ⟨i3, pa3, m3, c3⟩ := r3
             simp only [Bool.and_assoc]
 
-/-- Exact HOL `word_gc_move_loop_def` (`word_gcFunctionsScript.sml:179-193`). -/
+/-- Exact HOL `word_gc_move_loop_def` (`word_gcFunctionsScript.sml:180-194`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gc_move_loop_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGcMoveLoop {width : Nat} [NeZero width] (k : Nat) (conf : Config) :
@@ -393,7 +393,7 @@ noncomputable def wordGcMoveLoop {width : Nat} [NeZero width] (k : Nat) (conf : 
 termination_by k
 decreasing_by all_goals omega
 
-/-- Exact HOL `word_full_gc_def` (`word_gcFunctionsScript.sml:195-201`). -/
+/-- Exact HOL `word_full_gc_def` (`word_gcFunctionsScript.sml:196-202`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_full_gc_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordFullGc {width : Nat} [NeZero width] (conf : Config) :
@@ -405,7 +405,7 @@ noncomputable def wordFullGc {width : Nat} [NeZero width] (conf : Config) :
       let (i1, pa1, m1, c2) := wordGcMoveLoop (2 ^ width) conf (new, i1, pa1, old, m1, dm, c1)
       (rs, i1, pa1, m1, c2)
 
-/-- Exact HOL `word_gc_fun_assum_def` (`word_gcFunctionsScript.sml:203-217`).  The
+/-- Exact HOL `word_gc_fun_assum_def` (`word_gcFunctionsScript.sml:204-219`).  The
 HOL `SUBSET FDOM s` of the seven-element set literal is rendered as membership of
 each listed store name in the domain. -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gc_fun_assum_def"
@@ -426,7 +426,7 @@ def wordGcFunAssum {width : Nat} [NeZero width] (conf : Config)
   conf.lenSize + 2 < width ∧
   shiftLength conf < width
 
-/-- Exact HOL `word_gen_gc_can_do_partial_def` (`word_gcFunctionsScript.sml:219-229`). -/
+/-- Exact HOL `word_gen_gc_can_do_partial_def` (`word_gcFunctionsScript.sml:221-232`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
   "word_gen_gc_can_do_partial_def" (fmap_as_finite_support_relation := [s])
   (words_as_type_indexed_bitvec)]
@@ -438,7 +438,7 @@ noncomputable def wordGenGcCanDoPartial {width : Nat} [NeZero width] (genSizes :
     let endh := wordSemTheWord (holFapply s .endOfHeap)
     allo ≤ endh - trig
 
-/-- Exact HOL `new_trig_def` (`word_gcFunctionsScript.sml:231-240`); HOL
+/-- Exact HOL `new_trig_def` (`word_gcFunctionsScript.sml:234-243`); HOL
 `byte_aligned` is `gcByteAligned`. -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "new_trig_def"
   (words_as_type_indexed_bitvec)]
@@ -451,7 +451,7 @@ noncomputable def newTrig {width : Nat} [NeZero width] (heapSpace allocPref : Bi
   if h < a then BitVec.ofNat width h else
   if gcByteAligned allocPref then allocPref else BitVec.ofNat width h
 
-/-- Exact HOL `word_gen_gc_partial_move_ref_list_def` (`word_gcFunctionsScript.sml:249-259`). -/
+/-- Exact HOL `word_gen_gc_partial_move_ref_list_def` (`word_gcFunctionsScript.sml:252-262`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
   "word_gen_gc_partial_move_ref_list_def" (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcPartialMoveRefList {width : Nat} [NeZero width] (k : Nat)
@@ -473,7 +473,7 @@ noncomputable def wordGenGcPartialMoveRefList {width : Nat} [NeZero width] (k : 
 termination_by k
 decreasing_by omega
 
-/-- Exact HOL `word_gen_gc_partial_move_data_def` (`word_gcFunctionsScript.sml:262-282`). -/
+/-- Exact HOL `word_gen_gc_partial_move_data_def` (`word_gcFunctionsScript.sml:265-285`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
   "word_gen_gc_partial_move_data_def" (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcPartialMoveData {width : Nat} [NeZero width] (conf : Config)
@@ -500,7 +500,7 @@ noncomputable def wordGenGcPartialMoveData {width : Nat} [NeZero width] (conf : 
 termination_by k
 decreasing_by all_goals omega
 
-/-- Exact HOL `word_gen_gc_partial_def` (`word_gcFunctionsScript.sml:285-296`). -/
+/-- Exact HOL `word_gen_gc_partial_def` (`word_gcFunctionsScript.sml:288-299`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gen_gc_partial_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcPartial {width : Nat} [NeZero width] (conf : Config) :
@@ -518,7 +518,7 @@ noncomputable def wordGenGcPartial {width : Nat} [NeZero width] (conf : Config) 
         (new, i, pa, curr, m, dm, gs, rs)
       (roots, i, pa, m, c2 && c3)
 
-/-- Exact HOL `word_gen_gc_partial_full_def` (`word_gcFunctionsScript.sml:298-304`). -/
+/-- Exact HOL `word_gen_gc_partial_full_def` (`word_gcFunctionsScript.sml:301-307`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gen_gc_partial_full_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcPartialFull {width : Nat} [NeZero width] (conf : Config) :
@@ -531,13 +531,13 @@ noncomputable def wordGenGcPartialFull {width : Nat} [NeZero width] (conf : Conf
       let (b1, m, c2) := memcpy cpyLength new (curr + gs) m dm
       (roots, i, b1, m, c1 && c2)
 
-/-- Exact HOL `is_ref_header_def` (`word_gcFunctionsScript.sml:306-308`). -/
+/-- Exact HOL `is_ref_header_def` (`word_gcFunctionsScript.sml:309-311`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "is_ref_header_def"
   (words_as_type_indexed_bitvec)]
 def isRefHeader {width : Nat} [NeZero width] (v : BitVec width) : Bool :=
   decide ((v &&& 0b1100) = 0b01000)
 
-/-- Exact HOL `word_gen_gc_move_def` (`word_gcFunctionsScript.sml:310-336`). -/
+/-- Exact HOL `word_gen_gc_move_def` (`word_gcFunctionsScript.sml:313-340`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gen_gc_move_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcMove {width : Nat} [NeZero width] (conf : Config) :
@@ -571,7 +571,7 @@ noncomputable def wordGenGcMove {width : Nat} [NeZero width] (conf : Config) :
             let m1 := gcUpdate headerAddr (.word (i <<< 2)) m1
             (.word (updateAddr conf i w), v, pa1, ib, pb, m1, c)
 
-/-- Exact HOL `word_gen_gc_move_roots_def` (`word_gcFunctionsScript.sml:338-344`). -/
+/-- Exact HOL `word_gen_gc_move_roots_def` (`word_gcFunctionsScript.sml:342-348`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gen_gc_move_roots_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcMoveRoots {width : Nat} [NeZero width] (conf : Config) :
@@ -587,7 +587,7 @@ noncomputable def wordGenGcMoveRoots {width : Nat} [NeZero width] (conf : Config
       (w1 :: ws2, i2, pa2, ib, pb, m2, c1 && c2)
 termination_by x => x.1.length
 
-/-- Exact HOL `word_gen_gc_move_list_def` (`word_gcFunctionsScript.sml:346-354`). -/
+/-- Exact HOL `word_gen_gc_move_list_def` (`word_gcFunctionsScript.sml:350-358`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gen_gc_move_list_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcMoveList {width : Nat} [NeZero width] (conf : Config) :
@@ -606,7 +606,7 @@ noncomputable def wordGenGcMoveList {width : Nat} [NeZero width] (conf : Config)
 termination_by x => x.2.1.toNat
 decreasing_by apply bitVec_toNat_sub_one_lt; assumption
 
-/-- Exact HOL `word_gen_gc_move_data_def` (`word_gcFunctionsScript.sml:356-376`). -/
+/-- Exact HOL `word_gen_gc_move_data_def` (`word_gcFunctionsScript.sml:360-380`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gen_gc_move_data_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcMoveData {width : Nat} [NeZero width] (conf : Config) (k : Nat) :
@@ -635,7 +635,7 @@ noncomputable def wordGenGcMoveData {width : Nat} [NeZero width] (conf : Config)
 termination_by k
 decreasing_by all_goals omega
 
-/-- Exact HOL `word_gen_gc_move_refs_def` (`word_gcFunctionsScript.sml:378-393`). -/
+/-- Exact HOL `word_gen_gc_move_refs_def` (`word_gcFunctionsScript.sml:382-396`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gen_gc_move_refs_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGcMoveRefs {width : Nat} [NeZero width] (conf : Config) (k : Nat) :
@@ -658,7 +658,7 @@ noncomputable def wordGenGcMoveRefs {width : Nat} [NeZero width] (conf : Config)
 termination_by k
 decreasing_by omega
 
-/-- Exact HOL `word_gen_gc_move_loop_def` (`word_gcFunctionsScript.sml:395-416`).  As
+/-- Exact HOL `word_gen_gc_move_loop_def` (`word_gcFunctionsScript.sml:398-418`).  As
 in HOL, the `k = 0` result of the reference branch returns the pre-call `pb`, and
 the recursive call passes it as the new `pbx`. -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gen_gc_move_loop_def"
@@ -689,7 +689,7 @@ noncomputable def wordGenGcMoveLoop {width : Nat} [NeZero width] (conf : Config)
 termination_by k
 decreasing_by all_goals omega
 
-/-- Exact HOL `word_gen_gc_def` (`word_gcFunctionsScript.sml:418-426`). -/
+/-- Exact HOL `word_gen_gc_def` (`word_gcFunctionsScript.sml:420-429`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gen_gc_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordGenGc {width : Nat} [NeZero width] (conf : Config) :
@@ -706,7 +706,7 @@ noncomputable def wordGenGc {width : Nat} [NeZero width] (conf : Config) :
         wordGenGcMoveLoop conf len.toNat (new, i, pa, ib, pb, newEnd, curr, m, dm)
       (roots, i, pa, ib, pb, m, c1 && c2)
 
-/-- Exact HOL `glob_real_def` (`word_gcFunctionsScript.sml:428-432`). -/
+/-- Exact HOL `glob_real_def` (`word_gcFunctionsScript.sml:431-435`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "glob_real_def"
   (words_as_type_indexed_bitvec)]
 def globReal {width : Nat} [NeZero width] (c : Config) (curr : BitVec width) :
@@ -715,7 +715,7 @@ def globReal {width : Nat} [NeZero width] (c : Config) (curr : BitVec width) :
   | w => w
 
 open Classical in
-/-- Exact HOL `word_gc_fun_def` (`word_gcFunctionsScript.sml:434-503`): the
+/-- Exact HOL `word_gc_fun_def` (`word_gcFunctionsScript.sml:437-502`): the
 store-level collector of `gc_fun_type`.  The store argument and result are the
 canonical `HolFiniteMapExact` carrier; the type is `WordSemGcFun width` spelled
 out, whose own tag records that nested finite-map translation
