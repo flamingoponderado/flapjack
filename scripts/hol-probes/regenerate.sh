@@ -5087,3 +5087,7 @@ run_probe stack_remove_inst_atoms_probeScript.sml stack_remove_inst_atoms_probe.
 run_probe stack_remove_inst_binary_probeScript.sml stack_remove_inst_binary_probe.out \
   ib_binop ib_binop_types ib_binop_proved ib_shift ib_shift_types ib_shift_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_inst_arithmetic_probeScript.sml stack_remove_inst_arithmetic_probe.out \
+  ar_div ar_div_types ar_div_proved ar_carry ar_carry_types ar_carry_proved ar_add_overflow ar_add_overflow_types ar_add_overflow_proved ar_sub_overflow ar_sub_overflow_types ar_sub_overflow_proved ar_longmul ar_longmul_types ar_longmul_proved ar_longdiv ar_longdiv_types ar_longdiv_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
