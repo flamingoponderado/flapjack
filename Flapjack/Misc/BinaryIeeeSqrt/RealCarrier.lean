@@ -1,3 +1,4 @@
+import Flapjack.HolRef
 import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
 
 /-!
@@ -22,9 +23,11 @@ supplied agreement, radicand, success or target premise.
 
 These are Flapjack-specific infrastructure: everything is proved inside Lean,
 no HOL-to-Lean equivalence is assumed or established (Mathlib `ℝ` as HOL `real`
-is the standard carrier reading), and no `@[hol]` tag is attached here; exact
-tagging of the real-carrier renderings is the parent bead's (flapjack-dshl)
-acceptance step. The executed compiler continues to use the cut rendering.
+is the standard carrier reading), and only the fixed-width binary64 wrapper below is source-tagged. Generic
+`HolFloat t w` infrastructure remains untagged: its broad carrier permits zero
+widths beyond HOL's positive type dimensions. The executed compiler continues
+using the cut rendering, with the unconditional equality below connecting it
+to the reviewed binary64 real specification.
 -/
 
 namespace Flapjack
@@ -133,7 +136,17 @@ noncomputable def holFloatSqrtR {t w : Nat} (mode : HolRounding) (x : HolFloat t
   else if x = holFloatMinusZero t w then (holClearFlags, holFloatMinusZero t w)
   else (holInvalidopFlags, holFloatSomeQnan (.fpSqrt mode x))
 
-/-- HOL `machine_ieee$fp64_sqrt` over the real-carrier `float_sqrt`. -/
+/-- Source-reviewed generated HOL `machine_ieee$fp64_sqrt` at the literal
+52/11/64 factory invocation. Its unary flag-dropping lift is
+`float_to_fp64 (SND (float_sqrt mode (fp64_to_float a)))`.
+The reachable real specification retains all original rounding, flag, choice,
+signed-zero and NaN clauses over Mathlib `ℝ`; the cut-to-real equality below
+requires no assumed cut criterion. The conservative IEEE qualifier remains
+because the codecs and real/zero/classification helpers are in the reviewed
+rendering family; it does not claim an independent HOL-to-Lean equivalence
+proof. Generic real helpers are infrastructure, not generic HOL ports. -/
+@[hol "HOL/src/floating-point/machine_ieeeScript.sml" "fp64_sqrt_def" 16
+  (reals_as_rational_cuts)]
 noncomputable def holFp64SqrtR (mode : HolRounding) (a : BitVec 64) : BitVec 64 :=
   holFloatToFp64 (holFloatSqrtR mode (holFp64ToFloat a)).2
 

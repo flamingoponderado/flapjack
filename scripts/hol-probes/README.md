@@ -1,3 +1,8 @@
+`riscv_jumpcmp_polarity_probe.out` records 32 fresh original encoder byte
+vectors: all eight JumpCmp predicates, register/immediate operands, and
+short/long ranges. RiscVBranchPolarity kernel-checks actual executed Lab
+emission against these complete bytes; no full compiler theorem is asserted.
+
 `lab_implicit_section_zero_probe.out` records six original ignored-zero,
 implicit-section-base and nonzero-label positions. Executed collectors replay
 matching pre-encoding lines using actual instruction counts. This pins the
@@ -4312,6 +4317,13 @@ fixtures replay them and apply the full theorem at arbitrary positive width and
 arbitrary accumulator; no full compiler or cross-language equivalence is claimed.
 
 ### SSA primitive program invariants
+`binary_ieee_real_carrier_source_probeScript.sml` captures all 14 original
+real-rounding/sqrt and fixed64 codec definitions, with their full quantified
+types (28 rows), for the source review of `BinaryIeeeSqrt.RealCarrier`.
+The seven original exact-square observations remain in
+`machine_ieee_fp64_sqrt_exact_probe.out`; these source/type captures and examples
+provide review/regression evidence, not cross-assistant equivalence.
+### SSA Call allocation/map invariant
 
 `ssa_cc_trans_props_primitives_probe.out` captures the original 15 nonrecursive primitive invariant statements and actual constructor types. It replays the literal StoreConsts, instruction, expression tactic, CBW/DBW and ShareInst proofs after the original compiler simplification, including original instruction/extension/allocation prerequisites. The Lean cases derive all three invariants from only the original compiler equality and map/allocation premise.
 `ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
@@ -4411,3 +4423,13 @@ exact conclusions and empty theorem hypotheses before capture. Divergence uses
 all clocks and the original IMAGE/UNIV lazy-list least upper bound. Generic Lean
 clause checks live in `Flapjack.Test.TargetSemMachineSemParity`; these check
 local definition shape and are not a cross-language equivalence theorem.
+### Complete SSA program invariant
+
+`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
+
+### SSA reconciliation list prerequisites
+
+`ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
