@@ -57884,5 +57884,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:609: same four conjuncts: next-interference equality, target equality, calleeSavedRegs equality, ptrReg equality; conclusion whole function equalities for IO regs/FP and cache regs/FP, not individual weakened outputs. Exact predicate equality establishes guarded choice equality, then original sequence/getter/exclusion equalities. Complete original compiled statements captured by target_oracle_equality_probeScript.sml. Full generic native MachineConfig/InterferenceApp/HolFfiState and HolFfiName, independent σ : Type, positive width NeZero, machine BitVec width and FP BitVec64. Kernel81jobs zero warnings; no additional bounds/choice/target evaluation premise. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and shared opaque holHdNil/holArb out of range; no concrete fallback. No executed compiler body changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/CalleeSaved.lean",
+    "lean_name": "targetIoRegsCalleeSaved",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "target_io_regs_callee_saved",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:634: same sole MEM r initial calleeSavedRegs premise and oracle result NONE for arbitrary k/r/HolFfiName name. All original position/application match branches retained; no successful selection, register bounds or validity premise. Full generic native MachineConfig/HolFfiState with independent state/projection/σ : Type, positive width NeZero and BitVec width register result. Kernel80jobs zero warnings; fresh original full statements in target_callee_saved_probe.out. Inherited EL via oracle position/sequence/nextInterference/findNextInterference source112-211: reviewed holEl ffi_names keeps in-range element and opaque holHdNil/holArb out of range, no fallback/bounds premise. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/CalleeSaved.lean",
+    "lean_name": "targetCcRegsCalleeSaved",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "target_cc_regs_callee_saved",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:640: same sole MEM r initial calleeSavedRegs premise and oracle result NONE for arbitrary k/r. All original position/application match branches retained; no successful selection, register bounds or validity premise. Full generic native MachineConfig/HolFfiState with independent state/projection/σ : Type, positive width NeZero and BitVec width register result. Kernel80jobs zero warnings; fresh original full statements in target_callee_saved_probe.out. Inherited EL via oracle position/sequence/nextInterference/findNextInterference source112-211: reviewed holEl ffi_names keeps in-range element and opaque holHdNil/holArb out of range, no fallback/bounds premise. No executed compiler change."
   }
 ]

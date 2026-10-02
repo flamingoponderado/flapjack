@@ -10,6 +10,7 @@ import Flapjack.Test.LabToTargetFetchValidityParity
 import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchMono
 import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
+import Flapjack.Compiler.Backend.Semantics.TargetProps.CalleeSaved
 import Flapjack.Compiler.Backend.Semantics.TargetProps.ConstructedOracles
 import Flapjack.Compiler.Backend.Semantics.TargetProps.OracleEquality
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence

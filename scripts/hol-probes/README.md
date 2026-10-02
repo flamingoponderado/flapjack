@@ -4929,3 +4929,7 @@ and Bool-query/Nat-key/String-result/Bool-payload examples, including malformed 
 `target_oracle_equality_probeScript.sml` captures the complete original
 `interference_count_EQ` and `constructed_oracles_EQ` statements with no
 undischarged hypotheses. Native counterparts are in `TargetProps/OracleEquality.lean`.
+
+`target_callee_saved_probeScript.sml` captures complete original
+`target_io_regs_callee_saved` and `target_cc_regs_callee_saved` statements
+with no open hypotheses. Native ports are in `TargetProps/CalleeSaved.lean`.
