@@ -1,7 +1,8 @@
 import Flapjack.RiscV.WordCse
 
 /-! Original register-classifier observations at executed CSE callers.
-Source-only overflow and FP cases remain on the full carrier frontier. -/
+Overflow observations are extended in WordOverflowProduction; FP remains
+on the full carrier frontier. -/
 namespace Flapjack.Test.WordCseProductionRegisterClassifiers
 open Flapjack Flapjack.RiscV
 

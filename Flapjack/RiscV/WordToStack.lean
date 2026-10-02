@@ -704,6 +704,31 @@ def wordStackLongMulAliasLocationsSafe {α : Type} (config : WordStackConfig)
       | _, _, _, _ => false
   | _ => false
 
+/-- Flapjack executed counterpart of the two original overflow wInst clauses.
+SSA has already moved the flag output through its fixed register 0, so only
+its destination can spill; flag stack locations are rejected explicitly. -/
+def wordStackOverflowInst {α : Type} (config : WordStackConfig)
+    (build : Nat → Nat → Nat → Nat → WordArith α) (destination left right flag : Nat) :
+    Option (StackProg α) := do
+  let destinationLocation ← wordStackLocation config destination
+  let leftLocation ← wordStackLocation config left
+  let rightLocation ← wordStackLocation config right
+  let flagLocation ← wordStackLocation config flag
+  let flagRegister ← match flagLocation with
+    | .register register => some register
+    | .stack _ => none
+  let d := match destinationLocation with
+    | .register register => register | .stack _ => config.scratch
+  let l := match leftLocation with
+    | .register register => register | .stack _ => config.scratch
+  let r := match rightLocation with
+    | .register register => register | .stack _ => config.addressScratch
+  let loadLeft ← wordStackLongMulMoveToPhysical config left l
+  let loadRight ← wordStackLongMulMoveToPhysical config right r
+  let writeDestination ← wordStackLongMulMoveFromPhysical config destination d
+  pure (wordStackJoin loadLeft (wordStackJoin loadRight
+    (wordStackJoin (.inst (.arith (build d l r flagRegister))) writeDestination)))
+
 def wordStackArithInst {α : Type} (config : WordStackConfig) (operation : WordArith α) :
     Option (StackProg α) :=
   if wordSpecialArithLocationsSafe operation config.locations = true then
@@ -714,6 +739,8 @@ def wordStackArithInst {α : Type} (config : WordStackConfig) (operation : WordA
       wordStackAddCarryInst config operation
     | .cakeAddCarry _ _ _ _ =>
       wordStackCakeAddCarryInst config operation
+    | .addOverflow d l r flag => wordStackOverflowInst config WordArith.addOverflow d l r flag
+    | .subOverflow d l r flag => wordStackOverflowInst config WordArith.subOverflow d l r flag
     | .div destination dividend divisor =>
       wordStackDivInst config destination dividend divisor
     | .longDiv _ _ _ _ _ => wordStackLongDivInst config operation
@@ -2497,6 +2524,20 @@ def evalWordStackMachine [NeZero width]
         (BitVec.ofNat width total)
       some (wordStackMachineWriteRegister state carry
         (BitVec.ofNat width (total / 2 ^ width)))
+  | .inst (.arith (.addOverflow destination left right flag)) =>
+      let left := state.registers left
+      let right := state.registers right
+      let result := left + right
+      let overflow := if result.toInt ≠ left.toInt + right.toInt then 1 else 0
+      let state := wordStackMachineWriteRegister state destination result
+      some (wordStackMachineWriteRegister state flag overflow)
+  | .inst (.arith (.subOverflow destination left right flag)) =>
+      let left := state.registers left
+      let right := state.registers right
+      let result := left - right
+      let overflow := if result.toInt ≠ left.toInt - right.toInt then 1 else 0
+      let state := wordStackMachineWriteRegister state destination result
+      some (wordStackMachineWriteRegister state flag overflow)
   | .inst (.arith (.div destination dividend divisor)) =>
       let divisorValue := state.registers divisor
       let value := if divisorValue == 0 then
@@ -4059,6 +4100,8 @@ def wordArithToNat : WordArith (Word width) → WordArith Nat
   | .longDiv a b c d e => .longDiv a b c d e
   | .addCarry a b c d e => .addCarry a b c d e
   | .cakeAddCarry a b c d => .cakeAddCarry a b c d
+  | .addOverflow a b c d => .addOverflow a b c d
+  | .subOverflow a b c d => .subOverflow a b c d
   | .div a b c => .div a b c
   | .binOp operator destination sourceLeft sourceRight =>
       .binOp operator destination sourceLeft (wordRegImmToNat sourceRight)

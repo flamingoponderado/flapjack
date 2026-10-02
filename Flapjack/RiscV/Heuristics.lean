@@ -110,6 +110,9 @@ def wordHeuristicInst {α : Type} : WordInst α → NatInfoMap WordHeuristicCoun
               (wordHeuristicAddRhsReg sourceRight
                 (wordHeuristicAddRhsReg sourceLeft
                   (wordHeuristicAddRhsReg carry counts))))
+      | .addOverflow d l r flag | .subOverflow d l r flag =>
+          wordHeuristicAddLhsReg flag (wordHeuristicAddLhsReg d
+            (wordHeuristicAddRhsReg r (wordHeuristicAddRhsReg l counts)))
       | .div destination dividend divisor =>
           wordHeuristicAddLhsReg destination
             (wordHeuristicAddRhsReg divisor
@@ -366,6 +369,8 @@ def wordHeuristicInstFast {α : Type} : WordInst α → WordHeuristicCountMap �
       | .cakeAddCarry destination sourceLeft sourceRight carry =>
           ((((counts.addRhsReg carry).addRhsReg sourceLeft).addRhsReg
             sourceRight).addLhsReg destination).addLhsReg carry
+      | .addOverflow d l r flag | .subOverflow d l r flag =>
+          (((counts.addRhsReg l).addRhsReg r).addLhsReg d).addLhsReg flag
       | .div destination dividend divisor =>
           ((counts.addRhsReg dividend).addRhsReg divisor).addLhsReg destination
       | .binOp _ destination sourceLeft sourceRight =>

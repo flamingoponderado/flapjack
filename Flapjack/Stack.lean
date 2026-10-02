@@ -106,6 +106,10 @@ def stackMapWordArith (map : Nat → Nat) : WordArith α → WordArith α
   | .cakeAddCarry destination sourceLeft sourceRight carry =>
       .cakeAddCarry (map destination) (map sourceLeft) (map sourceRight)
         (map carry)
+  | .addOverflow destination sourceLeft sourceRight flag =>
+      .addOverflow (map destination) (map sourceLeft) (map sourceRight) (map flag)
+  | .subOverflow destination sourceLeft sourceRight flag =>
+      .subOverflow (map destination) (map sourceLeft) (map sourceRight) (map flag)
   | .div destination dividend divisor =>
       .div (map destination) (map dividend) (map divisor)
   | .binOp operator destination sourceLeft sourceRight =>

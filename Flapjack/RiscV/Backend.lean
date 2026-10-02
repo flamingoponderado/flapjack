@@ -289,6 +289,7 @@ def wordArithToInstruction [NeZero width] :
   | .longDiv _ _ _ _ _ => none
   | .addCarry _ _ _ _ _ => none
   | .cakeAddCarry _ _ _ _ => none
+  | .addOverflow _ _ _ _ | .subOverflow _ _ _ _ => none
   | .div destination dividend divisor => do
       let destination ← registerOfNat destination
       let dividend ← registerOfNat dividend
@@ -334,15 +335,15 @@ def wordArithToInstruction [NeZero width] :
 /-- Literal RV64 AddOverflow target expansion over already validated registers.
 Flapjack lowering infrastructure, not a full riscv_ast port: the executed
 Instruction carrier differs from HOL's ISA AST, and this is one source clause.
-The missing production overflow carrier/codec is tracked on key-production.7;
-this prerequisite helper is not yet called by the executed arithmetic route. -/
+The executed RV64 arithmetic route below calls this helper after register
+validation; full production integration is tracked on key-production.7. -/
 def wordAddOverflowToInstructions (destination left right flag : Fin 32) :
     List (Instruction 64) :=
   [.xor 31 left right, .xori 31 31 (-1), .add destination left right,
     .xor flag right destination, .and flag 31 flag, .srli flag flag 63]
 
 /-- Literal RV64 SubOverflow target expansion with the original operand order.
-Same staged production boundary as wordAddOverflowToInstructions; no separate
+Same production boundary as wordAddOverflowToInstructions; no separate
 HOL declaration or instruction-simulation theorem is claimed for this helper. -/
 def wordSubOverflowToInstructions (destination left right flag : Fin 32) :
     List (Instruction 64) :=
@@ -392,6 +393,30 @@ def wordArithToInstructions [NeZero width] :
           .add destination destination 31,
           .sltu 31 destination 31,
           .or carry carry 31]
+  | .addOverflow destination left right flag => do
+      if h : width = 64 then
+        if destination = right || [destination, left, right, flag].any (· == 31) then
+          none
+        else
+          let destination ← registerOfNat destination
+          let left ← registerOfNat left
+          let right ← registerOfNat right
+          let flag ← registerOfNat flag
+          pure (cast (congrArg (fun n => List (Instruction n)) h.symm)
+            (wordAddOverflowToInstructions destination left right flag))
+      else none
+  | .subOverflow destination left right flag => do
+      if h : width = 64 then
+        if destination = right || [destination, left, right, flag].any (· == 31) then
+          none
+        else
+          let destination ← registerOfNat destination
+          let left ← registerOfNat left
+          let right ← registerOfNat right
+          let flag ← registerOfNat flag
+          pure (cast (congrArg (fun n => List (Instruction n)) h.symm)
+            (wordSubOverflowToInstructions destination left right flag))
+      else none
   | .shift .ror destination sourceLeft (.imm amount) => do
       /- Cake's `riscv_ast` expands an immediate rotate-right with the
          reserved temporary register: `srli tmp,left,n; slli dst,left,w-n;

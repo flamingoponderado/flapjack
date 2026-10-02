@@ -4741,6 +4741,8 @@ The capture is source evidence, not a cross-assistant equivalence proof.
 `key_ordered_to_fmap` proof with its full statement and no open hypotheses.
 It retains arbitrary trees and only the original good comparator premise.
 This source capture does not assert cross-assistant equivalence or production wiring.
+`store_list_code_probeScript.sml` records the full original definition/type and 24 complete initializer trees at widths 1/8/64/80, with empty, constant, register and mixed lists, aliasing, arbitrary large registers, and word truncation. Native kernel fixtures retain the terminal Skip and literal right-nesting. Full init/compiler routing is tracked separately.
+
 ### Native SSA Return semantic case
 
 `ssa_cc_trans_correct_return_probeScript.sml` replays the literal resumed Return
@@ -4808,3 +4810,4 @@ original kernel-checked `ssa_cc_trans_correct` at native Div, including its
 full six-premise simulation and all state/register/SSA/table carriers. The
 opcode proof at 7919–7944 is manually compared; this probe does not claim a
 standalone replay of that tactic fragment.
+`word_overflow_production_probeScript.sml` captures 150 original overflow observations: 12 CSE classifier/key tuples at 8/80 bits including arbitrary large register naturals; two SSA result/map/next projections; four copy-propagation outputs including the right-operand/destination collision; four full WordToStack outputs including two spilled inputs and a spilled destination; and 128 full asmSem result/flag/input/failure observations at widths 1/8/64/80 with signed boundaries and destination/flag aliases. `WordOverflowProduction.lean` replays actual executed consumers, including the validated RV64 byte dispatcher against the earlier original target capture. No pass simulation or new HOL datatype tag is asserted.
