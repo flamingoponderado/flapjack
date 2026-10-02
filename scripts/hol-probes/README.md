@@ -4483,3 +4483,5 @@ The proof uses clock induction on the literal evaluator, with a local heartbeat
 budget for the complete constructor case analysis. No default target or gate is
 shortened. Source-reviewed total `holEl`/`holHd` behavior is retained at both
 clocks and explicitly recorded for the evaluator and machine semantics.
+
+`target_props_io_events_probeScript.sml` replays the full original `evaluate_io_events_mono` quantified theorem with no open hypotheses. `TargetPropsIoEventsParity.lean` checks the same unrestricted statement over the full literal evaluator. Clock induction composes exact returning FFI append with recursive prefix preservation; all failed/final paths retain the original trace.

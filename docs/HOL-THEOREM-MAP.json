@@ -52469,5 +52469,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.31.1): Entire original1063-1080 statement: arbitrary mc ffi k ms extra result ms1 ffi1, actual evaluator equality and result not TimeOut imply identical entire result/machine/FFI triple at k+extra. No extra source-validity, initial-state, target-result or simulation premise. Natural clock induction generalizes machine/config/FFI and applies IH only to actual recursive normal/cache/FFI-return branches; literal guards and terminal rollback retain the same triple. words_as_type_indexed_bitvec records only positive width and universe0 FFI host translation. The evaluator dependency uses source-reviewed total holEl/holHd: in-bounds list element, outside bounds shared holHdNil/holArb, no extra length guard or concrete fallback, identically at both clocks. Fresh original full quantified theorem check and halt/error rows plus generic Lean statement/kernel examples are regressions, not cross-assistant equivalence evidence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/EvaluateIoEventsMono.lean",
+    "lean_name": "evaluateTargetIoEventsMono",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "evaluate_io_events_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison 2026-10-02, bead .10.31.2.1, original1082-1110: entire universal mc ffi k ms with no hypotheses, input io_events IS_PREFIX actual final evaluator FFI io_events. Exact full machine evaluator, initial clock zero, normal/cache recursion, all mapped/external guards and terminal rollback, returning call_FFI append composed with IH. Natural clock induction has no callback or oracle-validity premise. Word qualifier records positive BitVec dimension and universe0 FFI host only. Dependency retains reviewed total holEl/holHd: in-bounds element and out-of-bounds shared holHdNil/holArb without bounds premise or concrete fallback. Fresh original theorem replay verifies full conclusion and null hypotheses; generic Lean replay checks complete statement, not cross-language equivalence."
   }
 ]

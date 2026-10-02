@@ -1,3 +1,4 @@
+import Flapjack.Test.TargetPropsIoEventsParity
 import Flapjack.Test.TargetPropsClockParity
 import Flapjack.Test.StackPropsSharedMemoryClockParity
 import Flapjack.Test.LabToTargetEncodingSimilarityParity

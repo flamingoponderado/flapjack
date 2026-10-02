@@ -4029,3 +4029,7 @@ run_probe word_cse_evaluation_frames_probeScript.sml word_cse_evaluation_frames_
 run_probe target_props_clock_probeScript.sml target_props_clock_probe.out \
   tp_clock_theorem_closed tp_clock_type tp_clock_statement tp_halt_stable tp_error_stable \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_props_io_events_probeScript.sml target_props_io_events_probe.out \
+  tp_io_full_statement tp_io_type \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
