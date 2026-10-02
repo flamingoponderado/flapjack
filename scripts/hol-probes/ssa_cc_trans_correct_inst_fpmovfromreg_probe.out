@@ -1,0 +1,11 @@
+fp_mov_from_reg_full=⊢ ∀st cst ssa na lt.
+    word_state_eq_rel st cst ∧ ssa_locals_rel na ssa st.locals cst.locals ∧ is_alloc_var na ∧ every_var (λx. x < na) (Inst (FP (FPMovFromReg n n0 n1))) ∧ ssa_map_ok na ssa ∧ lt_ok lt ⇒
+    ∃perm'. (let (res,rst) = evaluate (Inst (FP (FPMovFromReg n n0 n1)),st with permute := perm') in if res = SOME Error then T else (let (prog',ssa',na') = ssa_cc_trans (Inst (FP (FPMovFromReg n n0 n1))) ssa na lt; (res',rcst) = evaluate (prog',cst) in res = res' ∧ word_state_eq_rel rst rcst ∧ case res of NONE => ssa_locals_rel na' ssa' rst.locals rcst.locals | SOME (Result v12 v13) => rst.locals = rcst.locals | SOME (Exception v14 v15) => rst.locals = rcst.locals | SOME (Break n) => (case LLOOKUP lt n of NONE => T | SOME (tgt_ssa,v3,exit_names) => strong_locals_rel (option_lookup tgt_ssa) (domain exit_names) rst.locals rcst.locals) | SOME (Continue n') => (case LLOOKUP lt n' of NONE => T | SOME (tgt_ssa,names,v4) => strong_locals_rel (option_lookup tgt_ssa) (domain names) rst.locals rcst.locals) | SOME TimeOut => rst.locals = rcst.locals | SOME NotEnoughSpace => rst.locals = rcst.locals | SOME (FinalFFI v18) => rst.locals = rcst.locals | SOME Error => rst.locals = rcst.locals))
+fp_mov_from_reg_type_st=:(α, β, γ) state
+fp_mov_from_reg_type_cst=:(α, β, γ) state
+fp_mov_from_reg_type_first=:num
+fp_mov_from_reg_type_second=:num
+fp_mov_from_reg_type_fp=:num
+fp_mov_from_reg_type_ssa=:num sptree$num_map
+fp_mov_from_reg_type_next=:num
+fp_mov_from_reg_type_tables=:(num sptree$num_map # sptree$num_set # sptree$num_set) list

@@ -1,0 +1,8 @@
+lg_log_exists=∃f. ∀a n. 1 < a ∧ 0 < n ⇒ a ** f a n ≤ n ∧ n < a ** SUC (f a n)
+lg_log_spec=∀a n. 1 < a ∧ 0 < n ⇒ a ** LOG a n ≤ n ∧ n < a ** SUC (LOG a n)
+lg_log_unique=∀a n p. a ** p ≤ n ∧ n < a ** SUC p ⇒ LOG a n = p
+lg_log2_def=LOG2 = LOG 2
+lg_log2_8=LOG2 8 = 3
+lg_log2_1=LOG2 1 = 0
+lg_log2_9=LOG2 9 = 3
+lg_log2_64=LOG2 64 = 6

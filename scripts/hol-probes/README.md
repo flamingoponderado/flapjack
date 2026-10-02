@@ -9,6 +9,15 @@
 `target_register_oracles_probe.out` captures all four full native targetProps register-oracle types/equations and ten generic IO/cache presence, absence, callee filtering and allowed register/FP branches, replayed by TargetRegisterOraclesParity. Fixed word64 FP fallback and unused FFI name remain literal.
 
 `target_interference_sequence_probe.out` captures the full original types and equations for next_interference, interference_app_seq, interference_count and interference_pos (source215-249), with generic recurrence replays. Native kernel regressions preserve all generic parameters and unspecified option choice.
+`byte_word_slice_alt_probe.out` records the full original alternate-slice
+definition/type and66 complete numeric boundary results.
+`byte_decoder_native_probe.out` records set_byte/word_of_bytes definitions/types
+and252 complete numeric outputs;318 matching kernel fixtures cover widths
+1/7/8/16/64/80, both endians, truncated/oversized/inverted/huge slice bounds,
+wrapped addresses, repeated byte lanes and empty/single/five/eleven-byte lists.
+Registering original MOD_0 before EVAL avoids exponential residual expression
+expansion at sub-byte dimensions; this changes only probe reduction order.
+
 `mmio_index_probe.out` captures the full original optional-boundary definition
 and inferred type plus40 assumption-free proved choice equations for every
 external/read/write name list of length0..3. Matching kernel fixtures preserve
@@ -27,6 +36,13 @@ identity step using the empty external call. `Flapjack/EvaluateProps.lean`
 retains all four existential witnesses and kernel-checks the same generic
 identity step. The reflexive-transitive closure and full LabToTarget
 shared-memory relation remain separate obligations.
+`target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
+
+`target_search_mono_probe.out` captures the complete original find_next_interference_mono and find_next_interference_unique statements. Native kernel proofs retain arbitrary clock limits, all machine/FFI parameters and equality of the entire returned tuple, with no added bounds or validity premise.
+
+`target_register_oracles_probe.out` captures all four full native targetProps register-oracle types/equations and ten generic IO/cache presence, absence, callee filtering and allowed register/FP branches, replayed by TargetRegisterOraclesParity. Fixed word64 FP fallback and unused FFI name remain literal.
+
+`target_interference_sequence_probe.out` captures the full original types and equations for next_interference, interference_app_seq, interference_count and interference_pos (source215-249), with generic recurrence replays. Native kernel regressions preserve all generic parameters and unspecified option choice.
 
 `word_to_stack_native_addr_probe.out` records72 original wInst memory trees across Load/Store/Load8/Store8/Load32/Store32, register/spilled operands and zero/positive/negative64bit offsets; five selected Store trees include signed12 endpoints and out-of-range2048. Native kernel fixtures replay all72 source trees; production fixtures preserve Addr instead of macro address sequences, with unchanged original artifact/corpus goldens.
 
@@ -4709,6 +4725,54 @@ through a structural program observation and lookups of the `num_map`s on keys `
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_copy_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`logroot_log_spec_probe` captures the original HOL kernel statements of `LOG_exists`, the
+`new_specification` theorem `LOG`, `LOG_UNIQUE` and `LOG2_def`, and four `LOG2` values on
+positive arguments proved in HOL from `LOG_UNIQUE` (`LOG2` is `[nocompute]`). No value of
+`LOG2 0` is derivable from the specification. `LogrootParity` checks the Lean statements
+against the captured ones and proves the same values. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=logroot_log_spec_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`alignment_align_probe` captures the original HOL `align`/`byte_align` types and EVAL results
+of `word_slice` (including a bound above `^HB` and an empty slice), `align` (exponents 0, 3 and
+40 on a 32-bit word) and `aligned`, plus `byte_align`/`byte_aligned` at 64 bits proved in HOL
+through `LOG2 8 = 3`. Kernel-replayed in `AlignmentParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=alignment_align_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_share_mem_domain_probe` captures the original typed `share_mem_domain_code_rel`
+definition and three HOL-proved consumers: its reduction on code with no lines to the
+`byte_align` domain closure and `shared_addresses` equation, the full-domain instance, and the
+64-bit singleton `{8w}` counterexample (`byte_align 9w = 8w` through `LOG2 8 = 3`).
+`LabToTargetShareMemDomainParity` replays the three consumers in the kernel. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=lab_to_target_share_mem_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_share_mem_state_probe` captures the original typed `share_mem_state_rel`
+definition (independent labSem and machine word widths, vacuous outer `t1`/`ms1`) and two
+HOL-proved consumers: the instance with no FFI names and the counterexample with one shared-memory
+name whose entry PC is the halt PC (via `mmio_pcs_min_index [SharedMem MappedRead] = SOME 0`).
+`LabToTargetShareMemStateParity` replays both. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=lab_to_target_share_mem_state_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`asm_sem_mem_ops_probe` captures 14 original HOL results of `mem_load`, `mem_store` and
+`mem_op` on an 8-bit state: little/big-endian two-byte loads, misaligned and out-of-domain
+failures, one-byte stores, four `mem_op` opcodes, and the zero-count load, whose failure flag is
+proved equal to `¬aligned (LOG2 0) 1w` with `LOG2 0` left unconstrained. Positive `LOG2` values
+are proved from `LOG_UNIQUE` (`LOG2` is `[nocompute]`). Kernel-replayed in `AsmSemMemOpsParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=asm_sem_mem_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`asm_sem_step_probe` captures 12 original HOL results of `asm` (with `inst`/`jump_to_offset`)
+on an 8-bit state: every assembly clause, `Const`/`Arith`/`Mem`/`Skip` instructions, both
+`JumpCmp` branches, `JumpReg` with a satisfied and a violated `aligned s.align` guard, and the
+HOL-proved projection of `asm_step` onto its transition and non-failure conjuncts.
+Kernel-replayed in `AsmSemStepParity`. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=asm_sem_step_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+
+
 `word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
 original missing-bit, SNOC and prefix-reconstruction proofs plus their local
 original bit-index context, each with no open hypotheses. It prints two
@@ -4781,6 +4845,7 @@ It captures the full statement and native list/value/map/bound carriers;
 source and target state captures establish their independent code/FFI hosts.
 The capture is source evidence, not a cross-assistant equivalence proof.
 
+
 ### Balanced-map ordering/domain equivalence
 
 `balanced_map_keyordered_probeScript.sml` replays the original local
@@ -4804,6 +4869,7 @@ continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a 
 observation in `WordUnreachDefParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 
 `target_position_unique_probeScript.sml` captures the complete original
 `interference_count_lt` and `interference_pos_unique` theorem statements,
@@ -4979,6 +5045,20 @@ independent query/key/result/payload types; the latter forces a homogeneous
 Ordering comparator. `BalancedMapKeyOrderedTypes` checks generic constructors
 and Bool-query/Nat-key/String-result/Bool-payload examples, including malformed sizes.
 
+`ssa_cc_trans_correct_inst_fpcompare_probeScript.sml` captures original kernel
+FPLess/FPLessEqual/FPEqual specializations and full native state/register/SSA/table
+carriers. Original FP proof8174–8222 and fixed binary64 comparison/fresh word
+result cases are manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fpunary_probeScript.sml` captures original kernel
+FPMov/FPAbs/FPNeg specializations and native carriers. Original FP proof8174–8222
+and unchanged-SSA finite-map FP writes, bit copying and sign-only updates are
+manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fparith_probeScript.sml` captures original kernel
+FPSqrt/FPAdd/FPSub/FPMul/FPDiv/FPFma specializations and native carriers. Original
+FP proof8174–8222, unchanged-SSA FP writes and inherited rational/choice arithmetic
+operations are manually compared; no standalone tactic replay is claimed.
 `target_oracle_equality_probeScript.sml` captures the complete original
 `interference_count_EQ` and `constructed_oracles_EQ` statements with no
 undischarged hypotheses. Native counterparts are in `TargetProps/OracleEquality.lean`.
@@ -4990,6 +5070,31 @@ with no open hypotheses. Native ports are in `TargetProps/CalleeSaved.lean`.
 `target_next_cases_probeScript.sml` captures complete original
 `next_interference_ExtCall` and `next_interference_ccache` statements and
 checks no undischarged hypotheses. Native ports are in `TargetProps/NextCases.lean`.
+### Full balanced-map rotation arithmetic
+
+`balanced_map_balance_arithmetic_probeScript.sml` captures both typed
+`almost_balancedL/R_def` equations and replays all seven local `balanced_lem`
+proofs with their original statements and tactic bodies. It recreates local
+`TIMES_MIN` using the original proof. Every replay has no open hypotheses.
+The fourteen predicate observations cover left/right zero, one, two and strict
+boundary cases, matched by kernel fixtures in `BalancedMapBalanceArithmeticParity`.
+Lemma7 retains the original unused, independently typed first binder.
+
+### Balanced-map recursive membership law
+
+`balanced_map_membership_probeScript.sml` replays the full original local
+`member_eq_lookup` proof and prints its complete inferred types with no hypotheses.
+The original `gen_tac` script alias is spelled `Tactic.GEN_TAC` in standalone batch mode.
+Six actual member observations use Bool queries, Nat stored keys/payloads, arbitrary
+comparators and malformed cached sizes. Kernel fixtures cover nil, root equality,
+absent left/right branches and successful left/right recursive searches.
+
+### Balanced-map null characterization
+
+`balanced_map_null_probeScript.sml` captures the complete exported `null_thm`
+with and without full types, checks no open hypotheses and observes Tip and
+malformed cached-size Bin. `BalancedMapNullParity` checks the full independent
+key/query theorem and a Bool/Nat/String nonempty root, without comparator laws.
 `target_position_unique_probeScript.sml` captures the complete original
 `interference_count_lt` and `interference_pos_unique` theorem statements,
 checking that both compiled original theorems have no undischarged hypotheses.
@@ -5004,13 +5109,55 @@ Native counterparts are in `TargetProps/PositionLaws.lean`.
 `interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
 checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
 
+`ssa_cc_trans_correct_inst_fpint_probeScript.sml` captures original kernel
+FPToInt/FPFromInt specializations and native carriers. Original FP proof8174–8222,
+width branches, signed range/rounding failures and half-register writes are
+manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fpmovtoreg_probeScript.sml` captures original kernel
+FPMovToReg specialization and native carriers. Original FP proof8174–8222,
+width64 one-write and otherwidth two-write low/high extraction and destination
+aliases are manually reviewed; no standalone tactic replay is claimed.
 `target_next_mapped_probeScript.sml` captures the complete original
 `next_interference_MappedRead` and `next_interference_MappedWrite` statements
 with no open hypotheses. Native ports are in `TargetProps/NextMapped.lean`.
+`balanced_map_invariant_eq_probeScript.sml` captures the entire exported
+`invariant_eq`, including its typed independent Tip payload and all three
+comparator-guarded semantic clauses, with no open HOL hypotheses. It also
+captures a valid singleton, an invalid cached size, and an equal-key child.
+`BalancedMapInvariantEqParity` kernel-checks the corresponding observations.
+The capture also replays the original private `key_ordered_to_fmap` proof
+and the complete original `invariant_eq` proof body, checking the replay has
+no open hypotheses. Batch tactics use their equivalent qualified HOL names.
+The same probe now replays the complete private `inv_props` statement and
+literal original proof, prints its fully typed closed theorem, and evaluates
+a valid tree with two nonempty children. The Lean fixtures also instantiate
+all three `invProps` conclusions for a checked three-key comparator, using
+actual nonempty canonical child lookups rather than assumed domain facts.
+
+`ssa_cc_trans_correct_inst_fpmovfromreg_probeScript.sml` captures original kernel
+FPMovFromReg specialization and carriers (first=n FP destination, second=n0 left
+source, fp=n1 right source). Original FP proof8174–8209, width branches and real
+alias-input Move/fresh SSA locals are manually reviewed; no tactic replay claimed.
+
+`ssa_cc_trans_correct_inst_common_probeScript.sml` captures original kernel
+Skip/Load16/Store16 specializations and carriers. Original initial Inst split
+7860–7865, unchanged Skip and original unsupported16 Error exemptions are
+manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_probeScript.sml` captures original kernel arbitrary
+Inst specialization and native instruction/state/SSA/table carriers. Original
+Inst7860–8222 and all34 constructor cases are compared with the exhaustive
+Lean assembly; no standalone tactic replay is claimed.
 
 `target_next_shared_mem_probeScript.sml` captures the complete original
 `next_interference_SharedMem` statement with no open hypotheses; native
 assembly is in `TargetProps/NextSharedMem.lean`.
+The capture also replays the entire original `lookup_thm` statement and proof,
+with typed closed output, and evaluates left/root/right hits, whole-tree and
+child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
+consume the full generic theorem and derive actual semantic finite-map results
+for nonempty children and a distinct equivalent key with an independent payload.
 
 ### Misc byte-region prerequisites
 
@@ -5019,6 +5166,15 @@ assembly is in `TargetProps/NextSharedMem.lean`.
 from compiled `miscTheory`; `misc_memory_regions_probe.out` is statement review
 and regression evidence, not a cross-language equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=misc_memory_regions_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`init_code_probeScript.sml` captures the full original definition/type and120 complete native-tree equalities across positive widths1/8/32/64/80, heap-limit multiplication below/at/above overflow, GC modes, and zero/large/aliased register indices. The original word_shift is2 for32-bit words and3 otherwise; narrow immediate truncation is preserved. `stack_remove_compile_native_probeScript.sml` adds full init_stubs/compile definitions/types and50 outputs with50 equality checks for all three initializer labels, tail-call start, both jump modes, empty/nonempty section lists, repeated section labels, and huge natural labels. Matching Lean fixtures use kernel-checked literal trees/equations. These are proof-side definitions; production routing and compile_semantics remain separate obligations.
+`ssa_locals_force_rename_probe` captures the original proved generic
+`ssa_locals_rel_force_rename` (word_allocProof:6383–6403) and five inferred
+carriers: source/target alpha Spt, Nat SSA Spt, Nat pair list, and Nat bound.
+The original three premises and conclusion were manually compared with
+`SSALocalsForceRename.lean`; the Lean proof uses induction over the same
+force-rename updates. This is an original theorem capture, not a replay of
+the isolated source tactic or a cross-language equivalence proof. Regenerate
+with `HOL_PROBE_ONLY=ssa_locals_force_rename_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 ### Target evaluation induction base
 
@@ -5027,3 +5183,26 @@ and regression evidence, not a cross-language equivalence proof. Regenerate with
 `target_evaluate_eq_probe.out`. This is source-review regression evidence,
 not a proof of cross-language equivalence.
 Regenerate with `HOL_PROBE_ONLY=target_evaluate_eq_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+### Rotation auxiliary completion audit
+
+`balanced_map_rotation_aux_probeScript.sml` captures the complete typed
+specified equations for `singleL/R`, `doubleL/R`, `rotateL/R`, `bal`, `balL`,
+and `balR`, and actual single-rotation outputs with malformed cached sizes.
+The `bmra_unspecified_unreduced` row is an **unreduced expression**, not a true
+shared-ARB equality. `bmra_completed_singleR` is a **conditional theorem**;
+`bmra_completion_hyp` records its constructor-existence hypothesis explicitly.
+Do not use this capture to claim unconditional missing-case equivalence.
+
+Source audit: HOL `src/tfl/src/Defn.sml:1156-1171` sends constructor-pattern
+nonrecursive definitions to `Prim_rec.new_recursive_definition`.
+`src/1/Prim_rec.sml:259-266` proves function existence from the supplied
+equations, then calls `new_specification`. The existence construction at
+lines127-164 selects the requested constructor equations from the recursion
+axiom; it does not supply a Tip equation absent from the source specification.
+Thus the exported single-rotation equations constrain Bin cases, while the
+choice of the total function leaves the missing outputs unspecified. A shared
+map-valued ARB fallback is one possible realization, not established original
+behavior. A faithful port must retain that unspecified function specification
+(or prove a justified defining-body correspondence), and its missing-case
+outputs must not be treated as concrete parity fixtures. Full rotation proofs
+still need their original constructor premises and specified equations.

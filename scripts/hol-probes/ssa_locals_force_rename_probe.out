@@ -1,0 +1,6 @@
+force_locals_full=⊢ ssa_locals_rel na ssa st1 st2 ∧ EVERY (λx. lookup (FST x) st1 = lookup (SND x) st2) ls ∧ set (MAP SND ls) ⊆ domain st2 ⇒ ssa_locals_rel na (force_rename ls ssa) st1 st2
+force_locals_type_source=:α sptree$num_map
+force_locals_type_target=:α sptree$num_map
+force_locals_type_ssa=:num sptree$num_map
+force_locals_type_pairs=:(num # num) list
+force_locals_type_next=:num

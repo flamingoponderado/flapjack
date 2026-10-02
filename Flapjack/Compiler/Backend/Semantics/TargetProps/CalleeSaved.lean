@@ -20,7 +20,7 @@ theorem targetIoRegsCalleeSaved {width : Nat} [NeZero width]
   "target_cc_regs_callee_saved" (words_as_type_indexed_bitvec)]
 theorem targetCcRegsCalleeSaved {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
-    (ms : S) (k r : Nat) 
+    (ms : S) (k r : Nat)
     (h : r ∈ mc.calleeSavedRegs) : targetCcRegs mc ffi ms k r = none := by
   unfold targetCcRegs
   split
