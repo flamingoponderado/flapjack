@@ -95,6 +95,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.FloatingPoint
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
 import Flapjack.Compiler.Backend.StackToLab.InitializedProduction

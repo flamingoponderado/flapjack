@@ -5166,3 +5166,7 @@ run_probe ssa_call_returning_some_probeScript.sml ssa_call_returning_some_probe.
 run_probe lab_to_target_label_position_padding_probeScript.sml lab_to_target_label_position_padding_probe.out \
   pad_section_pos_ok pad_section_pos_ok_types mixed_original_four_guards mixed_full_tuple mixed_output_parity empty_nop_allowed multibyte_nop_allowed empty_aux_masked_guard label_head_guard prefix_guard_necessary input_parity_guard_necessary acc_parity_guard_necessary empty_width1 large_width80 \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_inst_probeScript.sml stack_remove_comp_inst_probe.out \
+  ci_statement ci_types ci_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
