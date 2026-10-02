@@ -5456,3 +5456,8 @@ run_probe word_to_stack_asm_conventions_probeScript.sml word_to_stack_asm_conven
 run_probe stack_remove_comp_store_probeScript.sml stack_remove_comp_store_probe.out \
   cs_statement cs_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe backend_restrict_zero_probeScript.sml backend_restrict_zero_probe.out \
+  restrict_zero_def empty zero_entry nonzero_entry first_zero absent_entry large_nat infinite \
+  "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"

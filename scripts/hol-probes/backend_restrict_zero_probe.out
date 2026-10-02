@@ -1,0 +1,9 @@
+restrict_zero_def=∀(labels :num # num -> bool).
+  restrict_zero labels = {l | l ∈ labels ∧ SND l = (0 :num)}
+empty=T
+zero_entry=T
+nonzero_entry=T
+first_zero=T
+absent_entry=T
+large_nat=T
+infinite=T

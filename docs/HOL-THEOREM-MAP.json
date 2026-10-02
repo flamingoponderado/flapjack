@@ -66007,5 +66007,13 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-store): genuine original comp_correct StackStore2200-2255, exact four source evaluation/nonError/full state relation/regBound hypotheses and existential clock/native target/usual result-branch conclusion. Direct immediate store and native upshift/store/downshift fallback both proved, including original register value for arbitrary Word/Loc, derived target memory-domain, complete memory point update, exact original pointer restoration and full26 postrelation. Clock0. No supplied target evaluation/domain/postheap/postrelation/pointer-restoration premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains Spt and stack remains List. Inherited reals_as_rational_cuts assumption from faithful total evaluator; pure store has no local real operation. Fresh literal original case plus local upshift/downshift proof replay recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "restrictZero",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "restrict_zero_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: complete backendPropsScript.sml354-357, unconditional arbitrary Nat-pair set comprehension retains original membership and SND equal to zero. No word dimension, map-value specialization, finiteness, extra premise or representation qualifier. Fresh original observations and native kernel replays cover empty/mixed/absent entries, first-component zero versus second-component zero, >64-bit naturals and infinite UNIV. Generic kernel consumer retains arbitrary input sets. Proof-side set definition has no executable compiler caller; prerequisite of lab_to_targetProof5006-5066, not compiler correctness or a cross-language equivalence proof."
   }
 ]
