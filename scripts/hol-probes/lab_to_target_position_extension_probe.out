@@ -1,0 +1,30 @@
+pos_val_acc_sum=∀(i :num) (pos :num) (secs :α sec list) (x :num) (y :num).
+  x + y = pos ⇒ x + pos_val i y secs = pos_val i pos secs
+pos_val_acc_sum_types=(i :num)::num;(pos :num)::num;(secs :α sec list)::α sec list;(x :num)::num;(y :num)::num;
+pos_val_acc_sum_hypotheses=0
+pos_val_acc_0=∀(i :num) (pos :num) (secs :α sec list).
+  pos + pos_val i (0 :num) secs = pos_val i pos secs
+pos_val_acc_0_types=(i :num)::num;(pos :num)::num;(secs :α sec list)::α sec list;
+pos_val_acc_0_hypotheses=0
+pos_val_APPEND1=∀(pc :num) (code :α sec list).
+  pc < num_pcs code ⇒
+  pos_val pc (0 :num) (code ++ (sec_list :α sec list)) =
+  pos_val pc (0 :num) code
+pos_val_APPEND1_types=(pc :num)::num;(code :α sec list)::α sec list;(sec_list :α sec list)::α sec list;
+pos_val_APPEND1_hypotheses=0
+pos_val_APPEND2=∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (p :num) (code :α sec list).
+  all_enc_ok c labs ffis p code ⇒
+  pos_val ((pc :num) + num_pcs code) (0 :num)
+    (code ++ (sec_list :α sec list)) =
+  LENGTH (prog_to_bytes code) + pos_val pc (0 :num) sec_list
+pos_val_APPEND2_types=(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(p :num)::num;(code :α sec list)::α sec list;(sec_list :α sec list)::α sec list;(pc :num)::num;
+pos_val_APPEND2_hypotheses=0
+acc_split=T
+acc_zero=T
+prefix_unrestricted=T
+prefix_boundary=T
+suffix_shift=T
+past_end=T
+invalid_prefix=T
+empty_prefix=T

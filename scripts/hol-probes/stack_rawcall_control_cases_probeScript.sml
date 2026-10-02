@@ -1,0 +1,10 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "control_full_statement="; print_term(concl comp_correct));
+val _ = print("control_full_hypotheses=" ^ Int.toString(length(hyp comp_correct)) ^ "\n");
+fun emit label program = (print(label ^ "="); print_term(concl(ISPEC program comp_correct)));
+val _ = emit "control_return" ``stackLang$Return register:64 stackLang$prog``;
+val _ = emit "control_raise" ``stackLang$Raise register:64 stackLang$prog``;
+val _ = emit "control_break" ``stackLang$Break register:64 stackLang$prog``;
+val _ = emit "control_continue" ``stackLang$Continue register:64 stackLang$prog``;
