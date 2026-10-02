@@ -141,3 +141,8 @@ declarations remain in `Flapjack/Misc/LprefixLub.lean`.
 
 The pinned external `HOL/src/n-bit/byteScript.sml` counterpart is
 `Flapjack/Byte.lean` (byte extraction and arbitrary-count word serialization).
+
+The pinned external `HOL/src/sort/mergesortScript.sml` counterpart is
+`Flapjack/Misc/Mergesort.lean` (the non-tail `sort2`/`sort3`/`merge`/`mergesortN`, their
+sortedness, and the tail-recursive correctness lemmas over the untagged tail rendering in
+`Flapjack/Basis/Pure/MlList.lean`).

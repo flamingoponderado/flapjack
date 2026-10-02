@@ -52922,5 +52922,149 @@
     "lean_name": "goodPrefBiasedPref",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.9): reg_allocProofScript.sml:753-766, ∀t (t : num list num_map as Spt (List Nat)); good_pref (biased_pref t) with biased_pref and handle_Subscript the exact tagged biasedPref/handleSubscript. Statement compared clause by clause with the source text; free variables and binder types re-elaborated in HOL (reg_allocProofTheory, show_types), since [local] theorems are not exported by DB.fetch. EVERY is ∀ x ∈ l, MEM list membership, LUPDATE List.set, M_success/M_failure Exc.success/Exc.failure, record update `s with f := v` the Lean structure update, no_clash/undirected/good_pref the exact tagged noClash/undirected/goodPref. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and node_tag/adj_ls/coalesced subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "sort2_def",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "sort2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:38-44 sort2 R x y = if R x y then [x;y] else [y;x]. Clause for clause, same argument order and polymorphic carrier (type checked against the hol_mergesort_probe types); HOL DIV2 n is n / 2 and DROP is List.drop. Kernel replay of 14 fresh original HOL EVAL results in Flapjack/Test/HolMergesortParity.lean (strict, non-strict and non-total relations; mergesortN counts below, at and above the list length). Proof-side definition: the executed sort is the tail-recursive mergesort_tail rendering in MlList.lean, which mergesortN_correct relates to it."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "sort3_def",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "sort3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:46-62, all six branches in HOL order. Clause for clause, same argument order and polymorphic carrier (type checked against the hol_mergesort_probe types); HOL DIV2 n is n / 2 and DROP is List.drop. Kernel replay of 14 fresh original HOL EVAL results in Flapjack/Test/HolMergesortParity.lean (strict, non-strict and non-total relations; mergesortN counts below, at and above the list length). Proof-side definition: the executed sort is the tail-recursive mergesort_tail rendering in MlList.lean, which mergesortN_correct relates to it."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "merge_def",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "merge",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:64-73, the four overlapping clauses in HOL order ([] [], l [], [] l, x::l1 y::l2 with the R x y test); termination by total length. Clause for clause, same argument order and polymorphic carrier (type checked against the hol_mergesort_probe types); HOL DIV2 n is n / 2 and DROP is List.drop. Kernel replay of 14 fresh original HOL EVAL results in Flapjack/Test/HolMergesortParity.lean (strict, non-strict and non-total relations; mergesortN counts below, at and above the list length). Proof-side definition: the executed sort is the tail-recursive mergesort_tail rendering in MlList.lean, which mergesortN_correct relates to it."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "mergesortN_def",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergesortN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:75-91, the ten small clauses and the general clause with len1 = DIV2 n merging mergesortN R (DIV2 n) l and mergesortN R (n - len1) (DROP len1 l). Clause for clause, same argument order and polymorphic carrier (type checked against the hol_mergesort_probe types); HOL DIV2 n is n / 2 and DROP is List.drop. Kernel replay of 14 fresh original HOL EVAL results in Flapjack/Test/HolMergesortParity.lean (strict, non-strict and non-total relations; mergesortN counts below, at and above the list length). Proof-side definition: the executed sort is the tail-recursive mergesort_tail rendering in MlList.lean, which mergesortN_correct relates to it."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "mem_sorted_append",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "memSortedAppend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:18-31 [local], ∀R l1 l2 x y. transitive R ∧ SORTED R (l1 ++ l2) ∧ MEM x l1 ∧ MEM y l2 ⇒ R x y over an arbitrary Prop relation R (no Bool rendering needed). HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "sort2_sorted",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "sort2Sorted",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:216-224, ∀R x y. total R ⇒ SORTED R (sort2 R x y). HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "sort3_sorted",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "sort3Sorted",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:226-234, ∀R x y z. total R ⇒ SORTED R (sort3 R x y z). HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "merge_sorted",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergeSorted",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:236-255, ∀R l1 l2 with the four premises in HOL order. HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "mergesortN_sorted",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergesortNSorted",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:257-280, ∀R n l. total R ∧ transitive R ⇒ SORTED R (mergesortN R n l). HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "sort2_tail_correct",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "sort2TailCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:419-425, ∀neg R x y over the untagged clause-for-clause sort2_tail rendering sort2Tail of MlList.lean; REVERSE is List.reverse. HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "sort3_tail_correct",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "sort3TailCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:427-432, ∀neg R x y z over the untagged sort3_tail rendering sort3Tail of MlList.lean. HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "merge_tail_correct1",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergeTailCorrect1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:434-442, ∀neg R l1 l2 acc. (neg = F) ⇒ merge_tail neg R l1 l2 acc = REVERSE (merge R l1 l2) ++ acc over the untagged merge_tail rendering mergeTail (REV l acc as l.reverse ++ acc). HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "merge_empty",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergeEmpty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:444-451, ∀R l acc. merge R l [] = l ∧ merge R [] l = l. HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise. HOL binds an acc that occurs nowhere in the statement; its type is a free type variable, kept as the vacuous binder (_acc : β)."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "merge_last_lem1",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergeLastLem1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:453-464 [local], ∀R l1 l2 x. (∀y. MEM y l2 ⇒ ¬R x y) ⇒ merge R (l1 ++ [x]) l2 = merge R l1 l2 ++ [x]. HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "merge_last_lem2",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergeLastLem2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:466-477 [local], ∀R l1 l2 y. (∀x. MEM x l1 ⇒ R x y) ⇒ merge R l1 (l2 ++ [y]) = merge R l1 l2 ++ [y]. HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "merge_tail_correct2",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergeTailCorrect2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:479-506, ∀neg R l1 l2 acc. (neg = T) ∧ transitive R ∧ SORTED R (REVERSE l1) ∧ SORTED R (REVERSE l2) ⇒ merge_tail neg R l1 l2 acc = merge R (REVERSE l1) (REVERSE l2) ++ acc. HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/mergesortScript.sml",
+    "hol_name": "mergesortN_correct",
+    "lean_path": "Flapjack/Misc/Mergesort.lean",
+    "lean_name": "mergesortNCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mergesortScript.sml:508-526, ∀negate R n l. total R ∧ transitive R ⇒ mergesortN_tail negate R n l = (if negate then REVERSE (mergesortN R n l) else mergesortN R n l) over the untagged mergesortN_tail rendering mergesortNTail. HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/basis/pure/mllistScript.sml",
+    "hol_name": "sort_SORTED",
+    "lean_path": "Flapjack/Basis/Pure/MlList/SortPerm.lean",
+    "lean_name": "sortSorted",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mllistScript.sml:297-301, ∀R L. transitive R ∧ total R ⇒ sorting$SORTED R (sort R L) over the exact tagged sort. HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
   }
 ]
