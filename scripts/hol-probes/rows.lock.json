@@ -7706,6 +7706,12 @@
       "sha256": "5fd9ccfab3bb7933d658486b7808ea392a05fdda6ce21d52598b424a755e4681"
     },
     {
+      "bytes": 38700,
+      "out": "word_to_stack_list_update_slices_probe.out",
+      "rows": 254,
+      "sha256": "3548b81705f80f2fce4542f14311407a7860198688465a6ea91cfb973d4fc71f"
+    },
+    {
       "bytes": 65,
       "out": "word_to_stack_live_length_probe.out",
       "rows": 6,
