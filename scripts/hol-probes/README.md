@@ -1,3 +1,7 @@
+`target_sequence_laws_probe.out` captures complete original sequence equality, exact tail and count monotonicity statements. Native generic proofs keep all initial and returned configurations/FFI states, arbitrary predicates and universal sequence/count indices.
+
+`target_search_const_probe.out` captures the complete clocked and unbounded original configuration-preservation statements. Native generic proofs preserve the entire target plus exact callee-saved list and pointer register, without validity or bounds hypotheses.
+
 `target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
 
 `target_search_mono_probe.out` captures the complete original find_next_interference_mono and find_next_interference_unique statements. Native kernel proofs retain arbitrary clock limits, all machine/FFI parameters and equality of the entire returned tuple, with no added bounds or validity premise.
@@ -5,6 +9,24 @@
 `target_register_oracles_probe.out` captures all four full native targetProps register-oracle types/equations and ten generic IO/cache presence, absence, callee filtering and allowed register/FP branches, replayed by TargetRegisterOraclesParity. Fixed word64 FP fallback and unused FFI name remain literal.
 
 `target_interference_sequence_probe.out` captures the full original types and equations for next_interference, interference_app_seq, interference_count and interference_pos (source215-249), with generic recurrence replays. Native kernel regressions preserve all generic parameters and unspecified option choice.
+`mmio_index_probe.out` captures the full original optional-boundary definition
+and inferred type plus40 assumption-free proved choice equations for every
+external/read/write name list of length0..3. Matching kernel fixtures preserve
+all-external/end-of-list boundaries, all-shared/zero boundaries and mixed-order
+rejection. A generic kernel uniqueness proof justifies the choice translation.
+
+`init_memory_probe.out` records the full original initializer definition/type,
+64 complete output trees, and 64 true equalities to independently written
+constructor trees. Matching kernel fixtures cover widths1/8/64/80, zero/aliased/
+arbitrary-large pointer registers, empty/word/register/mixed stores and word
+truncation. The full executed initializer route remains a separate parent.
+
+`evaluate_props_ffi_relation_probe.out` captures the full original FFI-step
+definition and inferred state-relation type, and checks an assumption-free
+identity step using the empty external call. `Flapjack/EvaluateProps.lean`
+retains all four existential witnesses and kernel-checks the same generic
+identity step. The reflexive-transitive closure and full LabToTarget
+shared-memory relation remain separate obligations.
 
 `word_to_stack_native_addr_probe.out` records72 original wInst memory trees across Load/Store/Load8/Store8/Load32/Store32, register/spilled operands and zero/positive/negative64bit offsets; five selected Store trees include signed12 endpoints and out-of-range2048. Native kernel fixtures replay all72 source trees; production fixtures preserve Addr instead of macro address sequences, with unchanged original artifact/corpus goldens.
 
@@ -4889,6 +4911,41 @@ complete native state/register/SSA/table carriers. Opcode8092–8113, signed
 wrapped difference test and physical/fresh-flag output path are manually
 compared. No standalone tactic replay is claimed.
 
+`ssa_cc_trans_correct_inst_load_probeScript.sml` captures the original kernel
+theorem specialization at native Mem Load and full state/register/offset-word/
+SSA/table carriers. Original opcode8115–8123, address expression, domain errors
+and fresh destination relation are manually compared; no standalone tactic
+replay is claimed.
+
+`ssa_cc_trans_correct_inst_load8_probeScript.sml` captures the original kernel
+theorem specialization at Mem Load8 and complete native state/register/offset/
+SSA/table carriers. Opcode8124–8132, domain/endianness byte-load branches and
+HOL w2w byte-to-word fresh update are manually compared; no standalone tactic
+replay is claimed.
+
+`ssa_cc_trans_correct_inst_load32_probeScript.sml` captures the original kernel
+theorem specialization at Mem Load32 and complete native state/register/offset/
+SSA/table carriers. Opcode8133–8142, alignment/domain/endianness errors and
+HOL w2w 32-bit-to-word fresh update are manually compared; no standalone tactic
+replay is claimed.
+
+`ssa_cc_trans_correct_inst_store_probeScript.sml` captures the original kernel
+theorem specialization at Mem Store and complete native state/register/offset/
+SSA/table carriers. Opcode8143–8154, arbitrary WordLoc data, domain errors and
+memory-update frame/unchanged locals are manually compared; no standalone
+tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_store8_probeScript.sml` captures the original kernel
+theorem specialization at Mem Store8 and complete native state/register/offset/
+SSA/table carriers. Opcode8155–8163, word-to-byte/data-type errors, byte-store
+domain/endianness update and unchanged-locals frame are manually compared; no
+standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_store32_probeScript.sml` captures the original kernel
+theorem specialization at Mem Store32 and complete native state/register/offset/
+SSA/table carriers. Opcode8164–8173, word-to-32-bit/data-type errors, alignment,
+domain and four-byte endianness update, and unchanged-locals frame are manually
+compared; no standalone tactic replay is claimed.
 ### Balanced-map core independent carriers
 
 `balanced_map_core_types_probeScript.sml` captures the complete fully typed original
@@ -4930,3 +4987,16 @@ absent left/right branches and successful left/right recursive searches.
 with and without full types, checks no open hypotheses and observes Tip and
 malformed cached-size Bin. `BalancedMapNullParity` checks the full independent
 key/query theorem and a Bool/Nat/String nonempty root, without comparator laws.
+`target_position_unique_probeScript.sml` captures the complete original
+`interference_count_lt` and `interference_pos_unique` theorem statements,
+checking that both compiled original theorems have no undischarged hypotheses.
+The native Lean counterparts are in `TargetProps/PositionUnique.lean`.
+
+`target_position_laws_probeScript.sml` prints the full original
+`interference_count_tail` and `interference_pos_head` statements and checks
+that the original compiled theorems have no undischarged hypotheses.
+Native counterparts are in `TargetProps/PositionLaws.lean`.
+
+`target_position_tail_probeScript.sml` captures complete original
+`interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
+checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
