@@ -6188,3 +6188,7 @@ kernel equality over the full native state.
 sptree_wf_definition_probeScript.sml captures the full original wf_def and254 complete wf/isEmpty outputs: all depth-two constructor combinations,24-level valid/malformed chains, and function payloads. Existing approved hol4 snapshot and pinned HOL source hashes agree; no provenance expansion. Kernel/runtime replay is SptreeWfDefinitionParity.lean.
 `stack_remove_find_code_probeScript.sml` replays both complete original local callee lookup proofs (231–255), retaining arbitrary erased register and the full destination family. Its four rows record both original statements and kernel proof success.
 `stack_rawcall_control_cases_probe` captures the original full `comp_correct`, zero external hypotheses, and Return/Raise/Break/Continue specializations at width64. Native proofs quantify arbitrary positive width; these are statement-shape evidence, not runtime parity or full theorem assembly.
+
+`stack_remove_comp_jump_lower_probeScript.sml` replays the literal original complete JumpLower case with actual source-guarded callee IH and original local register/dec-clock helpers, without assuming full `comp_correct`. Two rows record the scoped statement and proof success.
+
+`stack_remove_comp_code_buffer_probeScript.sml` proves the full original four-premise CodeBufferWrite case using the literal original case body and local getVar helper, without assuming full `comp_correct`. Two rows record its scoped statement and proof success.
