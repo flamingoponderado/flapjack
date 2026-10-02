@@ -67067,5 +67067,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-remove-loop: genuine original comp_correct Loop1703-1744/full theorem1481-1490. Same four actual source evaluation/nonError/full26state relation/register bound premises; original existential native target run at ck+target.clock and Halt/TimeOut/FinalFFI ffi equality versus full stateRelHOL result split. Only original source-fixed body IH and actual body-run/cont_loop/nonzero-middle-clock guarded reentry IH, both retain original arbitrary result/poststate/target/pointer/bounds/jump quantifiers. STOP identity and rewritten HOL evaluator equation represented using accepted unconditional native fixClockEvaluate. Source nonError excludes bodyError; contLoopImp derives body fullrelation and excludes TimeOut for real reentry. Zero-clock branch preserves timeout ffi through full relation/emptyEnv. Exit preserves original Break0 versus positive Break behavior. Reentry derives decClock stateRel, extends actual compiled body run via original evaluateAddClock, combines Nat allowances and proves exact decClock boosted-state equality from derived nonzero middle clock. No extra target-run, clock bound/success, target result, postrelation or unconditional simulation premise. Native comp Loop retains actual compiled body. Canonical native regs/fpRegs/store roundtrip witness reexported from imported owning state; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scopedHOL statement proved with literal original Loop case body prefixed only standalone rpt strip_tac."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/InstructionSimulation.lean",
+    "lean_name": "evaluateCompInst",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "evaluate_comp_Inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 .4.10 original121-132: arbitrary instruction, source/target/result states, result and frame info. Exactly source evaluate equality, result not Error and full literal state_rel are premises. Existential ck/t1/k1 retains post-state relation, actual evaluate of comp at ck+target.clock, original result and target stackSpace update, and nonTimeOut/nonHalt Word2 guard implies k1=t1.stackSpace. Positive native HolInst/HolProg/StackSemResult and full22field StackSemStateFiniteExact, configuration/FFI Type0; canonical regs/fpRegs/store qualifier covers full relation, code stays Spt. Same-module witness genuinely reexports actual owner broad/exact roundtrips. Native getVars/recursive wordExp/assign and all integer-memory/16FP operations derive code-only update transport; code preservation follows specializing unconditional transport to source.code. Postrelation derived using unchanged code/frame obligations, target primitive success derived from source success and transport. Actual evaluate Inst is clock-neutral; witness ck=0 and original stackSpace discharge existential without extra guard or target result premise. No callback or successful target execution assumption. Inherits SOUNDNESS item8 reals_as_rational_cuts through actual FP/evaluator constant closure; theorem introduces no real rendering itself and proves no HOL/Lean real equivalence. Full pass/production correctness remains open."
   }
 ]

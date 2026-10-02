@@ -1,3 +1,5 @@
+`stack_rawcall_inst_simulation_probe.out` captures the full original arbitrary-instruction existential simulation and zero theorem assumptions. Native kernel proof derives complete primitive transport, target evaluation and postrelation for every integer/memory/FP constructor. Inherited FP real-carrier limits remain; this is not full pass or executed compiler correctness.
+
 `stack_rawcall_state_rel_probe.out` captures the complete original full-state relation type/equation and generic reflexivity under state_ok and exact compile-oracle preservation. Native kernel consequences retain arbitrary whole states and independent per-entry frame-info witnesses; this establishes no evaluator simulation or production replacement.
 
 `target_sequence_laws_probe.out` captures complete original sequence equality, exact tail and count monotonicity statements. Native generic proofs keep all initial and returned configurations/FFI states, arbitrary predicates and universal sequence/count indices.
