@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallReturn
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstallCase
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAllocCase
 import Flapjack.Compiler.Backend.LabToTarget.NopPadding

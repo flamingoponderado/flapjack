@@ -62649,5 +62649,21 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a author source comparison2026-10-02 original resumed Install9700-9858 of full ssa_cc_trans_correct7666: all six original premises and complete ssaSimulation source-permutation/Error-exempt actual target result/frame/result-sensitive locals conclusion. Source permutation is original target.permute. Actual non-Error source Install derives successful cut/four word reads/normal result; native compiler rename and scratch moves, mapped cut relation, identical actual compile/buffer/oracle/config/code branches, fresh pointer copy and final rename are proved internally. No targetrun/successful callback/final SSA or post-frame premise, no induction hypothesis. Native arbitrary Nat/Spt/cutsets/program/code/stack/GC/FFI carriers retained, canonical fpRegs/store relation and positive word qualifiers only; inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Full SSA/end-to-end remain open."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+  "lean_name": "returningRefreshArguments",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific returning Call preparation factoring of original8298-8410, no standalone HOL declaration. Actual source getVars/paired-cut guards and original SSA/map/frame derive first native rename NONE/new SSA/frame plus argument reads through original SSA map (the actual compiler uses original map), then convention Move2*(i+1), rereads, preserved new stack SSA/frame and mapped paired-cut image domains/scoped relations/injections. No target-run or desired post-relation premise. Existing original-lookup preservation, physical ignore updates, get/set and cut lemmas discharge obligations. Full returning Call/callee/stack/return/exception-handler and fullSSA remain open on flapjack-sola-callreturn."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+  "lean_name": "returningPrepareArguments",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific returning Call preparation factoring of original8298-8410, no standalone HOL declaration. Actual source getVars/paired-cut guards and original SSA/map/frame derive first native rename NONE/new SSA/frame plus argument reads through original SSA map (the actual compiler uses original map), then convention Move2*(i+1), rereads, preserved new stack SSA/frame and mapped paired-cut image domains/scoped relations/injections. No target-run or desired post-relation premise. Existing original-lookup preservation, physical ignore updates, get/set and cut lemmas discharge obligations. Full returning Call/callee/stack/return/exception-handler and fullSSA remain open on flapjack-sola-callreturn."
 }
 ]
