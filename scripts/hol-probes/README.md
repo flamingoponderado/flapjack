@@ -6176,3 +6176,10 @@ Optional LLOOKUP probe captures six complete original closed re-exported stateme
 `l3_mmu_translate_addr_probe.out` captures the complete original translateAddr definition/type and256 observations spanning eight defined VM modes, both fetch/access kinds, all four privilege codes and both MMPRV flags with complementary MPRV1. Kernel fixtures replay optional address, all nine fields of all sixteen current-core TLB entries and PTE memory. Bare and Machine bypass, unsupported modes, Sv39/Sv48 levels2/3, and Data-only override are preserved. Other state fields are unobserved; invalid-mode canonical choice is preserved in the full definition rather than forced to a default. These regressions do not establish cross-language equivalence.
 
 word_to_stack_list_update_slices_probeScript.sml replays nine complete original Word-to-Stack slice/single-update proofs (146–173, 524–562) and captures 245 independent complete outputs, including empty/duplicate lists, ignored writes and 70-bit indices. The native kernel/runtime fixtures are in WordToStackListUpdateSlicesParity.lean; this list-only section does not use total HD/EL.
+
+The `l3_fetch_primitives_probeScript.sml` family also captures the complete original `rawReadInst_def` and its type, then evaluates all 256 first-byte values and address wraparound at the last three word64 addresses. Matching Lean kernel replays retain an arbitrary surrounding native state and observe the decoded width/value, current and other-core Skip, and unchanged memory byte. Probes are regression evidence; the full source equation is reviewed separately.
+
+`l3_step_fetch_probeScript.sml` captures the full original step Fetch definition,
+type and unconditional generic equation. It preserves THE NONE and does not
+claim to cover the separate model Fetch declaration. Its Lean replay is a generic
+kernel equality over the full native state.

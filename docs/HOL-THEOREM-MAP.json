@@ -67190,5 +67190,37 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: Source6407 complete universally quantified preservation of successful old lookups and complete original input validity imply full validity under arbitrary extended map; failed-lookups and new entries unconstrained. Every original line constructor handled, including failed lookup and unsupported Call; no target validity premise, map-domain freshness or global invariant added. Native original constructors/opaque mlstring, positive-width type-indexed words and canonical nested numeric sptrees reviewed; no fmap qualifier or arbitrary carrier specialization. Original exported fulltypes0openhyps, fresh original/native byte-shift/map-lookup regressions and fullgeneric fixtures; genuine arbitrary fresh outer-map consumer discharges the full source lookup guard, and actual append consumer derives shifted validity. Kernel checking/oracle tests supplement source review without establishing cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ReadInst.lean",
+    "lean_name": "PC",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "PC_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript1260-1263 literal current-core c_PC read, fixed core word8/result word64 and entire native state. No procID/totalCore bound. Full original definition/type and empty-hypothesis generic whole equation captured in l3_fetch_primitives_probe; kernel rfl replay retains all state fields and arbitrary core maps. Fixed source dimensions and native function-valued fields require no representation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ReadInst.lean",
+    "lean_name": "«write'Skip»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'Skip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript1281-1293 full c_Skip function update at procID with word64 value. All other state fields and all other core keys retained; no core bound or narrowed state. Full original definition/type and empty-hypothesis generic whole equation captured in l3_fetch_primitives_probe; kernel rfl replay retains all state fields and arbitrary core maps. Fixed source dimensions and native function-valued fields require no representation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ReadInst.lean",
+    "lean_name": "rawReadInst",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rawReadInst_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared riscvScript.sml:4530-4570: fixed rawInstType Half word16 / Word word32, full native riscv_state, BL8 bits 1 and 0, current-core Skip 2/4 function update, little-endian concatenation and modular word64 addresses. No alignment, architecture subset or successful-translation premise. boolify8 is untagged generated infrastructure with fixed in-range indices 7 through 0."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/Fetch.lean",
+    "lean_name": "Fetch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "Fetch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared riscv_stepScript.sml:28-32: full native state; translateAddr (PC s, Instruction, Read); THE optional returned address; rawReadInst on returned state. No successful-translation premise and canonical unspecified THE NONE preserved. Separate step namespace does not claim the different model Fetch definition."
   }
 ]
