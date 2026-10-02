@@ -964,6 +964,7 @@ import Flapjack.Test.LabToTargetShareMemStateParity
 import Flapjack.Test.AsmSemMemOpsParity
 import Flapjack.Test.AsmSemStepParity
 import Flapjack.Test.AsmPropsEncoderCorrectParity
+import Flapjack.Test.L3RiscvDecodeParity
 
 
 

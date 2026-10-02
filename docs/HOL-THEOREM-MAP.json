@@ -61560,5 +61560,1573 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source/type review2026-10-02 original1098-1153 full native transport. Full original state relation and tuple retained. Only actual interference sequence shifts; universal index i obligation is discharged by original i+l; all other original conjuncts preserved without extra transition premise. Positive-width BitVec translation alone, Type0 independent native carriers and source quantifiers/guards/conclusions compared with freshly captured original full/type rows. holEl/holHd remain literal total EL/HD with opaque nil result through actual full relation, no bound/fallback or weakened source condition added. Generic kernel proofs and repeated full-state shift consumer; compiler execution unchanged, complete compiler correctness goal remains open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "PC_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "PC",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "MCSR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "MCSR",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "privilege_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "privilege",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "raise'exception_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abraise'exception\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "vmType_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "vmType",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "SCSR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "SCSR",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ASID_SIZE_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "ASID_SIZE",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "curASID_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "curASID",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "checkMemPermission_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "checkMemPermission",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'SV_PTE_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'SV_PTE\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "MEM_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "MEM",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'MEM_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'MEM\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rawWriteData_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "rawWriteData",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "TLB_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "TLB",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'TLB_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'TLB\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'SV_Vaddr_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abrec'SV_Vaddr\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "LEVEL_BITS_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "LEVEL_BITS",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rawReadData_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "rawReadData",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'SV_PTE_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abrec'SV_PTE\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "isGlobal_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "isGlobal",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "PAGESIZE_BITS_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "PAGESIZE_BITS",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mkTLBEntry_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "mkTLBEntry",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "TLBEntries_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "TLBEntries",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "addToTLB_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "addToTLB",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lookupTLB_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "lookupTLB",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'Skip_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'Skip\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rawReadInst_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "rawReadInst",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "asSImm12_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "asSImm12",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "asImm20_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "asImm20",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "asImm12_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "asImm12",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Decode_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "Decode",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "DecodeRVC_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "DecodeRVC",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DecodeAny_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "DecodeAny",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'NextFetch_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'NextFetch\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "setTrap_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "setTrap",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "signalException_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "signalException",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'UnknownInstruction_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'UnknownInstruction\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "gpr_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "gpr",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "GPR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "GPR",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "flushTLB_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "flushTLB",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SFENCE_VM_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SFENCE_VM\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'SCSR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'SCSR\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "privLevel_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "privLevel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'MCSR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'MCSR\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MRTS_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'MRTS\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ERET_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'ERET\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "signalEnvCall_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "signalEnvCall",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ECALL_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'ECALL\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'EBREAK_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'EBREAK\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "architecture_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "architecture",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "curArch_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "curArch",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "in32BitMode_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "in32BitMode",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "is_CSR_defined_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "is_CSR_defined",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "curPrivilege_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "curPrivilege",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "csrPR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "csrPR",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "csrRW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "csrRW",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "check_CSR_access_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "check_CSR_access",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "checkCSROp_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "checkCSROp",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mip_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'mip\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mcause_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'mcause\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mie_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'mie\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mtdeleg_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'mtdeleg\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mstatus_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'mstatus\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mimpid_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'mimpid\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mcpuid_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'mcpuid\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'sip_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abrec'sip\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lift_mip_sip_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "lift_mip_sip",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'sip_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'sip\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'sie_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abrec'sie\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lift_mie_sie_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "lift_mie_sie",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'sie_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'sie\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'sstatus_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abrec'sstatus\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "extStatus_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "extStatus",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lift_mstatus_sstatus_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "lift_mstatus_sstatus",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'sstatus_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'sstatus\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'FPCSR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abreg'FPCSR\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "CSRMap_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "CSRMap",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "CSR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "CSR",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "sendIPI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "sendIPI",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mip_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abrec'mip\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mcause_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abrec'mcause\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mie_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abrec'mie\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mtdeleg_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abrec'mtdeleg\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mstatus_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abrec'mstatus\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "isValidVM_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "isValidVM",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "update_mstatus_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "update_mstatus",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lower_sip_mip_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "lower_sip_mip",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lower_sie_mie_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "lower_sie_mie",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lower_sstatus_mstatus_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "lower_sstatus_mstatus",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'FPCSR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abrec'FPCSR\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'reg'FPCSR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'reg'FPCSR\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ext_status_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "ext_status",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'CSRMap_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'CSRMap\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'CSR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'CSR\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Delta_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "Delta",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'Delta_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'Delta\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "writeCSR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "writeCSR",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'gpr_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'gpr\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'GPR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'GPR\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRWI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'CSRRWI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'CSRRW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRSI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'CSRRSI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRS_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'CSRRS\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRCI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'CSRRCI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRC_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'CSRRC\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "signalAddressException_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "signalAddressException",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRLW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SRLW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRLIW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SRLIW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRLI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SRLI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRL_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SRL\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRAW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SRAW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRAIW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SRAIW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRAI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SRAI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRA_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SRA\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLLW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SLLW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLLIW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SLLIW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLLI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SLLI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLL_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SLL\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'REMW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'REMW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'REMUW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'REMUW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'REMU_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'REMU\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'REM_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'REM\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MULW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'MULW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MULHU_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'MULHU\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MULHSU_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'MULHSU\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MULH_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'MULH\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MUL_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'MUL\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'DIVW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'DIVW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'DIVUW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'DIVUW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'DIVU_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'DIVU\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'DIV_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'DIV\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FETCH_MISALIGNED_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FETCH_MISALIGNED\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FETCH_FAULT_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FETCH_FAULT\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "fpr_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "fpr",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FPRS_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FPRS",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FPRD_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FPRD",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'fpr_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'fpr\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'FPRS_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'FPRS\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'FPRD_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'FPRD\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FP32_Sign_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FP32_Sign",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "writeFPRS_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "writeFPRS",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJ_S_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FSGNJ_S\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FP64_Sign_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FP64_Sign",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "writeFPRD_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "writeFPRD",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJ_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FSGNJ_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJX_S_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FSGNJX_S\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJX_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FSGNJX_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJN_S_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FSGNJN_S\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJN_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FSGNJN_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMV_X_S_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FMV_X_S\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMV_X_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FMV_X_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMV_S_X_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FMV_S_X\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMV_D_X_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FMV_D_X\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "fcsr_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "fcsr",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rnd_mode_dynamic_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "rnd_mode_dynamic",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rnd_mode_static_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "rnd_mode_static",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FP32_IsSignalingNan_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FP32_IsSignalingNan",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "RV32_CanonicalNan_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "RV32_CanonicalNan",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FP64_IsSignalingNan_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FP64_IsSignalingNan",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "RV64_CanonicalNan_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "RV64_CanonicalNan",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'fcsr_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'fcsr\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "setFP_Invalid_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "setFP_Invalid",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Skip_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "Skip",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "branchTo_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "branchTo",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'JALR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'JALR\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'JAL_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'JAL\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BNE_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'BNE\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BLTU_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'BLTU\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BLT_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'BLT\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BGEU_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'BGEU\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BGE_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'BGE\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BEQ_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'BEQ\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'XOR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'XOR\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SUBW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SUBW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SUB_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SUB\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLTU_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SLTU\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLT_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SLT\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'OR_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'OR\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AND_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AND\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ADDW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'ADDW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ADD_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'ADD\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'XORI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'XORI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLTIU_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SLTIU\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLTI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SLTI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ORI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'ORI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LUI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'LUI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AUIPC_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AUIPC\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ANDI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'ANDI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ADDIW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'ADDIW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ADDI_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'ADDI\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'ReserveLoad_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'ReserveLoad\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ReserveLoad_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "ReserveLoad",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "matchLoadReservation_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "matchLoadReservation",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'PC_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abwrite'PC\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "update_pc_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "update_pc",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "NextFetch_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "NextFetch",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
   }
 ]
