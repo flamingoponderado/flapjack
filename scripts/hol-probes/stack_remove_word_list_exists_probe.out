@@ -1,0 +1,2 @@
+word_list_exists_statement=word_list_exists a 0 = emp ∧ word_list_exists a (SUC n) = SEP_EXISTS w. one (a,w) * word_list_exists (a + bytes_in_word) n
+word_list_exists_proved=T

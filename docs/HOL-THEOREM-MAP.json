@@ -67559,5 +67559,14 @@
     "hol_name": "memory_fun2set_SUBSET",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison original1473-1478 and full generic STAR/memory_def/fun2set_def/SPLIT_def. Same arbitrary independent address/value carriers, source and target functions/domain sets and arbitrary frame predicate. Full separated source graph assertion on target graph proves entire source domain subset target domain; predicate-set inclusion is forall address/domain implies targetDomain. No extra finite-domain, word-width, alignment, nonempty, target-value-equality or evaluator premise. Original local memoryHOL and actual full generic SetSep definitions retained, no representation qualifiers/reals dependencies. Fresh complete literal original proof replay PASS, two rows capture the full generic domain-inclusion statement and proof success; StoreConsts/fullpass assembly not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListExists.lean",
+    "lean_name": "wordListExistsThm",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_exists_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison original21-36 and native full Misc.wordListExists/SetSep sepExists/star/cond/emp/one/wordList definitions. Complete original zero and successor conjunction as heap-predicate equalities, arbitrary address/count/payload carrier and every heap retained. Source pure length condition remains a separated empty heap; local starCond proves its elimination without assuming a length or concrete list. Forward successor destructs actual existential list and reverse reconstructs value::values; full partition/frame retained, modular bytesInWord address increment unchanged. Positive-width BitVec translation only, no extra width/domain/alignment/nonempty/noalias/success assumption, no finite-map/evaluator/reals carrier. Fresh complete literal original proof replay PASS, two rows capture both original heap-predicate equalities and proof success; DataBuffer/fullpass assembly remains open."
   }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemorySubset
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ProgCompEta
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnHandler

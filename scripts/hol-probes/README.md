@@ -6208,3 +6208,5 @@ sptree_wf_definition_probeScript.sml captures the full original wf_def and254 co
 `stack_remove_prog_comp_eta_probeScript.sml` replays the complete literal original function-equality proof, retaining arbitrary section names and all compiler parameters. Two rows capture its full statement and proof success; no full pass correctness theorem is assumed.
 
 `stack_remove_memory_subset_probeScript.sml` replays the complete literal original generic separated-graph domain inclusion proof. Arbitrary address/value types, functions/domains and frame retained. Two rows capture the full statement and proof success.
+
+`stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.

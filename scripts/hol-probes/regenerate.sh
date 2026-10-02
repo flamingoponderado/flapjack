@@ -5785,3 +5785,7 @@ run_probe stack_remove_prog_comp_eta_probeScript.sml stack_remove_prog_comp_eta_
 run_probe stack_remove_memory_subset_probeScript.sml stack_remove_memory_subset_probe.out \
   memory_subset_statement memory_subset_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_list_exists_probeScript.sml stack_remove_word_list_exists_probe.out \
+  word_list_exists_statement word_list_exists_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
