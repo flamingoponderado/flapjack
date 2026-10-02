@@ -53540,5 +53540,29 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2144-2197 word_gen_gc_partial_move_roots_bitmaps ([local] in HOL): as word_gc_move_roots_bitmaps with gs/rs threaded. HOL 'a word as positive-width BitVec with [NeZero]; the independently inferred descriptor/stack/bitmap word dimensions are kept independent; HOL ARB as holArb; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "SUBMAP_DOMSUB_both",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Submap.lean",
+    "lean_name": "submap_domsub_both",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "A",
+      "B"
+    ],
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml SUBMAP_DOMSUB_both ([local]): A SUBMAP B ==> A \\\\ c SUBMAP B \\\\ c, A B c free (implicit); HOL 'a |-> 'b as the canonical HolFiniteMapExact binders A and B (bare relation entries), SUBMAP as the untagged submap rendering (FLOOKUP agreement on FDOM A), \\\\ and |+ as the HOL-equality eraseEq/updateEq with [DecidableEq] for HOL equality; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "SUBMAP_FUPDATE_both",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Submap.lean",
+    "lean_name": "submap_fupdate_both",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "A",
+      "B"
+    ],
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml SUBMAP_FUPDATE_both ([local]): A SUBMAP B ==> A |+ (n,v) SUBMAP B |+ (n,v), A B n v free (implicit); HOL 'a |-> 'b as the canonical HolFiniteMapExact binders A and B (bare relation entries), SUBMAP as the untagged submap rendering (FLOOKUP agreement on FDOM A), \\\\ and |+ as the HOL-equality eraseEq/updateEq with [DecidableEq] for HOL equality; no hypothesis, side condition or conclusion change."
   }
 ]
