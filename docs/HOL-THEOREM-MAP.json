@@ -54761,5 +54761,37 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-y19g.18), stackSemScript.sml:773-1027 Definition evaluate_def: all 34 clauses in HOL order (Skip, Halt, Alloc, StoreConsts, Inst, Get, Set, OpCurrHeap, Tick, Seq, Return, Raise, Break, Continue, If, Loop, JumpLower, RawCall, Call, Install, ShMemOp (Addr a w), CodeBufferWrite, DataBufferWrite, FFI, LocValue, StackAlloc, StackFree, StackLoad, StackLoadAny, StackStore, StackStoreAny, StackGetSize, StackSetSize, BitmapLoad), each conjunct universally quantified over its own clause variables with HOL's tupled evaluate (prog, s). Right-hand sides are the source-reviewed clause fragment bodies over the exact HolProg/StackSemStateFiniteExact carriers; Seq/Loop clamp with fix_clock, Loop re-enters on STOP (Loop c1) = Loop c1 with dec_clock, Call/JumpLower/RawCall time out on clock 0 and run the found code on dec_clock, the Call returning arm stores Loc l1 l2 in link_reg and checks result/exception locations, with every source Error arm. HOL res = NONE tests are none/some splits; Install's total configuration equality and LocValue's loc_check use classical decidability. evaluate is the assembled well-founded evaluateHOL on HOL's clock-first lexicographic measure (Measure/CallSites certificates); the theorem is proved clause by clause from evaluateHOL's equations, so no evaluator callback, success or simulation premise appears. 'a word as positive-width BitVec with [NeZero width]; regs, fpRegs and store as the canonical HolFiniteMapExact fields of StackSemStateFiniteExact (code is the sptree Spt carrier, not named). The Inst clause uses the reviewed instHOL whose FP renderings carry reals_as_rational_cuts: inherited docs/SOUNDNESS.md item 8 assumption; this marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "memcpy_code_thm",
+    "hol_line": 390,
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/Memcpy.lean",
+    "lean_name": "memcpy_code_thm_n",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.1), stackAllocProof memcpy_code_thm [local] (390-442): !n a b m dm b1 m1 s, all eight hypotheses (memcpy (n2w n) a b m dm = (b1,m1,T), n < dimword as n < 2 ^ width, memory/mdomain, get_var 0/2/3, 1 IN FDOM) and the conclusion ?r1. evaluate (memcpy_code, s with clock := s.clock + n) = (NONE, s with <| memory := m1; regs := s.regs |++ [(0,Word 0w);(1,r1);(2,Word (a + n2w n * bytes_in_word));(3,Word b1)] |>). Over the exact StackSem evaluate (tagged evaluate_def) and the reviewed memcpy_code (GcCode) and memcpy (word_gcFunctions); 'a word as positive-width BitVec with [NeZero width], regs/fpRegs/store as the canonical HolFiniteMapExact fields of StackSemStateFiniteExact, HOL memory/mdomain as the state's function fields, 1 IN FDOM s.regs as (s.regs.lookup 1).isSome, |++ as updateListEq, the existential r1 kept; no extra hypothesis, success or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "memcpy_code_thm",
+    "hol_line": 444,
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/Memcpy.lean",
+    "lean_name": "memcpy_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.1), stackAllocProof memcpy_code_thm (444-463): !w a b m dm b1 m1 s with the seven hypotheses and conclusion with clock offset w2n w and register 2 = Word (a + w * bytes_in_word). Over the exact StackSem evaluate (tagged evaluate_def) and the reviewed memcpy_code (GcCode) and memcpy (word_gcFunctions); 'a word as positive-width BitVec with [NeZero width], regs/fpRegs/store as the canonical HolFiniteMapExact fields of StackSemStateFiniteExact, HOL memory/mdomain as the state's function fields, 1 IN FDOM s.regs as (s.regs.lookup 1).isSome, |++ as updateListEq, the existential r1 kept; no extra hypothesis, success or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
