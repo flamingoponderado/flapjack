@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetEndingLabelsParity
 import Flapjack.Test.LabToTargetPositionalEncodingParity
 import Flapjack.Test.LabToTargetLabelAnnotationsParity
 import Flapjack.Test.LabToTargetSimpleEncoderParity
@@ -1808,6 +1809,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetSimpleEncoderParity.runChecks,
     Flapjack.Test.LabToTargetLabelAnnotationsParity.runChecks,
     Flapjack.Test.LabToTargetPositionalEncodingParity.runChecks,
+    Flapjack.Test.LabToTargetEndingLabelsParity.runChecks,
     Flapjack.Test.LabToTargetEncd0Parity.runChecks,
     Flapjack.Test.LabToTargetLabelValidityParity.runChecks,
     Flapjack.Test.LabToTargetSimilarLabelsParity.runChecks,
