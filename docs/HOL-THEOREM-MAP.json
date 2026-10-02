@@ -60562,5 +60562,16 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL1322-1342: entire original six premise conjuncts and BOTH actual balanceL invariant and semantic union/update equality conclusions. Generic original key/payload/comparator/input trees retained; no additional success/constructor/result invariant/map hypothesis. Full original balanceL_balL transports actual implementation, literal small/heavy/fallback guards and complete balanced_lem1/2/rotateR_thm discharge all branches. Cached/structural sizes derived from input invariants. Only canonical finite-support to_fmap observer representation qualified; original union precedence and equivalence-class update retained. Entire original literal theorem/prerequisite proof replay hyp=[]; six valid branches original actual output/invariant/inserted-key observations, native full theorem both conclusions and canonical lookup consumers. Compiler definition/caller unchanged."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "singleL_thm",
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/SingleL.lean",
+    "lean_name": "singleLThm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against original1343-1372: all nine original premises and BOTH invariant/canonical map union-update conclusions retained; generic constructor-for-constructor key,payload,comparator and tree carriers. Actual singleL constructor equation; structural-size arithmetic and balanced_lem6; original good_cmp greater transitivity derives root ordering and left-map root absence. Canonical toFmap observer translation only. Literal original full proof replay has no open hypotheses; native complete premise/invariant/map/three lookup fixtures and original whole tree/invariant/lookups/badsize observations checked. No executable definition change."
   }
 ]

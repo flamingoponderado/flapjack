@@ -5446,3 +5446,13 @@ ALookupMap probes replay three complete original lookup mapping proofs and
 and payload carriers, repeated/absent/large keys and noninjective sentinels
 retain the original injection boundary. Regression evidence does not establish
 cross-language equivalence.
+
+## Full single-left rotation correctness
+
+`balanced_map_singleL_probeScript.sml` replays the literal original full
+`singleL_thm`1343-1372 with all nine premises and both conclusions, checking
+that its hypotheses are closed. Seven rows capture its typed statement, actual
+rotated tree, invariant, three lookups and invalid cached-size rejection.
+Native fixtures establish every premise and consume both conclusions and
+canonical map lookups. These observations are regression evidence, not a
+cross-language equivalence theorem.
