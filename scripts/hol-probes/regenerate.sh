@@ -4915,6 +4915,10 @@ run_probe stack_remove_memory_probeScript.sml stack_remove_memory_probe.out \
   sm_def sm_type sm_full_generic sm_unique sm_empty sm_infinite sm_independent sm_product sm_missing sm_extra sm_wrong_value sm_wrong_address sm_noninjective \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe ssa_install_case_probeScript.sml ssa_install_case_probe.out \
+  install_case_full \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe ssa_alloc_case_probeScript.sml ssa_alloc_case_probe.out \
   alloc_case_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

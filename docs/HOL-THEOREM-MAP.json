@@ -62617,5 +62617,19 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a author source comparison2026-10-02 original resumed Alloc9333-9606 of full ssa_cc_trans_correct7666: all six original premises and complete ssaSimulation existential source permutation, Error exemption, actual target result/frame and full result-sensitive locals retained. Original arbitrary Nat cutset/tree/local/code/stack/GC/FFI carriers and positive word width; explicit canonical fpRegs/store finite-map relation qualifiers only. Actual rename/count Move, scoped cut injection, GC permutation transport, post-domain, restricted SSA map and final rename derived from premises and actual total evaluator branches. Exhaustive native allocation leaves NONE or NotEnoughSpace with flush-empty locals; original source errors exempt, no targetrun/success/post-relation premise or induction hypothesis added. Inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Full SSA/end-to-end remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstallCase.lean",
+  "lean_name": "ssaCcTransCorrectInstall",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a author source comparison2026-10-02 original resumed Install9700-9858 of full ssa_cc_trans_correct7666: all six original premises and complete ssaSimulation source-permutation/Error-exempt actual target result/frame/result-sensitive locals conclusion. Source permutation is original target.permute. Actual non-Error source Install derives successful cut/four word reads/normal result; native compiler rename and scratch moves, mapped cut relation, identical actual compile/buffer/oracle/config/code branches, fresh pointer copy and final rename are proved internally. No targetrun/successful callback/final SSA or post-frame premise, no induction hypothesis. Native arbitrary Nat/Spt/cutsets/program/code/stack/GC/FFI carriers retained, canonical fpRegs/store relation and positive word qualifiers only; inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Full SSA/end-to-end remain open."
 }
 ]
