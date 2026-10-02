@@ -83,4 +83,29 @@ theorem asmStepImpEvaluate {width : Nat} [NeZero width]
   intro k
   exact ⟨(hout k).1, (hout k).2.1, (hout k).2.2, by omega⟩
 
+/-- Original evaluator-only consequence of the full assembly-step simulation.
+All original hypotheses and the nonzero existential step witness are retained.
+Inherited total holEl/holHd keeps shared opaque holHdNil/holArb without added
+bounds or fallback. The encoder/assembly semantics transitively inherit the
+reviewed rational-cut real translation and SOUNDNESS item 8 assumption. -/
+@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
+  "asm_step_IMP_evaluate_step" (words_as_type_indexed_bitvec)]
+theorem asmStepImpEvaluateOnly {width : Nat} [NeZero width]
+    {S Q : Type} {σ : Type} (c : MachineConfig width S Q) (s1 : AsmState width)
+    (ms1 : S) (io : HolFfiState σ) (i : HolAsm width)
+    (h : encoderCorrect c.target ∧ c.progAddresses = s1.memDomain ∧
+      ffiEntryPcsDisjoint c s1 (c.target.config.encode i).length ∧
+      interferenceOk c.nextInterfer (c.target.proj s1.memDomain) ∧
+      asmStep c.target.config s1 i
+        (asmUpd i (s1.pc + BitVec.ofNat width (c.target.config.encode i).length) s1) ∧
+      targetStateRel c.target s1 ms1) :
+    ∃ l ms2,
+      (∀ k, evaluateTargetHOL c io (k + l) ms1 =
+        evaluateTargetHOL (shiftInterfer l c) io k ms2) ∧
+      targetStateRel c.target
+        (asmUpd i (s1.pc + BitVec.ofNat width (c.target.config.encode i).length) s1) ms2 ∧
+      l ≠ 0 := by
+  obtain ⟨l, ms2, hout⟩ := asmStepImpEvaluate c s1 ms1 io i h
+  exact ⟨l, ms2, fun k => (hout k).1, (hout 0).2.2⟩
+
 end Flapjack.Compiler.Backend.Semantics.TargetProps

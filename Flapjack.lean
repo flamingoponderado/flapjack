@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
+import Flapjack.Compiler.Backend.Semantics.TargetProps.EncoderStepState
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EncodingNonempty
 import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
 import Flapjack.Test.LabToTargetSimpleEncoderParity
