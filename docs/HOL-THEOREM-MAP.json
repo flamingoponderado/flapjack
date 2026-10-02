@@ -66099,5 +66099,23 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02, assembly bead .5.8.5.3: whole original4592-5016 statement, literal typed stack_alloc_generational_alloc_statement_probe capture confirms native stack_alloc compile config. Exact original allocation/nonerror/gcFun/generational-kind/bitmap-length/stack-byte-bound/register0-ret/register1-word premises only. Original partial/full selector is split inside proof, not a premise. Original existential clock/register map and actual wordGcCode evaluation, complete poststate with original use_store/use_stack/use_alloc/compiled-code/gcFun overrides, non-none implies Halt Word1, source registers SUBMAP and normal return register0 retained. Checked partial/full case proofs derive every source and target stage, complete normal or full insufficient-space Halt state and all original update/clock facts without target-run, success, postrelation, sufficient-space or context premise. Same imported StackSemStateFiniteExact owner with canonical regs/fpRegs/store and same-module genuine broad/canonical roundtrip witness; positive BitVec width/NeZero and universe0 Type host translation only. Closure inherits the reals_as_rational_cuts assumption (SOUNDNESS item8); this comparison does not certify arbitrary untagged dependencies. Whole alloc dispatch/pass/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EndingLabels.lean",
+    "lean_name": "updLabLen_endsWithLabel",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "upd_lab_len_ends_with_label",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: complete original upd_lab_len_ends_with_label5415-5429 and pad_code_ends_with_label5667-5681. Sole EVERY sec_ends_with_label input guard, complete EVERY output result, arbitrary Nat position or arbitrary byte-list NOP, no parity/length/encoding/success/callback assumption. words_as_type_indexed_bitvec retains all native positive-width source carriers. Reuses checked actual updater/padding CodeSimilar relations and guarded section-ending classifier; does not port unguarded total LAST/HD. Full original types captured, fresh actual observations and native kernel consumers cover empty code, genuine ending lines, arbitrary NOP including empty, input guard counterexample, widths1/8/80 and >64-bit positions. Local support laws only; full remove_labels_loop and end-to-end correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EndingLabels.lean",
+    "lean_name": "padCode_endsWithLabel",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pad_code_ends_with_label",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: complete original upd_lab_len_ends_with_label5415-5429 and pad_code_ends_with_label5667-5681. Sole EVERY sec_ends_with_label input guard, complete EVERY output result, arbitrary Nat position or arbitrary byte-list NOP, no parity/length/encoding/success/callback assumption. words_as_type_indexed_bitvec retains all native positive-width source carriers. Reuses checked actual updater/padding CodeSimilar relations and guarded section-ending classifier; does not port unguarded total LAST/HD. Full original types captured, fresh actual observations and native kernel consumers cover empty code, genuine ending lines, arbitrary NOP including empty, input guard counterexample, widths1/8/80 and >64-bit positions. Local support laws only; full remove_labels_loop and end-to-end correctness remain open."
   }
 ]
