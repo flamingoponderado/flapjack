@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordCse.ListOrder
 import Flapjack.Word
 import Flapjack.Compiler.Backend.WordCse.InstructionKeys
 import Std.Data.TreeMap
@@ -18,14 +19,14 @@ address and diverges from Cake by several bytes.
 
 The port keeps Cake's structure; its only deviations are about the carrier:
 
-* the value type `α` is hashed to a `Nat` through `WordCseHash` instead of
-  Cake's `wordToNum w = w2n w`, because the port's `WordArith` carries an
-  immediate `WordRegImm` instead of Cake's `'a reg_imm`;
+* generic diagnostic values use `WordCseHash`; executed positive-width
+  machine words delegate reviewed native `wordToNum` and `regImmToNumList`
+  through a constructor-for-constructor immediate codec;
 * the two `num_map`s, the `store_name` alist and the two balanced maps are
   represented by association lists (`lookupNatInfo` is Cake's `lookup_any`,
   a first-match lookup, and `wordCseInsert` is a replacement insert);
-* Cake's balanced-map list keys compare by exact list equality (`listCmp`),
-  which is exactly `List` equality here;
+* the fact tables pass the reviewed native `listCmp` directly to TreeMap;
+  this comparator agrees unconditionally with the previous Lean list ordering;
 * `WordMemOp` has no immediate address offset, so the address offset in
   `loadToNumList` is always `0`;
 * Cake's `fpWrites`/FP rows and the `AddOverflow`/`SubOverflow` carriers do
@@ -41,9 +42,26 @@ open Flapjack
 /-- Cake's `wordToNum`: the numeral carried by a machine word. -/
 class WordCseHash (α : Type u) where
   hash : α → Nat
+  regImmKey : WordRegImm α → List Nat := fun
+    | .reg register => [33, register + 100]
+    | .imm value => [34, hash value]
 
-instance {width : Nat} : WordCseHash (BitVec width) where
+instance (priority := low) {width : Nat} : WordCseHash (BitVec width) where
   hash value := value.toNat
+
+/-- Constructor codec for the executed positive-width word immediate carrier.
+Flapjack infrastructure: the source and target constructors carry the same word. -/
+def wordCseNativeRegImm {width : Nat} [NeZero width] :
+    WordRegImm (BitVec width) → Flapjack.Compiler.Encoders.Asm.HolRegImm width
+  | .reg register => .reg register
+  | .imm value => .imm value
+
+/-- Machine-word CSE executes the reviewed native encoders. The lower-priority
+zero-width/generic diagnostic instance remains outside the HOL word claim. -/
+instance {width : Nat} [NeZero width] : WordCseHash (BitVec width) where
+  hash := Flapjack.Compiler.Backend.WordCse.wordToNum
+  regImmKey immediate := Flapjack.Compiler.Backend.WordCse.regImmToNumList
+    (wordCseNativeRegImm immediate)
 
 /-- The executable Word-to-Word probes also run on plain numerals, where the
     numeral is its own hash. -/
@@ -90,7 +108,8 @@ before consing the new one -- and they are only ever read back by key, so
 replacing the lists with trees changes no value the pass computes.  The
 whole-program byte comparison in the commit message is the evidence. -/
 abbrev WordCseRegMap := Std.TreeMap Nat Nat
-abbrev WordCseFactMap := Std.TreeMap (List Nat) Nat
+abbrev WordCseFactMap :=
+  Std.TreeMap (List Nat) Nat Compiler.Backend.WordCse.listCmp
 
 /-- Cake's `knowledge` record.  `toCanonical` and `toLatest` are the two
     register maps, `getsMem` records the register that already holds a store
@@ -222,9 +241,8 @@ def wordCseShiftToNum (operator : Shift) : Nat :=
 def wordCseBinOpToNum (operator : BinOp) : Nat :=
   Flapjack.Compiler.Backend.WordCse.arithOpToNum operator
 
-def wordCseRegImmToNumList [WordCseHash α] : WordRegImm α → List Nat
-  | .reg register => [33, register + 100]
-  | .imm value => [34, WordCseHash.hash value]
+def wordCseRegImmToNumList [WordCseHash α] (immediate : WordRegImm α) : List Nat :=
+  WordCseHash.regImmKey immediate
 
 def wordCseArithToNumList [WordCseHash α] : WordArith α → List Nat
   | .binOp operator _ sourceLeft sourceRight =>

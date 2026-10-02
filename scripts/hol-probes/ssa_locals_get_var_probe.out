@@ -1,0 +1,7 @@
+lg_full=⊢ ssa_locals_rel na ssa st.locals cst.locals ∧ get_var n st = SOME x ⇒ get_var (option_lookup ssa n) cst = SOME x
+lg_type_st=:(α, β, γ) state
+lg_type_cst=:(α, δ, ε) state
+lg_type_ssa=:num sptree$num_map
+lg_type_na=:num
+lg_type_n=:num
+lg_type_x=:α word_loc
