@@ -1,0 +1,11 @@
+gcmp_equal=T
+
+gcmp_less=F
+
+gcmp_greater=F
+
+gcmp_bool_order=T
+
+gcmp_bool_reverse=T
+
+gcmp_definition=⊢ ∀cmp. good_cmp cmp ⇔ (∀x. cmp x x = Equal) ∧ (∀x y. cmp x y = Equal ⇒ cmp y x = Equal) ∧ (∀x y. cmp x y = Greater ⇔ cmp y x = Less) ∧ (∀x y z. cmp x y = Equal ∧ cmp y z = Less ⇒ cmp x z = Less) ∧ (∀x y z. cmp x y = Less ∧ cmp y z = Equal ⇒ cmp x z = Less) ∧ (∀x y z. cmp x y = Equal ∧ cmp y z = Equal ⇒ cmp x z = Equal) ∧ ∀x y z. cmp x y = Less ∧ cmp y z = Less ⇒ cmp x z = Less

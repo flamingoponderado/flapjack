@@ -79,7 +79,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/stackLangScript.sml` (shared-word `prog`) | `Flapjack/Compiler/Backend/StackCarrier.lean` |
 | `compiler/backend/stack_removeScript.sml` | `Flapjack/Compiler/Backend/StackRemove.lean` (`max_stack_alloc`, `word_offset`, `store_list`, `store_length`, `stack_err_lab`, `halt_inst`; also the tagged stackLang instruction overloads `left_shift_inst`/`right_shift_inst`/`const_inst`/`load_inst`/`store_inst` over the exact `HolProg` carrier) |
 | `compiler/backend/proofs/stack_removeProofScript.sml` | `Flapjack/Compiler/Backend/StackRemove.lean` (`is_SOME_Word`, `read_mem`/`LENGTH_read_mem`, `addresses`/`IN_addresses`; `names_ok` Prop-shaped tag) |
-| `compiler/backend/proofs/stack_allocProofScript.sml` | `Flapjack/Compiler/Backend/StackAlloc/Proofs/` (`WordLemmas.lean` word/bit-length lemmas, `Bitmap.lean` bitmap list lemmas and `enc_dec_stack`, `GcBitmaps.lean` proof-side GC definitions, `Unroll.lean` bitmap-collector unrolling theorems, `Submap.lean` SUBMAP lemmas) |
+| `compiler/backend/proofs/stack_allocProofScript.sml` | `Flapjack/Compiler/Backend/StackAlloc/Proofs/` (`WordLemmas.lean` word/bit-length lemmas, `Bitmap.lean` bitmap list lemmas and `enc_dec_stack`, `GcBitmaps.lean` proof-side GC definitions, `Unroll.lean` bitmap-collector unrolling theorems, `Submap.lean` SUBMAP lemmas, `CodeThm/` GC code simulation theorems) |
 | `compiler/backend/stack_allocScript.sml` | `Flapjack/Compiler/Backend/StackAlloc.lean` (generic `next_lab`; executable pass counterpart remains `Flapjack/StackAlloc.lean`); `StackAlloc/GcCode.lean` (GC stub code); `StackAlloc/Compile.lean` (`next_lab`, `comp`, `prog_comp`, `stubs`, `compile` over `HolProg`) |
 | `compiler/backend/stack_to_labScript.sml` | `Flapjack/Compiler/Backend/StackToLab.lean` (`flatten` and `prog_to_section`; `compile` remains open) |
 | `compiler/backend/reg_alloc/parmoveScript.sml` | `Flapjack/Compiler/Backend/Parmove.lean` |
@@ -148,3 +148,20 @@ The pinned external `HOL/src/sort/mergesortScript.sml` counterpart is
 `Flapjack/Misc/Mergesort.lean` (the non-tail `sort2`/`sort3`/`merge`/`mergesortN`, their
 sortedness, and the tail-recursive correctness lemmas over the untagged tail rendering in
 `Flapjack/Basis/Pure/MlList.lean`).
+
+
+### Computed finite-map result observations
+
+`(fmap_as_finite_support_result_observations := [Producer, ...])` records
+only the canonical finite-support representation of explicitly named imported
+map producers used in a tagged declaration's type. Each producer must return
+`HolFiniteMapExact`, carry the standalone result qualifier, have its checked
+same-module lookup witness, and have a source-reviewed result manifest record.
+The observer has its own `reviewed_fmap_as_finite_support_result_observations`
+record with exactly the same producer list and a complete source comparison.
+Producer acceptance does not establish observer acceptance. The checker rejects
+unused, ambiguous, shadowed, unqualified, unreviewed, non-map, and unwitnessed
+producers. This narrow qualifier cannot combine with other representations and
+permits no changed quantifiers, hypotheses, evaluator, or conclusion. The
+syntactic checks and kernel witnesses do not prove cross-language equivalence;
+the complete observer still requires manual HOL source comparison.

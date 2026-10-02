@@ -1,0 +1,12 @@
+load "finite_mapTheory";
+open HolKernel Parse bossLib finite_mapTheory;
+val _ = Globals.linewidth := 10000;
+fun out label q = (print(label ^ "="); print_term(rand(concl(SIMP_CONV (srw_ss()) [FLOOKUP_FUNION,FLOOKUP_UPDATE,FLOOKUP_EMPTY] q))); print "\n");
+val _ = out "fmu_0" ``FLOOKUP (((FEMPTY |+ (1,10) |+ (2,20)):(num,num)fmap) ⊌ ((FEMPTY |+ (2,200) |+ (3,300)):(num,num)fmap)) 0``;
+val _ = out "fmu_1" ``FLOOKUP (((FEMPTY |+ (1,10) |+ (2,20)):(num,num)fmap) ⊌ ((FEMPTY |+ (2,200) |+ (3,300)):(num,num)fmap)) 1``;
+val _ = out "fmu_2" ``FLOOKUP (((FEMPTY |+ (1,10) |+ (2,20)):(num,num)fmap) ⊌ ((FEMPTY |+ (2,200) |+ (3,300)):(num,num)fmap)) 2``;
+val _ = out "fmu_3" ``FLOOKUP (((FEMPTY |+ (1,10) |+ (2,20)):(num,num)fmap) ⊌ ((FEMPTY |+ (2,200) |+ (3,300)):(num,num)fmap)) 3``;
+val _ = out "fmu_4" ``FLOOKUP (((FEMPTY |+ (1,10) |+ (2,20)):(num,num)fmap) ⊌ ((FEMPTY |+ (2,200) |+ (3,300)):(num,num)fmap)) 4``;
+val _ = out "fmu_empty_left" ``FLOOKUP ((FEMPTY:(num,num)fmap) ⊌ (FEMPTY |+ (2,200))) 2``;
+val _ = out "fmu_empty_right" ``FLOOKUP ((FEMPTY |+ (2,20)) ⊌ (FEMPTY:(num,num)fmap)) 2``;
+val _ = (print "fmu_lookup_theorem="; print_thm FLOOKUP_FUNION; print "\n");

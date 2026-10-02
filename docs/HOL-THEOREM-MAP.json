@@ -55180,5 +55180,412 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison 2026-10-02 bead flapjack-native-target-find-next-interference: Compared complete HOL112-211 definition and original inferred (alpha,beta,gamma)machine_config -> delta ffi_state -> num -> beta -> ((alpha,beta)interference_app # machine_config # ffi_state)option. Native MachineConfig/InterferenceApp exact imported carriers, arbitrary independent state/projection/universe0 FFI host and positive BitVec width/NeZero. Clock0 NONE; normal priority domain minus entries, encoded bytes, next then normal oracle shift, all3 state_ok guards and frame on ms1 only, recursive clock decrement; halt NONE; cache returns full CcApp with pre/post and shifted cache oracle. Retains every mapped-read/write lookup/alignment/shared-domain/template guard, bytecount/endian payload, total names lookup, final NONE and return full FfiApp/configuration/newFFI; external MMIO rejection and both optional bytearray reads. No extra bounds, successful-run or oracle-validity premise. words_as_type_indexed_bitvec records only standard positive word/FFI translation. Explicit holEl/holHd source review: literal original EL ffi_index ffi_names in shared and external branches, in-range selection via recursive TL/HD, past end holHdNil/shared opaque holArb HolFfiName. Inhabitation instance chooses no missing list name; no added length premise, guard, Option fallback or concrete unspecified value. Fresh original full definition/type and guard/full-return/event/normal-to-cache regression equations plus matching generic native kernel checks; regressions do not prove cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/LineLength.lean",
+    "lean_name": "lineLength",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "line_length_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original-source comparison 2026-10-02, beads .18.5.15.10.38-.45, source line259. Full conclusions and binder types freshly captured in lab_to_target_position_values_probe.out; original local pos_val_thm0 replay uses its literal HOL statement/proof. Native Line/Section preserves instruction constructors, HOL ASM/cmp/reg_imm/MlString, fixed word8 byte lists and natural label annotations; only positive type-indexed BitVec word dimensions translate. lineLength preserves label annotation zero vs nonzero and instruction byte-list LENGTH rather than annotation; secPosVal preserves label skipping with physical-byte accumulation, zero-index SOME and NONE exhaustion; posVal retains all three original clauses and empty-section recursion, with a kernel termination measure only. Full source count-bound/all-label exhaustion, section decomposition and unconditional total-count/SUM physical-length equality retain all quantifiers/premises/conclusions. posVal_sections preserves both original conjuncts and independent emptyWidth and width: the source operator-type capture explicitly shows alpha empty sec list versus beta nonempty carriers. All cases apply through native operations, with no callback or encoding-success assumptions, no target evaluation premise and no HD/EL dependency. Fifteen original boundary observations plus twenty native kernel applications include nonzero label bytes, mismatching instruction annotations, empty sections, exact and past exhaustion, arbitrary width and mixed1/8 and80/8 dimensions. Proof-support definitions from original semantics/proof scripts; no executed compiler routing or full pass-correctness closure is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionValues.lean",
+    "lean_name": "secPosVal",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_pos_val_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original-source comparison 2026-10-02, beads .18.5.15.10.38-.45, source line624. Full conclusions and binder types freshly captured in lab_to_target_position_values_probe.out; original local pos_val_thm0 replay uses its literal HOL statement/proof. Native Line/Section preserves instruction constructors, HOL ASM/cmp/reg_imm/MlString, fixed word8 byte lists and natural label annotations; only positive type-indexed BitVec word dimensions translate. lineLength preserves label annotation zero vs nonzero and instruction byte-list LENGTH rather than annotation; secPosVal preserves label skipping with physical-byte accumulation, zero-index SOME and NONE exhaustion; posVal retains all three original clauses and empty-section recursion, with a kernel termination measure only. Full source count-bound/all-label exhaustion, section decomposition and unconditional total-count/SUM physical-length equality retain all quantifiers/premises/conclusions. posVal_sections preserves both original conjuncts and independent emptyWidth and width: the source operator-type capture explicitly shows alpha empty sec list versus beta nonempty carriers. All cases apply through native operations, with no callback or encoding-success assumptions, no target evaluation premise and no HD/EL dependency. Fifteen original boundary observations plus twenty native kernel applications include nonzero label bytes, mismatching instruction annotations, empty sections, exact and past exhaustion, arbitrary width and mixed1/8 and80/8 dimensions. Proof-support definitions from original semantics/proof scripts; no executed compiler routing or full pass-correctness closure is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionValues.lean",
+    "lean_name": "secPosVal_tooBig",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_pos_val_too_big",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original-source comparison 2026-10-02, beads .18.5.15.10.38-.45, source line633. Full conclusions and binder types freshly captured in lab_to_target_position_values_probe.out; original local pos_val_thm0 replay uses its literal HOL statement/proof. Native Line/Section preserves instruction constructors, HOL ASM/cmp/reg_imm/MlString, fixed word8 byte lists and natural label annotations; only positive type-indexed BitVec word dimensions translate. lineLength preserves label annotation zero vs nonzero and instruction byte-list LENGTH rather than annotation; secPosVal preserves label skipping with physical-byte accumulation, zero-index SOME and NONE exhaustion; posVal retains all three original clauses and empty-section recursion, with a kernel termination measure only. Full source count-bound/all-label exhaustion, section decomposition and unconditional total-count/SUM physical-length equality retain all quantifiers/premises/conclusions. posVal_sections preserves both original conjuncts and independent emptyWidth and width: the source operator-type capture explicitly shows alpha empty sec list versus beta nonempty carriers. All cases apply through native operations, with no callback or encoding-success assumptions, no target evaluation premise and no HD/EL dependency. Fifteen original boundary observations plus twenty native kernel applications include nonzero label bytes, mismatching instruction annotations, empty sections, exact and past exhaustion, arbitrary width and mixed1/8 and80/8 dimensions. Proof-support definitions from original semantics/proof scripts; no executed compiler routing or full pass-correctness closure is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionValues.lean",
+    "lean_name": "everyIsLabel_secPosVal",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EVERY_is_Label_sec_pos_val",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original-source comparison 2026-10-02, beads .18.5.15.10.38-.45, source line640. Full conclusions and binder types freshly captured in lab_to_target_position_values_probe.out; original local pos_val_thm0 replay uses its literal HOL statement/proof. Native Line/Section preserves instruction constructors, HOL ASM/cmp/reg_imm/MlString, fixed word8 byte lists and natural label annotations; only positive type-indexed BitVec word dimensions translate. lineLength preserves label annotation zero vs nonzero and instruction byte-list LENGTH rather than annotation; secPosVal preserves label skipping with physical-byte accumulation, zero-index SOME and NONE exhaustion; posVal retains all three original clauses and empty-section recursion, with a kernel termination measure only. Full source count-bound/all-label exhaustion, section decomposition and unconditional total-count/SUM physical-length equality retain all quantifiers/premises/conclusions. posVal_sections preserves both original conjuncts and independent emptyWidth and width: the source operator-type capture explicitly shows alpha empty sec list versus beta nonempty carriers. All cases apply through native operations, with no callback or encoding-success assumptions, no target evaluation premise and no HD/EL dependency. Fifteen original boundary observations plus twenty native kernel applications include nonzero label bytes, mismatching instruction annotations, empty sections, exact and past exhaustion, arbitrary width and mixed1/8 and80/8 dimensions. Proof-support definitions from original semantics/proof scripts; no executed compiler routing or full pass-correctness closure is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionValues.lean",
+    "lean_name": "posVal",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original-source comparison 2026-10-02, beads .18.5.15.10.38-.45, source line602. Full conclusions and binder types freshly captured in lab_to_target_position_values_probe.out; original local pos_val_thm0 replay uses its literal HOL statement/proof. Native Line/Section preserves instruction constructors, HOL ASM/cmp/reg_imm/MlString, fixed word8 byte lists and natural label annotations; only positive type-indexed BitVec word dimensions translate. lineLength preserves label annotation zero vs nonzero and instruction byte-list LENGTH rather than annotation; secPosVal preserves label skipping with physical-byte accumulation, zero-index SOME and NONE exhaustion; posVal retains all three original clauses and empty-section recursion, with a kernel termination measure only. Full source count-bound/all-label exhaustion, section decomposition and unconditional total-count/SUM physical-length equality retain all quantifiers/premises/conclusions. posVal_sections preserves both original conjuncts and independent emptyWidth and width: the source operator-type capture explicitly shows alpha empty sec list versus beta nonempty carriers. All cases apply through native operations, with no callback or encoding-success assumptions, no target evaluation premise and no HD/EL dependency. Fifteen original boundary observations plus twenty native kernel applications include nonzero label bytes, mismatching instruction annotations, empty sections, exact and past exhaustion, arbitrary width and mixed1/8 and80/8 dimensions. Proof-support definitions from original semantics/proof scripts; no executed compiler routing or full pass-correctness closure is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionValues.lean",
+    "lean_name": "posVal_decompose",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_thm0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original-source comparison 2026-10-02, beads .18.5.15.10.38-.45, source line646. Full conclusions and binder types freshly captured in lab_to_target_position_values_probe.out; original local pos_val_thm0 replay uses its literal HOL statement/proof. Native Line/Section preserves instruction constructors, HOL ASM/cmp/reg_imm/MlString, fixed word8 byte lists and natural label annotations; only positive type-indexed BitVec word dimensions translate. lineLength preserves label annotation zero vs nonzero and instruction byte-list LENGTH rather than annotation; secPosVal preserves label skipping with physical-byte accumulation, zero-index SOME and NONE exhaustion; posVal retains all three original clauses and empty-section recursion, with a kernel termination measure only. Full source count-bound/all-label exhaustion, section decomposition and unconditional total-count/SUM physical-length equality retain all quantifiers/premises/conclusions. posVal_sections preserves both original conjuncts and independent emptyWidth and width: the source operator-type capture explicitly shows alpha empty sec list versus beta nonempty carriers. All cases apply through native operations, with no callback or encoding-success assumptions, no target evaluation premise and no HD/EL dependency. Fifteen original boundary observations plus twenty native kernel applications include nonzero label bytes, mismatching instruction annotations, empty sections, exact and past exhaustion, arbitrary width and mixed1/8 and80/8 dimensions. Proof-support definitions from original semantics/proof scripts; no executed compiler routing or full pass-correctness closure is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionValues.lean",
+    "lean_name": "posVal_sections",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original-source comparison 2026-10-02, beads .18.5.15.10.38-.45, source line659. Full conclusions and binder types freshly captured in lab_to_target_position_values_probe.out; original local pos_val_thm0 replay uses its literal HOL statement/proof. Native Line/Section preserves instruction constructors, HOL ASM/cmp/reg_imm/MlString, fixed word8 byte lists and natural label annotations; only positive type-indexed BitVec word dimensions translate. lineLength preserves label annotation zero vs nonzero and instruction byte-list LENGTH rather than annotation; secPosVal preserves label skipping with physical-byte accumulation, zero-index SOME and NONE exhaustion; posVal retains all three original clauses and empty-section recursion, with a kernel termination measure only. Full source count-bound/all-label exhaustion, section decomposition and unconditional total-count/SUM physical-length equality retain all quantifiers/premises/conclusions. posVal_sections preserves both original conjuncts and independent emptyWidth and width: the source operator-type capture explicitly shows alpha empty sec list versus beta nonempty carriers. All cases apply through native operations, with no callback or encoding-success assumptions, no target evaluation premise and no HD/EL dependency. Fifteen original boundary observations plus twenty native kernel applications include nonzero label bytes, mismatching instruction annotations, empty sections, exact and past exhaustion, arbitrary width and mixed1/8 and80/8 dimensions. Proof-support definitions from original semantics/proof scripts; no executed compiler routing or full pass-correctness closure is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionValues.lean",
+    "lean_name": "posVal_acc",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_acc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original-source comparison 2026-10-02, beads .18.5.15.10.38-.45, source line6460. Full conclusions and binder types freshly captured in lab_to_target_position_values_probe.out; original local pos_val_thm0 replay uses its literal HOL statement/proof. Native Line/Section preserves instruction constructors, HOL ASM/cmp/reg_imm/MlString, fixed word8 byte lists and natural label annotations; only positive type-indexed BitVec word dimensions translate. lineLength preserves label annotation zero vs nonzero and instruction byte-list LENGTH rather than annotation; secPosVal preserves label skipping with physical-byte accumulation, zero-index SOME and NONE exhaustion; posVal retains all three original clauses and empty-section recursion, with a kernel termination measure only. Full source count-bound/all-label exhaustion, section decomposition and unconditional total-count/SUM physical-length equality retain all quantifiers/premises/conclusions. posVal_sections preserves both original conjuncts and independent emptyWidth and width: the source operator-type capture explicitly shows alpha empty sec list versus beta nonempty carriers. All cases apply through native operations, with no callback or encoding-success assumptions, no target evaluation premise and no HD/EL dependency. Fifteen original boundary observations plus twenty native kernel applications include nonzero label bytes, mismatching instruction annotations, empty sections, exact and past exhaustion, arbitrary width and mixed1/8 and80/8 dimensions. Proof-support definitions from original semantics/proof scripts; no executed compiler routing or full pass-correctness closure is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionAppend.lean",
+    "lean_name": "labelZero",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "label_zero_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-02, beads .18.5.15.10.46-.48, original line3941: complete original definitions/theorems and all binder types freshly captured in lab_to_target_position_append_probe.out. Native word-indexed LabLineHOL/Section preserves ASM, cmp/reg_imm/MlString, fixed word8 lists and natural annotation fields; only positive source word dimensions translate to BitVec. labelZero distinguishes Label annotation zero and returns true on both instruction constructors; secLabelZero retains EVERY over the section lines. Full zero-position theorem has only EVERY sec_label_zero xs, with all xs/pos quantified. Full append theorem retains forall c1/i/pos/c2, same native carrier forced by list append, EVERY sec_label_zero c2 as sole premise, exact <= boundary branch posVal i pos c1 and strict-past branch natural subtraction plus full SUM physical-byte offset. Prefix labels may be nonzero and no validity premise on c1 is inserted. Actual native posVal/section decomposition/exhaustion used, no success callback, encoding-validity assumption or target evaluation premise, no HD/EL dependency. Seventeen original predicate/position observations all true and twenty-two native checks include nonzero prefix padding, zero suffix labels, instruction annotation/byte-length disagreement, exact and past boundaries, empty operands, label-only prefixes and full arbitrary-width boundary/shift consequences. No full pass correctness, executed compiler routing or cross-language equivalence closure claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionAppend.lean",
+    "lean_name": "secLabelZero",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_label_zero_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-02, beads .18.5.15.10.46-.48, original line3946: complete original definitions/theorems and all binder types freshly captured in lab_to_target_position_append_probe.out. Native word-indexed LabLineHOL/Section preserves ASM, cmp/reg_imm/MlString, fixed word8 lists and natural annotation fields; only positive source word dimensions translate to BitVec. labelZero distinguishes Label annotation zero and returns true on both instruction constructors; secLabelZero retains EVERY over the section lines. Full zero-position theorem has only EVERY sec_label_zero xs, with all xs/pos quantified. Full append theorem retains forall c1/i/pos/c2, same native carrier forced by list append, EVERY sec_label_zero c2 as sole premise, exact <= boundary branch posVal i pos c1 and strict-past branch natural subtraction plus full SUM physical-byte offset. Prefix labels may be nonzero and no validity premise on c1 is inserted. Actual native posVal/section decomposition/exhaustion used, no success callback, encoding-validity assumption or target evaluation premise, no HD/EL dependency. Seventeen original predicate/position observations all true and twenty-two native checks include nonzero prefix padding, zero suffix labels, instruction annotation/byte-length disagreement, exact and past boundaries, empty operands, label-only prefixes and full arbitrary-width boundary/shift consequences. No full pass correctness, executed compiler routing or cross-language equivalence closure claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionAppend.lean",
+    "lean_name": "secLabelZero_posVal_zero",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_label_zero_pos_val_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-02, beads .18.5.15.10.46-.48, original line4078: complete original definitions/theorems and all binder types freshly captured in lab_to_target_position_append_probe.out. Native word-indexed LabLineHOL/Section preserves ASM, cmp/reg_imm/MlString, fixed word8 lists and natural annotation fields; only positive source word dimensions translate to BitVec. labelZero distinguishes Label annotation zero and returns true on both instruction constructors; secLabelZero retains EVERY over the section lines. Full zero-position theorem has only EVERY sec_label_zero xs, with all xs/pos quantified. Full append theorem retains forall c1/i/pos/c2, same native carrier forced by list append, EVERY sec_label_zero c2 as sole premise, exact <= boundary branch posVal i pos c1 and strict-past branch natural subtraction plus full SUM physical-byte offset. Prefix labels may be nonzero and no validity premise on c1 is inserted. Actual native posVal/section decomposition/exhaustion used, no success callback, encoding-validity assumption or target evaluation premise, no HD/EL dependency. Seventeen original predicate/position observations all true and twenty-two native checks include nonzero prefix padding, zero suffix labels, instruction annotation/byte-length disagreement, exact and past boundaries, empty operands, label-only prefixes and full arbitrary-width boundary/shift consequences. No full pass correctness, executed compiler routing or cross-language equivalence closure claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionAppend.lean",
+    "lean_name": "posVal_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-02, beads .18.5.15.10.46-.48, original line6423: complete original definitions/theorems and all binder types freshly captured in lab_to_target_position_append_probe.out. Native word-indexed LabLineHOL/Section preserves ASM, cmp/reg_imm/MlString, fixed word8 lists and natural annotation fields; only positive source word dimensions translate to BitVec. labelZero distinguishes Label annotation zero and returns true on both instruction constructors; secLabelZero retains EVERY over the section lines. Full zero-position theorem has only EVERY sec_label_zero xs, with all xs/pos quantified. Full append theorem retains forall c1/i/pos/c2, same native carrier forced by list append, EVERY sec_label_zero c2 as sole premise, exact <= boundary branch posVal i pos c1 and strict-past branch natural subtraction plus full SUM physical-byte offset. Prefix labels may be nonzero and no validity premise on c1 is inserted. Actual native posVal/section decomposition/exhaustion used, no success callback, encoding-validity assumption or target evaluation premise, no HD/EL dependency. Seventeen original predicate/position observations all true and twenty-two native checks include nonzero prefix padding, zero suffix labels, instruction annotation/byte-length disagreement, exact and past boundaries, empty operands, label-only prefixes and full arbitrary-width boundary/shift consequences. No full pass correctness, executed compiler routing or cross-language equivalence closure claimed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "memcpy_code_thm",
+    "hol_line": 390,
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/Memcpy.lean",
+    "lean_name": "memcpy_code_thm_n",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.1), stackAllocProof memcpy_code_thm [local] (390-442): !n a b m dm b1 m1 s, all eight hypotheses (memcpy (n2w n) a b m dm = (b1,m1,T), n < dimword as n < 2 ^ width, memory/mdomain, get_var 0/2/3, 1 IN FDOM) and the conclusion ?r1. evaluate (memcpy_code, s with clock := s.clock + n) = (NONE, s with <| memory := m1; regs := s.regs |++ [(0,Word 0w);(1,r1);(2,Word (a + n2w n * bytes_in_word));(3,Word b1)] |>). Over the exact StackSem evaluate (tagged evaluate_def) and the reviewed memcpy_code (GcCode) and memcpy (word_gcFunctions); 'a word as positive-width BitVec with [NeZero width], regs/fpRegs/store as the canonical HolFiniteMapExact fields of StackSemStateFiniteExact, HOL memory/mdomain as the state's function fields, 1 IN FDOM s.regs as (s.regs.lookup 1).isSome, |++ as updateListEq, the existential r1 kept; no extra hypothesis, success or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "memcpy_code_thm",
+    "hol_line": 444,
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/Memcpy.lean",
+    "lean_name": "memcpy_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.1), stackAllocProof memcpy_code_thm (444-463): !w a b m dm b1 m1 s with the seven hypotheses and conclusion with clock offset w2n w and register 2 = Word (a + w * bytes_in_word). Over the exact StackSem evaluate (tagged evaluate_def) and the reviewed memcpy_code (GcCode) and memcpy (word_gcFunctions); 'a word as positive-width BitVec with [NeZero width], regs/fpRegs/store as the canonical HolFiniteMapExact fields of StackSemStateFiniteExact, HOL memory/mdomain as the state's function fields, 1 IN FDOM s.regs as (s.regs.lookup 1).isSome, |++ as updateListEq, the existential r1 kept; no extra hypothesis, success or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GcMove.lean",
+    "lean_name": "word_gc_move_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.2), stack_allocProofScript.sml:875-961 word_gc_move_code_thm: all seventeen hypotheses in HOL order (word_gc_move conf (w,i,pa,old,m,dm) = (w1,i1,pa1,m1,T); shift_length conf < dimindex; word_shift < dimindex; 2 < dimindex; len_size <> 0; !w. w << word_shift = w * bytes_in_word; FLOOKUP s.store CurrHeap = SOME (Word old); s.use_store; s.memory = m; s.mdomain = dm; 0,1,2,6 IN FDOM s.regs; get_var 3/4/5) with HOL's free variables implicit, and the conclusion ?ck r0 r1 r2 r6. evaluate (word_gc_move_code conf, s with clock := s.clock + ck) = (NONE, s with <| memory := m1; regs := s.regs |++ [(0,r0);(1,r1);(2,r2);(3,Word pa1);(4,Word i1);(5,w1);(6,r6)] |>). Over the exact StackSem evaluate (evaluate_def), the reviewed word_gc_move_code (GcCode) and word_gc_move (word_gcFunctions); dimindex as width, word_shift as wordShiftAmount, FLOOKUP/FDOM/|++ as the canonical HolFiniteMapExact lookup/updateListEq, 'a word as positive-width BitVec with [NeZero width]; no extra hypothesis, success or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticRaise.lean",
+    "lean_name": "ssaCcTransCorrectRaise",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: original resumed Raise9649-9654, all six original premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no extra IH/target-run/success/post-state premise. Native register Nat/result Exception word_lab and value carriers; getVar transport derives renamed lookup, actual singleton Move to physical register2 and original fixClock evaluator theorem derive target sequence. Original handler bound/LASTN stackframe/optional handler branches preserved; successful jumpExc replaces current locals by identical restored stackframe locals, full frame preserved. Canonical fpRegs/store finite-support and positive-width BitVec/Type0 hosts reviewed; Spt locals/code unchanged. Inherits reals_as_rational_cuts evaluator boundary SOUNDNESS8. Literal original resumed Raise proof and non-exported getVar helper PASS, full statement/native carriers captured. Lean kernel checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_get_vars",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsGetVars.lean",
+    "lean_name": "ssaLocalsRelGetVars",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: full original local ssa_locals_rel_get_vars4610-4623 with forall source register list/value list/fresh bound/SSA/source/target. Only original SSA locals relation and successful source getVars are premises; renamed target list-read success is proved by literal recursive getVars clauses and accepted original getVar transport, no extra target/domain/success assumption. Fresh literal original HOL statement/proof replay and native carriers PASS: shared word dimension, source (alpha,beta,gamma) state vs target (alpha,delta,epsilon) state confirm independent arbitrary Type0 code/FFI hosts. Positive-width BitVec word_loc and canonical fpRegs/store finite-support carrier translations reviewed; native Spt locals/SSA and List register/value carriers unchanged. Opaque THE is observed through original getVar transport only under original locals relation supplying source map domain. Lean kernel checked."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "Map",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_map",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL368: two constructors Tip/Bin; Bin fields num, polymorphic key/value, two recursive trees correspond exactly to Nat/key/value/Map/Map. No array/map/word carrier translation. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "ratio",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "ratio_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL372: constant 2:num equals Nat 2. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "delta",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "delta_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL375: constant 3:num equals Nat 3. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "size",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "size_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL378: Tip0; Bin returns stored size, including invalid cached metadata. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "bin",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "bin_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL384: Bin size(left)+size(right)+1 with unchanged key/value/children and same addition grouping. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "null",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "null_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL388: Tip T/Bin F corresponds Bool true/false. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "lookup",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "lookup_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL393: cmp queried key against stored key; Less left recursion, Greater right recursion, Equal SOME stored value, Tip NONE. Arbitrary comparator, no good_cmp premise. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "member",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "member_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL403: same comparator direction/three branches as HOL, Tip F, Equal T; no ordering premise. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "empty",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "empty_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL413: polymorphic Tip exactly. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "singleton",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "singleton_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL415: Bin1 key value Tip Tip exactly. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Rotations.lean",
+    "lean_name": "balanceL",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanceL_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL479-509: all seven outer clauses compared individually; nested strict lrs<2*lls and ls>3*rs guards, all cached-size sums and original subtree/payload reuse agree; unmatched child pair returns Tip. No invariant hypothesis or primed variant. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Rotations.lean",
+    "lean_name": "balanceR",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanceR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL511-540: all seven mirrored outer clauses compared individually; strict rls<2*rrs and rs>3*ls, both rotation cached-size sums and subtree/payload positions agree; malformed child pair returns Tip. No invariant hypothesis. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Insert.lean",
+    "lean_name": "insert",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "insert_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL542-549: Tip singleton; Less left insertion then balanceL; Greater right insertion then balanceR; Equal replaces key AND value while retaining cached size and both children. No comparator law. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "balanced",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL838: l+r<=1 OR MAX(l,r)<=delta*MIN(l,r), same inclusive bounds and Nat operations. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "structureSize",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "structure_size_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL842: Tip0; Bin1+recursive left+recursive right, cached field ignored, same addition grouping. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "keyOrdered",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_ordered_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL847: Tip true; Bin cmp parent-key stored-key=res AND recursive left AND recursive right, same conjunction order and arbitrary result/comparator. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "invariant",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "invariant_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL869: six conjuncts retained in order: cached n=1+structural left+right, keyOrdered left Greater, right Less, balanced cached child sizes, left invariant, right invariant; no good_cmp premise. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Semantics.lean",
+    "lean_name": "keySet",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL188 arbitrary cmp key query=Equal forms Set; Ordering constructor translation only; no good_cmp premise. Six original full lookup outputs and both source equations captured; kernel correspondence is representation evidence, not cross-language proof."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Semantics.lean",
+    "lean_name": "toFmap",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "to_fmap_def",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL825 Tip FEMPTY; Bin cached size ignored, left-biased FUNION followed by equality update at key_set cmp key. Set keys compare by actual set equality through classical DecidableEq, no Boolean comparator shortcut or new premise. Canonical finite support uses actual child supports plus root key; same-module unconditional lookup witness relates declaration on exactly one side to independent raw semanticLookup recursion. Proof-side noncomputability is no runtime replacement; production map wiring remains open. Six original full lookup outputs and both source equations captured; kernel correspondence is representation evidence, not cross-language proof.",
+    "fmap_as_finite_support_result": true
+  },
+  {
+    "lean_path": "Flapjack/FiniteMap/Comparison.lean",
+    "lean_name": "goodCmp",
+    "hol_path": "HOL/src/finite_maps/comparisonScript.sml",
+    "hol_name": "good_cmp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02 HOL17-26: all seven universally quantified conjuncts preserved in order: Equal reflexivity, Equal symmetry, Greater iff reversed Less, Equal/Less and Less/Equal interactions, Equal transitivity and Less transitivity. Arbitrary key type and comparator; constructor-for-constructor Ordering translation only, no order/equality typeclass, no extra premise or antisymmetry identifying equivalent keys. Five original finite Bool outcomes plus full source predicate preserved; kernel fixture acceptance of all-Equal comparator demonstrates distinct keys may be equivalent. No lookup/insertion or production correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+    "lean_name": "keySetEquiv",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_equiv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL194-201 all three components retained: self membership, symmetric membership with original key direction, membership transitivity with original pair conjuncts. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+    "lean_name": "keySetNonempty",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_nonempty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL204-209 local theorem keeps good_cmp only and concludes actual Set inequality with empty; proof uses self membership, with no extra nonempty carrier premise. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+    "lean_name": "keySetPartition",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_partition",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL211-219 same conjunctive hypothesis good_cmp AND unequal equivalence sets, conclusion Disjoint those sets. Set.disjoint_left is exact no-common-member characterization of HOL DISJOINT; no individual-key inequality replacement. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+    "lean_name": "keySetEq",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL220-229 actual key-class Set equality iff comparator Equal, same good_cmp hypothesis and arbitrary keys; no key-equality antisymmetry or relation hypothesis. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySetComparison.lean",
+    "lean_name": "keySetCmp",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_cmp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL229-232 arbitrary Set and result; for every member query the queried key comparison has that exact result, no good_cmp in definition. Standard predicate-set and Ordering constructor translations only; full original declarations captured without open hypotheses and unrestricted Lean theorem kernel-checks. No cross-language or full lookup/production correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySetComparison.lean",
+    "lean_name": "keySetCmpThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_cmp_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL234-243 full iff under good_cmp only; arbitrary queried key, representative key and result. Forward specializes to representative using reflexivity; backward Less/Equal use exact mixed/equality laws, Greater uses reversal and Equal/Less law. No assumed class congruence/target predicate or extra premise. Standard predicate-set and Ordering constructor translations only; full original declarations captured without open hypotheses and unrestricted Lean theorem kernel-checks. No cross-language or full lookup/production correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySetComparison.lean",
+    "lean_name": "keySetCmp2",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_cmp2_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL245-248 universal pair of members from arbitrary left/right Sets, conjunctive membership hypothesis, same cmp left-key right-key=result. No nonempty/class/ordering condition added. Standard predicate-set and Ordering constructor translations only; full original declarations captured without open hypotheses and unrestricted Lean theorem kernel-checks. No cross-language or full lookup/production correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/StructuralSize.lean",
+    "lean_name": "structureSizeThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "structure_size_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02 HOL918-923: arbitrary comparator and tree, invariant only premise, stored size equals recursive structure_size. Tip reflexivity and Bin invariant first conjunct correspond to original Cases_on/rw proof. No good_cmp, finite-map cardinality, balance conclusion or extra success assumption. Literal Map/Nat/Ordering carriers, no qualifier difference. Full original local proof replay captured with no open hypotheses and unrestricted Lean theorem kernel-checks; full size/cardinality/insertion and production correctness remain open."
   }
 ]
