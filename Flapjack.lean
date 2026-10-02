@@ -570,6 +570,7 @@ import Flapjack.Misc.BinaryIeeeSqrt
 import Flapjack.Misc.BinaryIeeeSqrtFp64
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
+import Flapjack.Basis.Pure.MlList.SortPerm
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp
@@ -1269,6 +1270,7 @@ import Flapjack.Compiler.Backend.RegAlloc.TagColour
 import Flapjack.Compiler.Backend.RegAlloc.MoveTable
 import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.PhaseSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
 import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
