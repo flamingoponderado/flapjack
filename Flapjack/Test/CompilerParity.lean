@@ -3,6 +3,7 @@ import Flapjack.Test.LabToTargetNopInsertEncodingParity
 import Flapjack.Test.LabToTargetNopPaddingParity
 import Flapjack.Test.MiscTakeFlatReplicateParity
 import Flapjack.Test.LabToTargetValidityNopParity
+import Flapjack.Test.StackRemoveStateRelation
 import Flapjack.Test.LabToTargetNopInvariantParity
 import Flapjack.Test.LabToTargetLengthCorrectnessParity
 import Flapjack.Test.LabToTargetPaddingLengthPropsParity
@@ -26,6 +27,9 @@ import Flapjack.Test.SetSepFun2Set
 import Flapjack.Test.SetSepElementary
 import Flapjack.Test.StackRemoveWordSelector
 import Flapjack.Test.StackRemoveMemory
+import Flapjack.Test.StackRemoveWordListRev
+import Flapjack.Test.StackRemoveWordStore
+import Flapjack.Test.MiscWordList
 import Flapjack.Test.StackRemoveCodeRelation
 import Flapjack.Test.DataMaxHeapLimit
 import Flapjack.Test.InitializedProduction

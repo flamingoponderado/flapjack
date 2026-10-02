@@ -1,0 +1,13 @@
+wr_def=(∀a. word_list_rev a [] = emp) ∧ ∀a x xs. word_list_rev a (x::xs) = one (a − bytes_in_word,x) * word_list_rev (a − bytes_in_word) xs
+wr_type=:α word -> β list -> (α word # β -> bool) -> bool
+wr_empty_generic=T
+wr_single_generic=T
+wr_wrap8=T
+wr_wrap32=T
+wr_product64=T
+wr_wrap80=T
+wr_two64=T
+wr_zero_stride_distinct=T
+wr_zero_stride_same1=T
+wr_zero_stride_same7=T
+wr_wrong_address=T

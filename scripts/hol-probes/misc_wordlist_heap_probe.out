@@ -1,0 +1,19 @@
+wl_def=(∀a. word_list a [] = emp) ∧ ∀a x xs. word_list a (x::xs) = one (a,x) * word_list (a + bytes_in_word) xs
+wl_type=:α word -> β list -> (α word # β -> bool) -> bool
+we_def=∀a n. word_list_exists a n = SEP_EXISTS xs. word_list a xs * cond (LENGTH xs = n)
+we_type=:α word -> num -> (α word # β -> bool) -> bool
+wl_empty=T
+wl_single=T
+wl_wrap8=T
+wl_wrap32=T
+wl_product64=T
+wl_wrap80=T
+wl_zero_distinct=T
+wl_zero_same1=T
+wl_zero_same7=T
+we_zero=T
+we_single=T
+we_wrap8=T
+we_zero_distinct=T
+we_wrong_zero=T
+we_wrong_address=T

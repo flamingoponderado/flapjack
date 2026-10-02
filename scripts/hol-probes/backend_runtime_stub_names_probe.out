@@ -1,0 +1,10 @@
+word_stub_names_def=⊢ stub_names () = [(raise_stub_location,«_Raise»); (store_consts_stub_location,«_StoreConsts»)]
+word_stub_names_type=:unit -> (num # mlstring) list
+gc_stub_names_def=⊢ stub_names () = [(gc_stub_location,«_GC»)]
+gc_stub_names_type=:unit -> (num # mlstring) list
+word_stub_names_values=[((5 :num),«_Raise»); ((6 :num),«_StoreConsts»)]
+word_stub_names_bytes=[((5 :num),[(95 :num); (82 :num); (97 :num); (105 :num); (115 :num); (101 :num)]); ((6 :num),[(95 :num); (83 :num); (116 :num); (111 :num); (114 :num); (101 :num); (67 :num); (111 :num); (110 :num); (115 :num); (116 :num); (115 :num)])]
+gc_stub_names_values=[((4 :num),«_GC»)]
+gc_stub_names_bytes=[((4 :num),[(95 :num); (71 :num); (67 :num)])]
+word_stub_names_count=(2 :num)
+gc_stub_names_count=(1 :num)
