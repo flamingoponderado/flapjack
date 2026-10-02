@@ -29,6 +29,8 @@ import Flapjack.Compiler.Backend.LabToTarget.MemoryTransport
 import Flapjack.Compiler.Backend.LabToTarget.LineInfo
 import Flapjack.Compiler.Backend.LabToTarget.ShmemExtraction
 import Flapjack.Compiler.Backend.LabToTarget.ShmemDistinct
+import Flapjack.Compiler.Backend.LabToTarget.ShmemPrefix
+import Flapjack.Compiler.Backend.LabToTarget.ShmemMembership
 import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
