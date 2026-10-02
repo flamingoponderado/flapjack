@@ -4771,6 +4771,12 @@ HOL-proved projection of `asm_step` onto its transition and non-failure conjunct
 Kernel-replayed in `AsmSemStepParity`. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=asm_sem_step_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`asm_props_encoder_correct_probe` captures the original typed `encoder_correct` definition and
+two HOL-proved consumers: its `target_ok` projection and the specialization to the identity
+interference environment. `AsmPropsEncoderCorrectParity` replays both. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=asm_props_encoder_correct_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 
 
 `word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
@@ -5206,6 +5212,14 @@ behavior. A faithful port must retain that unspecified function specification
 (or prove a justified defining-body correspondence), and its missing-case
 outputs must not be treated as concrete parity fixtures. Full rotation proofs
 still need their original constructor premises and specified equations.
+
+### Target encoding nonemptiness
+
+`target_encoding_nonempty_probeScript.sml` replays the literal original local
+`enc_ok_not_empty` statement and proof in HOL; local declarations are not
+exported from `targetPropsTheory`. Its output captures the full kernel-checked
+conclusion, retaining `asm_ok`. This is regression/source-review evidence.
+Regenerate with `HOL_PROBE_ONLY=target_encoding_nonempty_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `target_next_shared_mem_probeScript.sml` captures the complete original
 `next_interference_SharedMem` statement with no open hypotheses; native
 assembly is in `TargetProps/NextSharedMem.lean`.
@@ -5225,3 +5239,91 @@ and missing-read errors retain the original exemption. Bounded list observations
 use the existing guarded holEl translation. This is a theorem specialization
 capture, not an isolated tactic replay or equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cc_trans_correct_move_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Full ASM-step target evaluation theorem
+
+`target_encoding_nonempty_probeScript.sml` replays the literal original local
+`enc_ok_not_empty` statement and proof in HOL; local declarations are not
+exported from `targetPropsTheory`. Its output captures the full kernel-checked
+conclusion, retaining `asm_ok`. This is regression/source-review evidence.
+Regenerate with `HOL_PROBE_ONLY=target_encoding_nonempty_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`ssa_cc_trans_correct_buffer_writes_probe` captures the full original theorem
+specialized to CodeBufferWrite/DataBufferWrite and seven inferred numeric/state/SSA/table
+carriers. Original exp_tac2:6294 and resumed cases9860/9864, compiler124/126, and
+evaluator1152/1160 were compared with `SSASemanticBufferWrites.lean`. All six premises
+and the entire simulation conclusion remain; source-read and buffer-write failures
+use only the original Error exemption. Native buffers and exact byte narrowing
+retain their source clauses. Original proved theorem specialization capture, not
+an isolated tactic replay or equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_buffer_writes_probeScript.sml scripts/hol-probes/regenerate.sh`.
+### Misc byte-region prerequisites
+
+`misc_memory_regions_probeScript.sml` captures the complete original
+`bytes_in_memory_APPEND` and `bytes_in_memory_change_mem` theorem conclusions
+from compiled `miscTheory`; `misc_memory_regions_probe.out` is statement review
+and regression evidence, not a cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=misc_memory_regions_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+`RotationAux.lean` now follows the approved whole-function specification
+route: existence witnesses establish satisfiability; `Classical.choose`
+selects a function constrained only by the original clauses; four tagged
+equation theorems prove those entire clauses. No default in an existence
+witness becomes an equation about the selected function. The five complete
+rotate/balancing definitions retain their literal branch order and arithmetic.
+`BalancedMapRotationAuxParity` uses only specified equations, matching actual
+single/double outputs and both branches of each rotate wrapper. The extra
+conditional and unreduced audit rows remain explicitly qualified above.
+
+`stack_initialized_boundary_probeScript.sml` captures40 original post-allocation compositions: stack_remove.compile ->stack_names.compile with riscv_names ->MAPprog_to_section. Positive dimensions1/8/32/64/80, both GC/jump settings, zero/huge heap bounds and start labels, zero/23 register pointers, empty/mixed input lists, duplicate section9 and reserved section0 are retained. The native executed list boundary checks each concrete section name/line count; its universal kernel recovery theorem recovers all decoded native section fields. Numeric projections use an explicit constructor case, not a symbolic pattern-lambda capture. Actual artifact prefix replacement remains on the parent production bead.
+
+`ssa_locals_delete_probe` captures the original generic deletion-left/right
+locals relation theorems6321–6350 and five inferred carrier types. Original
+premises and arbitrary alpha native Spt payloads are unchanged in
+`SSALocalsDelete.lean`. Source deletion only removes read obligations; physical
+target deletion preserves all SSA-image reads because ssa_map_ok excludes that
+register. Original proved theorem capture and manual source comparison, not
+a cross-language equivalence proof or isolated source tactic replay. Regenerate
+with `HOL_PROBE_ONLY=ssa_locals_delete_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cc_trans_correct_store_consts_probe` captures the original full theorem
+specialized to StoreConsts and nine inferred types, including the Boolean/word
+constant list. Original StoreConsts9608–9647 was manually compared with
+`SSASemanticStoreConsts.lean`: six premises and full simulation retained, actual
+scratch Move/store/fresh Move target execution derived, source/target deletions
+and physical insertions preserve provisional locals before two fresh assignments.
+Native constant flags, memory writes, domain checks and result/error branches are
+unchanged. Original proved theorem capture, not isolated tactic replay or
+equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_store_consts_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cut_envs_domain_probe` captures original `cut_envs_domain_SUBSET`6451–6457
+and four inferred carrier types: two native num_sets and generic alpha locals/output
+trees. `SSACutEnvsDomain.lean` retains the sole original successful-cut equation
+and both input-domain subset conclusions, derived from actual cut_names guards.
+Original theorem capture/manual source comparison, not isolated tactic replay or
+equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cut_envs_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`data_max_heap_limit_probeScript.sml` records the full original numeric heap-limit definition/type and64 configurations across dimensions1/7/8/31/32/33/64/80, varied native config fields and GC carriers, exact default RV64layout4/4/2/32, and shifts above dimension. Independent integer MIN/division expectations are checked in the kernel and agree with every original numeric output. Original wordLang329 shift overload is backend_common.word_shift; both denominator exponent groupings are preserved. Actual initializer route must use this reviewed helper to compute2*limit-1 rather than freeze a captured heap word.
+
+`ssa_rename_move_distinct_probe` captures the original full scoped injection
+theorem6405–6423 and six inferred carriers. `SSARenameMoveDistinct.lean` retains
+the producer equation, distinct input names, both memberships, and equal selectors;
+distinct generated names plus the existing successful-lookup theorem derive
+input equality. Standard positive indexed-word program translation is explicit.
+Original theorem capture/manual source comparison, not isolated tactic replay
+or equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_rename_move_distinct_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`target_asm_step_evaluate_probeScript.sml` captures the complete original
+`asm_step_IMP_evaluate_step_find_next` statement, including all six hypotheses
+and both equalities, the assembly post-state relation, and nonzero step count.
+This is source-review regression evidence, not cross-language equivalence.
+Regenerate with `HOL_PROBE_ONLY=target_asm_step_evaluate_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+### Full single-right rotation correctness
+
+`balanced_map_singleR_probeScript.sml` replays the entire original local
+`singleR_thm` proof with its original local prerequisites, checking no open
+hypotheses. The typed statement retains all nine premise conjuncts and both
+invariant and map equality conclusions. Actual defined rotation, invariant,
+three recursive lookup values, and invalid cached-size rejection are captured.
+`BalancedMapSingleRParity` consumes both full native conclusions and derives
+all three canonical semantic lookups; missing constructor outputs are unused.

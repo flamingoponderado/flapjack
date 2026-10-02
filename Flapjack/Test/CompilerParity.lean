@@ -6,6 +6,8 @@ import Flapjack.Test.LabToTargetEncd0Parity
 import Flapjack.Test.LabToTargetLabelValidityParity
 import Flapjack.Test.LabToTargetSimilarLabelsParity
 import Flapjack.Test.LabToTargetGoodCodeParity
+import Flapjack.Test.DataMaxHeapLimit
+import Flapjack.Test.InitializedProduction
 import Flapjack.Test.StackRemoveInitCode
 import Flapjack.Test.StackRemoveCompile
 import Flapjack.Test.ByteDecoder
@@ -956,6 +958,7 @@ import Flapjack.Test.LabToTargetShareMemDomainParity
 import Flapjack.Test.LabToTargetShareMemStateParity
 import Flapjack.Test.AsmSemMemOpsParity
 import Flapjack.Test.AsmSemStepParity
+import Flapjack.Test.AsmPropsEncoderCorrectParity
 
 
 
@@ -1662,6 +1665,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CakeAllocatorBitsBridgeParity.runChecks,
     Flapjack.Test.StackNamesParity.runChecks,
     Flapjack.Test.StackRemoveInitParity.runChecks,
+    Flapjack.Test.InitializedProduction.runChecks,
     Flapjack.Test.WordLocWParity.runChecks,
     Flapjack.Test.StackRemoveHelpersParity.runChecks,
     Flapjack.Test.LoopSemStateParity.runChecks,

@@ -1,0 +1,7 @@
+delete_left_full=⊢ ssa_locals_rel na ssa stl cstl ⇒ ssa_locals_rel na ssa (delete n stl) cstl
+delete_right_full=⊢ ssa_map_ok na ssa ∧ ssa_locals_rel na ssa stl cstl ∧ is_phy_var n ⇒ ssa_locals_rel na ssa stl (delete n cstl)
+delete_type_source=:α sptree$num_map
+delete_type_target=:α sptree$num_map
+delete_type_ssa=:num sptree$num_map
+delete_type_name=:num
+delete_type_next=:num

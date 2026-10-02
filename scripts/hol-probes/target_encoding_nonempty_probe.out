@@ -1,0 +1,1 @@
+encoding_nonempty_statement=enc_ok c ∧ asm_ok w c ⇒ c.encode w ≠ []
