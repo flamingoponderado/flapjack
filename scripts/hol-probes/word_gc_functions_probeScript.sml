@@ -1,4 +1,4 @@
-load "preamble"; load "word_gcFunctionsTheory";
+load "preamble"; load "word_gcFunctionsTheory"; load "word_simpProofTheory";
 open bossLib; open HolKernel Parse; open preamble; open word_gcFunctionsTheory;
 
 val print_eval = fn label => fn q =>
@@ -65,3 +65,7 @@ val _ = print_eval "gc_new_trig_small" ``new_trig (100w:64 word) 8w [10]``;
 val _ = print_eval "gc_new_trig_big" ``new_trig (100w:64 word) 200w [1]``;
 val _ = print_eval "gc_new_trig_aligned" ``new_trig (1000w:64 word) 200w [1]``;
 val _ = print_eval "gc_new_trig_unaligned" ``new_trig (1000w:64 word) 201w [1]``;
+val _ = print_eval "gc_is_gc_const_even" ``word_simp$is_gc_const (6w:64 word)``;
+val _ = print_eval "gc_is_gc_const_odd" ``word_simp$is_gc_const (7w:64 word)``;
+val _ = print_eval "gc_is_gc_word_const_loc" ``word_simpProof$is_gc_word_const (Loc 1 2 : 64 word_loc)``;
+val _ = print_eval "gc_is_gc_word_const_odd" ``word_simpProof$is_gc_word_const (Word 7w : 64 word_loc)``;

@@ -1,0 +1,212 @@
+lo_definition=⊢ (∀tl2 tl1 hd2 hd1. listCmp (hd1::tl1) (hd2::tl2) = if hd1 = hd2 then listCmp tl1 tl2 else if hd1 > hd2 then Greater else Less) ∧ listCmp [] [] = Equal ∧ (∀tl1 hd1. listCmp (hd1::tl1) [] = Greater) ∧ ∀tl2 hd2. listCmp [] (hd2::tl2) = Less
+lo_full_eq=⊢ ∀L1 L2. listCmp L1 L2 = Equal ⇔ L1 = L2
+lo_full_reverse=⊢ ∀x y. listCmp x y = Greater ⇔ listCmp y x = Less
+lo_full_transit=⊢ ∀x y z. listCmp x y = Less ∧ listCmp y z = Less ⇒ listCmp x z = Less
+lo_value_0_0=⊢ listCmp [] [] = Equal
+lo_eq_0_0=⊢ ∀xs ys. listCmp ([] ++ xs) ([] ++ ys) = Equal ⇔ [] ++ xs = [] ++ ys
+lo_reverse_0_0=⊢ ∀xs ys. listCmp ([] ++ xs) ([] ++ ys) = Greater ⇔ listCmp ([] ++ ys) ([] ++ xs) = Less
+lo_value_0_1=⊢ listCmp [] [0] = Less
+lo_eq_0_1=⊢ ∀xs ys. listCmp ([] ++ xs) ([0] ++ ys) = Equal ⇔ [] ++ xs = [0] ++ ys
+lo_reverse_0_1=⊢ ∀xs ys. listCmp ([] ++ xs) ([0] ++ ys) = Greater ⇔ listCmp ([0] ++ ys) ([] ++ xs) = Less
+lo_value_0_2=⊢ listCmp [] [1] = Less
+lo_eq_0_2=⊢ ∀xs ys. listCmp ([] ++ xs) ([1] ++ ys) = Equal ⇔ [] ++ xs = [1] ++ ys
+lo_reverse_0_2=⊢ ∀xs ys. listCmp ([] ++ xs) ([1] ++ ys) = Greater ⇔ listCmp ([1] ++ ys) ([] ++ xs) = Less
+lo_value_0_3=⊢ listCmp [] [0; 0] = Less
+lo_eq_0_3=⊢ ∀xs ys. listCmp ([] ++ xs) ([0; 0] ++ ys) = Equal ⇔ [] ++ xs = [0; 0] ++ ys
+lo_reverse_0_3=⊢ ∀xs ys. listCmp ([] ++ xs) ([0; 0] ++ ys) = Greater ⇔ listCmp ([0; 0] ++ ys) ([] ++ xs) = Less
+lo_value_0_4=⊢ listCmp [] [0; 1] = Less
+lo_eq_0_4=⊢ ∀xs ys. listCmp ([] ++ xs) ([0; 1] ++ ys) = Equal ⇔ [] ++ xs = [0; 1] ++ ys
+lo_reverse_0_4=⊢ ∀xs ys. listCmp ([] ++ xs) ([0; 1] ++ ys) = Greater ⇔ listCmp ([0; 1] ++ ys) ([] ++ xs) = Less
+lo_value_0_5=⊢ listCmp [] [1; 0] = Less
+lo_eq_0_5=⊢ ∀xs ys. listCmp ([] ++ xs) ([1; 0] ++ ys) = Equal ⇔ [] ++ xs = [1; 0] ++ ys
+lo_reverse_0_5=⊢ ∀xs ys. listCmp ([] ++ xs) ([1; 0] ++ ys) = Greater ⇔ listCmp ([1; 0] ++ ys) ([] ++ xs) = Less
+lo_value_0_6=⊢ listCmp [] [1208925819614629174706183] = Less
+lo_eq_0_6=⊢ ∀xs ys. listCmp ([] ++ xs) ([1208925819614629174706183] ++ ys) = Equal ⇔ [] ++ xs = [1208925819614629174706183] ++ ys
+lo_reverse_0_6=⊢ ∀xs ys. listCmp ([] ++ xs) ([1208925819614629174706183] ++ ys) = Greater ⇔ listCmp ([1208925819614629174706183] ++ ys) ([] ++ xs) = Less
+lo_value_0_7=⊢ listCmp [] [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] = Less
+lo_eq_0_7=⊢ ∀xs ys. listCmp ([] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Equal ⇔ [] ++ xs = [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys
+lo_reverse_0_7=⊢ ∀xs ys. listCmp ([] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Greater ⇔ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) ([] ++ xs) = Less
+lo_value_1_0=⊢ listCmp [0] [] = Greater
+lo_eq_1_0=⊢ ∀xs ys. listCmp ([0] ++ xs) ([] ++ ys) = Equal ⇔ [0] ++ xs = [] ++ ys
+lo_reverse_1_0=⊢ ∀xs ys. listCmp ([0] ++ xs) ([] ++ ys) = Greater ⇔ listCmp ([] ++ ys) ([0] ++ xs) = Less
+lo_value_1_1=⊢ listCmp [0] [0] = Equal
+lo_eq_1_1=⊢ ∀xs ys. listCmp ([0] ++ xs) ([0] ++ ys) = Equal ⇔ [0] ++ xs = [0] ++ ys
+lo_reverse_1_1=⊢ ∀xs ys. listCmp ([0] ++ xs) ([0] ++ ys) = Greater ⇔ listCmp ([0] ++ ys) ([0] ++ xs) = Less
+lo_value_1_2=⊢ listCmp [0] [1] = Less
+lo_eq_1_2=⊢ ∀xs ys. listCmp ([0] ++ xs) ([1] ++ ys) = Equal ⇔ [0] ++ xs = [1] ++ ys
+lo_reverse_1_2=⊢ ∀xs ys. listCmp ([0] ++ xs) ([1] ++ ys) = Greater ⇔ listCmp ([1] ++ ys) ([0] ++ xs) = Less
+lo_value_1_3=⊢ listCmp [0] [0; 0] = Less
+lo_eq_1_3=⊢ ∀xs ys. listCmp ([0] ++ xs) ([0; 0] ++ ys) = Equal ⇔ [0] ++ xs = [0; 0] ++ ys
+lo_reverse_1_3=⊢ ∀xs ys. listCmp ([0] ++ xs) ([0; 0] ++ ys) = Greater ⇔ listCmp ([0; 0] ++ ys) ([0] ++ xs) = Less
+lo_value_1_4=⊢ listCmp [0] [0; 1] = Less
+lo_eq_1_4=⊢ ∀xs ys. listCmp ([0] ++ xs) ([0; 1] ++ ys) = Equal ⇔ [0] ++ xs = [0; 1] ++ ys
+lo_reverse_1_4=⊢ ∀xs ys. listCmp ([0] ++ xs) ([0; 1] ++ ys) = Greater ⇔ listCmp ([0; 1] ++ ys) ([0] ++ xs) = Less
+lo_value_1_5=⊢ listCmp [0] [1; 0] = Less
+lo_eq_1_5=⊢ ∀xs ys. listCmp ([0] ++ xs) ([1; 0] ++ ys) = Equal ⇔ [0] ++ xs = [1; 0] ++ ys
+lo_reverse_1_5=⊢ ∀xs ys. listCmp ([0] ++ xs) ([1; 0] ++ ys) = Greater ⇔ listCmp ([1; 0] ++ ys) ([0] ++ xs) = Less
+lo_value_1_6=⊢ listCmp [0] [1208925819614629174706183] = Less
+lo_eq_1_6=⊢ ∀xs ys. listCmp ([0] ++ xs) ([1208925819614629174706183] ++ ys) = Equal ⇔ [0] ++ xs = [1208925819614629174706183] ++ ys
+lo_reverse_1_6=⊢ ∀xs ys. listCmp ([0] ++ xs) ([1208925819614629174706183] ++ ys) = Greater ⇔ listCmp ([1208925819614629174706183] ++ ys) ([0] ++ xs) = Less
+lo_value_1_7=⊢ listCmp [0] [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] = Less
+lo_eq_1_7=⊢ ∀xs ys. listCmp ([0] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Equal ⇔ [0] ++ xs = [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys
+lo_reverse_1_7=⊢ ∀xs ys. listCmp ([0] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Greater ⇔ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) ([0] ++ xs) = Less
+lo_value_2_0=⊢ listCmp [1] [] = Greater
+lo_eq_2_0=⊢ ∀xs ys. listCmp ([1] ++ xs) ([] ++ ys) = Equal ⇔ [1] ++ xs = [] ++ ys
+lo_reverse_2_0=⊢ ∀xs ys. listCmp ([1] ++ xs) ([] ++ ys) = Greater ⇔ listCmp ([] ++ ys) ([1] ++ xs) = Less
+lo_value_2_1=⊢ listCmp [1] [0] = Greater
+lo_eq_2_1=⊢ ∀xs ys. listCmp ([1] ++ xs) ([0] ++ ys) = Equal ⇔ [1] ++ xs = [0] ++ ys
+lo_reverse_2_1=⊢ ∀xs ys. listCmp ([1] ++ xs) ([0] ++ ys) = Greater ⇔ listCmp ([0] ++ ys) ([1] ++ xs) = Less
+lo_value_2_2=⊢ listCmp [1] [1] = Equal
+lo_eq_2_2=⊢ ∀xs ys. listCmp ([1] ++ xs) ([1] ++ ys) = Equal ⇔ [1] ++ xs = [1] ++ ys
+lo_reverse_2_2=⊢ ∀xs ys. listCmp ([1] ++ xs) ([1] ++ ys) = Greater ⇔ listCmp ([1] ++ ys) ([1] ++ xs) = Less
+lo_value_2_3=⊢ listCmp [1] [0; 0] = Greater
+lo_eq_2_3=⊢ ∀xs ys. listCmp ([1] ++ xs) ([0; 0] ++ ys) = Equal ⇔ [1] ++ xs = [0; 0] ++ ys
+lo_reverse_2_3=⊢ ∀xs ys. listCmp ([1] ++ xs) ([0; 0] ++ ys) = Greater ⇔ listCmp ([0; 0] ++ ys) ([1] ++ xs) = Less
+lo_value_2_4=⊢ listCmp [1] [0; 1] = Greater
+lo_eq_2_4=⊢ ∀xs ys. listCmp ([1] ++ xs) ([0; 1] ++ ys) = Equal ⇔ [1] ++ xs = [0; 1] ++ ys
+lo_reverse_2_4=⊢ ∀xs ys. listCmp ([1] ++ xs) ([0; 1] ++ ys) = Greater ⇔ listCmp ([0; 1] ++ ys) ([1] ++ xs) = Less
+lo_value_2_5=⊢ listCmp [1] [1; 0] = Less
+lo_eq_2_5=⊢ ∀xs ys. listCmp ([1] ++ xs) ([1; 0] ++ ys) = Equal ⇔ [1] ++ xs = [1; 0] ++ ys
+lo_reverse_2_5=⊢ ∀xs ys. listCmp ([1] ++ xs) ([1; 0] ++ ys) = Greater ⇔ listCmp ([1; 0] ++ ys) ([1] ++ xs) = Less
+lo_value_2_6=⊢ listCmp [1] [1208925819614629174706183] = Less
+lo_eq_2_6=⊢ ∀xs ys. listCmp ([1] ++ xs) ([1208925819614629174706183] ++ ys) = Equal ⇔ [1] ++ xs = [1208925819614629174706183] ++ ys
+lo_reverse_2_6=⊢ ∀xs ys. listCmp ([1] ++ xs) ([1208925819614629174706183] ++ ys) = Greater ⇔ listCmp ([1208925819614629174706183] ++ ys) ([1] ++ xs) = Less
+lo_value_2_7=⊢ listCmp [1] [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] = Greater
+lo_eq_2_7=⊢ ∀xs ys. listCmp ([1] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Equal ⇔ [1] ++ xs = [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys
+lo_reverse_2_7=⊢ ∀xs ys. listCmp ([1] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Greater ⇔ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) ([1] ++ xs) = Less
+lo_value_3_0=⊢ listCmp [0; 0] [] = Greater
+lo_eq_3_0=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([] ++ ys) = Equal ⇔ [0; 0] ++ xs = [] ++ ys
+lo_reverse_3_0=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([] ++ ys) = Greater ⇔ listCmp ([] ++ ys) ([0; 0] ++ xs) = Less
+lo_value_3_1=⊢ listCmp [0; 0] [0] = Greater
+lo_eq_3_1=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([0] ++ ys) = Equal ⇔ [0; 0] ++ xs = [0] ++ ys
+lo_reverse_3_1=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([0] ++ ys) = Greater ⇔ listCmp ([0] ++ ys) ([0; 0] ++ xs) = Less
+lo_value_3_2=⊢ listCmp [0; 0] [1] = Less
+lo_eq_3_2=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([1] ++ ys) = Equal ⇔ [0; 0] ++ xs = [1] ++ ys
+lo_reverse_3_2=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([1] ++ ys) = Greater ⇔ listCmp ([1] ++ ys) ([0; 0] ++ xs) = Less
+lo_value_3_3=⊢ listCmp [0; 0] [0; 0] = Equal
+lo_eq_3_3=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([0; 0] ++ ys) = Equal ⇔ [0; 0] ++ xs = [0; 0] ++ ys
+lo_reverse_3_3=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([0; 0] ++ ys) = Greater ⇔ listCmp ([0; 0] ++ ys) ([0; 0] ++ xs) = Less
+lo_value_3_4=⊢ listCmp [0; 0] [0; 1] = Less
+lo_eq_3_4=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([0; 1] ++ ys) = Equal ⇔ [0; 0] ++ xs = [0; 1] ++ ys
+lo_reverse_3_4=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([0; 1] ++ ys) = Greater ⇔ listCmp ([0; 1] ++ ys) ([0; 0] ++ xs) = Less
+lo_value_3_5=⊢ listCmp [0; 0] [1; 0] = Less
+lo_eq_3_5=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([1; 0] ++ ys) = Equal ⇔ [0; 0] ++ xs = [1; 0] ++ ys
+lo_reverse_3_5=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([1; 0] ++ ys) = Greater ⇔ listCmp ([1; 0] ++ ys) ([0; 0] ++ xs) = Less
+lo_value_3_6=⊢ listCmp [0; 0] [1208925819614629174706183] = Less
+lo_eq_3_6=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([1208925819614629174706183] ++ ys) = Equal ⇔ [0; 0] ++ xs = [1208925819614629174706183] ++ ys
+lo_reverse_3_6=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([1208925819614629174706183] ++ ys) = Greater ⇔ listCmp ([1208925819614629174706183] ++ ys) ([0; 0] ++ xs) = Less
+lo_value_3_7=⊢ listCmp [0; 0] [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] = Less
+lo_eq_3_7=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Equal ⇔ [0; 0] ++ xs = [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys
+lo_reverse_3_7=⊢ ∀xs ys. listCmp ([0; 0] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Greater ⇔ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) ([0; 0] ++ xs) = Less
+lo_value_4_0=⊢ listCmp [0; 1] [] = Greater
+lo_eq_4_0=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([] ++ ys) = Equal ⇔ [0; 1] ++ xs = [] ++ ys
+lo_reverse_4_0=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([] ++ ys) = Greater ⇔ listCmp ([] ++ ys) ([0; 1] ++ xs) = Less
+lo_value_4_1=⊢ listCmp [0; 1] [0] = Greater
+lo_eq_4_1=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([0] ++ ys) = Equal ⇔ [0; 1] ++ xs = [0] ++ ys
+lo_reverse_4_1=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([0] ++ ys) = Greater ⇔ listCmp ([0] ++ ys) ([0; 1] ++ xs) = Less
+lo_value_4_2=⊢ listCmp [0; 1] [1] = Less
+lo_eq_4_2=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([1] ++ ys) = Equal ⇔ [0; 1] ++ xs = [1] ++ ys
+lo_reverse_4_2=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([1] ++ ys) = Greater ⇔ listCmp ([1] ++ ys) ([0; 1] ++ xs) = Less
+lo_value_4_3=⊢ listCmp [0; 1] [0; 0] = Greater
+lo_eq_4_3=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([0; 0] ++ ys) = Equal ⇔ [0; 1] ++ xs = [0; 0] ++ ys
+lo_reverse_4_3=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([0; 0] ++ ys) = Greater ⇔ listCmp ([0; 0] ++ ys) ([0; 1] ++ xs) = Less
+lo_value_4_4=⊢ listCmp [0; 1] [0; 1] = Equal
+lo_eq_4_4=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([0; 1] ++ ys) = Equal ⇔ [0; 1] ++ xs = [0; 1] ++ ys
+lo_reverse_4_4=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([0; 1] ++ ys) = Greater ⇔ listCmp ([0; 1] ++ ys) ([0; 1] ++ xs) = Less
+lo_value_4_5=⊢ listCmp [0; 1] [1; 0] = Less
+lo_eq_4_5=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([1; 0] ++ ys) = Equal ⇔ [0; 1] ++ xs = [1; 0] ++ ys
+lo_reverse_4_5=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([1; 0] ++ ys) = Greater ⇔ listCmp ([1; 0] ++ ys) ([0; 1] ++ xs) = Less
+lo_value_4_6=⊢ listCmp [0; 1] [1208925819614629174706183] = Less
+lo_eq_4_6=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([1208925819614629174706183] ++ ys) = Equal ⇔ [0; 1] ++ xs = [1208925819614629174706183] ++ ys
+lo_reverse_4_6=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([1208925819614629174706183] ++ ys) = Greater ⇔ listCmp ([1208925819614629174706183] ++ ys) ([0; 1] ++ xs) = Less
+lo_value_4_7=⊢ listCmp [0; 1] [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] = Greater
+lo_eq_4_7=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Equal ⇔ [0; 1] ++ xs = [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys
+lo_reverse_4_7=⊢ ∀xs ys. listCmp ([0; 1] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Greater ⇔ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) ([0; 1] ++ xs) = Less
+lo_value_5_0=⊢ listCmp [1; 0] [] = Greater
+lo_eq_5_0=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([] ++ ys) = Equal ⇔ [1; 0] ++ xs = [] ++ ys
+lo_reverse_5_0=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([] ++ ys) = Greater ⇔ listCmp ([] ++ ys) ([1; 0] ++ xs) = Less
+lo_value_5_1=⊢ listCmp [1; 0] [0] = Greater
+lo_eq_5_1=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([0] ++ ys) = Equal ⇔ [1; 0] ++ xs = [0] ++ ys
+lo_reverse_5_1=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([0] ++ ys) = Greater ⇔ listCmp ([0] ++ ys) ([1; 0] ++ xs) = Less
+lo_value_5_2=⊢ listCmp [1; 0] [1] = Greater
+lo_eq_5_2=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([1] ++ ys) = Equal ⇔ [1; 0] ++ xs = [1] ++ ys
+lo_reverse_5_2=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([1] ++ ys) = Greater ⇔ listCmp ([1] ++ ys) ([1; 0] ++ xs) = Less
+lo_value_5_3=⊢ listCmp [1; 0] [0; 0] = Greater
+lo_eq_5_3=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([0; 0] ++ ys) = Equal ⇔ [1; 0] ++ xs = [0; 0] ++ ys
+lo_reverse_5_3=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([0; 0] ++ ys) = Greater ⇔ listCmp ([0; 0] ++ ys) ([1; 0] ++ xs) = Less
+lo_value_5_4=⊢ listCmp [1; 0] [0; 1] = Greater
+lo_eq_5_4=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([0; 1] ++ ys) = Equal ⇔ [1; 0] ++ xs = [0; 1] ++ ys
+lo_reverse_5_4=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([0; 1] ++ ys) = Greater ⇔ listCmp ([0; 1] ++ ys) ([1; 0] ++ xs) = Less
+lo_value_5_5=⊢ listCmp [1; 0] [1; 0] = Equal
+lo_eq_5_5=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([1; 0] ++ ys) = Equal ⇔ [1; 0] ++ xs = [1; 0] ++ ys
+lo_reverse_5_5=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([1; 0] ++ ys) = Greater ⇔ listCmp ([1; 0] ++ ys) ([1; 0] ++ xs) = Less
+lo_value_5_6=⊢ listCmp [1; 0] [1208925819614629174706183] = Less
+lo_eq_5_6=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([1208925819614629174706183] ++ ys) = Equal ⇔ [1; 0] ++ xs = [1208925819614629174706183] ++ ys
+lo_reverse_5_6=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([1208925819614629174706183] ++ ys) = Greater ⇔ listCmp ([1208925819614629174706183] ++ ys) ([1; 0] ++ xs) = Less
+lo_value_5_7=⊢ listCmp [1; 0] [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] = Greater
+lo_eq_5_7=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Equal ⇔ [1; 0] ++ xs = [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys
+lo_reverse_5_7=⊢ ∀xs ys. listCmp ([1; 0] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Greater ⇔ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) ([1; 0] ++ xs) = Less
+lo_value_6_0=⊢ listCmp [1208925819614629174706183] [] = Greater
+lo_eq_6_0=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([] ++ ys) = Equal ⇔ [1208925819614629174706183] ++ xs = [] ++ ys
+lo_reverse_6_0=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([] ++ ys) = Greater ⇔ listCmp ([] ++ ys) ([1208925819614629174706183] ++ xs) = Less
+lo_value_6_1=⊢ listCmp [1208925819614629174706183] [0] = Greater
+lo_eq_6_1=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([0] ++ ys) = Equal ⇔ [1208925819614629174706183] ++ xs = [0] ++ ys
+lo_reverse_6_1=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([0] ++ ys) = Greater ⇔ listCmp ([0] ++ ys) ([1208925819614629174706183] ++ xs) = Less
+lo_value_6_2=⊢ listCmp [1208925819614629174706183] [1] = Greater
+lo_eq_6_2=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([1] ++ ys) = Equal ⇔ [1208925819614629174706183] ++ xs = [1] ++ ys
+lo_reverse_6_2=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([1] ++ ys) = Greater ⇔ listCmp ([1] ++ ys) ([1208925819614629174706183] ++ xs) = Less
+lo_value_6_3=⊢ listCmp [1208925819614629174706183] [0; 0] = Greater
+lo_eq_6_3=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([0; 0] ++ ys) = Equal ⇔ [1208925819614629174706183] ++ xs = [0; 0] ++ ys
+lo_reverse_6_3=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([0; 0] ++ ys) = Greater ⇔ listCmp ([0; 0] ++ ys) ([1208925819614629174706183] ++ xs) = Less
+lo_value_6_4=⊢ listCmp [1208925819614629174706183] [0; 1] = Greater
+lo_eq_6_4=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([0; 1] ++ ys) = Equal ⇔ [1208925819614629174706183] ++ xs = [0; 1] ++ ys
+lo_reverse_6_4=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([0; 1] ++ ys) = Greater ⇔ listCmp ([0; 1] ++ ys) ([1208925819614629174706183] ++ xs) = Less
+lo_value_6_5=⊢ listCmp [1208925819614629174706183] [1; 0] = Greater
+lo_eq_6_5=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([1; 0] ++ ys) = Equal ⇔ [1208925819614629174706183] ++ xs = [1; 0] ++ ys
+lo_reverse_6_5=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([1; 0] ++ ys) = Greater ⇔ listCmp ([1; 0] ++ ys) ([1208925819614629174706183] ++ xs) = Less
+lo_value_6_6=⊢ listCmp [1208925819614629174706183] [1208925819614629174706183] = Equal
+lo_eq_6_6=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([1208925819614629174706183] ++ ys) = Equal ⇔ [1208925819614629174706183] ++ xs = [1208925819614629174706183] ++ ys
+lo_reverse_6_6=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([1208925819614629174706183] ++ ys) = Greater ⇔ listCmp ([1208925819614629174706183] ++ ys) ([1208925819614629174706183] ++ xs) = Less
+lo_value_6_7=⊢ listCmp [1208925819614629174706183] [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] = Greater
+lo_eq_6_7=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Equal ⇔ [1208925819614629174706183] ++ xs = [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys
+lo_reverse_6_7=⊢ ∀xs ys. listCmp ([1208925819614629174706183] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Greater ⇔ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) ([1208925819614629174706183] ++ xs) = Less
+lo_value_7_0=⊢ listCmp [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] [] = Greater
+lo_eq_7_0=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([] ++ ys) = Equal ⇔ [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs = [] ++ ys
+lo_reverse_7_0=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([] ++ ys) = Greater ⇔ listCmp ([] ++ ys) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) = Less
+lo_value_7_1=⊢ listCmp [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] [0] = Greater
+lo_eq_7_1=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([0] ++ ys) = Equal ⇔ [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs = [0] ++ ys
+lo_reverse_7_1=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([0] ++ ys) = Greater ⇔ listCmp ([0] ++ ys) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) = Less
+lo_value_7_2=⊢ listCmp [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] [1] = Less
+lo_eq_7_2=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([1] ++ ys) = Equal ⇔ [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs = [1] ++ ys
+lo_reverse_7_2=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([1] ++ ys) = Greater ⇔ listCmp ([1] ++ ys) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) = Less
+lo_value_7_3=⊢ listCmp [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] [0; 0] = Greater
+lo_eq_7_3=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([0; 0] ++ ys) = Equal ⇔ [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs = [0; 0] ++ ys
+lo_reverse_7_3=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([0; 0] ++ ys) = Greater ⇔ listCmp ([0; 0] ++ ys) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) = Less
+lo_value_7_4=⊢ listCmp [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] [0; 1] = Less
+lo_eq_7_4=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([0; 1] ++ ys) = Equal ⇔ [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs = [0; 1] ++ ys
+lo_reverse_7_4=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([0; 1] ++ ys) = Greater ⇔ listCmp ([0; 1] ++ ys) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) = Less
+lo_value_7_5=⊢ listCmp [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] [1; 0] = Less
+lo_eq_7_5=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([1; 0] ++ ys) = Equal ⇔ [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs = [1; 0] ++ ys
+lo_reverse_7_5=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([1; 0] ++ ys) = Greater ⇔ listCmp ([1; 0] ++ ys) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) = Less
+lo_value_7_6=⊢ listCmp [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] [1208925819614629174706183] = Less
+lo_eq_7_6=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([1208925819614629174706183] ++ ys) = Equal ⇔ [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs = [1208925819614629174706183] ++ ys
+lo_reverse_7_6=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([1208925819614629174706183] ++ ys) = Greater ⇔ listCmp ([1208925819614629174706183] ++ ys) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) = Less
+lo_value_7_7=⊢ listCmp [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] = Equal
+lo_eq_7_7=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Equal ⇔ [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs = [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys
+lo_reverse_7_7=⊢ ∀xs ys. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Greater ⇔ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) = Less
+lo_transit_0=⊢ ∀xs ys zs. listCmp ([] ++ xs) ([0] ++ ys) = Less ∧ listCmp ([0] ++ ys) ([0; 0] ++ zs) = Less ⇒ listCmp ([] ++ xs) ([0; 0] ++ zs) = Less
+lo_transit_1=⊢ ∀xs ys zs. listCmp ([0] ++ xs) ([1] ++ ys) = Less ∧ listCmp ([1] ++ ys) ([0; 1] ++ zs) = Less ⇒ listCmp ([0] ++ xs) ([0; 1] ++ zs) = Less
+lo_transit_2=⊢ ∀xs ys zs. listCmp ([1] ++ xs) ([0; 0] ++ ys) = Less ∧ listCmp ([0; 0] ++ ys) ([1; 0] ++ zs) = Less ⇒ listCmp ([1] ++ xs) ([1; 0] ++ zs) = Less
+lo_transit_3=⊢ ∀xs ys zs. listCmp ([0; 0] ++ xs) ([0; 1] ++ ys) = Less ∧ listCmp ([0; 1] ++ ys) ([1208925819614629174706183] ++ zs) = Less ⇒ listCmp ([0; 0] ++ xs) ([1208925819614629174706183] ++ zs) = Less
+lo_transit_4=⊢ ∀xs ys zs. listCmp ([0; 1] ++ xs) ([1; 0] ++ ys) = Less ∧ listCmp ([1; 0] ++ ys) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ zs) = Less ⇒ listCmp ([0; 1] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ zs) = Less
+lo_transit_5=⊢ ∀xs ys zs. listCmp ([1; 0] ++ xs) ([1208925819614629174706183] ++ ys) = Less ∧ listCmp ([1208925819614629174706183] ++ ys) ([] ++ zs) = Less ⇒ listCmp ([1; 0] ++ xs) ([] ++ zs) = Less
+lo_transit_6=⊢ ∀xs ys zs. listCmp ([1208925819614629174706183] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Less ∧ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) ([0] ++ zs) = Less ⇒ listCmp ([1208925819614629174706183] ++ xs) ([0] ++ zs) = Less
+lo_transit_7=⊢ ∀xs ys zs. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([] ++ ys) = Less ∧ listCmp ([] ++ ys) ([1] ++ zs) = Less ⇒ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([1] ++ zs) = Less
+lo_transit_8=⊢ ∀xs ys zs. listCmp ([] ++ xs) ([0] ++ ys) = Less ∧ listCmp ([0] ++ ys) ([0; 0] ++ zs) = Less ⇒ listCmp ([] ++ xs) ([0; 0] ++ zs) = Less
+lo_transit_9=⊢ ∀xs ys zs. listCmp ([0] ++ xs) ([1] ++ ys) = Less ∧ listCmp ([1] ++ ys) ([0; 1] ++ zs) = Less ⇒ listCmp ([0] ++ xs) ([0; 1] ++ zs) = Less
+lo_transit_10=⊢ ∀xs ys zs. listCmp ([1] ++ xs) ([0; 0] ++ ys) = Less ∧ listCmp ([0; 0] ++ ys) ([1; 0] ++ zs) = Less ⇒ listCmp ([1] ++ xs) ([1; 0] ++ zs) = Less
+lo_transit_11=⊢ ∀xs ys zs. listCmp ([0; 0] ++ xs) ([0; 1] ++ ys) = Less ∧ listCmp ([0; 1] ++ ys) ([1208925819614629174706183] ++ zs) = Less ⇒ listCmp ([0; 0] ++ xs) ([1208925819614629174706183] ++ zs) = Less
+lo_transit_12=⊢ ∀xs ys zs. listCmp ([0; 1] ++ xs) ([1; 0] ++ ys) = Less ∧ listCmp ([1; 0] ++ ys) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ zs) = Less ⇒ listCmp ([0; 1] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ zs) = Less
+lo_transit_13=⊢ ∀xs ys zs. listCmp ([1; 0] ++ xs) ([1208925819614629174706183] ++ ys) = Less ∧ listCmp ([1208925819614629174706183] ++ ys) ([] ++ zs) = Less ⇒ listCmp ([1; 0] ++ xs) ([] ++ zs) = Less
+lo_transit_14=⊢ ∀xs ys zs. listCmp ([1208925819614629174706183] ++ xs) ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) = Less ∧ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ ys) ([0] ++ zs) = Less ⇒ listCmp ([1208925819614629174706183] ++ xs) ([0] ++ zs) = Less
+lo_transit_15=⊢ ∀xs ys zs. listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([] ++ ys) = Less ∧ listCmp ([] ++ ys) ([1] ++ zs) = Less ⇒ listCmp ([0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 1] ++ xs) ([1] ++ zs) = Less

@@ -1,0 +1,6 @@
+get_bits_11=[T; T; F]
+get_bits_1=[]
+get_bits_0=[]
+get_bits_msb_64=[T; F; T; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F;
+ F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F;
+ F; F; F; F; F; F; F; F; F; F; F; F; F]
