@@ -471,4 +471,51 @@ private theorem frameTimeoutFlush {width : Nat} [NeZero width] {C F : Type}
         (WordSemStateFiniteExact.flushState true target).locals := by
   simp_all only [Flapjack.WordAlloc.wordStateEqRel,WordSemStateFiniteExact.flushState,and_true]
 
+/-- Internal full-frame composition through the actual reconciliation run. -/
+private theorem frameTrans {width : Nat} [NeZero width] {C F : Type}
+    (source middle target : WordSemStateFiniteExact width C F)
+    (first : Flapjack.WordAlloc.wordStateEqRel source middle)
+    (second : Flapjack.WordAlloc.wordStateEqRel middle target) :
+    Flapjack.WordAlloc.wordStateEqRel source target := by
+  simp_all only [Flapjack.WordAlloc.wordStateEqRel,and_true]
+
+/-- The production-shaped Skip constructor match implements the original
+HOL equality test against Skip, for the evaluator equation used by Loop. -/
+private theorem evaluateBodyFinalNative {width : Nat} [NeZero width] {C F : Type}
+    (body moves : WordLangProgHOL (BitVec width))
+    (before after : WordSemStateFiniteExact width C F) (result : Option (WordSemResult width))
+    (run : WordSemStateFiniteExact.evaluate body before = (result,after)) :
+    WordSemStateFiniteExact.evaluate (match moves with | .skip => body | _ => .seq body moves) before =
+      match (generalizing := false) result with
+      | none => WordSemStateFiniteExact.evaluate moves after
+      | some value => (some value,after) := by
+  have original := evaluateBodyFinal body moves before after result run
+  cases moves <;> simpa using original
+
+/-- The original NONE body case executes actual reconciliation and derives
+its strong entry relation and complete frame. This is the full derived step
+needed before the recursive clock IH, with no target post-state assumption. -/
+private theorem bodyNoneReconcile {width : Nat} [NeZero width] {C F : Type}
+    (source before after : WordSemStateFiniteExact width C F)
+    (body : WordLangProgHOL (BitVec width)) (mapOut refreshed : Spt Nat)
+    (nextOut : Nat) (names : Spt Unit)
+    (run : WordSemStateFiniteExact.evaluate body before = (none,after))
+    (frame : Flapjack.WordAlloc.wordStateEqRel source after)
+    (locals : ssaLocalsRel nextOut mapOut source.locals after.locals)
+    (injection : ∀ x y, sptDomain names x → sptDomain names y →
+      optionLookup refreshed x = optionLookup refreshed y → x = y) :
+    ∃ reconciled,
+      WordSemStateFiniteExact.evaluate
+        (match ssaReconcile mapOut refreshed names with
+          | .skip => body | moves => .seq body moves) before = (none,reconciled) ∧
+      Flapjack.WordAlloc.wordStateEqRel source reconciled ∧
+      Flapjack.WordAlloc.strongLocalsRel (optionLookup refreshed)
+        (sptDomain names) source.locals reconciled.locals := by
+  obtain ⟨reconciled,reconcileRun,reconcileFrame,strong⟩ :=
+    evaluateSSAReconcile nextOut mapOut refreshed names source.locals after ⟨locals,injection⟩
+  refine ⟨reconciled,?_,frameTrans source after reconciled frame reconcileFrame,strong⟩
+  generalize movesEq : ssaReconcile (width := width) mapOut refreshed names = moves at reconcileRun ⊢
+  have native := evaluateBodyFinalNative body moves before after none run
+  cases moves <;> simpa using native.trans reconcileRun
+
 end Flapjack.Compiler.Backend.WordAlloc
