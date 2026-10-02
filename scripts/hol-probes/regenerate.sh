@@ -4298,3 +4298,7 @@ run_probe ssa_cc_trans_correct_inst_div_probeScript.sml ssa_cc_trans_correct_ins
 run_probe ssa_cc_trans_correct_inst_longmul_probeScript.sml ssa_cc_trans_correct_inst_longmul_probe.out \
   inst_longmul_full inst_longmul_type_st inst_longmul_type_cst inst_longmul_type_dst inst_longmul_type_src inst_longmul_type_left inst_longmul_type_right inst_longmul_type_ssa inst_longmul_type_next inst_longmul_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_inst_longdiv_probeScript.sml ssa_cc_trans_correct_inst_longdiv_probe.out \
+  inst_longdiv_full inst_longdiv_type_st inst_longdiv_type_cst inst_longdiv_type_dst inst_longdiv_type_src inst_longdiv_type_left inst_longdiv_type_right inst_longdiv_type_divisor inst_longdiv_type_ssa inst_longdiv_type_next inst_longdiv_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
