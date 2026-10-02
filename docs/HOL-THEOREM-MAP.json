@@ -67230,5 +67230,33 @@
     "hol_name": "wf_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-pxn.18.5.15.3.29.2: pinned original39-44 retains all four LN/LS/BN/BS clauses over exact arbitrary-payload Spt; both branch constructors recursively require both children wf and reject exactly two LN children, including a valued BS. Existing Boolean predicate unchanged: Bool true/and/not compute the HOL truth/connectives, with no payload equality or valid-tree premise. Existing approved hol4 snapshot SHA25697791ac7f3f7b0de823afb00f6f1fbd18cd158b9fe8a818a272b39daa0e49b71 agrees with pinned HOLa390cbabd and actual source installation. No provenance/allowlist/default change. Kernel complete four-clause proposition interface sptWfClauses has no assumptions; fresh original full wf_def closed statement and254 independent valid/malformed/deep-tree/function-payload complete observations replayed in kernel/runtime. Existing preservation theorems are reused, not duplicated."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/FindCode.lean",
+    "lean_name": "findCodeLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "find_code_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original231-255 source comparison: full stateRelHOL actual imported state carrier, canonical regs/fpRegs/store roundtrip reexport, arbitrary positive-width WordLocW, native Spt code unchanged. Same destination INL/INR guard and actual source findCode success; target lookup and regBound established conclusions. Arbitrary erasure register retained without alias/bound premise in lemma2. Native findCode matches only Loc(label,0); all word/none/nonzero-offset cases excluded by actual source success. Literal original proof replay and Lean kernel checks; no carrier duplicate or target-run hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/FindCode.lean",
+    "lean_name": "findCodeLemmaErased",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "find_code_lemma2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original231-255 source comparison: full stateRelHOL actual imported state carrier, canonical regs/fpRegs/store roundtrip reexport, arbitrary positive-width WordLocW, native Spt code unchanged. Same destination INL/INR guard and actual source findCode success; target lookup and regBound established conclusions. Arbitrary erasure register retained without alias/bound premise in lemma2. Native findCode matches only Loc(label,0); all word/none/nonzero-offset cases excluded by actual source success. Literal original proof replay and Lean kernel checks; no carrier duplicate or target-run hypothesis."
   }
 ]
