@@ -5190,3 +5190,11 @@ run_probe ssa_state_map_route_probeScript.sml ssa_state_map_route_probe.out \
   fresh_empty fresh_duplicate fresh_overwrite fresh_big force_empty force_duplicate \
   force_linear_registers keys_order \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cutset_route_probeScript.sml ssa_cutset_route_probe.out \
+  cut_empty_map cut_empty_names cut_duplicates cut_missing cut_order cut_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_reconcile_route_probeScript.sml ssa_reconcile_route_probe.out \
+  rec_empty rec_identity rec_missing_source rec_missing_target rec_duplicate rec_order rec_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

@@ -5989,3 +5989,7 @@ hypotheses internally and retains the six original premises.
 and conclusion; its native port retains only the initial locals-domain premise.
 These are source-review regression captures, not cross-language equivalence.
 The executed SSA migration and end-to-end correctness remain open.
+
+`ssa_cutset_route_probe.out` captures six original heterogeneous `sptree$inter` cutset observations: empty map/set, repeated first-match keys, missing keys, native traversal order and names/values beyond 64 bits. `SSAStateMapRouteParity.lean` replays complete outputs through the actual `wordSsaRestrict` caller. The full native program SSA route remains open.
+
+`ssa_reconcile_route_probe.out` captures seven original complete `ssa_reconcile` outputs, including Skip/identity, missing source/target, repeated first-match keys, native order and values beyond 64 bits. `SSAStateMapRouteParity.lean` kernel-replays the entire production caller program. Its API codec has a checked full result reconstruction theorem at every positive word width.
