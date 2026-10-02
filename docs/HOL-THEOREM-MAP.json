@@ -63478,5 +63478,41 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.1: full original register law on imported actual StackSemStateFiniteExact, fullstateRel, and StackSemStateOps native operations. Canonical regs/fpRegs/store maps qualify exact finite support owner; Spt code is not named. Same-module StateUpdates witness reexports genuine actualcarrier broad/exact roundtrips. Width with NeZero and independently quantified configuration/FFI C/F Type0 retained; generic WordLocW width and fixed BitVec64 match source carriers. No duplicate state, targetrun, preservation predicate, successful lookup/update, dimension restriction or extra hypothesis is supplied. Fresh original fullstatement/bindertypes/kernel proof and native generic kernel proof cover the complete source law. Original759-765 fullstateRel implies fullstateRel after assigning any same fixed64word at any Nat FPregister. CanonicalupdateEq congruence preserves wholefpRegs equality; remaining25conjuncts unchanged, including actualheap/register/runtime configuration. No FPexecution/rounding/evaluator definition is changed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryReads.lean",
+    "lean_name": "memoryFun2SetImpRead",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "memory_fun2set_IMP_read",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.2: full original read/load statement with exact hypothesis and conclusion orientation. Canonical full separation predicates, generic memoryHOL and paired fun2Set, not finite arrays or a partial heap evaluator. Target domain/read/load facts are derived, not assumed. Fresh original complete quantified statements/types/kernel proof9rows and native Lean kernel proofs cover full original results. No finite-domain, injectivity, heap-wf, address bounds, evaluator callback, output-success or supplied target memory correspondence premise. Original273-278 has independent arbitrary address alpha and payload beta, memoryfunctions alpha->beta, source/target domain predicates alpha->bool, arbitrary complete frame predicate on pair sets, and arbitrary address. Lean preserves both generic types, full frame/whole targetfun2Set hypothesis AND source-domain membership, and target-domain membership AND target memory=source memory conclusion. Proof extracts actual STAR split, transports source graph pair through partition union, applies exact generic fun2SetThm. No representation qualifier is needed for these predicate sets or function graph carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryReads.lean",
+    "lean_name": "stateRelRead",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_read",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.2: full original read/load statement with exact hypothesis and conclusion orientation. Canonical full separation predicates, generic memoryHOL and paired fun2Set, not finite arrays or a partial heap evaluator. Target domain/read/load facts are derived, not assumed. Fresh original complete quantified statements/types/kernel proof9rows and native Lean kernel proofs cover full original results. No finite-domain, injectivity, heap-wf, address bounds, evaluator callback, output-success or supplied target memory correspondence premise. Actual imported StackSemStateFiniteExact and StackSemStateOps.memLoad, positive word width with NeZero, independent C/F Type0, exact WordLocW payload. Relation qualifier covers actual three canonical finite maps, code staysSpt and memory/domain remain functions/predicates; same-module canonical witness reexports genuine state codec roundtrips. Boolean domain=true renders original predicate sets. Original280-287 fullstateRel AND address in source mdomain imply target mdomain membership AND target.memory address=source.memory address. Proof examines actual reserved base-register case from whole relation, excludes NONE/Loc by original relation, extracts all four nested STAR partitions from original five-assertion left-associated heap, then transports source-memory graph pair through every union to exact targetfun2Set. Does not assume a pre-separated frame or target read."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryReads.lean",
+    "lean_name": "stateRelMemLoadImp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_mem_load_imp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.2: full original read/load statement with exact hypothesis and conclusion orientation. Canonical full separation predicates, generic memoryHOL and paired fun2Set, not finite arrays or a partial heap evaluator. Target domain/read/load facts are derived, not assumed. Fresh original complete quantified statements/types/kernel proof9rows and native Lean kernel proofs cover full original results. No finite-domain, injectivity, heap-wf, address bounds, evaluator callback, output-success or supplied target memory correspondence premise. Actual imported StackSemStateFiniteExact and StackSemStateOps.memLoad, positive word width with NeZero, independent C/F Type0, exact WordLocW payload. Relation qualifier covers actual three canonical finite maps, code staysSpt and memory/domain remain functions/predicates; same-module canonical witness reexports genuine state codec roundtrips. Boolean domain=true renders original predicate sets. Original621-636 fullstateRel AND actual mem_load source=SOME value imply actual target mem_load sameSOME value. Source Bool domain=false contradicts original success; domain=true gives original source value equality, full stateRelRead supplies target domain and exact value, then native domain-checked memLoad returns samevalue. No target success/equality premise or word-only value restriction."
   }
 ]

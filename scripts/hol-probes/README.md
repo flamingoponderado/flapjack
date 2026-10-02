@@ -5809,3 +5809,14 @@ the original fixed 64-bit payload and have no integer-register bound. The
 Lean proofs use the actual evaluator state's canonical maps; no FP execution
 equation or rounding mode changes. These are instruction-simulation
 prerequisites, not the full `state_rel_inst` theorem.
+
+### Complete StackRemove separated memory read/load preservation
+
+`stack_remove_memoryreads_probeScript.sml` independently reproves
+`memory_fun2set_IMP_read`, `state_rel_read` and `state_rel_mem_load_imp` from
+the pinned full separation/memory/state definitions. Complete statements,
+all binder types and kernel proof rows are captured. The generic frame lemma
+retains independent arbitrary address/payload types and permits infinite
+domains. Native read/load use the actual full state relation and derive target
+domain/value facts through all five separated heap assertions. No target
+read/load or partial representation is supplied as a premise.

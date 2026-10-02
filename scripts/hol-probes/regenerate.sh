@@ -5055,3 +5055,7 @@ run_probe lab_to_target_section_prefix_nop_probeScript.sml lab_to_target_section
 run_probe stack_remove_stateupdates_probeScript.sml stack_remove_stateupdates_probe.out \
   su_setvar su_setvar_types su_setvar_proved su_getfp su_getfp_types su_getfp_proved su_setfp su_setfp_types su_setfp_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_memoryreads_probeScript.sml stack_remove_memoryreads_probe.out \
+  mr_graph mr_graph_types mr_graph_proved mr_read mr_read_types mr_read_proved mr_load mr_load_types mr_load_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
