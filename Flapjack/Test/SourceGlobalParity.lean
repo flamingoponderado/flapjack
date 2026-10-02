@@ -326,7 +326,7 @@ def wideConstantsExact : Bool :=
       (BitVec.ofNat 64 8) (BitVec.ofInt 64) [] checkedPipelineRemoveConfig
       "main" wideConstantsSource with
   | .ok image =>
-      match image.sections.find? (fun encodedSection => encodedSection.label == 4) with
+      match image.sections.find? (fun encodedSection => encodedSection.label == Flapjack.firstLoopName + 1) with
       | some encodedSection => encodedSection.bytes == cakeWideConstantsMain
       | none => false
   | .error _ => false

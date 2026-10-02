@@ -1,3 +1,4 @@
+import Flapjack.RiscV.InitializedRuntime
 import Flapjack.Compiler.Backend.StackToLab.Production
 import Flapjack.RiscV.Lab
 
@@ -375,11 +376,10 @@ def compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVCakeChecked
     | some programs =>
         let programs := stackRawCallPrograms programs
         let bounds := (BitVec.ofInt width (-2048), BitVec.ofNat width 2047)
-        match Flapjack.Compiler.Backend.StackToLab.ExecutedCodec.mapCodec?
-            (Flapjack.Compiler.Backend.StackToLab.Production.removedSection?
-              removeConfig.jump bounds removeConfig.stackPointer) programs with
+        match initializedRuntimeLab? removeConfig.jump bounds
+            removeConfig.stackPointer stackFunctionFirstLabel registerCount programs with
         | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
-        | some lab => match compileLabProgramLinkedWithPancakeRuntime context lab with
+        | some lab => match compileLabProgramLinkedWithNativeInitialization context lab with
           | some sections => .ok sections
           | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
 
