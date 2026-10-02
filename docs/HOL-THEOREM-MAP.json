@@ -63597,5 +63597,41 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-02 full original4653-4684 statement and all quantified/free-variable types freshly captured in lab_to_target_code_nop_encoding_probe.out. Full arbitrary enc/labs/ffis/nop/code/pos native Section/Line/Spt/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers and fixed word8 bytes retained, sole positive word dimension words_as_type_indexed_bitvec translation. All seven original whole-code guards retained: positive NOP, identity enc Skip, conditional NOP length!=1 implies EVERY secAligned and EVERY secLabelZero, EVERY secLabelOne, original allLengthLeq, EVERY full bounded secLabelPrefixZero, actual allEncd. Conclusion full actual allEncWithNop of actual padCode including all original line/empty section clauses, not a weaker length property or successful-output/callback assumption. Native allLengthLeq retains equivalent EVERY secLengthLeq from source definition. Kernel induction over sections uses full one-byte/all-label prefix and full positive aligned all-label section laws, original physical/annotation padding length laws and full two-conjunct allEncWithNop_alt. Proves padded physical section sum equals original annotation sum before consuming IH at the actual next section position; no extra post-result or sum premise. Ten fresh original/native observations and four actual full theorem instances cover one-byte permitted later label1 insertion, multibyte alignment/zero-label branch, offset-sensitive later Halt sections, full stored-word/bytes/annotation/section-ID tuples and per-section physical lengths, empty code and empty sections. HOL prefix observations rewritten only by original full prefix-cons law and checked empty-list source lemma. Full arbitrary-width original statement consumer checked. Genuine .107/.109/.99 dependencies and direct original loop use6042 retained. No production body or trusted-user HD/EL hold changes; full remove_labels_loop and compiler-to-machine/end-to-end correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryReads.lean",
+    "lean_name": "memoryFun2SetImpRead",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "memory_fun2set_IMP_read",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.2: full original read/load statement with exact hypothesis and conclusion orientation. Canonical full separation predicates, generic memoryHOL and paired fun2Set, not finite arrays or a partial heap evaluator. Target domain/read/load facts are derived, not assumed. Fresh original complete quantified statements/types/kernel proof9rows and native Lean kernel proofs cover full original results. No finite-domain, injectivity, heap-wf, address bounds, evaluator callback, output-success or supplied target memory correspondence premise. Original273-278 has independent arbitrary address alpha and payload beta, memoryfunctions alpha->beta, source/target domain predicates alpha->bool, arbitrary complete frame predicate on pair sets, and arbitrary address. Lean preserves both generic types, full frame/whole targetfun2Set hypothesis AND source-domain membership, and target-domain membership AND target memory=source memory conclusion. Proof extracts actual STAR split, transports source graph pair through partition union, applies exact generic fun2SetThm. No representation qualifier is needed for these predicate sets or function graph carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryReads.lean",
+    "lean_name": "stateRelRead",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_read",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.2: full original read/load statement with exact hypothesis and conclusion orientation. Canonical full separation predicates, generic memoryHOL and paired fun2Set, not finite arrays or a partial heap evaluator. Target domain/read/load facts are derived, not assumed. Fresh original complete quantified statements/types/kernel proof9rows and native Lean kernel proofs cover full original results. No finite-domain, injectivity, heap-wf, address bounds, evaluator callback, output-success or supplied target memory correspondence premise. Actual imported StackSemStateFiniteExact and StackSemStateOps.memLoad, positive word width with NeZero, independent C/F Type0, exact WordLocW payload. Relation qualifier covers actual three canonical finite maps, code staysSpt and memory/domain remain functions/predicates; same-module canonical witness reexports genuine state codec roundtrips. Boolean domain=true renders original predicate sets. Original280-287 fullstateRel AND address in source mdomain imply target mdomain membership AND target.memory address=source.memory address. Proof examines actual reserved base-register case from whole relation, excludes NONE/Loc by original relation, extracts all four nested STAR partitions from original five-assertion left-associated heap, then transports source-memory graph pair through every union to exact targetfun2Set. Does not assume a pre-separated frame or target read."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryReads.lean",
+    "lean_name": "stateRelMemLoadImp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_mem_load_imp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.2: full original read/load statement with exact hypothesis and conclusion orientation. Canonical full separation predicates, generic memoryHOL and paired fun2Set, not finite arrays or a partial heap evaluator. Target domain/read/load facts are derived, not assumed. Fresh original complete quantified statements/types/kernel proof9rows and native Lean kernel proofs cover full original results. No finite-domain, injectivity, heap-wf, address bounds, evaluator callback, output-success or supplied target memory correspondence premise. Actual imported StackSemStateFiniteExact and StackSemStateOps.memLoad, positive word width with NeZero, independent C/F Type0, exact WordLocW payload. Relation qualifier covers actual three canonical finite maps, code staysSpt and memory/domain remain functions/predicates; same-module canonical witness reexports genuine state codec roundtrips. Boolean domain=true renders original predicate sets. Original621-636 fullstateRel AND actual mem_load source=SOME value imply actual target mem_load sameSOME value. Source Bool domain=false contradicts original success; domain=true gives original source value equality, full stateRelRead supplies target domain and exact value, then native domain-checked memLoad returns samevalue. No target success/equality premise or word-only value restriction."
   }
 ]

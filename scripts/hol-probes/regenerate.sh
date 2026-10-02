@@ -5073,3 +5073,6 @@ run_probe word_to_stack_reg_instructions_probeScript.sml word_to_stack_reg_instr
 run_probe lab_to_target_code_nop_encoding_probeScript.sml lab_to_target_code_nop_encoding_probe.out \
   all_enc_with_nop_pad_code all_enc_with_nop_pad_code_types singlebyte_full_guards singlebyte_full_encoding singlebyte_full_tuple singlebyte_section_lengths multibyte_full_guards multibyte_full_encoding multibyte_full_tuple multibyte_section_lengths empty_code only_empty_sections \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_memoryreads_probeScript.sml stack_remove_memoryreads_probe.out \
+  mr_graph mr_graph_types mr_graph_proved mr_read mr_read_types mr_read_proved mr_load mr_load_types mr_load_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
