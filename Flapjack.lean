@@ -52,6 +52,7 @@ import Flapjack.Compiler.Backend.LabToTarget.SectionLength
 import Flapjack.Byte
 import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
+import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
 import Flapjack.Compiler.Backend.StackLang.ProductionWordBoundary

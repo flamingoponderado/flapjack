@@ -55368,5 +55368,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.4), stack_allocProofScript.sml:2680-2803 word_gen_gc_partial_move_code_thm: all hypotheses in HOL order (word_gen_gc_partial_move conf (w,i,pa,old,m,dm,gs,rs) = (w1,i1,pa1,m1,T); the shift/dimindex/len_size bounds; !w. w << word_shift = w * bytes_in_word; FLOOKUP CurrHeap; use_store; memory/mdomain; good_dimindex; 0,1,2 IN FDOM; get_var 3/4/5; FLOOKUP Temp 0w/Temp 1w = gs/rs; HOL's duplicated 1,2 IN FDOM and 6 IN FDOM) with free variables implicit, and the conclusion ?ck r0 r1 r2 r6 with the seven-register |++. Covers Loc, untagged word, the gs/rs window (both outside cases) and the forwarding/copy cases inside it via memcpy_code_thm, over the exact StackSem evaluate. Temp n as WordStore.temp (n#5), dimindex as width, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_add_clock",
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateAddClock.lean",
+    "lean_name": "evaluateAddClock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-on4w), stackPropsScript.sml:495-534 evaluate_add_clock: !p s r s'. evaluate (p,s) = (r,s') /\\ r <> SOME TimeOut ==> evaluate (p, s with clock := s.clock + extra) = (r, s' with clock := s'.clock + extra), with the free extra as the outermost binder, the conjunctive premise kept as one /\\ hypothesis and no other premise, over the tagged exact StackSem evaluate (EvaluateDef.lean). Proved for all 34 evaluate_def clauses by induction on HOL's clock-first lexicographic measure, using the existing inst/alloc/store_const_sem/sh_mem_op/word_exp with_const and const lemmas. 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
