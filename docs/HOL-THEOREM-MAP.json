@@ -58120,5 +58120,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:666: fresh complete original statements in target_next_cases_probe.out; same three conjuncts: PC outside program DIFF FFI entries, not halt, at cache PC. Same ptr/len register word payloads, pre and cache oracle0 post, only ccacheInterfer shifted1 in returned configuration, original FFI unchanged. Predicate negation of program membership and not FFI list membership is literal set-DIFF nonmembership, no extra guard. Native generic MachineConfig/InterferenceApp/HolFfiState state/projection/σ : Type, positive width NeZero, fixed word8 byte lists and native MlString ExtCall name retained; no String substitution or index bound. Original proof nextInterferenceIntro finiteclock1 and full literal search/applyOracle; native kernel81jobs zero warnings. EL provenance source112-211: holEl ffi_names keeps in-range list element and shared opaque holHdNil/holArb out of range; ExtCall equation assumes the same total EL identity, does not add bounds or fallback. No executed compiler body/routing change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/NextMapped.lean",
+    "lean_name": "nextInterferenceMappedRead",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "next_interference_MappedRead",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:685: fresh complete original statement in target_next_mapped_probe.out. All ten original conjuncts retained: nonprogram/FFI-entry PC, not halt/cache, findIndex, total EL SharedMem operator, ALOOKUP nb/Addr r off/reg/pc metadata, zero-nb alignment implication modulo width/8, shared domain, valid mapped instruction, actual callFFI return with wordToBytes address false. Native predicate negation of program membership and not FFI-list membership is literal DIFF nonmembership. Exact application index/bytes/pre/oracle0 post, only ffiInterfer shifted1 in returned config, actual newFfi. Full generic native MachineConfig/HolFfiState state/projection/σ : Type with positive width NeZero, word8 byte lists and machine BitVec width; no width>=8 or indexbounds/extra guard. Kernel81jobs zero warnings. EL provenance: holEl ffi_names keeps in-range list element and shared opaque holHdNil/holArb out of range; same total EL equality assumed as HOL, no fallback or added bounds. No executed compiler body/routing change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/NextMapped.lean",
+    "lean_name": "nextInterferenceMappedWrite",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "next_interference_MappedWrite",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:712: fresh complete original statement in target_next_mapped_probe.out. All ten original conjuncts retained: nonprogram/FFI-entry PC, not halt/cache, findIndex, total EL SharedMem operator, ALOOKUP nb/Addr r off/reg/pc metadata, zero-nb alignment implication modulo width/8, shared domain, valid mapped instruction, actual callFFI return with conditional full wordToBytes or wordToBytesAux nb.toNat of data register followed by address bytes, as source let-bound w. Native predicate negation of program membership and not FFI-list membership is literal DIFF nonmembership. Exact application index/bytes/pre/oracle0 post, only ffiInterfer shifted1 in returned config, actual newFfi. Full generic native MachineConfig/HolFfiState state/projection/σ : Type with positive width NeZero, word8 byte lists and machine BitVec width; no width>=8 or indexbounds/extra guard. Kernel81jobs zero warnings. EL provenance: holEl ffi_names keeps in-range list element and shared opaque holHdNil/holArb out of range; same total EL equality assumed as HOL, no fallback or added bounds. No executed compiler body/routing change."
   }
 ]

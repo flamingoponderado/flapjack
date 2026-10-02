@@ -5003,3 +5003,7 @@ Native counterparts are in `TargetProps/PositionLaws.lean`.
 `target_position_tail_probeScript.sml` captures complete original
 `interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
 checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
+
+`target_next_mapped_probeScript.sml` captures the complete original
+`next_interference_MappedRead` and `next_interference_MappedWrite` statements
+with no open hypotheses. Native ports are in `TargetProps/NextMapped.lean`.

@@ -10,6 +10,7 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionTail
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchConst
 import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
 import Flapjack.Compiler.Backend.Semantics.TargetProps.NextCases
+import Flapjack.Compiler.Backend.Semantics.TargetProps.NextMapped
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchMono
 import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
 import Flapjack.Compiler.Backend.Semantics.TargetProps.CalleeSaved

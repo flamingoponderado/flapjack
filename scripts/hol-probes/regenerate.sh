@@ -4519,3 +4519,7 @@ run_probe init_memory_probeScript.sml init_memory_probe.out \
 run_probe mmio_index_probeScript.sml mmio_index_probe.out \
   mmio_full_def mmio_type mmio_empty mmio_0 mmio_1 mmio_2 mmio_00 mmio_01 mmio_02 mmio_10 mmio_11 mmio_12 mmio_20 mmio_21 mmio_22 mmio_000 mmio_001 mmio_002 mmio_010 mmio_011 mmio_012 mmio_020 mmio_021 mmio_022 mmio_100 mmio_101 mmio_102 mmio_110 mmio_111 mmio_112 mmio_120 mmio_121 mmio_122 mmio_200 mmio_201 mmio_202 mmio_210 mmio_211 mmio_212 mmio_220 mmio_221 mmio_222 \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_next_mapped_probeScript.sml target_next_mapped_probe.out \
+  next_mapped_read_full_statement next_mapped_write_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
