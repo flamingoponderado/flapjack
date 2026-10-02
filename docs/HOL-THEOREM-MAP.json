@@ -62650,5 +62650,20 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-b source comparison 2026-10-02, original stack_allocProofScript.sml:4124-4241: full binder order and four curried premise groups, free conf/gs/rs implicit; all shift/width/lenSize/goodDimindex, store, memory/domain and register hypotheses preserved. Exact StackSem evaluate existential clock, memory m2 and nine-register update (register8 Word pa2); store unchanged. Complete fuel induction follows original empty/data-bit/pointer-list cases using native partial-list theorem and evaluateAddClock, no supplied target evaluation. Fresh original HOL typed capture confirms unused existential t0:delta,t1:epsilon, retained as independently arbitrary D/E with Nonempty instances; main source-review policy agmsg2026-10-02T10:04:33Z confirms standard HOL inhabited-type interpretation, not additional operational premise/qualifier. Canonical actual StackSemStateFiniteExact regs/fpRegs/store codec witness; positive-width BitVec NeZero. Seven original concrete EVAL observations; no claimed concrete oracle for unspecified theWord(Loc). Inst evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts, not an independent review of all dependencies."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+  "hol_name": "word_gen_gc_move_refs_code_thm",
+  "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenGcMoveRefs.lean",
+  "lean_name": "word_gen_gc_move_refs_code_thm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "regs",
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-b source comparison 2026-10-02 original stack_allocProofScript.sml:4243-4345: full quantified binder order, free conf implicit, unused c1 Boolean retained, all four curried premise groups in original order including Temp0/1 domain, Temp2/3/4 values, register0 bound and registers1..8. No good_dimindex extra premise. Exact evaluate conclusion existential clock, six register witnesses and two store witnesses, memory m2, Temp0..3 updates, register0 Word r1a1 and register8 Word r2a2, all other fields preserved. Source complete induction follows original empty interval/fuel contradiction/header-load+length/native word_gen_gc_move_list_code_thm/Get0 Temp4/IH/evaluate_add_clock; proves Temp4 survives four-temp updates and clocks/threaded finite-map equalities directly, no supplied target result. Native positive-width BitVec NeZero and actual canonical StackSemStateFiniteExact regs/fpRegs/store with codec witness. Fresh original full typed statement and five determinate EVAL observations, kernel replays; no unspecified nonword oracle claim. Exact evaluator Inst closure inherits SOUNDNESS item8 reals_as_rational_cuts, not source acceptance of arbitrary dependencies."
 }
 ]

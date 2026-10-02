@@ -4980,3 +4980,8 @@ run_probe misc_take_flat_replicate_probeScript.sml misc_take_flat_replicate_prob
 run_probe lab_to_target_nop_padding_probeScript.sml lab_to_target_nop_padding_probe.out \
   enc_with_nop_pad_bytes_length enc_with_nop_pad_bytes_length_types enc_with_nop_pad_bytes enc_with_nop_pad_bytes_types base_multibyte base_empty_nop generic_nat_padding generic_bool_padding zero_target empty_initial_extended target_mod_guard_required initial_mod_guard_required nop_identity_guard_required \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_alloc_gen_refs_statement_probeScript.sml stack_alloc_gen_refs_statement_probe.out \
+  gen_refs_free_vars gen_refs_full_typed_statement gen_refs_empty gen_refs_fuel_zero \
+  gen_refs_zero_payload gen_refs_small_field gen_refs_missing_domain \
+  "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
