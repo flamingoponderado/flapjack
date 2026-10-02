@@ -5820,3 +5820,13 @@ retains independent arbitrary address/payload types and permits infinite
 domains. Native read/load use the actual full state relation and derive target
 domain/value facts through all five separated heap assertions. No target
 read/load or partial representation is supplied as a premise.
+
+### Complete native StackRemove expression simulation
+
+`stack_remove_wordexp_simulation_probeScript.sml` captures the exported original
+`state_rel_word_exp`, then kernel-replays its complete explicitly quantified
+statement using that original theorem. Full binder types are recorded. The
+Lean theorem independently proves all six constructors and uses a genuine
+nested-list induction for every Op operand, exact native domain-checked Loads
+and both Shift children. No successful target expression or callback is a
+premise. Instruction simulation and full pass assembly remain separate work.

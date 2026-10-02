@@ -5059,3 +5059,7 @@ run_probe stack_remove_stateupdates_probeScript.sml stack_remove_stateupdates_pr
 run_probe stack_remove_memoryreads_probeScript.sml stack_remove_memoryreads_probe.out \
   mr_graph mr_graph_types mr_graph_proved mr_read mr_read_types mr_read_proved mr_load mr_load_types mr_load_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_wordexp_simulation_probeScript.sml stack_remove_wordexp_simulation_probe.out \
+  we_source we_statement we_types we_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
