@@ -5627,6 +5627,12 @@ run_probe lab_to_target_computed_label_positions_probeScript.sml lab_to_target_c
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_remove_labels_correctness_probeScript.sml lab_to_target_remove_labels_correctness_probe.out \
+  remove_labels_thm remove_labels_thm_types hypotheses \
+  empty stale_asm labels_only halt call_reject acc_preserve two_byte width1_large width80_large \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_initial_encoding_preconditions_probeScript.sml lab_to_target_initial_encoding_preconditions_probe.out \
   all_enc_ok_pre_enc_sec_list all_enc_ok_pre_enc_sec_list_types hypotheses empty label asm_stale labasm \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \

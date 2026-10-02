@@ -1988,6 +1988,12 @@
       "sha256": "7bf59ae9deca13d13db4726488c56950ddf0f5b354e0fcc03258211230e581de"
     },
     {
+      "bytes": 1853,
+      "out": "lab_to_target_remove_labels_correctness_probe.out",
+      "rows": 12,
+      "sha256": "7eae8517e6610bc9c114fb11470d83c6296db1fc296ef8c41f581cce62ec3dbc"
+    },
+    {
       "bytes": 2027,
       "out": "lab_to_target_remove_labels_loop_probe.out",
       "rows": 11,
