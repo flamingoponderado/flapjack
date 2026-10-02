@@ -1,0 +1,12 @@
+ALOOKUP_section_labels_ignore=∀(pos :num) (lines :α line list) (acc :(num # num) list).
+  ¬MEM (n2 :num) (MAP (SND :num # num -> num) (extract_labels lines)) ⇒
+  ALOOKUP (SND (section_labels pos lines acc)) n2 = ALOOKUP acc n2
+ALOOKUP_section_labels_ignore_types=(pos :num)::num;(lines :α line list)::α line list;(acc :(num # num) list)::(num # num) list;(n2 :num)::num;
+ALOOKUP_section_labels_ignore_hypotheses=0
+empty_duplicate_acc=T
+missing_key=T
+arbitrary_annotations=T
+guard_needed=T
+zero_query=T
+width1=T
+width80=T

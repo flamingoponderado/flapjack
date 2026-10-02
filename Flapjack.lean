@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPreservation
+import Flapjack.Compiler.Backend.LabProps.LabelExtractionValidity
 import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
 import Flapjack.RiscV.L3.Defs.MMU.Exception
 import Flapjack.Misc.Words.Formatting

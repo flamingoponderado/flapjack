@@ -5518,3 +5518,15 @@ run_probe lab_to_target_sec_pos_zero_probeScript.sml lab_to_target_sec_pos_zero_
   empty_guard_false all_labels_none zero_labels_asm zero_labels_labasm asm_unrestricted_annotation zero_guard_needed physical_not_annotation width1_large_pos width80_large_pos \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_section_lookup_ignore_probeScript.sml lab_to_target_section_lookup_ignore_probe.out \
+  ALOOKUP_section_labels_ignore ALOOKUP_section_labels_ignore_types ALOOKUP_section_labels_ignore_hypotheses \
+  empty_duplicate_acc missing_key arbitrary_annotations guard_needed zero_query width1 width80 \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe labprops_extraction_validity_probeScript.sml labprops_extraction_validity_probe.out \
+  sec_label_ok_extract_labels sec_label_ok_extract_labels_types sec_label_ok_extract_labels_hypotheses \
+  empty mixed wrong_owner zero_rejected width1 width80 \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"

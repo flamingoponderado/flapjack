@@ -66277,5 +66277,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: complete original sec_pos_val_0 4061-4066 and full typed/null-hypothesis capture. Exact NOT EVERY is_Label and EVERY label_zero conjunction, actual sec_pos_val at instruction index0 returning SOME initial Nat position. Arbitrary Nat position and native positive word dimension retained; words_as_type_indexed_bitvec only translates actual native carriers. No nonempty, encoding-validity, successful evaluation or supplied position result guard; empty/all-label exclusion follows only from original classifier guard. Actual label physical length zero derived from original label_zero; Asm/LabAsm annotations, encoded bytes and payloads unrestricted. Same literal constructor induction, no total HD/EL or opaque default. Child of PositionValues imports the existing labelZero owner PositionAppend, avoiding a dependency cycle or duplicate definition. Fresh original9 observations and identical native kernel replays include empty/all-label NONE, both instruction constructors, arbitrary annotation, needed zero-label guard/physical-vs-annotation sentinel, widths1/8/80 and >64-bit positions; full generic and genuine arbitrary-position consumers discharge original premises. This is a prerequisite of full ALOOKUP_section_labels and lab_lookup_compute_labels_test; no full location/machine/end-to-end theorem or HOL-to-Lean equivalence proof is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionLookupPreservation.lean",
+    "lean_name": "sectionLabels_lookup_ignore",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "ALOOKUP_section_labels_ignore",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: complete original ALOOKUP_section_labels_ignore 5278-5286: exact sole nonmembership guard over MAP SND extract_labels; full equality of actual section_labels accumulator ALOOKUP at the arbitrary key. Arbitrary Nat position, fixed List(Nat times Nat) accumulator including duplicate keys, and complete native Line carrier retained. Literal constructor induction, original zero-label filtering and recorded annotation position arithmetic; no encoding validity, freshness, target success, or desired-lookup premise. Fresh original7/native7 observations include absent keys, duplicate accumulator, arbitrary annotations, required nonmembership counterexample, zero query, widths1/8/80 and unbounded positions; full generic and actual arbitrary-accumulator theorem consumers. Original full typed capture with zero open hypotheses. words_as_type_indexed_bitvec only translates the actual native word dimension; all other carriers constructor-for-constructor. Proper original-script counterpart placement; no unguarded HD/EL, opaque default or hold change. Prerequisite of full ALOOKUP_section_labels; no full location/machine/end-to-end completion or cross-language equivalence proof claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/LabelExtractionValidity.lean",
+    "lean_name": "secLabelOk_extractLabels",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "sec_label_ok_extract_labels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: complete original sec_label_ok_extract_labels 1270-1277: both original EVERY(sec_label_ok n1) and MEM(n1prime,n2) extract_labels guards, both original owning-section equality and nonzero-ID result conjuncts. All Nat binders and full native Line carrier retained; no annotation-length, distinctness, success or target-result premise. Literal constructor induction, exact source extraction and sec_label_ok definitions. Fresh original6/native6 observations include arbitrary duplicate labels/annotations and both instruction constructors, wrong-owner/zero-ID guards, widths1/8/80 and unbounded identifiers; full generic and actual arbitrary-label-length theorem consumers. Original full typed capture with zero open hypotheses. words_as_type_indexed_bitvec only translates the actual native word dimension; all other carriers constructor-for-constructor. Proper original-script counterpart placement; no unguarded HD/EL, opaque default or hold change. Prerequisite of full ALOOKUP_section_labels; no full location/machine/end-to-end completion or cross-language equivalence proof claimed."
   }
 ]
