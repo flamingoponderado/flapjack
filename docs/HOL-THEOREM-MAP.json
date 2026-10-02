@@ -66348,5 +66348,86 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-stack-atomic-clocks): full original sh_mem_op_clock at stackSem1033-1077. Exact native operation, source returned Option/pair equality premise and post.clock<=source.clock conclusion, arbitrary state/config/FFI/word dimensions. No callback clock assumption, program restriction, target success or added premise. Canonical finite-support regs/fpRegs/store and positive type-indexed word translation only; code Spt and stacks List remain unchanged. Same-module witness reexports actual imported native carrier codec. Native field-preservation helpers are stronger independently checked facts used in proof; statement is original inequality. Literal original proof replay PASS."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExtractLabels.lean",
+    "lean_name": "extractLabels",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "extract_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02: complete source771-787 five clauses on reviewed HolProg with shared positive word dimension. Both optional tuple arities, return/handler label-before-body ordering, duplicates and ignored NONE-return handler retained; target/immediate/instruction/mlstring payloads ignored exactly as source. No finite map/list-array/default substitution. Fresh original56 ordered list observations at widths1/8/64/80 independently kernel replayed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ExtractLabelsHelpers.lean",
+    "lean_name": "stackMoveNoLabs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_no_labs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10760-10802 helper statement on actual native helper and ordered native StackProps extractor. Original label-free premise only for stack_move_no_labs; all other results unconditional. Arbitrary continuation, natural counts/frame values and independent copy_ret return-list/frame-tail carriers retained. Flapjack equality-strengthening infrastructure is untagged. Five complete original proofs freshly replayed with hyp=[];108 independent full-label observations at widths1/8/64/80 kernel replayed. No semantic move simulation or full compiler claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ExtractLabelsHelpers.lean",
+    "lean_name": "copyRetAuxLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "extract_labels_copy_ret_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10760-10802 helper statement on actual native helper and ordered native StackProps extractor. Original label-free premise only for stack_move_no_labs; all other results unconditional. Arbitrary continuation, natural counts/frame values and independent copy_ret return-list/frame-tail carriers retained. Flapjack equality-strengthening infrastructure is untagged. Five complete original proofs freshly replayed with hyp=[];108 independent full-label observations at widths1/8/64/80 kernel replayed. No semantic move simulation or full compiler claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ExtractLabelsHelpers.lean",
+    "lean_name": "copyRetLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "extract_labels_copy_ret",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10760-10802 helper statement on actual native helper and ordered native StackProps extractor. Original label-free premise only for stack_move_no_labs; all other results unconditional. Arbitrary continuation, natural counts/frame values and independent copy_ret return-list/frame-tail carriers retained. Flapjack equality-strengthening infrastructure is untagged. Five complete original proofs freshly replayed with hyp=[];108 independent full-label observations at widths1/8/64/80 kernel replayed. No semantic move simulation or full compiler claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ExtractLabelsHelpers.lean",
+    "lean_name": "stackLoadSkipLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "extract_labels_wStackLoad_Skip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10760-10802 helper statement on actual native helper and ordered native StackProps extractor. Original label-free premise only for stack_move_no_labs; all other results unconditional. Arbitrary continuation, natural counts/frame values and independent copy_ret return-list/frame-tail carriers retained. Flapjack equality-strengthening infrastructure is untagged. Five complete original proofs freshly replayed with hyp=[];108 independent full-label observations at widths1/8/64/80 kernel replayed. No semantic move simulation or full compiler claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ExtractLabelsHelpers.lean",
+    "lean_name": "stackMoveAllocLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "extract_labels_stack_move_StackAlloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10760-10802 helper statement on actual native helper and ordered native StackProps extractor. Original label-free premise only for stack_move_no_labs; all other results unconditional. Arbitrary continuation, natural counts/frame values and independent copy_ret return-list/frame-tail carriers retained. Flapjack equality-strengthening infrastructure is untagged. Five complete original proofs freshly replayed with hyp=[];108 independent full-label observations at widths1/8/64/80 kernel replayed. No semantic move simulation or full compiler claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ExtractLabelsCompiler.lean",
+    "lean_name": "wordToStackLabPres",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_lab_pres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10803-10943 ordered-label chain. All comp constructor cases, both performance flags, exact return/handler order, duplicate labels and ignored NONE-return handlers retained. Recursion follows actual compNative induction and exact threaded bitmap states, no public IH/target predicate/result premise. List compilation retains original output alias including full residual frames/bitmaps and original EVERY owner/nonzero/nonone/ALL_DISTINCT source guard, rendered equivalent List membership quantification/Nodup; top false-perf compile proves exact stub-prefixed keys and guard for both complete native stubs plus all bodies. Stronger private projection equations are untagged Flapjack organization. Fresh original three theorem statements hyp=[] and312 independent complete label projections of comp/list/top at widths1/8/64/80, both flags, duplicate IDs/labels, nested/ignored handlers,70bit metadata and bitmap threading kernel-replayed separately from generic theorem applications. All three use only standard propext/Classical.choice/Quot.sound axioms. No semantic compiler simulation/cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ExtractLabelsCompiler.lean",
+    "lean_name": "compileWordToStackLabPres",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_lab_pres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10803-10943 ordered-label chain. All comp constructor cases, both performance flags, exact return/handler order, duplicate labels and ignored NONE-return handlers retained. Recursion follows actual compNative induction and exact threaded bitmap states, no public IH/target predicate/result premise. List compilation retains original output alias including full residual frames/bitmaps and original EVERY owner/nonzero/nonone/ALL_DISTINCT source guard, rendered equivalent List membership quantification/Nodup; top false-perf compile proves exact stub-prefixed keys and guard for both complete native stubs plus all bodies. Stronger private projection equations are untagged Flapjack organization. Fresh original three theorem statements hyp=[] and312 independent complete label projections of comp/list/top at widths1/8/64/80, both flags, duplicate IDs/labels, nested/ignored handlers,70bit metadata and bitmap threading kernel-replayed separately from generic theorem applications. All three use only standard propext/Classical.choice/Quot.sound axioms. No semantic compiler simulation/cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ExtractLabelsCompiler.lean",
+    "lean_name": "wordToStackCompileLabPres",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_compile_lab_pres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10803-10943 ordered-label chain. All comp constructor cases, both performance flags, exact return/handler order, duplicate labels and ignored NONE-return handlers retained. Recursion follows actual compNative induction and exact threaded bitmap states, no public IH/target predicate/result premise. List compilation retains original output alias including full residual frames/bitmaps and original EVERY owner/nonzero/nonone/ALL_DISTINCT source guard, rendered equivalent List membership quantification/Nodup; top false-perf compile proves exact stub-prefixed keys and guard for both complete native stubs plus all bodies. Stronger private projection equations are untagged Flapjack organization. Fresh original three theorem statements hyp=[] and312 independent complete label projections of comp/list/top at widths1/8/64/80, both flags, duplicate IDs/labels, nested/ignored handlers,70bit metadata and bitmap threading kernel-replayed separately from generic theorem applications. All three use only standard propext/Classical.choice/Quot.sound axioms. No semantic compiler simulation/cross-language equivalence claim."
   }
 ]
