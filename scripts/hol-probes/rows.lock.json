@@ -8162,6 +8162,12 @@
       "sha256": "313c2f8732304142dac6d1acc9dccbe078c6c03d195332a82476342d82b0aa2c"
     },
     {
+      "bytes": 614,
+      "out": "word_to_stack_top_label_safety_probe.out",
+      "rows": 14,
+      "sha256": "723beba0bb3ec0543faba93d5521fdb9afef6f6e6abdc895d9229ce00f1d35c2"
+    },
+    {
       "bytes": 183,
       "out": "word_to_stack_unreach_codec_probe.out",
       "rows": 16,

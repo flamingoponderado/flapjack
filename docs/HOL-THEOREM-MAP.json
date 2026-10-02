@@ -67417,5 +67417,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: Source7302 complete c/labs/ffis/p/code plus independent free pc/suffix binders. Sole complete prefix all_enc_ok at independent p guard; exact shifted logical PC and LENGTH(prog_to_bytes code) physical byte result. Arbitrary suffix including malformed labels preserved. Actual full byte-length law derives physical length, not assumed. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Source pos_val uses line_length nonzero-label one-step marker whereas prog_to_bytes drops labels; validity is needed only in the original suffix law to relate those quantities. Fresh original fulltypes zero hypotheses and eight closed original/native cases, full generic fixtures and actual arbitrary-suffix/PC/start consumers. Kernel checking and original regressions supplement source review, not cross-language equivalence or full compiler simulation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_good_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/TopLabelSafety.lean",
+    "lean_name": "wordToStackGoodCodeLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead flapjack-sol2-top-label-safety: 11846-11868: full four-component compile asm_conf F progs equation and good_code_labels only; arbitrary external sets, no generated-stub membership premises. Both stub entries are owned by the returned program. Source false flag retained literally; actual compileNative, reviewed exact AsmConfigExact/WordLangProgHOL/HolProg and native Config, lists, Nat indices and sets retained. Only original word dimension translated to positive-width BitVec width/NeZero. Proof derives target safety from accepted full compiled-label bound and key preservation; no target predicate, target run, stronger source assumption or supplied simulation. Full literal original HOL proof replay plus independent actual compiler boundary propositions and Lean kernel replay. Regression evidence is not a cross-language equivalence proof; full compiler correctness remains unfinished."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_good_handler_labels",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/TopLabelSafety.lean",
+    "lean_name": "wordToStackGoodHandlerLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead flapjack-sol2-top-label-safety: 11903-11933: EVERY source good_handlers followed by the full four-component compile asm_conf F prog equation; exact stack_good_handler_labels conclusion, no source code-label safety premise. Source false flag retained literally; actual compileNative, reviewed exact AsmConfigExact/WordLangProgHOL/HolProg and native Config, lists, Nat indices and sets retained. Only original word dimension translated to positive-width BitVec width/NeZero. Proof derives target safety from accepted full compiled-label bound and key preservation; no target predicate, target run, stronger source assumption or supplied simulation. Full literal original HOL proof replay plus independent actual compiler boundary propositions and Lean kernel replay. Regression evidence is not a cross-language equivalence proof; full compiler correctness remains unfinished."
   }
 ]
