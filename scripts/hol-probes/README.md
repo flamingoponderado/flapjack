@@ -4829,3 +4829,9 @@ kernel theorem specialization at LongMul, its full six-premise simulation and
 complete native state/register/SSA/table types. Source opcode7943–8004 and
 actual physical input/output moves are manually compared; no standalone tactic
 replay of the fragment is claimed.
+
+`ssa_cc_trans_correct_inst_longdiv_probeScript.sml` captures the original
+kernel theorem specialization at LongDiv and complete state/register/SSA/table
+carriers. Full six-premise simulation, physical input/output moves and mapped
+divisor preservation are manually compared to opcode7998–8030; no standalone
+tactic replay is claimed.

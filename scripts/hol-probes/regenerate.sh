@@ -4366,3 +4366,7 @@ run_probe target_search_mono_probeScript.sml target_search_mono_probe.out \
 run_probe target_next_interference_probeScript.sml target_next_interference_probe.out \
   next_intro_full_statement next_shift_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe ssa_cc_trans_correct_inst_longdiv_probeScript.sml ssa_cc_trans_correct_inst_longdiv_probe.out \
+  inst_longdiv_full inst_longdiv_type_st inst_longdiv_type_cst inst_longdiv_type_dst inst_longdiv_type_src inst_longdiv_type_left inst_longdiv_type_right inst_longdiv_type_divisor inst_longdiv_type_ssa inst_longdiv_type_next inst_longdiv_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
