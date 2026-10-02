@@ -5267,3 +5267,23 @@ single/double outputs and both branches of each rotate wrapper. The extra
 conditional and unreduced audit rows remain explicitly qualified above.
 
 `stack_initialized_boundary_probeScript.sml` captures40 original post-allocation compositions: stack_remove.compile ->stack_names.compile with riscv_names ->MAPprog_to_section. Positive dimensions1/8/32/64/80, both GC/jump settings, zero/huge heap bounds and start labels, zero/23 register pointers, empty/mixed input lists, duplicate section9 and reserved section0 are retained. The native executed list boundary checks each concrete section name/line count; its universal kernel recovery theorem recovers all decoded native section fields. Numeric projections use an explicit constructor case, not a symbolic pattern-lambda capture. Actual artifact prefix replacement remains on the parent production bead.
+
+`ssa_locals_delete_probe` captures the original generic deletion-left/right
+locals relation theorems6321–6350 and five inferred carrier types. Original
+premises and arbitrary alpha native Spt payloads are unchanged in
+`SSALocalsDelete.lean`. Source deletion only removes read obligations; physical
+target deletion preserves all SSA-image reads because ssa_map_ok excludes that
+register. Original proved theorem capture and manual source comparison, not
+a cross-language equivalence proof or isolated source tactic replay. Regenerate
+with `HOL_PROBE_ONLY=ssa_locals_delete_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cc_trans_correct_store_consts_probe` captures the original full theorem
+specialized to StoreConsts and nine inferred types, including the Boolean/word
+constant list. Original StoreConsts9608–9647 was manually compared with
+`SSASemanticStoreConsts.lean`: six premises and full simulation retained, actual
+scratch Move/store/fresh Move target execution derived, source/target deletions
+and physical insertions preserve provisional locals before two fresh assignments.
+Native constant flags, memory writes, domain checks and result/error branches are
+unchanged. Original proved theorem capture, not isolated tactic replay or
+equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_store_consts_probeScript.sml scripts/hol-probes/regenerate.sh`.

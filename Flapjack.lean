@@ -4,6 +4,8 @@ import Flapjack.Test.LabToTargetEncd0Parity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticBufferWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMove
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsForceRename
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStoreConsts
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsDelete
 import Flapjack.Test.LabToTargetLabelValidityParity
 import Flapjack.Test.LabToTargetSimilarLabelsParity
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateEq

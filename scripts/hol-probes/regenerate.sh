@@ -4697,3 +4697,10 @@ run_probe lab_to_target_simple_encoder_probeScript.sml lab_to_target_simple_enco
   enc_lines_again_simp_def enc_lines_again_simp_def_types enc_lines_again_simp_EQ enc_lines_again_simp_EQ_types enc_lines_again_simp_len enc_lines_again_simp_len_types \
   enc_lines_again_simp_signature empty_full shrink_full grow_full equal_word_full shrink_acc_true shrink_acc_false grow_acc_true shrink_lengths grow_lengths_differ invalid_annotations_full invalid_acc_position_full shifted_full wrapped_word_full unbounded_position_full \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe ssa_locals_delete_probeScript.sml ssa_locals_delete_probe.out \
+  delete_left_full delete_right_full delete_type_source delete_type_target delete_type_ssa delete_type_name delete_type_next \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_store_consts_probeScript.sml ssa_cc_trans_correct_store_consts_probe.out \
+  store_consts_full store_consts_type_tmp store_consts_type_address store_consts_type_offset store_consts_type_words store_consts_type_st store_consts_type_cst store_consts_type_ssa store_consts_type_next store_consts_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

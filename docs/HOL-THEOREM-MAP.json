@@ -59674,5 +59674,35 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original simple encoder3151-3194, coherent .87 and three declaration children. Fresh complete original definition with typed inner universal binders, direct function signature and unchanged literal local accumulator EQ and successful length-map proofs/types captured in lab_to_target_simple_encoder_probe.out. Native arbitrary positive-width HolAsm/Line and fixed word8 bytes, natural nested Spt labels and original HolFfiName retained; sole word qualifier. Definition retains all four constructor clauses, unchanged-word branch, actual encoder-at-offset/max-length rewrite and exact Bool flag conjunction. Full unconditional accumulator theorem retains arbitrary accumulator and input flag and derives complete output list, final annotated section length and conjoined flag. Full MAP line_len preservation keeps exactly original actual returned(res,T) premise, with no source validity, bounds, desired target output or result-invariant premise. Fourteen original/native observations include invalid byte/label annotations, both input flags, growing false-output counterexample proving success guard necessary, old-max and new-max full outputs, equal-word no-encoding branch, shifted position and width8 word wrap with unbounded Nat final position264. Sixteen native kernel fixtures/consumers include two complete arbitrary-width statements. Proof-side auxiliary is defined in the original proof script and not called by the original executed compiler; production continues to use reviewed accumulator encoder, whose full correspondence is proved here. No totalHD/EL/LOG2 or targetProps dependency; full loop/remove_labels/compile_correct remains separate open work."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_delete_left",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsDelete.lean",
+    "lean_name": "ssaLocalsRelDeleteLeft",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original deletionLeft theorem6321/6331, generic alpha source/target Spt and Nat SSA tree/key/bound confirmed by original theorem and fivecarriercapture. Left original localsrelation premise alone; right original mapOK/localsrelation/physicalkey3premises only. Conclusions exact native source/target delete, no extra treevalidity/domain/readsuccess/bounds premise. Kernel lookup_delete branches derive preserved source obligations or physical exclusion from SSA image respectively. Existing guarded THE selector independence applies under original source-domain conjunct. No word/fmap carrier translation or executable behavior change. Original source manually compared, original provedtheorem capture and Lean kernel PASS; isolated tactic replay not claimed. FullStoreConsts/fullSSA remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_delete_right",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsDelete.lean",
+    "lean_name": "ssaLocalsRelDeleteRight",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original deletionRight theorem6321/6331, generic alpha source/target Spt and Nat SSA tree/key/bound confirmed by original theorem and fivecarriercapture. Left original localsrelation premise alone; right original mapOK/localsrelation/physicalkey3premises only. Conclusions exact native source/target delete, no extra treevalidity/domain/readsuccess/bounds premise. Kernel lookup_delete branches derive preserved source obligations or physical exclusion from SSA image respectively. Existing guarded THE selector independence applies under original source-domain conjunct. No word/fmap carrier translation or executable behavior change. Original source manually compared, original provedtheorem capture and Lean kernel PASS; isolated tactic replay not claimed. FullStoreConsts/fullSSA remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticStoreConsts.lean",
+    "lean_name": "ssaCcTransCorrectStoreConsts",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original resumed StoreConsts9608-9647, unchanged six premises and complete Error-exempt source-permutation/result/fullframe/result-sensitive locals. Actual compiler scratch Move(4,addressSSA),(6,offsetSSA), StoreConsts0/2/4/6, and final Move(freshAddress,4),(freshOffset,6) target runs are proved from source reads transported by ssaLocalsRelGetVar. Original fix_clock_evaluate discharges Seq normalization without targetclock premise. Native memory-domain failure and missing/location reads use only sourceError exemption; successful constant writes preserve Boolean/word list and same source/target memory. Original source tmp1/tmp2 deletions, physical target0/2 deletions and4/6 insertions preserve provisional relation using original localsdelete/ignore lemmas, followed by offset next and address next+4 fresh assignments; allalias cases included. No targetrun/postlocals/newsuccess/IH premise. Native Nat registers, Bool/indexedword list, Spt SSA/table/state and Type0 code/FFI confirmed by original kernel specialization/ninecarriers. Canonical fpRegs/store finite-support and indexedwords qualifiers explicit; inherits reals_as_rational_cuts evaluator SOUNDNESS8. Originalsource manual comparison/HOLcapture/Lean kernel PASS; no isolated tactic replay claimed. FullSSA/end-to-end remain open."
   }
 ]
