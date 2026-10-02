@@ -1,3 +1,4 @@
+import Flapjack.Test.RegAllocGenericCarrierRepair
 import Flapjack.Test.BalancedMapBalanceLCorrectParity
 import Flapjack.Test.BalancedMapBalanceLEqParity
 import Flapjack.Test.BalancedMapRotateRParity
