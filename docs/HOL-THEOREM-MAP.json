@@ -66084,5 +66084,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-stack-size): genuine full original comp_correct StackSetSize2339-2377. Exact original source evaluation/nonError/full state relation/regBound premises and existential clock/native target/usual result branch conclusion. Actual native move/sub/rightshift GetSize and leftshift/move/add SetSize evaluated with clock0. GetSize inverse shift no-wrap derived from original heap upper bound and source stackSpace bound; SetSize preserves original strict count<stack length guard and shifted register write, derives exact pointer reconstruction and all26 relation conjuncts. Source disabled/missing/Loc/out-of-bounds errors handled. No target-success, shift/no-wrap, pointer result or postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains Spt, stack List. Inherited reals_as_rational_cuts from faithful total evaluator, with no local real operation in either case. Fresh literal original HOL constructor replays PASS."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Bitmap.lean",
+    "lean_name": "compCorrectBitmapLoad",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-bitmap-load): genuine full original comp_correct BitmapLoad2374-2419, exact original source evaluation/nonError/full state relation/regBound premises and existential clock/native target/usual result branch conclusion. Actual compiled native store-slot load/add/leftshift/bitmap load evaluated with clock0. Original source register alias, missing/Loc, strict bitmap bound and useStack guards preserved. Full relation supplies Word BitmapBase and target base lookup; original mem_load_lemma derives first read, bounded bitmap factor extraction through all separated heaps derives final target domain/read. Forward shift equality uses original goodDimindex, no invented no-wrap requirement. Full26 postrelation derives from original bounded register update. No target-success/read/domain/postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width words only; code Spt and bitmaps/stack List unchanged. Inherited reals_as_rational_cuts from faithful total evaluator with no local real operation. Literal original case plus local mem_load_lemma reproof replay PASS."
   }
 ]

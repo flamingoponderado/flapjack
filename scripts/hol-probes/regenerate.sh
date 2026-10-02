@@ -5480,3 +5480,7 @@ run_probe stack_remove_comp_get_size_probeScript.sml stack_remove_comp_get_size_
 run_probe stack_remove_comp_set_size_probeScript.sml stack_remove_comp_set_size_probe.out \
   css_statement css_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_bitmap_probeScript.sml stack_remove_comp_bitmap_probe.out \
+  cbl_statement cbl_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
