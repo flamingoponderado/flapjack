@@ -5627,6 +5627,13 @@ run_probe lab_to_target_computed_label_positions_probeScript.sml lab_to_target_c
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_encoding_validity_closure_probeScript.sml lab_to_target_encoding_validity_closure_probe.out \
+  all_enc_ok_append all_enc_ok_append_types all_enc_ok_append_hypotheses \
+  all_enc_ok_labs_mono all_enc_ok_labs_mono_types all_enc_ok_labs_mono_hypotheses \
+  append extended dropped_lookup wrong_position owner_not_guard new_and_preserved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_remove_labels_correctness_probeScript.sml lab_to_target_remove_labels_correctness_probe.out \
   remove_labels_thm remove_labels_thm_types hypotheses \
   empty stale_asm labels_only halt call_reject acc_preserve two_byte width1_large width80_large \

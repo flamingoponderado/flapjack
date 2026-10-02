@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetEncodingValidityClosureParity
 import Flapjack.Test.LabToTargetRemoveLabelsCorrectnessParity
 import Flapjack.Test.L3MmuTranslateAddrParity
 import Flapjack.Test.L3MmuTranslateParity
