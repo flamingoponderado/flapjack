@@ -63779,5 +63779,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.9: complete genuine Mem outerconstructor of state_rel_inst767-870, all8native opcodes and full HolAddr carrier. Original3premises fullstateRel/regBoundInst/actualnative sourceinstsuccess, originalEXISTS targetnativeinstsuccess/fullpostrelation. Effectiveaddress derives from accepted fullwordexp and originalbasebound; lowerregister value equality derived, accepts Word/Loc scalar values. Loads preserve full WordLoc result or original8/32 widening. Unsupported16sourcefailure excluded internally by source success. Scalar targetdomain/store success derived from fullread; byte/32targetmemory/store/relation derived from original existential store laws, no targetoutput premise. Actual native states/operators unchanged, allheap/frame assertions preserved, no finite/domain/frame/arithmetic assumption added. Canonical imported StackSemStateFiniteExact regs/fpRegs/store with genuine local broad/exact roundtrip witness; Spt code not named. NeZero/BitVec width, independent C/F Type0 retained. Wholeinst closure conservatively inherits reals_as_rational_cuts assumption despite nonFP memory execution; flag retained. Fresh full original Memcase/type/kernel replay and complete generic native proof checked. Fullparent FP/assembly stillrequired."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InstructionSimulation/FloatingPoint.lean",
+    "lean_name": "stateRelInstFp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.10: complete genuine FP outerconstructor case of originalstate_rel_inst767-870, all16opcodes, same3originalhyp fullrelation/regBoundInst/source nativeinstsuccess and EXISTS targetnativeinstsuccess/fullpostrelation. Actual StackSemInst.instHOL/instFp/native instFpRegister dispatch unchanged. Derive allFPoperand equality from original completefpRegs relation, derive lowerinteger transfer operands fromoriginalbound. Preserve native comparisons/arithmetic/Fma/sign/Sqrt/ToInt/FromInt/MovToReg/MovFromReg, conversion representability/width64/halfselection/NaN choices and ordered aliasedupdates. No output/rounding/inputword/width/representation/frame premise added. Actual canonical imported StackSemStateFiniteExact regs/fpRegs/store owner and local genuine broad/exact roundtrip witness; Spt code not named. Width NeZero/BitVec and independent C/F Type0 retained. Wholeinst closure inherits reals_as_rational_cuts assumption, explicitly retained and documented beside theorem; no cross-language real equivalence claimed. Freshfulloriginal FPcase/types/kernel replay and fullnativegeneric16caseproof checked. Fullinstruction parent stillneeds genuine allconstructor assembly."
   }
 ]

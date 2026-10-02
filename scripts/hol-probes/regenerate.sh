@@ -5095,3 +5095,7 @@ run_probe stack_remove_inst_arithmetic_probeScript.sml stack_remove_inst_arithme
 run_probe stack_remove_inst_memory_probeScript.sml stack_remove_inst_memory_probe.out \
   im_statement im_types im_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_inst_fp_probeScript.sml stack_remove_inst_fp_probe.out \
+  ifp_statement ifp_types ifp_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
