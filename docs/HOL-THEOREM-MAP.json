@@ -66206,5 +66206,35 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: complete pad_section_labels5737-5772 and captured full original typed statement with zero hypotheses. Arbitrary word8 NOP list, native positive-width lines and aux, Nat position, fixed List(Nat x Nat) association accumulator labs and entire section_labels pair equality against REVERSE aux APPEND lines are retained. All four original guards retained, including lab_len_pos_ok at pos+SUM line_len aux, lab_len_pos_ok pos (REVERSE aux), EVERY label_zero aux, and the exact guarded first-label-one implication to nonempty/nonlabel auxiliary head. Both original HD occurrences are protected by explicit nonempty guards; public constructor cases are their same truth table on empty/nonempty lists and use no held total HD/EL or provisional opaque default. words_as_type_indexed_bitvec is solely the native positive word dimension with original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads. The literal constructor induction derives odd/even position transport and preserves all duplicate association entries; no NOP length, valid encoding, successful padding, target map equality or callback premise. Fresh original13 observations and matching native kernel replays cover empty arbitrary accumulators, zero/nonzero labels, ignored label ID0, odd Asm/LabAsm predecessors with arbitrary NOP length, successive boundaries/duplicate associations, annotation-vs-physical bytes, necessary boundary/parity counterexamples, false auxiliary guards, widths1/8/80 and >64-bit positions; full generic consumer and actual arbitrary-NOP theorem application discharge original premises. This is a local exact support theorem, not full remove_labels_loop or a HOL-to-Lean equivalence proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StackSize.lean",
+    "lean_name": "compCorrectStackGetSize",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-stack-size): genuine full original comp_correct StackGetSize2295-2338. Exact original source evaluation/nonError/full state relation/regBound premises and existential clock/native target/usual result branch conclusion. Actual native move/sub/rightshift GetSize and leftshift/move/add SetSize evaluated with clock0. GetSize inverse shift no-wrap derived from original heap upper bound and source stackSpace bound; SetSize preserves original strict count<stack length guard and shifted register write, derives exact pointer reconstruction and all26 relation conjuncts. Source disabled/missing/Loc/out-of-bounds errors handled. No target-success, shift/no-wrap, pointer result or postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains Spt, stack List. Inherited reals_as_rational_cuts from faithful total evaluator, with no local real operation in either case. Fresh literal original HOL constructor replays PASS."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StackSize.lean",
+    "lean_name": "compCorrectStackSetSize",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-stack-size): genuine full original comp_correct StackSetSize2339-2377. Exact original source evaluation/nonError/full state relation/regBound premises and existential clock/native target/usual result branch conclusion. Actual native move/sub/rightshift GetSize and leftshift/move/add SetSize evaluated with clock0. GetSize inverse shift no-wrap derived from original heap upper bound and source stackSpace bound; SetSize preserves original strict count<stack length guard and shifted register write, derives exact pointer reconstruction and all26 relation conjuncts. Source disabled/missing/Loc/out-of-bounds errors handled. No target-success, shift/no-wrap, pointer result or postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains Spt, stack List. Inherited reals_as_rational_cuts from faithful total evaluator, with no local real operation in either case. Fresh literal original HOL constructor replays PASS."
   }
 ]
