@@ -4500,7 +4500,7 @@ run_probe balanced_map_null_probeScript.sml balanced_map_null_probe.out \
   bmn_full bmn_typed bmn_tip bmn_bin_badsize \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
 run_probe balanced_map_invariant_eq_probeScript.sml balanced_map_invariant_eq_probe.out \
-  bmi_full bmi_typed bmi_replay bmi_props_typed bmi_children bmi_singleton bmi_badsize bmi_equal_child \
+  bmi_full bmi_typed bmi_replay bmi_props_typed bmi_lookup_typed bmi_lookup_left bmi_lookup_root bmi_lookup_right bmi_lookup_missing bmi_lookup_child_missing bmi_lookup_equivalent bmi_children bmi_singleton bmi_badsize bmi_equal_child \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
 run_probe target_search_const_probeScript.sml target_search_const_probe.out \
   search_const_full_statement next_const_full_statement \

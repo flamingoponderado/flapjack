@@ -5138,3 +5138,8 @@ Lean assembly; no standalone tactic replay is claimed.
 `target_next_shared_mem_probeScript.sml` captures the complete original
 `next_interference_SharedMem` statement with no open hypotheses; native
 assembly is in `TargetProps/NextSharedMem.lean`.
+The capture also replays the entire original `lookup_thm` statement and proof,
+with typed closed output, and evaluates left/root/right hits, whole-tree and
+child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
+consume the full generic theorem and derive actual semantic finite-map results
+for nonempty children and a distinct equivalent key with an independent payload.

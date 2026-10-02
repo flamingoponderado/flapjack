@@ -1,6 +1,6 @@
 load "bossLib";
 load "balanced_mapTheory";
-open HolKernel Parse bossLib balanced_mapTheory pred_setTheory Tactical;
+open HolKernel Parse bossLib balanced_mapTheory pred_setTheory finite_mapTheory Tactical BasicProvers;
 val _ = Globals.linewidth := 10000;
 val _ = if null(hyp invariant_eq) then () else raise Fail "open HOL hypotheses";
 val _ = (print "bmi_full="; print_thm invariant_eq; print "\n");
@@ -17,6 +17,20 @@ val inv_props = prove(``!cmp s k v l r. good_cmp cmp /\ invariant cmp (Bin s k v
   rw [invariant_eq] >> Tactic.IMP_RES_TAC key_ordered_to_fmap >> rfs [key_set_cmp_thm]);
 val _ = if null(hyp inv_props) then () else raise Fail "open inv_props hypotheses";
 val _ = (print "bmi_props_typed="; Globals.show_types := true; print_thm inv_props; print "\n"; Globals.show_types := false);
+val lookup_replay = prove(concl lookup_thm,
+  Induct_on `t` >> rw [lookup_def, to_fmap_def] >>
+  Tactic.IMP_RES_TAC inv_props >> TOP_CASE_TAC >>
+  gvs [invariant_eq, FLOOKUP_UPDATE, FLOOKUP_FUNION] >>
+  every_case_tac >> fs [] >> rw [] >> rfs [key_set_eq] >>
+  fs [FLOOKUP_DEF] >> metis_tac [comparisonTheory.cmp_thms]);
+val _ = if null(hyp lookup_replay) then () else raise Fail "open lookup replay hypotheses";
+val _ = (print "bmi_lookup_typed="; Globals.show_types := true; print_thm lookup_replay; print "\n"; Globals.show_types := false);
+val _ = (print "bmi_lookup_left="; print_term(rand(concl(EVAL ``lookup (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) 0 (Bin 3 1 99 (Bin 1 0 7 Tip Tip) (Bin 1 2 8 Tip Tip))``))); print "\n");
+val _ = (print "bmi_lookup_root="; print_term(rand(concl(EVAL ``lookup (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) 1 (Bin 3 1 99 (Bin 1 0 7 Tip Tip) (Bin 1 2 8 Tip Tip))``))); print "\n");
+val _ = (print "bmi_lookup_right="; print_term(rand(concl(EVAL ``lookup (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) 2 (Bin 3 1 99 (Bin 1 0 7 Tip Tip) (Bin 1 2 8 Tip Tip))``))); print "\n");
+val _ = (print "bmi_lookup_missing="; print_term(rand(concl(EVAL ``lookup (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) 3 (Bin 3 1 99 (Bin 1 0 7 Tip Tip) (Bin 1 2 8 Tip Tip))``))); print "\n");
+val _ = (print "bmi_lookup_child_missing="; print_term(rand(concl(EVAL ``lookup (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) 2 (Bin 1 0 7 Tip Tip)``))); print "\n");
+val _ = (print "bmi_lookup_equivalent="; print_term(rand(concl(EVAL ``lookup (\x:bool y:bool. Equal) T (Bin 1 F 11 Tip Tip)``))); print "\n");
 val _ = (print "bmi_children="; print_term(rand(concl(EVAL ``invariant (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) (Bin 3 1 99 (Bin 1 0 7 Tip Tip) (Bin 1 2 8 Tip Tip))``))); print "\n");
 val _ = (print "bmi_singleton="; print_term(rand(concl(EVAL ``invariant (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) (Bin 1 4 99 Tip Tip)``))); print "\n");
 val _ = (print "bmi_badsize="; print_term(rand(concl(EVAL ``invariant (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) (Bin 0 4 99 Tip Tip)``))); print "\n");
