@@ -36,4 +36,20 @@ theorem keysOrder : wordSsaKeys
       {current := [(6,212),(5,208),(1,204),(0,200),(2,100),(3,101),(4,102)],next := 216} =
     [3,1,5,0,4,2,6] := by decide +kernel
 
+-- Original sptree intersection observations through the actual cutset caller.
+example : (wordSsaRestrict { current := [], next := 17 } [2]).current = [] := by decide +kernel
+example : (wordSsaRestrict { current := [(2,7),(0,3)], next := 17 } []).current = [] := by decide +kernel
+example : (wordSsaRestrict { current := [(2,7),(2,9),(0,3),(5,11)], next := 17 }
+    [2,2,5]).current = [(5,11),(2,7)] := by decide +kernel
+example : (wordSsaRestrict { current := [(2,7),(0,3)], next := 17 }
+    [99,2]).current = [(2,7)] := by decide +kernel
+example : (wordSsaRestrict
+    { current := [(6,212),(5,208),(1,204),(0,200),(2,100),(3,101),(4,102)], next := 17 }
+    [6,5,1,0,2,3,4]).current =
+    [(3,101),(1,204),(5,208),(0,200),(4,102),(2,100),(6,212)] := by decide +kernel
+example : (wordSsaRestrict
+    { current := [(18446744073709551616,18446744073709551620),(2,7)], next := 18446744073709551620 }
+    [18446744073709551616]).current =
+    [(18446744073709551616,18446744073709551620)] := by decide +kernel
+
 end Flapjack.Test.SSAStateMapRouteParity

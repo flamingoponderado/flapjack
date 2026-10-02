@@ -118,6 +118,7 @@ example :
               (.move 0 [(22, 12), (26, 16)])))) := by
   simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaListNextVarRenameMove, wordSsaReadCutsets, wordSsaFreshList,
+    Compiler.Backend.WordAlloc.ssaRestrictExecutable, sptInter, sptMkBN, sptMkBS,
     wordSsaFresh, wordSsaRead, wordSsaRestrict, wordSsaSeq, List.eraseDups,
     List.eraseDupsBy, List.eraseDupsBy.loop, lookupNatInfo,
     NumSet.fromList, NumSet.fromAList, NumSet.toAList, NumSet.toSet, NumSet.insert,

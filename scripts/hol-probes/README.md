@@ -5951,3 +5951,5 @@ by the pinned original binary_ieeeLib; six signed tie checks are explicitly
 Lean algorithm regressions. The independent certified-converter bead remains
 open for the complete144-row original int-to-FP oracle; no modes are dropped.
 `word_to_stack_asm_remove_helpers_probe` freshly replays the five complete original local proofs at word_to_stackProofScript.sml:11129-11182, then captures 95 cross-width helper predicates (five independent width pairs, direct/empty/register/spilled destinations, zero/nonzero live bitmaps, arbitrary-continuation movement equivalences, auxiliary copies and both handler modes). Lean fixtures replay all observations. Regression evidence does not prove HOL-to-Lean equivalence.
+
+`ssa_cutset_route_probe.out` captures six original heterogeneous `sptree$inter` cutset observations: empty map/set, repeated first-match keys, missing keys, native traversal order and names/values beyond 64 bits. `SSAStateMapRouteParity.lean` replays complete outputs through the actual `wordSsaRestrict` caller. The full native program SSA route remains open.

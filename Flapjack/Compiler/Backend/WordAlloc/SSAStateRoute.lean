@@ -48,4 +48,43 @@ theorem ssaForceRenameExecutableCorresponds (renamings entries : List (Nat × Na
   simpa only [ssaForceRenameExecutable,sptLookup_sptFromAList] using
     sptLookup_sptFromAList_sptToAList key (forceRename renamings (sptFromAList entries))
 
+/-- Native cutset restriction for the production list facade. The right tree
+contains only unit values; native intersection retains the left map values.
+This is Flapjack API infrastructure with no independent HOL declaration. -/
+def ssaRestrictExecutable (entries : List (Nat × Nat)) (names : List Nat) :
+    List (Nat × Nat) :=
+  sptToAList (sptInter (sptFromAList entries)
+    (sptFromAList (names.map (fun name => (name, ())))) )
+
+/-- The cutset list codec records precisely membership, including repetitions.
+Flapjack codec infrastructure rather than a separate HOL port. -/
+theorem ssaCutsetLookup (names : List Nat) (key : Nat) :
+    sptLookup key (sptFromAList (names.map (fun name => (name, ())))) =
+      if key ∈ names then some () else none := by
+  rw [sptLookup_sptFromAList]
+  induction names with
+  | nil => simp [sptAListLookup]
+  | cons name names ih =>
+    by_cases same : key = name
+    · subst key; simp [sptAListLookup]
+    · simp [sptAListLookup, same, ih]
+
+/-- Native restriction preserves exactly the first-match input value on cutset
+keys and removes every other key, without any input-map validity premise. -/
+theorem ssaRestrictExecutableLookup (entries : List (Nat × Nat))
+    (names : List Nat) (key : Nat) :
+    sptAListLookup key (ssaRestrictExecutable entries names) =
+      if key ∈ names then sptAListLookup key entries else none := by
+  have decoded := sptLookup_sptFromAList_sptToAList key
+    (sptInter (sptFromAList entries)
+      (sptFromAList (names.map (fun name => (name, ())))))
+  rw [sptLookup_sptFromAList] at decoded
+  rw [ssaRestrictExecutable, decoded, sptLookup_sptInterCases,
+    ssaCutsetLookup, sptLookup_sptFromAList]
+  by_cases member : key ∈ names
+  · simp only [if_pos member]
+    cases sptAListLookup key entries <;> rfl
+  · simp only [if_neg member]
+    cases sptAListLookup key entries <;> rfl
+
 end Flapjack.Compiler.Backend.WordAlloc

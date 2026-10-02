@@ -36,4 +36,19 @@ canonical-input or distinct-key premise. -/
 theorem wordSsaKeysCorresponds (state : WordSsaState) :
     wordSsaKeys state = (sptToAList (sptFromAList state.current)).map Prod.fst := rfl
 
+/-- The actual allocator cutset caller retains its independent counter,
+returns the full ordered native intersection decoder, and has precisely the
+cutset-restricted first-match lookup. Flapjack production boundary proof. -/
+theorem wordSsaRestrictCorresponds (state : WordSsaState) (names : List Nat) :
+    (wordSsaRestrict state names).next = state.next ∧
+    (wordSsaRestrict state names).current =
+      sptToAList (sptInter (sptFromAList state.current)
+        (sptFromAList (names.map (fun name => (name, ()))))) ∧
+    ∀ key, lookupNatInfo key (wordSsaRestrict state names).current =
+      if key ∈ names then lookupNatInfo key state.current else none := by
+  refine ⟨rfl, rfl, ?_⟩
+  intro key
+  simp only [wordSsaRestrict, productionMergeMapLookup]
+  exact ssaRestrictExecutableLookup state.current names key
+
 end Flapjack.Compiler.Backend.WordAlloc

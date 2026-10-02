@@ -730,7 +730,7 @@ structure WordSsaLoopFrame where
   deriving DecidableEq, Repr
 
 def wordSsaRestrict (state : WordSsaState) (names : List Nat) : WordSsaState :=
-  { state with current := state.current.filter (fun entry => entry.1 ∈ names) }
+  { state with current := Compiler.Backend.WordAlloc.ssaRestrictExecutable state.current names }
 
 /-- `ssa_reconcile` (`word_allocScript.sml:318-330`): one parallel
     `Move 1` over CakeML's `MAP FST (toAList ns)` variable order.  Variables missing from the
