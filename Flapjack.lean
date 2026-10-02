@@ -1,4 +1,10 @@
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateRelation
+import Flapjack.RiscV.L3.Defs.MMU.Translate
+import Flapjack.RiscV.L3.Defs.MMU.Walk
+import Flapjack.RiscV.L3.Defs.MMU.Insert
+import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
+import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
+import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.Labels
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompLn
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
@@ -160,6 +166,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Clock
 import Flapjack.Compiler.Backend.Semantics.StackSem.ClockControl
 import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Seq
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.If
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
@@ -614,6 +621,9 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionParentCompression
 import Flapjack.Compiler.Backend.RegAlloc.ProductionBgOk
 import Flapjack.Compiler.Backend.RegAlloc.ProductionCoalesce
 import Flapjack.Compiler.Backend.RegAlloc.ProductionStep
+import Flapjack.Compiler.Backend.RegAlloc.ProductionInitAlloc
+import Flapjack.Compiler.Backend.RegAlloc.ProductionAllocLoop
+import Flapjack.Compiler.Backend.RegAlloc.ProductionColourReads
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec

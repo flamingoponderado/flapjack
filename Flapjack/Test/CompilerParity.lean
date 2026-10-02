@@ -1,8 +1,15 @@
+import Flapjack.Test.L3MmuTranslateParity
+import Flapjack.Test.L3MmuWalkParity
+import Flapjack.Test.L3MmuInsertParity
+import Flapjack.Test.LabToTargetInitialEncodingPreconditionsParity
+import Flapjack.Test.LabToTargetRemoveLabelsLoopParity
+import Flapjack.Test.LabToTargetComputedLabelPositionsParity
 import Flapjack.Test.StackRawCallLabelsParity
 import Flapjack.Test.StackRawCallLnParity
 import Flapjack.Test.StackRawCallShapeParity
 import Flapjack.Test.L3MmuTlbParity
 import Flapjack.Test.L3MmuAccessParity
+import Flapjack.Test.L3MmuPrimitivesParity
 import Flapjack.Test.StackRawCallCompileParity
 import Flapjack.Test.StackRawCallStateOkParity
 import Flapjack.Test.StackRawCallCollectParity
@@ -11,7 +18,6 @@ import Flapjack.Test.LabToTargetSecPosZeroParity
 import Flapjack.Test.LabToTargetPaddingCodeLabelsParity
 import Flapjack.Test.LabToTargetPaddingLabelsParity
 import Flapjack.Test.WordToStackTailHandlerParity
-import Flapjack.Test.L3MmuPrimitivesParity
 import Flapjack.Test.LabToTargetSectionLookupPositionsParity
 import Flapjack.Test.LabToTargetInitialEncodingNavigationParity
 import Flapjack.Test.LabToTargetLookupPrerequisitesParity
