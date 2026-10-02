@@ -1,4 +1,5 @@
 import Flapjack.RiscV.L3.Support
+import Flapjack.Misc.BinaryIeeeRound
 
 /-!
 # L3 RISC-V model: definitions
@@ -1073,6 +1074,11 @@ def «dfn'FMV_D_X» (arg0 : ((BitVec 5) × (BitVec 5))) : (riscv_state → riscv
   | (rd, rs) =>
   (fun (state : riscv_state) => (writeFPRD ((rd, (GPR rs state))) state))
 
+/-- HOL `riscv$l3round` (`l3round_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "l3round_def"]
+def l3round (rnd : Rounding) : (Option HolRounding) :=
+  (match rnd with | .RNE => (some HolRounding.roundTiesToEven) | .RTZ => (some HolRounding.roundTowardZero) | .RDN => (some HolRounding.roundTowardNegative) | .RUP => (some HolRounding.roundTowardPositive) | .RMM => (none : (Option HolRounding)) | .RDYN => (none : (Option HolRounding)))
+
 /-- HOL `riscv$fcsr` (`fcsr_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "fcsr_def"]
 def fcsr (state : riscv_state) : FPCSR :=
@@ -1087,6 +1093,11 @@ def rnd_mode_dynamic (rnd : (BitVec 3)) : (Option Rounding) :=
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "rnd_mode_static_def"]
 def rnd_mode_static (rnd : (BitVec 3)) : (Option Rounding) :=
   (((fun (v : (BitVec 3)) => (if ((v == (BitVec.ofNat 3 0))) then (some Rounding.RNE) else ((if ((v == (BitVec.ofNat 3 1))) then (some Rounding.RTZ) else ((if ((v == (BitVec.ofNat 3 2))) then (some Rounding.RDN) else ((if ((v == (BitVec.ofNat 3 3))) then (some Rounding.RUP) else ((if ((v == (BitVec.ofNat 3 4))) then (some Rounding.RMM) else ((if ((v == (BitVec.ofNat 3 7))) then (some Rounding.RDYN) else ((none : (Option Rounding)))))))))))))))) rnd)
+
+/-- HOL `riscv$round` (`round_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "round_def"]
+def round (rnd : (BitVec 3)) : (riscv_state → (Option HolRounding)) :=
+  (fun (state : riscv_state) => (match (rnd_mode_static rnd) with | none => (none : (Option HolRounding)) | some v => (match v with | .RNE => (l3round Rounding.RNE) | .RTZ => (l3round Rounding.RTZ) | .RDN => (l3round Rounding.RDN) | .RUP => (l3round Rounding.RUP) | .RMM => (l3round Rounding.RMM) | .RDYN => (match (rnd_mode_dynamic ((fcsr state).FRM)) with | none => (none : (Option HolRounding)) | some frm => (l3round frm)))))
 
 /-- HOL `riscv$FP32_IsSignalingNan` (`FP32_IsSignalingNan_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FP32_IsSignalingNan_def"]
@@ -1493,6 +1504,5 @@ def update_pc (v : (BitVec 64)) (s : riscv_state) : (Option riscv_state) :=
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "NextFetch_def"]
 def NextFetch (state : riscv_state) : (Option TransferControl) :=
   (state.c_NextFetch state.procID)
-
 
 end Flapjack.RiscV.L3

@@ -5571,6 +5571,19 @@ invalid page-table entries at levels0/2, compressed/full instruction Fetch
 and Skip, LD and a cross-word store. `L3RiscvMmuFetchParity` kernel replays
 those observations on the actual native state. The numeric greater-than
 rendering unlocks41 full original definitions; walk64 terminates on its
-original page-table level. The 240 emitted definitions remain pending full
-source/body acceptance; 52 FP-dependent declarations including whole Run and
+original page-table level. The 242 emitted definitions remain pending full
+source/body acceptance; 50 FP-dependent declarations including whole Run and
 NextRISCV are still omitted and tracked separately. No reduced ISA is substituted.
+
+## Native L3 rounding-mode conversion
+
+`l3_riscv_rounding_probeScript.sml` captures all six original L3 rounding
+constructors, all eight static 3-bit encodings, and all eight dynamic FRM
+encodings. `L3RiscvRoundingParity` kernel replays the same lists and native
+state fields. `l3round_def` (riscvScript.sml:1533) maps RNE/RTZ/RDN/RUP to the
+four original binary_ieee constructors; RMM/RDYN return NONE. `round_def`
+(:1546) uses static decoding first, reads fcsr.FRM only for RDYN, and preserves
+both NONE branches. The imported HolRounding datatype matches
+binary_ieeeScript.sml:245-250 constructor for constructor. These conversions
+use no real-valued FP operations; full IEEE operations and Run/NextRISCV remain
+open. This evidence does not establish HOL-to-Lean equivalence.

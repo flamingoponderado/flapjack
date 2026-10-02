@@ -694,6 +694,10 @@ SPECIAL = {
 }
 
 CONSTANTS = {
+    ('binary_ieee', 'roundTiesToEven'): (0, lambda r, c, xs, raw: 'HolRounding.roundTiesToEven'),
+    ('binary_ieee', 'roundTowardPositive'): (0, lambda r, c, xs, raw: 'HolRounding.roundTowardPositive'),
+    ('binary_ieee', 'roundTowardNegative'): (0, lambda r, c, xs, raw: 'HolRounding.roundTowardNegative'),
+    ('binary_ieee', 'roundTowardZero'): (0, lambda r, c, xs, raw: 'HolRounding.roundTowardZero'),
     ('one', 'one'): (0, lambda r, c, xs, raw: '()'),
     ('bool', 'T'): (0, lambda r, c, xs, raw: 'true'),
     ('bool', 'F'): (0, lambda r, c, xs, raw: 'false'),

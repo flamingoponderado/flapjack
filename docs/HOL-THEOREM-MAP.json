@@ -63630,5 +63630,21 @@
     "lean_name": "\u00abdfn'AMOADD_D\u00bb",
     "statement_status": "pending_statement_review",
     "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
-  }
+  },
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "l3round",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "l3round_def",
+  "statement_status": "pending_statement_review",
+  "reviewer": "flapjack-sol-c: literal rounding constructor carrier and original static/dynamic case review; pending coordinator acceptance. No real-valued FP operation is used by this declaration."
+},
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "round",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "round_def",
+  "statement_status": "pending_statement_review",
+  "reviewer": "flapjack-sol-c: literal rounding constructor carrier and original static/dynamic case review; pending coordinator acceptance. No real-valued FP operation is used by this declaration."
+}
 ]

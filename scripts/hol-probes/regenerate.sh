@@ -4853,3 +4853,7 @@ run_probe lab_to_target_state_transport_probeScript.sml lab_to_target_state_tran
 run_probe l3_riscv_mmu_fetch_probeScript.sml l3_riscv_mmu_fetch_probe.out \
   read_aligned read_unaligned read_cross_word translate_bare walk_invalid_level0 walk_invalid_level2 fetch_half fetch_half_skip fetch_word fetch_word_skip load_double store_cross_word \
   "$repo_dir/HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_riscv_rounding_probeScript.sml l3_riscv_rounding_probe.out \
+  l3_round_modes round_static_modes round_dynamic_modes \
+  "$repo_dir/HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
