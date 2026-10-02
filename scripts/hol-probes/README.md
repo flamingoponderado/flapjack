@@ -4324,6 +4324,7 @@ The seven original exact-square observations remain in
 `machine_ieee_fp64_sqrt_exact_probe.out`; these source/type captures and examples
 provide review/regression evidence, not cross-assistant equivalence.
 ### SSA Call allocation/map invariant
+### SSA primitive program invariants
 
 `ssa_cc_trans_props_primitives_probe.out` captures the original 15 nonrecursive primitive invariant statements and actual constructor types. It replays the literal StoreConsts, instruction, expression tactic, CBW/DBW and ShareInst proofs after the original compiler simplification, including original instruction/extension/allocation prerequisites. The Lean cases derive all three invariants from only the original compiler equality and map/allocation premise.
 `ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
@@ -4380,6 +4381,11 @@ clocked WordSem evaluator, its reviewed finite-support state and its inherited
 IEEE rational-cut assumption (SOUNDNESS item 8). This is a CSE simulation
 prerequisite, not the entire CSE invariant/pass or compiler theorem.
 
+`stackprops_shared_memory_clock_probeScript.sml` replays all nine original
+StackProps shared-memory clock-commutation proofs verbatim and captures their
+full statements/types (18 rows), then checks fifteen native returned/final/error
+observations at clock 37. `StackPropsSharedMemoryClockParity.lean` kernel-replays
+those observations and applies the full arbitrary-state dispatch theorem.
 ### SSA recursive control invariants
 
 `ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
