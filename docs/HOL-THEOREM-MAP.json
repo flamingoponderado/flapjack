@@ -63519,5 +63519,14 @@
     "lean_name": "returningNoHandlerException",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific inline no-handler returning Call8660-8692 factoring, no standalone HOL declaration. Actual source callee Exception and total evaluateStackSwap prove LASTN cannot select the new NONE-handler frame, so it enters the identical original common stack. Native key/value equality reconstructs identical outer-handler locals/tail stack and actual target evaluate equals the complete original returned state. Internal pre-run callee stack-replacement equality comes from calleeSwap, never a target run or output-state premise. Full returning Call constructor with original six premises and return/handler IHs remains open on flapjack-sola-callreturn."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionNopEncoding.lean",
+    "lean_name": "linesEncWithNop_padSection0",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lines_enc_with_nop_pad_section0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 full original4595-4625 statement and quantified/free-variable types freshly captured in lab_to_target_section_aligned0_nop_probe.out. Full enc/labs/ffis/nop/code/aux/pos binders and seven original guards retained: NOP identity, positive NOP length, EVERY lineAligned NOP length (both physical and annotated divisibility), actual linesEncd at pos+SUM annotation aux, actual reverse-aux NOP invariant, EVERY is_Label aux, EVERY labelZero code. Full actual padSection invariant conclusion; no added prefixZero/nonlabel/sum/length/output/callback premise. Arbitrary positive word dimension/native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/Line/Spt with fixed word8 bytes, sole words_as_type_indexed_bitvec translation. Kernel source-code induction retains initial zero labels and full all-label accumulator; after first Asm or LabAsm invokes full checked nonlabel aligned theorem. Physical/annotation sum is derived from reverse invariant; all seven LabAsm branches including original Call length-only NOP clause retained. Fourteen original/native observations and actual full theorem instances cover multibyte offset-sensitive bytes/stored words/annotations, all-label and empty accumulator, empty code, all seven LabAsm successful source guards, and independent physical/annotation alignment guard counterexamples. Full arbitrary-width original statement consumer kernel checked. Genuine .108 prerequisite consumed from checked pushedfd147540a source with acceptance edge retained. No production or trusted-user HD/EL hold change; full code padding/remove_labels_loop/end-to-end remain unfinished."
   }
 ]
