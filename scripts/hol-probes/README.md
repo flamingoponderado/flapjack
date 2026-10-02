@@ -6116,4 +6116,18 @@ Assembler-convention assembly probe prints both full original theorems with no o
 
 `numeric_formatting_probe.out` records70 original full digit/character-code observations: bases0/1/2/3/10/16/17/37, all HEX digits and invalid16/17/999, arbitrary shifted converter, 121-bit decimal numerals and widths1/7/8/16/64/80 with word wrapping. NumericFormattingParity kernel replays all70 using reviewed canonical HolChar rather than Lean String.
 
+`word_to_stack_tail_handler_probe.out` captures four original whole-result
+handler-erasure equalities and twelve direct/indirect, perf on/off compiler
+outputs. NONE-return calls ignore Move and Alloc handlers and preserve the
+supplied bitmap tree/counter; SOME-return Alloc handlers remain and update both.
+Returning trees retain original opaque instruction-builder macros. Actual fused
+production regressions replay the eight tail outputs with explicit leading
+Seq Skip removal and flattening of the original bitmap append tree to its
+production list; generic proofs cover arbitrary handlers and unchanged states.
+
 `l3_raise_exception_probe.out` captures the original polymorphic type and assumption-free full result equation, preserving ARB and every returned state field through the conditional exception update. Defs/MMU/Exception kernel-checks that complete generic equation under only HOL intrinsic Nonempty; no chosen-default binder.
+`stackprops_extract_labels_probe.out` captures56 fresh complete original ordered label lists at positive widths1/8/64/80. Kernel fixtures retain duplicates, return/handler prefix order, nested continuation order, ignored NONE-return handler, zero/one and70bit labels, Loop/Seq/If and representative label-free leaves. This supports the complete native five-clause extract_labels definition; it is regression evidence, not cross-language equivalence or full WordToStack label preservation. Selector: HOL_PROBE_ONLY=stackprops_extract_labels_probeScript.sml.
+
+Ordered-label helper probe freshly replays five complete original local proofs10760-10802 with no open hypotheses and captures108 independent full label lists at widths1/8/64/80. Kernel fixtures retain arbitrary-continuation label order, duplicate return/handler labels, zero/multiple moves/copies, both flags,70bit frame/count fields, natural subtraction, empty/duplicate load lists, and five full generic theorem applications. These are regression observations and original proof replays, not cross-language equivalence or semantic compiler simulation. Selector: HOL_PROBE_ONLY=word_to_stack_extract_labels_helpers_probeScript.sml.
+
+Complete ordered-label compiler probe prints three original full statements with hyp=[] and312 independent full-label projections (104 each comp/program-list/top) at widths1/8/64/80 and both performance flags. Kernel equalities preserve duplicates, nested return/handler order, ignored tail handlers, repeated IDs,70bit labels, and both stub keys. Three generic full-theorem applications and standard-axiom audits are separate from those observations. Direct comp includes70bit register boundaries; list/top If uses register2 because an evaluated70bit maximum with live calls demands an enormous original bitmap (profiled live EVAL stalled before that row, no capture accepted). The same chosen input is used on both languages; no theorem quantifier or default gate is restricted. Original observations are regression evidence, not cross-language equivalence or semantic compiler simulation. Selector: HOL_PROBE_ONLY=word_to_stack_extract_labels_compiler_probeScript.sml.
