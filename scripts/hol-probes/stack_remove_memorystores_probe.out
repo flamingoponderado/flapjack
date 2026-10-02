@@ -1,0 +1,9 @@
+ms_scalar=∀jump off k s t x y s1 t1. state_rel jump off k s t ∧ mem_store x y s = SOME s1 ∧ mem_store x y t = SOME t1 ⇒ state_rel jump off k s1 t1
+ms_scalar_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;x:α word;y:α word_loc;s1:(α, β, γ) stackSem$state;t1:(α, β, γ) stackSem$state
+ms_scalar_proved=T
+ms_32=∀jump off k s t a b z. state_rel jump off k s t ∧ mem_store_32 s.memory s.mdomain s.be a b = SOME z ⇒ ∃y. mem_store_32 t.memory t.mdomain t.be a b = SOME y ∧ state_rel jump off k (s with memory := z) (t with memory := y)
+ms_32_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;a:α word;b:word32;z:α word -> α word_loc
+ms_32_proved=T
+ms_byte=∀jump off k s t a b z. state_rel jump off k s t ∧ mem_store_byte_aux s.memory s.mdomain s.be a b = SOME z ⇒ ∃y. mem_store_byte_aux t.memory t.mdomain t.be a b = SOME y ∧ state_rel jump off k (s with memory := z) (t with memory := y)
+ms_byte_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;a:α word;b:word8;z:α word -> α word_loc
+ms_byte_proved=T

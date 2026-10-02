@@ -63544,5 +63544,47 @@
     "hol_name": "STAR_ASSOC",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison 2026-10-02 bead .6.7.6.1: literal set_sepScript77-81 complete arbitrary heap predicate equality p STAR(q STAR r)=(p STAR q) STAR r. Independent arbitrary heap-element alpha and three arbitrary predicates over sets, represented by reviewed characteristic predicates. Both full directions derive union equality and all disjointness conditions from original existential splits, retain every assertion unchanged, with no finite/domain/wf/frame assumption. Fresh original full statement/types/kernel replay confirms complete shape; native full theorem kernel checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryStores.lean",
+    "lean_name": "stateRelMemStore",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_mem_store",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 bead .6.8.4.4: complete original687-750 native store law on actual imported StackSemStateFiniteExact, full26conjunct stateRelHOL and actual native store operator. Canonical regs/fpRegs/store fields qualify finite support with same-module genuine imported broad/exact roundtrip witness; Spt code not named. Positive BitVec width/NeZero, independent C/F Type0, fixed32/8 payload retained. Scalar original both successful stores preserved; byte/32 source-onlysuccess derives target memory/store success and full updated relation. No assumed frame preservation, target output in existential laws, finite domain, domain equality or relaxed relation. Full five left-associated heaps reassociated via exact STAR_ASSOC and updated via exact generic memory_write. Native/classical equality update functions proved pointwise equal. Byte/32 derive old aligned target word/domain with stateRelRead, derive endian equality, preserve alignment errors and native four byte-update ordering. Fresh full original statements/types/kernel replays and complete native proofs checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryStores.lean",
+    "lean_name": "stateRelMemStore32",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_mem_store_32",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 bead .6.8.4.4: complete original687-750 native store law on actual imported StackSemStateFiniteExact, full26conjunct stateRelHOL and actual native store operator. Canonical regs/fpRegs/store fields qualify finite support with same-module genuine imported broad/exact roundtrip witness; Spt code not named. Positive BitVec width/NeZero, independent C/F Type0, fixed32/8 payload retained. Scalar original both successful stores preserved; byte/32 source-onlysuccess derives target memory/store success and full updated relation. No assumed frame preservation, target output in existential laws, finite domain, domain equality or relaxed relation. Full five left-associated heaps reassociated via exact STAR_ASSOC and updated via exact generic memory_write. Native/classical equality update functions proved pointwise equal. Byte/32 derive old aligned target word/domain with stateRelRead, derive endian equality, preserve alignment errors and native four byte-update ordering. Fresh full original statements/types/kernel replays and complete native proofs checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryStores.lean",
+    "lean_name": "stateRelMemStoreByteAux",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_mem_store_byte_aux",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 bead .6.8.4.4: complete original687-750 native store law on actual imported StackSemStateFiniteExact, full26conjunct stateRelHOL and actual native store operator. Canonical regs/fpRegs/store fields qualify finite support with same-module genuine imported broad/exact roundtrip witness; Spt code not named. Positive BitVec width/NeZero, independent C/F Type0, fixed32/8 payload retained. Scalar original both successful stores preserved; byte/32 source-onlysuccess derives target memory/store success and full updated relation. No assumed frame preservation, target output in existential laws, finite domain, domain equality or relaxed relation. Full five left-associated heaps reassociated via exact STAR_ASSOC and updated via exact generic memory_write. Native/classical equality update functions proved pointwise equal. Byte/32 derive old aligned target word/domain with stateRelRead, derive endian equality, preserve alignment errors and native four byte-update ordering. Fresh full original statements/types/kernel replays and complete native proofs checked."
   }
 ]

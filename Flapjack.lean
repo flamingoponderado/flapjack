@@ -78,6 +78,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryWrites
+import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryStores
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ExpressionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control

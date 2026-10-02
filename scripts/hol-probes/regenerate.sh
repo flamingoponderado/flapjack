@@ -5071,3 +5071,7 @@ run_probe stack_remove_memorywrite_probeScript.sml stack_remove_memorywrite_prob
 run_probe set_sep_assoc_probeScript.sml set_sep_assoc_probe.out \
   sa_source sa_statement sa_types sa_proved \
   "$hol_dir/examples/machine-code/hoare-triple/set_sepScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_memorystores_probeScript.sml stack_remove_memorystores_probe.out \
+  ms_scalar ms_scalar_types ms_scalar_proved ms_32 ms_32_types ms_32_proved ms_byte ms_byte_types ms_byte_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
