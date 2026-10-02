@@ -4667,6 +4667,26 @@ IRC and linear scan, and a physical register. HOL's free `asm_config` is only re
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`word_unreach_def_probe` captures the original HOL `remove_unreach` and `merge_moves` types
+and 18 EVAL results of `dest_Seq_Move`, `merge_moves`, `SimpSeq` and `remove_unreach`
+(through `Seq_assoc_right`) on small 64-bit programs, including the source's
+`remove_unreach_test`, continuations dropped after `Return`/`Raise`, a `Call` without return
+continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a structural
+observation in `WordUnreachDefParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_copy_def_probe` captures the original HOL `copy_prop` and `copy_prop_prog` types and 41
+EVAL results of `copy_prop` and `copy_prop_prog` (program and final `copy_state`) on small
+64-bit programs: Move chains, overlapping and non-alloc moves, every `copy_prop_inst` arith,
+memory and FP clause shape including the self-reference guards, `Set`/`Get` store
+equivalences, `If` merging (`merge_eqs`/`inter_eq`), the `Loop` reset, `ShareInst`,
+`OpCurrHeap`, buffer writes, `StoreConsts`/`LocValue` removal and the
+`Call`/`Alloc`/`Assign`/`Store`/`Install` resets. Kernel-replayed in `WordCopyDefParity`
+through a structural program observation and lookups of the `num_map`s on keys `0..31`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_copy_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
 original missing-bit, SNOC and prefix-reconstruction proofs plus their local
 original bit-index context, each with no open hypotheses. It prints two
