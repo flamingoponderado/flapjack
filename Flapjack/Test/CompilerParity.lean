@@ -40,6 +40,7 @@ import Flapjack.Test.BinaryIeeeRoundFp32Parity
 import Flapjack.Test.LabToTargetNopInsertEncodingParity
 import Flapjack.Test.LabToTargetNopPaddingParity
 import Flapjack.Test.MiscTakeFlatReplicateParity
+import Flapjack.Test.LabToTargetComputedLabelPreservationParity
 import Flapjack.Test.LabToTargetPreconditionPreservationParity
 import Flapjack.Test.LabToTargetValidityEstablishmentParity
 import Flapjack.Test.LabToTargetValidityNopParity
@@ -1921,6 +1922,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetNopInsertEncodingParity.runChecks,
     Flapjack.Test.LabToTargetNopPaddingParity.runChecks,
     Flapjack.Test.MiscTakeFlatReplicateParity.runChecks,
+    Flapjack.Test.LabToTargetComputedLabelPreservationParity.runChecks,
     Flapjack.Test.LabToTargetPreconditionPreservationParity.runChecks,
     Flapjack.Test.LabToTargetValidityEstablishmentParity.runChecks,
     Flapjack.Test.LabToTargetValidityNopParity.runChecks,

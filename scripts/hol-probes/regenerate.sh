@@ -5414,3 +5414,14 @@ run_probe lab_to_target_precondition_preservation_probeScript.sml lab_to_target_
   encode_lines_false_flag encode_code_false_flag add_nop_actual pad_section_actual pad_code_actual update_lines_actual update_code_actual invalid_accumulator_retained \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_computed_label_preservation_probeScript.sml lab_to_target_computed_label_preservation_probe.out \
+  lab_lookup_compute_labels_alt_ignore lab_lookup_compute_labels_alt_ignore_types \
+  enc_lines_again_section_labels enc_lines_again_section_labels_types \
+  enc_secs_again_compute_labels enc_secs_again_compute_labels_types \
+  changed_full_pair unchanged_encoding empty_odd zero_label_ignored duplicate_sections_full_map ignore_old_huge_nat ignore_missing nonmembership_guard_needed false_flag_changes_labels width1_changed width80_large_position \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_word_address_probeScript.sml stack_remove_word_address_probe.out \
+  wa_inverse_statement wa_inverse_proved wa_offset_statement wa_offset_proved wa_forward_statement wa_forward_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
