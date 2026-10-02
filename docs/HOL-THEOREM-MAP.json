@@ -55355,6 +55355,800 @@
     "reviewer": "Source comparison: full original local ssa_locals_rel_get_vars4610-4623 with forall source register list/value list/fresh bound/SSA/source/target. Only original SSA locals relation and successful source getVars are premises; renamed target list-read success is proved by literal recursive getVars clauses and accepted original getVar transport, no extra target/domain/success assumption. Fresh literal original HOL statement/proof replay and native carriers PASS: shared word dimension, source (alpha,beta,gamma) state vs target (alpha,delta,epsilon) state confirm independent arbitrary Type0 code/FFI hosts. Positive-width BitVec word_loc and canonical fpRegs/store finite-support carrier translations reviewed; native Spt locals/SSA and List register/value carriers unchanged. Opaque THE is observed through original getVar transport only under original locals relation supplying source map domain. Lean kernel checked."
   },
   {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "Map",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_map",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL368: two constructors Tip/Bin; Bin fields num, polymorphic key/value, two recursive trees correspond exactly to Nat/key/value/Map/Map. No array/map/word carrier translation. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "ratio",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "ratio_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL372: constant 2:num equals Nat 2. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "delta",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "delta_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL375: constant 3:num equals Nat 3. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "size",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "size_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL378: Tip0; Bin returns stored size, including invalid cached metadata. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "bin",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "bin_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL384: Bin size(left)+size(right)+1 with unchanged key/value/children and same addition grouping. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "null",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "null_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL388: Tip T/Bin F corresponds Bool true/false. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "lookup",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "lookup_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL393: cmp queried key against stored key; Less left recursion, Greater right recursion, Equal SOME stored value, Tip NONE. Arbitrary comparator, no good_cmp premise. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "member",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "member_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL403: same comparator direction/three branches as HOL, Tip F, Equal T; no ordering premise. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "empty",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "empty_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL413: polymorphic Tip exactly. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "singleton",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "singleton_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL415: Bin1 key value Tip Tip exactly. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Rotations.lean",
+    "lean_name": "balanceL",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanceL_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL479-509: all seven outer clauses compared individually; nested strict lrs<2*lls and ls>3*rs guards, all cached-size sums and original subtree/payload reuse agree; unmatched child pair returns Tip. No invariant hypothesis or primed variant. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Rotations.lean",
+    "lean_name": "balanceR",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanceR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL511-540: all seven mirrored outer clauses compared individually; strict rls<2*rrs and rs>3*ls, both rotation cached-size sums and subtree/payload positions agree; malformed child pair returns Tip. No invariant hypothesis. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Insert.lean",
+    "lean_name": "insert",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "insert_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL542-549: Tip singleton; Less left insertion then balanceL; Greater right insertion then balanceR; Equal replaces key AND value while retaining cached size and both children. No comparator law. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "balanced",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL838: l+r<=1 OR MAX(l,r)<=delta*MIN(l,r), same inclusive bounds and Nat operations. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "structureSize",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "structure_size_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL842: Tip0; Bin1+recursive left+recursive right, cached field ignored, same addition grouping. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "keyOrdered",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_ordered_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL847: Tip true; Bin cmp parent-key stored-key=res AND recursive left AND recursive right, same conjunction order and arbitrary result/comparator. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "invariant",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "invariant_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL869: six conjuncts retained in order: cached n=1+structural left+right, keyOrdered left Greater, right Less, balanced cached child sizes, left invariant, right invariant; no good_cmp premise. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Semantics.lean",
+    "lean_name": "keySet",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL188 arbitrary cmp key query=Equal forms Set; Ordering constructor translation only; no good_cmp premise. Six original full lookup outputs and both source equations captured; kernel correspondence is representation evidence, not cross-language proof."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Semantics.lean",
+    "lean_name": "toFmap",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "to_fmap_def",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL825 Tip FEMPTY; Bin cached size ignored, left-biased FUNION followed by equality update at key_set cmp key. Set keys compare by actual set equality through classical DecidableEq, no Boolean comparator shortcut or new premise. Canonical finite support uses actual child supports plus root key; same-module unconditional lookup witness relates declaration on exactly one side to independent raw semanticLookup recursion. Proof-side noncomputability is no runtime replacement; production map wiring remains open. Six original full lookup outputs and both source equations captured; kernel correspondence is representation evidence, not cross-language proof.",
+    "fmap_as_finite_support_result": true
+  },
+  {
+    "lean_path": "Flapjack/FiniteMap/Comparison.lean",
+    "lean_name": "goodCmp",
+    "hol_path": "HOL/src/finite_maps/comparisonScript.sml",
+    "hol_name": "good_cmp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02 HOL17-26: all seven universally quantified conjuncts preserved in order: Equal reflexivity, Equal symmetry, Greater iff reversed Less, Equal/Less and Less/Equal interactions, Equal transitivity and Less transitivity. Arbitrary key type and comparator; constructor-for-constructor Ordering translation only, no order/equality typeclass, no extra premise or antisymmetry identifying equivalent keys. Five original finite Bool outcomes plus full source predicate preserved; kernel fixture acceptance of all-Equal comparator demonstrates distinct keys may be equivalent. No lookup/insertion or production correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+    "lean_name": "keySetEquiv",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_equiv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL194-201 all three components retained: self membership, symmetric membership with original key direction, membership transitivity with original pair conjuncts. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+    "lean_name": "keySetNonempty",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_nonempty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL204-209 local theorem keeps good_cmp only and concludes actual Set inequality with empty; proof uses self membership, with no extra nonempty carrier premise. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+    "lean_name": "keySetPartition",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_partition",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL211-219 same conjunctive hypothesis good_cmp AND unequal equivalence sets, conclusion Disjoint those sets. Set.disjoint_left is exact no-common-member characterization of HOL DISJOINT; no individual-key inequality replacement. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+    "lean_name": "keySetEq",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL220-229 actual key-class Set equality iff comparator Equal, same good_cmp hypothesis and arbitrary keys; no key-equality antisymmetry or relation hypothesis. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySetComparison.lean",
+    "lean_name": "keySetCmp",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_cmp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL229-232 arbitrary Set and result; for every member query the queried key comparison has that exact result, no good_cmp in definition. Standard predicate-set and Ordering constructor translations only; full original declarations captured without open hypotheses and unrestricted Lean theorem kernel-checks. No cross-language or full lookup/production correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySetComparison.lean",
+    "lean_name": "keySetCmpThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_cmp_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL234-243 full iff under good_cmp only; arbitrary queried key, representative key and result. Forward specializes to representative using reflexivity; backward Less/Equal use exact mixed/equality laws, Greater uses reversal and Equal/Less law. No assumed class congruence/target predicate or extra premise. Standard predicate-set and Ordering constructor translations only; full original declarations captured without open hypotheses and unrestricted Lean theorem kernel-checks. No cross-language or full lookup/production correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/KeySetComparison.lean",
+    "lean_name": "keySetCmp2",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_set_cmp2_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL245-248 universal pair of members from arbitrary left/right Sets, conjunctive membership hypothesis, same cmp left-key right-key=result. No nonempty/class/ordering condition added. Standard predicate-set and Ordering constructor translations only; full original declarations captured without open hypotheses and unrestricted Lean theorem kernel-checks. No cross-language or full lookup/production correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/StructuralSize.lean",
+    "lean_name": "structureSizeThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "structure_size_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02 HOL918-923: arbitrary comparator and tree, invariant only premise, stored size equals recursive structure_size. Tip reflexivity and Bin invariant first conjunct correspond to original Cases_on/rw proof. No good_cmp, finite-map cardinality, balance conclusion or extra success assumption. Literal Map/Nat/Ordering carriers, no qualifier difference. Full original local proof replay captured with no open hypotheses and unrestricted Lean theorem kernel-checks; full size/cardinality/insertion and production correctness remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticReturn.lean",
+    "lean_name": "ssaCcTransCorrectReturn",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: original resumed Return9656-9687, all six original premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no added target-run/success/post-state/IH premise. Actual source getVar word-vs-location/getVars error and success branches; native target Move0 into original GENLIST(2*(x+1)) physical return registers represented by List.range.map. Original getVars transport, physical list-insert locals relation, getVar label transport after update, and set/read theorem derive actual target Return result and flushState false. Generated list lengths/Nodup/physical bounds derived, not assumed. Full state/result/native Nat/List/Spt carriers reviewed with shared arbitrary code/FFI hosts, canonical fpRegs/store finite-support and positive-width BitVec/Type0 translations. Inherits reals_as_rational_cuts evaluator boundary SOUNDNESS8. Fresh literal original resumed Return and original local helper proofs/carrier captures PASS; Lean kernel checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabelLookup.lean",
+    "lean_name": "labLookup",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lab_lookup_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 original-source comparison2026-10-02, beads .18.5.15.10.49-.56, original line349. Complete original statements and binder types freshly captured in lab_to_target_encoding_validity_probe.out; local lab_lookup_IMP reproduced with its literal original statement/proof. labLookup retains arbitrary alpha nested Spt values and NONE for either missing key; only original find_pos result theorem specializes to Nat. Full lineOk uses actual native AsmConfigExact/HolAsm/Line/Section/HolFfiName/MlString/Spt carriers, fixed word8 byte lists and natural positions, with only positive type-indexed word dimensions translated. All seven source clauses preserved: even position and zero Label annotation; actual cbwToAsm encoder relation, byte-length equality and asmOkExact; exact negative Halt/Install/FFI-index offsets; unsupported Call false; successful label lookup and relative offsets for remaining instructions. Full linesOk/allEncOk retain physical-byte progression and even position at each empty section. allEncOk_cons retains all conjuncts and alignment, full zero-label/zero-position consequences retain their sole source validity premise; original unused enc binder of pos_val_0 is vacuous and omitted as documented beside the theorem. posVal_bound retains all i/pos/code/conf/labs/ffi/n quantifiers with queried pos independent of validity n and exact LENGTH(prog_to_bytes) upper bound. No light-validity/callback substitute, added encoding-success premise, target evaluation assumption, changed word dimension or HD/EL dependence. Twenty-eight actual original valid/invalid config+encoder+lookup observations all true and thirty-five native kernel checks include rejected bytes/lengths/registers/lookups/Call, nonzero NOP padding, actual FFI indices/default, all instruction cases, empty-section alignment, genuine valid code, generic lookup and arbitrary-width position consumers. Proof-side source relations from original proof script; no executed routing, full machine refinement or cross-language equivalence closure claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabelLookup.lean",
+    "lean_name": "labLookup_implies_findPos",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lab_lookup_IMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 original-source comparison2026-10-02, beads .18.5.15.10.49-.56, original line356. Complete original statements and binder types freshly captured in lab_to_target_encoding_validity_probe.out; local lab_lookup_IMP reproduced with its literal original statement/proof. labLookup retains arbitrary alpha nested Spt values and NONE for either missing key; only original find_pos result theorem specializes to Nat. Full lineOk uses actual native AsmConfigExact/HolAsm/Line/Section/HolFfiName/MlString/Spt carriers, fixed word8 byte lists and natural positions, with only positive type-indexed word dimensions translated. All seven source clauses preserved: even position and zero Label annotation; actual cbwToAsm encoder relation, byte-length equality and asmOkExact; exact negative Halt/Install/FFI-index offsets; unsupported Call false; successful label lookup and relative offsets for remaining instructions. Full linesOk/allEncOk retain physical-byte progression and even position at each empty section. allEncOk_cons retains all conjuncts and alignment, full zero-label/zero-position consequences retain their sole source validity premise; original unused enc binder of pos_val_0 is vacuous and omitted as documented beside the theorem. posVal_bound retains all i/pos/code/conf/labs/ffi/n quantifiers with queried pos independent of validity n and exact LENGTH(prog_to_bytes) upper bound. No light-validity/callback substitute, added encoding-success premise, target evaluation assumption, changed word dimension or HD/EL dependence. Twenty-eight actual original valid/invalid config+encoder+lookup observations all true and thirty-five native kernel checks include rejected bytes/lengths/registers/lookups/Call, nonzero NOP padding, actual FFI indices/default, all instruction cases, empty-section alignment, genuine valid code, generic lookup and arbitrary-width position consumers. Proof-side source relations from original proof script; no executed routing, full machine refinement or cross-language equivalence closure claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EncodingValidity.lean",
+    "lean_name": "lineOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 original-source comparison2026-10-02, beads .18.5.15.10.49-.56, original line541. Complete original statements and binder types freshly captured in lab_to_target_encoding_validity_probe.out; local lab_lookup_IMP reproduced with its literal original statement/proof. labLookup retains arbitrary alpha nested Spt values and NONE for either missing key; only original find_pos result theorem specializes to Nat. Full lineOk uses actual native AsmConfigExact/HolAsm/Line/Section/HolFfiName/MlString/Spt carriers, fixed word8 byte lists and natural positions, with only positive type-indexed word dimensions translated. All seven source clauses preserved: even position and zero Label annotation; actual cbwToAsm encoder relation, byte-length equality and asmOkExact; exact negative Halt/Install/FFI-index offsets; unsupported Call false; successful label lookup and relative offsets for remaining instructions. Full linesOk/allEncOk retain physical-byte progression and even position at each empty section. allEncOk_cons retains all conjuncts and alignment, full zero-label/zero-position consequences retain their sole source validity premise; original unused enc binder of pos_val_0 is vacuous and omitted as documented beside the theorem. posVal_bound retains all i/pos/code/conf/labs/ffi/n quantifiers with queried pos independent of validity n and exact LENGTH(prog_to_bytes) upper bound. No light-validity/callback substitute, added encoding-success premise, target evaluation assumption, changed word dimension or HD/EL dependence. Twenty-eight actual original valid/invalid config+encoder+lookup observations all true and thirty-five native kernel checks include rejected bytes/lengths/registers/lookups/Call, nonzero NOP padding, actual FFI indices/default, all instruction cases, empty-section alignment, genuine valid code, generic lookup and arbitrary-width position consumers. Proof-side source relations from original proof script; no executed routing, full machine refinement or cross-language equivalence closure claimed.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EncodingValidity.lean",
+    "lean_name": "linesOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lines_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 original-source comparison2026-10-02, beads .18.5.15.10.49-.56, original line573. Complete original statements and binder types freshly captured in lab_to_target_encoding_validity_probe.out; local lab_lookup_IMP reproduced with its literal original statement/proof. labLookup retains arbitrary alpha nested Spt values and NONE for either missing key; only original find_pos result theorem specializes to Nat. Full lineOk uses actual native AsmConfigExact/HolAsm/Line/Section/HolFfiName/MlString/Spt carriers, fixed word8 byte lists and natural positions, with only positive type-indexed word dimensions translated. All seven source clauses preserved: even position and zero Label annotation; actual cbwToAsm encoder relation, byte-length equality and asmOkExact; exact negative Halt/Install/FFI-index offsets; unsupported Call false; successful label lookup and relative offsets for remaining instructions. Full linesOk/allEncOk retain physical-byte progression and even position at each empty section. allEncOk_cons retains all conjuncts and alignment, full zero-label/zero-position consequences retain their sole source validity premise; original unused enc binder of pos_val_0 is vacuous and omitted as documented beside the theorem. posVal_bound retains all i/pos/code/conf/labs/ffi/n quantifiers with queried pos independent of validity n and exact LENGTH(prog_to_bytes) upper bound. No light-validity/callback substitute, added encoding-success premise, target evaluation assumption, changed word dimension or HD/EL dependence. Twenty-eight actual original valid/invalid config+encoder+lookup observations all true and thirty-five native kernel checks include rejected bytes/lengths/registers/lookups/Call, nonzero NOP padding, actual FFI indices/default, all instruction cases, empty-section alignment, genuine valid code, generic lookup and arbitrary-width position consumers. Proof-side source relations from original proof script; no executed routing, full machine refinement or cross-language equivalence closure claimed.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EncodingValidity.lean",
+    "lean_name": "allEncOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 original-source comparison2026-10-02, beads .18.5.15.10.49-.56, original line580. Complete original statements and binder types freshly captured in lab_to_target_encoding_validity_probe.out; local lab_lookup_IMP reproduced with its literal original statement/proof. labLookup retains arbitrary alpha nested Spt values and NONE for either missing key; only original find_pos result theorem specializes to Nat. Full lineOk uses actual native AsmConfigExact/HolAsm/Line/Section/HolFfiName/MlString/Spt carriers, fixed word8 byte lists and natural positions, with only positive type-indexed word dimensions translated. All seven source clauses preserved: even position and zero Label annotation; actual cbwToAsm encoder relation, byte-length equality and asmOkExact; exact negative Halt/Install/FFI-index offsets; unsupported Call false; successful label lookup and relative offsets for remaining instructions. Full linesOk/allEncOk retain physical-byte progression and even position at each empty section. allEncOk_cons retains all conjuncts and alignment, full zero-label/zero-position consequences retain their sole source validity premise; original unused enc binder of pos_val_0 is vacuous and omitted as documented beside the theorem. posVal_bound retains all i/pos/code/conf/labs/ffi/n quantifiers with queried pos independent of validity n and exact LENGTH(prog_to_bytes) upper bound. No light-validity/callback substitute, added encoding-success premise, target evaluation assumption, changed word dimension or HD/EL dependence. Twenty-eight actual original valid/invalid config+encoder+lookup observations all true and thirty-five native kernel checks include rejected bytes/lengths/registers/lookups/Call, nonzero NOP padding, actual FFI indices/default, all instruction cases, empty-section alignment, genuine valid code, generic lookup and arbitrary-width position consumers. Proof-side source relations from original proof script; no executed routing, full machine refinement or cross-language equivalence closure claimed.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EncodingValidity.lean",
+    "lean_name": "allEncOk_cons",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_cons",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 original-source comparison2026-10-02, beads .18.5.15.10.49-.56, original line591. Complete original statements and binder types freshly captured in lab_to_target_encoding_validity_probe.out; local lab_lookup_IMP reproduced with its literal original statement/proof. labLookup retains arbitrary alpha nested Spt values and NONE for either missing key; only original find_pos result theorem specializes to Nat. Full lineOk uses actual native AsmConfigExact/HolAsm/Line/Section/HolFfiName/MlString/Spt carriers, fixed word8 byte lists and natural positions, with only positive type-indexed word dimensions translated. All seven source clauses preserved: even position and zero Label annotation; actual cbwToAsm encoder relation, byte-length equality and asmOkExact; exact negative Halt/Install/FFI-index offsets; unsupported Call false; successful label lookup and relative offsets for remaining instructions. Full linesOk/allEncOk retain physical-byte progression and even position at each empty section. allEncOk_cons retains all conjuncts and alignment, full zero-label/zero-position consequences retain their sole source validity premise; original unused enc binder of pos_val_0 is vacuous and omitted as documented beside the theorem. posVal_bound retains all i/pos/code/conf/labs/ffi/n quantifiers with queried pos independent of validity n and exact LENGTH(prog_to_bytes) upper bound. No light-validity/callback substitute, added encoding-success premise, target evaluation assumption, changed word dimension or HD/EL dependence. Twenty-eight actual original valid/invalid config+encoder+lookup observations all true and thirty-five native kernel checks include rejected bytes/lengths/registers/lookups/Call, nonzero NOP padding, actual FFI indices/default, all instruction cases, empty-section alignment, genuine valid code, generic lookup and arbitrary-width position consumers. Proof-side source relations from original proof script; no executed routing, full machine refinement or cross-language equivalence closure claimed.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EncodingValidity.lean",
+    "lean_name": "allEncOk_implies_secLabelZero",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_imp_sec_label_zero",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 original-source comparison2026-10-02, beads .18.5.15.10.49-.56, original line4092. Complete original statements and binder types freshly captured in lab_to_target_encoding_validity_probe.out; local lab_lookup_IMP reproduced with its literal original statement/proof. labLookup retains arbitrary alpha nested Spt values and NONE for either missing key; only original find_pos result theorem specializes to Nat. Full lineOk uses actual native AsmConfigExact/HolAsm/Line/Section/HolFfiName/MlString/Spt carriers, fixed word8 byte lists and natural positions, with only positive type-indexed word dimensions translated. All seven source clauses preserved: even position and zero Label annotation; actual cbwToAsm encoder relation, byte-length equality and asmOkExact; exact negative Halt/Install/FFI-index offsets; unsupported Call false; successful label lookup and relative offsets for remaining instructions. Full linesOk/allEncOk retain physical-byte progression and even position at each empty section. allEncOk_cons retains all conjuncts and alignment, full zero-label/zero-position consequences retain their sole source validity premise; original unused enc binder of pos_val_0 is vacuous and omitted as documented beside the theorem. posVal_bound retains all i/pos/code/conf/labs/ffi/n quantifiers with queried pos independent of validity n and exact LENGTH(prog_to_bytes) upper bound. No light-validity/callback substitute, added encoding-success premise, target evaluation assumption, changed word dimension or HD/EL dependence. Twenty-eight actual original valid/invalid config+encoder+lookup observations all true and thirty-five native kernel checks include rejected bytes/lengths/registers/lookups/Call, nonzero NOP padding, actual FFI indices/default, all instruction cases, empty-section alignment, genuine valid code, generic lookup and arbitrary-width position consumers. Proof-side source relations from original proof script; no executed routing, full machine refinement or cross-language equivalence closure claimed.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EncodingValidity.lean",
+    "lean_name": "posVal_zero",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 original-source comparison2026-10-02, beads .18.5.15.10.49-.56, original line614. Complete original statements and binder types freshly captured in lab_to_target_encoding_validity_probe.out; local lab_lookup_IMP reproduced with its literal original statement/proof. labLookup retains arbitrary alpha nested Spt values and NONE for either missing key; only original find_pos result theorem specializes to Nat. Full lineOk uses actual native AsmConfigExact/HolAsm/Line/Section/HolFfiName/MlString/Spt carriers, fixed word8 byte lists and natural positions, with only positive type-indexed word dimensions translated. All seven source clauses preserved: even position and zero Label annotation; actual cbwToAsm encoder relation, byte-length equality and asmOkExact; exact negative Halt/Install/FFI-index offsets; unsupported Call false; successful label lookup and relative offsets for remaining instructions. Full linesOk/allEncOk retain physical-byte progression and even position at each empty section. allEncOk_cons retains all conjuncts and alignment, full zero-label/zero-position consequences retain their sole source validity premise; original unused enc binder of pos_val_0 is vacuous and omitted as documented beside the theorem. posVal_bound retains all i/pos/code/conf/labs/ffi/n quantifiers with queried pos independent of validity n and exact LENGTH(prog_to_bytes) upper bound. No light-validity/callback substitute, added encoding-success premise, target evaluation assumption, changed word dimension or HD/EL dependence. Twenty-eight actual original valid/invalid config+encoder+lookup observations all true and thirty-five native kernel checks include rejected bytes/lengths/registers/lookups/Call, nonzero NOP padding, actual FFI indices/default, all instruction cases, empty-section alignment, genuine valid code, generic lookup and arbitrary-width position consumers. Proof-side source relations from original proof script; no executed routing, full machine refinement or cross-language equivalence closure claimed.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EncodingValidity.lean",
+    "lean_name": "posVal_bound",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 original-source comparison2026-10-02, beads .18.5.15.10.49-.56, original line6474. Complete original statements and binder types freshly captured in lab_to_target_encoding_validity_probe.out; local lab_lookup_IMP reproduced with its literal original statement/proof. labLookup retains arbitrary alpha nested Spt values and NONE for either missing key; only original find_pos result theorem specializes to Nat. Full lineOk uses actual native AsmConfigExact/HolAsm/Line/Section/HolFfiName/MlString/Spt carriers, fixed word8 byte lists and natural positions, with only positive type-indexed word dimensions translated. All seven source clauses preserved: even position and zero Label annotation; actual cbwToAsm encoder relation, byte-length equality and asmOkExact; exact negative Halt/Install/FFI-index offsets; unsupported Call false; successful label lookup and relative offsets for remaining instructions. Full linesOk/allEncOk retain physical-byte progression and even position at each empty section. allEncOk_cons retains all conjuncts and alignment, full zero-label/zero-position consequences retain their sole source validity premise; original unused enc binder of pos_val_0 is vacuous and omitted as documented beside the theorem. posVal_bound retains all i/pos/code/conf/labs/ffi/n quantifiers with queried pos independent of validity n and exact LENGTH(prog_to_bytes) upper bound. No light-validity/callback substitute, added encoding-success premise, target evaluation assumption, changed word dimension or HD/EL dependence. Twenty-eight actual original valid/invalid config+encoder+lookup observations all true and thirty-five native kernel checks include rejected bytes/lengths/registers/lookups/Call, nonzero NOP padding, actual FFI indices/default, all instruction cases, empty-section alignment, genuine valid code, generic lookup and arbitrary-width position consumers. Proof-side source relations from original proof script; no executed routing, full machine refinement or cross-language equivalence closure claimed.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "anub_def",
+    "lean_path": "Flapjack/Misc/Anub.lean",
+    "lean_name": "anub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): miscScript.sml:684-689, both clauses literal: anub [] acc = []; anub ((k,v)::ls) acc = if MEM k acc then anub ls acc else (k,v)::anub ls (k::acc); types ('a # 'b) list -> 'a list -> ('a # 'b) list with [DecidableEq α] deciding HOL MEM equality. Kernel-checked definition."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "anub_all_distinct_keys",
+    "lean_path": "Flapjack/Misc/Anub.lean",
+    "lean_name": "anubAllDistinctKeys",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): miscScript.sml:764-775, ∀ls acc. ALL_DISTINCT acc ⇒ ALL_DISTINCT (MAP FST (anub ls acc) ++ acc), ALL_DISTINCT as List.Nodup. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_unreachScript.sml",
+    "hol_name": "dest_Seq_Move_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach.lean",
+    "lean_name": "destSeqMove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachScript.sml:12-16, the three clauses literal (Move n l => SOME (n,l,Skip); Seq (Move n l) rest => SOME (n,l,rest); otherwise NONE). Sole carrier translation words_as_type_indexed_bitvec: HOL 'a prog to WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_unreach_def_probe kernel-replayed in Flapjack/Test/WordUnreachDefParity.lean. Proof-side definition; the executed RiscV/WordUnreach.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_unreachScript.sml",
+    "hol_name": "merge_moves_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach.lean",
+    "lean_name": "mergeMoves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachScript.sml:18-24, literal: l2' = MAP (λ(x,y). case ALOOKUP l1 y of NONE => (x,y) | SOME v => (x,v)) l2, result anub (l2' ++ l1) []; ALOOKUP on num keys as the untagged library rendering sptAListLookup (first match), anub the exact tagged anub. Original HOL probe word_unreach_def_probe kernel-replayed in Flapjack/Test/WordUnreachDefParity.lean. Proof-side definition; the executed RiscV/WordUnreach.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_unreachScript.sml",
+    "hol_name": "SimpSeq_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach.lean",
+    "lean_name": "simpSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachScript.sml:26-46, literal: default = Seq p1 p2; if p2 = Skip then p1 else case p1 of Skip => p2 | Raise/Return/Break/Continue => p1 | Move n1 l1 => case dest_Seq_Move p2 of NONE => default | SOME (n2,l2,rest) => let l = merge_moves l1 l2 in if rest = Skip then Move (MAX n1 n2) l else Seq (Move (MAX n1 n2) l) rest | _ => default (the commented-out n1 ≠ n2 guard is not code). HOL's p = Skip equality tests are decided by the Flapjack Decidable instance via isSkip (iff proved), equal to HOL equality with Skip. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a prog to WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_unreach_def_probe kernel-replayed in Flapjack/Test/WordUnreachDefParity.lean. Proof-side definition; the executed RiscV/WordUnreach.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_unreachScript.sml",
+    "hol_name": "Seq_assoc_right_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach.lean",
+    "lean_name": "seqAssocRight",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachScript.sml:48-68, clause by clause: Skip, Seq, If, MustTerminate, Call (NONE return continuation keeps the call and drops acc; SOME rewrites the return handler and optional exception handler with Seq_assoc_right _ Skip under SimpSeq), Loop, and the catchall SimpSeq p1 acc. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a prog to WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_unreach_def_probe kernel-replayed in Flapjack/Test/WordUnreachDefParity.lean. Proof-side definition; the executed RiscV/WordUnreach.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_unreachScript.sml",
+    "hol_name": "remove_unreach_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach.lean",
+    "lean_name": "removeUnreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachScript.sml:70-73, remove_unreach e = Seq_assoc_right e Skip. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a prog to WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_unreach_def_probe kernel-replayed in Flapjack/Test/WordUnreachDefParity.lean. Proof-side definition; the executed RiscV/WordUnreach.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "copy_vars_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "copyVars",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:40-44, both clauses literal: copy_vars [] from to = to; copy_vars ((l,r)::rest) from to = insert l (THE (lookup r from)) (copy_vars rest from to); HOL THE is the tagged holThe (hence [Nonempty α], the HOL ARB inhabitant), lookup/insert are sptLookup/sptInsert on Spt α ('a num_map). Kernel-checked definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "copy_vars_append",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "copyVarsAppend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:46-52: same universally quantified xs ys from to and the same equation copy_vars (xs ++ ys) from to = copy_vars xs from (copy_vars ys from to); no hypotheses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "ALL_DISTINCT_merge_moves",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "allDistinctMergeMoves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:33-37: free l1 l2, ALL_DISTINCT (MAP FST (merge_moves l1 l2)) rendered as List.Nodup of the List.map Prod.fst image of the tagged mergeMoves; no hypotheses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "copy_vars_MEM_acc",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "copyVarsMemAcc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:78-99: free s t, quantified xs acc n w, premise MEM n acc (n ∈ acc), conclusion insert n w (copy_vars (anub xs acc) s t) = insert n w (copy_vars (anub xs (FILTER (λx. n ≠ x) acc)) s t) with FILTER as List.filter of the decided predicate n ≠ x; anub is the tagged miscScript anub."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "copy_vars_anub",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "copyVarsAnub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:101-106: free xs, the function equation copy_vars (anub xs []) = copy_vars xs (both sides partially applied to the remaining from/to arguments, as in HOL)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "lookup_copy_vars_ignore",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "lookupCopyVarsIgnore",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:108-116: quantified l1 h1 x y, premise ALOOKUP l1 h1 = NONE (sptAListLookup h1 l1 = none, the library ALOOKUP rendering with arguments in key-first order), conclusion lookup h1 (copy_vars l1 x y) = lookup h1 y."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "lookup_copy_vars",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "lookupCopyVars",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:118-128: quantified l1 h1 y s t z, conjunctive premise ALOOKUP l1 h1 = SOME y ∧ lookup h1 (copy_vars l1 s t) = SOME z, conclusion THE (lookup y s) = z with THE as holThe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "IMP_EVERY_MAP_SND_anub",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "impEveryMapSndAnub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:142-148: quantified xs acc p (p : β → Prop for HOL predicate p), premise EVERY p (MAP SND xs), conclusion EVERY p (MAP SND (anub xs acc)); EVERY rendered as bounded membership over List.map Prod.snd; [DecidableEq α] decides the anub MEM key test."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "evaluate_Skip_Seq",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "evaluateSkipSeq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:14-18: free p and fixed s, evaluate (Seq Skip p, s) = evaluate (p, s) on the faithful clocked wordSem evaluate; no hypotheses. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "evaluate_Seq_Skip",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "evaluateSeqSkip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:20-25: ∀p1 s. evaluate (Seq p1 Skip, s) = evaluate (p1, s); no hypotheses. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "evaluate_Seq_assoc",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "evaluateSeqAssoc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:27-31: free p1 p2 p3 s, evaluate (Seq p1 (Seq p2 p3), s) = evaluate (Seq (Seq p1 p2) p3, s); no hypotheses. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "evaluate_Move",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "evaluateMove",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:54-76: free pri moves s, evaluate (Move pri moves, s) = if ALL_DISTINCT (MAP FST moves) then (case get_vars (MAP SND moves) s of NONE => (SOME Error, s) | SOME l => (NONE, s with locals := copy_vars moves s.locals s.locals)) else (SOME Error, s); same case split, the SOME binder l unused as in HOL, record update of locals only. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "get_vars_IS_SOME_lookup",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "getVarsIsSomeLookup",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:130-140 ([local]): ∀xs s. (∃ws. get_vars xs s = SOME ws) ⇔ EVERY (λx. IS_SOME (lookup x s.locals)) xs, EVERY as bounded membership and IS_SOME as Option.isSome = true; get_vars is the WordSemStateFiniteExact.getVars rendering. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "merge_moves_Skip",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "mergeMovesSkip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:150-199: free n1 n2 m, ∀l1 l2 s res s1, premise evaluate (Seq (Move n1 l1) (Move n2 l2), s) = (res, s1) ∧ res ≠ SOME Error, conclusion evaluate (Move m (merge_moves l1 l2), s) = (res, s1). Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "merge_moves_thm",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "mergeMovesThm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:201-216: free n1 n2 m, ∀p l1 l2 s res s1, premise evaluate (Seq (Move n1 l1) (Seq (Move n2 l2) p), s) = (res, s1) ∧ res ≠ SOME Error, conclusion evaluate (Seq (Move m (merge_moves l1 l2)) p, s) = (res, s1). Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "evaluate_SimpSeq",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "evaluateSimpSeq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:218-242 ([local]): free p1 p2 s res s1, premise evaluate (Seq p1 p2, s) = (res, s1) ∧ res ≠ SOME Error, conclusion evaluate (SimpSeq p1 p2, s) = (res, s1) with the tagged simpSeq. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "push_env_handler",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "pushEnvHandler",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:244-253 ([local]): free x' handler s, push_env x' (case handler of NONE => NONE | SOME (y1,q2,y2,y3) => SOME (y1, Seq_assoc_right q2 Skip, y2, y3)) (dec_clock s) = push_env x' handler (dec_clock s); same case expression over the handler option. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "evaluate_Loop_body_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "evaluateLoopBodyEq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:323-366 ([local]): free p1 p2 names exit_names; premise ∀s res s1. evaluate (p1, s) = (res, s1) ∧ res ≠ SOME Error ⇒ evaluate (p2, s) = (res, s1); conclusion the same implication for Loop names p1 exit_names versus Loop names p2 exit_names. HOL proves it by complete induction on s.clock; Lean by strong induction on the clock. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "evaluate_Seq_assoc_right_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "evaluateSeqAssocRightLemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:255-321 (with the suspended Loop case discharged at 365-377): ∀p1 p2 s res s1, premise evaluate (Seq p1 p2, s) = (res, s1) ∧ res ≠ SOME Error, conclusion evaluate (Seq_assoc_right p1 p2, s) = (res, s1) with the tagged seqAssocRight. HOL proves it by Seq_assoc_right_ind; Lean by structural recursion on p1 over all wordLang constructors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_unreachProofScript.sml",
+    "hol_name": "evaluate_remove_unreach",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach/Proofs.lean",
+    "lean_name": "evaluateRemoveUnreach",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:368-377: ∀p s res s1, premise evaluate (p, s) = (res, s1) ∧ res ≠ SOME Error, conclusion evaluate (remove_unreach p, s) = (res, s1) with the tagged removeUnreach. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/WordListLength.lean",
+    "lean_name": "divAddOne",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DIV_ADD_1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Original655-686 full division increment and both native word_list length statements. All Boolean lists including empty; arbitrary Nat chunk size including zero, positive lemma retains exactly 0<d. Full formula uses truncated Nat length-minus-one and division, zerochunk always singleton. Native executed wordListW already literal reviewed original recursion, word values may truncate when d exceeds width but length formula and original quantifiers are unchanged. Positive-width BitVec standard translation only; no width>=8, chunk<width, sentinel, listnonempty, target result or encoding-success premise. Kernel strong induction uses actual recursive drop and exact positive-divisor increment. Fresh three literal whole original proofs hyp=[] and246 matching closed original/kernel boundary laws across1/2/8/64/80bit widths, chunk0/1/2/7/80/99, empty/oneword/multiword81bit input and80bit naturals, plus generic fulltheorem application. Standard Lean axioms only; no totalHD/EL dependency or external sourceallowance change. Full frame relation and compiler theorem remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/WordListLength.lean",
+    "lean_name": "lengthWordListPositive",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LENGTH_word_list_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Original655-686 full division increment and both native word_list length statements. All Boolean lists including empty; arbitrary Nat chunk size including zero, positive lemma retains exactly 0<d. Full formula uses truncated Nat length-minus-one and division, zerochunk always singleton. Native executed wordListW already literal reviewed original recursion, word values may truncate when d exceeds width but length formula and original quantifiers are unchanged. Positive-width BitVec standard translation only; no width>=8, chunk<width, sentinel, listnonempty, target result or encoding-success premise. Kernel strong induction uses actual recursive drop and exact positive-divisor increment. Fresh three literal whole original proofs hyp=[] and246 matching closed original/kernel boundary laws across1/2/8/64/80bit widths, chunk0/1/2/7/80/99, empty/oneword/multiword81bit input and80bit naturals, plus generic fulltheorem application. Standard Lean axioms only; no totalHD/EL dependency or external sourceallowance change. Full frame relation and compiler theorem remain unfinished.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/WordListLength.lean",
+    "lean_name": "lengthWordList",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LENGTH_word_list",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Original655-686 full division increment and both native word_list length statements. All Boolean lists including empty; arbitrary Nat chunk size including zero, positive lemma retains exactly 0<d. Full formula uses truncated Nat length-minus-one and division, zerochunk always singleton. Native executed wordListW already literal reviewed original recursion, word values may truncate when d exceeds width but length formula and original quantifiers are unchanged. Positive-width BitVec standard translation only; no width>=8, chunk<width, sentinel, listnonempty, target result or encoding-success premise. Kernel strong induction uses actual recursive drop and exact positive-divisor increment. Fresh three literal whole original proofs hyp=[] and246 matching closed original/kernel boundary laws across1/2/8/64/80bit widths, chunk0/1/2/7/80/99, empty/oneword/multiword81bit input and80bit naturals, plus generic fulltheorem application. Standard Lean axioms only; no totalHD/EL dependency or external sourceallowance change. Full frame relation and compiler theorem remain unfinished.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdate.lean",
+    "lean_name": "listUpdate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "list_LUPDATE_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Literal original564-652 proof-only list_LUPDATE recursion and ten complete original laws, arbitrary native List payloads/Nat offsets, no Inhabited/BEq/width constraints. Native List.set compared constructor-for-constructor with original LUPDATE_def empty/zero/successor clauses, including ignored out-of-range update; optional getElem? matches oEL empty/zero/successor including none. Exact original guards retained for suffix/lookup interval ignore, drop-offset transport and equal-length append; unrestricted take/decomposition/length/empty/cons laws retain arbitrary indices. Definition belongs to original proof script and has no compiler-operation duplicate to route. Full native kernel induction proofs; fresh literal ten full original proofs plus definition/seven local source prerequisite replays hyp=[], and192 matching closed kernel/oracle boundary cases including64 exact whole output fixtures. Untagged private cons-successor helper is Flapjack induction infrastructure. No totalHD/EL/provenance expansion, additional target result, simulation premise or full compiler proof claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdate.lean",
+    "lean_name": "lengthListUpdate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LENGTH_list_LUPDATE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Literal original564-652 proof-only list_LUPDATE recursion and ten complete original laws, arbitrary native List payloads/Nat offsets, no Inhabited/BEq/width constraints. Native List.set compared constructor-for-constructor with original LUPDATE_def empty/zero/successor clauses, including ignored out-of-range update; optional getElem? matches oEL empty/zero/successor including none. Exact original guards retained for suffix/lookup interval ignore, drop-offset transport and equal-length append; unrestricted take/decomposition/length/empty/cons laws retain arbitrary indices. Definition belongs to original proof script and has no compiler-operation duplicate to route. Full native kernel induction proofs; fresh literal ten full original proofs plus definition/seven local source prerequisite replays hyp=[], and192 matching closed kernel/oracle boundary cases including64 exact whole output fixtures. Untagged private cons-successor helper is Flapjack induction infrastructure. No totalHD/EL/provenance expansion, additional target result, simulation premise or full compiler proof claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdate.lean",
+    "lean_name": "takeListUpdate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "TAKE_list_LUPDATE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Literal original564-652 proof-only list_LUPDATE recursion and ten complete original laws, arbitrary native List payloads/Nat offsets, no Inhabited/BEq/width constraints. Native List.set compared constructor-for-constructor with original LUPDATE_def empty/zero/successor clauses, including ignored out-of-range update; optional getElem? matches oEL empty/zero/successor including none. Exact original guards retained for suffix/lookup interval ignore, drop-offset transport and equal-length append; unrestricted take/decomposition/length/empty/cons laws retain arbitrary indices. Definition belongs to original proof script and has no compiler-operation duplicate to route. Full native kernel induction proofs; fresh literal ten full original proofs plus definition/seven local source prerequisite replays hyp=[], and192 matching closed kernel/oracle boundary cases including64 exact whole output fixtures. Untagged private cons-successor helper is Flapjack induction infrastructure. No totalHD/EL/provenance expansion, additional target result, simulation premise or full compiler proof claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdate.lean",
+    "lean_name": "lookupListUpdateIgnore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LLOOKUP_list_LUPDATE_IGNORE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Literal original564-652 proof-only list_LUPDATE recursion and ten complete original laws, arbitrary native List payloads/Nat offsets, no Inhabited/BEq/width constraints. Native List.set compared constructor-for-constructor with original LUPDATE_def empty/zero/successor clauses, including ignored out-of-range update; optional getElem? matches oEL empty/zero/successor including none. Exact original guards retained for suffix/lookup interval ignore, drop-offset transport and equal-length append; unrestricted take/decomposition/length/empty/cons laws retain arbitrary indices. Definition belongs to original proof script and has no compiler-operation duplicate to route. Full native kernel induction proofs; fresh literal ten full original proofs plus definition/seven local source prerequisite replays hyp=[], and192 matching closed kernel/oracle boundary cases including64 exact whole output fixtures. Untagged private cons-successor helper is Flapjack induction infrastructure. No totalHD/EL/provenance expansion, additional target result, simulation premise or full compiler proof claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdate.lean",
+    "lean_name": "dropListUpdate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_list_LUPDATE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Literal original564-652 proof-only list_LUPDATE recursion and ten complete original laws, arbitrary native List payloads/Nat offsets, no Inhabited/BEq/width constraints. Native List.set compared constructor-for-constructor with original LUPDATE_def empty/zero/successor clauses, including ignored out-of-range update; optional getElem? matches oEL empty/zero/successor including none. Exact original guards retained for suffix/lookup interval ignore, drop-offset transport and equal-length append; unrestricted take/decomposition/length/empty/cons laws retain arbitrary indices. Definition belongs to original proof script and has no compiler-operation duplicate to route. Full native kernel induction proofs; fresh literal ten full original proofs plus definition/seven local source prerequisite replays hyp=[], and192 matching closed kernel/oracle boundary cases including64 exact whole output fixtures. Untagged private cons-successor helper is Flapjack induction infrastructure. No totalHD/EL/provenance expansion, additional target result, simulation premise or full compiler proof claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdate.lean",
+    "lean_name": "dropListUpdateIgnore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_list_LUPDATE_IGNORE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Literal original564-652 proof-only list_LUPDATE recursion and ten complete original laws, arbitrary native List payloads/Nat offsets, no Inhabited/BEq/width constraints. Native List.set compared constructor-for-constructor with original LUPDATE_def empty/zero/successor clauses, including ignored out-of-range update; optional getElem? matches oEL empty/zero/successor including none. Exact original guards retained for suffix/lookup interval ignore, drop-offset transport and equal-length append; unrestricted take/decomposition/length/empty/cons laws retain arbitrary indices. Definition belongs to original proof script and has no compiler-operation duplicate to route. Full native kernel induction proofs; fresh literal ten full original proofs plus definition/seven local source prerequisite replays hyp=[], and192 matching closed kernel/oracle boundary cases including64 exact whole output fixtures. Untagged private cons-successor helper is Flapjack induction infrastructure. No totalHD/EL/provenance expansion, additional target result, simulation premise or full compiler proof claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdate.lean",
+    "lean_name": "listUpdateNil",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "list_LUPDATE_NIL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Literal original564-652 proof-only list_LUPDATE recursion and ten complete original laws, arbitrary native List payloads/Nat offsets, no Inhabited/BEq/width constraints. Native List.set compared constructor-for-constructor with original LUPDATE_def empty/zero/successor clauses, including ignored out-of-range update; optional getElem? matches oEL empty/zero/successor including none. Exact original guards retained for suffix/lookup interval ignore, drop-offset transport and equal-length append; unrestricted take/decomposition/length/empty/cons laws retain arbitrary indices. Definition belongs to original proof script and has no compiler-operation duplicate to route. Full native kernel induction proofs; fresh literal ten full original proofs plus definition/seven local source prerequisite replays hyp=[], and192 matching closed kernel/oracle boundary cases including64 exact whole output fixtures. Untagged private cons-successor helper is Flapjack induction infrastructure. No totalHD/EL/provenance expansion, additional target result, simulation premise or full compiler proof claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdate.lean",
+    "lean_name": "singleUpdateTakeDrop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LUPDATE_TAKE_LEMMA",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Literal original564-652 proof-only list_LUPDATE recursion and ten complete original laws, arbitrary native List payloads/Nat offsets, no Inhabited/BEq/width constraints. Native List.set compared constructor-for-constructor with original LUPDATE_def empty/zero/successor clauses, including ignored out-of-range update; optional getElem? matches oEL empty/zero/successor including none. Exact original guards retained for suffix/lookup interval ignore, drop-offset transport and equal-length append; unrestricted take/decomposition/length/empty/cons laws retain arbitrary indices. Definition belongs to original proof script and has no compiler-operation duplicate to route. Full native kernel induction proofs; fresh literal ten full original proofs plus definition/seven local source prerequisite replays hyp=[], and192 matching closed kernel/oracle boundary cases including64 exact whole output fixtures. Untagged private cons-successor helper is Flapjack induction infrastructure. No totalHD/EL/provenance expansion, additional target result, simulation premise or full compiler proof claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdate.lean",
+    "lean_name": "listUpdateTakeDrop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "list_LUPDATE_TAKE_DROP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Literal original564-652 proof-only list_LUPDATE recursion and ten complete original laws, arbitrary native List payloads/Nat offsets, no Inhabited/BEq/width constraints. Native List.set compared constructor-for-constructor with original LUPDATE_def empty/zero/successor clauses, including ignored out-of-range update; optional getElem? matches oEL empty/zero/successor including none. Exact original guards retained for suffix/lookup interval ignore, drop-offset transport and equal-length append; unrestricted take/decomposition/length/empty/cons laws retain arbitrary indices. Definition belongs to original proof script and has no compiler-operation duplicate to route. Full native kernel induction proofs; fresh literal ten full original proofs plus definition/seven local source prerequisite replays hyp=[], and192 matching closed kernel/oracle boundary cases including64 exact whole output fixtures. Untagged private cons-successor helper is Flapjack induction infrastructure. No totalHD/EL/provenance expansion, additional target result, simulation premise or full compiler proof claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdate.lean",
+    "lean_name": "listUpdateZeroCons",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "list_LUPDATE_0_CONS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Literal original564-652 proof-only list_LUPDATE recursion and ten complete original laws, arbitrary native List payloads/Nat offsets, no Inhabited/BEq/width constraints. Native List.set compared constructor-for-constructor with original LUPDATE_def empty/zero/successor clauses, including ignored out-of-range update; optional getElem? matches oEL empty/zero/successor including none. Exact original guards retained for suffix/lookup interval ignore, drop-offset transport and equal-length append; unrestricted take/decomposition/length/empty/cons laws retain arbitrary indices. Definition belongs to original proof script and has no compiler-operation duplicate to route. Full native kernel induction proofs; fresh literal ten full original proofs plus definition/seven local source prerequisite replays hyp=[], and192 matching closed kernel/oracle boundary cases including64 exact whole output fixtures. Untagged private cons-successor helper is Flapjack induction infrastructure. No totalHD/EL/provenance expansion, additional target result, simulation premise or full compiler proof claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdate.lean",
+    "lean_name": "listUpdateAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "list_LUPDATE_APPEND",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Literal original564-652 proof-only list_LUPDATE recursion and ten complete original laws, arbitrary native List payloads/Nat offsets, no Inhabited/BEq/width constraints. Native List.set compared constructor-for-constructor with original LUPDATE_def empty/zero/successor clauses, including ignored out-of-range update; optional getElem? matches oEL empty/zero/successor including none. Exact original guards retained for suffix/lookup interval ignore, drop-offset transport and equal-length append; unrestricted take/decomposition/length/empty/cons laws retain arbitrary indices. Definition belongs to original proof script and has no compiler-operation duplicate to route. Full native kernel induction proofs; fresh literal ten full original proofs plus definition/seven local source prerequisite replays hyp=[], and192 matching closed kernel/oracle boundary cases including64 exact whole output fixtures. Untagged private cons-successor helper is Flapjack induction infrastructure. No totalHD/EL/provenance expansion, additional target result, simulation premise or full compiler proof claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FilterBitmap.lean",
+    "lean_name": "filterBitmapEqSomeNil",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "IMP_filter_bitmap_EQ_SOME_NIL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original424-523 nine bitmap-filter laws on reviewed native StackSem.filterBitmap/WordToStackProofs.indexList. Arbitrary payload lists and both arbitrary pair field types; HOL List/Bool/Nat and Option/pair carriers constructor-for-constructor. Native filter clauses preserve unconsumed suffix, reject insufficient input even for allfalse mask, and select true positions. Every original length/output/zero-suffix/membership guard retained; equal-length reconstruction takes exactly original zs definition; pair reconstruction assumes only original two projection successes, no full pair target success. Take/index reconstruction derives native suffix rather than assuming it. Private formula/map/take/rest/pair-extensionality helpers are untagged Flapjack induction infrastructure, no external totalHD/EL tags or sourceallowance change. Fresh nine literal full original proofs hyp=[] and155 matching closed kernel/oracle boundary cases: actual scalar/pair full outputs, insufficient input, true/false/allfalse masks, unused suffix, selected/input length/membership, indexed prefixes at0/7 and exact equal-length zip/filter. Full evaluate_wLive/pass/compiler theorem remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FilterBitmap.lean",
+    "lean_name": "filterBitmapSelectedLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "filter_bitmap_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original424-523 nine bitmap-filter laws on reviewed native StackSem.filterBitmap/WordToStackProofs.indexList. Arbitrary payload lists and both arbitrary pair field types; HOL List/Bool/Nat and Option/pair carriers constructor-for-constructor. Native filter clauses preserve unconsumed suffix, reject insufficient input even for allfalse mask, and select true positions. Every original length/output/zero-suffix/membership guard retained; equal-length reconstruction takes exactly original zs definition; pair reconstruction assumes only original two projection successes, no full pair target success. Take/index reconstruction derives native suffix rather than assuming it. Private formula/map/take/rest/pair-extensionality helpers are untagged Flapjack induction infrastructure, no external totalHD/EL tags or sourceallowance change. Fresh nine literal full original proofs hyp=[] and155 matching closed kernel/oracle boundary cases: actual scalar/pair full outputs, insufficient input, true/false/allfalse masks, unused suffix, selected/input length/membership, indexed prefixes at0/7 and exact equal-length zip/filter. Full evaluate_wLive/pass/compiler theorem remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FilterBitmap.lean",
+    "lean_name": "filterBitmapInputLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "filter_bitmap_length_input",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original424-523 nine bitmap-filter laws on reviewed native StackSem.filterBitmap/WordToStackProofs.indexList. Arbitrary payload lists and both arbitrary pair field types; HOL List/Bool/Nat and Option/pair carriers constructor-for-constructor. Native filter clauses preserve unconsumed suffix, reject insufficient input even for allfalse mask, and select true positions. Every original length/output/zero-suffix/membership guard retained; equal-length reconstruction takes exactly original zs definition; pair reconstruction assumes only original two projection successes, no full pair target success. Take/index reconstruction derives native suffix rather than assuming it. Private formula/map/take/rest/pair-extensionality helpers are untagged Flapjack induction infrastructure, no external totalHD/EL tags or sourceallowance change. Fresh nine literal full original proofs hyp=[] and155 matching closed kernel/oracle boundary cases: actual scalar/pair full outputs, insufficient input, true/false/allfalse masks, unused suffix, selected/input length/membership, indexed prefixes at0/7 and exact equal-length zip/filter. Full evaluate_wLive/pass/compiler theorem remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FilterBitmap.lean",
+    "lean_name": "filterBitmapPairReconstruct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "filter_bitmap_MAP_IMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original424-523 nine bitmap-filter laws on reviewed native StackSem.filterBitmap/WordToStackProofs.indexList. Arbitrary payload lists and both arbitrary pair field types; HOL List/Bool/Nat and Option/pair carriers constructor-for-constructor. Native filter clauses preserve unconsumed suffix, reject insufficient input even for allfalse mask, and select true positions. Every original length/output/zero-suffix/membership guard retained; equal-length reconstruction takes exactly original zs definition; pair reconstruction assumes only original two projection successes, no full pair target success. Take/index reconstruction derives native suffix rather than assuming it. Private formula/map/take/rest/pair-extensionality helpers are untagged Flapjack induction infrastructure, no external totalHD/EL tags or sourceallowance change. Fresh nine literal full original proofs hyp=[] and155 matching closed kernel/oracle boundary cases: actual scalar/pair full outputs, insufficient input, true/false/allfalse masks, unused suffix, selected/input length/membership, indexed prefixes at0/7 and exact equal-length zip/filter. Full evaluate_wLive/pass/compiler theorem remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FilterBitmap.lean",
+    "lean_name": "filterBitmapMapSnd",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "filter_bitmap_IMP_MAP_SND",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original424-523 nine bitmap-filter laws on reviewed native StackSem.filterBitmap/WordToStackProofs.indexList. Arbitrary payload lists and both arbitrary pair field types; HOL List/Bool/Nat and Option/pair carriers constructor-for-constructor. Native filter clauses preserve unconsumed suffix, reject insufficient input even for allfalse mask, and select true positions. Every original length/output/zero-suffix/membership guard retained; equal-length reconstruction takes exactly original zs definition; pair reconstruction assumes only original two projection successes, no full pair target success. Take/index reconstruction derives native suffix rather than assuming it. Private formula/map/take/rest/pair-extensionality helpers are untagged Flapjack induction infrastructure, no external totalHD/EL tags or sourceallowance change. Fresh nine literal full original proofs hyp=[] and155 matching closed kernel/oracle boundary cases: actual scalar/pair full outputs, insufficient input, true/false/allfalse masks, unused suffix, selected/input length/membership, indexed prefixes at0/7 and exact equal-length zip/filter. Full evaluate_wLive/pass/compiler theorem remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FilterBitmap.lean",
+    "lean_name": "filterBitmapMapFst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "filter_bitmap_IMP_MAP_FST",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original424-523 nine bitmap-filter laws on reviewed native StackSem.filterBitmap/WordToStackProofs.indexList. Arbitrary payload lists and both arbitrary pair field types; HOL List/Bool/Nat and Option/pair carriers constructor-for-constructor. Native filter clauses preserve unconsumed suffix, reject insufficient input even for allfalse mask, and select true positions. Every original length/output/zero-suffix/membership guard retained; equal-length reconstruction takes exactly original zs definition; pair reconstruction assumes only original two projection successes, no full pair target success. Take/index reconstruction derives native suffix rather than assuming it. Private formula/map/take/rest/pair-extensionality helpers are untagged Flapjack induction infrastructure, no external totalHD/EL tags or sourceallowance change. Fresh nine literal full original proofs hyp=[] and155 matching closed kernel/oracle boundary cases: actual scalar/pair full outputs, insufficient input, true/false/allfalse masks, unused suffix, selected/input length/membership, indexed prefixes at0/7 and exact equal-length zip/filter. Full evaluate_wLive/pass/compiler theorem remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FilterBitmap.lean",
+    "lean_name": "filterBitmapTakeLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "filter_bitmap_TAKE_LENGTH_IMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original424-523 nine bitmap-filter laws on reviewed native StackSem.filterBitmap/WordToStackProofs.indexList. Arbitrary payload lists and both arbitrary pair field types; HOL List/Bool/Nat and Option/pair carriers constructor-for-constructor. Native filter clauses preserve unconsumed suffix, reject insufficient input even for allfalse mask, and select true positions. Every original length/output/zero-suffix/membership guard retained; equal-length reconstruction takes exactly original zs definition; pair reconstruction assumes only original two projection successes, no full pair target success. Take/index reconstruction derives native suffix rather than assuming it. Private formula/map/take/rest/pair-extensionality helpers are untagged Flapjack induction infrastructure, no external totalHD/EL tags or sourceallowance change. Fresh nine literal full original proofs hyp=[] and155 matching closed kernel/oracle boundary cases: actual scalar/pair full outputs, insufficient input, true/false/allfalse masks, unused suffix, selected/input length/membership, indexed prefixes at0/7 and exact equal-length zip/filter. Full evaluate_wLive/pass/compiler theorem remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FilterBitmap.lean",
+    "lean_name": "filterBitmapIndexReconstruct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "filter_bitmap_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original424-523 nine bitmap-filter laws on reviewed native StackSem.filterBitmap/WordToStackProofs.indexList. Arbitrary payload lists and both arbitrary pair field types; HOL List/Bool/Nat and Option/pair carriers constructor-for-constructor. Native filter clauses preserve unconsumed suffix, reject insufficient input even for allfalse mask, and select true positions. Every original length/output/zero-suffix/membership guard retained; equal-length reconstruction takes exactly original zs definition; pair reconstruction assumes only original two projection successes, no full pair target success. Take/index reconstruction derives native suffix rather than assuming it. Private formula/map/take/rest/pair-extensionality helpers are untagged Flapjack induction infrastructure, no external totalHD/EL tags or sourceallowance change. Fresh nine literal full original proofs hyp=[] and155 matching closed kernel/oracle boundary cases: actual scalar/pair full outputs, insufficient input, true/false/allfalse masks, unused suffix, selected/input length/membership, indexed prefixes at0/7 and exact equal-length zip/filter. Full evaluate_wLive/pass/compiler theorem remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FilterBitmap.lean",
+    "lean_name": "filterBitmapMem",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "filter_bitmap_MEM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original424-523 nine bitmap-filter laws on reviewed native StackSem.filterBitmap/WordToStackProofs.indexList. Arbitrary payload lists and both arbitrary pair field types; HOL List/Bool/Nat and Option/pair carriers constructor-for-constructor. Native filter clauses preserve unconsumed suffix, reject insufficient input even for allfalse mask, and select true positions. Every original length/output/zero-suffix/membership guard retained; equal-length reconstruction takes exactly original zs definition; pair reconstruction assumes only original two projection successes, no full pair target success. Take/index reconstruction derives native suffix rather than assuming it. Private formula/map/take/rest/pair-extensionality helpers are untagged Flapjack induction infrastructure, no external totalHD/EL tags or sourceallowance change. Fresh nine literal full original proofs hyp=[] and155 matching closed kernel/oracle boundary cases: actual scalar/pair full outputs, insufficient input, true/false/allfalse masks, unused suffix, selected/input length/membership, indexed prefixes at0/7 and exact equal-length zip/filter. Full evaluate_wLive/pass/compiler theorem remains unfinished."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
     "hol_name": "word_gen_gc_partial_move_code_thm",
     "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenPartialMove.lean",

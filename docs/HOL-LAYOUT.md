@@ -56,9 +56,12 @@ the cited name occurs in one of the two syntactic forms.
 | `basis/pure/mllistScript.sml` (`sort`) | `Flapjack/Basis/Pure/MlList.lean` (tagged `sort_def`, with an untagged clause-for-clause rendering of HOL `mergesort_tail`) |
 | `compiler/backend/word_allocScript.sml` | `Flapjack/Compiler/Backend/WordAlloc/` (`Expressions.lean` exact expression renaming and live sets) |
 | `compiler/backend/word_removeScript.sml` | `Flapjack/Compiler/Backend/WordRemove.lean` |
+| `compiler/backend/word_unreachScript.sml` | `Flapjack/Compiler/Backend/WordUnreach.lean` |
+| `misc/miscScript.sml` (`anub`) | `Flapjack/Misc/Anub.lean` |
 | `compiler/backend/data_to_wordScript.sml` | `Flapjack/Compiler/Backend/DataToWord/` (`Config.lean` gc_kind/config and pointer-layout helpers) |
 | `compiler/backend/proofs/word_gcFunctionsScript.sml` | `Flapjack/Compiler/Backend/WordGcFunctions.lean` (copying, generational and partial GC definitions and `word_gc_fun`); `WordGcFunctions/Roots.lean` (root `EVERY2`/`LENGTH` theorems) |
 | `compiler/backend/proofs/word_allocProofScript.sml` | `Flapjack/Compiler/Backend/WordAlloc/Proofs/` (`StrongLocalsRel.lean` live-scoped lookup transport) |
+| `compiler/backend/proofs/word_unreachProofScript.sml` | `Flapjack/Compiler/Backend/WordUnreach/Proofs.lean` |
 | `compiler/backend/semantics/wordSemScript.sml` | `Flapjack/Compiler/Backend/Semantics/WordSem/` (`State.lean` carriers, `Accessors.lean` state accessors and `word_exp`, `Env.lean` env/stack/cut helpers, `CallHelpers.lean` call/loop helpers, `Alloc.lean` find_code/gc/alloc/assign, `ShMem.lean` sh_mem_*/share_inst, `Inst.lean` inst_def, `Evaluate.lean` evaluate_def, `EvaluateClock.lean` clock lemmas, `EvaluateInd.lean` rebound evaluate_ind/evaluate_def, `Semantics.lean` semantics_def); the older call-aware executable analogue `Flapjack/WordSemantics.lean` is not a port |
 | `compiler/backend/semantics/wordPropsScript.sml` | `Flapjack/Compiler/Backend/Semantics/WordSem/EnvListSupport.lean` (`env_to_list_lookup_equiv`, over the exact `wordSemEnvToList` result and Spt lookup carriers); `Flapjack/Compiler/Backend/Semantics/WordSem/Props/` (`EvaluateAddClock.lean` clock-constancy lemmas and `evaluate_add_clock`) |
 | `compiler/backend/semantics/stackPropsScript.sml` | `Flapjack/Compiler/Backend/StackProps.lean` (recursive `stack_asm_ok` clauses and `addr_ok`, linked to the `asm_config` predicates; `StackProps/EvaluateAddClock.lean` proves `evaluate_add_clock` over the exact StackSem evaluator) |
@@ -148,3 +151,20 @@ The pinned external `HOL/src/sort/mergesortScript.sml` counterpart is
 `Flapjack/Misc/Mergesort.lean` (the non-tail `sort2`/`sort3`/`merge`/`mergesortN`, their
 sortedness, and the tail-recursive correctness lemmas over the untagged tail rendering in
 `Flapjack/Basis/Pure/MlList.lean`).
+
+
+### Computed finite-map result observations
+
+`(fmap_as_finite_support_result_observations := [Producer, ...])` records
+only the canonical finite-support representation of explicitly named imported
+map producers used in a tagged declaration's type. Each producer must return
+`HolFiniteMapExact`, carry the standalone result qualifier, have its checked
+same-module lookup witness, and have a source-reviewed result manifest record.
+The observer has its own `reviewed_fmap_as_finite_support_result_observations`
+record with exactly the same producer list and a complete source comparison.
+Producer acceptance does not establish observer acceptance. The checker rejects
+unused, ambiguous, shadowed, unqualified, unreviewed, non-map, and unwitnessed
+producers. This narrow qualifier cannot combine with other representations and
+permits no changed quantifiers, hypotheses, evaluator, or conclusion. The
+syntactic checks and kernel witnesses do not prove cross-language equivalence;
+the complete observer still requires manual HOL source comparison.

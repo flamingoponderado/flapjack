@@ -1,0 +1,58 @@
+bml_0=Bin 1 1 10 Tip Tip
+
+bml_1=Bin 2 1 10 (Bin 99 2 20 Tip Tip) Tip
+
+bml_2=Bin 3 4 40 (Bin 1 2 20 Tip Tip) (Bin 1 1 10 Tip Tip)
+
+bml_3=Bin 3 2 20 (Bin 4 4 40 (Bin 11 5 50 Tip Tip) (Bin 13 6 60 Tip Tip)) (Bin 1 1 10 Tip Tip)
+
+bml_4=Bin 31 2 20 (Bin 5 2 20 Tip Tip) (Bin 10 1 10 (Bin 9 3 30 Tip Tip) Tip)
+
+bml_5=Bin 31 3 30 (Bin 17 2 20 (Bin 5 2 20 Tip Tip) (Bin 11 5 50 Tip Tip)) (Bin 14 1 10 (Bin 13 6 60 Tip Tip) Tip)
+
+bml_6=Bin 78 1 10 Tip (Bin 77 9 90 Tip Tip)
+
+bml_7=Bin 5 1 10 (Bin 3 2 20 Tip Tip) (Bin 1 9 90 Tip Tip)
+
+bml_8=Tip
+
+bml_9=Bin 22 2 20 (Bin 5 2 20 Tip Tip) (Bin 11 1 10 (Bin 9 3 30 Tip Tip) (Bin 1 9 90 Tip Tip))
+
+bml_10=Bin 22 3 30 (Bin 17 2 20 (Bin 5 2 20 Tip Tip) (Bin 11 5 50 Tip Tip)) (Bin 15 1 10 (Bin 13 6 60 Tip Tip) (Bin 1 9 90 Tip Tip))
+
+bml_11=Tip
+
+bml_12=Tip
+
+bml_13=Tip
+
+bmr_0=Bin 1 1 10 Tip Tip
+
+bmr_1=Bin 2 1 10 Tip (Bin 99 2 20 Tip Tip)
+
+bmr_2=Bin 3 2 20 (Bin 1 1 10 Tip Tip) (Bin 4 4 40 (Bin 11 5 50 Tip Tip) (Bin 13 6 60 Tip Tip))
+
+bmr_3=Bin 3 4 40 (Bin 1 1 10 Tip Tip) (Bin 1 2 20 Tip Tip)
+
+bmr_4=Bin 31 2 20 (Bin 6 1 10 Tip (Bin 5 2 20 Tip Tip)) (Bin 9 3 30 Tip Tip)
+
+bmr_5=Bin 31 2 20 (Bin 6 1 10 Tip (Bin 5 2 20 Tip Tip)) (Bin 10 3 30 (Bin 11 5 50 Tip Tip) (Bin 13 6 60 Tip Tip))
+
+bmr_6=Bin 78 1 10 (Bin 77 9 90 Tip Tip) Tip
+
+bmr_7=Bin 5 1 10 (Bin 1 9 90 Tip Tip) (Bin 3 2 20 Tip Tip)
+
+bmr_8=Tip
+
+bmr_9=Bin 22 2 20 (Bin 7 1 10 (Bin 1 9 90 Tip Tip) (Bin 5 2 20 Tip Tip)) (Bin 9 3 30 Tip Tip)
+
+bmr_10=Bin 22 2 20 (Bin 7 1 10 (Bin 1 9 90 Tip Tip) (Bin 5 2 20 Tip Tip)) (Bin 10 3 30 (Bin 11 5 50 Tip Tip) (Bin 13 6 60 Tip Tip))
+
+bmr_11=Tip
+
+bmr_12=Tip
+
+bmr_13=Tip
+
+bml_definition=⊢ balanceL k x Tip Tip = Bin 1 k x Tip Tip ∧ balanceL k x (Bin s' k' v' Tip Tip) Tip = Bin 2 k x (Bin s' k' v' Tip Tip) Tip ∧ balanceL k x (Bin v0 lk lx Tip (Bin v1 lrk lrx v2 v3)) Tip = Bin 3 lrk lrx (Bin 1 lk lx Tip Tip) (Bin 1 k x Tip Tip) ∧ balanceL k x (Bin v4 lk lx (Bin s' k' v' l' r') Tip) Tip = Bin 3 lk lx (Bin s' k' v' l' r') (Bin 1 k x Tip Tip) ∧ balanceL k x (Bin ls lk lx (Bin lls k' v' l' r') (Bin lrs lrk lrx lrl lrr)) Tip = (if lrs < ratio * lls then Bin (1 + ls) lk lx (Bin lls k' v' l' r') (Bin (1 + lrs) k x (Bin lrs lrk lrx lrl lrr) Tip) else Bin (1 + ls) lrk lrx (Bin (1 + lls + size lrl) lk lx (Bin lls k' v' l' r') lrl) (Bin (1 + size lrr) k x lrr Tip)) ∧ balanceL k x Tip (Bin rs k' v' l' r') = Bin (1 + rs) k x Tip (Bin rs k' v' l' r') ∧ balanceL k x (Bin ls lk lx ll lr) (Bin rs k' v' l' r') = if ls > delta * rs then case (ll,lr) of (Tip,v1) => Tip | (Bin lls v8 v9 v10 v11,Tip) => Tip | (Bin lls v8 v9 v10 v11,Bin lrs lrk lrx lrl lrr) => if lrs < ratio * lls then Bin (1 + ls + rs) lk lx ll (Bin (1 + rs + lrs) k x lr (Bin rs k' v' l' r')) else Bin (1 + ls + rs) lrk lrx (Bin (1 + lls + size lrl) lk lx ll lrl) (Bin (1 + rs + size lrr) k x lrr (Bin rs k' v' l' r')) else Bin (1 + ls + rs) k x (Bin ls lk lx ll lr) (Bin rs k' v' l' r')
+bmr_definition=⊢ balanceR k x Tip Tip = Bin 1 k x Tip Tip ∧ balanceR k x Tip (Bin s' k' v' Tip Tip) = Bin 2 k x Tip (Bin s' k' v' Tip Tip) ∧ balanceR k x Tip (Bin v0 rk rx Tip (Bin s' k' v' l' r')) = Bin 3 rk rx (Bin 1 k x Tip Tip) (Bin s' k' v' l' r') ∧ balanceR k x Tip (Bin v1 rk rx (Bin v2 rlk rlx v3 v4) Tip) = Bin 3 rlk rlx (Bin 1 k x Tip Tip) (Bin 1 rk rx Tip Tip) ∧ balanceR k x Tip (Bin rs rk rx (Bin rls rlk rlx rll rlr) (Bin rrs k' v' l' r')) = (if rls < ratio * rrs then Bin (1 + rs) rk rx (Bin (1 + rls) k x Tip (Bin rls rlk rlx rll rlr)) (Bin rrs k' v' l' r') else Bin (1 + rs) rlk rlx (Bin (1 + size rll) k x Tip rll) (Bin (1 + rrs + size rlr) rk rx rlr (Bin rrs k' v' l' r'))) ∧ balanceR k x (Bin ls k' v' l' r') Tip = Bin (1 + ls) k x (Bin ls k' v' l' r') Tip ∧ balanceR k x (Bin ls k' v' l' r') (Bin rs rk rx rl rr) = if rs > delta * ls then case (rl,rr) of (Tip,v1) => Tip | (Bin rls rlk rlx rll rlr,Tip) => Tip | (Bin rls rlk rlx rll rlr,Bin rrs v18 v19 v20 v21) => if rls < ratio * rrs then Bin (1 + ls + rs) rk rx (Bin (1 + ls + rls) k x (Bin ls k' v' l' r') rl) rr else Bin (1 + ls + rs) rlk rlx (Bin (1 + ls + size rll) k x (Bin ls k' v' l' r') rll) (Bin (1 + rrs + size rlr) rk rx rlr rr) else Bin (1 + ls + rs) k x (Bin ls k' v' l' r') (Bin rs rk rx rl rr)

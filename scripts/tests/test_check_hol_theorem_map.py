@@ -2417,3 +2417,39 @@ class FmapEqualityStatusTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FmapResultObservationInventoryTest(unittest.TestCase):
+    def fixture(self):
+        record = {"hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+                  "hol_name": "to_fmap_key_set", "lean_path": "Flapjack/Example.lean",
+                  "lean_name": "observer", "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+                  "reviewer": "Source comparison: arbitrary cmp/tree domain observation, only reviewed producer map translation.",
+                  "fmap_as_finite_support_result_observations": ["toFmap"]}
+        tag = (record["hol_path"], record["hol_name"], (), (), (), (), False, (), False,
+               False, (), (), None, (), (), False, False, ("toFmap",))
+        return record, {(record["lean_path"], record["lean_name"]): tag}
+
+    def test_exact_list_and_status_required(self):
+        record, tags = self.fixture()
+        self.assertEqual([], MAP["validate_inventory"]([record], set(), tags, set()))
+        for changed in [dict(record, statement_status="reviewed_exact"),
+                        dict(record, fmap_as_finite_support_result_observations=["other"]),
+                        dict(record, reviewer="")]:
+            self.assertTrue(MAP["validate_inventory"]([changed], set(), tags, set()))
+
+    def test_status_cannot_be_used_without_qualifier(self):
+        record, tags = self.fixture()
+        key = next(iter(tags))
+        tags[key] = tags[key][:-1] + ((),)
+        self.assertTrue(MAP["validate_inventory"]([record], set(), tags, set()))
+
+
+class FmapResultObservationCombinationTest(unittest.TestCase):
+    def test_other_representation_qualifier_rejected(self):
+        record, tags = FmapResultObservationInventoryTest().fixture()
+        key = next(iter(tags))
+        tag = list(tags[key]); tag[3] = ("identifier",); tags[key] = tuple(tag)
+        record["names_as_string"] = ["identifier"]
+        self.assertTrue(any("cannot combine" in error for error in
+            MAP["validate_inventory"]([record], set(), tags, set())))
