@@ -6064,6 +6064,7 @@ Assembler-naming Inst probe captures the original generic seven-guard case appli
 ### Generational allocator partial-case statement capture
 
 `stack_alloc_generational_alloc_statement_probeScript.sml` and its `.out` capture the literal original `alloc_correct_lemma_Generational` statement, explicitly resolving `stack_alloc$compile`. The typed free variables confirm that `c` is the compiler config. This is statement elaboration evidence, not an executable oracle or proof replay. The Lean partial case retains all original premises and conclusions with the original partial-selector case condition; the full collector case remains open.
+Assembler-naming flat-constructor probe freshly prints the original general theorem with no open hypotheses and558 direct validity/complete-guard/actual-target-name observations (510T48F). Matching kernel fixtures include150 full seven-guard case applications. It covers all19 remaining nonrecursive constructors at widths1/2/8/32/64/80, both policy flags across families, arbitrary70bit natural fields, cycle/empty/odd moves, fixed five-bit Temp, ASCII mlstring FFI names, empty/nonempty live sets and constant lists, zero frame tail, strict frame minimum, natural subtraction underflow and rejected source conventions. Direct naming predicates are regression observations, not complete compiled-output comparisons or HOL-to-Lean equivalence. Recursive cases and full naming/compiler assembly remain open. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_flat_probeScript.sml.
 
 ### Complete native L3 square-root equations
 
