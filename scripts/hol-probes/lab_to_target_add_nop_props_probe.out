@@ -1,0 +1,44 @@
+line_length_add_nop1=∀(nop :word8 list) (ls :α line list).
+  ¬EVERY (is_Label :α line -> bool) ls ⇒
+  (SUM (MAP (line_length :α line -> num) (add_nop nop ls)) :num) =
+  (SUM (MAP (line_length :α line -> num) ls) :num) + LENGTH nop
+line_length_add_nop1_types=(nop :word8 list)::word8 list;(ls :α line list)::α line list;
+line_length_add_nop=∀(nop :word8 list) (ls :α line list).
+  EVERY (is_Label :α line -> bool) ls ⇒
+  (SUM (MAP (line_length :α line -> num) (add_nop nop ls)) :num) =
+  (SUM (MAP (line_length :α line -> num) ls) :num)
+line_length_add_nop_types=(nop :word8 list)::word8 list;(ls :α line list)::α line list;
+line_len_add_nop1=∀(nop :word8 list) (ls :α line list).
+  ¬EVERY (is_Label :α line -> bool) ls ⇒
+  (SUM (MAP (line_len :α line -> num) (add_nop nop ls)) :num) =
+  (SUM (MAP (line_len :α line -> num) ls) :num) + (1 :num)
+line_len_add_nop1_types=(nop :word8 list)::word8 list;(ls :α line list)::α line list;
+line_len_add_nop=∀(nop :word8 list) (ls :α line list).
+  EVERY (is_Label :α line -> bool) ls ⇒
+  (SUM (MAP (line_len :α line -> num) (add_nop nop ls)) :num) =
+  (SUM (MAP (line_len :α line -> num) ls) :num)
+line_len_add_nop_types=(nop :word8 list)::word8 list;(ls :α line list)::α line list;
+add_nop_append=∀(nop :word8 list) (l1 :α line list) (l2 :α line list).
+  add_nop nop (l1 ++ l2) =
+  if EVERY (is_Label :α line -> bool) l1 then l1 ++ add_nop nop l2
+  else add_nop nop l1 ++ l2
+add_nop_append_types=(nop :word8 list)::word8 list;(l1 :α line list)::α line list;(l2 :α line list)::α line list;
+EXISTS_not_Label_add_nop=∀(nop :word8 list) (acc :α line list).
+  EXISTS ($¬ ∘ (is_Label :α line -> bool)) (add_nop nop acc) ⇔
+  EXISTS ($¬ ∘ (is_Label :α line -> bool)) acc
+EXISTS_not_Label_add_nop_types=(nop :word8 list)::word8 list;(acc :α line list)::α line list;
+EVERY_is_Label_add_nop_preserved=∀(nop :word8 list) (acc :α line list).
+  EVERY (is_Label :α line -> bool) (add_nop nop acc) ⇔
+  EVERY (is_Label :α line -> bool) acc
+EVERY_is_Label_add_nop_preserved_types=(nop :word8 list)::word8 list;(acc :α line list)::α line list;
+first_nonlabel_full=T
+physical_increment_two=T
+annotation_increment_one=T
+empty_nop_annotation_changes=T
+all_labels_unchanged=T
+empty_input_unchanged=T
+first_labasm_full=T
+append_labels_inserts_right=T
+append_nonlabel_stops_left=T
+classifiers_preserved=T
+nonlabel_guard_required=T
