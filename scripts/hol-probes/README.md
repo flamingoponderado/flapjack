@@ -5872,3 +5872,4 @@ Lean theorem independently proves all six constructors and uses a genuine
 nested-list induction for every Op operand, exact native domain-checked Loads
 and both Shift children. No successful target expression or callback is a
 premise. Instruction simulation and full pass assembly remain separate work.
+`ssa_call_returning_none_probe.out` captures the full original no-handler returning Call specialization of `ssa_cc_trans_correct`, retaining all six premises and its complete existential source-permutation/Error-exempt result, frame and result-sensitive locals. The native case adds only the genuine smaller continuation induction hypothesis and derives guards, argument prefix, callee stack transport, return restoration and oracle suffix internally. Handler SOME and full SSA assembly remain open. This capture supports source review, not cross-language equivalence.

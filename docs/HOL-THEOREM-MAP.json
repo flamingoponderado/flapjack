@@ -63852,5 +63852,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 full source comparison of word_to_stack_reg_bound11410-11487 and actual native comp: complete Ffi case, retain all config/performance/source constructor/bitmap/frame fields and original post_alloc_conventions(FST frame),4<=FST frame,perf=F premises, actual compiler first-projection regBound at FST frame+2. Move preserves actual Option-valued scheduler temporary; arbitrary scheduled formatted lists bounded without scheduler result/bound assumptions. Allocation bounds actual wLive output without computing bitmap contents. Install/FFI integer guards extracted from original post-allocation conventions, no new assumptions. All native source/target/config/store/cutset/mlstring carriers retained; positive-width BitVec is the only words_as_type_indexed_bitvec translation. Fresh19 complete generic original case applications hyp=[] and420positive guard/kernel target pairs:375direct original target EVALs and45original Alloc case applications, plus120negative source-guard EVAL/kernel fixtures, widths1/2/8/64/80, three frames including empty-frame70bitoffset,70bitregisters/cycles/selfmoves/malformedcutsets/rejectedSetexpressions/emptyreturns. Regression evidence, not entire original proof replay or HOL-to-Lean equivalence. Full recursive/Call/register-bound assembly and compiler correctness remain open; no held imports/policy changes."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallCase.lean",
+    "lean_name": "ssaCcTransCorrectCallReturningNone",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a author source comparison2026-10-02 original full theorem7666-7702 and returning Call handlerNONE8298-8692: all six premises retained plus only the genuine smaller return-body universal induction hypothesis. Full ssaSimulation source-permutation existential/Error exemption, actual target result/frame and result-sensitive locals retained. Native arbitrary Nat/List/Spt cutsets, program/code/stack/GC/FFI and result carriers; only canonical fpRegs/store finite-map relation and positive type-indexed words qualified, no tree-map translation. Actual source guards, convention moves, callee entry stack replacement, total callee result transport, native pop/domain/cut SSA, retMove and result binder, continuation IH premises, no-handler exception unchanged poststate, clock-zero flush and oracle suffix hot-swap derived internally. No successful guard, targetrun/result, postrelation or oracle suffix premise. Original full specialization captured freshly in ssa_call_returning_none_probe.out; regression/source evidence is not cross-language equivalence. Inherits evaluator reals_as_rational_cuts SOUNDNESS item8. HandlerSOME/full returningCall constructor/fullSSA/end-to-end remain open."
   }
 ]
