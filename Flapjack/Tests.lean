@@ -1,3 +1,4 @@
+import Flapjack.Test.GenGcMoveRefsParity
 import Flapjack.Test.GenPartialMoveDataParity
 import Flapjack.Test.RuntimeSymbolWiringParity
 import Flapjack.Test.BackendRuntimeStubNamesParity
@@ -36,6 +37,7 @@ import Flapjack.Test.StackToLabNonrecursiveValidityParity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Test.WordToStackCallArgsCompilerParity
 import Flapjack.Test.WordToStackReturnCallArgsParity
 import Flapjack.Test.WordToStackRegBoundMonoParity
 import Flapjack.Test.WordToStackReturnRegBoundParity

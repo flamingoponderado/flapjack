@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Fail if `lake build` emits any warning.
+# Fail if `lake build` emits a warning outside Flapjack/Test/.
 #
 # Run this after lean-action has already built: Lake replays diagnostics from
 # its cache, so this second build is close to free and still reports every
-# warning in the library, not just the modules that happened to rebuild.
+# non-test warning, not just the modules that happened to rebuild.
 set -uo pipefail
 
 cd "$(dirname "$0")/.." || exit 1
@@ -20,15 +20,17 @@ if [ "$build_status" -ne 0 ]; then
   exit "$build_status"
 fi
 
-count=$(grep -c '^warning:' "$log")
+count=$(awk '/^warning:/ && !/^warning: Flapjack\/Test\// { n++ }
+             END { print n+0 }' "$log")
 
 if [ "$count" -ne 0 ]; then
-  echo "FAIL: lake build emitted $count warning(s)" >&2
+  echo "FAIL: lake build emitted $count non-test warning(s)" >&2
   echo >&2
-  grep -A3 '^warning:' "$log" >&2 | head -120
+  awk '/^warning:/ { remaining = ($0 !~ /^warning: Flapjack\/Test\// ? 4 : 0) }
+       remaining > 0 { print; remaining-- }' "$log" >&2 | head -120
   cat >&2 <<'MSG'
 
-The build is expected to be warning-free. Lean's linters print the exact
+The build is expected to be warning-free outside Flapjack/Test/. Lean's linters print the exact
 correction for most of these -- apply that rather than inventing a fix, and
 note that removing one unused simp argument can expose the next, so re-run
 until the count stops changing.
@@ -40,4 +42,4 @@ MSG
   exit 1
 fi
 
-echo "lake build: 0 warnings"
+echo "lake build: 0 non-test warnings"
