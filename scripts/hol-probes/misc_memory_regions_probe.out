@@ -1,0 +1,9 @@
+memory_append_full_statement=∀l1 l2 pc mem mem_domain.
+  bytes_in_memory pc (l1 ++ l2) mem mem_domain ⇔
+  bytes_in_memory pc l1 mem mem_domain ∧
+  bytes_in_memory (pc + n2w (LENGTH l1)) l2 mem mem_domain
+
+memory_change_full_statement=∀a bs m1 m2 md.
+  bytes_in_memory a bs m1 md ∧
+  (∀n. n < LENGTH bs ⇒ m1 (a + n2w n) = m2 (a + n2w n)) ⇒
+  bytes_in_memory a bs m2 md

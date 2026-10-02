@@ -5143,3 +5143,11 @@ with typed closed output, and evaluates left/root/right hits, whole-tree and
 child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
 consume the full generic theorem and derive actual semantic finite-map results
 for nonempty children and a distinct equivalent key with an independent payload.
+
+### Misc byte-region prerequisites
+
+`misc_memory_regions_probeScript.sml` captures the complete original
+`bytes_in_memory_APPEND` and `bytes_in_memory_change_mem` theorem conclusions
+from compiled `miscTheory`; `misc_memory_regions_probe.out` is statement review
+and regression evidence, not a cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=misc_memory_regions_probeScript.sml bash scripts/hol-probes/regenerate.sh`.

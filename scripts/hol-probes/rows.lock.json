@@ -350,6 +350,7 @@
     {"bytes": 55, "out": "misc_asm_write_bytearray_probe.out", "rows": 4, "sha256": "7d52f82bcd1d6224d7c237c70ff3904239ff20500d83a6c22595d6729966f8e7"},
     {"bytes": 137, "out": "misc_find_index_shift_zero_probe.out", "rows": 10, "sha256": "964070548e0fbe277287e90cefc05a908c42e18494e537cfb85a09b56b5c9c16"},
     {"bytes": 130, "out": "misc_lookup_any_find_index_probe.out", "rows": 8, "sha256": "aaadadfbc8d7d60e1cdf7160f55ce144944e48f7107fef7f234c06232f1442dd"},
+    {"bytes": 385, "out": "misc_memory_regions_probe.out", "rows": 2, "sha256": "45af8809f1b2433ac54fa13fe0e8bb869fe0ecc66b1568a49ad352a35a436268"},
     {"bytes": 628, "out": "mk_bij_probe.out", "rows": 8, "sha256": "5fd8c573d7dbea3c7f4de5f8fe4484dbb775705031987f2c9eb6bfdb608c314b"},
     {"bytes": 125, "out": "mkleaf_probe.out", "rows": 2, "sha256": "a97522da8985a4e1c2bb240ebbe50924a46d01f8c4c46392900b8067d1e65527"},
     {"bytes": 344, "out": "mknode_probe.out", "rows": 3, "sha256": "28c4ad224cbd50e28ce00412f7d61105bae92a4a8d3dea9457d2646badbc3009"},

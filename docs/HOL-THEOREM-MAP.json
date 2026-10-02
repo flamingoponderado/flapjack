@@ -59097,5 +59097,23 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL947-965: full arbitrary homogeneous comparator/key, independent payload and tree. Exactly goodCmp and invariant premises imply recursive lookup equals canonical FLOOKUP at keySet query. No target result/domain, successful lookup, key antisymmetry, inhabited carrier or extra law premise. Constructor induction and all Less/Equal/Greater branches; original invProps universal domain consequences derive impossible other-child membership, reviewed keySetEq controls root update. Option/Ordering constructors and left-biased finite-map union literal. Only reviewed toFmap producer observation representation qualified. Entire original unchanged statement and literal proof replay hyp=[] freshly typed; original hits in each branch, both misses and equivalent-distinct-key observation, kernel full generic consumer and semantic lookup fixtures. Proof-side only; no production compiler body changes."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "bytes_in_memory_APPEND",
+    "lean_path": "Flapjack/Misc/BytesInMemory.lean",
+    "lean_name": "bytesInMemory_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 against miscScript.sml:4182. All list/memory/domain/address quantifiers and the full concatenation iff retained; suffix starts at pc + n2w LENGTH prefix with wrapped word addition. HOL word8 translates to BitVec 8 and type-indexed address words to positive BitVec width under NeZero; lists and memory/domain function carriers retained. Original compiled miscTheory full statement captured and compared; Lean kernel checks proof."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "bytes_in_memory_change_mem",
+    "lean_path": "Flapjack/Misc/BytesInMemory.lean",
+    "lean_name": "bytesInMemory_changeMem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 against miscScript.sml:4211. Full conjunction premise retained: original byte region and agreement at every n < LENGTH bytes; unchanged domain and full byte-region conclusion, no global memory agreement or extra premise. HOL word8 translates to BitVec 8 and type-indexed address words to positive BitVec width under NeZero; lists and memory/domain function carriers retained. Original compiled miscTheory full statement captured and compared; Lean kernel checks proof."
   }
 ]
