@@ -29,14 +29,14 @@ def «write'NextFetch» (value : (Option TransferControl)) : (riscv_state → ri
 
 /-- HOL `riscv$setTrap` (`setTrap_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "setTrap_def"]
-def setTrap (arg0 : (ExceptionType × (Option (BitVec 64)))) : (riscv_state → riscv_state) :=
+noncomputable def setTrap (arg0 : (ExceptionType × (Option (BitVec 64)))) : (riscv_state → riscv_state) :=
   match arg0 with
   | (e, badaddr) =>
-  (fun (state : riscv_state) => («write'NextFetch» ((some ((TransferControl.Trap ((let r := ((let r := (holArb SynchronousTrap); { r with trap := ((fun (_eta1 : ExceptionType) => e)) r.trap })); { r with badaddr := ((fun (_eta1 : (Option (BitVec 64))) => badaddr)) r.badaddr })))))) state))
+  (fun (state : riscv_state) => («write'NextFetch» ((some ((TransferControl.Trap ((let r := ((let r := (Flapjack.holArb SynchronousTrap); { r with trap := ((fun (_eta1 : ExceptionType) => e)) r.trap })); { r with badaddr := ((fun (_eta1 : (Option (BitVec 64))) => badaddr)) r.badaddr })))))) state))
 
 /-- HOL `riscv$signalException` (`signalException_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "signalException_def"]
-def signalException (e : ExceptionType) : (riscv_state → riscv_state) :=
+noncomputable def signalException (e : ExceptionType) : (riscv_state → riscv_state) :=
   (fun (state : riscv_state) => (setTrap ((e, ((none : (Option (BitVec 64)))))) state))
 
 /-- HOL `riscv$gpr` (`gpr_def`), mechanically rendered from the elaborated HOL definition. -/
@@ -234,8 +234,8 @@ def FP32_IsSignalingNan (x : (BitVec 32)) : Bool :=
 def RV32_CanonicalNan  : (BitVec 32) :=
   (BitVec.ofNat 32 2143289344)
 
-/-- HOL `riscv$dfn'FCLASS_S` (`dfn'FCLASS_S_def`), mechanically rendered from the elaborated HOL definition. Uses the original fixed binary32/binary64 field codecs and generic IEEE value/comparison operations with `(reals_as_rational_cuts)` (docs/SOUNDNESS.md item 8). Existing model dependency/body acceptance remains open. -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FCLASS_S_def" (reals_as_rational_cuts)]
+/-- HOL `riscv$dfn'FCLASS_S` (`dfn'FCLASS_S_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FCLASS_S_def"]
 def «dfn'FCLASS_S» (arg0 : ((BitVec 5) × (BitVec 5))) : (riscv_state → riscv_state) :=
   match arg0 with
   | (rd, rs) =>
@@ -251,8 +251,8 @@ def FP64_IsSignalingNan (x : (BitVec 64)) : Bool :=
 def RV64_CanonicalNan  : (BitVec 64) :=
   (BitVec.ofNat 64 9221120237041090560)
 
-/-- HOL `riscv$dfn'FCLASS_D` (`dfn'FCLASS_D_def`), mechanically rendered from the elaborated HOL definition. Uses the original fixed binary32/binary64 field codecs and generic IEEE value/comparison operations with `(reals_as_rational_cuts)` (docs/SOUNDNESS.md item 8). Existing model dependency/body acceptance remains open. -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FCLASS_D_def" (reals_as_rational_cuts)]
+/-- HOL `riscv$dfn'FCLASS_D` (`dfn'FCLASS_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FCLASS_D_def"]
 def «dfn'FCLASS_D» (arg0 : ((BitVec 5) × (BitVec 5))) : (riscv_state → riscv_state) :=
   match arg0 with
   | (rd, rs) =>

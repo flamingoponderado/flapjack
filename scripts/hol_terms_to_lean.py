@@ -2,7 +2,7 @@
 """Render exported HOL definition theorems (S-expressions) as Lean definitions.
 
 Input: a file of `(def THY NAME DEFNAME TERM)` records written by
-`scripts/hol-probes/l3_riscv_export_defs.sml`, where TERM is the HOL conclusion with
+`scripts/l3/export_riscv_defs.sml`, where TERM is the HOL conclusion with
 `(v NAME TY)`, `(c THY NAME TY)`, `(a F X)` and `(l VAR BODY)` nodes and types
 `(tv NAME)` / `(ty THY OP ARGS...)`.
 
@@ -655,8 +655,9 @@ def special_word_len(r, c, args, env):
 
 
 def special_arb(r, c, args, env):
+    r.noncomputable = True
     t = fun_parts(c.ty)[1] if args else c.ty
-    base = f'(holArb {ty_lean(c.ty)})'
+    base = f'(Flapjack.holArb {ty_lean(c.ty)})'
     return base if not args else '(' + base + ''.join(' ' + r.atom(a, env) for a in args) + ')'
 
 
@@ -709,8 +710,7 @@ def uses_ieee_real_rendering(text: str) -> bool:
     # Their real carrier is the existing rational-cut translation; do not
     # conceal it when mapping the generated machine_ieee wrappers.
     return any(re.search(r'\b' + name + r'\b', text)
-               for name in ('holFloatCompare', 'holFloatIsNan', 'holFloatToInt',
-                            'holFloatIsNormal', 'holFloatIsSubnormal'))
+               for name in ('holFloatCompare', 'holFloatIsNan', 'holFloatToInt'))
 
 
 CONSTANTS = {
