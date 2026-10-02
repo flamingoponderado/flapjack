@@ -53717,5 +53717,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.4), original139-159: arbitrary Nat temporary/bitmap and full faithful native HolProg, no register separation/range/valid-memory/run/output premises. copy_each While NotEqual1Imm1 body exact six-item list: Load t1 t2, byte increment t2, If Test1Imm1 Skip Add t1 3, rightshift1 1, Store t1 2, byte increment2. copy_loop exact four-item list Load1t2/incrementt2/While signedLess1Imm0 with copy_each then load/increment/copy_each. Native While Loop/If/Break0 and original singleton/right-associated list_Seq, shifts and word byte stride reused; aliased registers retained. Only positive BitVec width/NeZero dimension translation qualified. Production36ez.3/fullcomp remains open; this is not a compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Comp.lean",
+    "lean_name": "comp",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "comp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol full source comparison 2026-10-02 (36ez.3.3), original161-222: arbitrary Boolean jump, signed word-pair bounds, Nat pointer and complete faithful HolProg. All34 constructors covered: Get/Set CurrHeap vs exact store_offset, OpCurrHeap register operands, exact free/alloc, StackStore/Load word_offset and signed offset_ok0 then native fallbacks, Load fallback first moves destination from pointer, arbitrary-access and size sequences exact parenthesization, Bitmap/StoreConsts complete lists/copy_loop and ignored optionalstub. Seq/If/Loop recurse on original subprograms, Call maps both option tuples preserving link register/labels/target; all16 wildcard constructors retained unchanged incl faithful MlString FFI and all native Inst payloads. Reuses canonical StackLang Overloads as sole tagged owner; aliases add no ports. Only positive BitVec width/NeZero dimension translation; no successful-pass/run, safety, result, postrelation or performance assumptions. sizeOf termination checked including nestedOption/tupleCall. Fresh original fulltype/definition and52 literal clause equations/native trees plus52kernel fixtures include signednegative/reversed bounds and wrapped offsets. Productionreplacement remains dependency-linked36ez.3; definition port alone is not pass/end-to-end correctness."
   }
 ]
