@@ -9,10 +9,11 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkBij
 /-!
 # reg_allocProof: correctness of `do_reg_alloc`
 
-Port of `reg_allocProofScript.sml:3235-3453`, `do_reg_alloc_correct`: from the initial
-allocator state on the remapping of a clash tree, `do_reg_alloc` succeeds and its colouring
-passes the `check_clash_tree` oracle, respects the register conventions, is supported on the
-clash tree, and separates every forced pair. HOL `REPLICATE` is `List.replicate`, `EVERY`
+Ports of `reg_allocProofScript.sml:3235-3490`, `do_reg_alloc_correct` and
+`reg_alloc_correct`: from the initial allocator state on the remapping of a clash tree,
+`do_reg_alloc` (and hence `reg_alloc`) succeeds and its colouring passes the
+`check_clash_tree` oracle, respects the register conventions, is supported on the clash tree,
+and separates every forced pair. HOL `REPLICATE` is `List.replicate`, `EVERY`
 bounded membership, `DIV` `/`, sets are predicates (`domain` is `sptDomain`) and `LN` is
 `Spt.ln`.
 -/
@@ -321,5 +322,35 @@ theorem doRegAllocCorrect :
       rw [← he1, ← he2']; exact heq
     have hv := hcol v1 hedge4.1 v2 ⟨hedge4.2.1, hedge4.2.2⟩ hc
     exact htainj _ _ hx1 hx2 (by rw [hspd ta _ _ hv1, hspd ta _ _ hv2, hv])
+
+/-- Exact HOL `reg_alloc_correct` (`reg_allocProofScript.sml:3460-3490`). -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "reg_alloc_correct"]
+theorem regAllocCorrect :
+    ∀ (alg : Algorithm) (scost : Option (Spt Nat)) (k : Nat)
+      (moves : List (Nat × (Nat × Nat))) (ct : ClashTree) (forced : List (Nat × Nat))
+      (fs : NumSet),
+      (∀ m ∈ forced, inClashTree ct m.1 ∧ inClashTree ct m.2) →
+      ∃ spcol livein flivein,
+        regAlloc alg scost k moves ct forced fs = .success spcol ∧
+        checkClashTree (spDefault spcol) ct .ln .ln = some (livein, flivein) ∧
+        (∀ x, inClashTree ct x →
+          sptDomain spcol x ∧
+            if isPhyVar x then spDefault spcol x = x / 2
+            else if isStackVar x then k ≤ spDefault spcol x
+            else True) ∧
+        (∀ x, sptDomain spcol x → inClashTree ct x) ∧
+        ∀ m ∈ forced, spDefault spcol m.1 = spDefault spcol m.2 → m.1 = m.2 := by
+  intro alg scost k moves ct forced fs hforced
+  rcases hb : mkBij ct with ⟨ta, fa, n⟩
+  obtain ⟨spcol, st', livein, flivein, hrun, hcc, hdom, hsup, hfor⟩ :=
+    doRegAllocCorrect alg scost k moves ct forced fs
+      { adj_ls := List.replicate n [], node_tag := List.replicate n .Atemp,
+        degrees := List.replicate n 0, dim := n, simp_wl := [], spill_wl := [], freeze_wl := [],
+        avail_moves_wl := [], unavail_moves_wl := [], coalesced := List.replicate n 0,
+        move_related := List.replicate n false, stack := [] }
+      ta fa n hb rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl hforced
+  refine ⟨spcol, livein, flivein, ?_, hcc, hdom, hsup, hfor⟩
+  simp only [regAlloc, hb, regAllocAux, runIraState, Translator.Monadic.MonadBase.run]
+  rw [hrun]
 
 end Flapjack.RegAlloc
