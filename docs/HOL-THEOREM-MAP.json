@@ -49794,5 +49794,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-const-memory-append): source5983-5992 arbitrary lists/domain/base, complete source domain predicate iff prefix predicate AND suffix predicate at base+bytes_in_word*n2w(prefixlength); HOL word set translated by existing native Bool characteristic function, Boolean truth as Prop equality, no new condition. Uses actual tagged native WordSem constant operations and bytes_in_word=ofNat(width/8), modular word dimension/FFI-free translation, arbitrary positive dimensions retain stride0 below8. Two literal unchanged complete original proof replays and252 matching kernel/original complete memory/domain fixtures; widths1/2/8/32/64/80, wrap/relocation overflow/long70-entry cases, every address at small widths. No held HD/EL, default, carrier, target evaluator or trust policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeInsertWf.lean",
+    "lean_name": "wfAlistInsert",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wf_alist_insert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-insert-wf): full original3570-3574/3703-3709 arbitrary payload/list quantifiers, constructor-for-constructor native Spt and actual alist_insert/fromList2 operations. Sole original wf input premise retained for insertion; fromList2 unconditional. Bool wf=true translates the source proposition. Literal original full proofs hyp=[] and168 matching whole-tree/input/output-wf Nat/Bool fixtures retain unequal lengths, repeated keys, empties, malformed carriers. No held HD/EL or trust policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeInsertWf.lean",
+    "lean_name": "wfFromList2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wf_fromList2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-insert-wf): full original3570-3574/3703-3709 arbitrary payload/list quantifiers, constructor-for-constructor native Spt and actual alist_insert/fromList2 operations. Sole original wf input premise retained for insertion; fromList2 unconditional. Bool wf=true translates the source proposition. Literal original full proofs hyp=[] and168 matching whole-tree/input/output-wf Nat/Bool fixtures retain unequal lengths, repeated keys, empties, malformed carriers. No held HD/EL or trust policy changes."
   }
 ]

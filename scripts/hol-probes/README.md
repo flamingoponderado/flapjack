@@ -4193,3 +4193,8 @@ long lists, empty prefixes, missing bits and true/false terminal bits.
 `WordToStackBitmapBitStructureParity.lean` checks matching observations and
 whole theorem applications. The HOL context replay uses original EL read-only;
 no new Lean total-EL port or provenance allowance is introduced.
+
+Native insertion-wf probes replay both complete original proofs and168 whole
+native Spt/input/output-wf fixtures. Matching kernel cases retain empty and
+unequal lists, repeated keys, Nat/Bool payloads and malformed trees.
+Regression evidence is not HOL-to-Lean equivalence.
