@@ -1,0 +1,490 @@
+fadd_s_one_two_rte=(0xCAFE000040400000w,0x3F800000w,0x40000000w,3w,T,SOME 0x40400000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_one_two_rtz=(0xCAFE000040400000w,0x3F800000w,0x40000000w,3w,T,SOME 0x40400000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_one_two_down=(0xCAFE000040400000w,0x3F800000w,0x40000000w,3w,T,SOME 0x40400000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_one_two_up=(0xCAFE000040400000w,0x3F800000w,0x40000000w,3w,T,SOME 0x40400000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_one_two_dynamic_up=(0xCAFE000040400000w,0x3F800000w,0x40000000w,3w,T,SOME 0x40400000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_one_two_invalid_static=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fadd_s_one_two_invalid_dynamic=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fadd_s_negative_one_two_rte=(0xCAFE00003F800000w,0xBF800000w,0x40000000w,3w,T,SOME 0x3F800000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_zero_negative_one_rte=(0xCAFE0000BF800000w,0w,0xBF800000w,3w,T,SOME 0xBF800000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_negative_zero_zero_rte=(0xCAFE000000000000w,0x80000000w,0w,3w,T,SOME 0w,F,T,0xBBBB000000000000w,F)
+fadd_s_negative_zero_zero_rtz=(0xCAFE000000000000w,0x80000000w,0w,3w,T,SOME 0w,F,T,0xBBBB000000000000w,F)
+fadd_s_negative_zero_zero_down=(0xCAFE000080000000w,0x80000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_negative_zero_zero_up=(0xCAFE000000000000w,0x80000000w,0w,3w,T,SOME 0w,F,T,0xBBBB000000000000w,F)
+fadd_s_cancel_rte=(0xCAFE000000000000w,0x3F800000w,0xBF800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_cancel_rtz=(0xCAFE000000000000w,0x3F800000w,0xBF800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_cancel_down=(0xCAFE000080000000w,0x3F800000w,0xBF800000w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_cancel_up=(0xCAFE000000000000w,0x3F800000w,0xBF800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_tie_rte=(0xCAFE00003F800000w,0x3F800000w,0x33800000w,3w,T,SOME 0x3F800000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_tie_rtz=(0xCAFE00003F800000w,0x3F800000w,0x33800000w,3w,T,SOME 0x3F800000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_tie_down=(0xCAFE00003F800000w,0x3F800000w,0x33800000w,3w,T,SOME 0x3F800000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_tie_up=(0xCAFE00003F800001w,0x3F800000w,0x33800000w,3w,T,SOME 0x3F800001w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_s_pinf_one_rte=(0xCAFE00007F800000w,0x7F800000w,0x3F800000w,3w,T,SOME 0x7F800000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_one_two_rte=(0xCAFE0000BF800000w,0x3F800000w,0x40000000w,3w,T,SOME 0xBF800000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_one_two_rtz=(0xCAFE0000BF800000w,0x3F800000w,0x40000000w,3w,T,SOME 0xBF800000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_one_two_down=(0xCAFE0000BF800000w,0x3F800000w,0x40000000w,3w,T,SOME 0xBF800000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_one_two_up=(0xCAFE0000BF800000w,0x3F800000w,0x40000000w,3w,T,SOME 0xBF800000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_one_two_dynamic_up=(0xCAFE0000BF800000w,0x3F800000w,0x40000000w,3w,T,SOME 0xBF800000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_one_two_invalid_static=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fsub_s_one_two_invalid_dynamic=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fsub_s_negative_one_two_rte=(0xCAFE0000C0400000w,0xBF800000w,0x40000000w,3w,T,SOME 0xC0400000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_zero_negative_one_rte=(0xCAFE00003F800000w,0w,0xBF800000w,3w,T,SOME 0x3F800000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_negative_zero_zero_rte=(0xCAFE000080000000w,0x80000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_negative_zero_zero_rtz=(0xCAFE000080000000w,0x80000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_negative_zero_zero_down=(0xCAFE000080000000w,0x80000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_negative_zero_zero_up=(0xCAFE000080000000w,0x80000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_cancel_rte=(0xCAFE000000000000w,0x3F800000w,0x3F800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_cancel_rtz=(0xCAFE000000000000w,0x3F800000w,0x3F800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_cancel_down=(0xCAFE000080000000w,0x3F800000w,0x3F800000w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_cancel_up=(0xCAFE000000000000w,0x3F800000w,0x3F800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_s_one_pinf_rte=(0xCAFE0000FF800000w,0x3F800000w,0x7F800000w,3w,T,SOME 0xFF800000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_one_two_rte=(0xCAFE000040000000w,0x3F800000w,0x40000000w,3w,T,SOME 0x40000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_one_two_rtz=(0xCAFE000040000000w,0x3F800000w,0x40000000w,3w,T,SOME 0x40000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_one_two_down=(0xCAFE000040000000w,0x3F800000w,0x40000000w,3w,T,SOME 0x40000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_one_two_up=(0xCAFE000040000000w,0x3F800000w,0x40000000w,3w,T,SOME 0x40000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_one_two_dynamic_up=(0xCAFE000040000000w,0x3F800000w,0x40000000w,3w,T,SOME 0x40000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_one_two_invalid_static=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fmul_s_one_two_invalid_dynamic=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fmul_s_negative_one_two_rte=(0xCAFE0000C0000000w,0xBF800000w,0x40000000w,3w,T,SOME 0xC0000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_zero_negative_one_rte=(0xCAFE000080000000w,0w,0xBF800000w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_negative_zero_zero_rte=(0xCAFE000080000000w,0x80000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_negative_zero_zero_rtz=(0xCAFE000080000000w,0x80000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_negative_zero_zero_down=(0xCAFE000080000000w,0x80000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_negative_zero_zero_up=(0xCAFE000080000000w,0x80000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmul_s_pinf_negative_one_rte=(0xCAFE0000FF800000w,0x7F800000w,0xBF800000w,3w,T,SOME 0xFF800000w,F,T,
+ 0xBBBB000000000000w,F)
+fdiv_s_one_two_rte=(0xCAFE00003F000000w,0x3F800000w,0x40000000w,3w,T,SOME 0x3F000000w,F,T,
+ 0xBBBB000000000000w,F)
+fdiv_s_one_two_rtz=(0xCAFE00003F000000w,0x3F800000w,0x40000000w,3w,T,SOME 0x3F000000w,F,T,
+ 0xBBBB000000000000w,F)
+fdiv_s_one_two_down=(0xCAFE00003F000000w,0x3F800000w,0x40000000w,3w,T,SOME 0x3F000000w,F,T,
+ 0xBBBB000000000000w,F)
+fdiv_s_one_two_up=(0xCAFE00003F000000w,0x3F800000w,0x40000000w,3w,T,SOME 0x3F000000w,F,T,
+ 0xBBBB000000000000w,F)
+fdiv_s_one_two_dynamic_up=(0xCAFE00003F000000w,0x3F800000w,0x40000000w,3w,T,SOME 0x3F000000w,F,T,
+ 0xBBBB000000000000w,F)
+fdiv_s_one_two_invalid_static=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fdiv_s_one_two_invalid_dynamic=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fdiv_s_negative_one_two_rte=(0xCAFE0000BF000000w,0xBF800000w,0x40000000w,3w,T,SOME 0xBF000000w,F,T,
+ 0xBBBB000000000000w,F)
+fdiv_s_zero_negative_one_rte=(0xCAFE000080000000w,0w,0xBF800000w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fdiv_s_negative_zero_zero_rte=⊢ dfn'FDIV_S (3w,1w,2w,0w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x80000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (3w,
+     float_to_fp32
+       (float_some_qnan
+          (FP_Div roundTiesToEven (fp32_to_float 0x80000000w)
+             (fp32_to_float 0w))))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x80000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fdiv_s_negative_zero_zero_rtz=⊢ dfn'FDIV_S (3w,1w,2w,1w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x80000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (3w,
+     float_to_fp32
+       (float_some_qnan
+          (FP_Div roundTowardZero (fp32_to_float 0x80000000w)
+             (fp32_to_float 0w))))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x80000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fdiv_s_negative_zero_zero_down=⊢ dfn'FDIV_S (3w,1w,2w,2w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x80000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (3w,
+     float_to_fp32
+       (float_some_qnan
+          (FP_Div roundTowardNegative (fp32_to_float 0x80000000w)
+             (fp32_to_float 0w))))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x80000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fdiv_s_negative_zero_zero_up=⊢ dfn'FDIV_S (3w,1w,2w,3w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x80000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (3w,
+     float_to_fp32
+       (float_some_qnan
+          (FP_Div roundTowardPositive (fp32_to_float 0x80000000w)
+             (fp32_to_float 0w))))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x80000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fdiv_s_one_zero_rte=(0xCAFE00007F800000w,0x3F800000w,0w,3w,T,SOME 0x7F800000w,F,T,
+ 0xBBBB000000000000w,F)
+fdiv_s_one_pinf_rte=(0xCAFE000000000000w,0x3F800000w,0x7F800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fdiv_s_pinf_negative_one_rte=(0xCAFE0000FF800000w,0x7F800000w,0xBF800000w,3w,T,SOME 0xFF800000w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_d_one_two_rte=(0x4008000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x4008000000000000w,F,T,0xBBBB000000000000w,F)
+fadd_d_one_two_rtz=(0x4008000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x4008000000000000w,F,T,0xBBBB000000000000w,F)
+fadd_d_one_two_down=(0x4008000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x4008000000000000w,F,T,0xBBBB000000000000w,F)
+fadd_d_one_two_up=(0x4008000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x4008000000000000w,F,T,0xBBBB000000000000w,F)
+fadd_d_one_two_dynamic_up=(0x4008000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x4008000000000000w,F,T,0xBBBB000000000000w,F)
+fadd_d_one_two_invalid_static=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,0w,F,SOME 42w,F,
+ T,0xBBBB000000000000w,T)
+fadd_d_one_two_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,0w,F,SOME 42w,F,
+ T,0xBBBB000000000000w,T)
+fadd_d_negative_one_two_rte=(0x3FF0000000000000w,0xBFF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fadd_d_zero_negative_one_rte=(0xBFF0000000000000w,0w,0xBFF0000000000000w,3w,T,SOME 0xBFF0000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fadd_d_negative_zero_zero_rte=(0w,0x8000000000000000w,0w,3w,T,SOME 0w,F,T,0xBBBB000000000000w,F)
+fadd_d_negative_zero_zero_rtz=(0w,0x8000000000000000w,0w,3w,T,SOME 0w,F,T,0xBBBB000000000000w,F)
+fadd_d_negative_zero_zero_down=(0x8000000000000000w,0x8000000000000000w,0w,3w,T,SOME 0x8000000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fadd_d_negative_zero_zero_up=(0w,0x8000000000000000w,0w,3w,T,SOME 0w,F,T,0xBBBB000000000000w,F)
+fadd_d_cancel_rte=(0w,0x3FF0000000000000w,0xBFF0000000000000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_d_cancel_rtz=(0w,0x3FF0000000000000w,0xBFF0000000000000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_d_cancel_down=(0x8000000000000000w,0x3FF0000000000000w,0xBFF0000000000000w,3w,T,
+ SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fadd_d_cancel_up=(0w,0x3FF0000000000000w,0xBFF0000000000000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fadd_d_tie_rte=(0x3FF0000000000000w,0x3FF0000000000000w,0x3CA0000000000000w,3w,T,
+ SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fadd_d_tie_rtz=(0x3FF0000000000000w,0x3FF0000000000000w,0x3CA0000000000000w,3w,T,
+ SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fadd_d_tie_down=(0x3FF0000000000000w,0x3FF0000000000000w,0x3CA0000000000000w,3w,T,
+ SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fadd_d_tie_up=(0x3FF0000000000001w,0x3FF0000000000000w,0x3CA0000000000000w,3w,T,
+ SOME 0x3FF0000000000001w,F,T,0xBBBB000000000000w,F)
+fadd_d_pinf_one_rte=(0x7FF0000000000000w,0x7FF0000000000000w,0x3FF0000000000000w,3w,T,
+ SOME 0x7FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fsub_d_one_two_rte=(0xBFF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fsub_d_one_two_rtz=(0xBFF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fsub_d_one_two_down=(0xBFF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fsub_d_one_two_up=(0xBFF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fsub_d_one_two_dynamic_up=(0xBFF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fsub_d_one_two_invalid_static=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,0w,F,SOME 42w,F,
+ T,0xBBBB000000000000w,T)
+fsub_d_one_two_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,0w,F,SOME 42w,F,
+ T,0xBBBB000000000000w,T)
+fsub_d_negative_one_two_rte=(0xC008000000000000w,0xBFF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0xC008000000000000w,F,T,0xBBBB000000000000w,F)
+fsub_d_zero_negative_one_rte=(0x3FF0000000000000w,0w,0xBFF0000000000000w,3w,T,SOME 0x3FF0000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fsub_d_negative_zero_zero_rte=(0x8000000000000000w,0x8000000000000000w,0w,3w,T,SOME 0x8000000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fsub_d_negative_zero_zero_rtz=(0x8000000000000000w,0x8000000000000000w,0w,3w,T,SOME 0x8000000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fsub_d_negative_zero_zero_down=(0x8000000000000000w,0x8000000000000000w,0w,3w,T,SOME 0x8000000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fsub_d_negative_zero_zero_up=(0x8000000000000000w,0x8000000000000000w,0w,3w,T,SOME 0x8000000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fsub_d_cancel_rte=(0w,0x3FF0000000000000w,0x3FF0000000000000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_d_cancel_rtz=(0w,0x3FF0000000000000w,0x3FF0000000000000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_d_cancel_down=(0x8000000000000000w,0x3FF0000000000000w,0x3FF0000000000000w,3w,T,
+ SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fsub_d_cancel_up=(0w,0x3FF0000000000000w,0x3FF0000000000000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fsub_d_one_pinf_rte=(0xFFF0000000000000w,0x3FF0000000000000w,0x7FF0000000000000w,3w,T,
+ SOME 0xFFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmul_d_one_two_rte=(0x4000000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x4000000000000000w,F,T,0xBBBB000000000000w,F)
+fmul_d_one_two_rtz=(0x4000000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x4000000000000000w,F,T,0xBBBB000000000000w,F)
+fmul_d_one_two_down=(0x4000000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x4000000000000000w,F,T,0xBBBB000000000000w,F)
+fmul_d_one_two_up=(0x4000000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x4000000000000000w,F,T,0xBBBB000000000000w,F)
+fmul_d_one_two_dynamic_up=(0x4000000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x4000000000000000w,F,T,0xBBBB000000000000w,F)
+fmul_d_one_two_invalid_static=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,0w,F,SOME 42w,F,
+ T,0xBBBB000000000000w,T)
+fmul_d_one_two_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,0w,F,SOME 42w,F,
+ T,0xBBBB000000000000w,T)
+fmul_d_negative_one_two_rte=(0xC000000000000000w,0xBFF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0xC000000000000000w,F,T,0xBBBB000000000000w,F)
+fmul_d_zero_negative_one_rte=(0x8000000000000000w,0w,0xBFF0000000000000w,3w,T,SOME 0x8000000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fmul_d_negative_zero_zero_rte=(0x8000000000000000w,0x8000000000000000w,0w,3w,T,SOME 0x8000000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fmul_d_negative_zero_zero_rtz=(0x8000000000000000w,0x8000000000000000w,0w,3w,T,SOME 0x8000000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fmul_d_negative_zero_zero_down=(0x8000000000000000w,0x8000000000000000w,0w,3w,T,SOME 0x8000000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fmul_d_negative_zero_zero_up=(0x8000000000000000w,0x8000000000000000w,0w,3w,T,SOME 0x8000000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fmul_d_pinf_negative_one_rte=(0xFFF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,3w,T,
+ SOME 0xFFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fdiv_d_one_two_rte=(0x3FE0000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x3FE0000000000000w,F,T,0xBBBB000000000000w,F)
+fdiv_d_one_two_rtz=(0x3FE0000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x3FE0000000000000w,F,T,0xBBBB000000000000w,F)
+fdiv_d_one_two_down=(0x3FE0000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x3FE0000000000000w,F,T,0xBBBB000000000000w,F)
+fdiv_d_one_two_up=(0x3FE0000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x3FE0000000000000w,F,T,0xBBBB000000000000w,F)
+fdiv_d_one_two_dynamic_up=(0x3FE0000000000000w,0x3FF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0x3FE0000000000000w,F,T,0xBBBB000000000000w,F)
+fdiv_d_one_two_invalid_static=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,0w,F,SOME 42w,F,
+ T,0xBBBB000000000000w,T)
+fdiv_d_one_two_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,0w,F,SOME 42w,F,
+ T,0xBBBB000000000000w,T)
+fdiv_d_negative_one_two_rte=(0xBFE0000000000000w,0xBFF0000000000000w,0x4000000000000000w,3w,T,
+ SOME 0xBFE0000000000000w,F,T,0xBBBB000000000000w,F)
+fdiv_d_zero_negative_one_rte=(0x8000000000000000w,0w,0xBFF0000000000000w,3w,T,SOME 0x8000000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fdiv_d_negative_zero_zero_rte=⊢ dfn'FDIV_D (3w,1w,2w,0w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x8000000000000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (3w,
+     float_to_fp64
+       (float_some_qnan
+          (FP_Div roundTiesToEven (fp64_to_float 0x8000000000000000w)
+             (fp64_to_float 0w))))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x8000000000000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fdiv_d_negative_zero_zero_rtz=⊢ dfn'FDIV_D (3w,1w,2w,1w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x8000000000000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (3w,
+     float_to_fp64
+       (float_some_qnan
+          (FP_Div roundTowardZero (fp64_to_float 0x8000000000000000w)
+             (fp64_to_float 0w))))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x8000000000000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fdiv_d_negative_zero_zero_down=⊢ dfn'FDIV_D (3w,1w,2w,2w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x8000000000000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (3w,
+     float_to_fp64
+       (float_some_qnan
+          (FP_Div roundTowardNegative (fp64_to_float 0x8000000000000000w)
+             (fp64_to_float 0w))))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x8000000000000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fdiv_d_negative_zero_zero_up=⊢ dfn'FDIV_D (3w,1w,2w,3w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x8000000000000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (3w,
+     float_to_fp64
+       (float_some_qnan
+          (FP_Div roundTowardPositive (fp64_to_float 0x8000000000000000w)
+             (fp64_to_float 0w))))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0x8000000000000000w
+               else if r = 2w then 0w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fdiv_d_one_zero_rte=(0x7FF0000000000000w,0x3FF0000000000000w,0w,3w,T,SOME 0x7FF0000000000000w,F,
+ T,0xBBBB000000000000w,F)
+fdiv_d_one_pinf_rte=(0w,0x3FF0000000000000w,0x7FF0000000000000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fdiv_d_pinf_negative_one_rte=(0xFFF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,3w,T,
+ SOME 0xFFF0000000000000w,F,T,0xBBBB000000000000w,F)

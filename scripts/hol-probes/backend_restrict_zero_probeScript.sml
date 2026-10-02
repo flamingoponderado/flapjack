@@ -1,0 +1,17 @@
+load "bossLib";
+load "preamble";
+load "backendPropsTheory";
+open bossLib HolKernel Parse preamble backendPropsTheory;
+val _ = show_types := true;
+val _ = print "restrict_zero_def=";
+val _ = print_term(concl restrict_zero_def);
+val _ = print "\n";
+val _ = show_types := false;
+fun observe label q = (print(label ^ "="); print_term(rconc(SIMP_CONV (srw_ss()) [restrict_zero_def] q)); print "\n");
+val _ = observe "empty" ``restrict_zero {} = {}``;
+val _ = observe "zero_entry" ``(7,0) IN restrict_zero {(7,0);(7,1)}``;
+val _ = observe "nonzero_entry" ``~((7,1) IN restrict_zero {(7,0);(7,1)})``;
+val _ = observe "first_zero" ``~((0,7) IN restrict_zero {(0,7)})``;
+val _ = observe "absent_entry" ``~((8,0) IN restrict_zero {(7,0)})``;
+val _ = observe "large_nat" ``(1208925819614629174706176,0) IN restrict_zero {(1208925819614629174706176,0)}``;
+val _ = observe "infinite" ``(7,0) IN restrict_zero UNIV /\ ~((7,1) IN restrict_zero UNIV)``;

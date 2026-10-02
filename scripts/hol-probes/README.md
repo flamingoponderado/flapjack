@@ -6045,8 +6045,75 @@ original reference sources are edited. All static/dynamic mode validation,
 register/status/delta/flag/other-core/trap observations retain original semantics.
 These finite/infinity rows do not fix arbitrary NaN output payloads or establish
 full model/compiler correctness. SOUNDNESS item8 remains inherited.
+
+### Full native L3 single/double arithmetic equations
+
+`l3_riscv_arithmetic_probeScript.sml` captures140 original FADD/FSUB/FMUL/FDIV
+S/D cases:132numeric ten-field state observations and8closed whole-state
+FDIV negative-zero/zero equations. Inputs cover all four supported rounding modes,
+dynamic rounding, invalid static/dynamic modes, cancellation, ties, signed zero
+and infinities. Observations include source/destination registers, MFS/MSD, delta,
+NV/NX, another core and the illegal-instruction trap. The NaN equations preserve
+the original symbolic quiet-NaN choice and complete writeFPRS/FPRD result; they
+do not assign a numeric payload. `Flapjack.Test.L3RiscvArithmeticParity`
+kernel-checks all140matching cases. The existing rational-real rendering
+assumption (SOUNDNESS item8) remains; regression evidence does not establish
+HOL-to-Lean equivalence or full model/compiler correctness.
 Assembler-naming Inst probe captures the original generic seven-guard case application with no open hypotheses and900 direct validity/guard/target observations (735T165F). Kernel fixtures include224 full seven-guard theorem applications and cover widths1/2/8/32/64/80, all arithmetic forms, eight memory operations and sixteen FP forms, both policy flags across families,70bit natural registers/frame slots, odd physical registers,32/64-bit FP pair behavior, ISA restrictions, underflow and strict frame minimum. This is regression evidence, not HOL-to-Lean equivalence or full naming/compiler correctness. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_inst_probeScript.sml.
 
 ### Generational allocator partial-case statement capture
 
 `stack_alloc_generational_alloc_statement_probeScript.sml` and its `.out` capture the literal original `alloc_correct_lemma_Generational` statement, explicitly resolving `stack_alloc$compile`. The typed free variables confirm that `c` is the compiler config. This is statement elaboration evidence, not an executable oracle or proof replay. The Lean partial case retains all original premises and conclusions with the original partial-selector case condition; the full collector case remains open.
+Assembler-naming flat-constructor probe freshly prints the original general theorem with no open hypotheses and558 direct validity/complete-guard/actual-target-name observations (510T48F). Matching kernel fixtures include150 full seven-guard case applications. It covers all19 remaining nonrecursive constructors at widths1/2/8/32/64/80, both policy flags across families, arbitrary70bit natural fields, cycle/empty/odd moves, fixed five-bit Temp, ASCII mlstring FFI names, empty/nonempty live sets and constant lists, zero frame tail, strict frame minimum, natural subtraction underflow and rejected source conventions. Direct naming predicates are regression observations, not complete compiled-output comparisons or HOL-to-Lean equivalence. Recursive cases and full naming/compiler assembly remain open. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_flat_probeScript.sml.
+
+Whole-program assembler-naming probe freshly prints the original theorem with no open hypotheses and288 direct complete-seven-guard/actual-target-name predicates, allT. Matching kernel fixtures independently reduce the naming predicates and apply the complete all-program theorem144 times. Twelve families cover MustTerminate/Loop/Seq, register/accepted-immediate/loaded-immediate If, direct and indirect tail Call, empty returning Call, spilling returning Call, handler Call and nested combinations at widths1/2/8/32/64/80 with both two-register policies. Tail Call retains an ignored invalid handler; raw labels/frame tails exceed64 bits. Original bitmap input uses Append; actual compilation threads residual bitmaps. These are naming-predicate regressions, not complete compiled-output comparisons or cross-language equivalence. Full assembler conventions and compiler correctness remain open. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_compiler_probeScript.sml.
+### Complete native L3 square-root equations
+
+`l3_riscv_sqrt_probeScript.sml` captures 56 original FSQRT_S/D cases over
+all four supported modes, dynamic rounding and invalid static/dynamic modes.
+Thirty-six numeric ten-field state tuples cover positive infinity, negative
+zero and traps. Twenty closed whole-state equations cover positive finite four
+and invalid negative one while retaining symbolic rounding and quiet-NaN
+choices. These equations preserve all flags before the machine lift takes SND;
+they do not claim numerical finite rounding or fix a NaN payload.
+`Flapjack.Test.L3RiscvSqrtParity` kernel-checks the same 56 cases. Both formats
+use the generic rational-cut square-root specification; existing all-mode
+Mathlib real agreement covers both carriers. The external HOL correspondence
+assumption in docs/SOUNDNESS.md item 8 and full-model obligations remain.
+
+### Generational allocator full-case statement comparison
+
+The full case in `AllocGenerational/Full.lean` uses the same literal, typed
+original theorem capture in `stack_alloc_generational_alloc_statement_probe.out`.
+It covers the original full proof branch at `stack_allocProofScript.sml:4833-5016`
+and the exact instruction list at `stack_allocScript.sml:568-634`. Its sole added
+case premise negates the original partial selector; source allocation derives
+collector success and both normal and insufficient-space Halt outcomes. This
+capture supplies statement elaboration evidence for both cases, not executable
+oracle coverage or proof replay. The full generational assembly and coordinator
+acceptance remain separate open work.
+### Native L3 separately rounded multiply/add/subtract instructions
+
+`l3_riscv_madd_probeScript.sml` captures 240 complete original FMADD/FMSUB/
+FNMADD/FNMSUB S/D cases. The original L3 clauses first round the product to
+a word, then decode it for a separately rounded add/subtract; the negative
+variants negate the final result. They do not use a hardware-fused primitive.
+The 208 numeric eleven-field tuples cover all four modes, dynamic rounding,
+invalid modes, signed zero, infinities and negative finite values. In both
+formats, the ties-even discriminator `(1 + ulp) * (1 - ulp) - 1` returns zero,
+while a truly fused operation would retain the small negative exact result.
+Thirty-two closed whole-state invalid-product equations preserve nested NaN
+choices without selecting payloads. `Flapjack.Test.L3RiscvMaddParity` replays
+the same inputs, states and expectations in the kernel. Full IEEE arithmetic
+uses the existing rational-real rendering assumption (docs/SOUNDNESS.md item 8);
+this does not establish HOL-to-Lean equivalence or full model correctness.
+
+`state_transformer_for_probe.out` records four complete original unit/state results for inclusive ascending, descending, equal-zero and descending-through-zero FOR. Kernel regressions in Misc/StateTransformer preserve all endpoints and the initial list state.
+
+Assembler-convention assembly probe prints both full original theorems with no open hypotheses and independently evaluates208 complete original outputs:64 comp tuples,72 compile_word_to_stack tuples and72 top compile tuples, plus72 complete source guards. Closed kernel equalities retain whole program constructors/payloads, exact bitmap AppList structure/counters, all frame sizes, sparse frame maps and both prepended stubs. The HOL top record is flattened by retaining both bitmaps_length and stack_frame_size; the Lean fixture reconstructs exactly those two fields. The serializer rejects free variables/open hypotheses and retains every constructor/payload, with numeric word literals evaluated at original widths. Families cover widths1/8/64/80, zero/positive frames, spill/cycle moves, return/handler bitmap threading, repeated IDs,70-bit labels/counts, natural subtraction and ignored tail handlers. Kernel source guards and144 full theorem applications are separate from these208 independent complete-output comparisons. Prior StackConvs and AsmRemoveCompiler theorem-specialization rows remain unchanged and retain their original evidence labels. These regressions support full11257/11660 conventions, not full compiler simulation or cross-language equivalence. Selector: HOL_PROBE_ONLY=word_to_stack_asm_conventions_probeScript.sml.
+
+`word_replicate_probe.out` captures16 original complete numeric word observations across independent input/output widths1/3/7/8/16/64/80, counts0/1/2/3/5/8/10/20, truncation and zero filling. Zero-count observations are assumption-free original bit-blast proofs; the rest use original WORD_EVAL_CONV. WordReplicateParity kernel replays all16.
+
+`numeric_formatting_probe.out` records70 original full digit/character-code observations: bases0/1/2/3/10/16/17/37, all HEX digits and invalid16/17/999, arbitrary shifted converter, 121-bit decimal numerals and widths1/7/8/16/64/80 with word wrapping. NumericFormattingParity kernel replays all70 using reviewed canonical HolChar rather than Lean String.
+
+`l3_raise_exception_probe.out` captures the original polymorphic type and assumption-free full result equation, preserving ARB and every returned state field through the conditional exception update. Defs/MMU/Exception kernel-checks that complete generic equation under only HOL intrinsic Nonempty; no chosen-default binder.
