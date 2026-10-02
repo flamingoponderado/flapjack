@@ -4204,3 +4204,13 @@ ALookupMap probes replay three complete original lookup mapping proofs and
 and payload carriers, repeated/absent/large keys and noninjective sentinels
 retain the original injection boundary. Regression evidence does not establish
 cross-language equivalence.
+
+Move reconstruction probes replay the complete original theorem and four
+original prerequisites. 560 matching packets compare full native reads,
+optional pairs of whole Spt trees and all six source guard observations.
+Widths1/2/8/64/80 retain word truncation; duplicate/missing/70bit keys, swaps,
+omitted self/nonself moves and malformed trees are included. Failed reads
+produce NONE rather than evaluating THE NONE. Regression evidence is not a
+HOL-to-Lean equivalence proof.
+Fifteen extra packets isolate the subset guard failure while all other guards
+succeed; they inspect absent lookup directly and never compute THE NONE.
