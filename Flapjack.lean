@@ -114,6 +114,8 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.AllocationArithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackAllocSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ShiftSimulation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordAddressArithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
@@ -296,6 +298,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameFlat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameInstructions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameShare
@@ -558,9 +561,11 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoves
 import Flapjack.Compiler.Backend.RegAlloc.ProductionStateRelation
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInitialSeed
+import Flapjack.Compiler.Backend.RegAlloc.ProductionStackTransition
 import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTransition
 import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTraversal
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
+import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyQuery
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
