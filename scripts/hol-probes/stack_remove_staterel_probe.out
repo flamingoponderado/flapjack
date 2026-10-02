@@ -1,0 +1,17 @@
+sr_def=∀jump off k s1 s2. state_rel jump off k s1 s2 ⇔ s1.use_stack ∧ s1.use_store ∧ ¬s2.use_stack ∧ ¬s2.use_store ∧ ¬s2.use_alloc ∧ ¬s1.use_alloc ∧ (s2.be ⇔ s1.be) ∧ s2.gc_fun = s1.gc_fun ∧ s2.clock = s1.clock ∧ s2.ffi = s1.ffi ∧ s2.ffi_save_regs = s1.ffi_save_regs ∧ s2.fp_regs = s1.fp_regs ∧ s2.code_buffer = s1.code_buffer ∧ s2.sh_mdomain = s1.sh_mdomain ∧ s1.compile = (λc p. s2.compile c (MAP (prog_comp jump off k) p)) ∧ s2.compile_oracle = (λn. (I ## MAP (prog_comp jump off k) ## I) (s1.compile_oracle n)) ∧ (∀n i p. MEM (i,p) (FST (SND (s1.compile_oracle n))) ⇒ reg_bound p k ∧ stack_num_stubs ≤ i + 1) ∧ good_dimindex (:α) ∧ (∀n. n < k ⇒ FLOOKUP s2.regs n = FLOOKUP s1.regs n) ∧ code_rel jump off k s1.code s2.code ∧ lookup stack_err_lab s2.code = SOME (halt_inst 2w) ∧ FLOOKUP s2.regs (k + 2) = FLOOKUP s1.store CurrHeap ∧ {k; k + 1; k + 2} ⊆ s2.ffi_save_regs ∧ is_SOME_Word (FLOOKUP s1.store BitmapBase) ∧ s1.stack_space ≤ LENGTH s1.stack ∧ (let bp = the_SOME_Word (FLOOKUP s1.store BitmapBase) ≪ shift (:α); all_bitmaps = s1.bitmaps ++ s1.data_buffer.buffer in s1.data_buffer.position = bp + bytes_in_word * n2w (LENGTH s1.bitmaps) ∧ case FLOOKUP s2.regs (k + 1) of NONE => F | SOME (Word base) => dimindex (:α) DIV 8 * max_stack_alloc ≤ w2n base ∧ w2n base + w2n bytes_in_word * LENGTH s1.stack < dimword (:α) ∧ FLOOKUP s2.regs k = SOME (Word (base + bytes_in_word * n2w s1.stack_space)) ∧ (memory s1.memory s1.mdomain * word_list bp (MAP Word all_bitmaps) * word_list_exists (bp + bytes_in_word * n2w (LENGTH all_bitmaps)) s1.data_buffer.space_left * word_store base s1.store * word_list base s1.stack) (fun2set (s2.memory,s2.mdomain)) | SOME (Loc v6 v7) => F)
+sr_type=:bool -> α word # α word -> num -> (α, β, γ) stackSem$state -> (α, β, γ) stackSem$state -> bool
+sr_star_shape=((((P*P)*P)*P)*P)
+sr_width1=T
+sr_width8=T
+sr_width80=T
+sr_source_stack=T
+sr_source_store=T
+sr_target_stack=T
+sr_target_store=T
+sr_source_alloc=T
+sr_target_alloc=T
+sr_stack_space=T
+sr_bitmap_none=T
+sr_bitmap_loc=T
+sr_base_none=T
+sr_base_loc=T
