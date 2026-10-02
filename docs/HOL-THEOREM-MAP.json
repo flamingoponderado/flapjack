@@ -60519,5 +60519,29 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): stack_namesProofScript.sml:304-526 comp_correct [local]. Same ∀p s r t. Same single conjunctive premise, in HOL order: evaluate (p,s) = (r,t), BIJ (find_name f) UNIV UNIV (Function.Bijective (findNameSpt f)), ~s.use_alloc, ~s.use_store, ~s.use_stack, s.compile = (λcfg. c cfg o stack_names$compile f) (compileHOL f). Same conclusion: evaluate (comp f p, rename_state c f s) = (r, rename_state c f t) over the tagged StackSem evaluate, progCompHOL (comp_def) and renameState (rename_state_def). HOL's free f and c are implicit binders. The proof is the measure induction of evaluate_add_clock/evaluate_consts, using the ported rename_state lemmas, evaluate_consts, and the MAP_KEYS choice-rendering laws for FEMPTY, DOMSUB_MAP_KEYS, DRESTRICT_MAP_KEYS_IMAGE and MAP_KEYS_FUPDATE (Flapjack infrastructure, injective case only). Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration through the tagged StackSem evaluate (its Inst clause, StackSem instHOL / inst_def FP clauses), as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ALookupMap.lean",
+    "lean_name": "alookupMapAny",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "ALOOKUP_MAP_any",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-alookup-map-laws): full original3548-3568/3576-3603/3605-3610, independent arbitrary key/payload type parameters and functions, exact queried-element INSERT key/list domain for INJ, exact source pair-map and query equalities. INJ codomain UNIV contributes no guard; membership maps and classical propositional equality use existing keyLookup, no DecidableEq/BEq/instance premise or global injection/Nodup restriction. Identity tabulation has no premises. Three literal original complete proofs hyp=[] and302 matching Nat/Bool heterogeneous-carrier complete Option/injection observations with repeated/missing/large keys and noninjective sentinels. No held HD/EL or trust policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ALookupMap.lean",
+    "lean_name": "alookupMapInjFst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "ALOOKUP_MAP_INJ_FST",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-alookup-map-laws): full original3548-3568/3576-3603/3605-3610, independent arbitrary key/payload type parameters and functions, exact queried-element INSERT key/list domain for INJ, exact source pair-map and query equalities. INJ codomain UNIV contributes no guard; membership maps and classical propositional equality use existing keyLookup, no DecidableEq/BEq/instance premise or global injection/Nodup restriction. Identity tabulation has no premises. Three literal original complete proofs hyp=[] and302 matching Nat/Bool heterogeneous-carrier complete Option/injection observations with repeated/missing/large keys and noninjective sentinels. No held HD/EL or trust policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ALookupMap.lean",
+    "lean_name": "alookupIdTabulate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "ALOOKUP_ID_TABULATE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-alookup-map-laws): full original3548-3568/3576-3603/3605-3610, independent arbitrary key/payload type parameters and functions, exact queried-element INSERT key/list domain for INJ, exact source pair-map and query equalities. INJ codomain UNIV contributes no guard; membership maps and classical propositional equality use existing keyLookup, no DecidableEq/BEq/instance premise or global injection/Nodup restriction. Identity tabulation has no premises. Three literal original complete proofs hyp=[] and302 matching Nat/Bool heterogeneous-carrier complete Option/injection observations with repeated/missing/large keys and noninjective sentinels. No held HD/EL or trust policy changes."
   }
 ]
