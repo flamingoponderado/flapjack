@@ -96,6 +96,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MapBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdate
 import Flapjack.Compiler.Backend.WordToStack.Proofs.WordListLength

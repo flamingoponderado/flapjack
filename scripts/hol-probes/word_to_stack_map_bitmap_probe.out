@@ -1,0 +1,201 @@
+mb_full_map_bitmap_success=⊢ ∀bs stack a b ls. filter_bitmap bs stack = SOME (a,b) ∧ LENGTH ls = LENGTH a ⇒ ∃x z. map_bitmap bs ls stack = SOME (x,[],DROP (LENGTH bs) stack) ∧ filter_bitmap bs x = SOME (ls,[])
+mb_full_map_bitmap_more=⊢ ∀bs ls stack n a c ls'. map_bitmap bs ls stack = SOME (a,[],c) ⇒ map_bitmap bs (ls ++ ls') stack = SOME (a,ls',c)
+mb_full_map_bitmap_more_simp=⊢ map_bitmap bs (TAKE (LENGTH l) ls) stack = SOME (a,[],c) ⇒ map_bitmap bs ls stack = SOME (a,DROP (LENGTH l) ls,c)
+mb_full_map_bitmap_LLOOKUP_F=⊢ ∀bm ls stack n res ls1 stack1. LLOOKUP bm n = SOME F ∧ map_bitmap bm ls stack = SOME (res,ls1,stack1) ⇒ ∃v. LLOOKUP res n = SOME v ∧ LLOOKUP stack n = SOME v
+mb_output_0_0_0=⊢ map_bitmap [] [] [] = SOME ([],[],[]) ⇔ T
+mb_output_0_0_1=⊢ map_bitmap [] [91] [] = SOME ([],[91],[]) ⇔ T
+mb_output_0_0_2=⊢ map_bitmap [] [91; 92] [] = SOME ([],[91; 92],[]) ⇔ T
+mb_output_0_0_3=⊢ map_bitmap [] [91; 92; 93; 94] [] = SOME ([],[91; 92; 93; 94],[]) ⇔ T
+mb_success_witness_0_0=⊢ map_bitmap [] [] [] = SOME ([],[],[]) ∧ filter_bitmap [] [] = SOME ([],[]) ⇔ T
+mb_more_0_0=⊢ map_bitmap [] ([] ++ [77; 78]) [] = SOME ([],[77; 78],[]) ⇔ T
+mb_prefix_suffix_0_0=⊢ map_bitmap [] (TAKE (LENGTH []) [77; 78]) [] = SOME ([],[],[]) ∧ map_bitmap [] [77; 78] [] = SOME ([],DROP (LENGTH []) [77; 78],[]) ⇔ T
+mb_output_0_1_0=⊢ map_bitmap [] [] [3] = SOME ([],[],[3]) ⇔ T
+mb_output_0_1_1=⊢ map_bitmap [] [91] [3] = SOME ([],[91],[3]) ⇔ T
+mb_output_0_1_2=⊢ map_bitmap [] [91; 92] [3] = SOME ([],[91; 92],[3]) ⇔ T
+mb_output_0_1_3=⊢ map_bitmap [] [91; 92; 93; 94] [3] = SOME ([],[91; 92; 93; 94],[3]) ⇔ T
+mb_success_witness_0_1=⊢ map_bitmap [] [] [3] = SOME ([],[],[3]) ∧ filter_bitmap [] [] = SOME ([],[]) ⇔ T
+mb_more_0_1=⊢ map_bitmap [] ([] ++ [77; 78]) [3] = SOME ([],[77; 78],[3]) ⇔ T
+mb_prefix_suffix_0_1=⊢ map_bitmap [] (TAKE (LENGTH []) [77; 78]) [3] = SOME ([],[],[3]) ∧ map_bitmap [] [77; 78] [3] = SOME ([],DROP (LENGTH []) [77; 78],[3]) ⇔ T
+mb_output_0_2_0=⊢ map_bitmap [] [] [2; 5] = SOME ([],[],[2; 5]) ⇔ T
+mb_output_0_2_1=⊢ map_bitmap [] [91] [2; 5] = SOME ([],[91],[2; 5]) ⇔ T
+mb_output_0_2_2=⊢ map_bitmap [] [91; 92] [2; 5] = SOME ([],[91; 92],[2; 5]) ⇔ T
+mb_output_0_2_3=⊢ map_bitmap [] [91; 92; 93; 94] [2; 5] = SOME ([],[91; 92; 93; 94],[2; 5]) ⇔ T
+mb_success_witness_0_2=⊢ map_bitmap [] [] [2; 5] = SOME ([],[],[2; 5]) ∧ filter_bitmap [] [] = SOME ([],[]) ⇔ T
+mb_more_0_2=⊢ map_bitmap [] ([] ++ [77; 78]) [2; 5] = SOME ([],[77; 78],[2; 5]) ⇔ T
+mb_prefix_suffix_0_2=⊢ map_bitmap [] (TAKE (LENGTH []) [77; 78]) [2; 5] = SOME ([],[],[2; 5]) ∧ map_bitmap [] [77; 78] [2; 5] = SOME ([],DROP (LENGTH []) [77; 78],[2; 5]) ⇔ T
+mb_output_0_3_0=⊢ map_bitmap [] [] [8; 3; 6; 1] = SOME ([],[],[8; 3; 6; 1]) ⇔ T
+mb_output_0_3_1=⊢ map_bitmap [] [91] [8; 3; 6; 1] = SOME ([],[91],[8; 3; 6; 1]) ⇔ T
+mb_output_0_3_2=⊢ map_bitmap [] [91; 92] [8; 3; 6; 1] = SOME ([],[91; 92],[8; 3; 6; 1]) ⇔ T
+mb_output_0_3_3=⊢ map_bitmap [] [91; 92; 93; 94] [8; 3; 6; 1] = SOME ([],[91; 92; 93; 94],[8; 3; 6; 1]) ⇔ T
+mb_success_witness_0_3=⊢ map_bitmap [] [] [8; 3; 6; 1] = SOME ([],[],[8; 3; 6; 1]) ∧ filter_bitmap [] [] = SOME ([],[]) ⇔ T
+mb_more_0_3=⊢ map_bitmap [] ([] ++ [77; 78]) [8; 3; 6; 1] = SOME ([],[77; 78],[8; 3; 6; 1]) ⇔ T
+mb_prefix_suffix_0_3=⊢ map_bitmap [] (TAKE (LENGTH []) [77; 78]) [8; 3; 6; 1] = SOME ([],[],[8; 3; 6; 1]) ∧ map_bitmap [] [77; 78] [8; 3; 6; 1] = SOME ([],DROP (LENGTH []) [77; 78],[8; 3; 6; 1]) ⇔ T
+mb_output_1_0_0=⊢ map_bitmap [F] [] [] = NONE ⇔ T
+mb_output_1_0_1=⊢ map_bitmap [F] [91] [] = NONE ⇔ T
+mb_output_1_0_2=⊢ map_bitmap [F] [91; 92] [] = NONE ⇔ T
+mb_output_1_0_3=⊢ map_bitmap [F] [91; 92; 93; 94] [] = NONE ⇔ T
+mb_output_1_1_0=⊢ map_bitmap [F] [] [3] = SOME ([3],[],[]) ⇔ T
+mb_output_1_1_1=⊢ map_bitmap [F] [91] [3] = SOME ([3],[91],[]) ⇔ T
+mb_output_1_1_2=⊢ map_bitmap [F] [91; 92] [3] = SOME ([3],[91; 92],[]) ⇔ T
+mb_output_1_1_3=⊢ map_bitmap [F] [91; 92; 93; 94] [3] = SOME ([3],[91; 92; 93; 94],[]) ⇔ T
+mb_success_witness_1_1=⊢ map_bitmap [F] [] [3] = SOME ([3],[],[]) ∧ filter_bitmap [F] [3] = SOME ([],[]) ⇔ T
+mb_more_1_1=⊢ map_bitmap [F] ([] ++ [77; 78]) [3] = SOME ([3],[77; 78],[]) ⇔ T
+mb_prefix_suffix_1_1=⊢ map_bitmap [F] (TAKE (LENGTH []) [77; 78]) [3] = SOME ([3],[],[]) ∧ map_bitmap [F] [77; 78] [3] = SOME ([3],DROP (LENGTH []) [77; 78],[]) ⇔ T
+mb_false_slot_1_1_0=⊢ LLOOKUP [F] 0 = SOME F ∧ LLOOKUP [3] 0 = SOME 3 ∧ LLOOKUP [3] 0 = SOME 3 ⇔ T
+mb_output_1_2_0=⊢ map_bitmap [F] [] [2; 5] = SOME ([2],[],[5]) ⇔ T
+mb_output_1_2_1=⊢ map_bitmap [F] [91] [2; 5] = SOME ([2],[91],[5]) ⇔ T
+mb_output_1_2_2=⊢ map_bitmap [F] [91; 92] [2; 5] = SOME ([2],[91; 92],[5]) ⇔ T
+mb_output_1_2_3=⊢ map_bitmap [F] [91; 92; 93; 94] [2; 5] = SOME ([2],[91; 92; 93; 94],[5]) ⇔ T
+mb_success_witness_1_2=⊢ map_bitmap [F] [] [2; 5] = SOME ([2],[],[5]) ∧ filter_bitmap [F] [2] = SOME ([],[]) ⇔ T
+mb_more_1_2=⊢ map_bitmap [F] ([] ++ [77; 78]) [2; 5] = SOME ([2],[77; 78],[5]) ⇔ T
+mb_prefix_suffix_1_2=⊢ map_bitmap [F] (TAKE (LENGTH []) [77; 78]) [2; 5] = SOME ([2],[],[5]) ∧ map_bitmap [F] [77; 78] [2; 5] = SOME ([2],DROP (LENGTH []) [77; 78],[5]) ⇔ T
+mb_false_slot_1_2_0=⊢ LLOOKUP [F] 0 = SOME F ∧ LLOOKUP [2] 0 = SOME 2 ∧ LLOOKUP [2; 5] 0 = SOME 2 ⇔ T
+mb_output_1_3_0=⊢ map_bitmap [F] [] [8; 3; 6; 1] = SOME ([8],[],[3; 6; 1]) ⇔ T
+mb_output_1_3_1=⊢ map_bitmap [F] [91] [8; 3; 6; 1] = SOME ([8],[91],[3; 6; 1]) ⇔ T
+mb_output_1_3_2=⊢ map_bitmap [F] [91; 92] [8; 3; 6; 1] = SOME ([8],[91; 92],[3; 6; 1]) ⇔ T
+mb_output_1_3_3=⊢ map_bitmap [F] [91; 92; 93; 94] [8; 3; 6; 1] = SOME ([8],[91; 92; 93; 94],[3; 6; 1]) ⇔ T
+mb_success_witness_1_3=⊢ map_bitmap [F] [] [8; 3; 6; 1] = SOME ([8],[],[3; 6; 1]) ∧ filter_bitmap [F] [8] = SOME ([],[]) ⇔ T
+mb_more_1_3=⊢ map_bitmap [F] ([] ++ [77; 78]) [8; 3; 6; 1] = SOME ([8],[77; 78],[3; 6; 1]) ⇔ T
+mb_prefix_suffix_1_3=⊢ map_bitmap [F] (TAKE (LENGTH []) [77; 78]) [8; 3; 6; 1] = SOME ([8],[],[3; 6; 1]) ∧ map_bitmap [F] [77; 78] [8; 3; 6; 1] = SOME ([8],DROP (LENGTH []) [77; 78],[3; 6; 1]) ⇔ T
+mb_false_slot_1_3_0=⊢ LLOOKUP [F] 0 = SOME F ∧ LLOOKUP [8] 0 = SOME 8 ∧ LLOOKUP [8; 3; 6; 1] 0 = SOME 8 ⇔ T
+mb_output_2_0_0=⊢ map_bitmap [T] [] [] = NONE ⇔ T
+mb_output_2_0_1=⊢ map_bitmap [T] [91] [] = NONE ⇔ T
+mb_output_2_0_2=⊢ map_bitmap [T] [91; 92] [] = NONE ⇔ T
+mb_output_2_0_3=⊢ map_bitmap [T] [91; 92; 93; 94] [] = NONE ⇔ T
+mb_output_2_1_0=⊢ map_bitmap [T] [] [3] = NONE ⇔ T
+mb_output_2_1_1=⊢ map_bitmap [T] [91] [3] = SOME ([91],[],[]) ⇔ T
+mb_output_2_1_2=⊢ map_bitmap [T] [91; 92] [3] = SOME ([91],[92],[]) ⇔ T
+mb_output_2_1_3=⊢ map_bitmap [T] [91; 92; 93; 94] [3] = SOME ([91],[92; 93; 94],[]) ⇔ T
+mb_success_witness_2_1=⊢ map_bitmap [T] [91] [3] = SOME ([91],[],[]) ∧ filter_bitmap [T] [91] = SOME ([91],[]) ⇔ T
+mb_more_2_1=⊢ map_bitmap [T] ([91] ++ [77; 78]) [3] = SOME ([91],[77; 78],[]) ⇔ T
+mb_prefix_suffix_2_1=⊢ map_bitmap [T] (TAKE (LENGTH [T]) [91; 77; 78]) [3] = SOME ([91],[],[]) ∧ map_bitmap [T] [91; 77; 78] [3] = SOME ([91],DROP (LENGTH [T]) [91; 77; 78],[]) ⇔ T
+mb_output_2_2_0=⊢ map_bitmap [T] [] [2; 5] = NONE ⇔ T
+mb_output_2_2_1=⊢ map_bitmap [T] [91] [2; 5] = SOME ([91],[],[5]) ⇔ T
+mb_output_2_2_2=⊢ map_bitmap [T] [91; 92] [2; 5] = SOME ([91],[92],[5]) ⇔ T
+mb_output_2_2_3=⊢ map_bitmap [T] [91; 92; 93; 94] [2; 5] = SOME ([91],[92; 93; 94],[5]) ⇔ T
+mb_success_witness_2_2=⊢ map_bitmap [T] [91] [2; 5] = SOME ([91],[],[5]) ∧ filter_bitmap [T] [91] = SOME ([91],[]) ⇔ T
+mb_more_2_2=⊢ map_bitmap [T] ([91] ++ [77; 78]) [2; 5] = SOME ([91],[77; 78],[5]) ⇔ T
+mb_prefix_suffix_2_2=⊢ map_bitmap [T] (TAKE (LENGTH [T]) [91; 77; 78]) [2; 5] = SOME ([91],[],[5]) ∧ map_bitmap [T] [91; 77; 78] [2; 5] = SOME ([91],DROP (LENGTH [T]) [91; 77; 78],[5]) ⇔ T
+mb_output_2_3_0=⊢ map_bitmap [T] [] [8; 3; 6; 1] = NONE ⇔ T
+mb_output_2_3_1=⊢ map_bitmap [T] [91] [8; 3; 6; 1] = SOME ([91],[],[3; 6; 1]) ⇔ T
+mb_output_2_3_2=⊢ map_bitmap [T] [91; 92] [8; 3; 6; 1] = SOME ([91],[92],[3; 6; 1]) ⇔ T
+mb_output_2_3_3=⊢ map_bitmap [T] [91; 92; 93; 94] [8; 3; 6; 1] = SOME ([91],[92; 93; 94],[3; 6; 1]) ⇔ T
+mb_success_witness_2_3=⊢ map_bitmap [T] [91] [8; 3; 6; 1] = SOME ([91],[],[3; 6; 1]) ∧ filter_bitmap [T] [91] = SOME ([91],[]) ⇔ T
+mb_more_2_3=⊢ map_bitmap [T] ([91] ++ [77; 78]) [8; 3; 6; 1] = SOME ([91],[77; 78],[3; 6; 1]) ⇔ T
+mb_prefix_suffix_2_3=⊢ map_bitmap [T] (TAKE (LENGTH [T]) [91; 77; 78]) [8; 3; 6; 1] = SOME ([91],[],[3; 6; 1]) ∧ map_bitmap [T] [91; 77; 78] [8; 3; 6; 1] = SOME ([91],DROP (LENGTH [T]) [91; 77; 78],[3; 6; 1]) ⇔ T
+mb_output_3_0_0=⊢ map_bitmap [F; F] [] [] = NONE ⇔ T
+mb_output_3_0_1=⊢ map_bitmap [F; F] [91] [] = NONE ⇔ T
+mb_output_3_0_2=⊢ map_bitmap [F; F] [91; 92] [] = NONE ⇔ T
+mb_output_3_0_3=⊢ map_bitmap [F; F] [91; 92; 93; 94] [] = NONE ⇔ T
+mb_output_3_1_0=⊢ map_bitmap [F; F] [] [3] = NONE ⇔ T
+mb_output_3_1_1=⊢ map_bitmap [F; F] [91] [3] = NONE ⇔ T
+mb_output_3_1_2=⊢ map_bitmap [F; F] [91; 92] [3] = NONE ⇔ T
+mb_output_3_1_3=⊢ map_bitmap [F; F] [91; 92; 93; 94] [3] = NONE ⇔ T
+mb_output_3_2_0=⊢ map_bitmap [F; F] [] [2; 5] = SOME ([2; 5],[],[]) ⇔ T
+mb_output_3_2_1=⊢ map_bitmap [F; F] [91] [2; 5] = SOME ([2; 5],[91],[]) ⇔ T
+mb_output_3_2_2=⊢ map_bitmap [F; F] [91; 92] [2; 5] = SOME ([2; 5],[91; 92],[]) ⇔ T
+mb_output_3_2_3=⊢ map_bitmap [F; F] [91; 92; 93; 94] [2; 5] = SOME ([2; 5],[91; 92; 93; 94],[]) ⇔ T
+mb_success_witness_3_2=⊢ map_bitmap [F; F] [] [2; 5] = SOME ([2; 5],[],[]) ∧ filter_bitmap [F; F] [2; 5] = SOME ([],[]) ⇔ T
+mb_more_3_2=⊢ map_bitmap [F; F] ([] ++ [77; 78]) [2; 5] = SOME ([2; 5],[77; 78],[]) ⇔ T
+mb_prefix_suffix_3_2=⊢ map_bitmap [F; F] (TAKE (LENGTH []) [77; 78]) [2; 5] = SOME ([2; 5],[],[]) ∧ map_bitmap [F; F] [77; 78] [2; 5] = SOME ([2; 5],DROP (LENGTH []) [77; 78],[]) ⇔ T
+mb_false_slot_3_2_0=⊢ LLOOKUP [F; F] 0 = SOME F ∧ LLOOKUP [2; 5] 0 = SOME 2 ∧ LLOOKUP [2; 5] 0 = SOME 2 ⇔ T
+mb_false_slot_3_2_1=⊢ LLOOKUP [F; F] 1 = SOME F ∧ LLOOKUP [2; 5] 1 = SOME 5 ∧ LLOOKUP [2; 5] 1 = SOME 5 ⇔ T
+mb_output_3_3_0=⊢ map_bitmap [F; F] [] [8; 3; 6; 1] = SOME ([8; 3],[],[6; 1]) ⇔ T
+mb_output_3_3_1=⊢ map_bitmap [F; F] [91] [8; 3; 6; 1] = SOME ([8; 3],[91],[6; 1]) ⇔ T
+mb_output_3_3_2=⊢ map_bitmap [F; F] [91; 92] [8; 3; 6; 1] = SOME ([8; 3],[91; 92],[6; 1]) ⇔ T
+mb_output_3_3_3=⊢ map_bitmap [F; F] [91; 92; 93; 94] [8; 3; 6; 1] = SOME ([8; 3],[91; 92; 93; 94],[6; 1]) ⇔ T
+mb_success_witness_3_3=⊢ map_bitmap [F; F] [] [8; 3; 6; 1] = SOME ([8; 3],[],[6; 1]) ∧ filter_bitmap [F; F] [8; 3] = SOME ([],[]) ⇔ T
+mb_more_3_3=⊢ map_bitmap [F; F] ([] ++ [77; 78]) [8; 3; 6; 1] = SOME ([8; 3],[77; 78],[6; 1]) ⇔ T
+mb_prefix_suffix_3_3=⊢ map_bitmap [F; F] (TAKE (LENGTH []) [77; 78]) [8; 3; 6; 1] = SOME ([8; 3],[],[6; 1]) ∧ map_bitmap [F; F] [77; 78] [8; 3; 6; 1] = SOME ([8; 3],DROP (LENGTH []) [77; 78],[6; 1]) ⇔ T
+mb_false_slot_3_3_0=⊢ LLOOKUP [F; F] 0 = SOME F ∧ LLOOKUP [8; 3] 0 = SOME 8 ∧ LLOOKUP [8; 3; 6; 1] 0 = SOME 8 ⇔ T
+mb_false_slot_3_3_1=⊢ LLOOKUP [F; F] 1 = SOME F ∧ LLOOKUP [8; 3] 1 = SOME 3 ∧ LLOOKUP [8; 3; 6; 1] 1 = SOME 3 ⇔ T
+mb_output_4_0_0=⊢ map_bitmap [T; F] [] [] = NONE ⇔ T
+mb_output_4_0_1=⊢ map_bitmap [T; F] [91] [] = NONE ⇔ T
+mb_output_4_0_2=⊢ map_bitmap [T; F] [91; 92] [] = NONE ⇔ T
+mb_output_4_0_3=⊢ map_bitmap [T; F] [91; 92; 93; 94] [] = NONE ⇔ T
+mb_output_4_1_0=⊢ map_bitmap [T; F] [] [3] = NONE ⇔ T
+mb_output_4_1_1=⊢ map_bitmap [T; F] [91] [3] = NONE ⇔ T
+mb_output_4_1_2=⊢ map_bitmap [T; F] [91; 92] [3] = NONE ⇔ T
+mb_output_4_1_3=⊢ map_bitmap [T; F] [91; 92; 93; 94] [3] = NONE ⇔ T
+mb_output_4_2_0=⊢ map_bitmap [T; F] [] [2; 5] = NONE ⇔ T
+mb_output_4_2_1=⊢ map_bitmap [T; F] [91] [2; 5] = SOME ([91; 5],[],[]) ⇔ T
+mb_output_4_2_2=⊢ map_bitmap [T; F] [91; 92] [2; 5] = SOME ([91; 5],[92],[]) ⇔ T
+mb_output_4_2_3=⊢ map_bitmap [T; F] [91; 92; 93; 94] [2; 5] = SOME ([91; 5],[92; 93; 94],[]) ⇔ T
+mb_success_witness_4_2=⊢ map_bitmap [T; F] [91] [2; 5] = SOME ([91; 5],[],[]) ∧ filter_bitmap [T; F] [91; 5] = SOME ([91],[]) ⇔ T
+mb_more_4_2=⊢ map_bitmap [T; F] ([91] ++ [77; 78]) [2; 5] = SOME ([91; 5],[77; 78],[]) ⇔ T
+mb_prefix_suffix_4_2=⊢ map_bitmap [T; F] (TAKE (LENGTH [T]) [91; 77; 78]) [2; 5] = SOME ([91; 5],[],[]) ∧ map_bitmap [T; F] [91; 77; 78] [2; 5] = SOME ([91; 5],DROP (LENGTH [T]) [91; 77; 78],[]) ⇔ T
+mb_false_slot_4_2_1=⊢ LLOOKUP [T; F] 1 = SOME F ∧ LLOOKUP [91; 5] 1 = SOME 5 ∧ LLOOKUP [2; 5] 1 = SOME 5 ⇔ T
+mb_output_4_3_0=⊢ map_bitmap [T; F] [] [8; 3; 6; 1] = NONE ⇔ T
+mb_output_4_3_1=⊢ map_bitmap [T; F] [91] [8; 3; 6; 1] = SOME ([91; 3],[],[6; 1]) ⇔ T
+mb_output_4_3_2=⊢ map_bitmap [T; F] [91; 92] [8; 3; 6; 1] = SOME ([91; 3],[92],[6; 1]) ⇔ T
+mb_output_4_3_3=⊢ map_bitmap [T; F] [91; 92; 93; 94] [8; 3; 6; 1] = SOME ([91; 3],[92; 93; 94],[6; 1]) ⇔ T
+mb_success_witness_4_3=⊢ map_bitmap [T; F] [91] [8; 3; 6; 1] = SOME ([91; 3],[],[6; 1]) ∧ filter_bitmap [T; F] [91; 3] = SOME ([91],[]) ⇔ T
+mb_more_4_3=⊢ map_bitmap [T; F] ([91] ++ [77; 78]) [8; 3; 6; 1] = SOME ([91; 3],[77; 78],[6; 1]) ⇔ T
+mb_prefix_suffix_4_3=⊢ map_bitmap [T; F] (TAKE (LENGTH [T]) [91; 77; 78]) [8; 3; 6; 1] = SOME ([91; 3],[],[6; 1]) ∧ map_bitmap [T; F] [91; 77; 78] [8; 3; 6; 1] = SOME ([91; 3],DROP (LENGTH [T]) [91; 77; 78],[6; 1]) ⇔ T
+mb_false_slot_4_3_1=⊢ LLOOKUP [T; F] 1 = SOME F ∧ LLOOKUP [91; 3] 1 = SOME 3 ∧ LLOOKUP [8; 3; 6; 1] 1 = SOME 3 ⇔ T
+mb_output_5_0_0=⊢ map_bitmap [F; T] [] [] = NONE ⇔ T
+mb_output_5_0_1=⊢ map_bitmap [F; T] [91] [] = NONE ⇔ T
+mb_output_5_0_2=⊢ map_bitmap [F; T] [91; 92] [] = NONE ⇔ T
+mb_output_5_0_3=⊢ map_bitmap [F; T] [91; 92; 93; 94] [] = NONE ⇔ T
+mb_output_5_1_0=⊢ map_bitmap [F; T] [] [3] = NONE ⇔ T
+mb_output_5_1_1=⊢ map_bitmap [F; T] [91] [3] = NONE ⇔ T
+mb_output_5_1_2=⊢ map_bitmap [F; T] [91; 92] [3] = NONE ⇔ T
+mb_output_5_1_3=⊢ map_bitmap [F; T] [91; 92; 93; 94] [3] = NONE ⇔ T
+mb_output_5_2_0=⊢ map_bitmap [F; T] [] [2; 5] = NONE ⇔ T
+mb_output_5_2_1=⊢ map_bitmap [F; T] [91] [2; 5] = SOME ([2; 91],[],[]) ⇔ T
+mb_output_5_2_2=⊢ map_bitmap [F; T] [91; 92] [2; 5] = SOME ([2; 91],[92],[]) ⇔ T
+mb_output_5_2_3=⊢ map_bitmap [F; T] [91; 92; 93; 94] [2; 5] = SOME ([2; 91],[92; 93; 94],[]) ⇔ T
+mb_success_witness_5_2=⊢ map_bitmap [F; T] [91] [2; 5] = SOME ([2; 91],[],[]) ∧ filter_bitmap [F; T] [2; 91] = SOME ([91],[]) ⇔ T
+mb_more_5_2=⊢ map_bitmap [F; T] ([91] ++ [77; 78]) [2; 5] = SOME ([2; 91],[77; 78],[]) ⇔ T
+mb_prefix_suffix_5_2=⊢ map_bitmap [F; T] (TAKE (LENGTH [T]) [91; 77; 78]) [2; 5] = SOME ([2; 91],[],[]) ∧ map_bitmap [F; T] [91; 77; 78] [2; 5] = SOME ([2; 91],DROP (LENGTH [T]) [91; 77; 78],[]) ⇔ T
+mb_false_slot_5_2_0=⊢ LLOOKUP [F; T] 0 = SOME F ∧ LLOOKUP [2; 91] 0 = SOME 2 ∧ LLOOKUP [2; 5] 0 = SOME 2 ⇔ T
+mb_output_5_3_0=⊢ map_bitmap [F; T] [] [8; 3; 6; 1] = NONE ⇔ T
+mb_output_5_3_1=⊢ map_bitmap [F; T] [91] [8; 3; 6; 1] = SOME ([8; 91],[],[6; 1]) ⇔ T
+mb_output_5_3_2=⊢ map_bitmap [F; T] [91; 92] [8; 3; 6; 1] = SOME ([8; 91],[92],[6; 1]) ⇔ T
+mb_output_5_3_3=⊢ map_bitmap [F; T] [91; 92; 93; 94] [8; 3; 6; 1] = SOME ([8; 91],[92; 93; 94],[6; 1]) ⇔ T
+mb_success_witness_5_3=⊢ map_bitmap [F; T] [91] [8; 3; 6; 1] = SOME ([8; 91],[],[6; 1]) ∧ filter_bitmap [F; T] [8; 91] = SOME ([91],[]) ⇔ T
+mb_more_5_3=⊢ map_bitmap [F; T] ([91] ++ [77; 78]) [8; 3; 6; 1] = SOME ([8; 91],[77; 78],[6; 1]) ⇔ T
+mb_prefix_suffix_5_3=⊢ map_bitmap [F; T] (TAKE (LENGTH [T]) [91; 77; 78]) [8; 3; 6; 1] = SOME ([8; 91],[],[6; 1]) ∧ map_bitmap [F; T] [91; 77; 78] [8; 3; 6; 1] = SOME ([8; 91],DROP (LENGTH [T]) [91; 77; 78],[6; 1]) ⇔ T
+mb_false_slot_5_3_0=⊢ LLOOKUP [F; T] 0 = SOME F ∧ LLOOKUP [8; 91] 0 = SOME 8 ∧ LLOOKUP [8; 3; 6; 1] 0 = SOME 8 ⇔ T
+mb_output_6_0_0=⊢ map_bitmap [T; T] [] [] = NONE ⇔ T
+mb_output_6_0_1=⊢ map_bitmap [T; T] [91] [] = NONE ⇔ T
+mb_output_6_0_2=⊢ map_bitmap [T; T] [91; 92] [] = NONE ⇔ T
+mb_output_6_0_3=⊢ map_bitmap [T; T] [91; 92; 93; 94] [] = NONE ⇔ T
+mb_output_6_1_0=⊢ map_bitmap [T; T] [] [3] = NONE ⇔ T
+mb_output_6_1_1=⊢ map_bitmap [T; T] [91] [3] = NONE ⇔ T
+mb_output_6_1_2=⊢ map_bitmap [T; T] [91; 92] [3] = NONE ⇔ T
+mb_output_6_1_3=⊢ map_bitmap [T; T] [91; 92; 93; 94] [3] = NONE ⇔ T
+mb_output_6_2_0=⊢ map_bitmap [T; T] [] [2; 5] = NONE ⇔ T
+mb_output_6_2_1=⊢ map_bitmap [T; T] [91] [2; 5] = NONE ⇔ T
+mb_output_6_2_2=⊢ map_bitmap [T; T] [91; 92] [2; 5] = SOME ([91; 92],[],[]) ⇔ T
+mb_output_6_2_3=⊢ map_bitmap [T; T] [91; 92; 93; 94] [2; 5] = SOME ([91; 92],[93; 94],[]) ⇔ T
+mb_success_witness_6_2=⊢ map_bitmap [T; T] [91; 92] [2; 5] = SOME ([91; 92],[],[]) ∧ filter_bitmap [T; T] [91; 92] = SOME ([91; 92],[]) ⇔ T
+mb_more_6_2=⊢ map_bitmap [T; T] ([91; 92] ++ [77; 78]) [2; 5] = SOME ([91; 92],[77; 78],[]) ⇔ T
+mb_prefix_suffix_6_2=⊢ map_bitmap [T; T] (TAKE (LENGTH [T; T]) [91; 92; 77; 78]) [2; 5] = SOME ([91; 92],[],[]) ∧ map_bitmap [T; T] [91; 92; 77; 78] [2; 5] = SOME ([91; 92],DROP (LENGTH [T; T]) [91; 92; 77; 78],[]) ⇔ T
+mb_output_6_3_0=⊢ map_bitmap [T; T] [] [8; 3; 6; 1] = NONE ⇔ T
+mb_output_6_3_1=⊢ map_bitmap [T; T] [91] [8; 3; 6; 1] = NONE ⇔ T
+mb_output_6_3_2=⊢ map_bitmap [T; T] [91; 92] [8; 3; 6; 1] = SOME ([91; 92],[],[6; 1]) ⇔ T
+mb_output_6_3_3=⊢ map_bitmap [T; T] [91; 92; 93; 94] [8; 3; 6; 1] = SOME ([91; 92],[93; 94],[6; 1]) ⇔ T
+mb_success_witness_6_3=⊢ map_bitmap [T; T] [91; 92] [8; 3; 6; 1] = SOME ([91; 92],[],[6; 1]) ∧ filter_bitmap [T; T] [91; 92] = SOME ([91; 92],[]) ⇔ T
+mb_more_6_3=⊢ map_bitmap [T; T] ([91; 92] ++ [77; 78]) [8; 3; 6; 1] = SOME ([91; 92],[77; 78],[6; 1]) ⇔ T
+mb_prefix_suffix_6_3=⊢ map_bitmap [T; T] (TAKE (LENGTH [T; T]) [91; 92; 77; 78]) [8; 3; 6; 1] = SOME ([91; 92],[],[6; 1]) ∧ map_bitmap [T; T] [91; 92; 77; 78] [8; 3; 6; 1] = SOME ([91; 92],DROP (LENGTH [T; T]) [91; 92; 77; 78],[6; 1]) ⇔ T
+mb_output_7_0_0=⊢ map_bitmap [T; F; T] [] [] = NONE ⇔ T
+mb_output_7_0_1=⊢ map_bitmap [T; F; T] [91] [] = NONE ⇔ T
+mb_output_7_0_2=⊢ map_bitmap [T; F; T] [91; 92] [] = NONE ⇔ T
+mb_output_7_0_3=⊢ map_bitmap [T; F; T] [91; 92; 93; 94] [] = NONE ⇔ T
+mb_output_7_1_0=⊢ map_bitmap [T; F; T] [] [3] = NONE ⇔ T
+mb_output_7_1_1=⊢ map_bitmap [T; F; T] [91] [3] = NONE ⇔ T
+mb_output_7_1_2=⊢ map_bitmap [T; F; T] [91; 92] [3] = NONE ⇔ T
+mb_output_7_1_3=⊢ map_bitmap [T; F; T] [91; 92; 93; 94] [3] = NONE ⇔ T
+mb_output_7_2_0=⊢ map_bitmap [T; F; T] [] [2; 5] = NONE ⇔ T
+mb_output_7_2_1=⊢ map_bitmap [T; F; T] [91] [2; 5] = NONE ⇔ T
+mb_output_7_2_2=⊢ map_bitmap [T; F; T] [91; 92] [2; 5] = NONE ⇔ T
+mb_output_7_2_3=⊢ map_bitmap [T; F; T] [91; 92; 93; 94] [2; 5] = NONE ⇔ T
+mb_output_7_3_0=⊢ map_bitmap [T; F; T] [] [8; 3; 6; 1] = NONE ⇔ T
+mb_output_7_3_1=⊢ map_bitmap [T; F; T] [91] [8; 3; 6; 1] = NONE ⇔ T
+mb_output_7_3_2=⊢ map_bitmap [T; F; T] [91; 92] [8; 3; 6; 1] = SOME ([91; 3; 92],[],[1]) ⇔ T
+mb_output_7_3_3=⊢ map_bitmap [T; F; T] [91; 92; 93; 94] [8; 3; 6; 1] = SOME ([91; 3; 92],[93; 94],[1]) ⇔ T
+mb_success_witness_7_3=⊢ map_bitmap [T; F; T] [91; 92] [8; 3; 6; 1] = SOME ([91; 3; 92],[],[1]) ∧ filter_bitmap [T; F; T] [91; 3; 92] = SOME ([91; 92],[]) ⇔ T
+mb_more_7_3=⊢ map_bitmap [T; F; T] ([91; 92] ++ [77; 78]) [8; 3; 6; 1] = SOME ([91; 3; 92],[77; 78],[1]) ⇔ T
+mb_prefix_suffix_7_3=⊢ map_bitmap [T; F; T] (TAKE (LENGTH [T; T]) [91; 92; 77; 78]) [8; 3; 6; 1] = SOME ([91; 3; 92],[],[1]) ∧ map_bitmap [T; F; T] [91; 92; 77; 78] [8; 3; 6; 1] = SOME ([91; 3; 92],DROP (LENGTH [T; T]) [91; 92; 77; 78],[1]) ⇔ T
+mb_false_slot_7_3_1=⊢ LLOOKUP [T; F; T] 1 = SOME F ∧ LLOOKUP [91; 3; 92] 1 = SOME 3 ∧ LLOOKUP [8; 3; 6; 1] 1 = SOME 3 ⇔ T
