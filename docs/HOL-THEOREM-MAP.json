@@ -65244,5 +65244,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-inst: complete Inst case of original11007-11127 with all seven original guards, arbitrary positive shared config/program word width, bitmap/frame and raw instruction. Actual compNative first projection; no target naming, result or simulation premise. Arithmetic, all eight memory operations and all sixteen FP constructors preserve original inst_ok_less, physical even-register halving, conditional two-register constraints and ISA side conditions. FP register pairs retain the original64-bit ignored second-register case and32-bit distinctness via physical even registers. Source strict4<frame and frame+1<reducedcount guards retained. words_as_type_indexed_bitvec records only the standard positive word-carrier translation. Fresh original generic case application has no open hypotheses;900 direct validity/guard/target observations and224 full seven-guard kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural registers/frame slots and rejected guards. Regression evidence is not HOL-to-Lean equivalence or a full original proof replay. Full naming assembly and compiler correctness remain separate open results."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackFreeSimulation.lean",
+    "lean_name": "evaluateSingleStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "evaluate_single_stack_free",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original968-990 source comparison: precisely fullstateRel, original result/postsource pair equality NONE and stackSpace+count, original stack safety negated strict length comparison, nonzero count and maxStackAlloc bound imply existential clock/posttarget actual singleStackFree evaluation and fullstateRel. Original target.clock+clock order retained; clock0 proved. Native Add immediate at reserved pointer uses derived Word lookup from original stateRelGetVarK, native wordOffset widthDIV8 product. Untagged stateRelFreeStep factors original unfolded26conjunct postrelation argument with original safety discharged, no supplied postrelation or execution hypothesis. Arbitrary positive width and Type0 C/F; actual imported canonical regs/fpRegs/store state with genuine codec witness, Spt code excluded. Full evaluator inherits reals_as_rational_cuts assumption explicitly; kernel proof no added trusted decision."
   }
 ]
