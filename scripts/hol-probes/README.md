@@ -4843,3 +4843,11 @@ tactic replay is claimed.
 LIST_CONJ, with and without type annotations and with no open hypotheses.
 The full original LIST_CONJ shares its type variable between datatype case
 results and comparator keys; Lean retains this and every original conjunct.
+
+
+### Heterogeneous balanced-map keys and queries
+
+`balanced_map_heterogeneous_probeScript.sml` captures the original full typed
+key-set, semantic-map and domain declarations. Comparator key and query types
+are independent. The Lean repair preserves this in the producer, raw codec and
+unconditional lookup witness; generic consumers and Bool/Nat fixtures check it.

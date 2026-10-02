@@ -4378,3 +4378,8 @@ run_probe store_init_probeScript.sml store_init_probe.out \
 run_probe comparison_bundle_probeScript.sml comparison_bundle_probe.out \
   cmp_full_bundle cmp_full_typed \
   "$repo_dir/HOL/src/finite_maps/comparisonScript.sml" "$hol_dir/src/finite_maps"
+
+
+run_probe balanced_map_heterogeneous_probeScript.sml balanced_map_heterogeneous_probe.out \
+  bmh_keyset bmh_map bmh_domain bmh_keyset_type bmh_map_type bmh_cmp bmh_cmp2 \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
