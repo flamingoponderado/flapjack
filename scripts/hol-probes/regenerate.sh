@@ -5696,3 +5696,7 @@ run_probe stack_remove_find_code_probeScript.sml stack_remove_find_code_probe.ou
 run_probe stack_remove_comp_jump_lower_probeScript.sml stack_remove_comp_jump_lower_probe.out \
   cc_jump_lower_statement cc_jump_lower_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_code_buffer_probeScript.sml stack_remove_comp_code_buffer_probe.out \
+  cc_code_buffer_statement cc_code_buffer_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

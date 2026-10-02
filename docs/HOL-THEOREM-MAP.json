@@ -67110,5 +67110,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead flapjack-sol-remove-jumplower: original comp_correct JumpLower1744-1765/full1481-1493. Same four source run/nonError/full26stateRel/regBound premises; only original actual source Word operands/lower comparison/Spt callee lookup/nonzero clock guarded body IH, retaining arbitrary result/poststate/target/pointer/bounds/jump quantifiers. Invalid source reads/lookup/bad return excluded by original nonError. Untaken branch preserves full relation; timeout proves FFI equality; callee uses codeRel-derived compiled lookup/body bound, stateRelDecClock and boosted-clock subtraction from source nonzero and clock equality. No target execution/lookup/postrelation assumption added. All result alternatives retained. Canonical owning-state codec reexport, regs/fpRegs/store qualified maps, Spt code/List stack unchanged, positive words/Type0 hosts, inherits reals_as_rational_cuts from faithful native evaluator/relation. Fresh scoped original HOL statement with same guarded IH, literal original case tactic body plus standalone strip prefix and original local getVar/decClock helpers; no full comp_correct assumed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/CodeBufferWrite.lean",
+    "lean_name": "compCorrectCodeBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead flapjack-sol-remove-codebuffer: genuine original comp_correct CodeBufferWrite2023-2034/full1481-1493. Original four source evaluation/nonError/full26stateRel/regBound premises, arbitrary native operands and all original result alternatives, actual target existential at clock+target.clock. Original source nonError eliminates invalid operands/failed buffer write only; target register lookups follow bounded getVar laws, target buffer equality follows original codeBuffer conjunct. Both execute identical native wordSemBufferWrite (same width address and setWidth8 value), clock0 proves actual target run. Full26postrelation established by identical buffer replacement, no supplied targetrun/write success/postrelation or stronger guard. Actual imported owning carrier/canonical regs-fpRegs-store codec roundtrip reexport; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts. Inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh original scoped HOL theorem literal case-body replay plus standalone strip prefix and original local getVar lemma; no full comp_correct assumed."
   }
 ]

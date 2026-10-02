@@ -6170,3 +6170,5 @@ word_to_stack_list_update_slices_probeScript.sml replays nine complete original 
 `stack_remove_find_code_probeScript.sml` replays both complete original local callee lookup proofs (231–255), retaining arbitrary erased register and the full destination family. Its four rows record both original statements and kernel proof success.
 
 `stack_remove_comp_jump_lower_probeScript.sml` replays the literal original complete JumpLower case with actual source-guarded callee IH and original local register/dec-clock helpers, without assuming full `comp_correct`. Two rows record the scoped statement and proof success.
+
+`stack_remove_comp_code_buffer_probeScript.sml` proves the full original four-premise CodeBufferWrite case using the literal original case body and local getVar helper, without assuming full `comp_correct`. Two rows record its scoped statement and proof success.

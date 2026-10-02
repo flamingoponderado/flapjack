@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CodeBufferWrite
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.JumpLower
 import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
 import Flapjack.RiscV.L3.Defs.MMU.Translate
