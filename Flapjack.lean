@@ -105,6 +105,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapWrites
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackPointer
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
@@ -286,6 +287,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameInstructions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameShare
 import Flapjack.Pancake.WordConvs.FullInstOkLess
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameHelpers
