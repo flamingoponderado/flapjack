@@ -4956,6 +4956,7 @@ run_probe backend_runtime_stub_names_probeScript.sml backend_runtime_stub_names_
 run_probe word_to_stack_alloc_recursive_probeScript.sml word_to_stack_alloc_recursive_probe.out \
   aar_full_MustTerminate aar_full_Loop aar_full_Seq aar_full_If aar_full_CallTail aar_full_CallReturn aar_full_CallHandler \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_validity_nop_probeScript.sml lab_to_target_validity_nop_probe.out \
   line_ok_line_enc_with_nop line_ok_line_enc_with_nop_types lines_ok_lines_enc_with_nop lines_ok_lines_enc_with_nop_types label_full asm_padding_full halt_full install_full ffi_full jump_full jumpcmp_full loc_full list_actual_full \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4963,3 +4964,6 @@ run_probe lab_to_target_validity_nop_probeScript.sml lab_to_target_validity_nop_
 run_probe word_to_stack_alloc_compiler_probeScript.sml word_to_stack_alloc_compiler_probe.out \
   aac_full aac_1_must aac_1_loop aac_1_seq aac_1_if aac_1_tail aac_1_ret aac_1_handler aac_2_must aac_2_loop aac_2_seq aac_2_if aac_2_tail aac_2_ret aac_2_handler aac_8_must aac_8_loop aac_8_seq aac_8_if aac_8_tail aac_8_ret aac_8_handler aac_64_must aac_64_loop aac_64_seq aac_64_if aac_64_tail aac_64_ret aac_64_handler aac_80_must aac_80_loop aac_80_seq aac_80_if aac_80_tail aac_80_ret aac_80_handler \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe misc_take_flat_replicate_probeScript.sml misc_take_flat_replicate_probe.out \
+  TAKE_FLAT_REPLICATE_LEQ TAKE_FLAT_REPLICATE_LEQ_types prefix_two_chunks equal_counts zero_count empty_chunks zero_source count_guard_required length_guard_required \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"

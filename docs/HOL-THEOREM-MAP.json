@@ -62595,5 +62595,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison of complete word_to_stack_alloc_arg11316-11382: forall config/perf/source program/bitmap/frame, only perf=F implies allocArg of actual comp first projection. All26 constructors covered, every proper-subprogram IH discharged internally by sizeOf wellfounded recursion; return and handler use actual successive bitmap outputs. No desired predicate/output/evaluation/success or extra guard premise. Native source/target/config/cutset carriers retained, positive-width BitVec is the only words_as_type_indexed_bitvec translation. Fresh complete generic original theorem application and35 nested same-input original theorem applications/kernel fixtures across widths1/2/8/64/80. These are theorem-application regression evidence, not direct EVAL or full original proof replay/cross-language equivalence. Full pass simulation and compiler chain remain open; no held imports or HD/EL/GC policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Misc/TakeFlatReplicate.lean",
+    "lean_name": "takeFlatReplicateLeq",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "TAKE_FLAT_REPLICATE_LEQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original miscScript3063, complete theorem and quantified j/k/alpha-list/len types freshly captured in misc_take_flat_replicate_probe.out. Full generic list carrier and independent original len binder retained, same conjunction len=LENGTH ls and k<=j, same TAKE(k*len)(FLAT(REPLICATE j ls))=FLAT(REPLICATE k ls). Ordinary List translation needs no qualifier; no fixed byte/word specialization, positivity or nonempty assumptions. Kernel induction on k preserves zero/empty chunks and equal counts. Seven original/native observations and full generic/actual empty-list consumers include both length and count guard counterexamples. Genuine dependency of full lab_to_targetProof enc_with_nop_pad_bytes4507; no other backend source change, no total HD/EL hold use, full padding-to-encoding/remove_labels_loop/end-to-end unfinished."
   }
 ]
