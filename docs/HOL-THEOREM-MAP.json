@@ -53700,6 +53700,97 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:4544-4551 good_dimindex_byte_aligned_eq: good_dimindex ==> (byte_aligned w <=> (w && (if dimindex = 32 then 3w else 7w)) = 0w), byte_aligned as the untagged gcByteAligned rendering (aligned (LOG2 (dimindex DIV 8)); the unspecified LOG2 0 case is excluded by good_dimindex). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
   },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/RegisterBounds.lean",
+    "lean_name": "regBoundExp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "reg_bound_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, stack-register-bounds original1020-1104: All three complete original definitions over exact WordLangExpHOL(BitVec width), HolInst width and HolProg width. words_as_type_indexed_bitvec records only positive shared word dimension and NeZero; exact MlString FFI, no String qualifier or alternate program carrier. Expression six constructors incl universally checked List arguments, Lookup alwaysFalse. Inst5 constructors, all8arith forms/16FP/8memory ops: original source-first bound order for Binop/Shift; all carry/overflow/LongDiv fields; only GP FP comparison destinations and both integer transfer registers constrained, FP-only fields ignored. Program all34 constructors and all special clauses: StoreConsts requires3<k, Set rejects BitmapBase; indirect call target alwayschecked but handler only beneath SOME-return, original return-register checked, labels ignored; StackLoad/StackStore literally check FIRST payload slot, not second register field suggested by datatype documentation. Source duplicate Halt/StackStore clauses are identical and merged, no semantic loss. No added assembly/success/wf/evaluator premises or HD/EL trust dependencies. Three complete original definition captures plus504 original numerical boundary/ignored-field cases at1/64/80 matched by504kernel cases; further arbitrarywidth Call/StackLoad/Const equations kernel checked. Sol/Sol3/main section agreement; actual StackRemoveProof641/769/1484 consumers justify parent dependency. Predicate-only prerequisites, no production compiler transformation or StackRemove/CSE/fullcompiler semantic closure claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/RegisterBounds.lean",
+    "lean_name": "regBoundInst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "reg_bound_inst_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, stack-register-bounds original1020-1104: All three complete original definitions over exact WordLangExpHOL(BitVec width), HolInst width and HolProg width. words_as_type_indexed_bitvec records only positive shared word dimension and NeZero; exact MlString FFI, no String qualifier or alternate program carrier. Expression six constructors incl universally checked List arguments, Lookup alwaysFalse. Inst5 constructors, all8arith forms/16FP/8memory ops: original source-first bound order for Binop/Shift; all carry/overflow/LongDiv fields; only GP FP comparison destinations and both integer transfer registers constrained, FP-only fields ignored. Program all34 constructors and all special clauses: StoreConsts requires3<k, Set rejects BitmapBase; indirect call target alwayschecked but handler only beneath SOME-return, original return-register checked, labels ignored; StackLoad/StackStore literally check FIRST payload slot, not second register field suggested by datatype documentation. Source duplicate Halt/StackStore clauses are identical and merged, no semantic loss. No added assembly/success/wf/evaluator premises or HD/EL trust dependencies. Three complete original definition captures plus504 original numerical boundary/ignored-field cases at1/64/80 matched by504kernel cases; further arbitrarywidth Call/StackLoad/Const equations kernel checked. Sol/Sol3/main section agreement; actual StackRemoveProof641/769/1484 consumers justify parent dependency. Predicate-only prerequisites, no production compiler transformation or StackRemove/CSE/fullcompiler semantic closure claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/RegisterBounds.lean",
+    "lean_name": "regBound",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "reg_bound_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, stack-register-bounds original1020-1104: All three complete original definitions over exact WordLangExpHOL(BitVec width), HolInst width and HolProg width. words_as_type_indexed_bitvec records only positive shared word dimension and NeZero; exact MlString FFI, no String qualifier or alternate program carrier. Expression six constructors incl universally checked List arguments, Lookup alwaysFalse. Inst5 constructors, all8arith forms/16FP/8memory ops: original source-first bound order for Binop/Shift; all carry/overflow/LongDiv fields; only GP FP comparison destinations and both integer transfer registers constrained, FP-only fields ignored. Program all34 constructors and all special clauses: StoreConsts requires3<k, Set rejects BitmapBase; indirect call target alwayschecked but handler only beneath SOME-return, original return-register checked, labels ignored; StackLoad/StackStore literally check FIRST payload slot, not second register field suggested by datatype documentation. Source duplicate Halt/StackStore clauses are identical and merged, no semantic loss. No added assembly/success/wf/evaluator premises or HD/EL trust dependencies. Three complete original definition captures plus504 original numerical boundary/ignored-field cases at1/64/80 matched by504kernel cases; further arbitrarywidth Call/StackLoad/Const equations kernel checked. Sol/Sol3/main section agreement; actual StackRemoveProof641/769/1484 consumers justify parent dependency. Predicate-only prerequisites, no production compiler transformation or StackRemove/CSE/fullcompiler semantic closure claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapWordLemmas.lean",
+    "lean_name": "maxListGenlistEvens",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAX_LIST_GENLIST_evens",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-stack-bitmap-word-lemmas original174-229: Five complete original mathematical statements, actual bitmap decode1042/1069/1083 and compiler register-range6525/8001ff prerequisites. GENLIST f n is exactly map f (range n); Nat maximum empty default0 is represented by associative/commutative foldl max0, same MAX_LIST recursion value including empty input, no sortedness/bounds premise. Both unrestricted maximum formulae retain original natural subtraction/successor and n=0. Local word_or_eq_0 full iff, local shift_shift_lemma only original non-MSB premise, word_shift_or_1 unconditional including high bit/overflow and width1. words_as_type_indexed_bitvec where present records positive BitVec width/NeZero only; numeric lemmas need no dimension qualifier. Logical shifts use BitVec Nat shift counts, bitwise OR/add and zero/one modulo width exact. Kernel list induction/Nat order and bit-extensionality/core BitVec lemmas prove arbitrary width, no native_decide/sorry/new external source allowances. Fresh original five complete literal proof replays hyp=[] and267 numerical/full-law applications at1/2/32/64/80 with one-bit words/allones/MSB/losttopbit/zero/prefix-boundary counts,275captured labels (five proofs/three original inferred types/267 cases; initial standalone fixture word widths explicitly repaired before successful full outcome audit). Matching267kernel cases plus2further arbitrarywidth/count whole applications. No state relation, desired evaluation or provisional HD/EL dependency, no full bitmap decoder/compiler simulation closure."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapWordLemmas.lean",
+    "lean_name": "maxListGenlistEvens2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAX_LIST_GENLIST_evens2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-stack-bitmap-word-lemmas original174-229: Five complete original mathematical statements, actual bitmap decode1042/1069/1083 and compiler register-range6525/8001ff prerequisites. GENLIST f n is exactly map f (range n); Nat maximum empty default0 is represented by associative/commutative foldl max0, same MAX_LIST recursion value including empty input, no sortedness/bounds premise. Both unrestricted maximum formulae retain original natural subtraction/successor and n=0. Local word_or_eq_0 full iff, local shift_shift_lemma only original non-MSB premise, word_shift_or_1 unconditional including high bit/overflow and width1. words_as_type_indexed_bitvec where present records positive BitVec width/NeZero only; numeric lemmas need no dimension qualifier. Logical shifts use BitVec Nat shift counts, bitwise OR/add and zero/one modulo width exact. Kernel list induction/Nat order and bit-extensionality/core BitVec lemmas prove arbitrary width, no native_decide/sorry/new external source allowances. Fresh original five complete literal proof replays hyp=[] and267 numerical/full-law applications at1/2/32/64/80 with one-bit words/allones/MSB/losttopbit/zero/prefix-boundary counts,275captured labels (five proofs/three original inferred types/267 cases; initial standalone fixture word widths explicitly repaired before successful full outcome audit). Matching267kernel cases plus2further arbitrarywidth/count whole applications. No state relation, desired evaluation or provisional HD/EL dependency, no full bitmap decoder/compiler simulation closure."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapWordLemmas.lean",
+    "lean_name": "wordOrEqZero",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_or_eq_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-stack-bitmap-word-lemmas original174-229: Five complete original mathematical statements, actual bitmap decode1042/1069/1083 and compiler register-range6525/8001ff prerequisites. GENLIST f n is exactly map f (range n); Nat maximum empty default0 is represented by associative/commutative foldl max0, same MAX_LIST recursion value including empty input, no sortedness/bounds premise. Both unrestricted maximum formulae retain original natural subtraction/successor and n=0. Local word_or_eq_0 full iff, local shift_shift_lemma only original non-MSB premise, word_shift_or_1 unconditional including high bit/overflow and width1. words_as_type_indexed_bitvec where present records positive BitVec width/NeZero only; numeric lemmas need no dimension qualifier. Logical shifts use BitVec Nat shift counts, bitwise OR/add and zero/one modulo width exact. Kernel list induction/Nat order and bit-extensionality/core BitVec lemmas prove arbitrary width, no native_decide/sorry/new external source allowances. Fresh original five complete literal proof replays hyp=[] and267 numerical/full-law applications at1/2/32/64/80 with one-bit words/allones/MSB/losttopbit/zero/prefix-boundary counts,275captured labels (five proofs/three original inferred types/267 cases; initial standalone fixture word widths explicitly repaired before successful full outcome audit). Matching267kernel cases plus2further arbitrarywidth/count whole applications. No state relation, desired evaluation or provisional HD/EL dependency, no full bitmap decoder/compiler simulation closure.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapWordLemmas.lean",
+    "lean_name": "shiftShiftLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "shift_shift_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-stack-bitmap-word-lemmas original174-229: Five complete original mathematical statements, actual bitmap decode1042/1069/1083 and compiler register-range6525/8001ff prerequisites. GENLIST f n is exactly map f (range n); Nat maximum empty default0 is represented by associative/commutative foldl max0, same MAX_LIST recursion value including empty input, no sortedness/bounds premise. Both unrestricted maximum formulae retain original natural subtraction/successor and n=0. Local word_or_eq_0 full iff, local shift_shift_lemma only original non-MSB premise, word_shift_or_1 unconditional including high bit/overflow and width1. words_as_type_indexed_bitvec where present records positive BitVec width/NeZero only; numeric lemmas need no dimension qualifier. Logical shifts use BitVec Nat shift counts, bitwise OR/add and zero/one modulo width exact. Kernel list induction/Nat order and bit-extensionality/core BitVec lemmas prove arbitrary width, no native_decide/sorry/new external source allowances. Fresh original five complete literal proof replays hyp=[] and267 numerical/full-law applications at1/2/32/64/80 with one-bit words/allones/MSB/losttopbit/zero/prefix-boundary counts,275captured labels (five proofs/three original inferred types/267 cases; initial standalone fixture word widths explicitly repaired before successful full outcome audit). Matching267kernel cases plus2further arbitrarywidth/count whole applications. No state relation, desired evaluation or provisional HD/EL dependency, no full bitmap decoder/compiler simulation closure.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapWordLemmas.lean",
+    "lean_name": "wordShiftOrOne",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_shift_or_1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-stack-bitmap-word-lemmas original174-229: Five complete original mathematical statements, actual bitmap decode1042/1069/1083 and compiler register-range6525/8001ff prerequisites. GENLIST f n is exactly map f (range n); Nat maximum empty default0 is represented by associative/commutative foldl max0, same MAX_LIST recursion value including empty input, no sortedness/bounds premise. Both unrestricted maximum formulae retain original natural subtraction/successor and n=0. Local word_or_eq_0 full iff, local shift_shift_lemma only original non-MSB premise, word_shift_or_1 unconditional including high bit/overflow and width1. words_as_type_indexed_bitvec where present records positive BitVec width/NeZero only; numeric lemmas need no dimension qualifier. Logical shifts use BitVec Nat shift counts, bitwise OR/add and zero/one modulo width exact. Kernel list induction/Nat order and bit-extensionality/core BitVec lemmas prove arbitrary width, no native_decide/sorry/new external source allowances. Fresh original five complete literal proof replays hyp=[] and267 numerical/full-law applications at1/2/32/64/80 with one-bit words/allones/MSB/losttopbit/zero/prefix-boundary counts,275captured labels (five proofs/three original inferred types/267 cases; initial standalone fixture word widths explicitly repaired before successful full outcome audit). Matching267kernel cases plus2further arbitrarywidth/count whole applications. No state relation, desired evaluation or provisional HD/EL dependency, no full bitmap decoder/compiler simulation closure.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/OrderedLabels.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "lean_name": "extractLabels",
+    "hol_name": "extract_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (qipb.1): complete original StackProps773-788 definition and inferred quantified types captured freshly. Exact HolProg retains single shared positive word dimension, all34 original constructors, fixed store_name, faithful asm payloads and MlString FFI field. Call NONE ignores handler; SOME return without handler emits return label then recursive return body; SOME handler emits both outer labels before recursive return then handler bodies. Loop recurses; Seq and If concatenate left then right; all other constructors empty. List order and duplicates unchanged, no set conversion or callback premises. words_as_type_indexed_bitvec records only the positive original word dimension; NeZero retained. Ten original/kernel observations include nested order, duplicates, ignored handler, 1/64/80 dimensions and leaf LocValue/JumpLower. Proof-script helper has no executed compiler path; no containment theorem or pass-correctness result claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/OrderedLabels.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "lean_name": "findCodeImpGetLabels",
+    "hol_name": "find_code_IMP_get_labels",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (qipb): full original StackProps790-798 theorem and literal original proof replayed with captured full inferred type: target:num+beta, regs:beta |-> gamma word_loc, code/e:alpha stackLang$prog. Lean retains arbitrary key kappa, independent positive registerWidth/programWidth, exact HolProg and Spt tree code, original successful input lookup equality, and complete predicate-set subset. fmap_as_finite_support_relation records only canonical standalone regs binder; words_as_type_indexed_bitvec records both independent positive word dimensions. No key equality/BEq, target evaluation, domain, offset-zero, output-state or label premise is added. Proof derives original successful Spt lookup in direct and all indirect branches then uses loc_check original existential disjunct. Full original/native theorem applications use Bool keys with register1/program80 and List Nat keys with register80/program1; missing/word/nonzero-offset source lookup observations retained. Dependent native findCode generic carrier repaired and coordinator accepted62gq before this port. No full compiler pass or source-to-RISC-V composition claim."
+  },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
   "lean_name": "Map",

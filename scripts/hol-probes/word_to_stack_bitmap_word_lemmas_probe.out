@@ -1,0 +1,275 @@
+bw_full_max0=⊢ ∀n. MAX_LIST (GENLIST (λx. 2 * x) n) = 2 * (n − 1)
+bw_full_max1=⊢ ∀n. MAX_LIST (GENLIST (λx. 2 * (x + 1)) n) = 2 * n
+bw_full_orzero=⊢ w ‖ v = 0w ⇔ w = 0w ∧ v = 0w
+bw_full_shift=⊢ ¬word_msb w ⇒ w ≪ 1 ⋙ 1 = w
+bw_full_orone=⊢ n ≪ 1 ‖ 1w = n ≪ 1 + 1w
+bw_max_0_0=⊢ MAX_LIST (GENLIST (λx. 2 * x) 0) = 0
+bw_max_1_0=⊢ MAX_LIST (GENLIST (λx. 2 * (x + 1)) 0) = 0
+bw_max_0_1=⊢ MAX_LIST (GENLIST (λx. 2 * x) 1) = 0
+bw_max_1_1=⊢ MAX_LIST (GENLIST (λx. 2 * (x + 1)) 1) = 2
+bw_max_0_2=⊢ MAX_LIST (GENLIST (λx. 2 * x) 2) = 2
+bw_max_1_2=⊢ MAX_LIST (GENLIST (λx. 2 * (x + 1)) 2) = 4
+bw_max_0_3=⊢ MAX_LIST (GENLIST (λx. 2 * x) 3) = 4
+bw_max_1_3=⊢ MAX_LIST (GENLIST (λx. 2 * (x + 1)) 3) = 6
+bw_max_0_10=⊢ MAX_LIST (GENLIST (λx. 2 * x) 10) = 18
+bw_max_1_10=⊢ MAX_LIST (GENLIST (λx. 2 * (x + 1)) 10) = 20
+bw_max_0_64=⊢ MAX_LIST (GENLIST (λx. 2 * x) 64) = 126
+bw_max_1_64=⊢ MAX_LIST (GENLIST (λx. 2 * (x + 1)) 64) = 128
+bw_max_0_100=⊢ MAX_LIST (GENLIST (λx. 2 * x) 100) = 198
+bw_max_1_100=⊢ MAX_LIST (GENLIST (λx. 2 * (x + 1)) 100) = 200
+bw_or_value_0_0_1=⊢ w2n (0w ‖ 0w) = 0
+bw_or_law_0_0_1=⊢ (0w ‖ 0w = 0w ⇔ 0w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_0_1_1=⊢ w2n (0w ‖ 1w) = 1
+bw_or_law_0_1_1=⊢ (0w ‖ 1w = 0w ⇔ 0w = 0w ∧ 1w = 0w) ⇔ T
+bw_orone_0_1=⊢ 0w ≪ 1 ‖ 1w = 0w ≪ 1 + 1w ⇔ T
+bw_shift_value_0_1=⊢ w2n (0w ≪ 1 ⋙ 1) = 0
+bw_shift_law_0_1=⊢ 0w ≪ 1 ⋙ 1 = 0w ⇔ T
+bw_or_value_1_0_1=⊢ w2n (1w ‖ 0w) = 1
+bw_or_law_1_0_1=⊢ (1w ‖ 0w = 0w ⇔ 1w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_1_1_1=⊢ w2n (1w ‖ 1w) = 1
+bw_or_law_1_1_1=⊢ (1w ‖ 1w = 0w ⇔ 1w = 0w ∧ 1w = 0w) ⇔ T
+bw_orone_1_1=⊢ 1w ≪ 1 ‖ 1w = 1w ≪ 1 + 1w ⇔ T
+bw_shift_value_1_1=⊢ w2n (1w ≪ 1 ⋙ 1) = 0
+bw_msb_drop_1_1=⊢ word_msb 1w ∧ 1w ≪ 1 ⋙ 1 ≠ 1w ⇔ T
+bw_or_value_0_0_2=⊢ w2n (0w ‖ 0w) = 0
+bw_or_law_0_0_2=⊢ (0w ‖ 0w = 0w ⇔ 0w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_0_1_2=⊢ w2n (0w ‖ 1w) = 1
+bw_or_law_0_1_2=⊢ (0w ‖ 1w = 0w ⇔ 0w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_0_2_2=⊢ w2n (0w ‖ 2w) = 2
+bw_or_law_0_2_2=⊢ (0w ‖ 2w = 0w ⇔ 0w = 0w ∧ 2w = 0w) ⇔ T
+bw_or_value_0_3_2=⊢ w2n (0w ‖ 3w) = 3
+bw_or_law_0_3_2=⊢ (0w ‖ 3w = 0w ⇔ 0w = 0w ∧ 3w = 0w) ⇔ T
+bw_orone_0_2=⊢ 0w ≪ 1 ‖ 1w = 0w ≪ 1 + 1w ⇔ T
+bw_shift_value_0_2=⊢ w2n (0w ≪ 1 ⋙ 1) = 0
+bw_shift_law_0_2=⊢ 0w ≪ 1 ⋙ 1 = 0w ⇔ T
+bw_or_value_1_0_2=⊢ w2n (1w ‖ 0w) = 1
+bw_or_law_1_0_2=⊢ (1w ‖ 0w = 0w ⇔ 1w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_1_1_2=⊢ w2n (1w ‖ 1w) = 1
+bw_or_law_1_1_2=⊢ (1w ‖ 1w = 0w ⇔ 1w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_1_2_2=⊢ w2n (1w ‖ 2w) = 3
+bw_or_law_1_2_2=⊢ (1w ‖ 2w = 0w ⇔ 1w = 0w ∧ 2w = 0w) ⇔ T
+bw_or_value_1_3_2=⊢ w2n (1w ‖ 3w) = 3
+bw_or_law_1_3_2=⊢ (1w ‖ 3w = 0w ⇔ 1w = 0w ∧ 3w = 0w) ⇔ T
+bw_orone_1_2=⊢ 1w ≪ 1 ‖ 1w = 1w ≪ 1 + 1w ⇔ T
+bw_shift_value_1_2=⊢ w2n (1w ≪ 1 ⋙ 1) = 1
+bw_shift_law_1_2=⊢ 1w ≪ 1 ⋙ 1 = 1w ⇔ T
+bw_or_value_2_0_2=⊢ w2n (2w ‖ 0w) = 2
+bw_or_law_2_0_2=⊢ (2w ‖ 0w = 0w ⇔ 2w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_2_1_2=⊢ w2n (2w ‖ 1w) = 3
+bw_or_law_2_1_2=⊢ (2w ‖ 1w = 0w ⇔ 2w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_2_2_2=⊢ w2n (2w ‖ 2w) = 2
+bw_or_law_2_2_2=⊢ (2w ‖ 2w = 0w ⇔ 2w = 0w ∧ 2w = 0w) ⇔ T
+bw_or_value_2_3_2=⊢ w2n (2w ‖ 3w) = 3
+bw_or_law_2_3_2=⊢ (2w ‖ 3w = 0w ⇔ 2w = 0w ∧ 3w = 0w) ⇔ T
+bw_orone_2_2=⊢ 2w ≪ 1 ‖ 1w = 2w ≪ 1 + 1w ⇔ T
+bw_shift_value_2_2=⊢ w2n (2w ≪ 1 ⋙ 1) = 0
+bw_msb_drop_2_2=⊢ word_msb 2w ∧ 2w ≪ 1 ⋙ 1 ≠ 2w ⇔ T
+bw_or_value_3_0_2=⊢ w2n (3w ‖ 0w) = 3
+bw_or_law_3_0_2=⊢ (3w ‖ 0w = 0w ⇔ 3w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_3_1_2=⊢ w2n (3w ‖ 1w) = 3
+bw_or_law_3_1_2=⊢ (3w ‖ 1w = 0w ⇔ 3w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_3_2_2=⊢ w2n (3w ‖ 2w) = 3
+bw_or_law_3_2_2=⊢ (3w ‖ 2w = 0w ⇔ 3w = 0w ∧ 2w = 0w) ⇔ T
+bw_or_value_3_3_2=⊢ w2n (3w ‖ 3w) = 3
+bw_or_law_3_3_2=⊢ (3w ‖ 3w = 0w ⇔ 3w = 0w ∧ 3w = 0w) ⇔ T
+bw_orone_3_2=⊢ 3w ≪ 1 ‖ 1w = 3w ≪ 1 + 1w ⇔ T
+bw_shift_value_3_2=⊢ w2n (3w ≪ 1 ⋙ 1) = 1
+bw_msb_drop_3_2=⊢ word_msb 3w ∧ 3w ≪ 1 ⋙ 1 ≠ 3w ⇔ T
+bw_or_value_0_0_32=⊢ w2n (0w ‖ 0w) = 0
+bw_or_law_0_0_32=⊢ (0w ‖ 0w = 0w ⇔ 0w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_0_1_32=⊢ w2n (0w ‖ 1w) = 1
+bw_or_law_0_1_32=⊢ (0w ‖ 1w = 0w ⇔ 0w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_0_2_32=⊢ w2n (0w ‖ 0x7FFFFFFFw) = 2147483647
+bw_or_law_0_2_32=⊢ (0w ‖ 0x7FFFFFFFw = 0w ⇔ 0w = 0w ∧ 0x7FFFFFFFw = 0w) ⇔ T
+bw_or_value_0_3_32=⊢ w2n (0w ‖ 0x80000000w) = 2147483648
+bw_or_law_0_3_32=⊢ (0w ‖ 0x80000000w = 0w ⇔ 0w = 0w ∧ 0x80000000w = 0w) ⇔ T
+bw_or_value_0_4_32=⊢ w2n (0w ‖ 0xFFFFFFFFw) = 4294967295
+bw_or_law_0_4_32=⊢ (0w ‖ 0xFFFFFFFFw = 0w ⇔ 0w = 0w ∧ 0xFFFFFFFFw = 0w) ⇔ T
+bw_orone_0_32=⊢ 0w ≪ 1 ‖ 1w = 0w ≪ 1 + 1w ⇔ T
+bw_shift_value_0_32=⊢ w2n (0w ≪ 1 ⋙ 1) = 0
+bw_shift_law_0_32=⊢ 0w ≪ 1 ⋙ 1 = 0w ⇔ T
+bw_or_value_1_0_32=⊢ w2n (1w ‖ 0w) = 1
+bw_or_law_1_0_32=⊢ (1w ‖ 0w = 0w ⇔ 1w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_1_1_32=⊢ w2n (1w ‖ 1w) = 1
+bw_or_law_1_1_32=⊢ (1w ‖ 1w = 0w ⇔ 1w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_1_2_32=⊢ w2n (1w ‖ 0x7FFFFFFFw) = 2147483647
+bw_or_law_1_2_32=⊢ (1w ‖ 0x7FFFFFFFw = 0w ⇔ 1w = 0w ∧ 0x7FFFFFFFw = 0w) ⇔ T
+bw_or_value_1_3_32=⊢ w2n (1w ‖ 0x80000000w) = 2147483649
+bw_or_law_1_3_32=⊢ (1w ‖ 0x80000000w = 0w ⇔ 1w = 0w ∧ 0x80000000w = 0w) ⇔ T
+bw_or_value_1_4_32=⊢ w2n (1w ‖ 0xFFFFFFFFw) = 4294967295
+bw_or_law_1_4_32=⊢ (1w ‖ 0xFFFFFFFFw = 0w ⇔ 1w = 0w ∧ 0xFFFFFFFFw = 0w) ⇔ T
+bw_orone_1_32=⊢ 1w ≪ 1 ‖ 1w = 1w ≪ 1 + 1w ⇔ T
+bw_shift_value_1_32=⊢ w2n (1w ≪ 1 ⋙ 1) = 1
+bw_shift_law_1_32=⊢ 1w ≪ 1 ⋙ 1 = 1w ⇔ T
+bw_or_value_2_0_32=⊢ w2n (0x7FFFFFFFw ‖ 0w) = 2147483647
+bw_or_law_2_0_32=⊢ (0x7FFFFFFFw ‖ 0w = 0w ⇔ 0x7FFFFFFFw = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_2_1_32=⊢ w2n (0x7FFFFFFFw ‖ 1w) = 2147483647
+bw_or_law_2_1_32=⊢ (0x7FFFFFFFw ‖ 1w = 0w ⇔ 0x7FFFFFFFw = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_2_2_32=⊢ w2n (0x7FFFFFFFw ‖ 0x7FFFFFFFw) = 2147483647
+bw_or_law_2_2_32=⊢ (0x7FFFFFFFw ‖ 0x7FFFFFFFw = 0w ⇔ 0x7FFFFFFFw = 0w ∧ 0x7FFFFFFFw = 0w) ⇔ T
+bw_or_value_2_3_32=⊢ w2n (0x7FFFFFFFw ‖ 0x80000000w) = 4294967295
+bw_or_law_2_3_32=⊢ (0x7FFFFFFFw ‖ 0x80000000w = 0w ⇔ 0x7FFFFFFFw = 0w ∧ 0x80000000w = 0w) ⇔ T
+bw_or_value_2_4_32=⊢ w2n (0x7FFFFFFFw ‖ 0xFFFFFFFFw) = 4294967295
+bw_or_law_2_4_32=⊢ (0x7FFFFFFFw ‖ 0xFFFFFFFFw = 0w ⇔ 0x7FFFFFFFw = 0w ∧ 0xFFFFFFFFw = 0w) ⇔ T
+bw_orone_2_32=⊢ 0x7FFFFFFFw ≪ 1 ‖ 1w = 0x7FFFFFFFw ≪ 1 + 1w ⇔ T
+bw_shift_value_2_32=⊢ w2n (0x7FFFFFFFw ≪ 1 ⋙ 1) = 2147483647
+bw_shift_law_2_32=⊢ 0x7FFFFFFFw ≪ 1 ⋙ 1 = 0x7FFFFFFFw ⇔ T
+bw_or_value_3_0_32=⊢ w2n (0x80000000w ‖ 0w) = 2147483648
+bw_or_law_3_0_32=⊢ (0x80000000w ‖ 0w = 0w ⇔ 0x80000000w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_3_1_32=⊢ w2n (0x80000000w ‖ 1w) = 2147483649
+bw_or_law_3_1_32=⊢ (0x80000000w ‖ 1w = 0w ⇔ 0x80000000w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_3_2_32=⊢ w2n (0x80000000w ‖ 0x7FFFFFFFw) = 4294967295
+bw_or_law_3_2_32=⊢ (0x80000000w ‖ 0x7FFFFFFFw = 0w ⇔ 0x80000000w = 0w ∧ 0x7FFFFFFFw = 0w) ⇔ T
+bw_or_value_3_3_32=⊢ w2n (0x80000000w ‖ 0x80000000w) = 2147483648
+bw_or_law_3_3_32=⊢ (0x80000000w ‖ 0x80000000w = 0w ⇔ 0x80000000w = 0w ∧ 0x80000000w = 0w) ⇔ T
+bw_or_value_3_4_32=⊢ w2n (0x80000000w ‖ 0xFFFFFFFFw) = 4294967295
+bw_or_law_3_4_32=⊢ (0x80000000w ‖ 0xFFFFFFFFw = 0w ⇔ 0x80000000w = 0w ∧ 0xFFFFFFFFw = 0w) ⇔ T
+bw_orone_3_32=⊢ 0x80000000w ≪ 1 ‖ 1w = 0x80000000w ≪ 1 + 1w ⇔ T
+bw_shift_value_3_32=⊢ w2n (0x80000000w ≪ 1 ⋙ 1) = 0
+bw_msb_drop_3_32=⊢ word_msb 0x80000000w ∧ 0x80000000w ≪ 1 ⋙ 1 ≠ 0x80000000w ⇔ T
+bw_or_value_4_0_32=⊢ w2n (0xFFFFFFFFw ‖ 0w) = 4294967295
+bw_or_law_4_0_32=⊢ (0xFFFFFFFFw ‖ 0w = 0w ⇔ 0xFFFFFFFFw = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_4_1_32=⊢ w2n (0xFFFFFFFFw ‖ 1w) = 4294967295
+bw_or_law_4_1_32=⊢ (0xFFFFFFFFw ‖ 1w = 0w ⇔ 0xFFFFFFFFw = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_4_2_32=⊢ w2n (0xFFFFFFFFw ‖ 0x7FFFFFFFw) = 4294967295
+bw_or_law_4_2_32=⊢ (0xFFFFFFFFw ‖ 0x7FFFFFFFw = 0w ⇔ 0xFFFFFFFFw = 0w ∧ 0x7FFFFFFFw = 0w) ⇔ T
+bw_or_value_4_3_32=⊢ w2n (0xFFFFFFFFw ‖ 0x80000000w) = 4294967295
+bw_or_law_4_3_32=⊢ (0xFFFFFFFFw ‖ 0x80000000w = 0w ⇔ 0xFFFFFFFFw = 0w ∧ 0x80000000w = 0w) ⇔ T
+bw_or_value_4_4_32=⊢ w2n (0xFFFFFFFFw ‖ 0xFFFFFFFFw) = 4294967295
+bw_or_law_4_4_32=⊢ (0xFFFFFFFFw ‖ 0xFFFFFFFFw = 0w ⇔ 0xFFFFFFFFw = 0w ∧ 0xFFFFFFFFw = 0w) ⇔ T
+bw_orone_4_32=⊢ 0xFFFFFFFFw ≪ 1 ‖ 1w = 0xFFFFFFFFw ≪ 1 + 1w ⇔ T
+bw_shift_value_4_32=⊢ w2n (0xFFFFFFFFw ≪ 1 ⋙ 1) = 2147483647
+bw_msb_drop_4_32=⊢ word_msb 0xFFFFFFFFw ∧ 0xFFFFFFFFw ≪ 1 ⋙ 1 ≠ 0xFFFFFFFFw ⇔ T
+bw_or_value_0_0_64=⊢ w2n (0w ‖ 0w) = 0
+bw_or_law_0_0_64=⊢ (0w ‖ 0w = 0w ⇔ 0w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_0_1_64=⊢ w2n (0w ‖ 1w) = 1
+bw_or_law_0_1_64=⊢ (0w ‖ 1w = 0w ⇔ 0w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_0_2_64=⊢ w2n (0w ‖ 0x7FFFFFFFFFFFFFFFw) = 9223372036854775807
+bw_or_law_0_2_64=⊢ (0w ‖ 0x7FFFFFFFFFFFFFFFw = 0w ⇔ 0w = 0w ∧ 0x7FFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_or_value_0_3_64=⊢ w2n (0w ‖ 0x8000000000000000w) = 9223372036854775808
+bw_or_law_0_3_64=⊢ (0w ‖ 0x8000000000000000w = 0w ⇔ 0w = 0w ∧ 0x8000000000000000w = 0w) ⇔ T
+bw_or_value_0_4_64=⊢ w2n (0w ‖ 0xFFFFFFFFFFFFFFFFw) = 18446744073709551615
+bw_or_law_0_4_64=⊢ (0w ‖ 0xFFFFFFFFFFFFFFFFw = 0w ⇔ 0w = 0w ∧ 0xFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_orone_0_64=⊢ 0w ≪ 1 ‖ 1w = 0w ≪ 1 + 1w ⇔ T
+bw_shift_value_0_64=⊢ w2n (0w ≪ 1 ⋙ 1) = 0
+bw_shift_law_0_64=⊢ 0w ≪ 1 ⋙ 1 = 0w ⇔ T
+bw_or_value_1_0_64=⊢ w2n (1w ‖ 0w) = 1
+bw_or_law_1_0_64=⊢ (1w ‖ 0w = 0w ⇔ 1w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_1_1_64=⊢ w2n (1w ‖ 1w) = 1
+bw_or_law_1_1_64=⊢ (1w ‖ 1w = 0w ⇔ 1w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_1_2_64=⊢ w2n (1w ‖ 0x7FFFFFFFFFFFFFFFw) = 9223372036854775807
+bw_or_law_1_2_64=⊢ (1w ‖ 0x7FFFFFFFFFFFFFFFw = 0w ⇔ 1w = 0w ∧ 0x7FFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_or_value_1_3_64=⊢ w2n (1w ‖ 0x8000000000000000w) = 9223372036854775809
+bw_or_law_1_3_64=⊢ (1w ‖ 0x8000000000000000w = 0w ⇔ 1w = 0w ∧ 0x8000000000000000w = 0w) ⇔ T
+bw_or_value_1_4_64=⊢ w2n (1w ‖ 0xFFFFFFFFFFFFFFFFw) = 18446744073709551615
+bw_or_law_1_4_64=⊢ (1w ‖ 0xFFFFFFFFFFFFFFFFw = 0w ⇔ 1w = 0w ∧ 0xFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_orone_1_64=⊢ 1w ≪ 1 ‖ 1w = 1w ≪ 1 + 1w ⇔ T
+bw_shift_value_1_64=⊢ w2n (1w ≪ 1 ⋙ 1) = 1
+bw_shift_law_1_64=⊢ 1w ≪ 1 ⋙ 1 = 1w ⇔ T
+bw_or_value_2_0_64=⊢ w2n (0x7FFFFFFFFFFFFFFFw ‖ 0w) = 9223372036854775807
+bw_or_law_2_0_64=⊢ (0x7FFFFFFFFFFFFFFFw ‖ 0w = 0w ⇔ 0x7FFFFFFFFFFFFFFFw = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_2_1_64=⊢ w2n (0x7FFFFFFFFFFFFFFFw ‖ 1w) = 9223372036854775807
+bw_or_law_2_1_64=⊢ (0x7FFFFFFFFFFFFFFFw ‖ 1w = 0w ⇔ 0x7FFFFFFFFFFFFFFFw = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_2_2_64=⊢ w2n (0x7FFFFFFFFFFFFFFFw ‖ 0x7FFFFFFFFFFFFFFFw) = 9223372036854775807
+bw_or_law_2_2_64=⊢ (0x7FFFFFFFFFFFFFFFw ‖ 0x7FFFFFFFFFFFFFFFw = 0w ⇔ 0x7FFFFFFFFFFFFFFFw = 0w ∧ 0x7FFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_or_value_2_3_64=⊢ w2n (0x7FFFFFFFFFFFFFFFw ‖ 0x8000000000000000w) = 18446744073709551615
+bw_or_law_2_3_64=⊢ (0x7FFFFFFFFFFFFFFFw ‖ 0x8000000000000000w = 0w ⇔ 0x7FFFFFFFFFFFFFFFw = 0w ∧ 0x8000000000000000w = 0w) ⇔ T
+bw_or_value_2_4_64=⊢ w2n (0x7FFFFFFFFFFFFFFFw ‖ 0xFFFFFFFFFFFFFFFFw) = 18446744073709551615
+bw_or_law_2_4_64=⊢ (0x7FFFFFFFFFFFFFFFw ‖ 0xFFFFFFFFFFFFFFFFw = 0w ⇔ 0x7FFFFFFFFFFFFFFFw = 0w ∧ 0xFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_orone_2_64=⊢ 0x7FFFFFFFFFFFFFFFw ≪ 1 ‖ 1w = 0x7FFFFFFFFFFFFFFFw ≪ 1 + 1w ⇔ T
+bw_shift_value_2_64=⊢ w2n (0x7FFFFFFFFFFFFFFFw ≪ 1 ⋙ 1) = 9223372036854775807
+bw_shift_law_2_64=⊢ 0x7FFFFFFFFFFFFFFFw ≪ 1 ⋙ 1 = 0x7FFFFFFFFFFFFFFFw ⇔ T
+bw_or_value_3_0_64=⊢ w2n (0x8000000000000000w ‖ 0w) = 9223372036854775808
+bw_or_law_3_0_64=⊢ (0x8000000000000000w ‖ 0w = 0w ⇔ 0x8000000000000000w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_3_1_64=⊢ w2n (0x8000000000000000w ‖ 1w) = 9223372036854775809
+bw_or_law_3_1_64=⊢ (0x8000000000000000w ‖ 1w = 0w ⇔ 0x8000000000000000w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_3_2_64=⊢ w2n (0x8000000000000000w ‖ 0x7FFFFFFFFFFFFFFFw) = 18446744073709551615
+bw_or_law_3_2_64=⊢ (0x8000000000000000w ‖ 0x7FFFFFFFFFFFFFFFw = 0w ⇔ 0x8000000000000000w = 0w ∧ 0x7FFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_or_value_3_3_64=⊢ w2n (0x8000000000000000w ‖ 0x8000000000000000w) = 9223372036854775808
+bw_or_law_3_3_64=⊢ (0x8000000000000000w ‖ 0x8000000000000000w = 0w ⇔ 0x8000000000000000w = 0w ∧ 0x8000000000000000w = 0w) ⇔ T
+bw_or_value_3_4_64=⊢ w2n (0x8000000000000000w ‖ 0xFFFFFFFFFFFFFFFFw) = 18446744073709551615
+bw_or_law_3_4_64=⊢ (0x8000000000000000w ‖ 0xFFFFFFFFFFFFFFFFw = 0w ⇔ 0x8000000000000000w = 0w ∧ 0xFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_orone_3_64=⊢ 0x8000000000000000w ≪ 1 ‖ 1w = 0x8000000000000000w ≪ 1 + 1w ⇔ T
+bw_shift_value_3_64=⊢ w2n (0x8000000000000000w ≪ 1 ⋙ 1) = 0
+bw_msb_drop_3_64=⊢ word_msb 0x8000000000000000w ∧ 0x8000000000000000w ≪ 1 ⋙ 1 ≠ 0x8000000000000000w ⇔ T
+bw_or_value_4_0_64=⊢ w2n (0xFFFFFFFFFFFFFFFFw ‖ 0w) = 18446744073709551615
+bw_or_law_4_0_64=⊢ (0xFFFFFFFFFFFFFFFFw ‖ 0w = 0w ⇔ 0xFFFFFFFFFFFFFFFFw = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_4_1_64=⊢ w2n (0xFFFFFFFFFFFFFFFFw ‖ 1w) = 18446744073709551615
+bw_or_law_4_1_64=⊢ (0xFFFFFFFFFFFFFFFFw ‖ 1w = 0w ⇔ 0xFFFFFFFFFFFFFFFFw = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_4_2_64=⊢ w2n (0xFFFFFFFFFFFFFFFFw ‖ 0x7FFFFFFFFFFFFFFFw) = 18446744073709551615
+bw_or_law_4_2_64=⊢ (0xFFFFFFFFFFFFFFFFw ‖ 0x7FFFFFFFFFFFFFFFw = 0w ⇔ 0xFFFFFFFFFFFFFFFFw = 0w ∧ 0x7FFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_or_value_4_3_64=⊢ w2n (0xFFFFFFFFFFFFFFFFw ‖ 0x8000000000000000w) = 18446744073709551615
+bw_or_law_4_3_64=⊢ (0xFFFFFFFFFFFFFFFFw ‖ 0x8000000000000000w = 0w ⇔ 0xFFFFFFFFFFFFFFFFw = 0w ∧ 0x8000000000000000w = 0w) ⇔ T
+bw_or_value_4_4_64=⊢ w2n (0xFFFFFFFFFFFFFFFFw ‖ 0xFFFFFFFFFFFFFFFFw) = 18446744073709551615
+bw_or_law_4_4_64=⊢ (0xFFFFFFFFFFFFFFFFw ‖ 0xFFFFFFFFFFFFFFFFw = 0w ⇔ 0xFFFFFFFFFFFFFFFFw = 0w ∧ 0xFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_orone_4_64=⊢ 0xFFFFFFFFFFFFFFFFw ≪ 1 ‖ 1w = 0xFFFFFFFFFFFFFFFFw ≪ 1 + 1w ⇔ T
+bw_shift_value_4_64=⊢ w2n (0xFFFFFFFFFFFFFFFFw ≪ 1 ⋙ 1) = 9223372036854775807
+bw_msb_drop_4_64=⊢ word_msb 0xFFFFFFFFFFFFFFFFw ∧ 0xFFFFFFFFFFFFFFFFw ≪ 1 ⋙ 1 ≠ 0xFFFFFFFFFFFFFFFFw ⇔ T
+bw_or_value_0_0_80=⊢ w2n (0w ‖ 0w) = 0
+bw_or_law_0_0_80=⊢ (0w ‖ 0w = 0w ⇔ 0w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_0_1_80=⊢ w2n (0w ‖ 1w) = 1
+bw_or_law_0_1_80=⊢ (0w ‖ 1w = 0w ⇔ 0w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_0_2_80=⊢ w2n (0w ‖ 0x7FFFFFFFFFFFFFFFFFFFw) = 604462909807314587353087
+bw_or_law_0_2_80=⊢ (0w ‖ 0x7FFFFFFFFFFFFFFFFFFFw = 0w ⇔ 0w = 0w ∧ 0x7FFFFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_or_value_0_3_80=⊢ w2n (0w ‖ 0x80000000000000000000w) = 604462909807314587353088
+bw_or_law_0_3_80=⊢ (0w ‖ 0x80000000000000000000w = 0w ⇔ 0w = 0w ∧ 0x80000000000000000000w = 0w) ⇔ T
+bw_or_value_0_4_80=⊢ w2n (0w ‖ 0xFFFFFFFFFFFFFFFFFFFFw) = 1208925819614629174706175
+bw_or_law_0_4_80=⊢ (0w ‖ 0xFFFFFFFFFFFFFFFFFFFFw = 0w ⇔ 0w = 0w ∧ 0xFFFFFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_orone_0_80=⊢ 0w ≪ 1 ‖ 1w = 0w ≪ 1 + 1w ⇔ T
+bw_shift_value_0_80=⊢ w2n (0w ≪ 1 ⋙ 1) = 0
+bw_shift_law_0_80=⊢ 0w ≪ 1 ⋙ 1 = 0w ⇔ T
+bw_or_value_1_0_80=⊢ w2n (1w ‖ 0w) = 1
+bw_or_law_1_0_80=⊢ (1w ‖ 0w = 0w ⇔ 1w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_1_1_80=⊢ w2n (1w ‖ 1w) = 1
+bw_or_law_1_1_80=⊢ (1w ‖ 1w = 0w ⇔ 1w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_1_2_80=⊢ w2n (1w ‖ 0x7FFFFFFFFFFFFFFFFFFFw) = 604462909807314587353087
+bw_or_law_1_2_80=⊢ (1w ‖ 0x7FFFFFFFFFFFFFFFFFFFw = 0w ⇔ 1w = 0w ∧ 0x7FFFFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_or_value_1_3_80=⊢ w2n (1w ‖ 0x80000000000000000000w) = 604462909807314587353089
+bw_or_law_1_3_80=⊢ (1w ‖ 0x80000000000000000000w = 0w ⇔ 1w = 0w ∧ 0x80000000000000000000w = 0w) ⇔ T
+bw_or_value_1_4_80=⊢ w2n (1w ‖ 0xFFFFFFFFFFFFFFFFFFFFw) = 1208925819614629174706175
+bw_or_law_1_4_80=⊢ (1w ‖ 0xFFFFFFFFFFFFFFFFFFFFw = 0w ⇔ 1w = 0w ∧ 0xFFFFFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_orone_1_80=⊢ 1w ≪ 1 ‖ 1w = 1w ≪ 1 + 1w ⇔ T
+bw_shift_value_1_80=⊢ w2n (1w ≪ 1 ⋙ 1) = 1
+bw_shift_law_1_80=⊢ 1w ≪ 1 ⋙ 1 = 1w ⇔ T
+bw_or_value_2_0_80=⊢ w2n (0x7FFFFFFFFFFFFFFFFFFFw ‖ 0w) = 604462909807314587353087
+bw_or_law_2_0_80=⊢ (0x7FFFFFFFFFFFFFFFFFFFw ‖ 0w = 0w ⇔ 0x7FFFFFFFFFFFFFFFFFFFw = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_2_1_80=⊢ w2n (0x7FFFFFFFFFFFFFFFFFFFw ‖ 1w) = 604462909807314587353087
+bw_or_law_2_1_80=⊢ (0x7FFFFFFFFFFFFFFFFFFFw ‖ 1w = 0w ⇔ 0x7FFFFFFFFFFFFFFFFFFFw = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_2_2_80=⊢ w2n (0x7FFFFFFFFFFFFFFFFFFFw ‖ 0x7FFFFFFFFFFFFFFFFFFFw) = 604462909807314587353087
+bw_or_law_2_2_80=⊢ (0x7FFFFFFFFFFFFFFFFFFFw ‖ 0x7FFFFFFFFFFFFFFFFFFFw = 0w ⇔ 0x7FFFFFFFFFFFFFFFFFFFw = 0w ∧ 0x7FFFFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_or_value_2_3_80=⊢ w2n (0x7FFFFFFFFFFFFFFFFFFFw ‖ 0x80000000000000000000w) = 1208925819614629174706175
+bw_or_law_2_3_80=⊢ (0x7FFFFFFFFFFFFFFFFFFFw ‖ 0x80000000000000000000w = 0w ⇔ 0x7FFFFFFFFFFFFFFFFFFFw = 0w ∧ 0x80000000000000000000w = 0w) ⇔ T
+bw_or_value_2_4_80=⊢ w2n (0x7FFFFFFFFFFFFFFFFFFFw ‖ 0xFFFFFFFFFFFFFFFFFFFFw) = 1208925819614629174706175
+bw_or_law_2_4_80=⊢ (0x7FFFFFFFFFFFFFFFFFFFw ‖ 0xFFFFFFFFFFFFFFFFFFFFw = 0w ⇔ 0x7FFFFFFFFFFFFFFFFFFFw = 0w ∧ 0xFFFFFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_orone_2_80=⊢ 0x7FFFFFFFFFFFFFFFFFFFw ≪ 1 ‖ 1w = 0x7FFFFFFFFFFFFFFFFFFFw ≪ 1 + 1w ⇔ T
+bw_shift_value_2_80=⊢ w2n (0x7FFFFFFFFFFFFFFFFFFFw ≪ 1 ⋙ 1) = 604462909807314587353087
+bw_shift_law_2_80=⊢ 0x7FFFFFFFFFFFFFFFFFFFw ≪ 1 ⋙ 1 = 0x7FFFFFFFFFFFFFFFFFFFw ⇔ T
+bw_or_value_3_0_80=⊢ w2n (0x80000000000000000000w ‖ 0w) = 604462909807314587353088
+bw_or_law_3_0_80=⊢ (0x80000000000000000000w ‖ 0w = 0w ⇔ 0x80000000000000000000w = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_3_1_80=⊢ w2n (0x80000000000000000000w ‖ 1w) = 604462909807314587353089
+bw_or_law_3_1_80=⊢ (0x80000000000000000000w ‖ 1w = 0w ⇔ 0x80000000000000000000w = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_3_2_80=⊢ w2n (0x80000000000000000000w ‖ 0x7FFFFFFFFFFFFFFFFFFFw) = 1208925819614629174706175
+bw_or_law_3_2_80=⊢ (0x80000000000000000000w ‖ 0x7FFFFFFFFFFFFFFFFFFFw = 0w ⇔ 0x80000000000000000000w = 0w ∧ 0x7FFFFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_or_value_3_3_80=⊢ w2n (0x80000000000000000000w ‖ 0x80000000000000000000w) = 604462909807314587353088
+bw_or_law_3_3_80=⊢ (0x80000000000000000000w ‖ 0x80000000000000000000w = 0w ⇔ 0x80000000000000000000w = 0w ∧ 0x80000000000000000000w = 0w) ⇔ T
+bw_or_value_3_4_80=⊢ w2n (0x80000000000000000000w ‖ 0xFFFFFFFFFFFFFFFFFFFFw) = 1208925819614629174706175
+bw_or_law_3_4_80=⊢ (0x80000000000000000000w ‖ 0xFFFFFFFFFFFFFFFFFFFFw = 0w ⇔ 0x80000000000000000000w = 0w ∧ 0xFFFFFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_orone_3_80=⊢ 0x80000000000000000000w ≪ 1 ‖ 1w = 0x80000000000000000000w ≪ 1 + 1w ⇔ T
+bw_shift_value_3_80=⊢ w2n (0x80000000000000000000w ≪ 1 ⋙ 1) = 0
+bw_msb_drop_3_80=⊢ word_msb 0x80000000000000000000w ∧ 0x80000000000000000000w ≪ 1 ⋙ 1 ≠ 0x80000000000000000000w ⇔ T
+bw_or_value_4_0_80=⊢ w2n (0xFFFFFFFFFFFFFFFFFFFFw ‖ 0w) = 1208925819614629174706175
+bw_or_law_4_0_80=⊢ (0xFFFFFFFFFFFFFFFFFFFFw ‖ 0w = 0w ⇔ 0xFFFFFFFFFFFFFFFFFFFFw = 0w ∧ 0w = 0w) ⇔ T
+bw_or_value_4_1_80=⊢ w2n (0xFFFFFFFFFFFFFFFFFFFFw ‖ 1w) = 1208925819614629174706175
+bw_or_law_4_1_80=⊢ (0xFFFFFFFFFFFFFFFFFFFFw ‖ 1w = 0w ⇔ 0xFFFFFFFFFFFFFFFFFFFFw = 0w ∧ 1w = 0w) ⇔ T
+bw_or_value_4_2_80=⊢ w2n (0xFFFFFFFFFFFFFFFFFFFFw ‖ 0x7FFFFFFFFFFFFFFFFFFFw) = 1208925819614629174706175
+bw_or_law_4_2_80=⊢ (0xFFFFFFFFFFFFFFFFFFFFw ‖ 0x7FFFFFFFFFFFFFFFFFFFw = 0w ⇔ 0xFFFFFFFFFFFFFFFFFFFFw = 0w ∧ 0x7FFFFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_or_value_4_3_80=⊢ w2n (0xFFFFFFFFFFFFFFFFFFFFw ‖ 0x80000000000000000000w) = 1208925819614629174706175
+bw_or_law_4_3_80=⊢ (0xFFFFFFFFFFFFFFFFFFFFw ‖ 0x80000000000000000000w = 0w ⇔ 0xFFFFFFFFFFFFFFFFFFFFw = 0w ∧ 0x80000000000000000000w = 0w) ⇔ T
+bw_or_value_4_4_80=⊢ w2n (0xFFFFFFFFFFFFFFFFFFFFw ‖ 0xFFFFFFFFFFFFFFFFFFFFw) = 1208925819614629174706175
+bw_or_law_4_4_80=⊢ (0xFFFFFFFFFFFFFFFFFFFFw ‖ 0xFFFFFFFFFFFFFFFFFFFFw = 0w ⇔ 0xFFFFFFFFFFFFFFFFFFFFw = 0w ∧ 0xFFFFFFFFFFFFFFFFFFFFw = 0w) ⇔ T
+bw_orone_4_80=⊢ 0xFFFFFFFFFFFFFFFFFFFFw ≪ 1 ‖ 1w = 0xFFFFFFFFFFFFFFFFFFFFw ≪ 1 + 1w ⇔ T
+bw_shift_value_4_80=⊢ w2n (0xFFFFFFFFFFFFFFFFFFFFw ≪ 1 ⋙ 1) = 604462909807314587353087
+bw_msb_drop_4_80=⊢ word_msb 0xFFFFFFFFFFFFFFFFFFFFw ∧ 0xFFFFFFFFFFFFFFFFFFFFw ≪ 1 ⋙ 1 ≠ 0xFFFFFFFFFFFFFFFFFFFFw ⇔ T
+bw_type_word=:α word
+bw_type_maximum=:num list -> num
+bw_type_genlist=:num -> num list
