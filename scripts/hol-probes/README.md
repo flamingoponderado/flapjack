@@ -4687,6 +4687,13 @@ against the captured ones and proves the same values. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=logroot_log_spec_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`alignment_align_probe` captures the original HOL `align`/`byte_align` types and EVAL results
+of `word_slice` (including a bound above `^HB` and an empty slice), `align` (exponents 0, 3 and
+40 on a 32-bit word) and `aligned`, plus `byte_align`/`byte_aligned` at 64 bits proved in HOL
+through `LOG2 8 = 3`. Kernel-replayed in `AlignmentParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=alignment_align_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 
 `word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
 original missing-bit, SNOC and prefix-reconstruction proofs plus their local

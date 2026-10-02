@@ -1439,6 +1439,8 @@ import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Misc.Sptree.InterEq
 import Flapjack.Misc.Logroot
 import Flapjack.Misc.Bit
+import Flapjack.Misc.Alignment
+import Flapjack.Misc.Alignment.Production
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Models

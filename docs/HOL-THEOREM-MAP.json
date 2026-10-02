@@ -57172,5 +57172,50 @@
     "lean_name": "holLOG2",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): bitScript.sml:54-55 LOG2_def[nocompute]: LOG2 = LOG 2, literal over the tagged holLOG. The untagged holLOG2_eq_log2 identifies it with Nat.log2 exactly on positive arguments via LOG_UNIQUE; LOG2 0 stays unconstrained. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
+  },
+  {
+    "hol_path": "HOL/src/n-bit/wordsScript.sml",
+    "hol_name": "word_slice_def",
+    "lean_path": "Flapjack/Misc/Alignment.lean",
+    "lean_name": "holWordSlice",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): wordsScript.sml:238-241 word_slice h l = λw. FCP i. l ≤ i ∧ i ≤ MIN h ^HB ∧ w ' i, literal: ^HB is width - 1, MIN is min, and FCP over the word carrier is the untagged holFcpWord whose bit i < width is the predicate (getLsbD_holFcpWord). Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean."
+  },
+  {
+    "hol_path": "HOL/src/n-bit/alignmentScript.sml",
+    "hol_name": "align_def",
+    "lean_path": "Flapjack/Misc/Alignment.lean",
+    "lean_name": "holAlign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:18 align p w = (dimindex (:'a) - 1 '' p) w, literal over holWordSlice with dimindex as width. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean."
+  },
+  {
+    "hol_path": "HOL/src/n-bit/alignmentScript.sml",
+    "hol_name": "aligned_def",
+    "lean_path": "Flapjack/Misc/Alignment.lean",
+    "lean_name": "holAligned",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:20 aligned p w = (align p w = w), the HOL bool rendered as Bool by decide of the word equality. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean."
+  },
+  {
+    "hol_path": "HOL/src/n-bit/alignmentScript.sml",
+    "hol_name": "byte_align_def",
+    "lean_path": "Flapjack/Misc/Alignment.lean",
+    "lean_name": "holByteAlign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:23-25 byte_align w = align (LOG2 (dimindex (:'a) DIV 8)) w, literal over the specified holLOG2 (LOG2 0 at widths below 8 stays unconstrained, as in HOL). Untagged bridges in Flapjack/Misc/Alignment/Production.lean: equal to the Log2ZeroParametric model at log2Zero := holLOG2 0 for every width, and to production panByteAlignHOL at width >= 8. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean."
+  },
+  {
+    "hol_path": "HOL/src/n-bit/alignmentScript.sml",
+    "hol_name": "byte_aligned_def",
+    "lean_path": "Flapjack/Misc/Alignment.lean",
+    "lean_name": "holByteAligned",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:27-29 byte_aligned w = aligned (LOG2 (dimindex (:'a) DIV 8)) w, literal over holAligned and holLOG2. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean."
   }
 ]

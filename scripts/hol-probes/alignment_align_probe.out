@@ -1,0 +1,12 @@
+al_align_type=:num -> α word -> α word
+al_byte_align_type=:α word -> α word
+al_slice_7_4=192w
+al_slice_20_4=43968w
+al_slice_3_9=0w
+al_align_3=0x12340w
+al_align_0=0x12345w
+al_align_40=0w
+al_aligned_t=T
+al_aligned_f=F
+al_byte_align_64=byte_align 0x1234567w = 0x1234560w
+al_byte_aligned_64=byte_aligned 16w

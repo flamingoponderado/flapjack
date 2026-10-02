@@ -3275,6 +3275,10 @@ run_probe logroot_log_spec_probeScript.sml logroot_log_spec_probe.out \
   lg_log_exists lg_log_spec lg_log_unique lg_log2_def lg_log2_8 lg_log2_1 lg_log2_9 lg_log2_64 \
   "$hol_dir/src/num/extra_theories/logrootScript.sml" "$cake_dir/compiler/backend"
 
+run_probe alignment_align_probeScript.sml alignment_align_probe.out \
+  al_align_type al_byte_align_type al_slice_7_4 al_slice_20_4 al_slice_3_9 al_align_3 al_align_0 al_align_40 al_aligned_t al_aligned_f al_byte_align_64 al_byte_aligned_64 \
+  "$hol_dir/src/n-bit/alignmentScript.sml" "$cake_dir/compiler/backend"
+
 
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
   sc_store sc_store8 sc_store16 sc_store32 sc_load sc_load8 sc_load16 sc_load32 \
