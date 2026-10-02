@@ -241,4 +241,88 @@ theorem initAllocFlags_range_production {native : State} {production : CakeRaSta
     rw [← good.2.2.2.2.1, moveReset_list_range]
   simpa only [cleared] using run
 
+/-- Literal body of the actual fused initializer, factored here only for its
+proofs. This is Flapjack-specific implementation infrastructure: the HOL
+initializer performs separate collection/degree/parent/flag traversals. -/
+def initAllocFusedStep (initial : CakeRaState) (limit : Nat)
+    (accumulator : List Nat × CakeRaState) (node : Nat) : List Nat × CakeRaState :=
+  let (allocs, state) := accumulator
+  let neighbours := (state.adjLists.get node).getD []
+  let fills := neighbours.filter (cakeConsideredVar state limit)
+  let allocs := if (initial.nodeTag.get node).getD .aTemp == .aTemp then node :: allocs else allocs
+  (allocs, {state with
+    degrees := state.degrees.set node fills.length
+    coalesced := state.coalesced.set node node
+    moveRelated := state.moveRelated.set node false})
+
+/-- The fused collection has the source filter's exact reverse order even
+before imposing native domains. No HOL declaration has this fused body. -/
+theorem initAllocFused_collection (initial : CakeRaState) (limit : Nat)
+    (nodes allocs : List Nat) (production : CakeRaState) :
+    (nodes.foldl (initAllocFusedStep initial limit) (allocs, production)).1 =
+      ((nodes.filter (fun node => (initial.nodeTag.get node).getD .aTemp == .aTemp)).reverse ++ allocs) := by
+  induction nodes generalizing allocs production with
+  | nil => rfl
+  | cons node rest ih =>
+    rw [List.foldl_cons, ih]
+    simp only [initAllocFusedStep]
+    cases selected : ((initial.nodeTag.get node).getD .aTemp == .aTemp) <;>
+      simp [selected, List.reverse_cons, List.append_assoc]
+
+/-- The fused body changes exactly three maps. This unconditional production
+frame justifies separating the initializer operations; it is not a HOL port. -/
+theorem initAllocFused_frame (initial : CakeRaState) (limit : Nat)
+    (nodes allocs : List Nat) (production : CakeRaState) :
+    (nodes.foldl (initAllocFusedStep initial limit) (allocs, production)).2 =
+      {production with
+        degrees := (nodes.foldl (initAllocFusedStep initial limit) (allocs, production)).2.degrees
+        coalesced := (nodes.foldl (initAllocFusedStep initial limit) (allocs, production)).2.coalesced
+        moveRelated := (nodes.foldl (initAllocFusedStep initial limit) (allocs, production)).2.moveRelated} := by
+  induction nodes generalizing allocs production with
+  | nil => rfl
+  | cons node rest ih =>
+    rw [List.foldl_cons, ih]
+    rfl
+
+/-- Fused self-parent writes are exactly the independent node-map fold.
+This is a concrete implementation equation without a HOL original. -/
+theorem initAllocFused_parents (initial : CakeRaState) (limit : Nat)
+    (nodes allocs : List Nat) (production : CakeRaState) :
+    (nodes.foldl (initAllocFusedStep initial limit) (allocs, production)).2.coalesced =
+      nodes.foldl (fun parents node => parents.set node node) production.coalesced := by
+  induction nodes generalizing allocs production with
+  | nil => rfl
+  | cons node rest ih =>
+    rw [List.foldl_cons, ih, List.foldl_cons]
+    rfl
+
+/-- The fused clearing map is exactly the independent false-write fold;
+the native full-range correspondence supplies its canonical representation.
+This is actual implementation infrastructure, deliberately untagged. -/
+theorem initAllocFused_flags (initial : CakeRaState) (limit : Nat)
+    (nodes allocs : List Nat) (production : CakeRaState) :
+    (nodes.foldl (initAllocFusedStep initial limit) (allocs, production)).2.moveRelated =
+      nodes.foldl (fun flags node => flags.set node false) production.moveRelated := by
+  induction nodes generalizing allocs production with
+  | nil => rfl
+  | cons node rest ih =>
+    rw [List.foldl_cons, ih, List.foldl_cons]
+    rfl
+
+/-- Degree counting reads only the immutable graph and tag maps, so the fused
+traversal equals the independent degree-map fold with those original reads.
+No default or neighbour bound is assumed here; the native domain proof is in
+initAllocDegrees_production. This is Flapjack-only implementation factoring. -/
+theorem initAllocFused_degrees (initial : CakeRaState) (limit : Nat)
+    (nodes allocs : List Nat) (production : CakeRaState) :
+    (nodes.foldl (initAllocFusedStep initial limit) (allocs, production)).2.degrees =
+      nodes.foldl (fun degrees node => degrees.set node
+        (((production.adjLists.get node).getD []).filter (cakeConsideredVar production limit)).length)
+        production.degrees := by
+  induction nodes generalizing allocs production with
+  | nil => rfl
+  | cons node rest ih =>
+    rw [List.foldl_cons, ih, List.foldl_cons]
+    rfl
+
 end Flapjack.RegAlloc
