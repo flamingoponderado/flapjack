@@ -5630,3 +5630,20 @@ conditions, distinct/overlapping singleton assertions, independent witness
 types, and an infinite domain. `Flapjack.Test.SetSepElementary` supplies sixteen
 Lean kernel fixtures. The port adds no finite-heap, word-width or validity
 restriction.
+Load-continuation probes replay the complete original `wStackLoad_append` and
+`get_labels_wStackLoad` proofs. 410 matching packets retain whole native ASTs
+and label observations across all 34 continuation constructors, widths
+1/2/8/64/80, repeated and 70-bit load indices, and nested return/handler cases.
+The handler-without-return case preserves its AST while contributing no labels,
+as in the original semantics. These checks are regression evidence, not a
+HOL-to-Lean equivalence proof.
+
+Return-copy label probes replay the complete original `copy_ret_aux_thm` and
+`get_labels_copy_ret` proofs. 460 matching native/original packets compare whole
+recursive return-copy ASTs and continuation labels, including saturated natural
+subtraction, independent Nat/Bool value and frame metadata carriers, all four
+performance/handler modes, 70-bit indices, and widths 1/2/8/64/80.
+They retain the descending load/store sequence and zero-count continuation.
+These observations provide regression evidence, not cross-language equivalence.
+
+Return allocation-argument probes replay all three complete original stack-move, recursive return-copy and wrapper proofs, with no open hypotheses. The210 predicate pairs cover widths1/2/8/64/80, zero/nonzero/saturated return counts, all four Boolean modes,70-bit slot/register/frame numbers, valid and invalid allocations, and independent optional Call return/handler checks. WordToStackReturnAllocArgsParity kernel-checks identical predicates and arbitrary-carrier theorem applications. These are original regression observations, not cross-language equivalence or full compiler correctness. Regenerate with HOL_PROBE_ONLY=word_to_stack_return_alloc_args_probeScript.sml.

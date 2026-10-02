@@ -61896,5 +61896,68 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 author source comparison2026-10-02 complete original3222-3277, all seven complete statements/quantified types freshly captured in lab_to_target_add_nop_props_probe.out. Full physical-length increment LENGTH nop versus annotated-length increment1 kept independent, nop arbitrary including empty/multibyte, exact not-EVERYisLabel and EVERYisLabel guards retained. Full conditional append retains both original branches; native List.all isLabelHOL models HOL EVERY Bool clause-for-clause and introduces no new Decidable instance premises. Both classifier iff statements retain full existential nonlabel and universal label predicates, not narrowed to a specific instruction. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed byte8 match; sole arbitrary positive word-dimension translation words_as_type_indexed_bitvec. Recursive proofs apply IH under actual tail nonlabel guard, and all addNop constructors preserve original first-nonlabel-only behavior. Eleven original/native observations plus seven full arbitrary-width consumers protect full Asm/LabAsm tuples, unchanged later instruction/words, empty NOP changes annotation only, multibyte NOP adds2physical/1annotated, all-label and empty lists unchanged, append selects left/right insertion, classifier preservation and nonlabel-guard counterexample. LSP full guarded induction goal inspected. Actual padding-length3777/3793/4300 proofs consume these prerequisites; full padding/encoding-with-NOP/remove_labels_loop/end-to-end remains unfinished. No compiler body changes or totalHD/EL hold dependency."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadContinuations.lean",
+    "lean_name": "wStackLoadAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wStackLoad_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-load-continuations): full original3711-3720 and5594-5599. Whole actual wStackLoadNative continuation-function equality and whole getLabelsExact label-set equality, arbitrary pair lists, indices, repetitions and continuation constructors; no bounds/success/label hypothesis. HolProg is constructor-for-constructor native34-constructor stackLang with HolInst/HolRegImm/HolAddr at arbitrary positive BitVec width and faithful MlString byte carrier. HOL set translated to predicate equality, including exact optional return/handler nesting (no return ignores handler labels). Two literal original whole proof replays hyp=[] and410 same-input whole-AST/label packets over1/2/8/64/80 widths, all34 constructors, long20 loads,70bit indices, duplicate/nested call labels, handler-without-return and byte names. No held list HD/EL or trust policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadContinuations.lean",
+    "lean_name": "getLabelsWStackLoad",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_labels_wStackLoad",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-load-continuations): full original3711-3720 and5594-5599. Whole actual wStackLoadNative continuation-function equality and whole getLabelsExact label-set equality, arbitrary pair lists, indices, repetitions and continuation constructors; no bounds/success/label hypothesis. HolProg is constructor-for-constructor native34-constructor stackLang with HolInst/HolRegImm/HolAddr at arbitrary positive BitVec width and faithful MlString byte carrier. HOL set translated to predicate equality, including exact optional return/handler nesting (no return ignores handler labels). Two literal original whole proof replays hyp=[] and410 same-input whole-AST/label packets over1/2/8/64/80 widths, all34 constructors, long20 loads,70bit indices, duplicate/nested call labels, handler-without-return and byte names. No held list HD/EL or trust policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnLabels.lean",
+    "lean_name": "copyRetAuxThm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_aux_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-return-labels): full original7602-7609 conjunction of zero/successor copy_ret_aux equations and7633-7641 whole get_labels(copy_ret)=get_labels continuation. Actual native copyRetAuxNative descending original list_Seq AST and copyRetNative length+1-k Nat subtraction, all perf/is_handle flags, optional handler-slot3/5 offset, SeqStackFree clauses; no register/frame/success/count/label premise. Return-value List beta and unused frame-tail gamma remain independent arbitrary Type0 carriers, faithful native HolProg at arbitrary positive BitVec width with MlString byte names. HOL set to predicate equality, original optional return/handler label clauses intact. Two literal unchanged whole original proofs hyp=[] and460 matching native complete AST/label packets at widths1/2/8/64/80, Nat/Bool independent list/metadata carriers, counts0/1/2/8/10,70bit frame/register indices and all Boolean wrapper branches including handler-without-return. Existing total HD/EL hold and trust policy unchanged; no full call simulation or compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnLabels.lean",
+    "lean_name": "getLabelsCopyRet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_labels_copy_ret",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-return-labels): full original7602-7609 conjunction of zero/successor copy_ret_aux equations and7633-7641 whole get_labels(copy_ret)=get_labels continuation. Actual native copyRetAuxNative descending original list_Seq AST and copyRetNative length+1-k Nat subtraction, all perf/is_handle flags, optional handler-slot3/5 offset, SeqStackFree clauses; no register/frame/success/count/label premise. Return-value List beta and unused frame-tail gamma remain independent arbitrary Type0 carriers, faithful native HolProg at arbitrary positive BitVec width with MlString byte names. HOL set to predicate equality, original optional return/handler label clauses intact. Two literal unchanged whole original proofs hyp=[] and460 matching native complete AST/label packets at widths1/2/8/64/80, Nat/Bool independent list/metadata carriers, counts0/1/2/8/10,70bit frame/register indices and all Boolean wrapper branches including handler-without-return. Existing total HD/EL hold and trust policy unchanged; no full call simulation or compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnAllocArgs.lean",
+    "lean_name": "stackMoveAllocArg",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original stack_move_alloc_arg at11292, actual native HolProg/stackMoveNative/copyRetAuxNative/copyRetNative and accepted allocArg. Same quantified natural arguments, implication/equivalence/closed predicate conclusion and original guard (only movement requires allocArg p); arbitrary positive word width via words_as_type_indexed_bitvec and NeZero, independent beta/gamma Type0 in wrapper, all Bool modes and arbitrary continuation. No extra count/frame/bound/success premise; source proof replay and210 original predicate pairs with matching kernel fixtures. No HD/EL/GC qualifier dependency; full compiler allocation-argument theorem and correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnAllocArgs.lean",
+    "lean_name": "allocArgCopyRetAux",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "alloc_arg_copy_ret_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original alloc_arg_copy_ret_aux at11300, actual native HolProg/stackMoveNative/copyRetAuxNative/copyRetNative and accepted allocArg. Same quantified natural arguments, implication/equivalence/closed predicate conclusion and original guard (only movement requires allocArg p); arbitrary positive word width via words_as_type_indexed_bitvec and NeZero, independent beta/gamma Type0 in wrapper, all Bool modes and arbitrary continuation. No extra count/frame/bound/success premise; source proof replay and210 original predicate pairs with matching kernel fixtures. No HD/EL/GC qualifier dependency; full compiler allocation-argument theorem and correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnAllocArgs.lean",
+    "lean_name": "allocArgCopyRet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "alloc_arg_copy_ret",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original alloc_arg_copy_ret at11309, actual native HolProg/stackMoveNative/copyRetAuxNative/copyRetNative and accepted allocArg. Same quantified natural arguments, implication/equivalence/closed predicate conclusion and original guard (only movement requires allocArg p); arbitrary positive word width via words_as_type_indexed_bitvec and NeZero, independent beta/gamma Type0 in wrapper, all Bool modes and arbitrary continuation. No extra count/frame/bound/success premise; source proof replay and210 original predicate pairs with matching kernel fixtures. No HD/EL/GC qualifier dependency; full compiler allocation-argument theorem and correctness remain open."
   }
 ]
