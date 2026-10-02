@@ -1,0 +1,8 @@
+rmt_mt_seq=Seq Skip Tick
+rmt_mt_nested=Tick
+rmt_seq=Seq Skip Tick
+rmt_if=If Equal 1 (Imm 0w) Skip Tick
+rmt_loop=Loop LN (Break 0) LN
+rmt_call_ret_handler=Call (SOME ([1],(LN,LN),Skip,2,3)) NONE [4] (SOME (5,Tick,6,7))
+rmt_call_tail_handler=Call NONE (SOME 1) [2] (SOME (3,Skip,4,5))
+rmt_tick=Tick
