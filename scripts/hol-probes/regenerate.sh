@@ -4300,3 +4300,7 @@ run_probe target_search_mono_probeScript.sml target_search_mono_probe.out \
 run_probe target_next_interference_probeScript.sml target_next_interference_probe.out \
   next_intro_full_statement next_shift_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_search_const_probeScript.sml target_search_const_probe.out \
+  search_const_full_statement next_const_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

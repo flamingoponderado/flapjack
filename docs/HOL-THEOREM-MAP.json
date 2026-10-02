@@ -56264,5 +56264,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 source343: full literal theorem over independent machine state/projection and universe-zero FFIhostσ with positive BitVec width NeZero, exact complete InterferenceApp/MachineConfig/HolFfiState tuple. Intro retains solely successful finite search premise and derives witness uniqueness from fullsearchunique; shift retains solely universal shiftedsearch equality and uses mono to equate existential predicates before congruence of reviewed holOptionSome. No boundedclock, machinevalidity, existence/uniqueness assumption or changedoracle/config. EL provenance through reviewed findNextInterference source112-211: total holEl ffi_names preserves in-range elements and sharedopaque holHdNil/holArb past end, no addedbounds/fallback assumption. Native whole generic theorem kernel checked; original fullstatement capture. Noexecutedcompilerbodychange."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SearchConst.lean",
+    "lean_name": "findNextInterferenceConst",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "find_next_interference_const",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source354, full original statement freshly captured in target_search_const_probe.out: sole successful search/choice premise and exact three conjunctions target equality, callee_saved_regs equality, ptr_reg equality retained. Complete native MachineConfig and InterferenceApp, independent state/projection/FFIhost Type and positive width NeZero. Clocked induction covers normaloracle recursion and every literal halt/cache/MMIO/externalFFI branch; unbounded theorem obtains real clock witness from reviewed holOptionSome, no added existence/validity/bounds assumption. EL provenance through findNextInterference source112-211 uses reviewed total holEl of ffi_names, in-range element and sharedopaque holHdNil/holArb out of range; no concrete missingname fallback. Both whole generic proofs kernel checked79jobs0warnings. Noexecutedcompilerbodychange."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SearchConst.lean",
+    "lean_name": "nextInterferenceConst",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "next_interference_const",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source370, full original statement freshly captured in target_search_const_probe.out: sole successful search/choice premise and exact three conjunctions target equality, callee_saved_regs equality, ptr_reg equality retained. Complete native MachineConfig and InterferenceApp, independent state/projection/FFIhost Type and positive width NeZero. Clocked induction covers normaloracle recursion and every literal halt/cache/MMIO/externalFFI branch; unbounded theorem obtains real clock witness from reviewed holOptionSome, no added existence/validity/bounds assumption. EL provenance through findNextInterference source112-211 uses reviewed total holEl of ffi_names, in-range element and sharedopaque holHdNil/holArb out of range; no concrete missingname fallback. Both whole generic proofs kernel checked79jobs0warnings. Noexecutedcompilerbodychange."
   }
 ]
