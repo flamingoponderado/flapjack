@@ -67726,42 +67726,123 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 full original source9811 and exported fulltype0hyp comparison: retains all three guards LENGTH(prog_to_bytes code)<dimword alpha, enc_ok c and all_enc_ok at independent validity start, arbitrary queried p and complete native carriers. Exact ALL_DISTINCT mapped entry_pc over SND(get_shmem_info code p [] []) becomes List.Nodup, with original Nat entry/exit PCs and offsets, fixed word8 nbytes, positive-width native word fields and own NeZero. Genuine proof consumes checked full extraction characterization and strict position-order law; each enumerated index contributes at most one matching Nat PC, and distinct indices strictly increase. Dimensional size guard retained even though this alternative Nat-order proof does not need it. No desired result/simulation/target-run premise or HD/EL default. Generic full theorem consumer and actual arbitrary query consumer discharge all original guards. Fresh original eight paired observations include independent positions, exact PC values, empty code, and duplicate zero-byte extraction that still passes all_enc_ok but fails enc_ok. Kernel and oracle evidence supplement source review, not HOL-to-Lean equivalence or full initializer/compiler/machine correctness."
   },
-{
-  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemPrefix.lean",
-  "lean_name": "getShmemInfo_append",
-  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-  "hol_name": "get_shmem_info_APPEND",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-sol3 full original source9615/9633 and exported fulltype0hyp comparison: All ten explicit original binders retained; exact three-conjunct premise (supplied output equality, name-prefix split, info-prefix split) and conjunction of output prefix equalities. No encoding, byte-size, label-validity or callback guard added. Exact full native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString positive-width BitVec carriers, Nat positions and record entry/exit PCs/offsets/registers, fixed word8 nbytes/bytes, own NeZero. Structural kernel proof directly unfolds accepted getShmemInfo constructor clauses and threads arbitrary split prefixes, including nonzero labels and zero-byte shared-memory instructions. Fresh registered original two fulltypes0hyp and seven original/native observations allT, widths1/8/80, invalid labels and length annotations, empty sections, nonempty split prefixes and unsigned offsets. Full generic consumers and actual arbitrary-prefix width80 caller checked. Evidence supplements source review, not HOL-to-Lean equivalence or full initializer/compiler/machine correctness."
-},
-{
-  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemPrefix.lean",
-  "lean_name": "getShmemInfo_prepend",
-  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-  "hol_name": "get_shmem_info_PREPEND",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-sol3 full original source9615/9633 and exported fulltype0hyp comparison: All six original free binders retained; exact supplied output equality premise and conjunction of output prefix equalities against the empty-accumulator extraction. No encoding, byte-size, label-validity or callback guard added. Exact full native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString positive-width BitVec carriers, Nat positions and record entry/exit PCs/offsets/registers, fixed word8 nbytes/bytes, own NeZero. Structural kernel proof directly unfolds accepted getShmemInfo constructor clauses and threads arbitrary split prefixes, including nonzero labels and zero-byte shared-memory instructions. Fresh registered original two fulltypes0hyp and seven original/native observations allT, widths1/8/80, invalid labels and length annotations, empty sections, nonempty split prefixes and unsigned offsets. Full generic consumers and actual arbitrary-prefix width80 caller checked. Evidence supplements source review, not HOL-to-Lean equivalence or full initializer/compiler/machine correctness."
-},
-{
-  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemMembership.lean",
-  "lean_name": "getShmemInfo_mem",
-  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-  "hol_name": "MEM_get_shmem_info",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-sol3 full original source9780/9852 and exported fulltypes0hyp comparison: Complete all_enc_ok, actual successful SharedMem fetch, and get_memop_info pair equality guards. Retains every c/labs/ffis/p-prime/code/pc/op/re/a/bytes/len/q/r/p binder and exact membership of (SharedMem q, source record) in ZIP of empty-accumulator extraction. Exit_pc remains pos_val pc (p+LENGTH bytes) code, justified by original position accumulator law; no desired membership assumption or extra encoding/size guard. Query and validity starts remain independent Nat. Exact native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec carriers with own NeZero, fixed word8 bytes/nbytes, Nat record PCs/registers/unsigned offsets. Genuine proof consumes checked full getShmemInfo characterization, original successful-fetch count bound and original position accumulator law, using ordered list flatten/map/unzip/zip correspondence. No targetrun/simulation callback or total HD/EL default. Fresh original two fulltypes0hyp and seven paired original/native observations allT cover load/store membership, successful actual fetch, exit expression, paired lengths/empty code and wrong name-record pairing. Full generic statements and arbitrary-query actual consumers kernel checked. Evidence supplements source review, not cross-language equivalence or full initializer/compiler/machine correctness."
-},
-{
-  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemMembership.lean",
-  "lean_name": "getShmemInfo_emptyLengthEq",
-  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-  "hol_name": "get_shmem_info_EMPTY_LENGTH_EQ",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-sol3 full original source9780/9852 and exported fulltypes0hyp comparison: Retains all c/labs/ffis/p-prime/code/p binders, sole complete all_enc_ok guard and exact equality of FST/SND lengths for empty-accumulator extraction. Query and validity starts remain independent Nat. Exact native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec carriers with own NeZero, fixed word8 bytes/nbytes, Nat record PCs/registers/unsigned offsets. Genuine proof consumes checked full getShmemInfo characterization, original successful-fetch count bound and original position accumulator law, using ordered list flatten/map/unzip/zip correspondence. No targetrun/simulation callback or total HD/EL default. Fresh original two fulltypes0hyp and seven paired original/native observations allT cover load/store membership, successful actual fetch, exit expression, paired lengths/empty code and wrong name-record pairing. Full generic statements and arbitrary-query actual consumers kernel checked. Evidence supplements source review, not cross-language equivalence or full initializer/compiler/machine correctness."
-},
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AddressException.lean",
+    "lean_name": "signalAddressException",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "signalAddressException_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison riscvScript3460-3472: exact ExceptionType x word64 argument, full riscv_state -> riscv_state, setTrap(e,SOME vAddr) with original returned state. Dependencies setTrap3433-3459 and write NextFetch preserve all other state/core fields. Native fixed-width carriers match reviewed Types, canonical arbitrary intermediate SynchronousTrap overwritten at both fields. No premise or branch narrowing; full integer instruction assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoadMode.lean",
+    "lean_name": "architecture",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "architecture_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison pinned riscvScript397-415/1417-1440: complete architecture_def literal equation, all2-bit selector routes. Source0 RV32I/2 RV64I/3 RV128I retain original state; invalid1 raises original UNDEFINED Unknown architecture: decimal-selector message and canonical ARB Architecture. curArch reads original current-core MCSR.mcpuid.ArchBase; in32BitMode compares result with RV32I and forwards returned state. Fixed positive native widths and full state function carriers match Types; no mode/core-bound premise or forced unspecified result. Full integer instruction assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoadMode.lean",
+    "lean_name": "curArch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "curArch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison pinned riscvScript397-415/1417-1440: complete curArch_def literal equation, all2-bit selector routes. Source0 RV32I/2 RV64I/3 RV128I retain original state; invalid1 raises original UNDEFINED Unknown architecture: decimal-selector message and canonical ARB Architecture. curArch reads original current-core MCSR.mcpuid.ArchBase; in32BitMode compares result with RV32I and forwards returned state. Fixed positive native widths and full state function carriers match Types; no mode/core-bound premise or forced unspecified result. Full integer instruction assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoadMode.lean",
+    "lean_name": "in32BitMode",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "in32BitMode_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison pinned riscvScript397-415/1417-1440: complete in32BitMode_def literal equation, all2-bit selector routes. Source0 RV32I/2 RV64I/3 RV128I retain original state; invalid1 raises original UNDEFINED Unknown architecture: decimal-selector message and canonical ARB Architecture. curArch reads original current-core MCSR.mcpuid.ArchBase; in32BitMode compares result with RV32I and forwards returned state. Fixed positive native widths and full state function carriers match Types; no mode/core-bound premise or forced unspecified result. Full integer instruction assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Reservation.lean",
+    "lean_name": "«write'ReserveLoad»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'ReserveLoad_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison riscvScript1381-1398/5691-5702: complete write'ReserveLoad_def, fixed word8 current-core index, Option word64 virtual address and arbitrary full native riscv_state. ReserveLoad reads c_ReserveLoad(procID); write ReserveLoad updates precisely that ATy function with source UPDATE and preserves all other state fields; matchLoadReservation is IsSome AND THE reservation equals supplied vAddr. Canonical HOL THE NONE remains unspecified; no default, successful reservation/core-bound/alignment premise, or narrowed state. Constructors/types match original native Types. LR/SC/full Run/Next assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Reservation.lean",
+    "lean_name": "ReserveLoad",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ReserveLoad_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison riscvScript1381-1398/5691-5702: complete ReserveLoad_def, fixed word8 current-core index, Option word64 virtual address and arbitrary full native riscv_state. ReserveLoad reads c_ReserveLoad(procID); write ReserveLoad updates precisely that ATy function with source UPDATE and preserves all other state fields; matchLoadReservation is IsSome AND THE reservation equals supplied vAddr. Canonical HOL THE NONE remains unspecified; no default, successful reservation/core-bound/alignment premise, or narrowed state. Constructors/types match original native Types. LR/SC/full Run/Next assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Reservation.lean",
+    "lean_name": "matchLoadReservation",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "matchLoadReservation_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison riscvScript1381-1398/5691-5702: complete matchLoadReservation_def, fixed word8 current-core index, Option word64 virtual address and arbitrary full native riscv_state. ReserveLoad reads c_ReserveLoad(procID); write ReserveLoad updates precisely that ATy function with source UPDATE and preserves all other state fields; matchLoadReservation is IsSome AND THE reservation equals supplied vAddr. Canonical HOL THE NONE remains unspecified; no default, successful reservation/core-bound/alignment premise, or narrowed state. Constructors/types match original native Types. LR/SC/full Run/Next assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemPrefix.lean",
+    "lean_name": "getShmemInfo_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "get_shmem_info_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source9615/9633 and exported fulltype0hyp comparison: All ten explicit original binders retained; exact three-conjunct premise (supplied output equality, name-prefix split, info-prefix split) and conjunction of output prefix equalities. No encoding, byte-size, label-validity or callback guard added. Exact full native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString positive-width BitVec carriers, Nat positions and record entry/exit PCs/offsets/registers, fixed word8 nbytes/bytes, own NeZero. Structural kernel proof directly unfolds accepted getShmemInfo constructor clauses and threads arbitrary split prefixes, including nonzero labels and zero-byte shared-memory instructions. Fresh registered original two fulltypes0hyp and seven original/native observations allT, widths1/8/80, invalid labels and length annotations, empty sections, nonempty split prefixes and unsigned offsets. Full generic consumers and actual arbitrary-prefix width80 caller checked. Evidence supplements source review, not HOL-to-Lean equivalence or full initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemPrefix.lean",
+    "lean_name": "getShmemInfo_prepend",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "get_shmem_info_PREPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source9615/9633 and exported fulltype0hyp comparison: All six original free binders retained; exact supplied output equality premise and conjunction of output prefix equalities against the empty-accumulator extraction. No encoding, byte-size, label-validity or callback guard added. Exact full native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString positive-width BitVec carriers, Nat positions and record entry/exit PCs/offsets/registers, fixed word8 nbytes/bytes, own NeZero. Structural kernel proof directly unfolds accepted getShmemInfo constructor clauses and threads arbitrary split prefixes, including nonzero labels and zero-byte shared-memory instructions. Fresh registered original two fulltypes0hyp and seven original/native observations allT, widths1/8/80, invalid labels and length annotations, empty sections, nonempty split prefixes and unsigned offsets. Full generic consumers and actual arbitrary-prefix width80 caller checked. Evidence supplements source review, not HOL-to-Lean equivalence or full initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemMembership.lean",
+    "lean_name": "getShmemInfo_mem",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "MEM_get_shmem_info",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source9780/9852 and exported fulltypes0hyp comparison: Complete all_enc_ok, actual successful SharedMem fetch, and get_memop_info pair equality guards. Retains every c/labs/ffis/p-prime/code/pc/op/re/a/bytes/len/q/r/p binder and exact membership of (SharedMem q, source record) in ZIP of empty-accumulator extraction. Exit_pc remains pos_val pc (p+LENGTH bytes) code, justified by original position accumulator law; no desired membership assumption or extra encoding/size guard. Query and validity starts remain independent Nat. Exact native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec carriers with own NeZero, fixed word8 bytes/nbytes, Nat record PCs/registers/unsigned offsets. Genuine proof consumes checked full getShmemInfo characterization, original successful-fetch count bound and original position accumulator law, using ordered list flatten/map/unzip/zip correspondence. No targetrun/simulation callback or total HD/EL default. Fresh original two fulltypes0hyp and seven paired original/native observations allT cover load/store membership, successful actual fetch, exit expression, paired lengths/empty code and wrong name-record pairing. Full generic statements and arbitrary-query actual consumers kernel checked. Evidence supplements source review, not cross-language equivalence or full initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemMembership.lean",
+    "lean_name": "getShmemInfo_emptyLengthEq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "get_shmem_info_EMPTY_LENGTH_EQ",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source9780/9852 and exported fulltypes0hyp comparison: Retains all c/labs/ffis/p-prime/code/p binders, sole complete all_enc_ok guard and exact equality of FST/SND lengths for empty-accumulator extraction. Query and validity starts remain independent Nat. Exact native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec carriers with own NeZero, fixed word8 bytes/nbytes, Nat record PCs/registers/unsigned offsets. Genuine proof consumes checked full getShmemInfo characterization, original successful-fetch count bound and original position accumulator law, using ordered list flatten/map/unzip/zip correspondence. No targetrun/simulation callback or total HD/EL default. Fresh original two fulltypes0hyp and seven paired original/native observations allT cover load/store membership, successful actual fetch, exit expression, paired lengths/empty code and wrong name-record pairing. Full generic statements and arbitrary-query actual consumers kernel checked. Evidence supplements source review, not cross-language equivalence or full initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapFrameUpdates.lean",
+    "lean_name": "listUpdateWriteBitmapNotNil",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "list_LUPDATE_write_bitmap_NOT_NIL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison: Original1032-1044 complete dimension8 guard and exclusion of singleton Word0 for arbitrary stack xs, num k/frame and independently polymorphic Spt payload retained. Fresh original full inferred types confirm names beta num_map and xs alpha word_loc list. Native writeBitmapExact and listUpdate are literal reviewed operations. Terminal and continuation sentinels prove nonzero head; empty destination remains empty. No totalEL/default or allocator/evaluator premise. Literal original proof replay is captured in word_to_stack_bitmap_frame_updates_probe.out.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapFrameUpdates.lean",
+    "lean_name": "dropListUpdateSameOffset",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_list_LUPDATE_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison: Original995-996 MATCH_MP DROP_list_LUPDATE at reflexive bound yields full same-offset drop equation, forall source/destination lists and offset. Lean directly specializes reviewed dropListUpdate at n=n; no changed guard or carrier. Literal original proof replay is captured in word_to_stack_bitmap_frame_updates_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapFrameUpdates.lean",
+    "lean_name": "appendFrameLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "APPEND_LEMMA",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison: Original1150-1163 full n1+n2+n3 <= LENGTH xs guard and two existential lists with drop decomposition and n2=LENGTH xs2 retained. Arbitrary List payload and all three Nat sizes; choose take/drop on original suffix. Third size remains in guard, no stronger prefix/length premises. Literal original proof replay is captured in word_to_stack_bitmap_frame_updates_probe.out."
+  },
 {
   "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemNames.lean",
   "lean_name": "getShmemInfo_mappedNames",
