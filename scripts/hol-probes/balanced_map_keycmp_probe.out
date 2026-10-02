@@ -1,0 +1,3 @@
+ksc_definition=⊢ ∀cmp k ks res. key_set_cmp cmp k ks res ⇔ ∀k'. k' ∈ ks ⇒ cmp k k' = res
+ksc_full_theorem=⊢ ∀cmp k k' res. good_cmp cmp ⇒ (key_set_cmp cmp k (key_set cmp k') res ⇔ cmp k k' = res)
+ksc_pair_definition=⊢ ∀cmp ks1 ks2 res. key_set_cmp2 cmp ks1 ks2 res ⇔ ∀k1 k2. k1 ∈ ks1 ∧ k2 ∈ ks2 ⇒ cmp k1 k2 = res

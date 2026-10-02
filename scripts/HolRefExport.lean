@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRaise
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp
@@ -9,6 +10,7 @@ import Flapjack.Compiler.Backend.StackLang.InstBuilders
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStateWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRegisterWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileListProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileLookupProps
 import Flapjack.Compiler.Backend.StackRemove.StoreAddress
@@ -193,6 +195,7 @@ elab "#emit_hol_ref_export" : command => do
           ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
           ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
           ("fmap_as_finite_support_function", toJson ref.fmapAsFiniteSupportFunction),
+          ("fmap_as_finite_support_result_observations", toJson ref.fmapAsFiniteSupportResultObservations),
           ("fmap_as_finite_support_parameters", toJson ref.fmapAsFiniteSupportParameters),
           ("fmap_as_finite_support_existentials", toJson ref.fmapAsFiniteSupportExistentials),
           ("fmap_as_finite_support_relation",
