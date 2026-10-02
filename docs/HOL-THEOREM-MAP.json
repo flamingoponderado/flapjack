@@ -52533,5 +52533,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c literal source comparison 2026-10-02, bead .10.31.2.1, original1082-1110: entire universal mc ffi k ms with no hypotheses, input io_events IS_PREFIX actual final evaluator FFI io_events. Exact full machine evaluator, initial clock zero, normal/cache recursion, all mapped/external guards and terminal rollback, returning call_FFI append composed with IH. Natural clock induction has no callback or oracle-validity premise. Word qualifier records positive BitVec dimension and universe0 FFI host only. Dependency retains reviewed total holEl/holHd: in-bounds element and out-of-bounds shared holHdNil/holArb without bounds premise or concrete fallback. Fresh original theorem replay verifies full conclusion and null hypotheses; generic Lean replay checks complete statement, not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EvaluateIgnoreClocks.lean",
+    "lean_name": "evaluateTargetIgnoreClocks",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "evaluate_ignore_clocks",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 bead .10.31.3: exact local original18-27 conjunction of two unrestricted mc/ffi/ms runs at k/kprime and both non-TimeOut results, conclusion equality of entire result/machine/FFI triples. Accepted full clock theorem at common k+kprime and commutativity; no extra clock bound, validity, oracle or poststate premise. Qualifier only positive BitVec dimension and universe0 FFI host. Source-reviewed total holEl/holHd inherited through actual evaluator: in-range element, out-of-range shared holHdNil/holArb, no bounds guard or concrete fallback. Literal complete original local proof replay checks full statement and null hypotheses; generic Lean application is regression not cross-language equivalence."
   }
 ]
