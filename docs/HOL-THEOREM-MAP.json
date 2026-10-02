@@ -62718,5 +62718,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison of complete reg_bound_mono11589-11603: arbitrary actual native program and bounds, exactly original regBound p k and k<=kprime imply regBound p kprime. All34 program and all native instruction constructors, original return-dependent optional handler branch retained. All recursive hypotheses internal, no target/success/output/extra guard premise. Native HolProg carrier reviewed, positive-width BitVec translation only. Fresh literal complete original proof replay hyp=[] plus456 direct original EVAL whole-predicate pairs at k/k+1, same-input kernel expectations read from new captured output using already reviewed source/Lean fixture carriers. Includes all program constructors/instruction variants, valid/invalid bounds, forbidden bitmap store, ignored handlers and active return/handler branches. No cross-language equivalence or full compiler theorem claim. No held imports/policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NopInsertEncoding.lean",
+    "lean_name": "linesEncWithNop_addNop",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lines_enc_with_nop_add_nop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original4505-4537; full quantified theorem and carrier types freshly captured in lab_to_target_nop_insert_encoding_probe.out. Arbitrary native enc/labs/ffis/pos/Line list and positive word dimension retained; sole original one-byte enc Skip guard plus actual reverse-source NOP predicate. Conclusion actual reverse(addNop encSkip ls), no extra label/nonlabel, alignment, sum, length-correctness or result premise. Original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/native Spt and fixed word8 bytes retained, sole words_as_type_indexed_bitvec translation. Kernel source-list induction uses actual reverse append law and constructive NOP witness count successor, all constructors including Call length-only clause. Nine fresh original/native observations, four actual theorem premise instances and full arbitrary-width consumer include mixed label/Asm and label/LabAsm first-nonlabel updates with untouched stored words/later lines, empty/all-label cases, Halt and Call, and necessary one-byte guard counterexample. No production body changes or trusted-user HD/EL hold use; full section padding/remove_labels_loop/end-to-end correctness remain unfinished; coordinator acceptance pending."
   }
 ]
