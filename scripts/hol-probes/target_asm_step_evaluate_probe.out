@@ -1,0 +1,14 @@
+asm_step_evaluate_full_statement=∀c s1 ms1 io i.
+  encoder_correct c.target ∧ c.prog_addresses = s1.mem_domain ∧
+  ffi_entry_pcs_disjoint c s1 (LENGTH (c.target.config.encode i)) ∧
+  interference_ok c.next_interfer (c.target.proj s1.mem_domain) ∧
+  asm_step c.target.config s1 i
+    (asm i (s1.pc + n2w (LENGTH (c.target.config.encode i))) s1) ∧
+  target_state_rel c.target s1 ms1 ⇒
+  ∃l ms2. ∀k.
+    evaluate c io (k + l) ms1 = evaluate (shift_interfer l c) io k ms2 ∧
+    find_next_interference c io (k + l) ms1 =
+    find_next_interference (shift_interfer l c) io k ms2 ∧
+    target_state_rel c.target
+      (asm i (s1.pc + n2w (LENGTH (c.target.config.encode i))) s1) ms2 ∧
+    l ≠ 0

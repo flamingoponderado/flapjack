@@ -1,0 +1,13 @@
+load "preamble";
+load "word_allocProofTheory";
+open bossLib HolKernel Parse preamble word_allocProofTheory word_allocTheory sptreeTheory;
+val _ = Globals.linewidth := 1000;
+fun out label th = (print(label ^ "="); print_thm th; print "\n");
+fun ty label name th = let val v=valOf(List.find(fn t => fst(dest_var t)=name)(free_vars(concl(SPEC_ALL th)))) in print(label ^ "="); print_type(type_of v); print "\n" end;
+val _ = out "delete_left_full" ssa_locals_rel_delete_left;
+val _ = out "delete_right_full" ssa_locals_rel_delete_right;
+val _ = ty "delete_type_source" "stl" ssa_locals_rel_delete_right;
+val _ = ty "delete_type_target" "cstl" ssa_locals_rel_delete_right;
+val _ = ty "delete_type_ssa" "ssa" ssa_locals_rel_delete_right;
+val _ = ty "delete_type_name" "n" ssa_locals_rel_delete_right;
+val _ = ty "delete_type_next" "na" ssa_locals_rel_delete_right;
