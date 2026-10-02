@@ -50162,5 +50162,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison of word_to_stack_alloc_arg11316-11382 and actual comp clauses: full wordToStackAllocArgCallHandler case, all original inputs and perf=F retained. Recursive cases add only genuine induction hypotheses for proper subprograms, quantified over arbitrary threaded bitmaps and frames; CallTail retains its arbitrary ignored handler. Returning calls use original stack movement and copy-return helpers and actual successive bitmap outputs. Native HOL carriers retained; positive-width BitVec translation is the only representation qualifier. Seven fresh complete generic original source case applications have no open hypotheses; regression evidence does not establish cross-language equivalence. Final induction assembly remains open; no HD/EL/GC hold release."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Compiler.lean",
+    "lean_name": "wordToStackAllocArg",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of complete word_to_stack_alloc_arg11316-11382: forall config/perf/source program/bitmap/frame, only perf=F implies allocArg of actual comp first projection. All26 constructors covered, every proper-subprogram IH discharged internally by sizeOf wellfounded recursion; return and handler use actual successive bitmap outputs. No desired predicate/output/evaluation/success or extra guard premise. Native source/target/config/cutset carriers retained, positive-width BitVec is the only words_as_type_indexed_bitvec translation. Fresh complete generic original theorem application and35 nested same-input original theorem applications/kernel fixtures across widths1/2/8/64/80. These are theorem-application regression evidence, not direct EVAL or full original proof replay/cross-language equivalence. Full pass simulation and compiler chain remain open; no held imports or HD/EL/GC policy changes."
   }
 ]

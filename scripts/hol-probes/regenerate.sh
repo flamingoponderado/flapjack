@@ -3866,3 +3866,7 @@ run_probe word_to_stack_alloc_flat_probeScript.sml word_to_stack_alloc_flat_prob
 run_probe word_to_stack_alloc_recursive_probeScript.sml word_to_stack_alloc_recursive_probe.out \
   aar_full_MustTerminate aar_full_Loop aar_full_Seq aar_full_If aar_full_CallTail aar_full_CallReturn aar_full_CallHandler \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_alloc_compiler_probeScript.sml word_to_stack_alloc_compiler_probe.out \
+  aac_full aac_1_must aac_1_loop aac_1_seq aac_1_if aac_1_tail aac_1_ret aac_1_handler aac_2_must aac_2_loop aac_2_seq aac_2_if aac_2_tail aac_2_ret aac_2_handler aac_8_must aac_8_loop aac_8_seq aac_8_if aac_8_tail aac_8_ret aac_8_handler aac_64_must aac_64_loop aac_64_seq aac_64_if aac_64_tail aac_64_ret aac_64_handler aac_80_must aac_80_loop aac_80_seq aac_80_if aac_80_tail aac_80_ret aac_80_handler \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
