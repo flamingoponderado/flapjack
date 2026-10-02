@@ -721,4 +721,72 @@ theorem extendCliqueSet_production (new initial : List Nat)
   simpa only [cakeExtendCliqueSet, cakeExtendCliqueSetFast] using
     extendCliqueBatch_production new initial cache related bounds
 
+/-- Actual fast clique insertion observations on its genuine duplicate-free
+input domain. This is untagged production infrastructure: the native HOL
+operation inserts pairs recursively rather than executing this union fold.
+Present input rows are required; no output graph is assumed. -/
+theorem cliqueInsertEdgeFast_membership (live : List Nat)
+    (cache : CakeNodeMap (Std.TreeSet Nat)) (distinct : live.Nodup)
+    (present : ∀ node ∈ live, (cache.get node).isSome = true)
+    (key member : Nat) :
+    ((cakeCliqueInsertEdgeSetFast live cache).get key).map
+      (fun row => row.contains member) =
+      (cache.get key).map (fun row => row.contains member ||
+        (live.contains key && live.contains member && !(key == member))) := by
+  have folded := unionRowsFold_membership live
+    (fun node => (Std.TreeSet.ofList live).erase node) cache key member
+  have graph : cakeCliqueInsertEdgeSetFast live cache =
+      live.foldl (unionRow (fun node => (Std.TreeSet.ofList live).erase node)) cache := by
+    unfold cakeCliqueInsertEdgeSetFast unionRow
+    simp only [distinct, dif_pos]
+  rw [graph]
+  rw [folded]
+  simp only [Std.TreeSet.contains_erase, Std.TreeSet.contains_ofList]
+  cases old : cache.get key with
+  | none =>
+    have absent : key ∉ live := by
+      intro belongs
+      have available := present key belongs
+      simp [old] at available
+    simp [absent]
+  | some row =>
+    by_cases same : key = member
+    · subst member; cases live.contains key <;> simp
+    · cases live.contains key <;> cases live.contains member
+      all_goals simp [same, bne, Bool.beq_eq_decide_eq,
+        Std.LawfulEqCmp.compare_eq_iff_eq]
+
+/-- Complete native recursive clique insertion correspondence on original
+input bounds, including the optional actual set cache and failure latch.
+Untagged production infrastructure; native cliqueInsertEdge already carries
+its reviewed HOL definition tag. Duplicate inputs follow the same recursion. -/
+theorem cliqueInsertEdgeReference_production (live : List Nat)
+    {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native production)
+    (bounds : ∀ node ∈ live, node < native.adj_ls.length) :
+    ∃ result, cliqueInsertEdge live native = (.success (), result) ∧
+      result.adj_ls.length = native.adj_ls.length ∧
+      ProductionStateRel result {production with
+        adjLists := cakeCliqueInsertEdge live production.adjLists
+        adjSets := production.adjSets.map (cakeCliqueInsertEdgeSet live)} := by
+  induction live generalizing native production with
+  | nil =>
+    refine ⟨native, ?_, rfl, ?_⟩
+    · rfl
+    · have identity : production.adjSets.map (fun cache => cache) = production.adjSets := by
+        cases production.adjSets <;> rfl
+      simpa only [cakeCliqueInsertEdge, cakeCliqueInsertEdgeSet, identity] using related
+  | cons node rest ih =>
+    obtain ⟨first, firstRun, firstLength, firstRel⟩ := listInsertEdge_production node rest related
+      (bounds node List.mem_cons_self)
+      (fun partner belongs => bounds partner (List.mem_cons_of_mem _ belongs))
+    obtain ⟨result, run, length, rel⟩ := ih firstRel (by
+      intro next belongs
+      rw [firstLength]
+      exact bounds next (List.mem_cons_of_mem _ belongs))
+    refine ⟨result, ?_, length.trans firstLength, ?_⟩
+    · simp only [cliqueInsertEdge, Translator.Monadic.MonadBase.ignoreBind, firstRun, run]
+    · simpa only [cakeCliqueInsertEdge, cakeCliqueInsertEdgeSet,
+        Option.map_map, Function.comp_def] using rel
+
 end Flapjack.RegAlloc
