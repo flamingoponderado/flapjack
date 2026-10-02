@@ -60543,5 +60543,64 @@
     "hol_name": "ALOOKUP_ID_TABULATE",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-alookup-map-laws): full original3548-3568/3576-3603/3605-3610, independent arbitrary key/payload type parameters and functions, exact queried-element INSERT key/list domain for INJ, exact source pair-map and query equalities. INJ codomain UNIV contributes no guard; membership maps and classical propositional equality use existing keyLookup, no DecidableEq/BEq/instance premise or global injection/Nodup restriction. Identity tabulation has no premises. Three literal original complete proofs hyp=[] and302 matching Nat/Bool heterogeneous-carrier complete Option/injection observations with repeated/missing/large keys and noninjective sentinels. No held HD/EL or trust policy changes."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_seq_collapse",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALoopSemanticHelpers.lean",
+    "lean_name": "evaluateSeqCollapse",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original local7018-7023 sole firstevaluate(P,s)=(NONE,t) premise and exact Seq(P,Q)s=evaluateQt conclusion. Native faithful clocked WordSem evaluator/Seq/program/state carriers retained; checked original fix_clock_evaluate applied before rewriting successfulrun, no clock/frame/targetsuccess extra premise. Standard canonical fpRegs/store finite-support and positiveindexedword translations explicit; inherits evaluator reals_as_rational_cuts SOUNDNESS item8. Original local statement and literal source simp[evaluate_def] replayed in pinnedHOL, not a cross-language equivalence proof. FullLoop/fullSSA/endtoend remainopen."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "cut_env_fromAList_LN",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALoopSemanticHelpers.lean",
+    "lean_name": "cutEnvFromAListLN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original local7026-7034 unconditional cutenv(a,fromAList(MAPg(toAListLN)))v=cutenv(a,LN)v. Native Unit Spt names, arbitrary genericpayload locals, Nat/Unit pair mapping retained; emptytree enumeration/map/fromAList reduce directly, no validity/guard/success premise or carrier qualifier. Original local statement and literal source proof replayed in pinnedHOL; kernel/source evidence is not cross-language equivalence proof. FullLoop/fullSSA/endtoend remainopen."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "foldr_insert_const_swap",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFakeConstChain.lean",
+    "lean_name": "foldrInsertConstSwap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: full local6715-6722 word_loc-valued constant insertion commutation for arbitrary registerlist/key/value/tree, including duplicatekeys. Native sptInsert swap/shadow and listinduction preserve exact unconditional equation. Native Nat/list/Spt/program/word_loc carriers confirmed by literal original localstatement/proof replay and inferredtypecapture. Standard positiveindexedword translation explicit; no statefield translation required. Original kernel replay/source review/Lean kernel evidence are not cross-language equivalence proof. Fullloopsetup/fullLoop/fullSSA/endtoend remainopen."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_fake_const_chain",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFakeConstChain.lean",
+    "lean_name": "evaluateFakeConstChain",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: full local6726-6741 unconditional actual evaluate(FOLDRSeqSkip(MAPfakeMove names),state)=(NONE,statewithlocals=FOLDRinsertWordzero). Induction applies nativeConst evaluation and original sequencecollapse, then constantinsertioncommutation; duplicate names allowed and no clock/frame/domain bound premise. Native Nat/list/Spt/program/word_loc carriers confirmed by literal original localstatement/proof replay and inferredtypecapture. Standard positiveindexedword translation explicit and canonicalfpRegs/store finite-support; inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Original kernel replay/source review/Lean kernel evidence are not cross-language equivalence proof. Fullloopsetup/fullLoop/fullSSA/endtoend remainopen."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_fake_const_chain_locals",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFakeConstChain.lean",
+    "lean_name": "evaluateFakeConstChainLocals",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: full local6743-6761 unconditional fourconclusion statement: stateframe, outputdomain=inputdomain union listset, unchanged outside reads, Wordzero inside reads. Derived from actual evaluator equation plus original constantfold lookup includingduplicate names; no targetrun/frame/successpremise. Native Nat/list/Spt/program/word_loc carriers confirmed by literal original localstatement/proof replay and inferredtypecapture. Standard positiveindexedword translation explicit and canonicalfpRegs/store finite-support; inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Original kernel replay/source review/Lean kernel evidence are not cross-language equivalence proof. Fullloopsetup/fullLoop/fullSSA/endtoend remainopen."
   }
 ]
