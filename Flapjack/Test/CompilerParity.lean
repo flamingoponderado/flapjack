@@ -134,6 +134,7 @@ import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
 import Flapjack.Test.TargetPropsInterferenceParity
+import Flapjack.Test.LabToTargetNavigationBoundsParity
 import Flapjack.Test.LabToTargetSectionLookupParity
 
 import Flapjack.Test.ParmovePreservesMovesPmovParity
@@ -247,6 +248,7 @@ import Flapjack.Test.RegAllocColouringParity
 import Flapjack.Test.RegAllocExceptionFunctionsParity
 import Flapjack.Test.RegAllocAllocatorParity
 import Flapjack.Test.WordAllocSelectRegAllocParity
+import Flapjack.Test.WordAllocDefParity
 import Flapjack.Test.RegAllocStempColouringParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
@@ -694,6 +696,8 @@ import Flapjack.Test.StackSemCallParity
 import Flapjack.Test.StackSemCallIndirectParity
 import Flapjack.Test.StackSemLoopRecursiveParity
 import Flapjack.Test.StackSemBufferWriteParity
+import Flapjack.Test.StackSemInstParity
+import Flapjack.Test.StackSemEvaluateParity
 import Flapjack.Test.StackSemShMemParity
 import Flapjack.Test.StackSemShMemOpParity
 import Flapjack.Test.StackSemFfiParity
@@ -1540,6 +1544,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackSemCallIndirectParity.runChecks,
     Flapjack.Test.StackSemLoopRecursiveParity.runChecks,
     Flapjack.Test.StackSemBufferWriteParity.runChecks,
+    Flapjack.Test.StackSemInstParity.runChecks,
+    Flapjack.Test.StackSemEvaluateParity.runChecks,
     Flapjack.Test.StackSemGenericCodeLookupParity.runChecks,
     StackPropsOrderedLabelsParity.runChecks,
     StackPropsAllocationConstantsParity.runChecks,
@@ -1733,6 +1739,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackAllocGcCodeParity.runChecks,
     Flapjack.Test.StackAllocGetBitsParity.runChecks,
     Flapjack.Test.StackAllocGcBitmapsParity.runChecks,
+    Flapjack.Test.LabToTargetNavigationBoundsParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
     Flapjack.Test.AsmPropsPcCoverageParity.runChecks,

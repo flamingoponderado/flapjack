@@ -1944,7 +1944,7 @@ scripts/hol-probes/regenerate.sh`. The `evaluateSeq`/`evaluateIf`/`evaluateLoop`
 fragments are untagged; the tagged ports of `fix_clock_def`, `cont_loop_def`,
 `exit_loop_def`, `get_var_imm_def`, `empty_env_def` and `dec_clock_def` live in
 `StackSem/Control.lean` and `StackSem/StateOps.lean`, and assembled full
-evaluation remains on `y19g`/`y19g.18`.
+evaluation remains on `y19g`/`y19g.18`. The same eleven rows are also replayed through the assembled total evaluator `evaluateHOL` (no stubbed sub-evaluations) in `Flapjack/Test/StackSemEvaluateParity.lean`.
 
 `stacksem_jumplower_probeScript.sml` records eight direct original
 `stackSem$evaluate` observations for the `JumpLower` clause
@@ -2826,6 +2826,8 @@ the executed allocator. Regenerate read-only with
 `stack_alloc_get_bits_probeScript.sml` captures four original `stack_allocProof` `get_bits` rows: an 8-bit word with three decoded bits, the words 1 and 0 (empty results) and a 64-bit word with its top bit set. `Flapjack/Test/StackAllocGetBitsParity.lean` replays every row in the kernel.
 
 `stack_alloc_gc_bitmaps_probeScript.sml` captures five original 64-bit `stack_allocProof` rows: `word_gc_move_bitmap` over a four-word stack (copying, constant and forwarded roots) and over a too-short stack, `word_gc_move_bitmaps` with a valid and a zero frame descriptor, and `word_gc_move_roots_bitmaps` over an encoded stack. `Flapjack/Test/StackAllocGcBitmapsParity.lean` replays every row in the kernel, comparing memories at the probed addresses.
+
+`stacksem_inst_probeScript.sml` captures six original StackSem `evaluate (Inst i, s)` rows at 64 bits: `Const`, an immediate `Add`, an `Add` from a missing register and from a `Loc` register (both `Error` with the original state), a `Load` outside the memory domain and `Skip`, each observed as result, register 1 and clock. `Flapjack/Test/StackSemInstParity.lean` replays every row in the kernel through `evaluateInst`.
 
 `word_remove_must_terminate_probeScript.sml` captures eight original `remove_must_terminate` rows: a `MustTerminate` over a `Seq`, nested `MustTerminate`, a `Seq` of two `MustTerminate`s, an `If` branch, a `Loop` body, a returning call with both a `MustTerminate` return handler and exception handler, a tail call with a `MustTerminate` handler, and the catchall `Tick`. `Flapjack/Test/WordRemoveMustTerminateParity.lean` replays every row in the kernel.
 
@@ -4645,3 +4647,10 @@ OpCurrHeap case and its original local variable/expression/fresh-update helpers.
 Only the discarded primitive induction bookkeeping is omitted. The capture
 records the complete original statement and native state/binop/register/table
 carriers; it is source evidence, not a cross-assistant equivalence proof.
+`word_alloc_def_probe` captures the original HOL `word_alloc` type and eight EVAL results on
+small 64-bit programs: each allocator branch (Simple, IRC, linear scan), an accepted and a
+clashing oracle colouring (the latter falls back to the allocator), stack variables under
+IRC and linear scan, and a physical register. HOL's free `asm_config` is only read through
+`ISA`. Kernel-replayed through a structural observation in `WordAllocDefParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_def_probeScript.sml scripts/hol-probes/regenerate.sh`.

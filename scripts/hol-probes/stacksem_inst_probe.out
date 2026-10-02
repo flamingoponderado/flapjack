@@ -1,0 +1,6 @@
+inst_const=(NONE,SOME (Word 7w),6)
+inst_add_imm=(NONE,SOME (Word 6w),6)
+inst_add_missing_reg=(SOME Error,SOME (Word 9w),6)
+inst_add_loc=(SOME Error,SOME (Word 9w),6)
+inst_load_outside=(SOME Error,SOME (Word 9w),6)
+inst_skip=(NONE,SOME (Word 9w),6)

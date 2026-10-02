@@ -54792,6 +54792,87 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.9): word_allocProofScript.sml:3371-3396, ∀alg spillcosts k heu_moves tree forced fs (alg : num) with EVERY (λ(r1,r2). in_clash_tree tree r1 ∧ in_clash_tree tree r2) forced; conclusion ∃spcol livein flivein with select_reg_alloc ... = M_success spcol, check_clash_tree (sp_default spcol) tree LN LN = SOME (livein, flivein), the in_clash_tree/domain/convention clause, the domain-support clause and the forced-pair EVERY, in HOL order. select_reg_alloc is the exact tagged selectRegAlloc; proved, as in HOL, from linear_scan_reg_alloc_correct and reg_alloc_correct. Free HOL variables and binder types as in the source statement; renderings as in the accepted do_reg_alloc_correct row (sets as predicates, DIV as /, EVERY over pattern lambdas as bounded membership with pair projections, LN as Spt.ln). Kernel-checked; standard axioms; no extra premise. Through do_reg_alloc_correct (resp. reg_alloc_correct and linear_scan_reg_alloc_correct) the allocator state reads node tags and adjacency lists through HOL EL as the exact holEl."
   },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NavigationBounds.lean",
+    "lean_name": "secLocToPc_bound",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_loc_to_pc_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02, navigation bounds .10.36/.37: full original theorem at line6493, directly regenerated HOL conclusion and all binder types in lab_to_target_navigation_bounds_probe.out. Native labLang Line/Section carries HOL instruction, cmp/reg_imm/MlString, fixed word8 bytes and natural labels/positions unchanged; the only carrier translation is positive-width BitVec for HOL word dimension. secLocToPc_bound preserves forall n/xs/x and the sole successful lookup premise, including label zero on empty lists; locToPc_bound preserves forall code/l1/l2/x, the EVERY sec_labels_ok and successful lookup conjuncts, and complete SUM(MAP(len_no_lab o Section_lines)) upper bound. Uses faithful native section decomposition and actual recursive navigation; no encoding callback, extra bound premise or simulation assumption. Six fresh original observations and nine native kernel checks include final-label equality and empty-tail section equality, with arbitrary-width theorem application. No full pass-correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NavigationBounds.lean",
+    "lean_name": "locToPc_bound",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "loc_to_pc_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02, navigation bounds .10.36/.37: full original theorem at line6506, directly regenerated HOL conclusion and all binder types in lab_to_target_navigation_bounds_probe.out. Native labLang Line/Section carries HOL instruction, cmp/reg_imm/MlString, fixed word8 bytes and natural labels/positions unchanged; the only carrier translation is positive-width BitVec for HOL word dimension. secLocToPc_bound preserves forall n/xs/x and the sole successful lookup premise, including label zero on empty lists; locToPc_bound preserves forall code/l1/l2/x, the EVERY sec_labels_ok and successful lookup conjuncts, and complete SUM(MAP(len_no_lab o Section_lines)) upper bound. Uses faithful native section decomposition and actual recursive navigation; no encoding callback, extra bound premise or simulation assumption. Six fresh original observations and nine native kernel checks include final-label equality and empty-tail section equality, with arbitrary-width theorem application. No full pass-correctness claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "SUBMAP_DOMSUB_both",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Submap.lean",
+    "lean_name": "submap_domsub_both",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "A",
+      "B"
+    ],
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml SUBMAP_DOMSUB_both ([local]): A SUBMAP B ==> A \\\\ c SUBMAP B \\\\ c, A B c free (implicit); HOL 'a |-> 'b as the canonical HolFiniteMapExact binders A and B (bare relation entries), SUBMAP as the untagged submap rendering (FLOOKUP agreement on FDOM A), \\\\ and |+ as the HOL-equality eraseEq/updateEq with [DecidableEq] for HOL equality; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "SUBMAP_FUPDATE_both",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Submap.lean",
+    "lean_name": "submap_fupdate_both",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "A",
+      "B"
+    ],
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml SUBMAP_FUPDATE_both ([local]): A SUBMAP B ==> A |+ (n,v) SUBMAP B |+ (n,v), A B n v free (implicit); HOL 'a |-> 'b as the canonical HolFiniteMapExact binders A and B (bare relation entries), SUBMAP as the untagged submap rendering (FLOOKUP agreement on FDOM A), \\\\ and |+ as the HOL-equality eraseEq/updateEq with [DecidableEq] for HOL equality; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 773,
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/EvaluateDef.lean",
+    "lean_name": "evaluate_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-y19g.18), stackSemScript.sml:773-1027 Definition evaluate_def: all 34 clauses in HOL order (Skip, Halt, Alloc, StoreConsts, Inst, Get, Set, OpCurrHeap, Tick, Seq, Return, Raise, Break, Continue, If, Loop, JumpLower, RawCall, Call, Install, ShMemOp (Addr a w), CodeBufferWrite, DataBufferWrite, FFI, LocValue, StackAlloc, StackFree, StackLoad, StackLoadAny, StackStore, StackStoreAny, StackGetSize, StackSetSize, BitmapLoad), each conjunct universally quantified over its own clause variables with HOL's tupled evaluate (prog, s). Right-hand sides are the source-reviewed clause fragment bodies over the exact HolProg/StackSemStateFiniteExact carriers; Seq/Loop clamp with fix_clock, Loop re-enters on STOP (Loop c1) = Loop c1 with dec_clock, Call/JumpLower/RawCall time out on clock 0 and run the found code on dec_clock, the Call returning arm stores Loc l1 l2 in link_reg and checks result/exception locations, with every source Error arm. HOL res = NONE tests are none/some splits; Install's total configuration equality and LocValue's loc_check use classical decidability. evaluate is the assembled well-founded evaluateHOL on HOL's clock-first lexicographic measure (Measure/CallSites certificates); the theorem is proved clause by clause from evaluateHOL's equations, so no evaluator callback, success or simulation premise appears. 'a word as positive-width BitVec with [NeZero width]; regs, fpRegs and store as the canonical HolFiniteMapExact fields of StackSemStateFiniteExact (code is the sptree Spt carrier, not named). The Inst clause uses the reviewed instHOL whose FP renderings carry reals_as_rational_cuts: inherited docs/SOUNDNESS.md item 8 assumption; this marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "word_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/WordAllocDef.lean",
+    "lean_name": "wordAlloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.3) against word_allocScript.sml:1791-1807, clause by clause: let tree = get_clash_tree prog [], fs = get_stack_only prog, forced = get_forced c prog [] (the commented-out get_prefs_sp line is not code); case oracle_colour_ok k col_opt tree prog forced of NONE => let (heu_moves,spillcosts) = get_heuristics alg fc prog in case select_reg_alloc alg spillcosts k heu_moves tree forced fs of M_success col => apply_colour (total_colour col) prog | M_failure _ => prog | SOME col_prog => col_prog. Argument order fc c alg k prog col_opt as in HOL (type num -> 'a asm_config -> num -> num -> 'a prog -> num num_map option -> 'a prog, checked against the wa_type row of word_alloc_def_probe). Every callee is the exact tagged getClashTree/getStackOnly/getForced/oracleColourOk/getHeuristics/selectRegAlloc/applyColour/totalColour. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_alloc_def_probe (type + 8 EVAL rows over all allocator branches and both oracle outcomes) kernel-replayed in Flapjack/Test/WordAllocDefParity.lean. Proof-side definition: the executed RISC-V allocator is not yet routed through it (production routing remains the parent obligation)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "word_alloc_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/WordAllocCorrect.lean",
+    "lean_name": "wordAllocCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5): word_allocProofScript.sml:3399-3477, ∀fc c alg prog k col_opt st in HOL binder order with exactly the two premises even_starting_locals st.locals ∧ wf_cutsets prog (no other premise); conclusion ∃perm'. let (res,rst) = evaluate (prog, st with permute := perm') in if res = SOME Error then T else let (res',rcst) = evaluate (word_alloc fc c alg k prog col_opt, st) in res = res' ∧ word_state_eq_rel rst rcst ∧ case res of NONE => T | SOME (Break _) => T | SOME (Continue _) => T | SOME _ => rst.locals = rcst.locals, rendered literally with Lean let-destructuring and a match with a wildcard last arm; the if on res = SOME Error is decided classically as in the accepted evaluate_apply_colour motive. evaluate, word_alloc, even_starting_locals, wf_cutsets and word_state_eq_rel are the exact tagged evaluate/wordAlloc/evenStartingLocals/wfCutsets/wordStateEqRel. Carrier translations exactly those of evaluate_apply_colour: fmap_as_finite_support [fpRegs, store] for the canonical WordSemStateFiniteExact state (same-module witness re-exported from WordSemStateExact) and words_as_type_indexed_bitvec for 'a word / 'a asm_config / 'a prog with [NeZero width]; C and F are the state's code/ffi type variables at Type. The proof follows HOL: oracle branch via clash_tree_colouring_ok then evaluate_apply_colour with strong_locals_rel from even_starting_locals and every_even_colour; allocator branch via get_forced_in_get_clash_tree, select_reg_alloc_correct, check_clash_tree_INJ with (λx. 2x) and total_colour_alt, then clash_tree_colouring_ok and evaluate_apply_colour. Axioms: propext, Classical.choice, Quot.sound. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path. Through word_alloc's select_reg_alloc (reg_alloc and linear_scan allocator states) and the WordSem evaluator, list subscripts read through HOL EL as the exact holEl."
+  },
 {
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "ssa_cc_trans_correct",
