@@ -67549,5 +67549,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead flapjack-word-stack-word-extraction: 4080-4087: independent arbitrary mapped-source carrier/function, conjunction of successful mapped extraction and member premise, existential exact SOME Word payload witness. Actual executed native theWords/WordLocW reused; only original word dimension becomes positive BitVec width with NeZero. Lists/options/Nat metadata and all quantified variables/guards retained; no extra bounds/equality/default-validity/target-run assumptions. Full literal original proofs and 136 independent original complete outputs replayed; Lean kernel/runtime fixture evidence does not prove cross-language equivalence. This is genuine complete-inventory work, not a claimed active comp_correct prerequisite: subsequent legacy consumers occur in a commented source block. Coordinator acceptance and full compiler goal remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/RawCall.lean",
+    "lean_name": "compCorrectRawCall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original comp_correct RawCall1766-1783/full1481-1493 source comparison2026-10-02. Same four actual source run/nonError/full26stateRel/regBound premises; only original actual source successful Seq-code lookup/nonzero-clock guarded callee-body IH, retaining arbitrary body result/poststate/target/pointer/bounds/jump quantifiers. RawCall enters the Seq second program exactly as original dest_Seq. Accepted full findCodeLemma proves target compiled Seq lookup and whole program bound; native regBound Seq derives body bound. Missing/non-Seq source code and bad return excluded by source nonError; clock0 yields original timeout FFI equality. Nonzero callee simulation uses stateRelDecClock and original clock equality for actual boosted target clock subtraction. Every original result alternative and target existential/full postrelation retained; no targetrun/code success/postrelation or stronger source premise. Canonical imported owning-state codec witness reexport, qualified regs/fpRegs/store only, Spt code/List stack unchanged, positive type-indexed words and Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scoped original theorem with same source-guarded IHs, literal original RawCall proof body and recreated original local lookup/decClock helpers, no full comp_correct assumed."
   }
 ]
