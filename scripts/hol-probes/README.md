@@ -4663,3 +4663,5 @@ OpCurrHeap case and its original local variable/expression/fresh-update helpers.
 Only the discarded primitive induction bookkeeping is omitted. The capture
 records the complete original statement and native state/binop/register/table
 carriers; it is source evidence, not a cross-assistant equivalence proof.
+
+`riscv_overflow_target_probeScript.sml` captures both original RV64 six-instruction overflow expansions and their encoded bytes for eight register tuples, including zero, scratch-register and alias cases. These source observations support a staged target-helper prerequisite; the production overflow carrier and codec remain separate work.

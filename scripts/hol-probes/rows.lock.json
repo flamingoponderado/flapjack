@@ -603,6 +603,7 @@
     {"bytes": 1968, "out": "riscv_jumpcmp_polarity_probe.out", "rows": 32, "sha256": "3f1259100da5ca7fb8d7706f59152dff419493f58e7b482d2a72ff306f42e00b"},
     {"bytes": 304, "out": "riscv_names_probe.out", "rows": 20, "sha256": "a12114e3eed8b6201917dfcea830e0dede38acb59d17a21bad95200322327509"},
     {"bytes": 71, "out": "riscv_names_tlookup_probe.out", "rows": 1, "sha256": "63e11ae50f07d8a5fd80a626e131f1b0d7b9c98cdf0b61103ed56c4396a1d471"},
+    {"bytes": 5234, "out": "riscv_overflow_target_probe.out", "rows": 32, "sha256": "1547d432e8b12a030ce6415bf4880834450fdc0e125768ab36206ba38bbc7195"},
     {"bytes": 113, "out": "riscv_target_memop_probe.out", "rows": 8, "sha256": "fa4948d83a553a010d1ba431acdbe7e635200ee73c321edcf3e47cb94b233118"},
     {"bytes": 70, "out": "riscv_word_extract_6_probe.out", "rows": 3, "sha256": "2a76f66b9bd0087af59dbb398721b2952ebfc72b752fe9287174792497d4dd72"},
     {"bytes": 97, "out": "semantics_props_implements_probe.out", "rows": 1, "sha256": "01a6cff089205778ea38712e76e5dbe3d6e33d938ee5c27848b0be045da49c46"},
