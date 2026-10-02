@@ -1,0 +1,22 @@
+lines_offset_ok_pad_section=∀(nop :word8 list) (lines :α line list) (aux :α line list)
+    (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+    (pos :num).
+  lab_len_pos_ok (pos + (SUM (MAP (line_len :α line -> num) aux) :num)) lines ∧
+  lab_len_pos_ok pos (REVERSE aux) ∧ EVERY (label_zero :α line -> bool) aux ∧
+  (¬NULL lines ∧ is_Label (HD lines) ∧ line_len (HD lines) = (1 :num) ⇒
+   ¬NULL aux ∧ ¬is_Label (HD aux)) ∧
+  lines_offset_ok labs ffis pos (REVERSE aux ++ lines) ⇒
+  lines_offset_ok labs ffis pos (pad_section nop lines aux)
+lines_offset_ok_pad_section_types=(nop :word8 list)::word8 list;(lines :α line list)::α line list;(aux :α line list)::α line list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;
+mixed_original_five_guards=T
+mixed_full_tuple=T
+mixed_output_offsets=T
+empty_nop_offsets=T
+multibyte_nop_offsets=T
+zero_label_head_accumulator=T
+empty_accumulator_mask=T
+head_guard_necessary=T
+input_parity_necessary=T
+all_seven_opcodes=T
+empty_width1=T
+large_width80=T
