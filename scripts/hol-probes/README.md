@@ -5941,3 +5941,16 @@ local generational `word_gc_fun_thm` (1731) and `gc_thm` (1884), retaining
 all branches and printing their typed statements and free carriers. This is
 statement evidence, not a replay of the original HOL proof or concrete execution.
 The full Lean equalities live in `StackAlloc/Proofs/GcGenerational.lean`.
+## Complete binary32 directed rounding agreement
+
+The untagged BinaryIeeeDirectedFp32 infrastructure proves all three directed
+clauses for every rational input and both zero signs, and assembles all four
+modes. Source review compared HOL round_def411–443's strict largest guards,
+per-mode clamps/infinities and finite candidate sets, plus float_round's zero
+selection. Agreement is with the rational rendering; SOUNDNESS item8 remains.
+
+The directed probe captures 50 fresh original toward-zero numeric outputs,
+replayed by Lean kernel proofs. Finite upward/downward conversion is rejected
+by the pinned original binary_ieeeLib; six signed tie checks are explicitly
+Lean algorithm regressions. The independent certified-converter bead remains
+open for the complete144-row original int-to-FP oracle; no modes are dropped.

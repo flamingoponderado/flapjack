@@ -874,6 +874,7 @@ import Flapjack.Misc.BinaryIeeeRound
 import Flapjack.Misc.BinaryIeeeArith
 import Flapjack.Misc.BinaryIeeeRoundFp64
 import Flapjack.Misc.BinaryIeeeRoundFp32
+import Flapjack.Misc.BinaryIeeeDirectedFp32
 import Flapjack.Misc.BinaryIeeeArithFp64
 import Flapjack.Misc.BinaryIeeeConvert
 import Flapjack.Misc.BinaryIeeeSqrt

@@ -1,4 +1,5 @@
 import Flapjack.Test.LabToTargetOffsetEstablishmentParity
+import Flapjack.Test.BinaryIeeeDirectedFp32Parity
 import Flapjack.Test.LabToTargetOffsetInvariantParity
 import Flapjack.Test.LabToTargetCodeLabelPositionPaddingParity
 import Flapjack.Test.LabToTargetPrefixPaddingLengthParity
