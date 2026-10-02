@@ -155,6 +155,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.Clock
 import Flapjack.Compiler.Backend.Semantics.StackSem.ClockControl
 import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Seq
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers

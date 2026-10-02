@@ -66801,5 +66801,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.5: originalcompile_def107-112 whole original list collect_info LN computed once then MAP name/body to name/comp_top shared info body. Native HolProg positive word dimension and actual Spt collection; keys, order, duplicates, empty list and top-level Seq preserved, no success/lookup/validity hypothesis. Sole conventional word translation. Five fresh complete original output lists independently kernel replayed (forward reference, last recognized duplicate with ignored bare entry, bare-only fallback, zero entry/top Seq, empty). Executed broad replacement remains OPEN .4.3; no full simulation or production claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Seq.lean",
+    "lean_name": "compCorrectSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-remove-seq: genuine original comp_correct Seq1645-1663, full theorem1481-1490. Same four evaluation/nonError/full26conjunct state relation/register bound premises and existential target run at ck+target.clock; same Halt/TimeOut/FinalFFI ffi equality versus full stateRelHOL result split. Only original subprogram induction hypotheses: first fixed at actual source, second guarded by actual first NONE run; both retain arbitrary result/poststate/target/pointer/bounds/jump quantifiers. Rewritten HOL evaluator equation recovered in Lean from checked unconditional full fixClockEvaluate; actual target NONE run extended by original evaluateAddClock (NONE is not TimeOut), additional allowances combined by Nat associativity/commutativity. No target-evaluation, global simulation law, extra clock bound or successful-pass premise. Canonical native finite-support regs/fpRegs/store witness reexported from owning imported state; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scoped HOL statement proved by literal original Seq case body, prefixed only rpt strip_tac for standalone constructor goal."
   }
 ]
