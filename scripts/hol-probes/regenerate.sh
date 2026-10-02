@@ -5817,3 +5817,10 @@ run_probe lab_to_target_shmem_distinct_probeScript.sml lab_to_target_shmem_disti
   full_guards entry_values distinct independent_query empty zero_validity encoding_guard zero_duplicate \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_shmem_prefix_probeScript.sml lab_to_target_shmem_prefix_probe.out \
+  get_shmem_info_APPEND get_shmem_info_APPEND_types get_shmem_info_APPEND_hypotheses \
+  get_shmem_info_PREPEND get_shmem_info_PREPEND_types get_shmem_info_PREPEND_hypotheses \
+  invalid_code_output prepend_names prepend_info append_split empty wide_offsets one_offsets \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

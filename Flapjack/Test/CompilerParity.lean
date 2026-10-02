@@ -2,6 +2,7 @@ import Flapjack.Test.LabToTargetByteIntervalDistinctParity
 import Flapjack.Test.LabToTargetLineInfoParity
 import Flapjack.Test.LabToTargetShmemExtractionParity
 import Flapjack.Test.LabToTargetShmemDistinctParity
+import Flapjack.Test.LabToTargetShmemPrefixParity
 import Flapjack.Test.LabToTargetEncodingValidityClosureParity
 import Flapjack.Test.LabToTargetProgramByteLengthsParity
 import Flapjack.Test.LabToTargetPositionExtensionParity
