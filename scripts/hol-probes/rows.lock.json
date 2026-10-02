@@ -203,6 +203,7 @@
     {"bytes": 630, "out": "hol_mergesort_probe.out", "rows": 18, "sha256": "f21073d6c3ba873a7301c709deeb95fc47d830992e0af715607c1f76f26ae840"},
     {"bytes": 412, "out": "hol_sorting_probe.out", "rows": 14, "sha256": "ac959c6f311fbb14bb9cdea997f6151952925df527e4c4f5a709b66b2f1805ee"},
     {"bytes": 583, "out": "hol_word_arithmetic_probe.out", "rows": 13, "sha256": "de8ecd5dd96ff87ed4f8aae184a500d303c337c564ab04275870567a195e9caf"},
+    {"bytes": 18640, "out": "init_memory_probe.out", "rows": 130, "sha256": "8621374217c1c694fe1946de7fab4eab8073c93512e3cb9f8f0e397e22b2762f"},
     {"bytes": 1008, "out": "keep_annot_probe.out", "rows": 1, "sha256": "0e8bf163c41d6e8ca23c0abab93c800b6bd8776efabdd96291e35366f1036038"},
     {"bytes": 1008, "out": "keep_ident_probe.out", "rows": 1, "sha256": "bc97eea929af1b9e774eb34df94a042a8ec6ba2f1fb2a6e8ae5313d0d5725897"},
     {"bytes": 75, "out": "keep_kw_probe.out", "rows": 2, "sha256": "95504f40249189b9e583ccef958d4bba570b1cae1a408fc1a27ff9c4997749a7"},

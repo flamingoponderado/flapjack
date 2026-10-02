@@ -1,3 +1,9 @@
+`init_memory_probe.out` records the full original initializer definition/type,
+64 complete output trees, and 64 true equalities to independently written
+constructor trees. Matching kernel fixtures cover widths1/8/64/80, zero/aliased/
+arbitrary-large pointer registers, empty/word/register/mixed stores and word
+truncation. The full executed initializer route remains a separate parent.
+
 `evaluate_props_ffi_relation_probe.out` captures the full original FFI-step
 definition and inferred state-relation type, and checks an assumption-free
 identity step using the empty external call. `Flapjack/EvaluateProps.lean`

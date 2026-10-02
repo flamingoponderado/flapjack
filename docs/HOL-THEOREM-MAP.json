@@ -56173,5 +56173,14 @@
     "hol_name": "call_FFI_rel_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.62.1): evaluatePropsScript20-22 existential name/conf/bytes/t and equality to FFI_return s2 t retained exactly. Native HolFfiState, HolFfiName (exact MlString), BitVec8 byte lists and callFFIHOL are the reviewed source carriers and operation. Both states quantify over universe-0 host Type; no result assumption or successful-call callback. Definition is a single step, not RTC; full LabToTarget share_mem_state_rel parent remains open. Unconditional identity step is separately kernel checked using empty ExtCall and empty lists. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/InitMemory.lean",
+    "lean_name": "initMemory",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "init_memory_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.6.6.2): original five-element list_Seq retained literally: const0 bytes_in_word; sub k0; const0 zero; store0 k; store_list_code(k+1)0 xs. Canonical source-reviewed native helpers and HolProg positive-width carrier, List and Sum constructor-for-constructor; byte stride width DIV8 reduced modulo word dimension, arbitrary Nat registers, alias k0 allowed, no new bounds or semantic assumptions. Fresh original full definition/type and64 full outputs plus64 explicit-tree equalities across widths1/8/64/80, k0/1/23/2^80+9, empty/word/register/mixed lists; matching explicit native kernel trees. Proof-side definition only; full initializer and executed compiler route remain open on linked parent. Coordinator source-ready authorization2026-10-02T04:02 preserves storeListCode acceptance dependency. Coordinator review pending."
   }
 ]
