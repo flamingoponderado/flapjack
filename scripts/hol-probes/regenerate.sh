@@ -4729,3 +4729,7 @@ run_probe word_to_stack_const_memory_append_probeScript.sml word_to_stack_const_
 run_probe balanced_map_singleR_probeScript.sml balanced_map_singleR_probe.out \
   bmsr_full bmsr_tree bmsr_invariant bmsr_lookup0 bmsr_lookup1 bmsr_lookup2 bmsr_badsize \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe ssa_cc_trans_correct_share_inst_probeScript.sml ssa_cc_trans_correct_share_inst_probe.out \
+  share_inst_full share_inst_type_operator share_inst_type_name share_inst_type_expression share_inst_type_st share_inst_type_cst share_inst_type_ssa share_inst_type_next share_inst_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

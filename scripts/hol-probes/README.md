@@ -5336,3 +5336,12 @@ invariant and map equality conclusions. Actual defined rotation, invariant,
 three recursive lookup values, and invalid cached-size rejection are captured.
 `BalancedMapSingleRParity` consumes both full native conclusions and derives
 all three canonical semantic lookups; missing constructor outputs are unused.
+
+`ssa_cc_trans_correct_share_inst_probe` captures the full original theorem
+specialized to ShareInst and eight inferred carriers. Original ShareInst10012–10045
+was manually compared with `SSASemanticShareInst.lean`: all eight native shared
+load/store operators, six original premises and full simulation are retained.
+Successful stores preserve locals; returning loads use fresh SSA insertion;
+final FFI outcomes flush locals. Original proved theorem specialization capture,
+not isolated tactic replay or cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_share_inst_probeScript.sml scripts/hol-probes/regenerate.sh`.

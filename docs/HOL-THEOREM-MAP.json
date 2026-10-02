@@ -60230,5 +60230,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a source comparison 2026-10-02: full resumed FFI9868-10010 of original7666 sixpremise SSA simulation. Entire source permutation/Error exemption/result equality/frame and result-sensitive locals conclusion retained. Actual first refresh Move at next+2, scratch physical2/4/6/8 writes, renamed cut via scoped original injection/cutEnvLemma, original bytearray reads/callFFI and final flush or returning writeBytearray/emptyfpRegs/updateffi followed by actual restoration Move at counter+2 derived. Native mlstring function name, Nat registers/counters, Unit Spt cutsets pair, Spt SSA/tables, indexedword/native WordLoc payloads and Type0 FFI retained. Only canonical fpRegs/store finite-support and positive indexedword translations qualified; locals/code native Spt are not finite-map-qualified. Internal successfulbranch/read/cut premises fully discharged by public source evaluator splits, no targetrun/postlocals/newsuccess/publicextra hypothesis. Inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Original manually compared/proved theorem specialization capture/Lean kernel evidence; no isolated tactic replay or equivalence proof claimed. FullSSA/end-to-end remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticShareInst.lean",
+  "lean_name": "ssaCcTransCorrectShareInst",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original resumed ShareInst10012-10045, same sixpremises and entire existential sourcepermutation/Errorexemption/result/frame/result-sensitive locals simulation. All eight asmMemOp constructors preserve native shared domainalignment/configuration/bytepayload/callFFI/flush clauses. Stores transport actual sourcegetVar and preserve SSAmap; loads use actual nextVarRename freshdestination and original localssetvar theorem. Source failed expression/nonword/missingregister/outofdomain branches use only original Error exemption. Native Spt maps/tables and fixedbyte lists retained; only canonical fpRegs/store finite-support and positive indexedword translations qualified. No targetrun/postlocals/success extra hypothesis. Inherits evaluator reals_as_rational_cuts SOUNDNESS item8. Original manual source/carrier comparison and proved theorem specialization capture, Lean kernel evidence; no isolated tactic replay or equivalence proof claimed. FullSSA/endtoend remain open."
 }
 ]
