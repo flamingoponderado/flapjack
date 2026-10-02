@@ -1,0 +1,15 @@
+bytes_in_memory_eq_mem=∀(pc :α word) (bytes :word8 list).
+  (∀(a :α word).
+     a ∈ (t1 :α asm_state).mem_domain ⇒
+     (mc_conf :(α, β, γ) machine_config).target.get_byte (ms1 :β) a =
+     (t1.mem a :word8)) ∧ bytes_in_memory pc bytes t1.mem t1.mem_domain ⇒
+  bytes_in_memory pc bytes (mc_conf.target.get_byte ms1) t1.mem_domain
+bytes_in_memory_eq_mem_types=(pc :α word)::α word;(bytes :word8 list)::word8 list;(ms1 :β)::β;(mc_conf :(α, β, γ) machine_config)::(α, β, γ) machine_config;(t1 :α asm_state)::α asm_state;
+bytes_in_memory_eq_mem_hypotheses=0
+wrap8=T
+wrap1=T
+wrap64=T
+wrap80=T
+outside_diff=T
+empty_domain=T
+missing_domain=T

@@ -67636,5 +67636,14 @@
     "hol_name": "subspt_FOLDL_union",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Full forall list and initial tree, subspt initial into List.foldl sptUnion initial. All arbitrary generic-payload native trees; left fold and union argument order unchanged. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/MemoryTransport.lean",
+    "lean_name": "bytesInMemory_eqMem",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "bytes_in_memory_eq_mem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source6948-6959 comparison: forall pc/bytes and free t1/mc_conf/ms1 retained. HOL alpha word addresses and alpha AsmState translate to the same positive BitVec width; beta machine state and gamma projection remain independent universe0 Type parameters on original MachineConfig. Fixed word8 bytes and word64 FP fields preserved. Exact domain-restricted target get_byte equality and source bytes_in_memory conjunction imply same region in target get_byte with unchanged source domain. No global-memory equality, target-evaluation premise, fixed machine/projection specialization or bytes-domain approximation. Original misc bytes_in_memory recursive byte-value/domain/wrapped-address clauses reviewed. Fresh original complete exported fulltype0hyp, seven original/native cases at widths1/8/64/80 including wrap, empty domain, missing domain and distinct outside memories; full generic kernel statement and actual arbitrary machine/projection consumer discharge source guards. No duplicate byte APPEND/UPDATE port. Kernel/oracle evidence supplements source review, not cross-language equivalence or full machine/compiler proof."
   }
 ]

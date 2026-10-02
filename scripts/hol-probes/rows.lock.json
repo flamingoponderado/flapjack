@@ -1874,6 +1874,12 @@
       "sha256": "1da518560997b5de293625067b019f65719eec946ebfca00724a7a20d3d79186"
     },
     {
+      "bytes": 666,
+      "out": "lab_to_target_memory_transport_probe.out",
+      "rows": 10,
+      "sha256": "3d1d29d006980b3ffb68ba73105bac352f29987d0fb7f240f73d633d801dc7eb"
+    },
+    {
       "bytes": 807,
       "out": "lab_to_target_navigation_bounds_probe.out",
       "rows": 10,
