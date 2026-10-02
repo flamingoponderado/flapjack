@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticLoop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopIteration
 import Flapjack.Compiler.Backend.LabToTarget.PrefixPreservation

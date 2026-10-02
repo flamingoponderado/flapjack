@@ -5566,3 +5566,5 @@ its full type and ten invariant-valid constructor/guard/ratio equality cases.
 Native consumers prove both input invariants. The generic theorem retains only
 original comparator validity and those invariants; observations are regression
 evidence, not a cross-language equivalence theorem.
+
+`ssa_call_tail_probe.out` captures the complete original `ssa_cc_trans_correct` tail Call specialization, with all six premises and the full source-permutation/Error-exempt evaluator conclusion. The native case derives argument moves and identical callee environments; full SSA assembly remains open.

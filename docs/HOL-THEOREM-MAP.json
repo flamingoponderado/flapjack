@@ -61645,5 +61645,19 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-a author source comparison2026-10-02 original resumed Loop10047-10096 of ssa_cc_trans_correct7666: full six original premises plus only smaller-body universal induction hypothesis. Exact full ssaSimulation existential source permutation, Error exemption, actual target evaluation equality/frame and result-sensitive locals conclusion. Actual compiler setup/loop output derived; loopSetupCorrect supplies run/frame/counter/map/domain/injection/image, original every_var_mono raises occurrence bounds, source lookup SOME discharges THE versus getD selector observation, full ssaCcTransLoopHelper gives clock induction, evaluateSeqCollapse transports actual target setup. No target execution, source execution or post-state premise. Native actual total evaluator, original Nat/List/Spt/program/state carriers, explicit canonical fpRegs/store and positive word qualifiers. Inherits reals_as_rational_cuts evaluator SOUNDNESS item 8. Full SSA assembly and end-to-end remain open."
-  }
+  },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallTail.lean",
+  "lean_name": "ssaCcTransCorrectCallTail",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a author source comparison2026-10-02 original7666-7700 and resumed Call_tail8268-8296: all six original premises; no IH as both callee environments become identical after original argument convention moves. Full ssaSimulation existential source permutation/Error exemption/actual target run/full frame/result-sensitive locals, no target execution or callee success premise. Original none-return Call with arbitrary destination, arguments and handler; generated distinct even registers, actual renamed argument reads, same destination guard, code/stack-size lookup, clock timeout/flush, same callee state and bad_fun_return branches derived internally. Native Nat/List/Spt and full WordLang/WordSem carriers; only canonical fpRegs/store finite-map and positive type-indexed word translations qualified, tree locals/code not finite-map-qualified. Inherits evaluator reals_as_rational_cuts SOUNDNESS item8. Full original case statement captured from loaded HOL theorem; captures/checks are regression evidence, not cross-language equivalence. Returning Call/Alloc/Install/full SSA and end-to-end remain open."
+}
 ]
