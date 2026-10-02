@@ -62441,5 +62441,23 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.4: original128-133 full type alpha word->(store_name |-> beta word_loc)->(alpha word#beta word_loc->bool)->bool has independent address and stored-word dimensions. Lean preserves two Nat widths with own NeZero discharges; actual finite map parameter store is HolFiniteMapExact WordStoreHOL(WordLocW valueWidth), matching the faithful StackSem state map, not a raw function carrier. Bare relation qualifier store accounts for that parameter; no field-owner witness is required. Full unchanged48storeList order is mapped through existing complete constructor-preserving StackSemRegisterTransfers.storeOfSyntax, whose two unconditional inverse laws preserve all18 constructors and fixed Temp5. Missing lookups become Word0 at valueWidth, present Word/Loc values pass through, and the full list is supplied to exact generic wordListRev at addressWidth. No required-key/success/map-wf/width-agreement/finite-heap premise or altered store ordering. Original full definitions/types, complete empty/mixed48slot vectors with Temp0/31 and populated unlisted CurrHeap, independent-dimension assertion equalities and word projections provide source evidence; generic Lean finite-support and whole-assertion fixtures compare the same values/order/defaults. No duplicate state or compiler implementation is introduced."
+  },
+  {
+    "lean_path": "Flapjack/Misc/WordList.lean",
+    "lean_name": "wordList",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "word_list_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.7: Original1859-1862: empty=emp; cons=one(address,value) STAR word_list(address+bytes_in_word,tail). Current address is used for the head, modular addition only for the recursive tail; payload type beta remains independent of the positive address-word dimension. Full original address/payload polymorphic types reviewed. The only representation qualifier records address BitVec width/[NeZero width]; payloads and lists remain generic and heap sets are predicates. Canonical emp/one/STAR/cond/sepExists reused. No width>=8, nonwrapping-address, distinct-address, functional-heap or finite-domain side condition. Fresh original full equations/types and positive/negative wrap, zero-stride and existential-length probes compare the same inputs; fifteen Lean kernel fixtures and four regression helpers derive pure length from the partition. This is miscScript heap separation, distinct from the WordToStack bitmap word_list helper."
+  },
+  {
+    "lean_path": "Flapjack/Misc/WordList.lean",
+    "lean_name": "wordListExists",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "word_list_exists_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.7: Original1864-1867: SEP_EXISTS values. word_list address values STAR cond(LENGTH values=length). Lean preserves the existential Listbeta, exact length equality, original STAR ordering and empty-heap cond, rather than accepting a list/representation/length premise. Full original address/payload polymorphic types reviewed. The only representation qualifier records address BitVec width/[NeZero width]; payloads and lists remain generic and heap sets are predicates. Canonical emp/one/STAR/cond/sepExists reused. No width>=8, nonwrapping-address, distinct-address, functional-heap or finite-domain side condition. Fresh original full equations/types and positive/negative wrap, zero-stride and existential-length probes compare the same inputs; fifteen Lean kernel fixtures and four regression helpers derive pure length from the partition. This is miscScript heap separation, distinct from the WordToStack bitmap word_list helper."
   }
 ]

@@ -5708,3 +5708,16 @@ length48. Twelve Lean kernel fixtures in `Flapjack.Test.StackRemoveWordStore`
 use an actual canonical finite-support map and the existing complete store-name
 codec, with generic payload/width proofs and lookup extensionality. Assertion
 proofs compare complete lists before heap separation is expanded.
+
+`misc_wordlist_heap_probe.out` records full `word_list_def` and
+`word_list_exists_def` with independent generic payload types, plus fifteen
+fresh original kernel-proved fixtures. Forward lists use the current address
+for their singleton and modular addition for the tail. Existential lists retain
+the exact length cond inside STAR. Fixtures cover widths1/7/8/32/64/80, product
+payloads, overlapping/distinct pairs under zero stride, generic zero/singleton
+existentials, wrapping two-cell witnesses, wrong length and wrong address.
+`Flapjack.Test.MiscWordList` replays fifteen fixtures and derives the length
+condition from the empty separation partition; it adds no premise to the
+tagged definitions. Original existential proofs select bounded witnesses
+explicitly rather than searching through the recursive list definition. This
+is heap separation from miscScript, not WordToStack bitmap-word chunking.
