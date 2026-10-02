@@ -1,0 +1,14 @@
+word_loc_val_def=(∀(p :α word) (labs :num sptree$num_map sptree$num_map) (w :α word).
+   word_loc_val p labs (Word w) = SOME w) ∧
+∀(p :α word) (labs :num sptree$num_map sptree$num_map) (k1 :num) (k2 :num).
+  word_loc_val p labs (Loc k1 k2 :α word_loc) =
+  case lab_lookup k1 k2 labs of
+    (NONE :num option) => (NONE :α word option)
+  | SOME q => SOME (p + (n2w q :α word))
+word_loc_val_def_types=
+word_unchanged=T
+location_hit=T
+location_wrap=T
+outer_missing=T
+inner_missing=T
+one_bit=T

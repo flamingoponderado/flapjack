@@ -1,0 +1,82 @@
+extract_labels_def=extract_labels ([] :α line list) = ([] :(num # num) list) ∧
+(∀(xs :α line list) (v0 :num) (l2 :num) (l1 :num).
+   extract_labels ((Label l1 l2 v0 :α line)::xs) = (l1,l2)::extract_labels xs) ∧
+(∀(xs :α line list) (v7 :num) (v6 :word8 list) (v5 :α asm_or_cbw).
+   extract_labels (Asm v5 v6 v7::xs) = extract_labels xs) ∧
+∀(xs :α line list) (v9 :α word) (v8 :α asm_with_lab) (v11 :num)
+    (v10 :word8 list).
+  extract_labels (LabAsm v8 v9 v10 v11::xs) = extract_labels xs
+extract_labels_def_types=
+extract_labels_append=∀(A :α line list) (B :α line list).
+  extract_labels (A ++ B) = extract_labels A ++ extract_labels B
+extract_labels_append_types=(A :α line list)::α line list;(B :α line list)::α line list;
+labs_of_def=labs_of (LocValue (v0 :num) (Lab (n1 :num) (n2 :num)) :α asm_with_lab) =
+{(n1,n2)} ∧ labs_of (Jump (Lab n1 n2) :α asm_with_lab) = {(n1,n2)} ∧
+labs_of
+  (JumpCmp (v1 :cmp) (v2 :num) (v3 :α reg_imm) (Lab n1 n2) :α asm_with_lab) =
+{(n1,n2)} ∧
+labs_of (Call (v9 :lab) :α asm_with_lab) = (∅ :num # num -> bool) ∧
+labs_of (CallFFI (v12 :mlstring) :α asm_with_lab) = (∅ :num # num -> bool) ∧
+labs_of (Install :α asm_with_lab) = (∅ :num # num -> bool) ∧
+labs_of (Halt :α asm_with_lab) = (∅ :num # num -> bool)
+labs_of_def_types=(v12 :mlstring)::mlstring;(v9 :lab)::lab;(v3 :α reg_imm)::α reg_imm;(v2 :num)::num;(v1 :cmp)::cmp;(n2 :num)::num;(n1 :num)::num;(v0 :num)::num;
+line_get_labels_def=line_get_labels
+  (LabAsm (a :α asm_with_lab) (v0 :α word) (v1 :word8 list) (v2 :num)) =
+labs_of a ∧
+line_get_labels (Label (v :num) (v4 :num) (v5 :num) :α line) =
+(∅ :num # num -> bool) ∧
+line_get_labels (Asm (v6 :α asm_or_cbw) (v7 :word8 list) (v8 :num)) =
+(∅ :num # num -> bool)
+line_get_labels_def_types=(v8 :num)::num;(v7 :word8 list)::word8 list;(v6 :α asm_or_cbw)::α asm_or_cbw;(v5 :num)::num;(v4 :num)::num;(v :num)::num;(v2 :num)::num;(v1 :word8 list)::word8 list;(v0 :α word)::α word;(a :α asm_with_lab)::α asm_with_lab;
+sec_get_labels_def=∀(v0 :num) (lines :α line list).
+  sec_get_labels (Section v0 lines) =
+  BIGUNION (IMAGE (line_get_labels :α line -> num # num -> bool) (set lines))
+sec_get_labels_def_types=(v0 :num)::num;(lines :α line list)::α line list;
+get_labels_def=∀(code :α sec list).
+  get_labels code =
+  BIGUNION (IMAGE (sec_get_labels :α sec -> num # num -> bool) (set code))
+get_labels_def_types=(code :α sec list)::α sec list;
+get_labels_cons=get_labels ((x :α sec)::(xs :α sec list)) = sec_get_labels x ∪ get_labels xs
+get_labels_cons_types=(xs :α sec list)::α sec list;(x :α sec)::α sec;
+line_get_code_labels_def=line_get_code_labels (Label (v0 :num) (l :num) (v1 :num) :α line) = {l} ∧
+line_get_code_labels (Asm (v5 :α asm_or_cbw) (v6 :word8 list) (v7 :num)) =
+(∅ :num -> bool) ∧
+line_get_code_labels
+  (LabAsm (v8 :α asm_with_lab) (v9 :α word) (v10 :word8 list) (v11 :num)) =
+(∅ :num -> bool)
+line_get_code_labels_def_types=(v11 :num)::num;(v10 :word8 list)::word8 list;(v9 :α word)::α word;(v8 :α asm_with_lab)::α asm_with_lab;(v7 :num)::num;(v6 :word8 list)::word8 list;(v5 :α asm_or_cbw)::α asm_or_cbw;(v1 :num)::num;(l :num)::num;(v0 :num)::num;
+sec_get_code_labels_def=∀(n1 :num) (lines :α line list).
+  sec_get_code_labels (Section n1 lines) =
+  (n1,(0 :num)) INSERT
+  IMAGE (λ(n2 :num). (n1,n2))
+    (BIGUNION
+       (IMAGE (line_get_code_labels :α line -> num -> bool) (set lines)))
+sec_get_code_labels_def_types=(n1 :num)::num;(lines :α line list)::α line list;
+get_code_labels_def=∀(code :α sec list).
+  get_code_labels code =
+  BIGUNION
+    (IMAGE (sec_get_code_labels :α sec -> num # num -> bool) (set code))
+get_code_labels_def_types=(code :α sec list)::α sec list;
+get_code_labels_nil=get_code_labels ([] :α sec list) = (∅ :num # num -> bool)
+get_code_labels_nil_types=
+get_code_labels_cons=get_code_labels ((s :α sec)::(secs :α sec list)) =
+sec_get_code_labels s ∪ get_code_labels secs
+get_code_labels_cons_types=(secs :α sec list)::α sec list;(s :α sec)::α sec;
+extract_empty=T
+extract_duplicates=T
+jump_ref=T
+loc_ref=T
+cmp_ref=T
+call_ignored=T
+ffi_ignored=T
+install_ignored=T
+halt_ignored=T
+label_not_ref=T
+code_reference=T
+code_call_ignored=T
+code_label=T
+implicit_zero=T
+empty_section_zero=T
+section_id_owns_label=T
+reference_empty=T
+code_labels_empty=T

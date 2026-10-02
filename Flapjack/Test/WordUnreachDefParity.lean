@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordUnreach
+import Flapjack.RiscV.WordUnreach
 
 namespace Flapjack.Test.WordUnreachDefParity
 open Flapjack Flapjack.Compiler.Backend.WordUnreach
@@ -106,5 +107,33 @@ example : same (removeUnreach (.seq (.ite .equal 1 (.imm 0) (.seq .skip (.break 
 example : same (removeUnreach (.seq (.loop .ln (.seq (.continue 0) .tick) .ln)
       (.mustTerminate (.seq .tick .skip))))
     (.seq (.loop .ln (.continue 0) .ln) (.mustTerminate .tick)) := by decide +kernel
+
+-- The original move fixtures also exercise BOTH actual production wrappers.
+-- These are finite caller checks, not full native program-routing claims.
+example : RiscV.wordCopyUnreachMergeMoves [(1,11),(2,22),(3,33)] [(3,1),(2,99)] =
+    [(3,11),(2,99),(1,11)] := by rfl
+example : RiscV.wordUnreachMergeMoves [(1,11),(2,22),(3,33)] [(3,1),(2,99)] =
+    [(3,11),(2,99),(1,11)] := by rfl
+example : RiscV.wordCopyUnreachMergeMoves [(1,2),(1,3)] [(4,1),(4,5)] =
+    [(4,2),(1,2)] := by rfl
+example : RiscV.wordUnreachMergeMoves [(1,2),(1,3)] [(4,1),(4,5)] =
+    [(4,2),(1,2)] := by rfl
+example : RiscV.wordCopyUnreachSeq (.move 1 [(1,11)] : WordProg (BitVec 64))
+    (.move 4 [(2,1)]) = .move 4 [(2,11),(1,11)] := by rfl
+example : RiscV.wordUnreachSimpSeq (.move 1 [(1,11)] : WordProg (BitVec 64))
+    (.seq (.move 0 [(2,1)]) (.raise 7)) =
+    .seq (.move 1 [(2,11),(1,11)]) (.raise 7) := by rfl
+example : RiscV.wordRemoveUnreachableAfterCopy
+    (.seq (.move 1 [(1,11),(2,22),(3,33)]) (.move 1 [(3,1),(2,99)]) :
+      WordProg (BitVec 64)) = .move 1 [(3,11),(2,99),(1,11)] := by
+  simp only [RiscV.wordRemoveUnreachableAfterCopy, RiscV.wordCopyUnreachParts,
+    RiscV.wordCopyUnreachPartsAcc, List.foldr_cons, List.foldr_nil,
+    RiscV.wordCopyUnreachSeq]
+  rfl
+example : RiscV.wordRemoveUnreachable
+    (.seq (.move 1 [(1,11),(2,22),(3,33)]) (.move 1 [(3,1),(2,99)]) :
+      WordProg (BitVec 64)) = .move 1 [(3,11),(2,99),(1,11)] := by
+  simp only [RiscV.wordRemoveUnreachable]
+  rfl
 
 end Flapjack.Test.WordUnreachDefParity
