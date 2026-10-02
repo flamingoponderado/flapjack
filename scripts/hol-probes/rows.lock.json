@@ -5684,6 +5684,12 @@
       "sha256": "f2a84be3ce19c11c512dc87fea3734c963d8f718a6bf86fa2b68b7dd6b583eef"
     },
     {
+      "bytes": 2524,
+      "out": "stack_remove_comp_call_return_none_probe.out",
+      "rows": 2,
+      "sha256": "83ca0e6cc92949a38dd37e8f116a12e3e47800af6ef5c584df032cb0cc64cc1a"
+    },
+    {
       "bytes": 1469,
       "out": "stack_remove_comp_call_tail_probe.out",
       "rows": 2,
