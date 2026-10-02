@@ -5349,3 +5349,6 @@ run_probe stack_remove_comp_locvalue_probeScript.sml stack_remove_comp_locvalue_
 run_probe stack_remove_pointer_probeScript.sml stack_remove_pointer_probe.out \
   sp_statement sp_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_strong_even_labels_probeScript.sml lab_to_target_strong_even_labels_probe.out \
+  even_labels_ends_imp_strong even_labels_ends_imp_strong_types mixed_three_guards weak_guard_needed ending_guard_needed zero_guard_needed width1_empty width80_large_position \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

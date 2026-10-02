@@ -65208,5 +65208,14 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol original395-418 comparison: original full state_rel alone implies existential base alpha word, lookup k+1 Word base, lower address reserve widthDIV8*maxStackAlloc, nonwrapping stack upper bound, lookup k Word(base+bytes*stackSpace), complete original five-factor separated heap. Native source/target share same positive width and Type0 configuration/FFI carriers. Canonical imported finite-map state and genuine same-module broad/exact witness; code remains Spt. Native bitmaps++buffer followed by map Word equals original MAP Word bitmaps++MAP Word buffer, combined list length equals original length sum. Bool domains rendered as true predicates, ordinary HOL lists use List. No extra base/bitmap/lookup/safety/success/heap premise; all facts extracted from final fullstateRel conjunct, invalid lookup constructors contradicted. Literal original proof replay and native kernel proof checked; neither new evaluator nor real arithmetic involved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/StrongEvenLabels.lean",
+    "lean_name": "evenLabels_ends_imp_strong",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "even_labels_ends_imp_strong",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5261-5276, fresh full theorem/type capture in lab_to_target_strong_even_labels_probe.out. Retains forall arbitrary pos/native code and exactly source three conjunctive guards even_labels pos code, EVERY sec_ends_with_label code, EVERY sec_label_zero code, implies full even_labels_strong pos code. Sole words_as_type_indexed_bitvec dimension translation, native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and fixed word8 bytes preserved; source EVERY is literal forall membership. Kernel full structural code and line induction derives even section-end position from weak predicate at final Label and original zero annotation, using only outer structural tail induction hypothesis; no extra terminal-evenness, success, output, encoding, clock or callback premise. Reviewed native SectionEnd reverse/nonempty predicate implements guarded LAST without any held total HD/EL dependency. Two local untagged helpers are documented Flapjack induction infrastructure, not independently named HOL declarations. Six fresh original/native observations capture mixed annotation/physical-byte behavior with duplicate section IDs and mismatched label metadata, all three guards and strong output, independent counterexamples omitting each guard, widths1/8/80 and large positions; full arbitrary-width consumer kernel checked. No production operation changes; full loop/pass/end-to-end remains open. Oracle regressions do not prove HOL-to-Lean equivalence."
   }
 ]

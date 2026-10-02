@@ -1,0 +1,11 @@
+even_labels_ends_imp_strong=∀(pos :num) (code :α sec list).
+  even_labels pos code ∧ EVERY (sec_ends_with_label :α sec -> bool) code ∧
+  EVERY (sec_label_zero :α sec -> bool) code ⇒
+  even_labels_strong pos code
+even_labels_ends_imp_strong_types=(pos :num)::num;(code :α sec list)::α sec list;
+mixed_three_guards=T
+weak_guard_needed=T
+ending_guard_needed=T
+zero_guard_needed=T
+width1_empty=T
+width80_large_position=T
