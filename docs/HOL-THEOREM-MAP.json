@@ -52222,5 +52222,18 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (219-229): gen_sizes <> [] /\\ allo <=+ endh - trig with theWord (s ' _) via wordSemTheWord and holFapply; s is the canonical HolFiniteMapExact store binder (bare relation entry). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileGetVars.lean",
+    "lean_name": "ssaReconcileGetVarsLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_reconcile_get_vars_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (58wf), original lines6524-6549: forall source list/current SSA tree/native WordSem state, original ALL_DISTINCT and per-member lookup existence imply existential get_vars of MAP(THE lookup), exact LENGTH and all in-bounds EL lookup equations. List/Nodup/MEM and sptree num_map stay literal; exact holThe and holEl retain missing/out-of-bounds unspecified values, no premise requiring SSA lookup success added. Imported canonical native WordSem carrier only fpRegs/store are finite-support maps, locals/current SSA are trees; same-module non-vacuous full toBroad/ofBroad carrier roundtrip. Standard positive BitVec width and universe-zero code/FFI host translation, no changed quantifier/premise/conclusion. Native getVars/getVar list induction kernel checked; distinctness retained though unused beyond induction."
   }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives

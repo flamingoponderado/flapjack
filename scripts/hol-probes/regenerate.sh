@@ -4009,3 +4009,7 @@ run_probe word_cse_load_evaluation_probeScript.sml word_cse_load_evaluation_prob
 run_probe target_sem_machine_sem_probeScript.sml target_sem_machine_sem_probe.out \
   ts_terminate_clause ts_diverge_clause ts_fail_clause \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe ssa_reconcile_get_vars_probeScript.sml ssa_reconcile_get_vars_probe.out \
+  ssa_reconcile_get_vars_original_proof ssa_reconcile_get_vars_original_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

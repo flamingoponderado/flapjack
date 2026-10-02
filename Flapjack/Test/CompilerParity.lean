@@ -1,3 +1,4 @@
+import Flapjack.Test.SSAReconcileGetVars
 import Flapjack.Test.RiscVBranchPolarity
 import Flapjack.Test.LabImplicitSectionZero
 import Flapjack.Test.TargetSemMachineSemParity
