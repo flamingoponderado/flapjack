@@ -1,3 +1,4 @@
+import Flapjack.Test.BalancedMapDoubleRParity
 import Flapjack.Test.BalancedMapSingleRParity
 import Flapjack.Test.BalancedMapNullParity
 import Flapjack.Test.BalancedMapInvariantEqParity

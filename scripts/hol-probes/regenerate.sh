@@ -4676,3 +4676,7 @@ run_probe ssa_locals_force_rename_probeScript.sml ssa_locals_force_rename_probe.
 run_probe ssa_cc_trans_correct_move_probeScript.sml ssa_cc_trans_correct_move_probe.out \
   move_full move_type_priority move_type_moves move_type_st move_type_cst move_type_ssa move_type_next move_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe balanced_map_doubleR_probeScript.sml balanced_map_doubleR_probe.out \
+  bmdr_full bmdr_tree bmdr_invariant bmdr_lookup0 bmdr_lookup1 bmdr_lookup2 bmdr_badsize \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

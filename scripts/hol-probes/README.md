@@ -5252,3 +5252,14 @@ and missing-read errors retain the original exemption. Bounded list observations
 use the existing guarded holEl translation. This is a theorem specialization
 capture, not an isolated tactic replay or equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cc_trans_correct_move_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Full double-right rotation correctness
+
+`balanced_map_doubleR_probeScript.sml` replays the entire original local
+`doubleR_thm` proof and its literal local antisymmetry, balanced_lem4,
+structural-size and map prerequisites. Equivalent batch names are qualified;
+the closed typed result retains all nine premises and both conclusions.
+Defined double rotation, invariant, three key lookups and invalid cached-size
+rejection are original observations. `BalancedMapDoubleRParity` kernel-checks
+both full native conclusions and derives the three semantic lookups. The
+inner Bin is proved from original premises, with no missing-output assumption.

@@ -59419,5 +59419,16 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b author source comparison 2026-10-02 HOL1181-1210: full nine premise conjuncts and both invariant and map equality conclusions, generic homogeneous comparator/key and independent payload, cached size and all children unchanged. Only canonical finite-support representation of observed to_fmap is qualified; union precedence and update at comparator equivalence class preserved. Native proof derives ordering and missing child lookup rather than assuming post-state/map facts. Uses only original specified singleR Bin clause of chosen whole function; no missing-case output or cross-prover choice equivalence claim. Complete original proof and required local prerequisite proofs replayed with no hypotheses; concrete invariant and all three key observations kernel-checked."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/DoubleR.lean",
+    "lean_name": "doubleRThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "doubleR_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL1213-1266: complete original nine premise conjuncts and BOTH invariant plus semantic finite-map union/update equality. Generic original keys/payload/comparator/cached sizes/children retained. Original premises themselves rule out inner Tip; specified chosen-function doubleR Bin/Bin clause only, no unspecified output, extra target premise, universal context assumption or cross-prover choice equivalence. Three distinct comparator equivalence classes and absent child lookups derived from goodCmp/keyOrdered, not assumed. Canonical to_fmap observation representation only, root update and left-biased union precedence retained. Entire literal original local theorem proof with antisymmetry/arithmetic/structural/map prerequisites replayed hyp=[]; complete generic kernel proof and both-conclusion/all-three-key fixtures."
   }
 ]
