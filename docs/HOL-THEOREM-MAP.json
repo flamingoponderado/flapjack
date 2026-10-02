@@ -65181,5 +65181,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-shifts): original stack_removeProofScript.sml1037-1074 evaluate_upshift/evaluate_downshift. Identical sole word-register lookup premise, arbitrary count including zero, actual recursive native Add/Sub evaluation, NONE result and whole state unchanged except canonical register update. Positive-width word and canonical finite-support regs/fpRegs/store translations only. Seq clock clamp is proved unchanged. No dimension/safety/state-relation restriction or supplied target evaluation. Same-module imported-carrier roundtrip witness. Inherited reals_as_rational_cuts assumption from faithful total evaluator, no local real operation. Fresh original literal proof replays recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackHeap.lean",
+    "lean_name": "wordListAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-stack-heap): original stack_removeProofScript.sml49-56 word_list_APPEND. Same arbitrary first/second lists, payload type, base word and whole assertion equality; original prefix length address offset uses bytes_in_word times n2w length. Positive-width word translation only, no bounds/heap validity/injectivity premise. Original word_list_def and generic separation associativity used unchanged. Native wordListNth and full-relation slot-read extraction are deliberately untagged source-local compiler-case factoring, not substitutions for this port. Fresh literal original append proof replay recorded."
   }
 ]
