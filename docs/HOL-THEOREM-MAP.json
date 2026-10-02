@@ -67551,5 +67551,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison original1244-1248 and prog_comp_def224-226: complete unconditional function equality over all jump/off/k and name/program pairs. Independent arbitrary section name beta preserved by Name:Type, no numeric-label specialization. Same native HolProg constructors and comp, identical pair projection/constructor equation; positive type-indexed words is the only qualifier. No evaluator, state relation, finite-map or reals carrier appears. Fresh original literal proof replay PASS, two rows capture the full original function equality and proof success; Install/fullpass assembly not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemorySubset.lean",
+    "lean_name": "memoryFun2SetSubset",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "memory_fun2set_SUBSET",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison original1473-1478 and full generic STAR/memory_def/fun2set_def/SPLIT_def. Same arbitrary independent address/value carriers, source and target functions/domain sets and arbitrary frame predicate. Full separated source graph assertion on target graph proves entire source domain subset target domain; predicate-set inclusion is forall address/domain implies targetDomain. No extra finite-domain, word-width, alignment, nonempty, target-value-equality or evaluator premise. Original local memoryHOL and actual full generic SetSep definitions retained, no representation qualifiers/reals dependencies. Fresh complete literal original proof replay PASS, two rows capture the full generic domain-inclusion statement and proof success; StoreConsts/fullpass assembly not claimed."
   }
 ]

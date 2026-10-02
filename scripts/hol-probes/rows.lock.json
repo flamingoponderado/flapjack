@@ -5906,6 +5906,12 @@
       "sha256": "7a0851c3acef65dd56c49168ea1f1a934d9257097ebbea7a2bfb0d9c364dc770"
     },
     {
+      "bytes": 101,
+      "out": "stack_remove_memory_subset_probe.out",
+      "rows": 2,
+      "sha256": "601567e987fd727345908df2ba68fb30e6baf891f4aa418d2cc607ad65a31d9a"
+    },
+    {
       "bytes": 617,
       "out": "stack_remove_memoryloads_probe.out",
       "rows": 6,

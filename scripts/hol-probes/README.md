@@ -6206,3 +6206,5 @@ sptree_wf_definition_probeScript.sml captures the full original wf_def and254 co
 `stack_remove_comp_call_return_handler_probeScript.sml` replays the original returning prefix and handler-SOME branch tactics, omitting the handler-NONE branch and its selector for the fixed AST option. Full source-guarded callee/return/exception-body IHs retained; original local erased lookup/clock helpers recreated, no full `comp_correct` assumed. Two rows record the scoped statement and proof success.
 
 `stack_remove_prog_comp_eta_probeScript.sml` replays the complete literal original function-equality proof, retaining arbitrary section names and all compiler parameters. Two rows capture its full statement and proof success; no full pass correctness theorem is assumed.
+
+`stack_remove_memory_subset_probeScript.sml` replays the complete literal original generic separated-graph domain inclusion proof. Arbitrary address/value types, functions/domains and frame retained. Two rows capture the full statement and proof success.
