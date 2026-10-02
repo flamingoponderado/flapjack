@@ -1,0 +1,14 @@
+top_full_word_to_stack_good_code_labels=⊢ ∀progs prog' fs elabs bytes bs asm_conf. compile asm_conf F progs = (bytes,bs,fs,prog') ∧ word_good_code_labels progs elabs ⇒ stack_good_code_labels prog' elabs
+top_full_word_to_stack_good_handler_labels=⊢ ∀prog' prog fs bytes bs asm_conf. EVERY (λ(n,m,pp). word_good_handlers n pp) prog ⇒ compile asm_conf F prog = (bytes,bs,fs,prog') ⇒ stack_good_handler_labels prog'
+top_empty=T
+top_self=T
+top_missing=T
+top_external=T
+top_duplicates=T
+top_owned=T
+top_wrong_owner=T
+top_tail_missing=T
+top_threaded=T
+top_width_one=T
+top_raise_owned=T
+top_store_owned=T
