@@ -1,10 +1,11 @@
 import Flapjack.Test.StackSemGenericCodeLookupParity
 import Flapjack.Test.StackPropsStackLengthsParity
+import Flapjack.Test.TargetPropsIoEventsParity
+import Flapjack.Test.TargetPropsClockParity
 import Flapjack.Test.StackPropsSharedMemoryClockParity
 import Flapjack.Test.LabToTargetEncodingSimilarityParity
 import Flapjack.Test.LabToTargetPaddingSimilarityParity
 import Flapjack.Test.AsmPropsArithmeticPreservationParity
-import Flapjack.Test.TargetPropsClockParity
 import Flapjack.Test.StackRemoveStoreAddress
 import Flapjack.Test.StackRemoveStackAlloc
 import Flapjack.Test.StackRemoveStackAddress
