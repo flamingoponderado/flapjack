@@ -19,7 +19,7 @@ private theorem moveAuxLabels {width : Nat} [NeZero width]
     (moves : List (Sum Nat Nat × Sum Nat Nat)) (frame : Nat × Nat × Nat) :
     StackProps.extractLabels (wMoveAuxNative (width := width) moves frame) = [] := by
   induction moves with
-  | nil => rfl
+  | nil => simp only [wMoveAuxNative, StackProps.extractLabels]
   | cons xy rest ih =>
     cases rest with
     | nil => exact moveSingleLabels xy frame
@@ -68,9 +68,9 @@ private theorem instLabels {width : Nat} [NeZero width]
   all_goals try simp only [*]
   all_goals try simp only [stackLoadLabels]
   all_goals first
-    | exact write1Labels _ _ _ [] (fun _ => rfl)
-    | exact write2Labels _ _ _ [] (fun _ => write1Labels _ _ _ [] (fun _ => rfl))
-    | rfl
+    | exact write1Labels _ _ _ [] (fun _ => by simp only [StackProps.extractLabels])
+    | exact write2Labels _ _ _ [] (fun _ => write1Labels _ _ _ [] (fun _ => by simp only [StackProps.extractLabels]))
+    | simp only [StackProps.extractLabels]
 
 private theorem freeLabels {width : Nat} [NeZero width]
     (slots : Nat) (p : HolProg width) :
@@ -87,7 +87,7 @@ private theorem destLabels {width : Nat} [NeZero width]
     (dest : Option Nat) (args : List Nat) (frame : Nat × Nat × Nat) :
     StackProps.extractLabels (callDestNative (width := width) dest args frame).1 = [] := by
   cases dest with
-  | some _ => rfl
+  | some _ => simp only [callDestNative, StackProps.extractLabels]
   | none =>
     by_cases h : args.length = 0
     · simp [callDestNative, h, StackProps.extractLabels]
