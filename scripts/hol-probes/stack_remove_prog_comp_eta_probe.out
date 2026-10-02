@@ -1,0 +1,2 @@
+prog_comp_eta_statement=prog_comp = (λjump off k (n,p). (n,comp jump off k p))
+prog_comp_eta_proved=T

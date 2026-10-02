@@ -111,4 +111,62 @@ theorem producedAllocator_graphInputBound (tree : WordClashTree) :
       (cakeMkBij tree).nextNode tree := by
   exact graphInputBound_of_clashNames _ _ tree (producedAllocator_name_bound tree)
 
+/-- The produced native bijection's forward map is inverted by its reverse
+map. Untagged empty-input specialization of the existing native invariant. -/
+theorem mkBij_forward_inverse (tree : ClashTree) :
+    spInverts (mkBij tree).1 (mkBij tree).2.1 := by
+  rcases built : mkBijAux tree (.ln, .ln, 0) with ⟨forward, reverse, dimension⟩
+  have emptyInverse : spInverts (.ln : Spt Nat) .ln := by
+    intro key value found
+    simp [sptLookup] at found
+  have emptyDomain : sptDomain (.ln : Spt Nat) = (fun key => key < 0) := by
+    funext key
+    simp [sptDomain, sptLookup]
+  have invariants := mkBijAuxBij tree .ln .ln 0 forward reverse dimension
+    ⟨built, emptyInverse, emptyInverse, emptyDomain⟩
+  simpa only [mkBij, built] using invariants.1
+
+/-- Every source name is present in the constructed forward map. This derives
+the original domain premise needed for injectivity; no desired map is assumed.
+Untagged original-input specialization of mkBijAuxDomain. -/
+theorem mkBij_name_lookup (tree : ClashTree) (name : Nat) (belongs : inClashTree tree name) :
+    sptLookup name (mkBij tree).1 = some (Flapjack.spDefault (mkBij tree).1 name) := by
+  rcases built : mkBijAux tree (.ln, .ln, 0) with ⟨forward, reverse, dimension⟩
+  have domain := mkBijAuxDomain tree .ln .ln 0 forward reverse dimension built
+  have available : sptDomain forward name := by
+    rw [domain]
+    exact Or.inr belongs
+  simp only [mkBij, built]
+  cases found : sptLookup name forward with
+  | none => simp [sptDomain, found] at available
+  | some node => simp only [Flapjack.spDefault, found]
+
+/-- Constructed native decoding is injective on original source names, as
+required by native graph invariant preservation. Untagged domain discharge
+from the produced bijection, not an extra assumed injectivity condition. -/
+theorem mkBij_name_injective (tree : ClashTree) (left right : Nat)
+    (leftMember : inClashTree tree left) (rightMember : inClashTree tree right)
+    (same : Flapjack.spDefault (mkBij tree).1 left = Flapjack.spDefault (mkBij tree).1 right) :
+    left = right := by
+  have leftLookup := mkBij_name_lookup tree left leftMember
+  have rightLookup := mkBij_name_lookup tree right rightMember
+  have leftInverse := mkBij_forward_inverse tree left _ leftLookup
+  have rightInverse := mkBij_forward_inverse tree right _ rightLookup
+  rw [same] at leftInverse
+  exact Option.some.inj (leftInverse.symm.trans rightInverse)
+
+/-- The actual produced indexed decoder is injective on the original input
+names. The real codec and constructed native inverse discharge the condition;
+untagged initializer domain infrastructure. -/
+theorem producedAllocator_name_injective (tree : WordClashTree) (left right : Nat)
+    (leftMember : inClashTree (productionClashTreeToNative tree) left)
+    (rightMember : inClashTree (productionClashTreeToNative tree) right)
+    (same : cakeSpDefaultIndexed (cakeSpDefaultIndex (cakeMkBij tree).toAllocator) left =
+      cakeSpDefaultIndexed (cakeSpDefaultIndex (cakeMkBij tree).toAllocator) right) :
+    left = right := by
+  rw [tagDecoder_production, tagDecoder_production] at same
+  have injective := mkBij_name_injective (productionClashTreeToNative tree) left right leftMember rightMember
+  rw [mkBij_production] at injective
+  exact injective same
+
 end Flapjack.RegAlloc
