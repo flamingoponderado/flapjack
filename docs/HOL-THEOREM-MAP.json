@@ -53826,5 +53826,75 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol full source comparison 2026-10-02 (36ez.3.3), original161-222: arbitrary Boolean jump, signed word-pair bounds, Nat pointer and complete faithful HolProg. All34 constructors covered: Get/Set CurrHeap vs exact store_offset, OpCurrHeap register operands, exact free/alloc, StackStore/Load word_offset and signed offset_ok0 then native fallbacks, Load fallback first moves destination from pointer, arbitrary-access and size sequences exact parenthesization, Bitmap/StoreConsts complete lists/copy_loop and ignored optionalstub. Seq/If/Loop recurse on original subprograms, Call maps both option tuples preserving link register/labels/target; all16 wildcard constructors retained unchanged incl faithful MlString FFI and all native Inst payloads. Reuses canonical StackLang Overloads as sole tagged owner; aliases add no ports. Only positive BitVec width/NeZero dimension translation; no successful-pass/run, safety, result, postrelation or performance assumptions. sizeOf termination checked including nestedOption/tupleCall. Fresh original fulltype/definition and52 literal clause equations/native trees plus52kernel fixtures include signednegative/reversed bounds and wrapped offsets. Productionreplacement remains dependency-linked36ez.3; definition port alone is not pass/end-to-end correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticRegisterWrites.lean",
+    "lean_name": "ssaCcTransCorrectGet",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-wqr8: original resumed Get case, six original premises and complete Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion via transparent ssaSimulation. Native destination nextVarRename/setVar and source error/success branches; no added success, target eval or post-frame premise. Literal original exp_tac2 replay removes only discarded recursive-induction bookkeeping, no recursive IH in these primitive cases. Captured full specialized statements and six carrier types match native positive width/shared C F hosts, WordStoreHOL, WordLangExpHOL, Nat labels and Spt name sets. Only canonical imported fpRegs/store map translation, same-module roundtrip witness; standard words translation; inherited reals_as_rational_cuts boundary SOUNDNESS8. Other SSA correctness cases remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticRegisterWrites.lean",
+    "lean_name": "ssaCcTransCorrectLocValue",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-wqr8: original resumed LocValue case, six original premises and complete Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion via transparent ssaSimulation. Native destination nextVarRename/setVar and source error/success branches; no added success, target eval or post-frame premise. Literal original exp_tac2 replay removes only discarded recursive-induction bookkeeping, no recursive IH in these primitive cases. Captured full specialized statements and six carrier types match native positive width/shared C F hosts, WordStoreHOL, WordLangExpHOL, Nat labels and Spt name sets. Only canonical imported fpRegs/store map translation, same-module roundtrip witness; standard words translation; inherited reals_as_rational_cuts boundary SOUNDNESS8. Other SSA correctness cases remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticRegisterWrites.lean",
+    "lean_name": "ssaCcTransCorrectAssign",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-wqr8: original resumed Assign case, six original premises and complete Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion via transparent ssaSimulation. Native destination nextVarRename/setVar and source error/success branches; no added success, target eval or post-frame premise. Literal original exp_tac2 replay removes only discarded recursive-induction bookkeeping, no recursive IH in these primitive cases. Captured full specialized statements and six carrier types match native positive width/shared C F hosts, WordStoreHOL, WordLangExpHOL, Nat labels and Spt name sets. Only canonical imported fpRegs/store map translation, same-module roundtrip witness; standard words translation; inherited reals_as_rational_cuts boundary SOUNDNESS8. Other SSA correctness cases remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticStateWrites.lean",
+    "lean_name": "ssaCcTransCorrectSet",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source review flapjack-brhb: genuine original resumed Set case8232/8236, original six premises/full Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion via transparent ssaSimulation. Actual native expression/getVar failures, forbidden Set store names, nonword Store address and memory-domain failure/success preserved. Accepted expression/getVar transport derives target execution; no extra success/target-eval/output-frame premise. Literal original case proofs and local prerequisites replayed, omitting only discarded recursive IH bookkeeping for primitive Set, Store proof retained with expr binder substitution. Captured full2statements/6types match original shared positive-width/native hosts, expression/store-name/Nat/Spt carriers. Only imported fpRegs/store map translation and standard words translation; same-module canonical roundtrip witness; inherits reals_as_rational_cuts SOUNDNESS8. Full semantic SSA assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticStateWrites.lean",
+    "lean_name": "ssaCcTransCorrectStore",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source review flapjack-brhb: genuine original resumed Store case8232/8236, original six premises/full Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion via transparent ssaSimulation. Actual native expression/getVar failures, forbidden Set store names, nonword Store address and memory-domain failure/success preserved. Accepted expression/getVar transport derives target execution; no extra success/target-eval/output-frame premise. Literal original case proofs and local prerequisites replayed, omitting only discarded recursive IH bookkeeping for primitive Set, Store proof retained with expr binder substitution. Captured full2statements/6types match original shared positive-width/native hosts, expression/store-name/Nat/Spt carriers. Only imported fpRegs/store map translation and standard words translation; same-module canonical roundtrip witness; inherits reals_as_rational_cuts SOUNDNESS8. Full semantic SSA assembly remains open."
   }
 ]
