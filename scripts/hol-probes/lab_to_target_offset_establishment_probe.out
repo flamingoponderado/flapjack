@@ -1,0 +1,23 @@
+enc_lines_again_simp_offset_ok=∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+    (enc :α asm -> word8 list) (lines :α line list) (res :α line list)
+    (ok :bool).
+  enc_lines_again_simp labs ffis pos enc lines = (res,ok) ⇒
+  lines_offset_ok labs ffis pos res
+enc_lines_again_simp_offset_ok_types=(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(enc :α asm -> word8 list)::α asm -> word8 list;(lines :α line list)::α line list;(res :α line list)::α line list;(ok :bool)::bool;
+enc_secs_again_offset_ok=∀(pos :num) (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+    (enc :α asm -> word8 list) (ls :α sec list) (res :α sec list) (ok :bool).
+  enc_secs_again pos labs ffis enc ls = (res,ok) ⇒
+  (offset_ok labs ffis pos res :bool)
+enc_secs_again_offset_ok_types=(pos :num)::num;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(enc :α asm -> word8 list)::α asm -> word8 list;(ls :α sec list)::α sec list;(res :α sec list)::α sec list;(ok :bool)::bool;
+growth_false_full_tuple=T
+growth_false_offset_ok=T
+bad_input_repaired=T
+nongrowth_true_full_tuple=T
+same_word_malformed_unchanged=T
+sections_false_full_tuple=T
+sections_false_offset_ok=T
+bad_old_position=T
+empty_width1=T
+empty_sections=T
+all_opcodes_false_flag=T
+large_width80_false=T

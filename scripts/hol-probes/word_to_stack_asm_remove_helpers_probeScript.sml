@@ -1,0 +1,141 @@
+load "preamble"; load "word_to_stackProofTheory";
+open HolKernel Parse bossLib preamble word_to_stackProofTheory word_to_stackTheory stackPropsTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = numLib.temp_prefer_num();
+fun theoremRow label th = (if null(hyp th) then () else raise Fail "open premise"; print(label ^ "="); print_thm th; print "\n");
+val call_dest_stack_asm_remove = prove(``  (FST k)+1 < c.reg_count - LENGTH c.avoid_regs ∧
+  call_dest d a k = (q0,d') ⇒
+  stack_asm_remove c q0 ∧
+  case d' of
+    INR r => r ≤ (FST k)+1
+  | INL l => T``,
+  Cases_on`d`>>EVAL_TAC>>rw[]>>
+  EVAL_TAC>>
+  pairarg_tac>>fs[]>>
+  pop_assum mp_tac>>PairCases_on`k`>>
+  EVAL_TAC>>rw[]>>
+  EVAL_TAC>>rw[]);
+val _ = theoremRow "arh_call_dest_stack_asm_remove" call_dest_stack_asm_remove;
+val wLive_stack_asm_remove = prove(``  (FST kf)+1 < c.reg_count - LENGTH c.avoid_regs ∧
+  wLive q bs kf = (q1,bs') ⇒
+  stack_asm_remove c q1``,
+  PairCases_on`kf`>>
+  fs[wLive_def]>>
+  rw[]>-EVAL_TAC>>
+  rpt(pairarg_tac>>fs[])>>
+  rveq>>EVAL_TAC>>fs[]);
+val _ = theoremRow "arh_wLive_stack_asm_remove" wLive_stack_asm_remove;
+val stack_move_stack_asm_remove = prove(``  ∀n start offset i p.
+  reg_name i c ⇒
+  (stack_asm_remove c (stack_move n start offset i p) ⇔ stack_asm_remove c p)``,
+  Induct>>
+  rw[stack_move_def,stack_asm_remove_def]);
+val _ = theoremRow "arh_stack_move_stack_asm_remove" stack_move_stack_asm_remove;
+val copy_ret_aux_stack_asm_remove = prove(``  ∀k f n.
+  reg_name k c ⇒
+  stack_asm_remove c (copy_ret_aux k f n)``,
+  ho_match_mp_tac copy_ret_aux_ind>>
+  rw[]>>simp[Once copy_ret_aux_def]>>rw[]>>
+  simp[stack_asm_remove_def,stackLangTheory.list_Seq_def]);
+val _ = theoremRow "arh_copy_ret_aux_stack_asm_remove" copy_ret_aux_stack_asm_remove;
+val copy_ret_stack_asm_remove = prove(``  reg_name (FST kf) c ⇒
+  (stack_asm_remove c (copy_ret F b kf vs kont) ⇔ stack_asm_remove c kont)``,
+  PairCases_on`kf`>>rw[copy_ret_F]>>
+  simp[stack_asm_remove_def,SeqStackFree_def,copy_ret_aux_stack_asm_remove]);
+val _ = theoremRow "arh_copy_ret_stack_asm_remove" copy_ret_stack_asm_remove;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "arh_1_80_dest_direct" ``stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (SOME 1180591620717411303424) [] (4,1180591620717411303424,0)) : 80 stackLang$prog)``;
+val _ = out "arh_1_80_dest_empty" ``stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [] (4,1180591620717411303424,0)) : 80 stackLang$prog)``;
+val _ = out "arh_1_80_dest_reg" ``stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [2;4] (4,1180591620717411303424,0)) : 80 stackLang$prog)``;
+val _ = out "arh_1_80_dest_spill" ``stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [2;1180591620717411303424] (4,1180591620717411303424,0)) : 80 stackLang$prog)``;
+val _ = out "arh_1_80_move_0_0" ``(stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 0 1180591620717411303424 9 4 (Skip : 80 stackLang$prog)) = stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 80 stackLang$prog))``;
+val _ = out "arh_1_80_move_0_1" ``(stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 0 1180591620717411303424 9 4 (Get 6 CurrHeap : 80 stackLang$prog)) = stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 80 stackLang$prog))``;
+val _ = out "arh_1_80_move_1_0" ``(stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 1 1180591620717411303424 9 4 (Skip : 80 stackLang$prog)) = stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 80 stackLang$prog))``;
+val _ = out "arh_1_80_move_1_1" ``(stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 1 1180591620717411303424 9 4 (Get 6 CurrHeap : 80 stackLang$prog)) = stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 80 stackLang$prog))``;
+val _ = out "arh_1_80_move_3_0" ``(stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 3 1180591620717411303424 9 4 (Skip : 80 stackLang$prog)) = stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 80 stackLang$prog))``;
+val _ = out "arh_1_80_move_3_1" ``(stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 3 1180591620717411303424 9 4 (Get 6 CurrHeap : 80 stackLang$prog)) = stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 80 stackLang$prog))``;
+val _ = out "arh_1_80_aux_0" ``stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 0 : 80 stackLang$prog)``;
+val _ = out "arh_1_80_aux_1" ``stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 1 : 80 stackLang$prog)``;
+val _ = out "arh_1_80_aux_3" ``stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 3 : 80 stackLang$prog)``;
+val _ = out "arh_1_80_ret_0_0" ``(stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F F (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Skip : 80 stackLang$prog)) = stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 80 stackLang$prog))``;
+val _ = out "arh_1_80_ret_0_1" ``(stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F F (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Get 6 CurrHeap : 80 stackLang$prog)) = stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 80 stackLang$prog))``;
+val _ = out "arh_1_80_ret_1_0" ``(stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F T (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Skip : 80 stackLang$prog)) = stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 80 stackLang$prog))``;
+val _ = out "arh_1_80_ret_1_1" ``(stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F T (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Get 6 CurrHeap : 80 stackLang$prog)) = stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 80 stackLang$prog))``;
+val _ = out "arh_80_1_dest_direct" ``stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (SOME 1180591620717411303424) [] (4,1180591620717411303424,0)) : 1 stackLang$prog)``;
+val _ = out "arh_80_1_dest_empty" ``stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [] (4,1180591620717411303424,0)) : 1 stackLang$prog)``;
+val _ = out "arh_80_1_dest_reg" ``stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [2;4] (4,1180591620717411303424,0)) : 1 stackLang$prog)``;
+val _ = out "arh_80_1_dest_spill" ``stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [2;1180591620717411303424] (4,1180591620717411303424,0)) : 1 stackLang$prog)``;
+val _ = out "arh_80_1_move_0_0" ``(stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 0 1180591620717411303424 9 4 (Skip : 1 stackLang$prog)) = stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 1 stackLang$prog))``;
+val _ = out "arh_80_1_move_0_1" ``(stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 0 1180591620717411303424 9 4 (Get 6 CurrHeap : 1 stackLang$prog)) = stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 1 stackLang$prog))``;
+val _ = out "arh_80_1_move_1_0" ``(stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 1 1180591620717411303424 9 4 (Skip : 1 stackLang$prog)) = stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 1 stackLang$prog))``;
+val _ = out "arh_80_1_move_1_1" ``(stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 1 1180591620717411303424 9 4 (Get 6 CurrHeap : 1 stackLang$prog)) = stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 1 stackLang$prog))``;
+val _ = out "arh_80_1_move_3_0" ``(stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 3 1180591620717411303424 9 4 (Skip : 1 stackLang$prog)) = stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 1 stackLang$prog))``;
+val _ = out "arh_80_1_move_3_1" ``(stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 3 1180591620717411303424 9 4 (Get 6 CurrHeap : 1 stackLang$prog)) = stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 1 stackLang$prog))``;
+val _ = out "arh_80_1_aux_0" ``stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 0 : 1 stackLang$prog)``;
+val _ = out "arh_80_1_aux_1" ``stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 1 : 1 stackLang$prog)``;
+val _ = out "arh_80_1_aux_3" ``stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 3 : 1 stackLang$prog)``;
+val _ = out "arh_80_1_ret_0_0" ``(stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F F (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Skip : 1 stackLang$prog)) = stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 1 stackLang$prog))``;
+val _ = out "arh_80_1_ret_0_1" ``(stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F F (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Get 6 CurrHeap : 1 stackLang$prog)) = stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 1 stackLang$prog))``;
+val _ = out "arh_80_1_ret_1_0" ``(stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F T (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Skip : 1 stackLang$prog)) = stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 1 stackLang$prog))``;
+val _ = out "arh_80_1_ret_1_1" ``(stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F T (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Get 6 CurrHeap : 1 stackLang$prog)) = stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 1 stackLang$prog))``;
+val _ = out "arh_2_64_dest_direct" ``stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (SOME 1180591620717411303424) [] (4,1180591620717411303424,0)) : 64 stackLang$prog)``;
+val _ = out "arh_2_64_dest_empty" ``stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [] (4,1180591620717411303424,0)) : 64 stackLang$prog)``;
+val _ = out "arh_2_64_dest_reg" ``stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [2;4] (4,1180591620717411303424,0)) : 64 stackLang$prog)``;
+val _ = out "arh_2_64_dest_spill" ``stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [2;1180591620717411303424] (4,1180591620717411303424,0)) : 64 stackLang$prog)``;
+val _ = out "arh_2_64_move_0_0" ``(stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 0 1180591620717411303424 9 4 (Skip : 64 stackLang$prog)) = stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 64 stackLang$prog))``;
+val _ = out "arh_2_64_move_0_1" ``(stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 0 1180591620717411303424 9 4 (Get 6 CurrHeap : 64 stackLang$prog)) = stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 64 stackLang$prog))``;
+val _ = out "arh_2_64_move_1_0" ``(stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 1 1180591620717411303424 9 4 (Skip : 64 stackLang$prog)) = stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 64 stackLang$prog))``;
+val _ = out "arh_2_64_move_1_1" ``(stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 1 1180591620717411303424 9 4 (Get 6 CurrHeap : 64 stackLang$prog)) = stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 64 stackLang$prog))``;
+val _ = out "arh_2_64_move_3_0" ``(stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 3 1180591620717411303424 9 4 (Skip : 64 stackLang$prog)) = stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 64 stackLang$prog))``;
+val _ = out "arh_2_64_move_3_1" ``(stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 3 1180591620717411303424 9 4 (Get 6 CurrHeap : 64 stackLang$prog)) = stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 64 stackLang$prog))``;
+val _ = out "arh_2_64_aux_0" ``stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 0 : 64 stackLang$prog)``;
+val _ = out "arh_2_64_aux_1" ``stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 1 : 64 stackLang$prog)``;
+val _ = out "arh_2_64_aux_3" ``stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 3 : 64 stackLang$prog)``;
+val _ = out "arh_2_64_ret_0_0" ``(stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F F (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Skip : 64 stackLang$prog)) = stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 64 stackLang$prog))``;
+val _ = out "arh_2_64_ret_0_1" ``(stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F F (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Get 6 CurrHeap : 64 stackLang$prog)) = stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 64 stackLang$prog))``;
+val _ = out "arh_2_64_ret_1_0" ``(stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F T (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Skip : 64 stackLang$prog)) = stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 64 stackLang$prog))``;
+val _ = out "arh_2_64_ret_1_1" ``(stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F T (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Get 6 CurrHeap : 64 stackLang$prog)) = stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 64 stackLang$prog))``;
+val _ = out "arh_64_2_dest_direct" ``stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (SOME 1180591620717411303424) [] (4,1180591620717411303424,0)) : 2 stackLang$prog)``;
+val _ = out "arh_64_2_dest_empty" ``stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [] (4,1180591620717411303424,0)) : 2 stackLang$prog)``;
+val _ = out "arh_64_2_dest_reg" ``stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [2;4] (4,1180591620717411303424,0)) : 2 stackLang$prog)``;
+val _ = out "arh_64_2_dest_spill" ``stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [2;1180591620717411303424] (4,1180591620717411303424,0)) : 2 stackLang$prog)``;
+val _ = out "arh_64_2_move_0_0" ``(stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 0 1180591620717411303424 9 4 (Skip : 2 stackLang$prog)) = stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 2 stackLang$prog))``;
+val _ = out "arh_64_2_move_0_1" ``(stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 0 1180591620717411303424 9 4 (Get 6 CurrHeap : 2 stackLang$prog)) = stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 2 stackLang$prog))``;
+val _ = out "arh_64_2_move_1_0" ``(stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 1 1180591620717411303424 9 4 (Skip : 2 stackLang$prog)) = stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 2 stackLang$prog))``;
+val _ = out "arh_64_2_move_1_1" ``(stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 1 1180591620717411303424 9 4 (Get 6 CurrHeap : 2 stackLang$prog)) = stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 2 stackLang$prog))``;
+val _ = out "arh_64_2_move_3_0" ``(stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 3 1180591620717411303424 9 4 (Skip : 2 stackLang$prog)) = stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 2 stackLang$prog))``;
+val _ = out "arh_64_2_move_3_1" ``(stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 3 1180591620717411303424 9 4 (Get 6 CurrHeap : 2 stackLang$prog)) = stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 2 stackLang$prog))``;
+val _ = out "arh_64_2_aux_0" ``stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 0 : 2 stackLang$prog)``;
+val _ = out "arh_64_2_aux_1" ``stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 1 : 2 stackLang$prog)``;
+val _ = out "arh_64_2_aux_3" ``stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 3 : 2 stackLang$prog)``;
+val _ = out "arh_64_2_ret_0_0" ``(stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F F (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Skip : 2 stackLang$prog)) = stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 2 stackLang$prog))``;
+val _ = out "arh_64_2_ret_0_1" ``(stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F F (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Get 6 CurrHeap : 2 stackLang$prog)) = stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 2 stackLang$prog))``;
+val _ = out "arh_64_2_ret_1_0" ``(stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F T (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Skip : 2 stackLang$prog)) = stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 2 stackLang$prog))``;
+val _ = out "arh_64_2_ret_1_1" ``(stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F T (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Get 6 CurrHeap : 2 stackLang$prog)) = stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 2 stackLang$prog))``;
+val _ = out "arh_8_8_dest_direct" ``stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (SOME 1180591620717411303424) [] (4,1180591620717411303424,0)) : 8 stackLang$prog)``;
+val _ = out "arh_8_8_dest_empty" ``stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [] (4,1180591620717411303424,0)) : 8 stackLang$prog)``;
+val _ = out "arh_8_8_dest_reg" ``stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [2;4] (4,1180591620717411303424,0)) : 8 stackLang$prog)``;
+val _ = out "arh_8_8_dest_spill" ``stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(call_dest (NONE) [2;1180591620717411303424] (4,1180591620717411303424,0)) : 8 stackLang$prog)``;
+val _ = out "arh_8_8_move_0_0" ``(stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 0 1180591620717411303424 9 4 (Skip : 8 stackLang$prog)) = stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 8 stackLang$prog))``;
+val _ = out "arh_8_8_move_0_1" ``(stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 0 1180591620717411303424 9 4 (Get 6 CurrHeap : 8 stackLang$prog)) = stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 8 stackLang$prog))``;
+val _ = out "arh_8_8_move_1_0" ``(stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 1 1180591620717411303424 9 4 (Skip : 8 stackLang$prog)) = stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 8 stackLang$prog))``;
+val _ = out "arh_8_8_move_1_1" ``(stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 1 1180591620717411303424 9 4 (Get 6 CurrHeap : 8 stackLang$prog)) = stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 8 stackLang$prog))``;
+val _ = out "arh_8_8_move_3_0" ``(stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 3 1180591620717411303424 9 4 (Skip : 8 stackLang$prog)) = stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 8 stackLang$prog))``;
+val _ = out "arh_8_8_move_3_1" ``(stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (stack_move 3 1180591620717411303424 9 4 (Get 6 CurrHeap : 8 stackLang$prog)) = stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 8 stackLang$prog))``;
+val _ = out "arh_8_8_aux_0" ``stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 0 : 8 stackLang$prog)``;
+val _ = out "arh_8_8_aux_1" ``stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 1 : 8 stackLang$prog)``;
+val _ = out "arh_8_8_aux_3" ``stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret_aux 4 1180591620717411303424 3 : 8 stackLang$prog)``;
+val _ = out "arh_8_8_ret_0_0" ``(stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F F (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Skip : 8 stackLang$prog)) = stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 8 stackLang$prog))``;
+val _ = out "arh_8_8_ret_0_1" ``(stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F F (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Get 6 CurrHeap : 8 stackLang$prog)) = stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 8 stackLang$prog))``;
+val _ = out "arh_8_8_ret_1_0" ``(stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F T (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Skip : 8 stackLang$prog)) = stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Skip : 8 stackLang$prog))``;
+val _ = out "arh_8_8_ret_1_1" ``(stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (copy_ret F T (4,1180591620717411303424,ARB:num) [1;2;3;4;5;6] (Get 6 CurrHeap : 8 stackLang$prog)) = stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (Get 6 CurrHeap : 8 stackLang$prog))``;
+val _ = out "arh_1_80_live_0" ``stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(wLive (LN,LN) (List [8w;2w],99) (4,0,3)) : 80 stackLang$prog)``;
+val _ = out "arh_1_80_live_7" ``stack_asm_remove ((c:1 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(wLive (LN,LN) (List [8w;2w],99) (4,7,3)) : 80 stackLang$prog)``;
+val _ = out "arh_80_1_live_0" ``stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(wLive (LN,LN) (List [8w;2w],99) (4,0,3)) : 1 stackLang$prog)``;
+val _ = out "arh_80_1_live_7" ``stack_asm_remove ((c:80 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(wLive (LN,LN) (List [8w;2w],99) (4,7,3)) : 1 stackLang$prog)``;
+val _ = out "arh_2_64_live_0" ``stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(wLive (LN,LN) (List [8w;2w],99) (4,0,3)) : 64 stackLang$prog)``;
+val _ = out "arh_2_64_live_7" ``stack_asm_remove ((c:2 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(wLive (LN,LN) (List [8w;2w],99) (4,7,3)) : 64 stackLang$prog)``;
+val _ = out "arh_64_2_live_0" ``stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(wLive (LN,LN) (List [8w;2w],99) (4,0,3)) : 2 stackLang$prog)``;
+val _ = out "arh_64_2_live_7" ``stack_asm_remove ((c:64 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(wLive (LN,LN) (List [8w;2w],99) (4,7,3)) : 2 stackLang$prog)``;
+val _ = out "arh_8_8_live_0" ``stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(wLive (LN,LN) (List [8w;2w],99) (4,0,3)) : 8 stackLang$prog)``;
+val _ = out "arh_8_8_live_7" ``stack_asm_remove ((c:8 asm$asm_config) with <|reg_count:=8;avoid_regs:=[0;1]|>) (FST(wLive (LN,LN) (List [8w;2w],99) (4,7,3)) : 8 stackLang$prog)``;
