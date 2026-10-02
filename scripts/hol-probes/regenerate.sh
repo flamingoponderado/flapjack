@@ -23,6 +23,9 @@ if [[ ! -f "$cake_dir/pancake/semantics/loopSemScript.sml" ]]; then
 fi
 
 probe_dir="$repo_dir/scripts/hol-probes"
+if [[ -z "${HOL_PROBE_ONLY:-}" || "$HOL_PROBE_ONLY" == export_riscv_defs.sml ]]; then
+  bash "$repo_dir/scripts/l3/regenerate-export.sh" --update
+fi
 tmp=$(mktemp)
 trap 'rm -f "$tmp"' EXIT
 

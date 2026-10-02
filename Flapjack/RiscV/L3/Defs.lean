@@ -29,14 +29,14 @@ def «write'NextFetch» (value : (Option TransferControl)) : (riscv_state → ri
 
 /-- HOL `riscv$setTrap` (`setTrap_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "setTrap_def"]
-def setTrap (arg0 : (ExceptionType × (Option (BitVec 64)))) : (riscv_state → riscv_state) :=
+noncomputable def setTrap (arg0 : (ExceptionType × (Option (BitVec 64)))) : (riscv_state → riscv_state) :=
   match arg0 with
   | (e, badaddr) =>
-  (fun (state : riscv_state) => («write'NextFetch» ((some ((TransferControl.Trap ((let r := ((let r := (holArb SynchronousTrap); { r with trap := ((fun (_eta1 : ExceptionType) => e)) r.trap })); { r with badaddr := ((fun (_eta1 : (Option (BitVec 64))) => badaddr)) r.badaddr })))))) state))
+  (fun (state : riscv_state) => («write'NextFetch» ((some ((TransferControl.Trap ((let r := ((let r := (Flapjack.holArb SynchronousTrap); { r with trap := ((fun (_eta1 : ExceptionType) => e)) r.trap })); { r with badaddr := ((fun (_eta1 : (Option (BitVec 64))) => badaddr)) r.badaddr })))))) state))
 
 /-- HOL `riscv$signalException` (`signalException_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "signalException_def"]
-def signalException (e : ExceptionType) : (riscv_state → riscv_state) :=
+noncomputable def signalException (e : ExceptionType) : (riscv_state → riscv_state) :=
   (fun (state : riscv_state) => (setTrap ((e, ((none : (Option (BitVec 64)))))) state))
 
 /-- HOL `riscv$gpr` (`gpr_def`), mechanically rendered from the elaborated HOL definition. -/

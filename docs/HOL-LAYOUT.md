@@ -160,7 +160,12 @@ The pinned external `HOL/src/n-bit/alignmentScript.sml` counterpart is
 
 The pinned external `HOL/examples/l3-machine-code/riscv/model/riscvScript.sml` (the L3-generated
 RISC-V model) counterpart is `Flapjack/RiscV/L3/` (`Types.lean`: every `Construct`/`Record`
-datatype and the `riscv_state` record).
+datatype and the `riscv_state` record; `Defs.lean`: the selected complete
+FP/state equations and their source dependency closure; `Support.lean`:
+library-rendering infrastructure sharing the canonical `Flapjack.holArb`).
+The full original dependency export is reproduced by
+`scripts/l3/regenerate-export.sh` from the pinned HOL. Generator self-consistency
+checks are distinct from source review and the finite original HOL probes.
 
 The pinned external `HOL/src/pred_set/src/pred_setScript.sml` counterpart is
 `Flapjack/Misc/PredSet.lean` (the left inverse `LINV_OPT`/`LINV`, sets as predicates).
