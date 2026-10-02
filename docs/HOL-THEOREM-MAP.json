@@ -66054,5 +66054,35 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison: pinned HOL wordsScript587-590 FCP i. i<n*dimindex(:a) AND w raw-index(i MOD dimindex(:a)). Lean uses the reviewed holFcpWord and same guard/modulo/index; positive input width implies modulo index in range so getLsbD matches raw FCP access. Independent HOL input/output word dimensions translate to inputWidth/outputWidth with separate NeZero obligations under words_as_type_indexed_bitvec. No count/bound premise or fixed-width restriction; output truncation and bits beyond requested repeats match. Sixteen fresh original full word numeric observations and kernel fixtures cover distinct widths, zero/large counts, truncation and zero filling."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StackSize.lean",
+    "lean_name": "compCorrectStackGetSize",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-stack-size): genuine full original comp_correct StackGetSize2295-2338. Exact original source evaluation/nonError/full state relation/regBound premises and existential clock/native target/usual result branch conclusion. Actual native move/sub/rightshift GetSize and leftshift/move/add SetSize evaluated with clock0. GetSize inverse shift no-wrap derived from original heap upper bound and source stackSpace bound; SetSize preserves original strict count<stack length guard and shifted register write, derives exact pointer reconstruction and all26 relation conjuncts. Source disabled/missing/Loc/out-of-bounds errors handled. No target-success, shift/no-wrap, pointer result or postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains Spt, stack List. Inherited reals_as_rational_cuts from faithful total evaluator, with no local real operation in either case. Fresh literal original HOL constructor replays PASS."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StackSize.lean",
+    "lean_name": "compCorrectStackSetSize",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-stack-size): genuine full original comp_correct StackSetSize2339-2377. Exact original source evaluation/nonError/full state relation/regBound premises and existential clock/native target/usual result branch conclusion. Actual native move/sub/rightshift GetSize and leftshift/move/add SetSize evaluated with clock0. GetSize inverse shift no-wrap derived from original heap upper bound and source stackSpace bound; SetSize preserves original strict count<stack length guard and shifted register write, derives exact pointer reconstruction and all26 relation conjuncts. Source disabled/missing/Loc/out-of-bounds errors handled. No target-success, shift/no-wrap, pointer result or postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains Spt, stack List. Inherited reals_as_rational_cuts from faithful total evaluator, with no local real operation in either case. Fresh literal original HOL constructor replays PASS."
   }
 ]

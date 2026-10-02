@@ -5472,3 +5472,11 @@ run_probe backend_restrict_zero_probeScript.sml backend_restrict_zero_probe.out 
 run_probe word_replicate_probeScript.sml word_replicate_probe.out \
   replicate_0 replicate_1 replicate_2 replicate_3 replicate_4 replicate_5 replicate_6 replicate_7 replicate_8 replicate_9 replicate_10 replicate_11 replicate_12 replicate_13 replicate_14 replicate_15 \
   "$hol_dir/src/n-bit/wordsScript.sml" "$hol_dir/src/n-bit"
+
+run_probe stack_remove_comp_get_size_probeScript.sml stack_remove_comp_get_size_probe.out \
+  cgs_statement cgs_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_set_size_probeScript.sml stack_remove_comp_set_size_probe.out \
+  css_statement css_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
