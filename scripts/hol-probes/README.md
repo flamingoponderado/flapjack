@@ -1,3 +1,5 @@
+`target_sequence_laws_probe.out` captures complete original sequence equality, exact tail and count monotonicity statements. Native generic proofs keep all initial and returned configurations/FFI states, arbitrary predicates and universal sequence/count indices.
+
 `target_search_const_probe.out` captures the complete clocked and unbounded original configuration-preservation statements. Native generic proofs preserve the entire target plus exact callee-saved list and pointer register, without validity or bounds hypotheses.
 
 `target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.

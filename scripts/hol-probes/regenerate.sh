@@ -4304,3 +4304,7 @@ run_probe target_next_interference_probeScript.sml target_next_interference_prob
 run_probe target_search_const_probeScript.sml target_search_const_probe.out \
   search_const_full_statement next_const_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_sequence_laws_probeScript.sml target_sequence_laws_probe.out \
+  sequence_eq_full_statement sequence_tail_full_statement count_mono_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

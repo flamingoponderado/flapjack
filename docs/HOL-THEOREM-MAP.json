@@ -56282,5 +56282,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 source370, full original statement freshly captured in target_search_const_probe.out: sole successful search/choice premise and exact three conjunctions target equality, callee_saved_regs equality, ptr_reg equality retained. Complete native MachineConfig and InterferenceApp, independent state/projection/FFIhost Type and positive width NeZero. Clocked induction covers normaloracle recursion and every literal halt/cache/MMIO/externalFFI branch; unbounded theorem obtains real clock witness from reviewed holOptionSome, no added existence/validity/bounds assumption. EL provenance through findNextInterference source112-211 uses reviewed total holEl of ffi_names, in-range element and sharedopaque holHdNil/holArb out of range; no concrete missingname fallback. Both whole generic proofs kernel checked79jobs0warnings. Noexecutedcompilerbodychange."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SequenceLaws.lean",
+    "lean_name": "interferenceAppSeqEq",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_app_seq_EQ",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source383: full original statement freshly captured in target_sequence_laws_probe.out compared literally. Initial whole next-interference result equality gives full sequence equality for every n; no additional context premise. Complete native MachineConfig/InterferenceApp/HolFfiState retained, independent state/projection/FFIhostσ Type and positive width NeZero. Native kernel checked79jobs0warnings; proofs use literal sequence recurrence or successor count and nonnegative Nat addition as original. EL provenance via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and sharedopaque holHdNil/holArb out of range, no concrete fallback/indexbounds premise. No executed compiler body change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SequenceLaws.lean",
+    "lean_name": "interferenceAppSeqTail",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_app_seq_tail",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source391: full original statement freshly captured in target_sequence_laws_probe.out compared literally. Exact successful first result gives every successor suffix at returned configuration, FFI and appPost; no changed clock or oracle. Complete native MachineConfig/InterferenceApp/HolFfiState retained, independent state/projection/FFIhostσ Type and positive width NeZero. Native kernel checked79jobs0warnings; proofs use literal sequence recurrence or successor count and nonnegative Nat addition as original. EL provenance via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and sharedopaque holHdNil/holArb out of range, no concrete fallback/indexbounds premise. No executed compiler body change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SequenceLaws.lean",
+    "lean_name": "interferenceCountMono",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_count_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source399: full original statement freshly captured in target_sequence_laws_probe.out compared literally. Arbitrary predicate count at m is at most count at m+i for all i,m; no presence or success assumption. Complete native MachineConfig/InterferenceApp/HolFfiState retained, independent state/projection/FFIhostσ Type and positive width NeZero. Native kernel checked79jobs0warnings; proofs use literal sequence recurrence or successor count and nonnegative Nat addition as original. EL provenance via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and sharedopaque holHdNil/holArb out of range, no concrete fallback/indexbounds premise. No executed compiler body change."
   }
 ]
