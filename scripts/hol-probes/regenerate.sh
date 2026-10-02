@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe stack_rawcall_collect_probeScript.sml stack_rawcall_collect_probe.out \
+  collect_bare_rejected collect_seq_zero collect_nested_rejected collect_duplicates \
+  "$cake_dir/compiler/backend/stack_rawcallScript.sml" "$cake_dir/compiler/backend"
 run_probe stack_rawcall_native_probeScript.sml stack_rawcall_native_probe.out \
   rawcall_equal rawcall_smaller rawcall_larger rawcall_missing rawcall_top_preserved rawcall_tail_handler_untouched rawcall_return_handler_compiled \
   "$cake_dir/compiler/backend/stack_rawcallScript.sml" "$cake_dir/compiler/backend"

@@ -1,6 +1,7 @@
 {
   "version": 1,
   "records": [
+    {"bytes": 130, "out": "stack_rawcall_collect_probe.out", "rows": 4, "sha256": "384b24b7b0f86f82f70e70838471dda0d76e7dff9e0a653992ce302da28014dc"},
     {"bytes": 453, "out": "stack_rawcall_native_probe.out", "rows": 7, "sha256": "e98d7b2e8288f69f4c895cd09a8fdd4bc0b6ec36a32aaa209b25df19d677394f"},
     {"bytes": 1837, "out": "afindi_probe.out", "rows": 20, "sha256": "410d0db64e6dd5f2f45d7e3b63fa5b19053e0721b389c835726e185391ed6ac6"},
     {"bytes": 308, "out": "alignment_align_probe.out", "rows": 12, "sha256": "bf38467ceac1ec6a2a3a350fe87d12306a11e06a3d74073602e6abef89d44d60"},

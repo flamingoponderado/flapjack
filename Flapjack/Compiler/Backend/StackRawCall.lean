@@ -6,6 +6,24 @@ obligation: the broad fuelled StackRawCall helper is not this definition. -/
 namespace Flapjack.Compiler.Backend.StackRawCall
 open Flapjack Flapjack.Compiler.Backend.StackLang
 
+/-- Original entry-allocation recognition. A bare StackAlloc is not an entry. -/
+@[hol "cakeml/compiler/backend/stack_rawcallScript.sml" "seq_stack_alloc_def"
+  (words_as_type_indexed_bitvec)]
+def seqStackAlloc {width : Nat} [NeZero width] : HolProg width → Option Nat
+  | .seq (.stackAlloc k) _ => some k
+  | _ => none
+
+/-- Original left-to-right information collection; later duplicate keys win. -/
+@[hol "cakeml/compiler/backend/stack_rawcallScript.sml" "collect_info_def"
+  (words_as_type_indexed_bitvec)]
+def collectInfo {width : Nat} [NeZero width] :
+    List (Nat × HolProg width) → Spt Nat → Spt Nat
+  | [], info => info
+  | (n, body) :: rest, info =>
+      collectInfo rest (match seqStackAlloc body with
+        | none => info
+        | some k => sptInsert n k info)
+
 /-- Original recognition of a stack release followed by a direct tail call. -/
 @[hol "cakeml/compiler/backend/stack_rawcallScript.sml" "dest_case_def"
   (words_as_type_indexed_bitvec)]

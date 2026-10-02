@@ -6128,3 +6128,5 @@ production list; generic proofs cover arbitrary handlers and unchanged states.
 `l3_raise_exception_probe.out` captures the original polymorphic type and assumption-free full result equation, preserving ARB and every returned state field through the conditional exception update. Defs/MMU/Exception kernel-checks that complete generic equation under only HOL intrinsic Nonempty; no chosen-default binder.
 
 `stack_rawcall_native_probe.out` captures seven complete original trees: three frame comparison branches, missing lookup, preserved top Seq, untouched NONE-return handler, and both compiled SOME-return continuations. Matching native kernel fixtures compare full trees. This is definition evidence, not production-path replacement or compiler correctness.
+
+`stack_rawcall_collect_probe.out` captures bare and nested allocation rejection, zero-sized entry acceptance, and all four queried map results for duplicate entries with an existing map. Native replay retains last-wins insertion; broad production frame collection remains a separate obligation.
