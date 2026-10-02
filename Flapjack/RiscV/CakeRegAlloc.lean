@@ -1639,12 +1639,66 @@ private theorem cakeDecDegStep_simpWl_of_ok (v : Nat) (state updated : CakeRaSta
           simp only [cakeDecDeg, hfailure, hstep]
           exact cakeDecDegStep_simpWl_of_ok v state updated hstep
 
-/-- `dec_degree`: decrement the degrees of all nodes adjacent to `x`. -/
+/-- `dec_degree`: decrement the degrees of all nodes adjacent to `x`.
+Native `adj_ls_sub` raises Subscript for a missing row; preserve that error
+through the pipeline latch instead of substituting an empty neighbour list.
+A previous failure remains latched and prevents further transitions. -/
 def cakeDecDegree (x : Nat) (state : CakeRaState) : CakeRaState :=
-  if x < state.dim then
-    (cakeAdjSub state.adjLists x).foldl (fun s v => cakeDecDeg v s) state
-  else
-    state
+  match state.failure with
+  | some _ => state
+  | none =>
+      if x < state.dim then
+        match state.adjLists.get x with
+        | some neighbours => neighbours.foldl (fun s v => cakeDecDeg v s) state
+        | none => { state with failure := some .subscript }
+      else
+        state
+
+/-- Neighbour degree updates preserve the production stack field,
+including a newly latched adjacency Subscript. -/
+@[simp] theorem cakeDecDegree_stack (node : Nat) (state : CakeRaState) :
+    (cakeDecDegree node state).stack = state.stack := by
+  have fold : ∀ (state : CakeRaState) (nodes : List Nat),
+      (nodes.foldl (fun state node => cakeDecDeg node state) state).stack = state.stack := by
+    intro state nodes
+    induction nodes generalizing state with
+    | nil => rfl
+    | cons node rest ih =>
+        simp only [List.foldl_cons]
+        rw [ih]
+        exact cakeDecDeg_stack node state
+  cases failure : state.failure with
+  | some error => simp [cakeDecDegree, failure]
+  | none =>
+      simp only [cakeDecDegree, failure]
+      split
+      · split
+        · exact fold _ _
+        · rfl
+      · rfl
+
+/-- Neighbour degree updates preserve the production simpWl field,
+including a newly latched adjacency Subscript. -/
+@[simp] theorem cakeDecDegree_simpWl (node : Nat) (state : CakeRaState) :
+    (cakeDecDegree node state).simpWl = state.simpWl := by
+  have fold : ∀ (state : CakeRaState) (nodes : List Nat),
+      (nodes.foldl (fun state node => cakeDecDeg node state) state).simpWl = state.simpWl := by
+    intro state nodes
+    induction nodes generalizing state with
+    | nil => rfl
+    | cons node rest ih =>
+        simp only [List.foldl_cons]
+        rw [ih]
+        exact cakeDecDeg_simpWl node state
+  cases failure : state.failure with
+  | some error => simp [cakeDecDegree, failure]
+  | none =>
+      simp only [cakeDecDegree, failure]
+      split
+      · split
+        · exact fold _ _
+        · rfl
+      · rfl
 
 /-- `push_stack` (`reg_allocScript.sml:300-307`). -/
 def cakePushStack (x : Nat) (state : CakeRaState) : CakeRaState :=
@@ -1731,24 +1785,6 @@ theorem cakeDoSimplify_stack_eq
     (k : Nat) (state : CakeRaState) (items : List Nat)
     (hsimp : state.simpWl = items) (hitems : items ≠ []) :
     (cakeDoSimplify k state).2.stack = items.reverse ++ state.stack := by
-  have hdecDegStack : ∀ (s : CakeRaState) (xs : List Nat),
-      (xs.foldl (fun s x => cakeDecDeg x s) s).stack = s.stack := by
-    intro s xs
-    induction xs generalizing s with
-    | nil => rfl
-    | cons x xs ih =>
-        simp only [List.foldl]
-        rw [ih]
-        exact cakeDecDeg_stack x s
-  have hdecDegSimp : ∀ (s : CakeRaState) (xs : List Nat),
-      (xs.foldl (fun s x => cakeDecDeg x s) s).simpWl = s.simpWl := by
-    intro s xs
-    induction xs generalizing s with
-    | nil => rfl
-    | cons x xs ih =>
-        simp only [List.foldl]
-        rw [ih]
-        exact cakeDecDeg_simpWl x s
   have hdec : ∀ (s : CakeRaState) (xs : List Nat),
       (xs.foldl (fun s x => cakeDecDegree x s) s).stack = s.stack := by
     intro s xs
@@ -1757,9 +1793,7 @@ theorem cakeDoSimplify_stack_eq
     | cons x xs ih =>
         simp only [List.foldl]
         rw [ih]
-        by_cases hlt : x < s.dim
-        · simp [cakeDecDegree, hlt, hdecDegStack]
-        · simp [cakeDecDegree, hlt]
+        exact cakeDecDegree_stack x s
   have hdecSimp : ∀ (s : CakeRaState) (xs : List Nat),
       (xs.foldl (fun s x => cakeDecDegree x s) s).simpWl = s.simpWl := by
     intro s xs
@@ -1768,9 +1802,7 @@ theorem cakeDoSimplify_stack_eq
     | cons x xs ih =>
         simp only [List.foldl]
         rw [ih]
-        by_cases hlt : x < s.dim
-        · simp [cakeDecDegree, hlt, hdecDegSimp]
-        · simp [cakeDecDegree, hlt]
+        exact cakeDecDegree_simpWl x s
   have hpush : ∀ (s : CakeRaState) (xs : List Nat),
       (xs.foldl (fun s x => cakePushStack x s) s).stack = xs.reverse ++ s.stack := by
     intro s xs
@@ -1967,18 +1999,9 @@ theorem cakeDoFreeze_selected_stack_lt_dim
     (hitem : item < state.dim) :
     ∃ selected, selected < state.dim ∧
       (cakeDoFreeze k state).2.stack = selected :: state.stack := by
-  have hdecDeg : ∀ (s : CakeRaState) (xs : List Nat),
-      (xs.foldl (fun s x => cakeDecDeg x s) s).stack = s.stack := by
-    intro s xs
-    induction xs generalizing s with
-    | nil => rfl
-    | cons x xs ih =>
-        simp only [List.foldl]
-        rw [ih]
-        exact cakeDecDeg_stack x s
   refine ⟨item, hitem, ?_⟩
-  simp [cakeDoFreeze, hfreeze, cakePushStack, cakeDecDegree, hitem,
-    hdecDeg, cakeUnspill, cakeReviveMoves, cakeAddSimpWl, cakeAddFreezeWl]
+  simp [cakeDoFreeze, hfreeze, cakePushStack,
+    cakeUnspill, cakeReviveMoves, cakeAddSimpWl, cakeAddFreezeWl]
 
 /-- Flapjack executable compatibility wrapper for the reviewed natural spill-
 cost division. This wrapper has no separate HOL original; the production
@@ -2124,15 +2147,6 @@ theorem cakeDoSpill_selected_stack_lt_dim
     (hrest : ∀ x ∈ rest, x < state.dim) :
     ∃ selected, selected < state.dim ∧
       (cakeDoSpill scost k state).2.stack = selected :: state.stack := by
-  have hfold : ∀ (s : CakeRaState) (xs : List Nat),
-      (xs.foldl (fun s v => cakeDecDeg v s) s).stack = s.stack := by
-    intro s xs
-    induction xs generalizing s with
-    | nil => rfl
-    | cons x xs ih =>
-        simp only [List.foldl]
-        rw [ih]
-        exact cakeDecDeg_stack x s
   cases hcost : scost with
   | none =>
       have hbounds := cakeStExListMaxDeg_bounds state.degrees rest
@@ -2140,7 +2154,7 @@ theorem cakeDoSpill_selected_stack_lt_dim
         (by simp) hitem
       refine ⟨(cakeStExListMaxDeg state.degrees rest state.dim item
         ((state.degrees.get item).getD 0) []).1, hbounds.1, ?_⟩
-      simp [cakeDoSpill, hspill, cakePushStack, cakeDecDegree, hbounds.1, hfold,
+      simp [cakeDoSpill, hspill, cakePushStack,
         cakeUnspill, cakeReviveMoves, cakeAddSimpWl, cakeAddFreezeWl]
   | some costs =>
       have hbounds := cakeStExListMinCost_bounds state.degrees costs rest
@@ -2150,7 +2164,7 @@ theorem cakeDoSpill_selected_stack_lt_dim
       refine ⟨(cakeStExListMinCost state.degrees costs rest state.dim item
         (cakeSafeDiv ((costs.get item).getD 0)
           ((state.degrees.get item).getD 0)) []).1, hbounds.1, ?_⟩
-      simp [cakeDoSpill, hspill, cakePushStack, cakeDecDegree, hbounds.1, hfold,
+      simp [cakeDoSpill, hspill, cakePushStack,
         cakeUnspill, cakeReviveMoves, cakeAddSimpWl, cakeAddFreezeWl]
 
 /-- `do_step` (`reg_allocScript.sml:832-857`): the first successful

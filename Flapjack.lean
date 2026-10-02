@@ -550,6 +550,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoves
 import Flapjack.Compiler.Backend.RegAlloc.ProductionStateRelation
 import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTransition
+import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTraversal
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
