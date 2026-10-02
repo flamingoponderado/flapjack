@@ -1,0 +1,6 @@
+sc_statement=∀p q. p * q = q * p
+sc_types=p:(α -> bool) -> bool;q:(α -> bool) -> bool
+sc_proved=T
+sw_statement=∀d y a x p f. (one (a,x) * p) (fun2set (f,d)) ⇒ (p * one (a,y)) (fun2set (f⦇a ↦ y⦈,d))
+sw_types=d:β -> bool;y:α;a:β;x:α;p:(β # α -> bool) -> bool;f:β -> α
+sw_proved=T
