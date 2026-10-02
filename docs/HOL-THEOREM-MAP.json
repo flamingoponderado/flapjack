@@ -67232,5 +67232,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.13 genuine Continue simple_case of original comp_correct134ff/276-291. Original source evaluation equality, result not Error, literal full state_rel are the only premises; no constructor predicate exposed. Actual positive-width native HolProg and complete22field evaluator state/configuration/FFI preserved. Both compTop/comp original existential clock/targetstate/stackspace results and nonTimeOut/nonHalt Word2 guard retained verbatim. Source stackSem814-823 Return/Raise read a register and require Loc, all other payloads/missing reads Error with unchanged state; Break/Continue return exact label result and unchanged state. Native equations match each branch, including errors. Actual code-update evaluation transport derives source code preservation and target execution/full postrelation. Both comp functions leave these constructors unchanged. Clock0/target own stackSpace are derived witnesses, not premises. Qualifier fields canonical regs/fpRegs/store have actual imported stateowner and same-module genuine broad/canonical codec roundtrips; code remains Spt and lists List. Full evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced. One genuine case only, not full compiler or executed route correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/Loop.lean",
+    "lean_name": "compCorrectLoop",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.14 genuine Loop case original307-356 of comp_correct134ff. Original source evaluation equality/nonError/literalstateRel retained. Only genuine body-program IH and recursive same-Loop IH restricted to strictly smaller source clocks are added; no current-run/wholepass/target-result simulation premise. BranchIH/SimulationResult expand to original comp component hypothesis and existential clock,targetstate,stackspace, actual evaluation at target.clock+clock, fullpostrelation and original nonTimeOut/nonHalt Word2 guard. Both compTop/comp conclusions retained. Actual full evaluator loop dispatch uses existing unconditional fix_clock_evaluate identity, no assumed clocklaw. Source body nonError derived from original Loop run. Exit uses actual exit_loop, preserves guard, target execution derived from bodyIH. Continuing forces bodyResult NONE or Continue0 via faithful cont_loop_IMP, discharging body stackspace guard. Zero-clock case derives targetclock0 and emptyEnv postrelation and timeout. Nonzero case derives strict sourceclock decrease via evaluate_clock, uses recursiveIH only there, extends actual target body with evaluate_add_clock, derives arithmetic reentry state and sums extra clocks; no target execution/postrelation supplied as new premise. Positive-width native HolProg/full22field state/configuration/FFI preserved; actual imported canonical regs/fpRegs/store owner and same-module genuine broadcodec roundtrips, code Spt/list List unchanged. Full evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced. Genuine Loop case only, not assembled comp_correct/compile_semantics/runtime correctness."
   }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.ControlLeaves
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.If
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.BasicLeaves
