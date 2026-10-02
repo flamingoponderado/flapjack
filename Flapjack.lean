@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EncodingNonempty
 import Flapjack.Test.LabToTargetSimpleEncoderParity
 import Flapjack.Test.LabToTargetEncd0Parity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStoreConsts
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsDelete

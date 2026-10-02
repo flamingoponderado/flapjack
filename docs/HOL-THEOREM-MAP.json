@@ -59721,5 +59721,14 @@
     "statement_status": "reviewed_word_dimension_as_width",
     "word_dimension_as_width": "width",
     "reviewer": "flapjack-sol source comparison2026-10-02; bead .6.6.6.2: original116-120 MIN(dimword(:a) DIV2^shift_length c)(dimword(:a) DIV2^(shift(:a)+1)), full imported Config25-36 retained. wordLang329 overload explicitly identifies shift as reviewed backend_common.word_shift,2 at dimension32 and3 otherwise. Lean preserves both denominator exponent groupings and MIN/Nat DIV, no extra config validity/shift bounds or word carriers. Only numeric dimension translated to explicit positive width/[NeZero width] and dimword to2^width, hence word_dimension_as_width qualifier. Fresh original full definition/type and64 independent numeric/kernel expectations at dimensions1/7/8/31/32/33/64/80, varying allconfig fields/gcKind and shifts below/above dimension, including exact RV64data config4/4/2/lenSize32. Actual backend73/165/222 supplies2*maxHeapLimit-1 to full initializer; its production caller remains on linked .6.6.6 parent, not completed by this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_next_var_rename_move_distinct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameMoveDistinct.lean",
+    "lean_name": "listNextVarRenameMoveDistinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: fulloriginal6405-6423, exactly producer equation/distinct names/two memberships/equaloptionLookup5premises and inputkey equality. Actual listNextVarRenameMove is decomposed; original arithmetic lemma1 gives distinct generated names, original lookup lemma2prime identifies that list with mapped selectors. All selected inputs have successful outputmap lookups by original lemma2 fourthconjunct, so guarded THE/getD rendering remains justified; selector-independent infrastructure already checked, no THE NONE agreement claimed. Native Nat SSA/input/output maps, names/keys/counters and original word-indexed program confirmed by original theorem/sixcarriers. Sole standard words_as_type_indexed_bitvec positiveword translation explicit, no finite-map carrier changes/globalinjectivity/allocation/success/newpremise. Source manually compared/HOLcapture/Lean kernel PASS; no isolated tactic replay claimed. FullFFI/fullSSA/end-to-end remain open."
   }
 ]

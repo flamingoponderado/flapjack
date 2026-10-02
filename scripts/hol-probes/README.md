@@ -5296,3 +5296,12 @@ Original theorem capture/manual source comparison, not isolated tactic replay or
 equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cut_envs_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `data_max_heap_limit_probeScript.sml` records the full original numeric heap-limit definition/type and64 configurations across dimensions1/7/8/31/32/33/64/80, varied native config fields and GC carriers, exact default RV64layout4/4/2/32, and shifts above dimension. Independent integer MIN/division expectations are checked in the kernel and agree with every original numeric output. Original wordLang329 shift overload is backend_common.word_shift; both denominator exponent groupings are preserved. Actual initializer route must use this reviewed helper to compute2*limit-1 rather than freeze a captured heap word.
+
+`ssa_rename_move_distinct_probe` captures the original full scoped injection
+theorem6405–6423 and six inferred carriers. `SSARenameMoveDistinct.lean` retains
+the producer equation, distinct input names, both memberships, and equal selectors;
+distinct generated names plus the existing successful-lookup theorem derive
+input equality. Standard positive indexed-word program translation is explicit.
+Original theorem capture/manual source comparison, not isolated tactic replay
+or equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_rename_move_distinct_probeScript.sml scripts/hol-probes/regenerate.sh`.
