@@ -222,7 +222,7 @@ private theorem allocCutLocalsRelation {α : Type} (next : Nat) (ssa : Spt Nat)
 /-- Flapjack-specific original Alloc final rename restoration (9548-9606).
 The domain, scoped value relation and bounds are internal collector facts;
 actual final Move execution and full SSA/frame are derived. No standalone
-HOL declaration exists; the full Alloc simulation remains unassembled. -/
+HOL declaration exists; the full Alloc simulation is assembled in ssaCcTransCorrectAlloc. -/
 theorem allocRestoreLocals {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat)
     (names : Spt Unit) (counter : Nat)
@@ -261,7 +261,7 @@ theorem allocRestoreLocals {width : Nat} [NeZero width] {C F : Type}
 The existing native allocation simulation chooses the source permutation;
 actual results/frame agree, and normal return derives scoped locals and domain.
 No target allocation outcome or desired post-relation is assumed. There is no
-standalone HOL declaration; full SSA Alloc assembly remains open. -/
+standalone HOL declaration; the full Alloc case is assembled in ssaCcTransCorrectAlloc. -/
 theorem allocCollectorTransport {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat)
     (first second : Spt Unit) (amount : BitVec width)
