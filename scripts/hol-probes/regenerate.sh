@@ -4063,3 +4063,18 @@ run_probe stack_remove_stack_alloc_probeScript.sml stack_remove_stack_alloc_prob
 run_probe stack_remove_store_address_probeScript.sml stack_remove_store_address_probe.out \
   store_pos_full_def store_pos_type store_offset_full_def store_offset_type position_0 position_1 position_2 position_3 position_4 position_5 position_6 position_7 position_8 position_9 position_10 position_11 position_12 position_13 position_14 position_15 position_16 position_17 position_18 position_19 position_20 position_21 position_22 position_23 position_24 position_25 position_26 position_27 position_28 position_29 position_30 position_31 position_32 position_33 position_34 position_35 position_36 position_37 position_38 position_39 position_40 position_41 position_42 position_43 position_44 position_45 position_46 position_47 position_48 offset_1_0 offset_1_10 offset_1_15 offset_1_16 offset_1_47 offset_1_48 offset_8_0 offset_8_10 offset_8_15 offset_8_16 offset_8_47 offset_8_48 offset_32_0 offset_32_10 offset_32_15 offset_32_16 offset_32_47 offset_32_48 offset_64_0 offset_64_10 offset_64_15 offset_64_16 offset_64_47 offset_64_48 offset_80_0 offset_80_10 offset_80_15 offset_80_16 offset_80_47 offset_80_48 \
   "$cake_dir/compiler/backend/stack_removeScript.sml" "$cake_dir/compiler/backend"
+run_probe ssa_lt_ok_probeScript.sml ssa_lt_ok_probe.out \
+  lt_ok_full lt_ok_type_lt \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_control_probeScript.sml ssa_cc_trans_correct_control_probe.out \
+  sc_break_full sc_continue_full sc_type_n sc_type_st sc_type_cst sc_type_ssa sc_type_na sc_type_lt \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_primitives_probeScript.sml ssa_cc_trans_correct_primitives_probe.out \
+  sp_skip_full sp_tick_full sp_type_st sp_type_cst sp_type_ssa sp_type_na sp_type_lt \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_get_var_probeScript.sml ssa_locals_get_var_probe.out \
+  lg_full lg_type_st lg_type_cst lg_type_ssa lg_type_na lg_type_n lg_type_x \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

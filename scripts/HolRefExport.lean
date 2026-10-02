@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileListProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileLookupProps
 import Flapjack.Compiler.Backend.StackRemove.StoreAddress
@@ -6,6 +7,10 @@ import Flapjack.Compiler.Backend.StackRemove.StackAddress
 import Flapjack.Compiler.Backend.StackRemove.StackFree
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileEmpty
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcile
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopTable
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives
