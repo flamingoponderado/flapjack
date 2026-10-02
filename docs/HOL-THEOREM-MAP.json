@@ -60614,5 +60614,21 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full original balanceR_thm: all six hypotheses in source order and BOTH invariant/canonical to_fmap union-update conclusions for actual balanceR retained. Full balanceR_balR, original small/heavy/fallback guards, balanced_lem1/5 and full rotateL_thm assemble result with no target result premise. Generic original key/payload/comparator/tree carriers; only canonical toFmap observer representation translation. Literal full source proof and prerequisite replay hyp=[]; six native complete-premise branches consume both conclusions and inserted-key lookup; nineteen original full typed/tree/invariant/lookup rows. No executed definition changes."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "almost_balancedL_thm",
+    "lean_path": "Flapjack/Misc/BalancedMap/AlmostBalanceCorrect.lean",
+    "lean_name": "almostBalancedLThm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02: full original almost_balancedL_thm, same universally quantified Nat l/r, sole balanced premise, all THREE original conclusions including selected-side increment and opposite-side truncated subtraction. Literal original conditionals/delta/min/max and Nat subtraction retained, no positivity hypothesis or changed carrier. Full literal original proof replay hyp=[]; twelve zero/singleton/exact-delta-boundary pairs in each direction consume complete native conjunctions with matching original arithmetic observations. No executable definition change."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "almost_balancedR_thm",
+    "lean_path": "Flapjack/Misc/BalancedMap/AlmostBalanceCorrect.lean",
+    "lean_name": "almostBalancedRThm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02: full original almost_balancedR_thm, same universally quantified Nat l/r, sole balanced premise, all THREE original conclusions including selected-side increment and opposite-side truncated subtraction. Literal original conditionals/delta/min/max and Nat subtraction retained, no positivity hypothesis or changed carrier. Full literal original proof replay hyp=[]; twelve zero/singleton/exact-delta-boundary pairs in each direction consume complete native conjunctions with matching original arithmetic observations. No executable definition change."
   }
 ]

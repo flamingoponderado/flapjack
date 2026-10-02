@@ -5492,3 +5492,12 @@ checking no open hypotheses. Nineteen rows capture the full type and six actual
 small/fallback/rotation trees, invariants and inserted-key lookups. Native
 consumers prove all original premises and use both conclusions. Observations
 are regression evidence, not a cross-language equivalence theorem.
+
+## Full almost-balance growth/decrement laws
+
+`balanced_map_almost_balance_correct_probeScript.sml` literally replays both
+full original arithmetic proofs with no open hypotheses. Twenty-six rows
+capture both complete types and twelve zero/singleton/delta-boundary pairs
+in both directions. Native consumers use all three conclusions, retaining
+truncated subtraction at zero. Observations are regression evidence, not
+a cross-language equivalence theorem.
