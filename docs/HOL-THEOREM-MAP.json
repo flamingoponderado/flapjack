@@ -60248,6 +60248,213 @@
     "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:1259-1277 and full original compiled theorem capture. All original encoder_correct, initial state relation and RTC of existential literal asm_step hypotheses preserved; existential FUNPOW final target relation constructed by RTC induction and addition of exact single-step witnesses. Relation.ReflTransGen is the same least reflexive-transitive closure; Function.iterate is HOL FUNPOW. No final execution/post-state premise. BitVec width/NeZero and native HolAsmTarget/AsmState retain positive word dimensions and Type carriers; lists and predicate sets unchanged. Inherited total holEl/holHd retains shared opaque holHdNil/holArb without bounds/fallback. Transitively inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through exact encoder/assembly FP semantics. No executable behavior change."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenGcMove.lean",
+    "lean_name": "word_gen_gc_move_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.6), stack_allocProofScript.sml:2526-2678 word_gen_gc_move_code_thm: all premises in HOL order as one conjunction (word_gen_gc_move conf (w,i,pa,ib,pb,old,m,dm) = (w1,i1,pa1,ib1,pb1,m1,T); the shift/dimindex/len_size bounds; !w. w << word_shift = w * bytes_in_word; FLOOKUP CurrHeap = Word old; use_store; memory/mdomain; 0,1,2 IN FDOM s.regs; get_var 3/4/5; Temp 0w/Temp 1w IN FDOM s.store; FLOOKUP Temp 2w = Word pb, Temp 3w = Word ib; HOL's duplicated 1,2 IN FDOM and 6 IN FDOM), free variables implicit, conclusion ?ck r0 r1 r2 r6 t0 t1 with memory m1, the four-slot Temp store |++ and the seven-register |++, over the exact StackSem evaluate. Covers Loc, untagged word, forwarding pointer, reference objects (copied below Temp 2w with Temp 3w decremented, via memcpy_code_thm) and other objects (copied as in word_gc_move_code_thm). Temp nw as WordStore.temp over its fixed five-bit address, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeInsertWf.lean",
+    "lean_name": "wfAlistInsert",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wf_alist_insert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-insert-wf): full original3570-3574/3703-3709 arbitrary payload/list quantifiers, constructor-for-constructor native Spt and actual alist_insert/fromList2 operations. Sole original wf input premise retained for insertion; fromList2 unconditional. Bool wf=true translates the source proposition. Literal original full proofs hyp=[] and168 matching whole-tree/input/output-wf Nat/Bool fixtures retain unequal lengths, repeated keys, empties, malformed carriers. No held HD/EL or trust policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeInsertWf.lean",
+    "lean_name": "wfFromList2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wf_fromList2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-insert-wf): full original3570-3574/3703-3709 arbitrary payload/list quantifiers, constructor-for-constructor native Spt and actual alist_insert/fromList2 operations. Sole original wf input premise retained for insertion; fromList2 unconditional. Bool wf=true translates the source proposition. Literal original full proofs hyp=[] and168 matching whole-tree/input/output-wf Nat/Bool fixtures retain unequal lengths, repeated keys, empties, malformed carriers. No held HD/EL or trust policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/DoubleR.lean",
+    "lean_name": "doubleRThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "doubleR_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL1213-1266: complete original nine premise conjuncts and BOTH invariant plus semantic finite-map union/update equality. Generic original keys/payload/comparator/cached sizes/children retained. Original premises themselves rule out inner Tip; specified chosen-function doubleR Bin/Bin clause only, no unspecified output, extra target premise, universal context assumption or cross-prover choice equivalence. Three distinct comparator equivalence classes and absent child lookups derived from goodCmp/keyOrdered, not assumed. Canonical to_fmap observation representation only, root update and left-biased union precedence retained. Entire literal original local theorem proof with antisymmetry/arithmetic/structural/map prerequisites replayed hyp=[]; complete generic kernel proof and both-conclusion/all-three-key fixtures."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticFFI.lean",
+    "lean_name": "ssaCcTransCorrectFFI",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: full resumed FFI9868-10010 of original7666 sixpremise SSA simulation. Entire source permutation/Error exemption/result equality/frame and result-sensitive locals conclusion retained. Actual first refresh Move at next+2, scratch physical2/4/6/8 writes, renamed cut via scoped original injection/cutEnvLemma, original bytearray reads/callFFI and final flush or returning writeBytearray/emptyfpRegs/updateffi followed by actual restoration Move at counter+2 derived. Native mlstring function name, Nat registers/counters, Unit Spt cutsets pair, Spt SSA/tables, indexedword/native WordLoc payloads and Type0 FFI retained. Only canonical fpRegs/store finite-support and positive indexedword translations qualified; locals/code native Spt are not finite-map-qualified. Internal successfulbranch/read/cut premises fully discharged by public source evaluator splits, no targetrun/postlocals/newsuccess/publicextra hypothesis. Inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Original manually compared/proved theorem specialization capture/Lean kernel evidence; no isolated tactic replay or equivalence proof claimed. FullSSA/end-to-end remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticShareInst.lean",
+    "lean_name": "ssaCcTransCorrectShareInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original resumed ShareInst10012-10045, same sixpremises and entire existential sourcepermutation/Errorexemption/result/frame/result-sensitive locals simulation. All eight asmMemOp constructors preserve native shared domainalignment/configuration/bytepayload/callFFI/flush clauses. Stores transport actual sourcegetVar and preserve SSAmap; loads use actual nextVarRename freshdestination and original localssetvar theorem. Source failed expression/nonword/missingregister/outofdomain branches use only original Error exemption. Native Spt maps/tables and fixedbyte lists retained; only canonical fpRegs/store finite-support and positive indexedword translations qualified. No targetrun/postlocals/success extra hypothesis. Inherits evaluator reals_as_rational_cuts SOUNDNESS item8. Original manual source/carrier comparison and proved theorem specialization capture, Lean kernel evidence; no isolated tactic replay or equivalence proof claimed. FullSSA/endtoend remain open."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/RotateR.lean",
+    "lean_name": "rotateRThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "rotateR_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL1268-1288: entire original eight premise conjuncts and BOTH invariant/map union-update equality conclusions; generic original key/payload/comparator/left/right carriers retained. Literal strict middle-size ratio guard chooses original specified full singleR/doubleR proofs. Heaviness rules out outer Tip directly; no extra constructor/success/order/target invariant/map hypothesis or unspecified output claim. Only canonical finite-support to_fmap observer representation qualified, left-biased union and equivalence-class update unchanged. Complete literal original HOL assembly proof with full constructor proofs replayed hyp=[]; both actual branch outputs/invariants/three lookups captured, full generic kernel assembly and both-conclusion canonical semantic fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionalEncoding.lean",
+    "lean_name": "lineLengthLeq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_length_leq_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original lab_to_targetProofScript3701–3714/3809–3919, coherent .88.1 and11 declaration leaves. Fresh complete original typed definitions/theorem statements, full quantified binder types, direct predicate signatures and original all_length_leq overload lambda captured in lab_to_target_positional_encd_probe.out. Native original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers, nested Nat Spt labels, HolFfiName list and fixed word8 bytes retained; arbitrary positive original word dimension translated solely by words_as_type_indexed_bitvec. Full line_encd retains Asm exact byte length and all7 labelled-opcode encoder equalities plus byte-length lower bound; stored LabAsm word is intentionally ignored as original. Halt/Install/FFI negative offsets, original index+3, Jump/JumpCmp/Loc/Call find_pos+n2w-neg arithmetic and every constructor retained. lines_encd threads recorded annotations including Label; all_encd advances sections by SUM(MAP line_len), not byte length. Three full original implication laws derive lower bounds. Both full successful encoder laws keep exactly actual pair=(res,T), original source EVERY label_one and encd0 and derive complete lines_encd/all_encd; no callback, desired output/invariant, source wellformedness or target-result premise. Native inductive proofs consume checked .87 simple encoder/equality and .86/.89 predicates; source guards retained even where proof could omit them. Twenty-one original/native observations cover all labelled opcodes, duplicate FFI first index and absent default0, wrong position/cache/short annotations, arbitrary label annotation999, unequal Asm lengths versus weaker length bound, missing-label0, width8 word wrap at Nat260, label/section recorded-length position threading and full successful line/section output tuples. Five full arbitrary-width statement consumers plus21 observations kernel checked. Original proof-script predicates, no executed compiler change; HD/EL provenance hold unchanged, full remove_labels_loop/remove_labels/compile_correct remains separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionalEncoding.lean",
+    "lean_name": "secLengthLeq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_length_leq_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original lab_to_targetProofScript3701–3714/3809–3919, coherent .88.1 and11 declaration leaves. Fresh complete original typed definitions/theorem statements, full quantified binder types, direct predicate signatures and original all_length_leq overload lambda captured in lab_to_target_positional_encd_probe.out. Native original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers, nested Nat Spt labels, HolFfiName list and fixed word8 bytes retained; arbitrary positive original word dimension translated solely by words_as_type_indexed_bitvec. Full line_encd retains Asm exact byte length and all7 labelled-opcode encoder equalities plus byte-length lower bound; stored LabAsm word is intentionally ignored as original. Halt/Install/FFI negative offsets, original index+3, Jump/JumpCmp/Loc/Call find_pos+n2w-neg arithmetic and every constructor retained. lines_encd threads recorded annotations including Label; all_encd advances sections by SUM(MAP line_len), not byte length. Three full original implication laws derive lower bounds. Both full successful encoder laws keep exactly actual pair=(res,T), original source EVERY label_one and encd0 and derive complete lines_encd/all_encd; no callback, desired output/invariant, source wellformedness or target-result premise. Native inductive proofs consume checked .87 simple encoder/equality and .86/.89 predicates; source guards retained even where proof could omit them. Twenty-one original/native observations cover all labelled opcodes, duplicate FFI first index and absent default0, wrong position/cache/short annotations, arbitrary label annotation999, unequal Asm lengths versus weaker length bound, missing-label0, width8 word wrap at Nat260, label/section recorded-length position threading and full successful line/section output tuples. Five full arbitrary-width statement consumers plus21 observations kernel checked. Original proof-script predicates, no executed compiler change; HD/EL provenance hold unchanged, full remove_labels_loop/remove_labels/compile_correct remains separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionalEncoding.lean",
+    "lean_name": "allLengthLeq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_length_leq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original lab_to_targetProofScript3701–3714/3809–3919, coherent .88.1 and11 declaration leaves. Fresh complete original typed definitions/theorem statements, full quantified binder types, direct predicate signatures and original all_length_leq overload lambda captured in lab_to_target_positional_encd_probe.out. Native original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers, nested Nat Spt labels, HolFfiName list and fixed word8 bytes retained; arbitrary positive original word dimension translated solely by words_as_type_indexed_bitvec. Full line_encd retains Asm exact byte length and all7 labelled-opcode encoder equalities plus byte-length lower bound; stored LabAsm word is intentionally ignored as original. Halt/Install/FFI negative offsets, original index+3, Jump/JumpCmp/Loc/Call find_pos+n2w-neg arithmetic and every constructor retained. lines_encd threads recorded annotations including Label; all_encd advances sections by SUM(MAP line_len), not byte length. Three full original implication laws derive lower bounds. Both full successful encoder laws keep exactly actual pair=(res,T), original source EVERY label_one and encd0 and derive complete lines_encd/all_encd; no callback, desired output/invariant, source wellformedness or target-result premise. Native inductive proofs consume checked .87 simple encoder/equality and .86/.89 predicates; source guards retained even where proof could omit them. Twenty-one original/native observations cover all labelled opcodes, duplicate FFI first index and absent default0, wrong position/cache/short annotations, arbitrary label annotation999, unequal Asm lengths versus weaker length bound, missing-label0, width8 word wrap at Nat260, label/section recorded-length position threading and full successful line/section output tuples. Five full arbitrary-width statement consumers plus21 observations kernel checked. Original proof-script predicates, no executed compiler change; HD/EL provenance hold unchanged, full remove_labels_loop/remove_labels/compile_correct remains separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionalEncoding.lean",
+    "lean_name": "lineEncd",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_encd_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original lab_to_targetProofScript3701–3714/3809–3919, coherent .88.1 and11 declaration leaves. Fresh complete original typed definitions/theorem statements, full quantified binder types, direct predicate signatures and original all_length_leq overload lambda captured in lab_to_target_positional_encd_probe.out. Native original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers, nested Nat Spt labels, HolFfiName list and fixed word8 bytes retained; arbitrary positive original word dimension translated solely by words_as_type_indexed_bitvec. Full line_encd retains Asm exact byte length and all7 labelled-opcode encoder equalities plus byte-length lower bound; stored LabAsm word is intentionally ignored as original. Halt/Install/FFI negative offsets, original index+3, Jump/JumpCmp/Loc/Call find_pos+n2w-neg arithmetic and every constructor retained. lines_encd threads recorded annotations including Label; all_encd advances sections by SUM(MAP line_len), not byte length. Three full original implication laws derive lower bounds. Both full successful encoder laws keep exactly actual pair=(res,T), original source EVERY label_one and encd0 and derive complete lines_encd/all_encd; no callback, desired output/invariant, source wellformedness or target-result premise. Native inductive proofs consume checked .87 simple encoder/equality and .86/.89 predicates; source guards retained even where proof could omit them. Twenty-one original/native observations cover all labelled opcodes, duplicate FFI first index and absent default0, wrong position/cache/short annotations, arbitrary label annotation999, unequal Asm lengths versus weaker length bound, missing-label0, width8 word wrap at Nat260, label/section recorded-length position threading and full successful line/section output tuples. Five full arbitrary-width statement consumers plus21 observations kernel checked. Original proof-script predicates, no executed compiler change; HD/EL provenance hold unchanged, full remove_labels_loop/remove_labels/compile_correct remains separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionalEncoding.lean",
+    "lean_name": "linesEncd",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lines_encd_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original lab_to_targetProofScript3701–3714/3809–3919, coherent .88.1 and11 declaration leaves. Fresh complete original typed definitions/theorem statements, full quantified binder types, direct predicate signatures and original all_length_leq overload lambda captured in lab_to_target_positional_encd_probe.out. Native original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers, nested Nat Spt labels, HolFfiName list and fixed word8 bytes retained; arbitrary positive original word dimension translated solely by words_as_type_indexed_bitvec. Full line_encd retains Asm exact byte length and all7 labelled-opcode encoder equalities plus byte-length lower bound; stored LabAsm word is intentionally ignored as original. Halt/Install/FFI negative offsets, original index+3, Jump/JumpCmp/Loc/Call find_pos+n2w-neg arithmetic and every constructor retained. lines_encd threads recorded annotations including Label; all_encd advances sections by SUM(MAP line_len), not byte length. Three full original implication laws derive lower bounds. Both full successful encoder laws keep exactly actual pair=(res,T), original source EVERY label_one and encd0 and derive complete lines_encd/all_encd; no callback, desired output/invariant, source wellformedness or target-result premise. Native inductive proofs consume checked .87 simple encoder/equality and .86/.89 predicates; source guards retained even where proof could omit them. Twenty-one original/native observations cover all labelled opcodes, duplicate FFI first index and absent default0, wrong position/cache/short annotations, arbitrary label annotation999, unequal Asm lengths versus weaker length bound, missing-label0, width8 word wrap at Nat260, label/section recorded-length position threading and full successful line/section output tuples. Five full arbitrary-width statement consumers plus21 observations kernel checked. Original proof-script predicates, no executed compiler change; HD/EL provenance hold unchanged, full remove_labels_loop/remove_labels/compile_correct remains separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionalEncoding.lean",
+    "lean_name": "allEncd",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_encd_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original lab_to_targetProofScript3701–3714/3809–3919, coherent .88.1 and11 declaration leaves. Fresh complete original typed definitions/theorem statements, full quantified binder types, direct predicate signatures and original all_length_leq overload lambda captured in lab_to_target_positional_encd_probe.out. Native original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers, nested Nat Spt labels, HolFfiName list and fixed word8 bytes retained; arbitrary positive original word dimension translated solely by words_as_type_indexed_bitvec. Full line_encd retains Asm exact byte length and all7 labelled-opcode encoder equalities plus byte-length lower bound; stored LabAsm word is intentionally ignored as original. Halt/Install/FFI negative offsets, original index+3, Jump/JumpCmp/Loc/Call find_pos+n2w-neg arithmetic and every constructor retained. lines_encd threads recorded annotations including Label; all_encd advances sections by SUM(MAP line_len), not byte length. Three full original implication laws derive lower bounds. Both full successful encoder laws keep exactly actual pair=(res,T), original source EVERY label_one and encd0 and derive complete lines_encd/all_encd; no callback, desired output/invariant, source wellformedness or target-result premise. Native inductive proofs consume checked .87 simple encoder/equality and .86/.89 predicates; source guards retained even where proof could omit them. Twenty-one original/native observations cover all labelled opcodes, duplicate FFI first index and absent default0, wrong position/cache/short annotations, arbitrary label annotation999, unequal Asm lengths versus weaker length bound, missing-label0, width8 word wrap at Nat260, label/section recorded-length position threading and full successful line/section output tuples. Five full arbitrary-width statement consumers plus21 observations kernel checked. Original proof-script predicates, no executed compiler change; HD/EL provenance hold unchanged, full remove_labels_loop/remove_labels/compile_correct remains separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionalEncoding.lean",
+    "lean_name": "lineEncd_lengthLeq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_encd_length_leq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original lab_to_targetProofScript3701–3714/3809–3919, coherent .88.1 and11 declaration leaves. Fresh complete original typed definitions/theorem statements, full quantified binder types, direct predicate signatures and original all_length_leq overload lambda captured in lab_to_target_positional_encd_probe.out. Native original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers, nested Nat Spt labels, HolFfiName list and fixed word8 bytes retained; arbitrary positive original word dimension translated solely by words_as_type_indexed_bitvec. Full line_encd retains Asm exact byte length and all7 labelled-opcode encoder equalities plus byte-length lower bound; stored LabAsm word is intentionally ignored as original. Halt/Install/FFI negative offsets, original index+3, Jump/JumpCmp/Loc/Call find_pos+n2w-neg arithmetic and every constructor retained. lines_encd threads recorded annotations including Label; all_encd advances sections by SUM(MAP line_len), not byte length. Three full original implication laws derive lower bounds. Both full successful encoder laws keep exactly actual pair=(res,T), original source EVERY label_one and encd0 and derive complete lines_encd/all_encd; no callback, desired output/invariant, source wellformedness or target-result premise. Native inductive proofs consume checked .87 simple encoder/equality and .86/.89 predicates; source guards retained even where proof could omit them. Twenty-one original/native observations cover all labelled opcodes, duplicate FFI first index and absent default0, wrong position/cache/short annotations, arbitrary label annotation999, unequal Asm lengths versus weaker length bound, missing-label0, width8 word wrap at Nat260, label/section recorded-length position threading and full successful line/section output tuples. Five full arbitrary-width statement consumers plus21 observations kernel checked. Original proof-script predicates, no executed compiler change; HD/EL provenance hold unchanged, full remove_labels_loop/remove_labels/compile_correct remains separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionalEncoding.lean",
+    "lean_name": "linesEncd_lengthLeq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lines_encd_length_leq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original lab_to_targetProofScript3701–3714/3809–3919, coherent .88.1 and11 declaration leaves. Fresh complete original typed definitions/theorem statements, full quantified binder types, direct predicate signatures and original all_length_leq overload lambda captured in lab_to_target_positional_encd_probe.out. Native original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers, nested Nat Spt labels, HolFfiName list and fixed word8 bytes retained; arbitrary positive original word dimension translated solely by words_as_type_indexed_bitvec. Full line_encd retains Asm exact byte length and all7 labelled-opcode encoder equalities plus byte-length lower bound; stored LabAsm word is intentionally ignored as original. Halt/Install/FFI negative offsets, original index+3, Jump/JumpCmp/Loc/Call find_pos+n2w-neg arithmetic and every constructor retained. lines_encd threads recorded annotations including Label; all_encd advances sections by SUM(MAP line_len), not byte length. Three full original implication laws derive lower bounds. Both full successful encoder laws keep exactly actual pair=(res,T), original source EVERY label_one and encd0 and derive complete lines_encd/all_encd; no callback, desired output/invariant, source wellformedness or target-result premise. Native inductive proofs consume checked .87 simple encoder/equality and .86/.89 predicates; source guards retained even where proof could omit them. Twenty-one original/native observations cover all labelled opcodes, duplicate FFI first index and absent default0, wrong position/cache/short annotations, arbitrary label annotation999, unequal Asm lengths versus weaker length bound, missing-label0, width8 word wrap at Nat260, label/section recorded-length position threading and full successful line/section output tuples. Five full arbitrary-width statement consumers plus21 observations kernel checked. Original proof-script predicates, no executed compiler change; HD/EL provenance hold unchanged, full remove_labels_loop/remove_labels/compile_correct remains separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionalEncoding.lean",
+    "lean_name": "allEncd_lengthLeq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_encd_length_leq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original lab_to_targetProofScript3701–3714/3809–3919, coherent .88.1 and11 declaration leaves. Fresh complete original typed definitions/theorem statements, full quantified binder types, direct predicate signatures and original all_length_leq overload lambda captured in lab_to_target_positional_encd_probe.out. Native original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers, nested Nat Spt labels, HolFfiName list and fixed word8 bytes retained; arbitrary positive original word dimension translated solely by words_as_type_indexed_bitvec. Full line_encd retains Asm exact byte length and all7 labelled-opcode encoder equalities plus byte-length lower bound; stored LabAsm word is intentionally ignored as original. Halt/Install/FFI negative offsets, original index+3, Jump/JumpCmp/Loc/Call find_pos+n2w-neg arithmetic and every constructor retained. lines_encd threads recorded annotations including Label; all_encd advances sections by SUM(MAP line_len), not byte length. Three full original implication laws derive lower bounds. Both full successful encoder laws keep exactly actual pair=(res,T), original source EVERY label_one and encd0 and derive complete lines_encd/all_encd; no callback, desired output/invariant, source wellformedness or target-result premise. Native inductive proofs consume checked .87 simple encoder/equality and .86/.89 predicates; source guards retained even where proof could omit them. Twenty-one original/native observations cover all labelled opcodes, duplicate FFI first index and absent default0, wrong position/cache/short annotations, arbitrary label annotation999, unequal Asm lengths versus weaker length bound, missing-label0, width8 word wrap at Nat260, label/section recorded-length position threading and full successful line/section output tuples. Five full arbitrary-width statement consumers plus21 observations kernel checked. Original proof-script predicates, no executed compiler change; HD/EL provenance hold unchanged, full remove_labels_loop/remove_labels/compile_correct remains separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionalEncoding.lean",
+    "lean_name": "encLinesAgainSimp_encd",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_lines_again_simp_encd",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original lab_to_targetProofScript3701–3714/3809–3919, coherent .88.1 and11 declaration leaves. Fresh complete original typed definitions/theorem statements, full quantified binder types, direct predicate signatures and original all_length_leq overload lambda captured in lab_to_target_positional_encd_probe.out. Native original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers, nested Nat Spt labels, HolFfiName list and fixed word8 bytes retained; arbitrary positive original word dimension translated solely by words_as_type_indexed_bitvec. Full line_encd retains Asm exact byte length and all7 labelled-opcode encoder equalities plus byte-length lower bound; stored LabAsm word is intentionally ignored as original. Halt/Install/FFI negative offsets, original index+3, Jump/JumpCmp/Loc/Call find_pos+n2w-neg arithmetic and every constructor retained. lines_encd threads recorded annotations including Label; all_encd advances sections by SUM(MAP line_len), not byte length. Three full original implication laws derive lower bounds. Both full successful encoder laws keep exactly actual pair=(res,T), original source EVERY label_one and encd0 and derive complete lines_encd/all_encd; no callback, desired output/invariant, source wellformedness or target-result premise. Native inductive proofs consume checked .87 simple encoder/equality and .86/.89 predicates; source guards retained even where proof could omit them. Twenty-one original/native observations cover all labelled opcodes, duplicate FFI first index and absent default0, wrong position/cache/short annotations, arbitrary label annotation999, unequal Asm lengths versus weaker length bound, missing-label0, width8 word wrap at Nat260, label/section recorded-length position threading and full successful line/section output tuples. Five full arbitrary-width statement consumers plus21 observations kernel checked. Original proof-script predicates, no executed compiler change; HD/EL provenance hold unchanged, full remove_labels_loop/remove_labels/compile_correct remains separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionalEncoding.lean",
+    "lean_name": "encSecsAgain_encd",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_secs_again_encd",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original lab_to_targetProofScript3701–3714/3809–3919, coherent .88.1 and11 declaration leaves. Fresh complete original typed definitions/theorem statements, full quantified binder types, direct predicate signatures and original all_length_leq overload lambda captured in lab_to_target_positional_encd_probe.out. Native original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers, nested Nat Spt labels, HolFfiName list and fixed word8 bytes retained; arbitrary positive original word dimension translated solely by words_as_type_indexed_bitvec. Full line_encd retains Asm exact byte length and all7 labelled-opcode encoder equalities plus byte-length lower bound; stored LabAsm word is intentionally ignored as original. Halt/Install/FFI negative offsets, original index+3, Jump/JumpCmp/Loc/Call find_pos+n2w-neg arithmetic and every constructor retained. lines_encd threads recorded annotations including Label; all_encd advances sections by SUM(MAP line_len), not byte length. Three full original implication laws derive lower bounds. Both full successful encoder laws keep exactly actual pair=(res,T), original source EVERY label_one and encd0 and derive complete lines_encd/all_encd; no callback, desired output/invariant, source wellformedness or target-result premise. Native inductive proofs consume checked .87 simple encoder/equality and .86/.89 predicates; source guards retained even where proof could omit them. Twenty-one original/native observations cover all labelled opcodes, duplicate FFI first index and absent default0, wrong position/cache/short annotations, arbitrary label annotation999, unequal Asm lengths versus weaker length bound, missing-label0, width8 word wrap at Nat260, label/section recorded-length position threading and full successful line/section output tuples. Five full arbitrary-width statement consumers plus21 observations kernel checked. Original proof-script predicates, no executed compiler change; HD/EL provenance hold unchanged, full remove_labels_loop/remove_labels/compile_correct remains separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EndingLabels.lean",
+    "lean_name": "encLinesAgainSimp_endsWithLabel",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_lines_again_simp_ends_with_label",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original ending-label group5564–5605, .90 and3 declaration leaves. Fresh complete original theorem/section-end definition statements and full quantified types captured in lab_to_target_ending_label_probe.out. Original native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, nested Nat Spt labels, HolFfiName list, fixed word8 bytes and arbitrary positive dimension retained; sole words_as_type_indexed_bitvec. Full line theorem retains actual returned pair=(res,ok) for arbitrary Bool, source nonempty and LAST classifier conjuncts, and derives both target nonempty and LAST classifier. Flapjack-specific lastLabel maps checked getLast? through native isLabelHOL with false at empty; its empty value is irrelevant behind BOTH retained original nonempty conjuncts. This is a guarded nonempty expression, not a tagged total HOL LAST default or a provenance allowance. Kernel-checked endLabel_iff establishes exact correspondence to existing reviewed secEndsWithLabelNative reverse-head predicate, where empty is false and nonempty inspects the actual final line. Full section/initial encoder laws retain source EVERY only and actual pair equality with arbitrary flag for repeated encoding, deriving full output EVERY without output/success/wellformedness assumptions. Proof factors constructor-preserving original EVERY2/code_similar and full simple-accumulator equality; same native executed encoders as source, no change to compiler. Fourteen fresh original/native observations cover empty-section rejection, arbitrary large label annotation999/777, nonlabel ends, complete growing false-flag output, preserved ends even on false, unchanged-word invalid cache/annotation, full initial encoded tuple and empty sections remaining invalid. Three complete arbitrary-width statement consumers plus14 observations kernel checked. HD/EL hold unchanged; full remove_labels_loop/remove_labels/compile_correct remain separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EndingLabels.lean",
+    "lean_name": "encSecsAgain_endsWithLabel",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_secs_again_ends_with_label",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original ending-label group5564–5605, .90 and3 declaration leaves. Fresh complete original theorem/section-end definition statements and full quantified types captured in lab_to_target_ending_label_probe.out. Original native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, nested Nat Spt labels, HolFfiName list, fixed word8 bytes and arbitrary positive dimension retained; sole words_as_type_indexed_bitvec. Full line theorem retains actual returned pair=(res,ok) for arbitrary Bool, source nonempty and LAST classifier conjuncts, and derives both target nonempty and LAST classifier. Flapjack-specific lastLabel maps checked getLast? through native isLabelHOL with false at empty; its empty value is irrelevant behind BOTH retained original nonempty conjuncts. This is a guarded nonempty expression, not a tagged total HOL LAST default or a provenance allowance. Kernel-checked endLabel_iff establishes exact correspondence to existing reviewed secEndsWithLabelNative reverse-head predicate, where empty is false and nonempty inspects the actual final line. Full section/initial encoder laws retain source EVERY only and actual pair equality with arbitrary flag for repeated encoding, deriving full output EVERY without output/success/wellformedness assumptions. Proof factors constructor-preserving original EVERY2/code_similar and full simple-accumulator equality; same native executed encoders as source, no change to compiler. Fourteen fresh original/native observations cover empty-section rejection, arbitrary large label annotation999/777, nonlabel ends, complete growing false-flag output, preserved ends even on false, unchanged-word invalid cache/annotation, full initial encoded tuple and empty sections remaining invalid. Three complete arbitrary-width statement consumers plus14 observations kernel checked. HD/EL hold unchanged; full remove_labels_loop/remove_labels/compile_correct remain separate unfinished work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EndingLabels.lean",
+    "lean_name": "encSecList_endsWithLabel",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_sec_list_ends_with_label",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original ending-label group5564–5605, .90 and3 declaration leaves. Fresh complete original theorem/section-end definition statements and full quantified types captured in lab_to_target_ending_label_probe.out. Original native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, nested Nat Spt labels, HolFfiName list, fixed word8 bytes and arbitrary positive dimension retained; sole words_as_type_indexed_bitvec. Full line theorem retains actual returned pair=(res,ok) for arbitrary Bool, source nonempty and LAST classifier conjuncts, and derives both target nonempty and LAST classifier. Flapjack-specific lastLabel maps checked getLast? through native isLabelHOL with false at empty; its empty value is irrelevant behind BOTH retained original nonempty conjuncts. This is a guarded nonempty expression, not a tagged total HOL LAST default or a provenance allowance. Kernel-checked endLabel_iff establishes exact correspondence to existing reviewed secEndsWithLabelNative reverse-head predicate, where empty is false and nonempty inspects the actual final line. Full section/initial encoder laws retain source EVERY only and actual pair equality with arbitrary flag for repeated encoding, deriving full output EVERY without output/success/wellformedness assumptions. Proof factors constructor-preserving original EVERY2/code_similar and full simple-accumulator equality; same native executed encoders as source, no change to compiler. Fourteen fresh original/native observations cover empty-section rejection, arbitrary large label annotation999/777, nonlabel ends, complete growing false-flag output, preserved ends even on false, unchanged-word invalid cache/annotation, full initial encoded tuple and empty sections remaining invalid. Three complete arbitrary-width statement consumers plus14 observations kernel checked. HD/EL hold unchanged; full remove_labels_loop/remove_labels/compile_correct remain separate unfinished work."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
     "hol_name": "ffi_interfer_ok_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/InterferenceContracts.lean",
@@ -60282,6 +60489,60 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:1309-1325 and full original compiled HOL capture. All three original contract/entry-state/link-alignment hypotheses and all pc/mc/t1/ms2/k/a1/a2 variables retained; conclusion uses canonical post_ccache_asm and exact cache interference result. Every state_ok/PC/memory/register/FP conjunct proved; pointer-preservation branch retained. No added premise or assumed final state relation. BitVec width under NeZero and fixed BitVec8/64 payloads preserve source word dimensions; native MachineConfig/HolAsmTarget/AsmState, predicate sets, Lists and Type state/projection carriers retained. HOL membership as Prop and Boolean state/alignment predicates as = true are literal logical renderings. Native empty mlstring is implode []. Proof-side logical contracts, no compiler executable behavior change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_consts",
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateConsts.lean",
+    "lean_name": "evaluateConsts",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7.15): stackPropsScript.sml:400-418, same ∀c s r s1 and premise evaluate (c,s) = (r,s1) on the tagged exact StackSem evaluate. Conclusion: the eight conjuncts s1.use_alloc = s.use_alloc, use_store, use_stack, be, gc_fun, mdomain, sh_mdomain, compile, in HOL order. HOL proves it by recInduct evaluate_ind with alloc_const/inst_const/store_const_sem_const/sh_mem_op_const; the Lean proof is the same measure induction as evaluate_add_clock, using the ported versions of those lemmas. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration through the tagged StackSem evaluate (its Inst clause, StackSem instHOL / inst_def FP clauses), as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "comp_correct",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/CompCorrect.lean",
+    "lean_name": "compCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): stack_namesProofScript.sml:304-526 comp_correct [local]. Same ∀p s r t. Same single conjunctive premise, in HOL order: evaluate (p,s) = (r,t), BIJ (find_name f) UNIV UNIV (Function.Bijective (findNameSpt f)), ~s.use_alloc, ~s.use_store, ~s.use_stack, s.compile = (λcfg. c cfg o stack_names$compile f) (compileHOL f). Same conclusion: evaluate (comp f p, rename_state c f s) = (r, rename_state c f t) over the tagged StackSem evaluate, progCompHOL (comp_def) and renameState (rename_state_def). HOL's free f and c are implicit binders. The proof is the measure induction of evaluate_add_clock/evaluate_consts, using the ported rename_state lemmas, evaluate_consts, and the MAP_KEYS choice-rendering laws for FEMPTY, DOMSUB_MAP_KEYS, DRESTRICT_MAP_KEYS_IMAGE and MAP_KEYS_FUPDATE (Flapjack infrastructure, injective case only). Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration through the tagged StackSem evaluate (its Inst clause, StackSem instHOL / inst_def FP clauses), as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ALookupMap.lean",
+    "lean_name": "alookupMapAny",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "ALOOKUP_MAP_any",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-alookup-map-laws): full original3548-3568/3576-3603/3605-3610, independent arbitrary key/payload type parameters and functions, exact queried-element INSERT key/list domain for INJ, exact source pair-map and query equalities. INJ codomain UNIV contributes no guard; membership maps and classical propositional equality use existing keyLookup, no DecidableEq/BEq/instance premise or global injection/Nodup restriction. Identity tabulation has no premises. Three literal original complete proofs hyp=[] and302 matching Nat/Bool heterogeneous-carrier complete Option/injection observations with repeated/missing/large keys and noninjective sentinels. No held HD/EL or trust policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ALookupMap.lean",
+    "lean_name": "alookupMapInjFst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "ALOOKUP_MAP_INJ_FST",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-alookup-map-laws): full original3548-3568/3576-3603/3605-3610, independent arbitrary key/payload type parameters and functions, exact queried-element INSERT key/list domain for INJ, exact source pair-map and query equalities. INJ codomain UNIV contributes no guard; membership maps and classical propositional equality use existing keyLookup, no DecidableEq/BEq/instance premise or global injection/Nodup restriction. Identity tabulation has no premises. Three literal original complete proofs hyp=[] and302 matching Nat/Bool heterogeneous-carrier complete Option/injection observations with repeated/missing/large keys and noninjective sentinels. No held HD/EL or trust policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ALookupMap.lean",
+    "lean_name": "alookupIdTabulate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "ALOOKUP_ID_TABULATE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-alookup-map-laws): full original3548-3568/3576-3603/3605-3610, independent arbitrary key/payload type parameters and functions, exact queried-element INSERT key/list domain for INJ, exact source pair-map and query equalities. INJ codomain UNIV contributes no guard; membership maps and classical propositional equality use existing keyLookup, no DecidableEq/BEq/instance premise or global injection/Nodup restriction. Identity tabulation has no premises. Three literal original complete proofs hyp=[] and302 matching Nat/Bool heterogeneous-carrier complete Option/injection observations with repeated/missing/large keys and noninjective sentinels. No held HD/EL or trust policy changes."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/WordLocValByte.lean",
