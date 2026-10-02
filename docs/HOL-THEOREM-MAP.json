@@ -53790,5 +53790,14 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (qipb): full original StackProps790-798 theorem and literal original proof replayed with captured full inferred type: target:num+beta, regs:beta |-> gamma word_loc, code/e:alpha stackLang$prog. Lean retains arbitrary key kappa, independent positive registerWidth/programWidth, exact HolProg and Spt tree code, original successful input lookup equality, and complete predicate-set subset. fmap_as_finite_support_relation records only canonical standalone regs binder; words_as_type_indexed_bitvec records both independent positive word dimensions. No key equality/BEq, target evaluation, domain, offset-zero, output-state or label premise is added. Proof derives original successful Spt lookup in direct and all indirect branches then uses loc_check original existential disjunct. Full original/native theorem applications use Bool keys with register1/program80 and List Nat keys with register80/program1; missing/word/nonzero-offset source lookup observations retained. Dependent native findCode generic carrier repaired and coordinator accepted62gq before this port. No full compiler pass or source-to-RISC-V composition claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EvaluateIgnoreClocks.lean",
+    "lean_name": "evaluateTargetIgnoreClocks",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "evaluate_ignore_clocks",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 bead .10.31.3: exact local original18-27 conjunction of two unrestricted mc/ffi/ms runs at k/kprime and both non-TimeOut results, conclusion equality of entire result/machine/FFI triples. Accepted full clock theorem at common k+kprime and commutativity; no extra clock bound, validity, oracle or poststate premise. Qualifier only positive BitVec dimension and universe0 FFI host. Source-reviewed total holEl/holHd inherited through actual evaluator: in-range element, out-of-range shared holHdNil/holArb, no bounds guard or concrete fallback. Literal complete original local proof replay checks full statement and null hypotheses; generic Lean application is regression not cross-language equivalence."
   }
 ]
