@@ -4294,3 +4294,7 @@ run_probe comparison_bundle_probeScript.sml comparison_bundle_probe.out \
 run_probe balanced_map_heterogeneous_probeScript.sml balanced_map_heterogeneous_probe.out \
   bmh_keyset bmh_map bmh_domain bmh_keyset_type bmh_map_type bmh_cmp bmh_cmp2 \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_core_types_probeScript.sml balanced_map_core_types_probe.out \
+  bmct_lookup bmct_member \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

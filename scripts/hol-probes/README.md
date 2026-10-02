@@ -4764,3 +4764,11 @@ results and comparator keys; Lean retains this and every original conjunct.
 key-set, semantic-map and domain declarations. Comparator key and query types
 are independent. The Lean repair preserves this in the producer, raw codec and
 unconditional lookup witness; generic consumers and Bool/Nat fixtures check it.
+
+### Balanced-map core independent carriers
+
+`balanced_map_core_types_probeScript.sml` captures the complete fully typed original
+`lookup_def` and `member_def`, including independent query/stored-key/payload types
+and all recursive ordering branches. Both captured theorems have no hypotheses.
+The heterogeneous kernel fixtures instantiate query Bool, stored key Nat and
+payload String; existing homogeneous observations remain unchanged.
