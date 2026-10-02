@@ -62635,5 +62635,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 author source comparison 2026-10-02 complete original4473-4510, both complete statements and free-variable types freshly captured in lab_to_target_nop_padding_probe.out. Encoded element carrier is arbitrary HOL alpha/beta list and remains independent Value:Type, not fixed byte8; native HolAsm positive dimension is sole words_as_type_indexed_bitvec translation. Unconditional same-length padding theorem retains arbitrary encoder/instruction and supports empty NOP. General establishment retains all original five conjuncts: NOP identity with enc Skip, encoded length bound, encoded and target length MOD NOP length both zero, positive NOP length. Conclusion actual encWithNop of actual padBytes, not a desired-result premise or weaker length statement. Full arbitrary inputs, no BEq or DecidableEq instances added. Proof uses original enc_with_nop_thm, exact generic TAKE_FLAT_REPLICATE_LEQ prerequisite7fd9673306e1488429f15ed765a163d2a6eaecaa, ordinary Nat quotient equations and full list take/append semantics. Nine original/native observations and six actual theorem applications plus two full generic consumers cover Nat/Bool payloads, multibyte/empty NOP, exact/zero target and empty encoded input, and both modulo/NOP-identity guard counterexamples. Original numeric disequality normalized with source HOL simplifier after EVAL, not a hand-written result. No production body change or HD/EL hold dependency; full line/section padding invariants and remove_labels_loop/end-to-end remain unfinished."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstallCase.lean",
+    "lean_name": "ssaCcTransCorrectInstall",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a author source comparison2026-10-02 original resumed Install9700-9858 of full ssa_cc_trans_correct7666: all six original premises and complete ssaSimulation source-permutation/Error-exempt actual target result/frame/result-sensitive locals conclusion. Source permutation is original target.permute. Actual non-Error source Install derives successful cut/four word reads/normal result; native compiler rename and scratch moves, mapped cut relation, identical actual compile/buffer/oracle/config/code branches, fresh pointer copy and final rename are proved internally. No targetrun/successful callback/final SSA or post-frame premise, no induction hypothesis. Native arbitrary Nat/Spt/cutsets/program/code/stack/GC/FFI carriers retained, canonical fpRegs/store relation and positive word qualifiers only; inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Full SSA/end-to-end remain open."
   }
 ]
