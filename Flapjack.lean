@@ -615,6 +615,9 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionParentCompression
 import Flapjack.Compiler.Backend.RegAlloc.ProductionBgOk
 import Flapjack.Compiler.Backend.RegAlloc.ProductionCoalesce
 import Flapjack.Compiler.Backend.RegAlloc.ProductionStep
+import Flapjack.Compiler.Backend.RegAlloc.ProductionInitAlloc
+import Flapjack.Compiler.Backend.RegAlloc.ProductionAllocLoop
+import Flapjack.Compiler.Backend.RegAlloc.ProductionColourReads
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
