@@ -238,4 +238,72 @@ theorem fp32Lower_zero_isClosest {X : Rat} (hX : 0 ≤ X)
       split at ha <;> split at ha <;> grind
     exact (fp32Lower_isClosest hX hmax).2 b ⟨hb.1, hbbelow⟩
 
+/-- All closest below-candidates have the lower bracket's represented value. -/
+theorem fp32Lower_closest_value {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) (b : HolFloat 23 8)
+    (hb : holIsClosest (fun c : HolFloat 23 8 =>
+      holFloatIsFinite c = true ∧ holFloatToReal c ≤ X / 2 ^ 149)
+      (X / 2 ^ 149) b) :
+    holFloatToReal b = holFloatToReal (fp32OfPat false (fp32Lower X)) := by
+  have hc := fp32Lower_isClosest hX hmax
+  have hd := hb.2 _ hc.1
+  have he := fp32Lower_value_extremal hX hmax b hb.1.2
+  have hl := hc.1.2
+  have hbval := hb.1.2
+  unfold holRatAbs at hd
+  split at hd <;> split at hd <;> grind
+
+/-- All closest above-candidates have the upper bracket's represented value. -/
+theorem fp32Upper_closest_value {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) (b : HolFloat 23 8)
+    (hb : holIsClosest (fun c : HolFloat 23 8 =>
+      holFloatIsFinite c = true ∧ X / 2 ^ 149 ≤ holFloatToReal c)
+      (X / 2 ^ 149) b) :
+    holFloatToReal b = holFloatToReal (fp32OfPat false (fp32Upper X)) := by
+  have hc := fp32Upper_isClosest hX hmax
+  have hd := hb.2 _ hc.1
+  have he := fp32Upper_value_extremal hX hmax b hb.1.2
+  have hl := hc.1.2
+  have hbval := hb.1.2
+  unfold holRatAbs at hd
+  split at hd <;> split at hd <;> grind
+
+/-- Toward-zero closest candidates have the same represented value as the lower bracket. -/
+theorem fp32Lower_zero_closest_value {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) (b : HolFloat 23 8)
+    (hb : holIsClosest (fun c : HolFloat 23 8 =>
+      holFloatIsFinite c = true ∧
+        holRatAbs (holFloatToReal c) ≤ holRatAbs (X / 2 ^ 149))
+      (X / 2 ^ 149) b) :
+    holFloatToReal b = holFloatToReal (fp32OfPat false (fp32Lower X)) := by
+  have hc := fp32Lower_zero_isClosest hX hmax
+  have hd := hb.2 _ hc.1
+  have hf := fp32Directed_finite_bracket hX hmax
+  have hD := fp32_D_pos
+  have hx0 : 0 ≤ X / 2 ^ 149 := by grind
+  have hbval : holFloatToReal b ≤ X / 2 ^ 149 := by
+    have ha := hb.1.2
+    unfold holRatAbs at ha
+    split at ha <;> split at ha <;> grind
+  have he := fp32Lower_value_extremal hX hmax b hbval
+  have hl := hf.2.2.1
+  unfold holRatAbs at hd
+  split at hd <;> split at hd <;> grind
+
+/-- Equal represented magnitudes have equal patterns when their sign bits agree. -/
+theorem fp32_same_sign_value_injective (a b : HolFloat 23 8)
+    (hs : a.sign = b.sign) (hv : holFloatToReal a = holFloatToReal b) : a = b := by
+  rw [holFloatToReal_fp32, holFloatToReal_fp32, hs] at hv
+  have hD := fp32_D_pos
+  have hn : ((fp32N (fp32Pat a) : Nat) : Rat) =
+      ((fp32N (fp32Pat b) : Nat) : Rat) := by
+    by_cases h : b.sign = 1 <;> simp only [h, if_true, if_false] at hv <;> grind
+  have hnat : fp32N (fp32Pat a) = fp32N (fp32Pat b) := by exact_mod_cast hn
+  have hp : fp32Pat a = fp32Pat b := by
+    rcases Nat.lt_trichotomy (fp32Pat a) (fp32Pat b) with h | h | h
+    · have := fp32N_strictMono h; omega
+    · exact h
+    · have := fp32N_strictMono h; omega
+  rw [← fp32OfPat_pat a, ← fp32OfPat_pat b, hs, hp]
+
 end Flapjack.Binary32Rounding
