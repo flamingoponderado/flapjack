@@ -1,3 +1,9 @@
+`ssa_reconcile_get_vars_probe.out` replays the literal original full theorem
+and list-induction proof, and records all universally quantified binder types.
+The Lean counterpart keeps distinctness, native get_vars result existence,
+length and every in-bounds EL/THE lookup; the replay is source-review evidence,
+not a cross-assistant equivalence proof.
+
 `riscv_jumpcmp_polarity_probe.out` records 32 fresh original encoder byte
 vectors: all eight JumpCmp predicates, register/immediate operands, and
 short/long ranges. RiscVBranchPolarity kernel-checks actual executed Lab

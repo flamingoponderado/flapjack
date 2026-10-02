@@ -52474,5 +52474,18 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a source comparison flapjack-2nhb: Genuine original6593-6650 empty-moves branch of evaluate_ssa_reconcile: both original SSA-locals/injection premises retained and only actual filtered moves=[] branch guard added. Native total pair evaluate, existential poststate, full21-field wordStateEqRel and original domain-scoped strongLocalsRel derived; no output/result/simulation premise. Injection unused here retained for assembly. Fresh literal full original reconciliation proof replay plus branch specialization and6carrier types confirms arbitrary names delta num_map, positive word width, native word_loc and independent configuration/FFI host types. Guard uses exact compiler filter/flatten and lawful Nat equality. Native Spt locals/names/maps unchanged; fmap_as_finite_support_relation translates only actual imported owner fpRegs/store with same-module genuine broad/exact roundtrip witness; words_as_type_indexed_bitvec only conventional positive-width/FFI translation. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item8); Skip-only branch. Full nonempty assembly and native SSA simulation remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileGetVars.lean",
+  "lean_name": "ssaReconcileGetVarsLemma",
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_reconcile_get_vars_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison 2026-10-02 (58wf), original lines6524-6549: forall source list/current SSA tree/native WordSem state, original ALL_DISTINCT and per-member lookup existence imply existential get_vars of MAP(THE lookup), exact LENGTH and all in-bounds EL lookup equations. List/Nodup/MEM and sptree num_map stay literal; exact holThe and holEl retain missing/out-of-bounds unspecified values, no premise requiring SSA lookup success added. Imported canonical native WordSem carrier only fpRegs/store are finite-support maps, locals/current SSA are trees; same-module non-vacuous full toBroad/ofBroad carrier roundtrip. Standard positive BitVec width and universe-zero code/FFI host translation, no changed quantifier/premise/conclusion. Native getVars/getVar list induction kernel checked; distinctness retained though unused beyond induction."
 }
 ]

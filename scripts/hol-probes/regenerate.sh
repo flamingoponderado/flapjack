@@ -4029,3 +4029,7 @@ run_probe word_cse_evaluation_frames_probeScript.sml word_cse_evaluation_frames_
 run_probe ssa_reconcile_empty_probeScript.sml ssa_reconcile_empty_probe.out \
   re_original_full re_empty_full re_type_na re_type_cur_ssa re_type_tgt_ssa re_type_st_locs re_type_cst re_type_ns \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_reconcile_get_vars_probeScript.sml ssa_reconcile_get_vars_probe.out \
+  ssa_reconcile_get_vars_original_proof ssa_reconcile_get_vars_original_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
