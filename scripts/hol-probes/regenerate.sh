@@ -4115,3 +4115,7 @@ run_probe target_props_clock_io_events_probeScript.sml target_props_clock_io_eve
 run_probe target_props_interference_app_probeScript.sml target_props_interference_app_probe.out \
   ia_ffi_type ia_cc_type ia_isffi_type ia_post_type ia_ffi_classifier ia_cc_classifier ia_ffi_post ia_cc_post \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe asmprops_interference_ok_probeScript.sml asmprops_interference_ok_probe.out \
+  interference_ok_full interference_ok_type interference_ok_identity interference_ok_changed \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"

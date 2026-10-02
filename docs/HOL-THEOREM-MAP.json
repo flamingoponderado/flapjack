@@ -53835,5 +53835,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c literal source/type comparison 2026-10-02, native-target-interference-app: original95-106 exact two constructors FfiApp Nat fixed8bit byte List arbitrary pre/post state and CcApp two same-dimension words arbitrary pre/post state. FFI phantom word parameter retained. Bool classifier and post projection have both literal equations, no premise or altered payload. Positive word dimension translation only; state Type universe0. Fresh original four full inferred types and four unrestricted constructor equations T captured; Lean generic equations kernel checked. No EL/HD or real dependency and no completed oracle-search/simulation claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Interference.lean",
+    "lean_name": "interferenceOk",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "interference_ok_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c complete literal source/type comparison 2026-10-02 native-interference-ok: asmProps75-77 arbitrary env:num->state->state and independently arbitrary projection:state->result, forall natural index and state projection equality exactly. HOL bool predicate as Lean Prop, no premise, constrained dimension, finite map, array, real or EL dependency. Fresh full equation proof hyp=[] and original fully polymorphic type captured, identity T and changed state F. Lean generic definitional equation and identity/changed regressions kernel checked. No full encoder_correct or compiler simulation completion claim."
   }
 ]
