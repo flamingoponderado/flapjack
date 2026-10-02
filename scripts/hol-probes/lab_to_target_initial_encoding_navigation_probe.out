@@ -1,0 +1,14 @@
+loc_to_pc_enc_sec_list=∀(l1 :num) (l2 :num) (code :α sec list).
+  loc_to_pc l1 l2 (enc_sec_list (e :α asm -> word8 list) code) =
+  loc_to_pc l1 l2 code
+loc_to_pc_enc_sec_list_types=(l1 :num)::num;(l2 :num)::num;(code :α sec list)::α sec list;(e :α asm -> word8 list)::α asm -> word8 list;
+loc_to_pc_enc_sec_list_hypotheses=0
+empty=T
+section_zero=T
+mixed_index=T
+wrong_section_owner=T
+duplicate_labels=T
+absent=T
+zero_label_ignored=T
+width1=T
+width80_large_ids=T

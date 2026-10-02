@@ -1,0 +1,25 @@
+ALOOKUP_section_labels=∀(pos :num) (lines :α line list) (acc :(num # num) list) (pc :num).
+  EVERY (sec_label_ok (n1 :num) :α line -> bool) lines ∧
+  EVERY (line_length_ok :α line -> bool) lines ∧
+  EVERY (label_zero :α line -> bool) lines ∧
+  ALL_DISTINCT (extract_labels lines) ∧
+  sec_loc_to_pc (n2 :num) lines = SOME pc ∧ n2 ≠ (0 :num) ⇒
+  ∃(i :num).
+    ALOOKUP (SND (section_labels pos lines acc)) n2 = SOME i ∧
+    (sec_pos_val pc pos lines = (NONE :num option) ∧
+     i = pos + (SUM (MAP (line_length :α line -> num) lines) :num) ∧
+     pc = LENGTH (FILTER ($¬ ∘ (is_Label :α line -> bool)) lines) ∨
+     sec_pos_val pc pos lines = SOME i)
+ALOOKUP_section_labels_types=(pos :num)::num;(lines :α line list)::α line list;(acc :(num # num) list)::(num # num) list;(pc :num)::num;(n2 :num)::num;(n1 :num)::num;
+ALOOKUP_section_labels_hypotheses=0
+empty=T
+boundary_duplicate_acc=T
+head_success=T
+asm_prefix=T
+labasm_boundary=T
+missing=T
+distinct_guard_needed=T
+owner_guard_false=T
+length_guard_needed=T
+width1_large_pos=T
+width80_large_pos=T

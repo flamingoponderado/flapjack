@@ -107,6 +107,12 @@ run_probe() {
   done
 }
 
+run_probe stack_rawcall_collect_probeScript.sml stack_rawcall_collect_probe.out \
+  collect_bare_rejected collect_seq_zero collect_nested_rejected collect_duplicates \
+  "$cake_dir/compiler/backend/stack_rawcallScript.sml" "$cake_dir/compiler/backend"
+run_probe stack_rawcall_native_probeScript.sml stack_rawcall_native_probe.out \
+  rawcall_equal rawcall_smaller rawcall_larger rawcall_missing rawcall_top_preserved rawcall_tail_handler_untouched rawcall_return_handler_compiled \
+  "$cake_dir/compiler/backend/stack_rawcallScript.sml" "$cake_dir/compiler/backend"
 run_probe word_to_stack_tail_handler_probeScript.sml word_to_stack_tail_handler_probe.out \
   tail_direct_F_handler_erased tail_direct_T_handler_erased tail_indirect_F_handler_erased tail_indirect_T_handler_erased tail_direct_F_move_complete tail_direct_F_bitmap_complete tail_direct_T_move_complete tail_direct_T_bitmap_complete tail_indirect_F_move_complete tail_indirect_F_bitmap_complete tail_indirect_T_move_complete tail_indirect_T_bitmap_complete return_direct_F_bitmap_complete return_direct_T_bitmap_complete return_indirect_F_bitmap_complete return_indirect_T_bitmap_complete \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
@@ -5551,3 +5557,37 @@ run_probe l3_mmu_tlb_probeScript.sml l3_mmu_tlb_probe.out \
 run_probe l3_mmu_write_frame_probeScript.sml l3_mmu_write_frame_probe.out \
   raw_write_frame \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe l3_mmu_primitives_probeScript.sml l3_mmu_primitives_probe.out \
+  constant_ASID_SIZE constant_LEVEL_BITS constant_PAGESIZE_BITS constant_TLBEntries privilege_0 privilege_1 privilege_2 privilege_3 global_0 global_1 global_2 global_3 global_4 global_5 global_6 global_7 global_8 global_9 global_10 global_11 global_12 global_13 global_14 global_15 pte_0 pte_repack_0 vaddr_0 pte_1 pte_repack_1 vaddr_1 pte_2 pte_repack_2 vaddr_2 pte_3 pte_repack_3 vaddr_3 pte_4 pte_repack_4 vaddr_4 pte_5 pte_repack_5 vaddr_5 pte_6 pte_repack_6 vaddr_6 pte_7 pte_repack_7 vaddr_7 pte_8 pte_repack_8 vaddr_8 pte_9 pte_repack_9 vaddr_9 scsr_full tlb_full tlb_write_full mem_write_full mem_read_0 mem_read_1 mem_read_2 mem_read_3 \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe stack_sem_clock_control_probeScript.sml stack_sem_clock_control_probe.out \
+  cseq_statement cseq_proved cif_statement cif_proved cloop_statement cloop_proved \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe word_to_stack_make_init_probeScript.sml word_to_stack_make_init_probe.out \
+  mi_definition mi_1_0_reset mi_1_0_sizes mi_1_0_inherit mi_1_0_store mi_1_0_oracle mi_1_1_reset mi_1_1_sizes mi_1_1_inherit mi_1_1_store mi_1_1_oracle mi_1_2_reset mi_1_2_sizes mi_1_2_inherit mi_1_2_store mi_1_2_oracle mi_1_3_reset mi_1_3_sizes mi_1_3_inherit mi_1_3_store mi_1_3_oracle mi_1_4_reset mi_1_4_sizes mi_1_4_inherit mi_1_4_store mi_1_4_oracle mi_1_0_0_compile mi_1_0_99_compile mi_1_17_0_compile mi_1_17_99_compile mi_1_300_0_compile mi_1_300_99_compile mi_8_0_reset mi_8_0_sizes mi_8_0_inherit mi_8_0_store mi_8_0_oracle mi_8_1_reset mi_8_1_sizes mi_8_1_inherit mi_8_1_store mi_8_1_oracle mi_8_2_reset mi_8_2_sizes mi_8_2_inherit mi_8_2_store mi_8_2_oracle mi_8_3_reset mi_8_3_sizes mi_8_3_inherit mi_8_3_store mi_8_3_oracle mi_8_4_reset mi_8_4_sizes mi_8_4_inherit mi_8_4_store mi_8_4_oracle mi_8_0_0_compile mi_8_0_99_compile mi_8_17_0_compile mi_8_17_99_compile mi_8_300_0_compile mi_8_300_99_compile mi_64_0_reset mi_64_0_sizes mi_64_0_inherit mi_64_0_store mi_64_0_oracle mi_64_1_reset mi_64_1_sizes mi_64_1_inherit mi_64_1_store mi_64_1_oracle mi_64_2_reset mi_64_2_sizes mi_64_2_inherit mi_64_2_store mi_64_2_oracle mi_64_3_reset mi_64_3_sizes mi_64_3_inherit mi_64_3_store mi_64_3_oracle mi_64_4_reset mi_64_4_sizes mi_64_4_inherit mi_64_4_store mi_64_4_oracle mi_64_0_0_compile mi_64_0_99_compile mi_64_17_0_compile mi_64_17_99_compile mi_64_300_0_compile mi_64_300_99_compile mi_80_0_reset mi_80_0_sizes mi_80_0_inherit mi_80_0_store mi_80_0_oracle mi_80_1_reset mi_80_1_sizes mi_80_1_inherit mi_80_1_store mi_80_1_oracle mi_80_2_reset mi_80_2_sizes mi_80_2_inherit mi_80_2_store mi_80_2_oracle mi_80_3_reset mi_80_3_sizes mi_80_3_inherit mi_80_3_store mi_80_3_oracle mi_80_4_reset mi_80_4_sizes mi_80_4_inherit mi_80_4_store mi_80_4_oracle mi_80_0_0_compile mi_80_0_99_compile mi_80_17_0_compile mi_80_17_99_compile mi_80_300_0_compile mi_80_300_99_compile \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_section_lookup_ignore_probeScript.sml lab_to_target_section_lookup_ignore_probe.out \
+  ALOOKUP_section_labels_ignore ALOOKUP_section_labels_ignore_types ALOOKUP_section_labels_ignore_hypotheses \
+  empty_duplicate_acc missing_key arbitrary_annotations guard_needed zero_query width1 width80 \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe labprops_extraction_validity_probeScript.sml labprops_extraction_validity_probe.out \
+  sec_label_ok_extract_labels sec_label_ok_extract_labels_types sec_label_ok_extract_labels_hypotheses \
+  empty mixed wrong_owner zero_rejected width1 width80 \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+run_probe lab_to_target_initial_encoding_navigation_probeScript.sml lab_to_target_initial_encoding_navigation_probe.out \
+  loc_to_pc_enc_sec_list loc_to_pc_enc_sec_list_types loc_to_pc_enc_sec_list_hypotheses \
+  empty section_zero mixed_index wrong_section_owner duplicate_labels absent zero_label_ignored width1 width80_large_ids \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_section_lookup_positions_probeScript.sml lab_to_target_section_lookup_positions_probe.out \
+  ALOOKUP_section_labels ALOOKUP_section_labels_types ALOOKUP_section_labels_hypotheses \
+  empty boundary_duplicate_acc head_success asm_prefix labasm_boundary missing distinct_guard_needed owner_guard_false length_guard_needed width1_large_pos width80_large_pos \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

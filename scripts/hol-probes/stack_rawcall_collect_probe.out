@@ -1,0 +1,4 @@
+collect_bare_rejected=NONE
+collect_seq_zero=SOME 0
+collect_nested_rejected=NONE
+collect_duplicates=[SOME 8; SOME 6; SOME 0; NONE]

@@ -1,0 +1,11 @@
+sec_label_ok_extract_labels=EVERY (sec_label_ok (n1 :num) :α line -> bool) (lines :α line list) ∧
+MEM ((n1' :num),(n2 :num)) (extract_labels lines) ⇒
+n1' = n1 ∧ n2 ≠ (0 :num)
+sec_label_ok_extract_labels_types=(n2 :num)::num;(n1' :num)::num;(lines :α line list)::α line list;(n1 :num)::num;
+sec_label_ok_extract_labels_hypotheses=0
+empty=T
+mixed=T
+wrong_owner=T
+zero_rejected=T
+width1=T
+width80=T
