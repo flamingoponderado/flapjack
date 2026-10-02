@@ -1324,6 +1324,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.StempAssignment
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColourExtraction
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColouringTransport
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkGraphCheckClashTree
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.CoalesceSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.FreezeSpillSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoAlloc1Success
