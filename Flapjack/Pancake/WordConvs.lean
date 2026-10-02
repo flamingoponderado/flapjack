@@ -304,12 +304,17 @@ def fullInstOkLessWith {width : Nat}
       | none => false
   | _ => true
 
-/-- Broad executed program-validity wrapper. It retains the original
+/-- Broad program-validity compatibility wrapper. It retains the original
 width-general behavior, including width zero, and uses AsmConfig whose encoder
 consumes AsmData and produces UInt8 lists. Those carriers differ from HOL's
 positive-width asm_config with HolAsm/word8 encoder, so this wrapper is untagged.
 The faithful full_inst_ok_less port is fullInstOkLessExact in the counterpart
-submodule; the shared recursive traversal avoids a duplicate program semantics. -/
+submodule; the shared recursive traversal avoids a duplicate program semantics.
+Source-call audit: this guard is a proof-side HOL correctness predicate, not
+an invoked CLI compiler validation pass. The native naming/convention proofs
+and executed regression runner use the exact predicate. This older wrapper
+is retained only for explicitly untagged compatibility checks; its encoder
+carrier difference is not discharged by the matching bounded test results. -/
 def fullInstOkLess {width : Nat} (config : AsmConfig width)
     (program : WordLangProgHOL (BitVec width)) : Bool :=
   fullInstOkLessWith (instOkLess config) (fun operator offset =>

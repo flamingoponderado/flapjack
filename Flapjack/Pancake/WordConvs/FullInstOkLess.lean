@@ -7,7 +7,12 @@ open Flapjack.Compiler.Encoders.Asm
 and assembler-configuration carriers. Instruction validity uses reviewed exact
 HolInst conversion; ShareInst uses precisely the source four/two/remaining memop
 partition and exact address extraction. Recursive clauses are shared with the
-broad executed wrapper through policy-parameterized Flapjack infrastructure. -/
+untagged compatibility wrapper through policy-parameterized infrastructure.
+The original backend defines this guard in semantics/wordConvsScript.sml and
+uses it in proofs, rather than invoking it from executable compiler passes.
+Native WordToStack naming and assembler-convention theorems use this exact
+guard, as does the executed WordLangFullInstOkLessParity runner. This caller
+disposition does not establish the broader production encoder/carrier bridge. -/
 @[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "full_inst_ok_less_def"
   (words_as_type_indexed_bitvec)]
 def fullInstOkLessExact {width : Nat} [NeZero width] (config : AsmConfigExact width)

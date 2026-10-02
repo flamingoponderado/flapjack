@@ -1,6 +1,9 @@
+import Flapjack.Test.NumericFormattingParity
 import Flapjack.Test.WordReplicateParity
 import Flapjack.Test.L3RiscvMaddParity
+import Flapjack.Test.LabToTargetZeroLabelExistenceParity
 import Flapjack.Test.BackendRestrictZeroParity
+import Flapjack.Test.LabToTargetUpdatePadEndingParity
 import Flapjack.Test.L3RiscvSqrtParity
 import Flapjack.Test.L3RiscvArithmeticParity
 import Flapjack.Test.SetNewTriggerParity
