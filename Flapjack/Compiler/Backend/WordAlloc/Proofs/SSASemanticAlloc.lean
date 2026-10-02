@@ -175,4 +175,85 @@ theorem allocNormalLocalsDomain {width : Nat} [NeZero width] {C F : Type}
             funext key
             exact propext or_comm
 
+-- Internal restricted-map algebra from the original Alloc9478-9548 branch.
+private theorem allocCutLocalsRelation {α : Type} (next : Nat) (ssa : Spt Nat)
+    (names : Spt Unit) (source target : Spt α)
+    (mapped : ∀ key, sptDomain names key → sptDomain ssa key)
+    (sourceDomain : sptDomain source = sptDomain names)
+    (matching : Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
+      (sptDomain names) source target)
+    (below : ∀ key, sptDomain names key → key < next) :
+    ssaLocalsRel next (sptInter ssa names) source target := by
+  have interRead : ∀ key register, sptLookup key (sptInter ssa names) = some register →
+      sptLookup key ssa = some register ∧ sptDomain names key := by
+    intro key register read
+    rw [sptLookup_sptInterCases] at read
+    cases left : sptLookup key ssa with
+    | none => simp [left] at read
+    | some value =>
+      cases right : sptLookup key names with
+      | none => simp [left,right] at read
+      | some payload =>
+        have equal : value = register := by simpa [left,right] using read
+        subst value
+        exact ⟨rfl,(sptMem_iff_lookup key names).mpr ⟨payload,right⟩⟩
+  refine ⟨?_,?_⟩
+  · intro key register read
+    obtain ⟨original,inNames⟩ := interRead key register read
+    have inSource : sptDomain source key := by rw [sourceDomain]; exact inNames
+    obtain ⟨value,sourceRead⟩ := (sptMem_iff_lookup key source).mp inSource
+    have targetRead := matching key value ⟨inNames,sourceRead⟩
+    apply (sptMem_iff_lookup register target).mpr
+    exact ⟨value,by simpa [optionLookup,original] using targetRead⟩
+  · intro key value read
+    have inNames : sptDomain names key := by
+      rw [←sourceDomain]
+      exact (sptMem_iff_lookup key source).mpr ⟨value,read⟩
+    obtain ⟨register,original⟩ := (sptMem_iff_lookup key ssa).mp (mapped key inNames)
+    obtain ⟨payload,nameRead⟩ := (sptMem_iff_lookup key names).mp inNames
+    have interLookup : sptLookup key (sptInter ssa names) = some register := by
+      simp [sptLookup_sptInterCases,original,nameRead]
+    refine ⟨(sptMem_iff_lookup key _).mpr ⟨register,interLookup⟩,?_,fun _ => below key inNames⟩
+    simpa only [interLookup,Option.getD_some,optionLookup,original] using
+      matching key value ⟨inNames,read⟩
+
+
+/-- Flapjack-specific original Alloc final rename restoration (9548-9606).
+The domain, scoped value relation and bounds are internal collector facts;
+actual final Move execution and full SSA/frame are derived. No standalone
+HOL declaration exists; the full Alloc simulation remains unassembled. -/
+theorem allocRestoreLocals {width : Nat} [NeZero width] {C F : Type}
+    (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat)
+    (names : Spt Unit) (counter : Nat)
+    (mapped : ∀ key, sptDomain names key → sptDomain ssa key)
+    (sourceDomain : sptDomain source.locals = sptDomain names)
+    (matching : Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
+      (sptDomain names) source.locals target.locals)
+    (below : ∀ key, sptDomain names key → key < counter)
+    (valid : ssaMapOK counter ssa)
+    (frame : Flapjack.WordAlloc.wordStateEqRel source target) :
+    let (move,ssaOut,nextOut) := listNextVarRenameMove (width := width)
+      (sptInter ssa names) (counter+2) ((sptToAList names).map Prod.fst)
+    let (result,targetOut) := WordSemStateFiniteExact.evaluate move target
+    result = none ∧ ssaLocalsRel nextOut ssaOut source.locals targetOut.locals ∧
+      Flapjack.WordAlloc.wordStateEqRel source targetOut := by
+  have restricted := allocCutLocalsRelation counter ssa names source.locals target.locals
+    mapped sourceDomain matching below
+  have present : ∀ key ∈ (sptToAList names).map Prod.fst, sptDomain source.locals key := by
+    intro key member
+    rw [sourceDomain]
+    exact (sptMemMapFstToAList names key).mp member
+  have restored := listNextVarRenameMovePreserve source (sptInter ssa names) (counter+2)
+    ((sptToAList names).map Prod.fst) target
+    ⟨ssaLocalsRelMore counter _ _ _ (counter+2) ⟨restricted,by omega⟩,
+      present,sptAllDistinctMapFstToAList _,
+      ssaMapOKMore counter _ (counter+2) ⟨ssaMapOKInter counter ssa names valid,by omega⟩,
+      frame⟩
+  generalize produced : listNextVarRenameMove (width := width)
+    (sptInter ssa names) (counter+2) ((sptToAList names).map Prod.fst) = output at restored ⊢
+  rcases output with ⟨move,ssaOut,nextOut⟩
+  generalize evaluated : WordSemStateFiniteExact.evaluate move target = run at restored ⊢
+  rcases run with ⟨result,targetOut⟩
+  exact ⟨restored.1,restored.2.1,restored.2.2.1⟩
+
 end Flapjack.Compiler.Backend.WordAlloc
