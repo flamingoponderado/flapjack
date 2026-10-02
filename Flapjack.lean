@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSetup
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst

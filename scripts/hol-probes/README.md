@@ -5362,3 +5362,11 @@ actual fake-Move chain evaluation, and all four original locals/frame conclusion
 Duplicate registers remain allowed. Original local HOL proof replay and manual
 source comparison are not a cross-language equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_fake_const_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Native SSA Loop setup
+
+`ssa_loop_setup_correct_probeScript.sml` replays the literal original local
+`loop_setup_correct` proof, with its local prerequisites, and captures the full
+five-premise/ten-conclusion statement and nine native carriers. The pinned
+original HOL kernel replay and Lean kernel check are regression/source-review
+evidence, not a cross-language equivalence proof. Full Loop simulation remains open.

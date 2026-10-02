@@ -4741,3 +4741,7 @@ run_probe ssa_loop_semantic_helpers_probeScript.sml ssa_loop_semantic_helpers_pr
 run_probe ssa_fake_const_chain_probeScript.sml ssa_fake_const_chain_probe.out \
   const_swap_full fake_chain_full fake_chain_locals_full const_swap_type_names const_swap_type_value const_swap_type_locals fake_chain_type_state fake_chain_locals_type_state \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_loop_setup_correct_probeScript.sml ssa_loop_setup_correct_probe.out \
+  loop_setup_full loop_setup_type_st loop_setup_type_cst loop_setup_type_ssa loop_setup_type_na loop_setup_type_names loop_setup_type_exit_names loop_setup_type_setup_prog loop_setup_type_ssa_refreshed loop_setup_type_na_refreshed \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

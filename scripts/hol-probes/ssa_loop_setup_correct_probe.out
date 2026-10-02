@@ -1,0 +1,10 @@
+loop_setup_full=⊢ ∀st cst ssa na names exit_names setup_prog ssa_refreshed na_refreshed. word_state_eq_rel st cst ∧ ssa_locals_rel na ssa st.locals cst.locals ∧ ssa_map_ok na ssa ∧ is_alloc_var na ∧ loop_setup names exit_names ssa na = (setup_prog,ssa_refreshed,na_refreshed) ⇒ ∃rcst. evaluate (setup_prog,cst) = (NONE,rcst) ∧ word_state_eq_rel st rcst ∧ ssa_locals_rel na_refreshed ssa_refreshed st.locals rcst.locals ∧ na ≤ na_refreshed ∧ is_alloc_var na_refreshed ∧ ssa_map_ok na_refreshed ssa_refreshed ∧ domain ssa_refreshed = domain ssa ∪ domain (union names exit_names) ∧ INJ (option_lookup ssa_refreshed) (domain names) 𝕌(:num) ∧ INJ (option_lookup ssa_refreshed) (domain exit_names) 𝕌(:num) ∧ ∀v. v ∈ domain ssa_refreshed ⇒ option_lookup ssa_refreshed v ∈ domain rcst.locals
+loop_setup_type_st=:(α, β, γ) state
+loop_setup_type_cst=:(α, β, γ) state
+loop_setup_type_ssa=:num sptree$num_map
+loop_setup_type_na=:num
+loop_setup_type_names=:sptree$num_set
+loop_setup_type_exit_names=:sptree$num_set
+loop_setup_type_setup_prog=:α prog
+loop_setup_type_ssa_refreshed=:num sptree$num_map
+loop_setup_type_na_refreshed=:num

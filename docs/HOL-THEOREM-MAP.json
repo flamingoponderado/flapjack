@@ -60303,5 +60303,19 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a source comparison 2026-10-02: full local6743-6761 unconditional fourconclusion statement: stateframe, outputdomain=inputdomain union listset, unchanged outside reads, Wordzero inside reads. Derived from actual evaluator equation plus original constantfold lookup includingduplicate names; no targetrun/frame/successpremise. Native Nat/list/Spt/program/word_loc carriers confirmed by literal original localstatement/proof replay and inferredtypecapture. Standard positiveindexedword translation explicit and canonicalfpRegs/store finite-support; inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Original kernel replay/source review/Lean kernel evidence are not cross-language equivalence proof. Fullloopsetup/fullLoop/fullSSA/endtoend remainopen."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "loop_setup_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALoopSetup.lean",
+  "lean_name": "loopSetupCorrect",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original local6766-7014 five premises and ten conclusions retained: actual setup execution existential, frame, locals relation, counter monotonicity, allocation class, map bound, union domain, entry and exit scoped injection, and image domain. Actual fake initialization and rename Move evaluation derived from original premises; no target execution/post-state relation/global injection assumed. Native Nat/List/Spt Unit names and Spt Nat map, actual wordLang program and wordSem state retained. Standard positive indexed-word and canonical fpRegs/store finite-support translations explicit; inherits reals_as_rational_cuts evaluator SOUNDNESS item 8. Original HOL local proof replay is regression evidence, not cross-language equivalence. Full Loop/full SSA/end-to-end remain open."
 }
 ]
