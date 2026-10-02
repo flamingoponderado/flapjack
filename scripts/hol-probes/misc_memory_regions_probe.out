@@ -7,3 +7,4 @@ memory_change_full_statement=∀a bs m1 m2 md.
   bytes_in_memory a bs m1 md ∧
   (∀n. n < LENGTH bs ⇒ m1 (a + n2w n) = m2 (a + n2w n)) ⇒
   bytes_in_memory a bs m2 md
+
