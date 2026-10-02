@@ -39,7 +39,13 @@ of the total pair result, complete frame relation and renamed local values.
 No target execution, successful reads, output list, or post-state relation is
 assumed. Both original move-list branches are covered. Native name-set payload,
 configuration and FFI carriers remain arbitrary. The full evaluator inherits
-reals_as_rational_cuts (SOUNDNESS item 8), although only Skip/Move run here. -/
+reals_as_rational_cuts (SOUNDNESS item 8), although only Skip/Move run here.
+The original indexed observations (word_allocProof:6660-6704) use EL only under
+`i < LENGTH filtered_vars` and equal value-list lengths. Here membership supplies
+that bound, `holEl_eq_getElem` connects the selected key, and the indexed getVars
+and zip-lookup facts use the same derived bounds. The inherited total holEl/holHd
+rendering retains shared opaque holHdNil/holArb outside the list; no public
+bounds premise or concrete out-of-range value is introduced. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_ssa_reconcile"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
