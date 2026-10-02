@@ -62842,5 +62842,80 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.2: genuine case of full comp_correct source1481-1493, p specialized only to named HOL constructor with no recursive IH needed. Full four original hypotheses retained: faithful source evaluate=(result,postSource), result not SOME Error, full native stateRel, and regBound. Conclusion retains existential Nat extra clock and full target poststate with evaluate(comp p,target clock+extra) equal same result, plus exactly original Halt/TimeOut/FinalFFI ffi equality versus full stateRel in every other result case. No target evaluation, postrelation, successful lookup, restricted clock, or weaker evaluator premise. Uses actual total StackSemEvaluate.evaluate/evaluate_def, StackLang.HolProg, StackSemStateFiniteExact with canonical regs/fpRegs/store and Spt code, exact native comp/regBound and imported full relation. Positive width and independently quantified C/F Type0; qualifier names only the three real finite-map fields and same-module canonical codec witness reexports genuine state roundtrips. All result payloads use exact WordLocW/StackSemResult carriers. Complete original kernel case replay and full statement/binder types provide source evidence; remaining constructor cases and assembly stay open. Original Alloc1503-1504 is impossible under original full stateRel source.useAlloc=false: faithful evaluate_alloc produces SOME Error, contradicting the original nonError hypothesis. Lean proves exactly that contradiction, as the original kernel replay does, rather than adding a universally impossible context premise or assuming target existence. Full original existential conclusion and all four hypotheses are retained. Inherited representation assumption: elaborated declaration closure reaches reals_as_rational_cuts through the full StackSem evaluator and its FP instruction implementation, so the manifest explicitly propagates the existing docs/SOUNDNESS.md real-rendering assurance limit. These specialized Skip/Halt/Alloc paths execute no FP instruction by their exact evaluate clauses (Alloc is source-excluded); the syntactic inherited marker remains. This does not add a theorem premise, remove upstream FP obligations, or source-review arbitrary untagged dependencies.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectTick",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.3: genuine constructor case of full comp_correct1481-1493. Keeps full original source evaluate=(result,postSource), result not SOME Error, full native stateRel and regBound hypotheses, and existential extraNatclock/targetpoststate with compiled evaluate equal same result plus original Halt/TimeOut/FinalFFI ffi equality and full stateRel for every other result. No target-run, postrelation, successful lookup or clock assumption supplied. Actual StackSemEvaluate.evaluate with reviewed34equations, native comp/regBound, StackSemStateFiniteExact canonical regs/fpRegs/store and Spt code. Width has NeZero; independent configuration C/FFI F Type0. Same-module nested Control canonical witness reexports genuine carrier roundtrips; no duplicate owner. Fresh original complete statement/binder-type/kernel proof replay compares identical cases. Conservative inherits_reals_as_rational_cuts marker propagates full evaluator closure assumption from existing FP implementation/docsSOUNDNESS; these specialized constructors perform no FP, and no direct real carrier difference or theorem premise is added. Remaining constructor cases/assembly remain open. Original1639-1644: source/target clock equality from fullstateRel synchronizes exact native evaluate_tick branch. Clock0 gives TimeOut/emptyEnv with unchangedffi; nonzero givesNONE/decClock on both states and fullstateRelDecClock. Supplies0extra clock and actual target state, no nonzero-clock hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.3: genuine constructor case of full comp_correct1481-1493. Keeps full original source evaluate=(result,postSource), result not SOME Error, full native stateRel and regBound hypotheses, and existential extraNatclock/targetpoststate with compiled evaluate equal same result plus original Halt/TimeOut/FinalFFI ffi equality and full stateRel for every other result. No target-run, postrelation, successful lookup or clock assumption supplied. Actual StackSemEvaluate.evaluate with reviewed34equations, native comp/regBound, StackSemStateFiniteExact canonical regs/fpRegs/store and Spt code. Width has NeZero; independent configuration C/FFI F Type0. Same-module nested Control canonical witness reexports genuine carrier roundtrips; no duplicate owner. Fresh original complete statement/binder-type/kernel proof replay compares identical cases. Conservative inherits_reals_as_rational_cuts marker propagates full evaluator closure assumption from existing FP implementation/docsSOUNDNESS; these specialized constructors perform no FP, and no direct real carrier difference or theorem premise is added. Remaining constructor cases/assembly remain open. Original1664-1672: boundregister<k plus stateRelGetVar gives exact native lookup equality. None/Word produce Error and contradict only original nonError; arbitrary Loc(block,offset) gives Result sameLoc and unchangedstate. Supplies0/target and original full postrelation. Loc-only success is derived inside proof, not an extra premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.3: genuine constructor case of full comp_correct1481-1493. Keeps full original source evaluate=(result,postSource), result not SOME Error, full native stateRel and regBound hypotheses, and existential extraNatclock/targetpoststate with compiled evaluate equal same result plus original Halt/TimeOut/FinalFFI ffi equality and full stateRel for every other result. No target-run, postrelation, successful lookup or clock assumption supplied. Actual StackSemEvaluate.evaluate with reviewed34equations, native comp/regBound, StackSemStateFiniteExact canonical regs/fpRegs/store and Spt code. Width has NeZero; independent configuration C/FFI F Type0. Same-module nested Control canonical witness reexports genuine carrier roundtrips; no duplicate owner. Fresh original complete statement/binder-type/kernel proof replay compares identical cases. Conservative inherits_reals_as_rational_cuts marker propagates full evaluator closure assumption from existing FP implementation/docsSOUNDNESS; these specialized constructors perform no FP, and no direct real carrier difference or theorem premise is added. Remaining constructor cases/assembly remain open. Original1673-1680: boundregister<k and native lookup equality, None/Word excluded by original nonError, arbitrary Loc gives Exception sameLoc and unchangedstate. Supplies0/target and fulloriginalpostrelation, no lookup-success premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectBreak",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.3: genuine constructor case of full comp_correct1481-1493. Keeps full original source evaluate=(result,postSource), result not SOME Error, full native stateRel and regBound hypotheses, and existential extraNatclock/targetpoststate with compiled evaluate equal same result plus original Halt/TimeOut/FinalFFI ffi equality and full stateRel for every other result. No target-run, postrelation, successful lookup or clock assumption supplied. Actual StackSemEvaluate.evaluate with reviewed34equations, native comp/regBound, StackSemStateFiniteExact canonical regs/fpRegs/store and Spt code. Width has NeZero; independent configuration C/FFI F Type0. Same-module nested Control canonical witness reexports genuine carrier roundtrips; no duplicate owner. Fresh original complete statement/binder-type/kernel proof replay compares identical cases. Conservative inherits_reals_as_rational_cuts marker propagates full evaluator closure assumption from existing FP implementation/docsSOUNDNESS; these specialized constructors perform no FP, and no direct real carrier difference or theorem premise is added. Remaining constructor cases/assembly remain open. Original1681-1682: faithful evaluate_break returns SOME(Break label), unchangedsource; compiler leaves constructor unchanged. Supplies0/unchangedtarget, same Break label and fullstateRel. Does not classify Break as Error or add a vacuous contradiction."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectContinue",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.3: genuine constructor case of full comp_correct1481-1493. Keeps full original source evaluate=(result,postSource), result not SOME Error, full native stateRel and regBound hypotheses, and existential extraNatclock/targetpoststate with compiled evaluate equal same result plus original Halt/TimeOut/FinalFFI ffi equality and full stateRel for every other result. No target-run, postrelation, successful lookup or clock assumption supplied. Actual StackSemEvaluate.evaluate with reviewed34equations, native comp/regBound, StackSemStateFiniteExact canonical regs/fpRegs/store and Spt code. Width has NeZero; independent configuration C/FFI F Type0. Same-module nested Control canonical witness reexports genuine carrier roundtrips; no duplicate owner. Fresh original complete statement/binder-type/kernel proof replay compares identical cases. Conservative inherits_reals_as_rational_cuts marker propagates full evaluator closure assumption from existing FP implementation/docsSOUNDNESS; these specialized constructors perform no FP, and no direct real carrier difference or theorem premise is added. Remaining constructor cases/assembly remain open. Original1683-1684: faithful evaluate_continue returns SOME(Continue label), unchangedsource; compiler leaves constructor unchanged. Supplies0/unchangedtarget, same Continue label and fullstateRel; no weakened result condition or successful-run premise."
   }
 ]

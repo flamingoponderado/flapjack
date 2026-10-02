@@ -5009,3 +5009,7 @@ run_probe stack_remove_statelaws_probeScript.sml stack_remove_statelaws_probe.ou
 run_probe stack_remove_comp_atoms_probeScript.sml stack_remove_comp_atoms_probe.out \
   cc_skip cc_skip_types cc_skip_proved cc_halt cc_halt_types cc_halt_proved cc_alloc cc_alloc_types cc_alloc_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_control_probeScript.sml stack_remove_comp_control_probe.out \
+  cc_tick cc_tick_types cc_tick_proved cc_return cc_return_types cc_return_proved cc_raise cc_raise_types cc_raise_proved cc_break cc_break_types cc_break_proved cc_continue cc_continue_types cc_continue_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
