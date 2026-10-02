@@ -5582,3 +5582,12 @@ memory prerequisite type/equation and9 original graph proofs. The graph keeps
 independent address/value carriers; kernel counterparts include wrong value,
 outside/empty domain, Bool/Nat and Bool/product values, noninjective functions
 and an infinite-domain application. No finite-heap premise is introduced.
+
+`set_sep_elementary_probe.out` freshly records the six canonical `set_sep`
+heap predicates (`one`, `emp`, `cond`, `SPLIT`, `STAR`, `SEP_EXISTS`), their full
+independently generic types, and fourteen original kernel-proved fixtures. The
+fixtures include overlapping/extra partitions, empty heaps, true/false pure
+conditions, distinct/overlapping singleton assertions, independent witness
+types, and an infinite domain. `Flapjack.Test.SetSepElementary` supplies sixteen
+Lean kernel fixtures. The port adds no finite-heap, word-width or validity
+restriction.
