@@ -14,4 +14,10 @@ def smartSeqHOL {width : Nat} [NeZero width]
   | .skip => second
   | _ => .seq first second
 
+/-- Exact HOL `is_gc_const_def` (`word_simpScript.sml:253-255`). -/
+@[hol "cakeml/compiler/backend/word_simpScript.sml" "is_gc_const_def"
+  (words_as_type_indexed_bitvec)]
+def isGcConst {width : Nat} [NeZero width] (c : BitVec width) : Bool :=
+  decide (c &&& 1 = 0)
+
 end Flapjack.Compiler.Backend.WordSimp

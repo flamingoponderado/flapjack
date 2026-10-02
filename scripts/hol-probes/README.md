@@ -2809,7 +2809,11 @@ the executed allocator. Regenerate read-only with
 
 `data_to_word_config_probeScript.sml` captures six original `data_to_word` pointer-layout rows: `shift_length` and `small_shift_length` of one configuration, and `get_gen_size` for an empty list, an in-range first generation, an overflowing first generation at 64 bits and a 32-bit size. `Flapjack/Test/DataToWordConfigParity.lean` replays every row in the kernel.
 
-`word_gc_functions_probeScript.sml` captures twenty-four original `word_gcFunctions` rows at 64 bits: `ptr_to_addr`, `update_addr`, `decode_length`, both `is_ref_header` outcomes, `memcpy` with its result memory and a failing domain check, `word_gc_move` on a zero and a non-zero `Loc`, a small word, a copied object and a forwarding pointer, `word_gen_gc_move` copying a data object and a reference object, `word_gen_gc_partial_move` outside and inside the young generation, `word_gc_move_roots`, `word_gc_move_list`, `glob_real` on a word and a `Loc`, and the four `new_trig` branches. `Flapjack/Test/WordGcFunctionsParity.lean` replays every row in the kernel, comparing memories at the probed addresses.
+`word_gc_functions_probeScript.sml` captures original `word_gcFunctions` and `word_simp` GC-constant rows at 64 bits: `ptr_to_addr`, `update_addr`, `decode_length`, both `is_ref_header` outcomes, `memcpy` with its result memory and a failing domain check, `word_gc_move` on a zero and a non-zero `Loc`, a small word, a copied object and a forwarding pointer, `word_gen_gc_move` copying a data object and a reference object, `word_gen_gc_partial_move` outside and inside the young generation, `word_gc_move_roots`, `word_gc_move_list`, `glob_real` on a word and a `Loc`, the four `new_trig` branches, and `is_gc_const`/`is_gc_word_const` on an even and odd word and a `Loc` (twenty-eight rows in all). `Flapjack/Test/WordGcFunctionsParity.lean` replays every row in the kernel, comparing memories at the probed addresses.
+
+`stack_alloc_gc_code_probeScript.sml` captures eleven original `stack_alloc` rows, each printed on one line: `memcpy_code`, `clear_top_inst`, a 32-bit `SetNewTrigger`, `word_gc_code` for `None`, `Simple`, `Generational [10]` and `Generational []` at 64 bits and `Generational [10]` at 32 bits, `prog_comp` on two programs and `compile` with the `None` collector. `Flapjack/Test/StackAllocGcCodeParity.lean` replays every row in the kernel; each HOL term is translated constructor for constructor into the tagged `HolProg` ports and compared by `rfl` (or `simp` for the well-founded `next_lab`/`comp`).
+
+`stack_alloc_get_bits_probeScript.sml` captures four original `stack_allocProof` `get_bits` rows: an 8-bit word with three decoded bits, the words 1 and 0 (empty results) and a 64-bit word with its top bit set. `Flapjack/Test/StackAllocGetBitsParity.lean` replays every row in the kernel.
 
 `word_remove_must_terminate_probeScript.sml` captures eight original `remove_must_terminate` rows: a `MustTerminate` over a `Seq`, nested `MustTerminate`, a `Seq` of two `MustTerminate`s, an `If` branch, a `Loop` body, a returning call with both a `MustTerminate` return handler and exception handler, a tail call with a `MustTerminate` handler, and the catchall `Tick`. `Flapjack/Test/WordRemoveMustTerminateParity.lean` replays every row in the kernel.
 
@@ -4540,6 +4544,15 @@ equivalence or complete CSE correctness.
 `ssa_cc_trans_correct_primitives_probe.out` replays the literal original Skip/Tick semantic correctness proofs and original exists_tac against their complete original theorem specializations. All six premises, full existential postconditions and five native carrier types are captured; Tick retains both zero/positive-clock paths in Lean.
 
 `ssa_locals_get_var_probe.out` replays the complete original SSA get_var lookup transport and captures six original types, including independently arbitrary source/target configuration and FFI hosts. It supports expression-producing SSA semantic cases without adding a target-read-success premise.
+`word_cse_list_order_probeScript.sml` captures original `listCmp_def`, replays
+the complete equality, antisymmetry and transitivity proof bodies with no open
+hypotheses, evaluates 64 independent empty/prefix/long-prefix/large-numeral
+comparison pairs, and applies the original full laws to 144 pairs/triples
+with arbitrary suffixes. The matching `WordCseListOrderParity.lean` checks
+all 208 values/applications. This group does not establish external
+`TotOrd`/`good_cmp`, the balanced-map carrier or full CSE correctness.
+The production list-key comparator route is tracked separately.
+`target_props_io_events_probeScript.sml` replays the full original `evaluate_io_events_mono` quantified theorem with no open hypotheses. `TargetPropsIoEventsParity.lean` checks the same unrestricted statement over the full literal evaluator. Clock induction composes exact returning FFI append with recursive prefix preservation; all failed/final paths retain the original trace.
 
 ## Literal balanced-map core
 
