@@ -61976,5 +61976,59 @@
     "hol_name": "memory_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.2: original118-120 memory m dm=lambda s.s=fun2set(m,dm), full original type (alpha->beta)->(alpha->bool)->(alpha#beta->bool)->bool. Lean preserves independently generic alpha and beta, curried function/domain arguments and whole heap equality to the exact paired fun2Set graph. Sets remain predicates, with no word specialization, finiteness/injectivity/reachability restriction, state carrier or successful-run premise. Accepted graph primitive is reused directly, not duplicated; whole equality excludes missing/extra/wrong-value/wrong-address entries. Fresh original source/type and eleven kernel-proved fixtures cover generic equality/uniqueness, empty/infinite domains, independent Bool/Nat/product carriers, negative heap mismatches and noninjective memory. Eleven Lean kernel fixtures preserve those obligations; no executable compiler code is changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallTail.lean",
+    "lean_name": "ssaCcTransCorrectCallTail",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a author source comparison2026-10-02 original7666-7700 and resumed Call_tail8268-8296: all six original premises; no IH as both callee environments become identical after original argument convention moves. Full ssaSimulation existential source permutation/Error exemption/actual target run/full frame/result-sensitive locals, no target execution or callee success premise. Original none-return Call with arbitrary destination, arguments and handler; generated distinct even registers, actual renamed argument reads, same destination guard, code/stack-size lookup, clock timeout/flush, same callee state and bad_fun_return branches derived internally. Native Nat/List/Spt and full WordLang/WordSem carriers; only canonical fpRegs/store finite-map and positive type-indexed word translations qualified, tree locals/code not finite-map-qualified. Inherits evaluator reals_as_rational_cuts SOUNDNESS item8. Full original case statement captured from loaded HOL theorem; captures/checks are regression evidence, not cross-language equivalence. Returning Call/Alloc/Install/full SSA and end-to-end remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean",
+    "lean_name": "installRefreshCutNames",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific factoring of original Install9710-9800 preparation, no standalone HOL declaration. Successful source argument/cut guards are evaluator branch facts; actual native rename/scratch execution, preserved data arguments and mapped-cut relation are conclusions, never final correctness premises. Useful dependency of full Install case, not an additional completed HOL theorem port; full six-premise Install simulation and callback/post-rename assembly remain open on flapjack-sola-install."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean",
+    "lean_name": "installPrepareArguments",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific factoring of original Install9710-9800 preparation, no standalone HOL declaration. Successful source argument/cut guards are evaluator branch facts; actual native rename/scratch execution, preserved data arguments and mapped-cut relation are conclusions, never final correctness premises. Useful dependency of full Install case, not an additional completed HOL theorem port; full six-premise Install simulation and callback/post-rename assembly remain open on flapjack-sola-install."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean",
+    "lean_name": "installResultLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific factoring of original Install9800-9858 post-result algebra/restoration, no standalone HOL declaration. Actual callback local shapes, source cut environment domain/strong matching and original map bounds are intermediate branch facts. Fresh SSA insertion/physical2 nonalias, actual pointer-copy/final native rename execution and final SSA/frame are proved conclusions. No targetrun or desired final locals hypothesis. This is an independent prerequisite of full six-premise Install simulation, not an additional completed HOL port; callback branch and full case remain open on flapjack-sola-install."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean",
+    "lean_name": "installRestoreResult",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific factoring of original Install9800-9858 post-result algebra/restoration, no standalone HOL declaration. Actual callback local shapes, source cut environment domain/strong matching and original map bounds are intermediate branch facts. Fresh SSA insertion/physical2 nonalias, actual pointer-copy/final native rename execution and final SSA/frame are proved conclusions. No targetrun or desired final locals hypothesis. This is an independent prerequisite of full six-premise Install simulation, not an additional completed HOL port; callback branch and full case remain open on flapjack-sola-install."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean",
+    "lean_name": "installCallbacksAligned",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific factoring of original Install9710-9858 callback transport, no standalone HOL declaration. Source/target argument and cut success are internal alignment facts derived by preparation; original shared frame yields identical actual compile callback, buffer flush, oracle/config check and code union branches. Total evaluator result/frame and successful source-pointer versus target-pointer Loc local shapes are conclusions, no targetrun/result or post-frame premise. Failure cases retained. Infrastructure prerequisite only; full six-premise Install simulation remains open on flapjack-sola-install."
   }
 ]

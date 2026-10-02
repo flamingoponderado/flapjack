@@ -4894,3 +4894,7 @@ run_probe stack_remove_word_selector_probeScript.sml stack_remove_word_selector_
 run_probe stack_remove_memory_probeScript.sml stack_remove_memory_probe.out \
   sm_def sm_type sm_full_generic sm_unique sm_empty sm_infinite sm_independent sm_product sm_missing sm_extra sm_wrong_value sm_wrong_address sm_noninjective \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_call_tail_probeScript.sml ssa_call_tail_probe.out \
+  tail_case_full \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
