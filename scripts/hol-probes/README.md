@@ -4761,3 +4761,8 @@ HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh
 `interference_count_lt` and `interference_pos_unique` theorem statements,
 checking that both compiled original theorems have no undischarged hypotheses.
 The native Lean counterparts are in `TargetProps/PositionUnique.lean`.
+
+`target_position_laws_probeScript.sml` prints the full original
+`interference_count_tail` and `interference_pos_head` statements and checks
+that the original compiled theorems have no undischarged hypotheses.
+Native counterparts are in `TargetProps/PositionLaws.lean`.
