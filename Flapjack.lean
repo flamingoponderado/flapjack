@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.NopPadding
 import Flapjack.Misc.TakeFlatReplicate
 import Flapjack.Compiler.Backend.LabToTarget.ValidityNop
 import Flapjack.Compiler.Backend.LabToTarget.NopInvariant

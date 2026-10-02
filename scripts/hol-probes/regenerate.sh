@@ -4971,3 +4971,7 @@ run_probe word_to_stack_alloc_compiler_probeScript.sml word_to_stack_alloc_compi
 run_probe misc_take_flat_replicate_probeScript.sml misc_take_flat_replicate_probe.out \
   TAKE_FLAT_REPLICATE_LEQ TAKE_FLAT_REPLICATE_LEQ_types prefix_two_chunks equal_counts zero_count empty_chunks zero_source count_guard_required length_guard_required \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
+
+run_probe lab_to_target_nop_padding_probeScript.sml lab_to_target_nop_padding_probe.out \
+  enc_with_nop_pad_bytes_length enc_with_nop_pad_bytes_length_types enc_with_nop_pad_bytes enc_with_nop_pad_bytes_types base_multibyte base_empty_nop generic_nat_padding generic_bool_padding zero_target empty_initial_extended target_mod_guard_required initial_mod_guard_required nop_identity_guard_required \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
