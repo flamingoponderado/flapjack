@@ -65909,5 +65909,14 @@
     "hol_name": "FOR_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison: pinned HOL source48-54 defines inclusive total FOR on Nat endpoints and unit-valued state actions. Lean preserves equal endpoint action, ascending increment, descending truncated decrement, BIND state threading discarding Unit, and distance termination with no extra premise. Original state_transformer_for probe covers both directions, equal zero and descending through zero with initial state; Lean kernel replays all four."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Words/Replicate.lean",
+    "lean_name": "holWordReplicate",
+    "hol_path": "HOL/src/n-bit/wordsScript.sml",
+    "hol_name": "word_replicate_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison: pinned HOL wordsScript587-590 FCP i. i<n*dimindex(:a) AND w raw-index(i MOD dimindex(:a)). Lean uses the reviewed holFcpWord and same guard/modulo/index; positive input width implies modulo index in range so getLsbD matches raw FCP access. Independent HOL input/output word dimensions translate to inputWidth/outputWidth with separate NeZero obligations under words_as_type_indexed_bitvec. No count/bound premise or fixed-width restriction; output truncation and bits beyond requested repeats match. Sixteen fresh original full word numeric observations and kernel fixtures cover distinct widths, zero/large counts, truncation and zero filling."
   }
 ]
