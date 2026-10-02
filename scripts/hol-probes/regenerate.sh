@@ -5190,3 +5190,7 @@ run_probe stack_remove_store_heap_read_probeScript.sml stack_remove_store_heap_r
 run_probe stack_remove_store_heap_domain_probeScript.sml stack_remove_store_heap_domain_probe.out \
   sd_statement sd_types sd_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe set_sep_heap_write_probeScript.sml set_sep_heap_write_probe.out \
+  sc_statement sc_types sc_proved sw_statement sw_types sw_proved \
+  "$hol_dir/examples/machine-code/hoare-triple/set_sepScript.sml" "$cake_dir/compiler/backend/proofs"

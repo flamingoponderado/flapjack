@@ -64421,5 +64421,21 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.12: full original local mem_load_lemma2 1131-1167. Exactly store_list membership AND complete original five-factor heap imply target mdomain membership at base+store_offset. No source store lookup, target success/domain/frame, fullstateRel, dimension bound or heap finiteness assumption. Fresh original quantified carrier types show source(alpha,delta,epsilon) and target(alpha,gamma,beta), so Lean preserves independent SourceC/SourceF/TargetC/TargetF Type0 at the shared positive native word width; unlike mem_load_lemma it must not identify host/config parameters. Original shifted BitmapBase/bitmaps/buffer/spaceLeft/source graph/reverse word_store/stack factors and source buffer.length+bitmaps.length offset retained, MAP Word over concatenation equivalent by List.map_append. Source canonicalstore has same-module genuine broad/exact roundtrip witness; Bool domains denote true entries. Proof uses independent modular slot extraction and exact all48 first-match positions, lifts concrete default-or-present store slot through the fullheap, derives target graphdomain without any lookup premise or use of the stronger read theorem. Fresh literal original proof3rows and native full kernel proof checked; Set and global compiler theorem remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/Misc/SetSep.lean",
+    "lean_name": "starComm",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+    "hol_name": "STAR_COMM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.13.1: Full original arbitrary predicate-heap commutativity p*q=q*p. Exact generic Type0 carrier, no finiteness/heap input restriction; both disjoint partitions reconstructed by swapping the actual witnesses. Literal original statement/types/proof fresh replay and native kernel proof checked. These are generic HOL separation laws required by original store_write_lemma; no fullcase or compiler correctness completion claimed."
+  },
+  {
+    "lean_path": "Flapjack/Misc/SetSep.lean",
+    "lean_name": "writeFun2Set",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+    "hol_name": "write_fun2set",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.13.1: Full original arbitrary address beta/payload alpha, new/old payload/address/frame/function/domain. Original singleton-left frame premise on function graph implies same frame and new singleton-right on exact equality point-update graph, domain unchanged. No finite-domain, functional-frame, address-uniqueness, new-value equality or supplied targetheap/success premise. Original graph membership plus original disjointness derives absence of every other payload at the updated address, allowing original frame heap unchanged. Full generic function/predicate graph, not HOL finite map, so no fmap qualifier. Classical equality decision stays proof-local, no DecidableEq/BEq/LawfulBEq hypothesis or executable decision/trust shortcut. Literal original statement/types/proof fresh replay and native kernel proof checked. These are generic HOL separation laws required by original store_write_lemma; no fullcase or compiler correctness completion claimed."
   }
 ]
