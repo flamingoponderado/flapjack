@@ -63900,5 +63900,50 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-02 complete original4718-4740 statements and all quantified types freshly captured in lab_to_target_label_position_updates_probe.out. Full arbitrary pos/lines or pos/code native Line/Section, HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 byte carriers retained, sole positive words_as_type_indexed_bitvec dimension translation. Both conclusions establish actual labLenPosOk of actual linesUpdLabLen first projection seeded with [] or actual allLabLenPosOk of actual updLabLen, unconditionally. No input parity/evenness/length/encoder/success/output premise introduced. Kernel list induction uses original full lines_upd_lab_len_AUX and preserves all constructor payloads, bytes and nonlabel annotations; computes label0/1 from actual current position. Full section induction uses original unconditional SND_lines_upd_lab_len conservation and sec_length_sum_line_len to identify actual returned position with updated annotations before IH, not old input label lengths. Fourteen original/native observations and actual full theorem instances cover odd/even bad label repairs, consecutive labels, arbitrary malformed nonlabels, full mixed list/section tuples including unchanged stored words/bytes/section IDs, changed output positions, bad input becoming valid, empty lists/code/sections and width1/8/80 with large words/positions. Two full arbitrary-width statement consumers checked. Original native compiler updater is already executed; only full correctness properties added, no alternative compiler body. Actual used dependency does not traverse total HD/EL or imported guarded LAST theorem; individual hold unchanged. Independent encoder-preservation and full parity padding/strong-label/remove_labels_loop/end-to-end remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/StateTransport.lean",
+    "lean_name": "oracleTie_clock",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_clock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source/type review2026-10-02 original1098-1153 full native transport. Independent compiler carrier C, source single implication and arbitrary clock; exact four-function oracle tie unchanged. Positive-width BitVec translation alone, Type0 independent native carriers and source quantifiers/guards/conclusions compared with freshly captured original full/type rows. holEl/holHd remain literal total EL/HD with opaque nil result through actual full relation, no bound/fallback or weakened source condition added. Generic kernel proofs and repeated full-state shift consumer; compiler execution unchanged, complete compiler correctness goal remains open. Recovered and re-reviewed on current canonical carriers by flapjack-sol-c (2026-10-02), branch fleet-solc-native-state-transport; full original statements/types freshly regenerated."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/StateTransport.lean",
+    "lean_name": "stateRelClock",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "state_rel_clock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source/type review2026-10-02 original1098-1153 full native transport. Original tuple and concrete Config Lab state preserved; exact forward implication derived from full relation clock iff. Positive-width BitVec translation alone, Type0 independent native carriers and source quantifiers/guards/conclusions compared with freshly captured original full/type rows. holEl/holHd remain literal total EL/HD with opaque nil result through actual full relation, no bound/fallback or weakened source condition added. Generic kernel proofs and repeated full-state shift consumer; compiler execution unchanged, complete compiler correctness goal remains open. Recovered and re-reviewed on current canonical carriers by flapjack-sol-c (2026-10-02), branch fleet-solc-native-state-transport; full original statements/types freshly regenerated."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/StateTransport.lean",
+    "lean_name": "shareMemStateRel_shiftInterfer",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "share_mem_state_rel_shift_interfer",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source/type review2026-10-02 original1098-1153 full native transport. Original independent machine/Lab widths, Config and FFI host plus vacuous independent outer t/ms carriers preserved. Whole relation ignores only nextInterfer; every MMIO/FFI residue remains literal. Positive-width BitVec translation alone, Type0 independent native carriers and source quantifiers/guards/conclusions compared with freshly captured original full/type rows. holEl/holHd remain literal total EL/HD with opaque nil result through actual full relation, no bound/fallback or weakened source condition added. Generic kernel proofs and repeated full-state shift consumer; compiler execution unchanged, complete compiler correctness goal remains open. Recovered and re-reviewed on current canonical carriers by flapjack-sol-c (2026-10-02), branch fleet-solc-native-state-transport; full original statements/types freshly regenerated."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/StateTransport.lean",
+    "lean_name": "shareMemDomainCodeRel_shiftInterfer",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "share_mem_domain_code_rel_shift_interfer",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source/type review2026-10-02 original1098-1153 full native transport. Original actual Lab state with generic compiler C retained, not replaced by arbitrary domain parameter. Bool shared-domain membership is read through =true, lossless domainTruth_roundtrip; full code/domain relation unchanged. Positive-width BitVec translation alone, Type0 independent native carriers and source quantifiers/guards/conclusions compared with freshly captured original full/type rows. holEl/holHd remain literal total EL/HD with opaque nil result through actual full relation, no bound/fallback or weakened source condition added. Generic kernel proofs and repeated full-state shift consumer; compiler execution unchanged, complete compiler correctness goal remains open. Recovered and re-reviewed on current canonical carriers by flapjack-sol-c (2026-10-02), branch fleet-solc-native-state-transport; full original statements/types freshly regenerated."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/StateTransport.lean",
+    "lean_name": "stateRel_shiftInterfer",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "state_rel_shift_interfer",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source/type review2026-10-02 original1098-1153 full native transport. Full original state relation and tuple retained. Only actual interference sequence shifts; universal index i obligation is discharged by original i+l; all other original conjuncts preserved without extra transition premise. Positive-width BitVec translation alone, Type0 independent native carriers and source quantifiers/guards/conclusions compared with freshly captured original full/type rows. holEl/holHd remain literal total EL/HD with opaque nil result through actual full relation, no bound/fallback or weakened source condition added. Generic kernel proofs and repeated full-state shift consumer; compiler execution unchanged, complete compiler correctness goal remains open. Recovered and re-reviewed on current canonical carriers by flapjack-sol-c (2026-10-02), branch fleet-solc-native-state-transport; full original statements/types freshly regenerated."
   }
 ]
