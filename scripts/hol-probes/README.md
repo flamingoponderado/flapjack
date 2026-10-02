@@ -6238,3 +6238,5 @@ Each observes equality of the entire returned state to the literal single-field
 update. Lean guards retain arbitrary unrelated state; unconditional full-state,
 indexed-frame, read-after-write and match-shape lemmas preserve original THE
 NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
+
+`word_to_stack_bitmap_frame_updates_probe.out` replays the three complete original bitmap/frame-list proofs and captures the independently polymorphic Spt/word-location binder types. Its 63 original overwrite observations cover empty, truncated and location-valued stacks across widths 8/64/80 and terminal/continuation boundaries. The Lean generic proofs retain every original guard; the parity module checks the same concrete native operations. No evaluator simulation, source pipeline unreachability or provenance hold release is claimed.
