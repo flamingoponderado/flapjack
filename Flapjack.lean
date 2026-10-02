@@ -1,8 +1,9 @@
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRefs
-import Flapjack.Compiler.Backend.LabToTarget.CodeNopEncoding
-import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
+import Flapjack.Compiler.Backend.LabToTarget.LabelPositionUpdates
 import Flapjack.Compiler.Backend.LabToTarget.LabelPosition
+import Flapjack.Compiler.Backend.LabToTarget.CodeNopEncoding
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRefs
+import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveData
 import Flapjack.Compiler.Backend.LabToTarget.NopInsertEncoding
 import Flapjack.Compiler.Backend.LabToTarget.NopPadding
@@ -80,6 +81,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
+import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryWrites
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ExpressionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
@@ -98,6 +100,7 @@ import Flapjack.Test.LabToTargetWordLocationParity
 import Flapjack.Compiler.Backend.LabToTarget.WordLocValByte
 import Flapjack.Compiler.Backend.LabToTarget.StateRel
 import Flapjack.Compiler.Backend.LabToTarget.OracleTie
+import Flapjack.Compiler.Backend.LabToTarget.StateTransport
 import Flapjack.Test.LabToTargetWordLocValByteParity
 import Flapjack.Test.LabToTargetFetchValidityParity
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SequenceLaws

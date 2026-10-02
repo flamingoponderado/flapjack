@@ -5094,6 +5094,21 @@ run_probe word_to_stack_reg_flat_probeScript.sml word_to_stack_reg_flat_probe.ou
 run_probe ssa_call_returning_none_probeScript.sml ssa_call_returning_none_probe.out \
   returning_none_case_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_memorywrite_probeScript.sml stack_remove_memorywrite_probe.out \
+  mw_source mw_statement mw_types mw_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe set_sep_assoc_probeScript.sml set_sep_assoc_probe.out \
+  sa_source sa_statement sa_types sa_proved \
+  "$hol_dir/examples/machine-code/hoare-triple/set_sepScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_label_position_updates_probeScript.sml lab_to_target_label_position_updates_probe.out \
+  lines_upd_lab_len_pos_ok lines_upd_lab_len_pos_ok_types upd_lab_len_pos_ok upd_lab_len_pos_ok_types mixed_odd_full_tuple mixed_odd_pos_ok mixed_even_full_tuple mixed_even_pos_ok odd_label_chain nonlabels_unchanged empty_list_width1 section_full_tuple section_all_pos_ok bad_input_repaired empty_code empty_sections large_width80_tuple large_width80_pos_ok \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_state_transport_probeScript.sml lab_to_target_state_transport_probe.out \
+  oracle_tie_clock_full oracle_tie_clock_types state_rel_clock_full state_rel_clock_types share_mem_state_rel_shift_interfer_full share_mem_state_rel_shift_interfer_types share_mem_domain_code_rel_shift_interfer_full share_mem_domain_code_rel_shift_interfer_types state_rel_shift_interfer_full state_rel_shift_interfer_types \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_alloc_gen_loop_statement_probeScript.sml stack_alloc_gen_loop_statement_probe.out \
   gen_loop_full_typed_statement gen_loop_free_vars gen_loop_stop gen_loop_data_fuel_zero \

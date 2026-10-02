@@ -1,0 +1,4 @@
+sa_source=∀p q r. p * (q * r) = p * q * r
+sa_statement=∀p q r. p * (q * r) = p * q * r
+sa_types=p:(α -> bool) -> bool;q:(α -> bool) -> bool;r:(α -> bool) -> bool
+sa_proved=T

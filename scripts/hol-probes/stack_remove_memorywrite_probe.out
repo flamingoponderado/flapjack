@@ -1,0 +1,4 @@
+mw_source=x ∈ sd ∧ x ∈ dm ∧ (memory sm sd * p) (fun2set (m,dm)) ⇒ (memory sm⦇x ↦ y⦈ sd * p) (fun2set (m⦇x ↦ y⦈,dm))
+mw_statement=∀x y sd dm sm m p. x ∈ sd ∧ x ∈ dm ∧ (memory sm sd * p) (fun2set (m,dm)) ⇒ (memory sm⦇x ↦ y⦈ sd * p) (fun2set (m⦇x ↦ y⦈,dm))
+mw_types=x:α;y:β;sd:α -> bool;dm:α -> bool;sm:α -> β;m:α -> β;p:(α # β -> bool) -> bool
+mw_proved=T
