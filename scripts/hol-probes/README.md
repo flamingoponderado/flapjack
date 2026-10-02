@@ -4128,3 +4128,22 @@ no target evaluation or memory-domain premise is added. Native finite-map/word
 translations and the evaluator's inherited IEEE rational-cut assumption
 (SOUNDNESS item 8) are retained. These are invariant-update prerequisites,
 not a completed CSE/compiler correctness proof.
+
+## Full Word CSE evaluation frames and state agreement
+
+`word_cse_evaluation_frames_probeScript.sml` literally replays all four original
+proofs: arithmetic register writes, arbitrary memory replacement, arithmetic
+locals agreement, and load locals/memory/domain/endianness agreement. It captures
+complete conclusions with no open hypotheses, four inferred types and 256 full
+theorem applications at widths 1/32/64/80. The applications cover all eligible
+arithmetic forms, both binop operand forms, every immediate shift, signed division,
+all four load variants, and writes to the destination or another unread register.
+The original `firstRegOfArith` expression is retained for HOL theorem matching.
+`WordCseEvaluationFramesParity.lean` applies the full kernel theorems on arbitrary
+values, states and memory functions. Eligibility/read guards and each exact set
+of input field equalities are preserved; target evaluation or global invariants
+are not assumed. The shared proof-only value factoring is checked against actual
+native Inst clauses; LoadEvaluation support was exposed without changing its
+implementation or old theorem statements. Existing finite-map/positive-word
+translations and inherited rational-cut assumption (SOUNDNESS item 8) remain.
+These are invariant-update prerequisites, not full CSE/compiler correctness.
