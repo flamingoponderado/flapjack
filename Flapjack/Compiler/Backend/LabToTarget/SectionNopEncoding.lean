@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.PrefixZero
 import Flapjack.Compiler.Backend.LabToTarget.NopInsertEncoding
 import Flapjack.Compiler.Backend.LabToTarget.NopPadding
 import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
@@ -104,6 +105,64 @@ theorem linesEncWithNop_padSection1 {width : Nat} [NeZero width]
         exact ⟨by rw [hsum]; exact paddedLabNop enc labs ffis _ nop a w bytes n hnop hone he,trivial⟩
       simp only [padSection]
       apply ih (.labAsm a w (padBytes bytes n nop) n :: aux)
+      refine ⟨hnop,hone,?_,ha',?_,ht⟩
+      · simpa [lineLen,Nat.add_assoc,Nat.add_comm,Nat.add_left_comm] using hr
+      · simp [isLabelHOL]
+
+/-- Full original all-label accumulator case, including the bounded prefix-zero
+predicate that forbids an insertion before the first real instruction. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_enc_with_nop_pad_section"
+  (words_as_type_indexed_bitvec)]
+theorem linesEncWithNop_padSection {width : Nat} [NeZero width]
+    (enc : HolAsm width → List (BitVec 8)) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
+    (nop : List (BitVec 8)) (code aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (pos : Nat) :
+    nop = enc (.inst .skip) ∧ nop.length = 1 ∧
+    linesEncd enc labs ffis (pos + (aux.map lineLen).sum) code ∧
+    linesEncWithNop enc labs ffis pos aux.reverse ∧
+    (∀ line ∈ aux, isLabelHOL line = true) ∧ (∀ line ∈ code, labelOne line) ∧ labelPrefixZero code →
+    linesEncWithNop enc labs ffis pos (padSection nop code aux) := by
+  induction code generalizing aux with
+  | nil => rintro ⟨_,_,_,ha,_,_,_⟩; exact ha
+  | cons line rest ih =>
+    rintro ⟨hnop,hone,he,ha,hlaux,hl,hprefix⟩
+    have ht : ∀ l ∈ rest, labelOne l := fun l hm => hl l (by simp [hm])
+    have hsum := reverseNop_sum enc labs ffis pos aux ha
+    rcases he with ⟨he,hr⟩
+    cases line with
+    | label k1 k2 n =>
+      have hh := (labelPrefixZero_cons_iff (.label k1 k2 n) rest).mp hprefix (by rfl)
+      have hz : n = 0 := hh.1
+      have ha' : linesEncWithNop enc labs ffis pos (.label k1 k2 0 :: aux).reverse := by
+        simp only [List.reverse_cons,linesEncWithNop_append]
+        exact ⟨ha,by simp [linesEncWithNop,lineEncWithNop]⟩
+      simp only [padSection,if_pos hz]
+      apply ih (.label k1 k2 0 :: aux)
+      refine ⟨hnop,hone,?_,ha',?_,ht,hh.2⟩
+      · simpa [lineLen,hz] using hr
+      · simpa [isLabelHOL] using hlaux
+    | asm a bytes n =>
+      change enc (cbwToAsmExact a) = bytes ∧ n = bytes.length at he
+      have hp := lengthPadBytes bytes nop n ⟨by omega,by omega⟩
+      have ha' : linesEncWithNop enc labs ffis pos (.asm a (padBytes bytes n nop) n :: aux).reverse := by
+        simp only [List.reverse_cons,linesEncWithNop_append]
+        refine ⟨ha,?_⟩
+        simp only [linesEncWithNop,lineEncWithNop]
+        refine ⟨⟨?_,hp⟩,trivial⟩
+        simpa only [he.1,he.2,← hnop] using encWithNop_padBytes_length enc (cbwToAsmExact a)
+      simp only [padSection]
+      apply linesEncWithNop_padSection1 enc labs ffis nop rest (.asm a (padBytes bytes n nop) n :: aux) pos
+      refine ⟨hnop,hone,?_,ha',?_,ht⟩
+      · simpa [lineLen,Nat.add_assoc,Nat.add_comm,Nat.add_left_comm] using hr
+      · simp [isLabelHOL]
+    | labAsm a w bytes n =>
+      have ha' : linesEncWithNop enc labs ffis pos (.labAsm a w (padBytes bytes n nop) n :: aux).reverse := by
+        simp only [List.reverse_cons,linesEncWithNop_append]
+        refine ⟨ha,?_⟩
+        simp only [linesEncWithNop]
+        exact ⟨by rw [hsum]; exact paddedLabNop enc labs ffis _ nop a w bytes n hnop hone he,trivial⟩
+      simp only [padSection]
+      apply linesEncWithNop_padSection1 enc labs ffis nop rest (.labAsm a w (padBytes bytes n nop) n :: aux) pos
       refine ⟨hnop,hone,?_,ha',?_,ht⟩
       · simpa [lineLen,Nat.add_assoc,Nat.add_comm,Nat.add_left_comm] using hr
       · simp [isLabelHOL]
