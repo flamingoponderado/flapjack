@@ -1,0 +1,1 @@
+raw_write_frame=⊢ rawWriteData (a,d,n) s = s with MEM8 := (rawWriteData (a,d,n) s).MEM8
