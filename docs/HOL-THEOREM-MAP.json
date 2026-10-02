@@ -52574,5 +52574,33 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a complete source comparison flapjack-d7l6: Genuine original resumed Continue semantic case10100-10138 of fullssa_cc_trans_correct7666. Exactly all six original wordStateEqRel/ssaLocalsRel/allocation/everyVar/map/ltOK hypotheses; no IH needed for these constructors. Full existential source permutation and original Error-exempt result/frame/result-sensitive locals conclusion factored through transparent ssaSimulation, no predicate premise. All original result constructors retained; actual optional table indexing past-end NONE; native triple SptNat/SptUnit/SptUnit List, shared native width and same independent C/F state hosts confirmed by literal original resumed proof replay and6types. Chooses target permutation, derives actual native reconciliation via complete26yt, compiler-generated Skip/Seq cases, fixClock/depth restoration from proved frame and strongLocalsRel with selected entry/exit domain. Private exitAfterMoves is internal derived evaluation factoring, not an added public simulation premise. fmap_as_finite_support_relation names only imported actual owner fpRegs/store with local genuine broad/exact roundtrip witness; words_as_type_indexed_bitvec only standard positive-width/native host translation. Inherits reals_as_rational_cuts through full evaluator, SOUNDNESS item8. Kernel checked full case; all other native SSA semantic constructors/final composition remain unfinished."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticPrimitives.lean",
+  "lean_name": "ssaCcTransCorrectSkip",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a full source comparison flapjack-7rtj: Genuine original resumed Skip semantic case7736/9689 ofssa_cc_trans_correct7666. Exactly original six premises wordStateEqRel/ssaLocalsRel/allocation/everyVar/map/ltOK, no extra positive-clock, target execution/result/frame/simulation or IH premise. Complete source permutation existential and original Error-exempt result-sensitive conclusion through transparent checked ssaSimulation, no predicate premise. Actual native compiler/evaluate Skip clauses, including Tick zero-clock flush/timeout and positive-clock decClock, both outputs derived from original frame/locals. Fresh literal original exists_tac and resumed proofs, complete original specialized statements and5carrier types confirm shared positive-width/native state hosts, SptNat maps and Unit name sets. fmap_as_finite_support_relation translates only imported ownerfpRegs/store with same-module broad/exact roundtrip witness; words_as_type_indexed_bitvec only standard positive-width/native host translation. Inherits reals_as_rational_cuts via evaluate, SOUNDNESSitem8, no executed FP step. Native fullSSA other constructorcases/composition remainunfinished."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticPrimitives.lean",
+  "lean_name": "ssaCcTransCorrectTick",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a full source comparison flapjack-7rtj: Genuine original resumed Tick semantic case7736/9689 ofssa_cc_trans_correct7666. Exactly original six premises wordStateEqRel/ssaLocalsRel/allocation/everyVar/map/ltOK, no extra positive-clock, target execution/result/frame/simulation or IH premise. Complete source permutation existential and original Error-exempt result-sensitive conclusion through transparent checked ssaSimulation, no predicate premise. Actual native compiler/evaluate Tick clauses, including Tick zero-clock flush/timeout and positive-clock decClock, both outputs derived from original frame/locals. Fresh literal original exists_tac and resumed proofs, complete original specialized statements and5carrier types confirm shared positive-width/native state hosts, SptNat maps and Unit name sets. fmap_as_finite_support_relation translates only imported ownerfpRegs/store with same-module broad/exact roundtrip witness; words_as_type_indexed_bitvec only standard positive-width/native host translation. Inherits reals_as_rational_cuts via evaluate, SOUNDNESSitem8, no executed FP step. Native fullSSA other constructorcases/composition remainunfinished."
 }
 ]

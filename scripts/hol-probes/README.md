@@ -4510,3 +4510,5 @@ values. `WordCseDeletionFramesParity.lean` kernel-checks matching applications.
 The statements retain the original input guards and both evaluation directions.
 These regressions supplement source review; they do not prove cross-language
 equivalence or complete CSE correctness.
+
+`ssa_cc_trans_correct_primitives_probe.out` replays the literal original Skip/Tick semantic correctness proofs and original exists_tac against their complete original theorem specializations. All six premises, full existential postconditions and five native carrier types are captured; Tick retains both zero/positive-clock paths in Lean.
