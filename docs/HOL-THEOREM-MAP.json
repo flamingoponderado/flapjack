@@ -61675,5 +61675,21 @@
   "lean_name": "installPrepareArguments",
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific factoring of original Install9710-9800 preparation, no standalone HOL declaration. Successful source argument/cut guards are evaluator branch facts; actual native rename/scratch execution, preserved data arguments and mapped-cut relation are conclusions, never final correctness premises. Useful dependency of full Install case, not an additional completed HOL theorem port; full six-premise Install simulation and callback/post-rename assembly remain open on flapjack-sola-install."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean",
+  "lean_name": "installResultLocals",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific factoring of original Install9800-9858 post-result algebra/restoration, no standalone HOL declaration. Actual callback local shapes, source cut environment domain/strong matching and original map bounds are intermediate branch facts. Fresh SSA insertion/physical2 nonalias, actual pointer-copy/final native rename execution and final SSA/frame are proved conclusions. No targetrun or desired final locals hypothesis. This is an independent prerequisite of full six-premise Install simulation, not an additional completed HOL port; callback branch and full case remain open on flapjack-sola-install."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean",
+  "lean_name": "installRestoreResult",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific factoring of original Install9800-9858 post-result algebra/restoration, no standalone HOL declaration. Actual callback local shapes, source cut environment domain/strong matching and original map bounds are intermediate branch facts. Fresh SSA insertion/physical2 nonalias, actual pointer-copy/final native rename execution and final SSA/frame are proved conclusions. No targetrun or desired final locals hypothesis. This is an independent prerequisite of full six-premise Install simulation, not an additional completed HOL port; callback branch and full case remain open on flapjack-sola-install."
 }
 ]

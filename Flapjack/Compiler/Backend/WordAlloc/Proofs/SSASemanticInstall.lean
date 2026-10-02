@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 
@@ -174,5 +175,153 @@ theorem installPrepareArguments {width : Nat} [NeZero width] {C F : Type}
       LoopSemStateFiniteExact.sptAlistInsert,sptLookup_sptInsert]
   · simp [WordSemStateFiniteExact.getVar,WordSemStateFiniteExact.setVars,
       LoopSemStateFiniteExact.sptAlistInsert,sptLookup_sptInsert]
+
+-- Flapjack factoring of the original Install case's inline cut-map argument;
+-- these derived intermediate premises are not public simulation premises.
+private theorem cutLocalsRelation {α : Type} (next : Nat) (ssa : Spt Nat)
+    (names : Spt Unit) (source target : Spt α)
+    (mapped : ∀ key, sptDomain names key → sptDomain ssa key)
+    (sourceDomain : sptDomain source = sptDomain names)
+    (matching : Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
+      (sptDomain names) source target)
+    (below : ∀ key, sptDomain names key → key < next) :
+    ssaLocalsRel next (sptInter ssa names) source target := by
+  have interRead : ∀ key register, sptLookup key (sptInter ssa names) = some register →
+      sptLookup key ssa = some register ∧ sptDomain names key := by
+    intro key register read
+    rw [sptLookup_sptInterCases] at read
+    cases left : sptLookup key ssa with
+    | none => simp [left] at read
+    | some value =>
+      cases right : sptLookup key names with
+      | none => simp [left,right] at read
+      | some payload =>
+        have equal : value = register := by simpa [left,right] using read
+        subst value
+        exact ⟨rfl,(sptMem_iff_lookup key names).mpr ⟨payload,right⟩⟩
+  refine ⟨?_,?_⟩
+  · intro key register read
+    obtain ⟨original,inNames⟩ := interRead key register read
+    have inSource : sptDomain source key := by rw [sourceDomain]; exact inNames
+    obtain ⟨value,sourceRead⟩ := (sptMem_iff_lookup key source).mp inSource
+    have targetRead := matching key value ⟨inNames,sourceRead⟩
+    apply (sptMem_iff_lookup register target).mpr
+    exact ⟨value,by simpa [optionLookup,original] using targetRead⟩
+  · intro key value read
+    have inNames : sptDomain names key := by
+      rw [←sourceDomain]
+      exact (sptMem_iff_lookup key source).mpr ⟨value,read⟩
+    obtain ⟨register,original⟩ := (sptMem_iff_lookup key ssa).mp (mapped key inNames)
+    obtain ⟨payload,nameRead⟩ := (sptMem_iff_lookup key names).mp inNames
+    have interLookup : sptLookup key (sptInter ssa names) = some register := by
+      simp [sptLookup_sptInterCases,original,nameRead]
+    refine ⟨(sptMem_iff_lookup key _).mpr ⟨register,interLookup⟩,?_,fun _ => below key inNames⟩
+    simpa only [interLookup,Option.getD_some,optionLookup,original] using
+      matching key value ⟨inNames,read⟩
+
+
+/-- Flapjack-specific post-install locals algebra (original source9800-9840).
+No independent HOL declaration exists. The mapped environment relation is
+obtained from the actual source/target cuts before callback execution; this
+helper derives the new SSA relation rather than assuming it. The physical
+result at register2 cannot alias an old SSA value, and the fresh pointer copy
+uses counter+2 exactly as the native nextVarRename producer does. -/
+theorem installResultLocals {α : Type} (counter : Nat) (ssa : Spt Nat)
+    (names : Spt Unit) (sourceEnv targetEnv : Spt α) (ptr : Nat) (value : α)
+    (mapped : ∀ key, sptDomain names key → sptDomain ssa key)
+    (sourceDomain : sptDomain sourceEnv = sptDomain names)
+    (matching : Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
+      (sptDomain names) sourceEnv targetEnv)
+    (below : ∀ key, sptDomain names key → key < counter)
+    (valid : ssaMapOK counter ssa) (ptrBound : ptr < counter+2) :
+    ssaLocalsRel (counter+6) (sptInsert ptr (counter+2) (sptInter ssa names))
+      (sptInsert ptr value sourceEnv)
+      (sptInsert (counter+2) value (sptInsert 2 value targetEnv)) := by
+  have cutRelated := cutLocalsRelation counter ssa names sourceEnv targetEnv
+    mapped sourceDomain matching below
+  have cutValid := ssaMapOKInter counter ssa names valid
+  have physicalRelated := ssaLocalsRelIgnoreInsert counter (sptInter ssa names)
+    sourceEnv targetEnv 2 value ⟨cutValid,cutRelated,by simp [isPhyVar]⟩
+  have relatedMore := ssaLocalsRelMore counter (sptInter ssa names)
+    sourceEnv (sptInsert 2 value targetEnv) (counter+2) ⟨physicalRelated,by omega⟩
+  have validMore := ssaMapOKMore counter (sptInter ssa names) (counter+2) ⟨cutValid,by omega⟩
+  simpa [Nat.add_assoc] using ssaLocalsRelInsert (counter+2) (sptInter ssa names)
+    sourceEnv (sptInsert 2 value targetEnv) ptr value ⟨relatedMore,validMore,ptrBound⟩
+
+
+/-- Flapjack-specific restoration after the actual successful Install callback.
+There is no standalone HOL declaration. Input local shapes and frame are the
+callback branch's computed states; the actual pointer-copy and final rename run,
+full output SSA locals relation and frame are derived. In particular this helper
+does not assume a target evaluation or its desired final locals relation. -/
+theorem installRestoreResult {width : Nat} [NeZero width] {C F : Type}
+    (sourceAfter targetAfter : WordSemStateFiniteExact width C F)
+    (counter ptr : Nat) (ssa : Spt Nat) (names : Spt Unit)
+    (sourceEnv targetEnv : Spt (WordLocW width)) (value : WordLocW width)
+    (mapped : ∀ key, sptDomain names key → sptDomain ssa key)
+    (sourceDomain : sptDomain sourceEnv = sptDomain names)
+    (matching : Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
+      (sptDomain names) sourceEnv targetEnv)
+    (below : ∀ key, sptDomain names key → key < counter)
+    (valid : ssaMapOK counter ssa) (stack : isStackVar counter)
+    (ptrBound : ptr < counter+2)
+    (sourceLocals : sourceAfter.locals = sptInsert ptr value sourceEnv)
+    (targetLocals : targetAfter.locals = sptInsert 2 value targetEnv)
+    (frame : Flapjack.WordAlloc.wordStateEqRel sourceAfter targetAfter) :
+    let (ptrOut,ssaAfter,nextAfter) := nextVarRename ptr (sptInter ssa names) (counter+2)
+    let (restore,ssaOut,nextOut) := listNextVarRenameMove (width := width) ssaAfter nextAfter
+      ((sptToAList names).map Prod.fst)
+    let (result,targetOut) := WordSemStateFiniteExact.evaluate
+      (.seq (.move 1 [(ptrOut,2)]) restore) targetAfter
+    result = none ∧ ssaLocalsRel nextOut ssaOut sourceAfter.locals targetOut.locals ∧
+      Flapjack.WordAlloc.wordStateEqRel sourceAfter targetOut := by
+  dsimp only [nextVarRename]
+  let copied := WordSemStateFiniteExact.setVar (counter+2) value targetAfter
+  have copiedRelated : ssaLocalsRel (counter+6)
+      (sptInsert ptr (counter+2) (sptInter ssa names)) sourceAfter.locals copied.locals := by
+    simpa [copied,WordSemStateFiniteExact.setVar,sourceLocals,targetLocals] using
+      installResultLocals counter ssa names sourceEnv targetEnv ptr value
+        mapped sourceDomain matching below valid ptrBound
+  have copiedFrame : Flapjack.WordAlloc.wordStateEqRel sourceAfter copied := frame
+  have copyRun : WordSemStateFiniteExact.evaluate (.move 1 [(counter+2,2)]) targetAfter =
+      (none,copied) := by
+    simp [WordSemStateFiniteExact.evaluate,WordSemStateFiniteExact.getVars,
+      WordSemStateFiniteExact.getVar,targetLocals,copied,WordSemStateFiniteExact.setVar,
+      WordSemStateFiniteExact.setVars,LoopSemStateFiniteExact.sptAlistInsert,
+      sptLookup_sptInsert_same]
+  have originalValid := ssaMapOKMore counter (sptInter ssa names) (counter+2)
+    ⟨ssaMapOKInter counter ssa names valid,by omega⟩
+  have renamedProps := nextVarRenameProps ptr (sptInter ssa names) (counter+2)
+    (counter+2) (sptInsert ptr (counter+2) (sptInter ssa names)) (counter+2+4) rfl
+    ⟨Or.inl (isStackVarFlip counter stack),originalValid⟩
+  have renamedValid : ssaMapOK (counter+6) (sptInsert ptr (counter+2) (sptInter ssa names)) := by
+    simpa [Nat.add_assoc] using renamedProps.2.2.2
+  have present : ∀ key ∈ (sptToAList names).map Prod.fst, sptDomain sourceAfter.locals key := by
+    intro key member
+    have inNames := (sptMemMapFstToAList names key).mp member
+    obtain ⟨oldValue,read⟩ := (sptMem_iff_lookup key sourceEnv).mp (by change sptDomain sourceEnv key; rw [sourceDomain]; exact inNames)
+    rw [sourceLocals]
+    by_cases same : key = ptr
+    · subst key; exact (sptMem_iff_lookup ptr _).mpr ⟨value,sptLookup_sptInsert_same ptr value sourceEnv⟩
+    · exact (sptMem_iff_lookup key _).mpr ⟨oldValue,by rw [sptLookup_sptInsert_ne ptr key value sourceEnv same]; exact read⟩
+  have restored := listNextVarRenameMovePreserve sourceAfter
+    (sptInsert ptr (counter+2) (sptInter ssa names)) (counter+6)
+    ((sptToAList names).map Prod.fst) copied
+    ⟨copiedRelated,present,sptAllDistinctMapFstToAList _,renamedValid,copiedFrame⟩
+  simp only [Nat.add_assoc] at *
+  generalize produced : listNextVarRenameMove (width := width)
+    (sptInsert ptr (counter+2) (sptInter ssa names)) (counter+6)
+    ((sptToAList names).map Prod.fst) = output at restored ⊢
+  rcases output with ⟨restore,ssaOut,nextOut⟩
+  dsimp only at restored ⊢
+  have seqRun : WordSemStateFiniteExact.evaluate
+      (.seq (.move 1 [(counter+2,2)]) restore) targetAfter =
+      WordSemStateFiniteExact.evaluate restore copied := by
+    rw [WordSemStateFiniteExact.evaluate,copyRun]
+    have fixed : targetAfter.fixClock ((none : Option (WordSemResult width)),copied) = (none,copied) := by
+      simp [WordSemStateFiniteExact.fixClock,copied,WordSemStateFiniteExact.setVar]
+    rw [fixed]
+  rw [seqRun]
+  exact ⟨restored.1,restored.2.1,restored.2.2.1⟩
 
 end Flapjack.Compiler.Backend.WordAlloc
