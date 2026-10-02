@@ -1,3 +1,4 @@
+import Flapjack.RiscV.RuntimeSymbolPreservation
 import Flapjack.Compiler.Backend.WordToStack.StubNames
 import Flapjack.Compiler.Backend.StackAlloc.StubNames
 import Flapjack.Compiler.Backend.StackRemove.StubNames
