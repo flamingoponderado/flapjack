@@ -53769,5 +53769,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a source review flapjack-brhb: genuine original resumed Store case8232/8236, original six premises/full Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion via transparent ssaSimulation. Actual native expression/getVar failures, forbidden Set store names, nonword Store address and memory-domain failure/success preserved. Accepted expression/getVar transport derives target execution; no extra success/target-eval/output-frame premise. Literal original case proofs and local prerequisites replayed, omitting only discarded recursive IH bookkeeping for primitive Set, Store proof retained with expr binder substitution. Captured full2statements/6types match original shared positive-width/native hosts, expression/store-name/Nat/Spt carriers. Only imported fpRegs/store map translation and standard words translation; same-module canonical roundtrip witness; inherits reals_as_rational_cuts SOUNDNESS8. Full semantic SSA assembly remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticMustTerminate.lean",
+  "lean_name": "ssaCcTransCorrectMustTerminate",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a source review flapjack-ifwu: genuine original resumed MustTerminate semantic case8252. All original6premises/full Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion via transparent ssaSimulation; only legitimate universal smaller-body induction hypothesis specialized from completeInduct prog_size. No target execution/success/post-frame premise, full assembly will discharge IH. Actual termdepzero and body Error/timeOut exemption, bounded-clock/decreased-depth body call, caller clock/depth restoration. Fresh literal original case replay substitutes body binder and specialized IH, removes only already-discharged structural size_tac2; full recursive/original statements and6types match native positive width/shared C F hosts/SptNat/name sets. Imported fpRegs/store canonical translation with local roundtrip witness; standard words translation; inherits reals_as_rational_cuts SOUNDNESS8. FullSSA other cases/assembly unfinished."
 }
 ]

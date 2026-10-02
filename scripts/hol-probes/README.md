@@ -4564,3 +4564,5 @@ all 208 values/applications. This group does not establish external
 `TotOrd`/`good_cmp`, the balanced-map carrier or full CSE correctness.
 The production list-key comparator route is tracked separately.
 `target_props_io_events_probeScript.sml` replays the full original `evaluate_io_events_mono` quantified theorem with no open hypotheses. `TargetPropsIoEventsParity.lean` checks the same unrestricted statement over the full literal evaluator. Clock induction composes exact returning FFI append with recursive prefix preservation; all failed/final paths retain the original trace.
+
+Native SSA MustTerminate probe replays original recursive case with its specialized smaller-body IH, omitting already-discharged prog_size bookkeeping. Captures full recursive/original statements and six carrier types; no desired target evaluation or frame is assumed.
