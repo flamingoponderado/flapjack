@@ -3,7 +3,8 @@
 This identifies source locations, not theorem truth or new trusted sources.
 It covers Hol_reln's reviewed tuple form, bounded define_run calls, and the
 bounded define_monad_access_funs / define_MFarray_manip_funs accessor factories
-and the bounded define_monad_exception_functions factory.
+and the bounded define_monad_exception_functions factory, and the L3 Import
+`Construct`/`Record` type declarations of L3-generated model scripts.
 """
 
 import re
@@ -414,4 +415,108 @@ def monad_exception_declarations(text: str) -> list[tuple[tuple[str, ...], int, 
         start_line = text.count('\n', 0, match.start()) + 1
         end_line = text.count('\n', 0, close2 + end.end()) + 1
         result.append((names, start_line, end_line))
+    return result
+
+
+def _l3_tuple_names(text: str, start: int, list_form: bool) -> tuple[list[str], int] | None:
+    """Scan one literal L3 `Construct` list or `Record` tuple from `start`.
+
+    Return the type names (the first string literal of each top-level tuple of a
+    `Construct` list, or of the single `Record` tuple) and the exclusive end
+    offset, or None for any other shape. SML strings are skipped as atoms.
+    """
+    i = start
+    while i < len(text) and text[i].isspace():
+        i += 1
+    opening = '[' if list_form else '('
+    if i >= len(text) or text[i] != opening:
+        return None
+    depth = 0
+    names: list[str] = []
+    expect_name = False
+    while i < len(text):
+        # Comment punctuation and quoted names are not tuple syntax. Preserve
+        # the expectation for the next real token across nested SML comments.
+        if text.startswith('(*', i):
+            comment_depth = 1
+            i += 2
+            while i < len(text) and comment_depth:
+                if text.startswith('(*', i):
+                    comment_depth += 1
+                    i += 2
+                elif text.startswith('*)', i):
+                    comment_depth -= 1
+                    i += 2
+                else:
+                    i += 1
+            if comment_depth:
+                return None
+            continue
+        c = text[i]
+        if c == '"':
+            j = i + 1
+            while j < len(text) and text[j] != '"':
+                if text[j] == '\\':
+                    j += 1
+                j += 1
+            if j >= len(text):
+                return None
+            if expect_name:
+                literal = text[i + 1:j]
+                if re.fullmatch(_NAME, literal) is None:
+                    return None
+                names.append(literal)
+            expect_name = False
+            i = j + 1
+            continue
+        if c in '([':
+            depth += 1
+            # A type name opens each top-level tuple: depth 2 inside a
+            # Construct list, depth 1 for the Record tuple.
+            expect_name = c == '(' and depth == (2 if list_form else 1)
+        elif c in ')]':
+            depth -= 1
+            expect_name = False
+            if depth == 0:
+                return (names, i + 1) if names else None
+        elif not c.isspace():
+            expect_name = False
+        i += 1
+    return None
+
+
+def l3_type_declarations(text: str) -> list[tuple[tuple[str, ...], int, int]]:
+    """Recognize the type declarations of an L3-generated model script.
+
+    In a script that begins its theory with `val () = Import.start "THY"`
+    (`HOL/examples/l3-machine-code/common/Import.sml:58`), a top-level
+    `val _ = Construct [("T1", [...]), ...]` declares the algebraic types
+    `T1`, ... and `val _ = Record ("T", [...])` declares the record type `T`
+    (`Import.sml:153-165`, both through `Datatype.astHol_datatype`). Only literal
+    names in those two literal forms are recognized; this records source
+    provenance only, not elaboration or type equivalence. Calls inside comments,
+    strings or nested SML scopes, rebound `Construct`/`Record`, and other
+    argument shapes are excluded.
+    """
+    masked, _quotes = _headers_and_quotes(text)
+    nested = _nested_positions(masked)
+    start = re.search(r'^val\s*\(\s*\)\s*=\s*Import\.start\b', masked, re.MULTILINE)
+    if start is None or start.start() in nested:
+        return []
+    header = re.compile(r'^val\s+_\s*=\s*(?P<kind>Construct|Record)\b', re.MULTILINE)
+    result: list[tuple[tuple[str, ...], int, int]] = []
+    for match in header.finditer(masked, start.end()):
+        if match.start() in nested:
+            continue
+        if _top_level_bindings(masked, nested, match['kind'], match.start()):
+            continue
+        scanned = _l3_tuple_names(text, match.end(), match['kind'] == 'Construct')
+        if scanned is None:
+            continue
+        names, end = scanned
+        if len(set(names)) != len(names):
+            continue
+        start_line = text.count('\n', 0, match.start()) + 1
+        end_line = text.count('\n', 0, end) + 1
+        result.append((tuple(names), start_line, end_line))
     return result

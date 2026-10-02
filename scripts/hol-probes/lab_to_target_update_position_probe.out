@@ -1,0 +1,25 @@
+SND_lines_upd_lab_len=∀(pos :num) (lines :α line list) (acc :α line list).
+  SND (lines_upd_lab_len pos lines acc) =
+  pos +
+  (SUM
+     (MAP (line_len :α line -> num) (FST (lines_upd_lab_len pos lines acc))) :
+   num) − (SUM (MAP (line_len :α line -> num) acc) :num)
+SND_lines_upd_lab_len_types=(pos :num)::num;(lines :α line list)::α line list;(acc :α line list)::α line list;
+EVEN_sec_length_lines_upd_lab_len=∀(pos :num) (lines :α line list) (acc :α line list).
+  (if NULL lines then
+     EVEN pos ∧ EVEN (SUM (MAP (line_len :α line -> num) acc) :num)
+   else
+     is_Label (LAST lines) ∧
+     EVEN (pos + (SUM (MAP (line_len :α line -> num) acc) :num))) ⇒
+  EVEN
+    (SUM
+       (MAP (line_len :α line -> num) (FST (lines_upd_lab_len pos lines acc))) :
+     num)
+EVEN_sec_length_lines_upd_lab_len_types=(pos :num)::num;(lines :α line list)::α line list;(acc :α line list)::α line list;
+empty_position=T
+empty_even=T
+nonempty_odd_pos_odd_acc=T
+nonempty_even_output=T
+guard_required=T
+final_label_required=T
+full_position_subtraction=T

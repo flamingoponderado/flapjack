@@ -1,0 +1,30 @@
+lines_upd_lab_len_AUX=∀(l :α line list) (aux :α line list) (pos :num).
+  FST (lines_upd_lab_len pos l aux) =
+  REVERSE aux ++ FST (lines_upd_lab_len pos l ([] :α line list))
+lines_upd_lab_len_AUX_types=(l :α line list)::α line list;(aux :α line list)::α line list;(pos :num)::num;
+line_similar_lines_upd_lab_len=∀(l :α line list) (aux :β) (pos :num) (l1 :α line list).
+  LIST_REL (line_similar :α line -> α line -> bool)
+    (FST (lines_upd_lab_len pos l ([] :α line list))) l1 ⇔
+  LIST_REL (line_similar :α line -> α line -> bool) l l1
+line_similar_lines_upd_lab_len_types=(l :α line list)::α line list;(aux :β)::β;(pos :num)::num;(l1 :α line list)::α line list;
+code_similar_upd_lab_len=∀(code :α sec list) (pos :num) (code1 :α sec list).
+  code_similar (upd_lab_len pos code) code1 ⇔ code_similar code code1
+code_similar_upd_lab_len_types=(code :α sec list)::α sec list;(pos :num)::num;(code1 :α sec list)::α sec list;
+lines_upd_lab_len_similar=∀(pos :num) (lines :α line list) (aux :α line list).
+  LIST_REL (line_similar :α line -> α line -> bool)
+    (FST (lines_upd_lab_len pos lines aux)) (REVERSE aux ++ lines)
+lines_upd_lab_len_similar_types=(pos :num)::num;(lines :α line list)::α line list;(aux :α line list)::α line list;
+empty_acc_full=T
+even_full=T
+odd_full=T
+acc_full=T
+aux_equality=T
+line_relation_positive=T
+line_relation_negative=T
+raw_changed_similarity_retained=T
+code_relation_positive=T
+section_id_mismatch_rejected=T
+instruction_mismatch_rejected=T
+accumulator_similarity=T
+empty_code=T
+program_full=T

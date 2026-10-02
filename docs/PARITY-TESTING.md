@@ -99,6 +99,19 @@ runtime/entry/user sections without hiding byte differences, and succeeds only
 when every residual difference has an owning bead. This artifact audit
 complements the machine-execution fixture above; it does not replace it.
 
+The RV64 CLI runtime image now constructs its complete initializer through
+native `StackRemove.compileHOL` and `StackNames.compileHOL`, using Pancake's
+`GC = None` configuration override and `DataToWord.maxHeapLimit`. The linker
+uses the generated sections for addresses and relocation labels, and the
+formatter emits their bytes and symbol metadata. `RiscV.RuntimeBytes` retains
+an independent captured original prefix for regression comparison only.
+`Test.RiscVArtifactParity.initializedPrefixExact` checks all six runtime labels,
+addresses, lengths and bytes against that unchanged oracle. The legacy source
+namespace is normalized to original globals (GC4, Raise5, StoreConsts6,
+source functions64 onward); exported symbol suffixes remain section ordinals.
+Upstream broad allocation/raw-call/long-div preparation remains a separate
+compiler-port frontier; the runtime boundary does not establish its simulation.
+
 ## Differential fuzzing against `cake`
 
 `scripts/parity-difffuzz.py` is a deterministic differential fuzzer over the
@@ -311,3 +324,13 @@ ALookupMap probes replay three complete original lookup mapping proofs and
 and payload carriers, repeated/absent/large keys and noninjective sentinels
 retain the original injection boundary. Regression evidence does not establish
 cross-language equivalence.
+
+Move reconstruction probes replay the complete original theorem and four
+original prerequisites. 560 matching packets compare full native reads,
+optional pairs of whole Spt trees and all six source guard observations.
+Widths1/2/8/64/80 retain word truncation; duplicate/missing/70bit keys, swaps,
+omitted self/nonself moves and malformed trees are included. Failed reads
+produce NONE rather than evaluating THE NONE. Regression evidence is not a
+HOL-to-Lean equivalence proof.
+Fifteen extra packets isolate the subset guard failure while all other guards
+succeed; they inspect absent lookup directly and never compute THE NONE.

@@ -1,0 +1,8 @@
+const_swap_full=⊢ ∀rs h v m. FOLDR (λr loc. insert r v loc) (insert h v m) rs = insert h v (FOLDR (λr loc. insert r v loc) m rs)
+fake_chain_full=⊢ ∀rs cst. evaluate (FOLDR Seq Skip (MAP (λr. fake_move r) rs),cst) = (NONE,cst with locals := FOLDR (λr loc. insert r (Word 0w) loc) cst.locals rs)
+fake_chain_locals_full=⊢ ∀rs cst. (let rcst = SND (evaluate (FOLDR Seq Skip (MAP (λr. fake_move r) rs),cst)) in word_state_eq_rel cst rcst ∧ domain rcst.locals = domain cst.locals ∪ set rs ∧ (∀r. ¬MEM r rs ⇒ lookup r rcst.locals = lookup r cst.locals) ∧ ∀r. MEM r rs ⇒ lookup r rcst.locals = SOME (Word 0w))
+const_swap_type_names=:num list
+const_swap_type_value=:α word_loc
+const_swap_type_locals=:α word_loc sptree$num_map
+fake_chain_type_state=:(α, β, γ) state
+fake_chain_locals_type_state=:(α, β, γ) state
