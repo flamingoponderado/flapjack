@@ -64437,5 +64437,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-02 complete original4863-4890 definitions and full append theorem statements/types freshly captured in lab_to_target_offset_invariant_probe.out. Actual HOL alpha line/section carriers confirmed: positive-word native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/BitVec payloads, fixed word8 bytes, native Spt nested label maps and HolFfiName list; sole words_as_type_indexed_bitvec dimension translation. lineOffsetOk exactly compares every LabAsm stored word with actual getJumpOffset at arbitrary annotation position and ignores bytes/length; other constructors True. linesOffsetOk original empty/cons clauses advance by source lineLen, offsetOk original section clauses advance by SUM MAP line_len; full arbitrary append iff retains both conjuncts and actual source annotation position. No encoder/config/asmOffsetOk/success/output guard or extra instance introduced. Native Spt/MlString carriers constructor translations unchanged; proof-side predicates do not replace an executed compiler operation. Twelve fresh original/native observations cover unconstrained nonlabels, all seven labelled opcodes at a nonempty two-level label map and duplicate FFI names, wrong stored word despite otherwise matching bytes, missing label/FFI defaults, arbitrary label annotations versus physical bytes, actual true append theorem application and bad position, multi-section traversal/reset counterexample, empty width1 lists/sections and width80 large positions/stored-word mismatch; full arbitrary-width append consumer checked. No total HD/EL or individual hold release. Full unconditional both-flag encoder establishment, padding offset preservation and loop/pass/end-to-end remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InstructionSimulation/FloatingPoint.lean",
+    "lean_name": "stateRelInstFp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.10: complete genuine FP outerconstructor case of originalstate_rel_inst767-870, all16opcodes, same3originalhyp fullrelation/regBoundInst/source nativeinstsuccess and EXISTS targetnativeinstsuccess/fullpostrelation. Actual StackSemInst.instHOL/instFp/native instFpRegister dispatch unchanged. Derive allFPoperand equality from original completefpRegs relation, derive lowerinteger transfer operands fromoriginalbound. Preserve native comparisons/arithmetic/Fma/sign/Sqrt/ToInt/FromInt/MovToReg/MovFromReg, conversion representability/width64/halfselection/NaN choices and ordered aliasedupdates. No output/rounding/inputword/width/representation/frame premise added. Actual canonical imported StackSemStateFiniteExact regs/fpRegs/store owner and local genuine broad/exact roundtrip witness; Spt code not named. Width NeZero/BitVec and independent C/F Type0 retained. Wholeinst closure inherits reals_as_rational_cuts assumption, explicitly retained and documented beside theorem; no cross-language real equivalence claimed. Freshfulloriginal FPcase/types/kernel replay and fullnativegeneric16caseproof checked. Fullinstruction parent stillneeds genuine allconstructor assembly."
   }
 ]
