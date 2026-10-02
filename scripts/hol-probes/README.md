@@ -5019,3 +5019,11 @@ assembly is in `TargetProps/NextSharedMem.lean`.
 from compiled `miscTheory`; `misc_memory_regions_probe.out` is statement review
 and regression evidence, not a cross-language equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=misc_memory_regions_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+### Target evaluation induction base
+
+`target_evaluate_eq_probeScript.sml` specializes original
+`evaluate_EQ_evaluate_lemma` at zero and captures its full statement in
+`target_evaluate_eq_probe.out`. This is source-review regression evidence,
+not proof of cross-language equivalence or of the pending successor case.
+Regenerate with `HOL_PROBE_ONLY=target_evaluate_eq_probeScript.sml bash scripts/hol-probes/regenerate.sh`.

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateEq
 import Flapjack.Test.LabToTargetGoodCodeParity
 import Flapjack.Test.LabToTargetByteLengthsParity
 import Flapjack.Test.LabPropsLabelSetsParity
