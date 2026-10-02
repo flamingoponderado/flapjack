@@ -1444,6 +1444,8 @@ import Flapjack.Compiler.Backend.LabToTarget.Labels
 import Flapjack.Compiler.Backend.StackNames
 import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
+import Flapjack.FiniteMap.MapKeys
+import Flapjack.Compiler.Backend.StackNames.Proofs.RenameState
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend

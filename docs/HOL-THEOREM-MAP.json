@@ -59323,5 +59323,383 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-native-encoder-correct): asmPropsScript.sml:117-133 compared against the HOL kernel typing (t : ('a,'b,'c) target, s1 s2 : 'a asm_state, i : 'a asm, ms : 'b, n : num, env : num -> 'b -> 'b). Literal: target_ok t ∧ ∀s1 i s2 ms. asm_step t.config s1 i s2 ∧ target_state_rel t s1 ms ⇒ ∃n. ∀env. interference_ok env (t.proj s1.mem_domain) ⇒ let pcs = all_pcs (LENGTH (t.config.encode i)) s1.pc in asserts n (λk s. env (n - k) (t.next s)) ms (λms'. t.state_ok ms' ∧ (∀pc. pc ∈ pcs 0 ⇒ t.get_byte ms' pc = t.get_byte ms pc) ∧ t.get_pc ms' ∈ pcs t.config.code_alignment) (λms'. target_state_rel t s2 ms') ∧ asserts2 (n + 1) (λk. env (n + 1 - k)) t.next ms (λms1 ms2. ∀x. x ∉ s1.mem_domain ⇒ t.get_byte ms1 x = t.get_byte ms2 x). It uses the reviewed targetOk, asmStep, targetStateRel, interferenceOk, allPcs (Set), asserts and asserts2. HOL bool t.state_ok ms' is = true and x ∉ s1.mem_domain is ¬ s1.memDomain x. Original HOL probe asm_props_encoder_correct_probe captures the typed definition and the HOL-proved target_ok projection and identity-environment specialization; Flapjack/Test/AsmPropsEncoderCorrectParity.lean replays both through the untagged encoderCorrect_targetOk and encoderCorrect_noInterference. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "rename_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:15-24 rename_state_def: rename_state c f s = s with <|regs := MAP_KEYS (find_name f) s.regs; code := fromAList (compile f (toAList s.code)); compile := c; compile_oracle := (I ## compile f ## I) o s.compile_oracle; ffi_save_regs := IMAGE (find_name f) s.ffi_save_regs|>. All five updates are literal: MAP_KEYS is the untagged Hilbert-choice rendering HolFiniteMapExact.mapKeys of HOL's new_specification over the finite-support carrier; find_name (tlookup) is findNameSpt; fromAList/toAList are sptFromAList/sptToAList; ## is Prod.map; IMAGE over the Boolean ffi_save_regs predicate is the decided existential. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "rename_state_with_clock",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "renameState_withClock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:26-30 rename_state_with_clock: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "rename_state_const",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "renameState_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:32-44 rename_state_const: the nine field equations memory, be, mdomain, sh_mdomain, code_buffer, clock, compile = c, use_stack, fp_regs. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "rename_state_with_memory",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "renameState_withMemory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:46-50 rename_state_with_memory: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "dec_clock_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "decClock_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:52-56 dec_clock_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "mem_load_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "memLoad_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:58-62 mem_load_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "mem_store_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "memStore_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:64-68 mem_store_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "get_var_find_name",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "getVar_findName",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:70-79 get_var_find_name: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "get_var_imm_find_name",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "getVarImm_findName",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:81-92 get_var_imm_find_name: BIJ (find_name f) UNIV UNIV ⇒ get_var_imm (ri_find_name f ri) (rename_state c f s) = get_var_imm ri s. The reg_imm operand is the stack_names HolRegImm carrier, read by StackSem's get_var_imm through the HolRegImm.toWordRegImm codec its If clause uses. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "FLOOKUP_rename_state_find_name",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "lookup_renameState_findName",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:94-101 FLOOKUP_rename_state_find_name: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "sh_mem_load_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "shMemLoad_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:103-112 sh_mem_load_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "sh_mem_store_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "shMemStore_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:114-122 sh_mem_store_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "sh_mem_load_byte_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "shMemLoadByte_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:124-133 sh_mem_load_byte_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "sh_mem_store_byte_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "shMemStoreByte_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:135-142 sh_mem_store_byte_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "sh_mem_load16_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "shMemLoad16_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:144-153 sh_mem_load16_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "sh_mem_store16_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "shMemStore16_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:155-162 sh_mem_store16_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "sh_mem_load32_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "shMemLoad32_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:164-173 sh_mem_load32_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "sh_mem_store32_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "shMemStore32_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:175-182 sh_mem_store32_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "sh_mem_op_rename_store",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "shMemOp_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:184-190 sh_mem_op_rename_store: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "prog_comp_eta",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "progComp_eta",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:192-196 prog_comp_eta: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Sole carrier translation words_as_type_indexed_bitvec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "find_code_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "findCode_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:198-219 find_code_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "set_var_find_name",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "setVar_findName",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:221-229 set_var_find_name: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "set_fp_var_find_name",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "setFpVar_findName",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:231-236 set_fp_var_find_name: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "domain_rename_state_code",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "domain_renameState_code",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:274-278 domain_rename_state_code: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "comp_STOP_Loop",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "comp_STOP_Loop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:280-285 comp_STOP_Loop: [local] comp f (STOP (Loop c1)) = STOP (Loop (comp f c1)); HOL STOP is the identity (stackSemScript.sml:663-664), which the Lean program carrier does not render, so both sides are Loop. Sole carrier translation words_as_type_indexed_bitvec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "get_labels_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "getLabels_comp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:287-293 get_labels_comp: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Sole carrier translation words_as_type_indexed_bitvec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "loc_check_rename_state",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "locCheck_renameState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:295-302 loc_check_rename_state: same quantified variables, hypotheses and conclusion; BIJ (find_name f) UNIV UNIV is Function.Bijective (findNameSpt f); MAP_KEYS/fromAList/toAList/lookup/FLOOKUP are the carrier renderings named in rename_state_def's note; OPTION_MAP is Option.map. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "inst_rename",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/RenameState.lean",
+    "lean_name": "instRename",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): HOL stack_namesProofScript.sml:238-266 inst_rename: BIJ (find_name f) UNIV UNIV ⇒ inst (inst_find_name f i) (rename_state c f s) = OPTION_MAP (rename_state c f) (inst i s), over the reviewed StackSem instHOL, including every integer, memory and FP case and the same-register Or copy. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration through the tagged StackSem instHOL (inst_def) FP clauses, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
