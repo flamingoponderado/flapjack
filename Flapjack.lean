@@ -22,7 +22,6 @@ import Flapjack.Misc.BalancedMap.StructuralSize
 import Flapjack.Misc.FlatReplicate
 import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry
-
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
@@ -149,7 +148,6 @@ import Flapjack.Compiler.Backend.WordAlloc.LimitVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
-
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
 import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
 import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
@@ -177,7 +175,6 @@ import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
 import Flapjack.Compiler.Backend.Parmove.InjOnState
 import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
 import Flapjack.Compiler.Backend.BackendProps
-
 import Flapjack.Compiler.Backend.LabToTarget.Interference
 import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
@@ -1289,8 +1286,6 @@ import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
 import Flapjack.Misc.Sorting
 import Flapjack.Misc.Mergesort
-
--- Tagged modules required by the HOL reference coverage gate.
 import Flapjack.Compiler.Backend.LabFilter
 import Flapjack.Compiler.Backend.LabToTarget.Compile
 import Flapjack.Compiler.Backend.LabToTarget.PaddingLength
@@ -1402,6 +1397,42 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLe
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRaise
+import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
+import Flapjack.Compiler.Encoders.AsmProps.Encoding
+import Flapjack.Compiler.Encoders.AsmProps.Interference
+import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
+import Flapjack.Compiler.Backend.WordToStack
+import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+import Flapjack.Misc.ListSubset
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
+import Flapjack.Compiler.Backend.LinearScan.Proofs
+import Flapjack.Misc.Sptree.ToAList
+import Flapjack.Translator.Monadic.MonadBase.Arrays
+import Flapjack.Misc.AppList
+import Flapjack.Misc.Sptree
+import Flapjack.Misc.LList
+import Flapjack.Misc.LprefixLub
+import Flapjack.Misc.OptMmapCong
+import Flapjack.Compiler.Backend.LabLang
+import Flapjack.Compiler.Backend.LabSem
+import Flapjack.Compiler.Backend.LabProps
+import Flapjack.Compiler.Backend.LabToTarget.Encoding
+import Flapjack.Compiler.Backend.LabToTarget.Labels
+import Flapjack.Compiler.Backend.LabToTarget.Positions
+import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+import Flapjack.Compiler.Backend.LabToTarget.Padding
+import Flapjack.Compiler.Backend.StackNames
+import Flapjack.Compiler.Backend.StackNames.NamesOk
+import Flapjack.Compiler.Backend.StackNames.Labels
+import Flapjack.Compiler.Backend.StackRemove
+import Flapjack.Compiler.Backend.StackAlloc
+
+
+
+-- Tagged modules required by the HOL reference coverage gate.
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside

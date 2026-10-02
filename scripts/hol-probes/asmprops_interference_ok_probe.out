@@ -1,0 +1,4 @@
+interference_ok_full=T
+interference_ok_type=:(num -> α -> α) -> (α -> β) -> bool
+interference_ok_identity=T
+interference_ok_changed=F
