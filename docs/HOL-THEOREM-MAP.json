@@ -63346,5 +63346,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-02 full original4626-4651 quantified/free-variable types freshly captured in lab_to_target_section_prefix_nop_probe.out. All enc/labs/ffis/nop/code/aux/pos binders and seven guards retained: NOP identity, one-byte length, full linesEncd at pos+SUM annotation aux, actual reverse-aux NOP predicate, EVERY is_Label aux, EVERY labelOne code, full bounded labelPrefixZero code. Conclusion actual full padSection NOP predicate. No extra sum/length/alignment, narrowed recursive prefix predicate, nonlabel premise, callback or result assumption. Actual native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/Spt with word8 bytes and arbitrary positive word index, sole words_as_type_indexed_bitvec translation. Kernel code induction derives leading label annotation zero from checked full source prefix-cons law, preserves full all-label accumulator before first instruction, then invokes actual full nonlabel section theorem after first Asm or any LabAsm. Physical/annotation sum remains derived from actual reverse invariant. Eight fresh original/native observations include offset-sensitive first LabAsm padding then later label insertion, full stored word/byte/annotation tuple, empty accumulator/code/all-zero-label and Call-first cases, and successful remaining guards with a rejected prefix counterexample. HOL bounded quantifier oracle normalized by original label_prefix_zero_cons theorem before EVAL, never replaced by a narrowed predicate or hand-written output. Five actual full theorem instances and full arbitrary-width statement consumer kernel checked. Real .106/.96 dependencies retained; no production or individual HD/EL hold change. General positive-length aligned section groups, full code padding/remove_labels_loop/end-to-end remain unfinished."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_refs_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenGcMoveRefs.lean",
+    "lean_name": "word_gen_gc_move_refs_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 original stack_allocProofScript.sml:4243-4345: full quantified binder order, free conf implicit, unused c1 Boolean retained, all four curried premise groups in original order including Temp0/1 domain, Temp2/3/4 values, register0 bound and registers1..8. No good_dimindex extra premise. Exact evaluate conclusion existential clock, six register witnesses and two store witnesses, memory m2, Temp0..3 updates, register0 Word r1a1 and register8 Word r2a2, all other fields preserved. Source complete induction follows original empty interval/fuel contradiction/header-load+length/native word_gen_gc_move_list_code_thm/Get0 Temp4/IH/evaluate_add_clock; proves Temp4 survives four-temp updates and clocks/threaded finite-map equalities directly, no supplied target result. Native positive-width BitVec NeZero and actual canonical StackSemStateFiniteExact regs/fpRegs/store with codec witness. Fresh original full typed statement and five determinate EVAL observations, kernel replays; no unspecified nonword oracle claim. Exact evaluator Inst closure inherits SOUNDNESS item8 reals_as_rational_cuts, not source acceptance of arbitrary dependencies."
   }
 ]
