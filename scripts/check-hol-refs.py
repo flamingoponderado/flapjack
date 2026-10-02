@@ -3308,6 +3308,57 @@ def _hol_prog_alias_module_ok(module: str, root: str) -> bool:
     return True
 
 
+def source_bound_rounding_enum(root: Path) -> bool:
+    """Only the literal, uniquely owned HOL rounding enum is real-free.
+
+    This does not exempt its module or any rounding operation. Fail closed
+    when either source carrier changes, or another Lean declaration shadows
+    the reviewed name (including an abbrev/alias with that name).
+    """
+    owner = root / "Flapjack/Misc/BinaryIeeeRound.lean"
+    original = root / "HOL/src/floating-point/binary_ieeeScript.sml"
+    if not owner.is_file() or not original.is_file():
+        return False
+    lean = strip_lean_comments(owner.read_text(encoding="utf-8"))
+    pattern = (r"(?m)^inductive HolRounding where\s*"
+               r"\| roundTiesToEven\s*\| roundTowardPositive\s*"
+               r"\| roundTowardNegative\s*\| roundTowardZero\s*"
+               r"deriving DecidableEq, Repr\s*(?=/--|def |noncomputable |$)")
+    carrier = re.search(pattern, lean)
+    if carrier is None:
+        return False
+    scopes = re.findall(r"(?m)^(?:namespace|end)\b[^\n]*", lean[:carrier.start()])
+    if scopes != ["namespace Flapjack"]:
+        return False
+    # HOL comments nest: a stale enum quoted in a comment is not its owner.
+    raw = original.read_text(encoding="utf-8")
+    kept, depth, i = [], 0, 0
+    while i < len(raw):
+        if raw.startswith("(*", i):
+            depth += 1
+            i += 2
+        elif depth and raw.startswith("*)", i):
+            depth -= 1
+            i += 2
+        else:
+            if not depth:
+                kept.append(raw[i])
+            i += 1
+    if depth:
+        return False
+    hol = "".join(kept)
+    if not re.search(r"Datatype:\s*rounding\s*=\s*roundTiesToEven\s*"
+                     r"\| roundTowardPositive\s*\| roundTowardNegative\s*"
+                     r"\| roundTowardZero\s*End\b", hol):
+        return False
+    owners = []
+    for path in root.glob("Flapjack/**/*.lean"):
+        text = strip_lean_comments(path.read_text(encoding="utf-8"))
+        owners.extend(path for match in REALS_RENDERING_DECL_RE.finditer(text)
+                      if match.group(1).rsplit(".", 1)[-1] == "HolRounding")
+    return owners == [owner]
+
+
 def reals_rendering_names(root: Path) -> set[str]:
     """Short names of the reviewed binary64 real-rendering declarations."""
     names: set[str] = set()
@@ -3316,6 +3367,8 @@ def reals_rendering_names(root: Path) -> set[str]:
             text = strip_lean_comments(path.read_text(encoding="utf-8"))
             for match in REALS_RENDERING_DECL_RE.finditer(text):
                 names.add(match.group(1).rsplit(".", 1)[-1])
+    if source_bound_rounding_enum(root):
+        names.discard("HolRounding")
     return names
 
 
