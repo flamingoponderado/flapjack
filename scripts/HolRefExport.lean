@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileLookupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileEmpty
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcile
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopTable
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl

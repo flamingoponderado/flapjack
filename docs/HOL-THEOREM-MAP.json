@@ -52509,5 +52509,33 @@
   "lean_name": "ltOK",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol-a source comparison flapjack-whba: Complete original6709 EVERY predicate, both INJ option_lookup domains and their conjunction preserved. HOL EVERY as ordinary forall member in a native List; INJ into UNIV as precisely domain-restricted equality implication (range tautological). Native product/Spt/Nat carriers unchanged; fresh original definition and complete inferred lt type capture confirm independent arbitrary alpha/beta payloads for entry/exit name trees, target Spt Nat. Unit specialization is not baked into full definition. No map-validity, lookup-success or evaluator premise. Kernel checked definition; proof predicate only, original Break10108/Continue10127 extraction and full simulation remain subsequent work."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticControl.lean",
+  "lean_name": "ssaCcTransCorrectBreak",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a complete source comparison flapjack-d7l6: Genuine original resumed Break semantic case10100-10138 of fullssa_cc_trans_correct7666. Exactly all six original wordStateEqRel/ssaLocalsRel/allocation/everyVar/map/ltOK hypotheses; no IH needed for these constructors. Full existential source permutation and original Error-exempt result/frame/result-sensitive locals conclusion factored through transparent ssaSimulation, no predicate premise. All original result constructors retained; actual optional table indexing past-end NONE; native triple SptNat/SptUnit/SptUnit List, shared native width and same independent C/F state hosts confirmed by literal original resumed proof replay and6types. Chooses target permutation, derives actual native reconciliation via complete26yt, compiler-generated Skip/Seq cases, fixClock/depth restoration from proved frame and strongLocalsRel with selected entry/exit domain. Private exitAfterMoves is internal derived evaluation factoring, not an added public simulation premise. fmap_as_finite_support_relation names only imported actual owner fpRegs/store with local genuine broad/exact roundtrip witness; words_as_type_indexed_bitvec only standard positive-width/native host translation. Inherits reals_as_rational_cuts through full evaluator, SOUNDNESS item8. Kernel checked full case; all other native SSA semantic constructors/final composition remain unfinished."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticControl.lean",
+  "lean_name": "ssaCcTransCorrectContinue",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a complete source comparison flapjack-d7l6: Genuine original resumed Continue semantic case10100-10138 of fullssa_cc_trans_correct7666. Exactly all six original wordStateEqRel/ssaLocalsRel/allocation/everyVar/map/ltOK hypotheses; no IH needed for these constructors. Full existential source permutation and original Error-exempt result/frame/result-sensitive locals conclusion factored through transparent ssaSimulation, no predicate premise. All original result constructors retained; actual optional table indexing past-end NONE; native triple SptNat/SptUnit/SptUnit List, shared native width and same independent C/F state hosts confirmed by literal original resumed proof replay and6types. Chooses target permutation, derives actual native reconciliation via complete26yt, compiler-generated Skip/Seq cases, fixClock/depth restoration from proved frame and strongLocalsRel with selected entry/exit domain. Private exitAfterMoves is internal derived evaluation factoring, not an added public simulation premise. fmap_as_finite_support_relation names only imported actual owner fpRegs/store with local genuine broad/exact roundtrip witness; words_as_type_indexed_bitvec only standard positive-width/native host translation. Inherits reals_as_rational_cuts through full evaluator, SOUNDNESS item8. Kernel checked full case; all other native SSA semantic constructors/final composition remain unfinished."
 }
 ]
