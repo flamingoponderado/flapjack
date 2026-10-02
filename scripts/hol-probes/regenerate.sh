@@ -5773,3 +5773,7 @@ run_probe stack_remove_comp_call_tail_probeScript.sml stack_remove_comp_call_tai
 run_probe stack_remove_comp_call_return_none_probeScript.sml stack_remove_comp_call_return_none_probe.out \
   cc_call_return_none_statement cc_call_return_none_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_call_return_handler_probeScript.sml stack_remove_comp_call_return_handler_probe.out \
+  cc_call_return_handler_statement cc_call_return_handler_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
