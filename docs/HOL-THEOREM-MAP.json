@@ -67172,5 +67172,23 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine Tick case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EncodingValidityClosure.lean",
+    "lean_name": "allEncOk_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6366 full two validity guards with actual LENGTH(prog_to_bytes left) shift and complete append validity result. No section validity/distinctness/encoder validity or map-domain premise added; physical-byte/line-length equality derived from original head validity. Native original constructors/opaque mlstring, positive-width type-indexed words and canonical nested numeric sptrees reviewed; no fmap qualifier or arbitrary carrier specialization. Original exported fulltypes0openhyps, fresh original/native byte-shift/map-lookup regressions and fullgeneric fixtures; genuine arbitrary fresh outer-map consumer discharges the full source lookup guard, and actual append consumer derives shifted validity. Kernel checking/oracle tests supplement source review without establishing cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EncodingValidityClosure.lean",
+    "lean_name": "allEncOk_extendLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_labs_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6407 complete universally quantified preservation of successful old lookups and complete original input validity imply full validity under arbitrary extended map; failed-lookups and new entries unconstrained. Every original line constructor handled, including failed lookup and unsupported Call; no target validity premise, map-domain freshness or global invariant added. Native original constructors/opaque mlstring, positive-width type-indexed words and canonical nested numeric sptrees reviewed; no fmap qualifier or arbitrary carrier specialization. Original exported fulltypes0openhyps, fresh original/native byte-shift/map-lookup regressions and fullgeneric fixtures; genuine arbitrary fresh outer-map consumer discharges the full source lookup guard, and actual append consumer derives shifted validity. Kernel checking/oracle tests supplement source review without establishing cross-language equivalence or full compiler simulation."
   }
 ]

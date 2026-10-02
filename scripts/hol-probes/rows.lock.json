@@ -1706,6 +1706,12 @@
       "sha256": "8a4bdfbb78128773faf01f725caf09d44fe51293992320fb08bd0e5682f2ab45"
     },
     {
+      "bytes": 1367,
+      "out": "lab_to_target_encoding_validity_closure_probe.out",
+      "rows": 12,
+      "sha256": "46b810ab1bfbe4869829e013a1273567f4ca22de3bb85c286af07bd58a96ca61"
+    },
+    {
       "bytes": 7942,
       "out": "lab_to_target_encoding_validity_probe.out",
       "rows": 46,

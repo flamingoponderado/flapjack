@@ -5,6 +5,7 @@ import Flapjack.RiscV.L3.Defs.MMU.Translate
 import Flapjack.RiscV.L3.Defs.MMU.Walk
 import Flapjack.RiscV.L3.Defs.MMU.Insert
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
+import Flapjack.Compiler.Backend.LabToTarget.EncodingValidityClosure
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
