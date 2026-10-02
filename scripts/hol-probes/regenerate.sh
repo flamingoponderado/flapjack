@@ -4771,3 +4771,6 @@ run_probe ssa_loop_semantic_helpers_probeScript.sml ssa_loop_semantic_helpers_pr
 run_probe ssa_fake_const_chain_probeScript.sml ssa_fake_const_chain_probe.out \
   const_swap_full fake_chain_full fake_chain_locals_full const_swap_type_names const_swap_type_value const_swap_type_locals fake_chain_type_state fake_chain_locals_type_state \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe balanced_map_balanceL_eq_probeScript.sml balanced_map_balanceL_eq_probe.out \
+  bmbl_full bmbl_empty bmbl_singleton bmbl_lr_only bmbl_ll_only bmbl_single_tip bmbl_double_tip bmbl_left_tip bmbl_fallback bmbl_heavy_single bmbl_heavy_double \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

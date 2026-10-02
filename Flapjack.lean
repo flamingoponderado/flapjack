@@ -2,6 +2,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
+import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceL
+import Flapjack.Misc.BalancedMap.RotationCorrect.RotateR
+import Flapjack.Misc.BalancedMap.RotationCorrect.DoubleR
 import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EncoderStepState
 import Flapjack.Compiler.Backend.Semantics.TargetProps.PostInterferenceState
@@ -10,8 +13,6 @@ import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
 import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
 import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
 import Flapjack.Test.LabToTargetSimpleEncoderParity
-import Flapjack.Misc.BalancedMap.RotationCorrect.RotateR
-import Flapjack.Misc.BalancedMap.RotationCorrect.DoubleR
 import Flapjack.Misc.BalancedMap.RotationCorrect.SingleR
 import Flapjack.Test.LabToTargetEncd0Parity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
