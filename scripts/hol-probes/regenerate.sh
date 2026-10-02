@@ -108,13 +108,13 @@ run_probe() {
 }
 
 run_probe stack_rawcall_loop_case_probeScript.sml stack_rawcall_loop_case_probe.out \
-  loop_full_statement loop_full_hypotheses loop_case_statement \
+  loop_full_statement loop_full_hypotheses loop_case_statement loop_evaluate_ind_obligation \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_control_cases_probeScript.sml stack_rawcall_control_cases_probe.out \
   control_full_statement control_full_hypotheses control_return control_raise control_break control_continue \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_if_case_probeScript.sml stack_rawcall_if_case_probe.out \
-  if_full_statement if_full_hypotheses if_case_statement \
+  if_full_statement if_full_hypotheses if_case_statement if_evaluate_ind_obligation \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_basic_cases_probeScript.sml stack_rawcall_basic_cases_probe.out \
   basic_full_statement basic_full_hypotheses basic_skip basic_halt basic_get basic_set basic_op_curr_heap basic_tick \

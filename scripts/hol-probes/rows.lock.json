@@ -5594,10 +5594,10 @@
       "sha256": "2f9ae68b26a5e4dbcf6b6cf6220401eeae0e3639372e579f0ccccce0bc82d631"
     },
     {
-      "bytes": 1186,
+      "bytes": 1552,
       "out": "stack_rawcall_if_case_probe.out",
-      "rows": 3,
-      "sha256": "6a02f82232e15f02430bd7d69a530cd63d5c69c0eb61420f63692ccb70c3eece"
+      "rows": 4,
+      "sha256": "2d4b8f6c29410943d2eb47ccf74cf38830d01190cb9fb22280c4b73dbfe320cd"
     },
     {
       "bytes": 336,
@@ -5618,10 +5618,10 @@
       "sha256": "729033c76e86fd528c6776789735c956c61509ad958399817d3f4599bce3aca9"
     },
     {
-      "bytes": 1081,
+      "bytes": 1263,
       "out": "stack_rawcall_loop_case_probe.out",
-      "rows": 3,
-      "sha256": "7ceaf77c633f924f1d883a72a803289ab6b7a536d36cbc4ead75114b3325019f"
+      "rows": 4,
+      "sha256": "f8939d8591dc48892f4c35fbbf4c905409c5b6eef55671f170c48f7de09f40d9"
     },
     {
       "bytes": 453,
