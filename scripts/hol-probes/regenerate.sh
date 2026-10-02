@@ -5492,3 +5492,9 @@ run_probe lab_to_target_padding_labels_probeScript.sml lab_to_target_padding_lab
   empty_arbitrary_acc even_zero_label odd_asm_empty_nop odd_labasm_wide_nop successive_boundaries annotation_not_bytes boundary_guard_needed line_parity_guard_needed aux_parity_guard_false aux_zero_guard_false zero_label_id_ignored width1 width80_large_pos \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_padding_code_labels_probeScript.sml lab_to_target_padding_code_labels_probe.out \
+  pad_code_compute_labels pad_code_compute_labels_types pad_code_compute_labels_hypotheses \
+  empty_accumulator one_byte_full_map wide_nop_zero_labels empty_nop_zero_labels successive_sections duplicate_section_overwrite zero_id prefix_guard_needed conditional_zero_guard_false width1 width80_large_position \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

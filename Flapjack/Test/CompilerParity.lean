@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetPaddingCodeLabelsParity
 import Flapjack.Test.LabToTargetPaddingLabelsParity
 import Flapjack.Test.NumericFormattingParity
 import Flapjack.Test.WordReplicateParity
