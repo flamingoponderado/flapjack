@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileListProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileLookupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileGetVars
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileEmpty
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives
@@ -12,6 +13,7 @@ import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
 import Flapjack.Compiler.Backend.WordCse.Proofs.ArithmeticKeys
