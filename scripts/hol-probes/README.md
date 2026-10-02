@@ -4627,6 +4627,22 @@ SSA state-writing probe replays original Set/Store semantic cases and local prer
 
 `target_props_clock_io_events_probeScript.sml` replays the full original `evaluate_add_clock_io_events_mono` theorem (targetPropsScript.sml:1112-1137), including only clock order and no open hypotheses. `TargetPropsClockIoEventsParity.lean` checks the same full statement over the literal evaluator. Paired clock induction retains every transition and uses full input-event prefix preservation at clock zero.
 
+`word_alloc_def_probe` captures the original HOL `word_alloc` type and eight EVAL results on
+small 64-bit programs: each allocator branch (Simple, IRC, linear scan), an accepted and a
+clashing oracle colouring (the latter falls back to the allocator), stack variables under
+IRC and linear scan, and a physical register. HOL's free `asm_config` is only read through
+`ISA`. Kernel-replayed through a structural observation in `WordAllocDefParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
+original missing-bit, SNOC and prefix-reconstruction proofs plus their local
+original bit-index context, each with no open hypotheses. It prints two
+original types and 187 cases across widths 1/2/8/64/80, including truncating
+long lists, empty prefixes, missing bits and true/false terminal bits.
+`WordToStackBitmapBitStructureParity.lean` checks matching observations and
+whole theorem applications. The HOL context replay uses original EL read-only;
+no new Lean total-EL port or provenance allowance is introduced.
 Native SSA Seq probe replays the original semantic case and local locals-more proof, with specialized legitimate first/second body IHs and already-discharged size bookkeeping omitted. Captures full recursive/original statements and seven carrier types; actual scheduler-swap and second-context validity are retained.
 
 ### Native SSA semantic If case

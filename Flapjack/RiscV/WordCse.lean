@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.WordCse.ListOrder
 import Flapjack.Word
 import Flapjack.Compiler.Backend.WordCse.InstructionKeys
+import Flapjack.Compiler.Backend.WordCse.RegisterUses
+import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
 import Std.Data.TreeMap
 
 /-!
@@ -21,7 +23,9 @@ The port keeps Cake's structure; its only deviations are about the carrier:
 
 * generic diagnostic values use `WordCseHash`; executed positive-width
   machine words delegate reviewed native `wordToNum` and `regImmToNumList`
-  through a constructor-for-constructor immediate codec;
+  through a constructor-for-constructor immediate codec; shared arithmetic
+  keys also execute native `arithToNumList` through the positional codec,
+  and load-offset keys execute native `loadToNumList`;
 * the two `num_map`s, the `store_name` alist and the two balanced maps are
   represented by association lists (`lookupNatInfo` is Cake's `lookup_any`,
   a first-match lookup, and `wordCseInsert` is a replacement insert);
@@ -42,6 +46,11 @@ open Flapjack
 /-- Cake's `wordToNum`: the numeral carried by a machine word. -/
 class WordCseHash (α : Type u) where
   hash : α → Nat
+  nativeArithKey : WordArith α → Option (List Nat) := fun _ => none
+  nativeInstKey : WordInst α → Option (List Nat) := fun _ => none
+  nativeArithInfo : WordArith α → Option (Nat × List Nat × List Nat × Bool) := fun _ => none
+  loadKey : WordMemOp → Nat → α → List Nat := fun operator address offset =>
+    [Compiler.Backend.WordCse.memOpToNum operator, address + 100, hash offset]
   regImmKey : WordRegImm α → List Nat := fun
     | .reg register => [33, register + 100]
     | .imm value => [34, hash value]
@@ -56,10 +65,31 @@ def wordCseNativeRegImm {width : Nat} [NeZero width] :
   | .reg register => .reg register
   | .imm value => .imm value
 
+/-- Production instruction embedding for keys. Offset-free memory explicitly
+means native Addr base zero; other shared constructors use the existing codec.
+The separate five-register AddCarry is rejected. Flapjack routing infrastructure,
+not a HOL datatype port or an instruction simulation theorem. -/
+def wordCseNativeInst? {width : Nat} [NeZero width] :
+    WordInst (BitVec width) → Option (Compiler.Encoders.Asm.HolInst width)
+  | .mem operator destination base => some (.mem operator destination (.addr base 0))
+  | instruction => Compiler.Backend.StackToLab.ExecutedCodec.instFromExecuted? (.word instruction)
+
 /-- Machine-word CSE executes the reviewed native encoders. The lower-priority
 zero-width/generic diagnostic instance remains outside the HOL word claim. -/
 instance {width : Nat} [NeZero width] : WordCseHash (BitVec width) where
   hash := Flapjack.Compiler.Backend.WordCse.wordToNum
+  nativeArithInfo operation :=
+    (Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted? operation).map
+      (fun native => (Compiler.Backend.WordCse.firstRegOfArith native,
+        Compiler.Backend.WordCse.arithWrites native,
+        Compiler.Backend.WordCse.arithReads native,
+        Compiler.Backend.WordCse.canMemArith native))
+  loadKey := Compiler.Backend.WordCse.loadToNumList
+  nativeInstKey instruction := (wordCseNativeInst? instruction).map
+    Compiler.Backend.WordCse.instToNumList
+  nativeArithKey operation :=
+    (Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted? operation).map
+      Compiler.Backend.WordCse.arithToNumList
   regImmKey immediate := Flapjack.Compiler.Backend.WordCse.regImmToNumList
     (wordCseNativeRegImm immediate)
 
@@ -244,7 +274,7 @@ def wordCseBinOpToNum (operator : BinOp) : Nat :=
 def wordCseRegImmToNumList [WordCseHash α] (immediate : WordRegImm α) : List Nat :=
   WordCseHash.regImmKey immediate
 
-def wordCseArithToNumList [WordCseHash α] : WordArith α → List Nat
+private def wordCseArithDiagnosticKey [WordCseHash α] : WordArith α → List Nat
   | .binOp operator _ sourceLeft sourceRight =>
       [25, wordCseBinOpToNum operator, sourceLeft + 100] ++
         wordCseRegImmToNumList sourceRight
@@ -260,6 +290,24 @@ def wordCseArithToNumList [WordCseHash α] : WordArith α → List Nat
      heads; `can_mem_arith` rejects the five-register primitive. -/
   | .addCarry _ _ _ _ _ => [31]
 
+/-- Positive-width executed words use the reviewed native arithmetic encoder
+through its existing positional codec. Generic diagnostics and the distinct
+five-register AddCarry extension retain their explicit diagnostic key. This
+routing infrastructure is not a full arithmetic-carrier or CSE correctness port. -/
+def wordCseArithToNumList [WordCseHash α] (operation : WordArith α) : List Nat :=
+  match WordCseHash.nativeArithKey operation with
+  | some key => key
+  | none => wordCseArithDiagnosticKey operation
+
+/-- Successful canonical arithmetic conversion makes the actual executed key
+exactly the native key. Flapjack codec correspondence, with no HOL original;
+this assumes only carrier conversion, not a target run or simulation. -/
+theorem wordCseArithToNumList_native {width : Nat} [NeZero width]
+    (operation : WordArith (BitVec width)) (native : Compiler.Encoders.Asm.HolArith width)
+    (converted : Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted? operation = some native) :
+    wordCseArithToNumList operation = Compiler.Backend.WordCse.arithToNumList native := by
+  simp [wordCseArithToNumList, WordCseHash.nativeArithKey, converted]
+
 /-- Executed CSE delegates the reviewed native scalar encoder; the carrier is identical. -/
 def wordCseMemOpToNum (operator : WordMemOp) : Nat :=
   Flapjack.Compiler.Backend.WordCse.memOpToNum operator
@@ -272,31 +320,54 @@ def wordCseLoadToNumList (operator : WordMemOp) (address : Nat) : List Nat :=
 /-- `loadToNumList` for the expression carrier.  Cake's `Addr n2 offset`
     carries the offset into the hash; `WordInst.mem` cannot, so a load with a
     non-zero offset is held as `.assign dest (.load (.op .add [.var n2,
-    .const offset]))` until `wordToStack` fuses it.  Hashing that carrier the
+    .const offset]))` until `wordToStack` selects its native address.  Hashing that carrier the
     same way lets `word_cse` see those loads, which is how Cake shares a
     repeated global read.  A zero offset hashes to the same key as the
     instruction form, which is correct: they denote the same load. -/
 def wordCseLoadOffsetToNumList [WordCseHash α] (operator : WordMemOp)
     (address : Nat) (offset : α) : List Nat :=
-  [wordCseMemOpToNum operator, address + 100, WordCseHash.hash offset]
+  WordCseHash.loadKey operator address offset
+
+/-- Actual positive-width load keys execute the full native encoder. This
+unconditional equality is Flapjack routing infrastructure with no HOL original. -/
+theorem wordCseLoadOffsetToNumList_native {width : Nat} [NeZero width]
+    (operator : WordMemOp) (address : Nat) (offset : BitVec width) :
+    wordCseLoadOffsetToNumList operator address offset =
+      Compiler.Backend.WordCse.loadToNumList operator address offset := rfl
+
+/-- Heap-address facts execute the reviewed word-free encoder. -/
+def wordCseHeapToNumList (operator : BinOp) (source : Nat) : List Nat :=
+  Compiler.Backend.WordCse.opCurrHeapToNumList operator source
 
 /-- Cake's `instToNumList`.  The `Const` hash deliberately omits the
     destination so that two constants with the same value share a key. -/
-def wordCseInstToNumList [WordCseHash α] : WordInst α → List Nat
+private def wordCseInstDiagnosticKey [WordCseHash α] : WordInst α → List Nat
   | .const _ value => [2, WordCseHash.hash value]
   | .arith operation => 3 :: wordCseArithToNumList operation
   | .mem _ _ _ => [1]
-  | .memOffset operator _ address offset =>
-      wordCseLoadOffsetToNumList operator address offset
+  | .memOffset _ _ _ _ => [1]
 
-def wordCseIsStore : WordMemOp → Bool
-  | .store => true
-  | .store8 => true
-  | .store16 => true
-  | .store32 => true
-  | _ => false
+/-- Representable machine-word instructions execute native instToNumList.
+Memory uses the original [1] catch-all; actual load facts use the separate load
+key helper. Generic diagnostics and the five-register extension stay explicit. -/
+def wordCseInstToNumList [WordCseHash α] (instruction : WordInst α) : List Nat :=
+  match WordCseHash.nativeInstKey instruction with
+  | some key => key
+  | none => wordCseInstDiagnosticKey instruction
 
-def wordCseFirstRegOfArith : WordArith α → Nat
+/-- Exact key correspondence for successful production carrier conversion.
+Flapjack infrastructure with no HOL original; no run or simulation is assumed. -/
+theorem wordCseInstToNumList_native {width : Nat} [NeZero width]
+    (instruction : WordInst (BitVec width)) (native : Compiler.Encoders.Asm.HolInst width)
+    (converted : wordCseNativeInst? instruction = some native) :
+    wordCseInstToNumList instruction = Compiler.Backend.WordCse.instToNumList native := by
+  simp [wordCseInstToNumList, WordCseHash.nativeInstKey, converted]
+
+/-- Actual store detection delegates the reviewed identical memory carrier. -/
+def wordCseIsStore (operator : WordMemOp) : Bool :=
+  Compiler.Backend.WordCse.isStore operator
+
+private def wordCseFirstRegDiagnostic : WordArith α → Nat
   | .binOp _ destination _ _ => destination
   | .shift _ destination _ _ => destination
   | .div destination _ _ => destination
@@ -305,7 +376,7 @@ def wordCseFirstRegOfArith : WordArith α → Nat
   | .cakeAddCarry destination _ _ _ => destination
   | .addCarry destination _ _ _ _ => destination
 
-def wordCseArithWrites : WordArith α → List Nat
+private def wordCseArithWritesDiagnostic : WordArith α → List Nat
   | .binOp _ destination _ _ => [destination]
   | .shift _ destination _ _ => [destination]
   | .div destination _ _ => [destination]
@@ -314,7 +385,7 @@ def wordCseArithWrites : WordArith α → List Nat
   | .cakeAddCarry destination _ _ carry => [destination, carry]
   | .addCarry destination resultCarry _ _ _ => [destination, resultCarry]
 
-def wordCseArithReads : WordArith α → List Nat
+private def wordCseArithReadsDiagnostic : WordArith α → List Nat
   | .binOp _ _ sourceLeft (.reg sourceRight) => [sourceLeft, sourceRight]
   | .binOp _ _ sourceLeft (.imm _) => [sourceLeft]
   | .shift _ _ sourceLeft (.reg sourceRight) => [sourceLeft, sourceRight]
@@ -328,13 +399,57 @@ def wordCseArithReads : WordArith α → List Nat
 /-- Cake's `can_mem_arith`: only instructions whose operands are odd
     registers (or an odd register with an immediate) may be shared through
     the fact table. -/
-def wordCseCanMemArith : WordArith α → Bool
+private def wordCseCanMemArithDiagnostic : WordArith α → Bool
   | .binOp _ _ sourceLeft (.reg sourceRight) =>
       sourceLeft % 2 != 0 && sourceRight % 2 != 0
   | .binOp _ _ sourceLeft (.imm _) => sourceLeft % 2 != 0
   | .div _ dividend divisor => dividend % 2 != 0 && divisor % 2 != 0
   | .shift _ _ destination (.imm _) => destination % 2 != 0
   | _ => false
+
+/-- Executed shared arithmetic destination, through reviewed native classifiers.
+The fallback is generic diagnostic or Flapjack extension infrastructure. -/
+def wordCseFirstRegOfArith [WordCseHash α] (operation : WordArith α) : Nat :=
+  match WordCseHash.nativeArithInfo operation with
+  | some info => info.1
+  | none => wordCseFirstRegDiagnostic operation
+
+/-- Executed shared arithmetic writes, preserving native positional carry output. -/
+def wordCseArithWrites [WordCseHash α] (operation : WordArith α) : List Nat :=
+  match WordCseHash.nativeArithInfo operation with
+  | some info => info.2.1
+  | none => wordCseArithWritesDiagnostic operation
+
+/-- Executed shared arithmetic reads, including the native carry input. -/
+def wordCseArithReads [WordCseHash α] (operation : WordArith α) : List Nat :=
+  match WordCseHash.nativeArithInfo operation with
+  | some info => info.2.2.1
+  | none => wordCseArithReadsDiagnostic operation
+
+/-- Native sharing eligibility for represented instructions. The separate
+five-register extension is excluded even for an arbitrary diagnostic instance,
+so CSE cannot erase an unsupported input and hide its codec failure. -/
+def wordCseCanMemArith [WordCseHash α] : WordArith α → Bool
+  | .addCarry _ _ _ _ _ => false
+  | operation => match WordCseHash.nativeArithInfo operation with
+    | some info => info.2.2.2
+    | none => wordCseCanMemArithDiagnostic operation
+
+/-- Exact four-classifier correspondence on successful positional conversion.
+Flapjack routing infrastructure, not a HOL simulation or theorem port. -/
+theorem wordCseArithInfo_native {width : Nat} [NeZero width]
+    (operation : WordArith (BitVec width)) (native : Compiler.Encoders.Asm.HolArith width)
+    (converted : Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted? operation = some native) :
+    wordCseFirstRegOfArith operation = Compiler.Backend.WordCse.firstRegOfArith native ∧
+    wordCseArithWrites operation = Compiler.Backend.WordCse.arithWrites native ∧
+    wordCseArithReads operation = Compiler.Backend.WordCse.arithReads native ∧
+    wordCseCanMemArith operation = Compiler.Backend.WordCse.canMemArith native := by
+  cases operation <;>
+    simp [Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted?] at converted
+  all_goals subst native
+  all_goals simp [wordCseFirstRegOfArith, wordCseArithWrites, wordCseArithReads,
+    wordCseCanMemArith, WordCseHash.nativeArithInfo,
+    Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted?]
 
 /-- Cake's `add_to_data_aux`/`add_to_load_aux`, shared by the instruction and
     load fact tables.  `table` is the fact map consulted for a repeated
@@ -528,10 +643,10 @@ def wordCseProg [WordCseHash α] : WordCseKnowledge → WordProg α → WordProg
            by instruction selection; this keeps a rematerialised constant
            live through the final dead-code pass. -/
         wordCseAddToFact (wordCseRegisterRead data canonicalSource) data.instrsMem destination
-          [0, wordCseBinOpToNum operator, canonicalSource + 100]
+          (wordCseHeapToNumList operator canonicalSource)
           (.opCurrHeap operator destination source)
           (fun data register => wordCseRecordInst data register
-            [0, wordCseBinOpToNum operator, canonicalSource + 100])
+            (wordCseHeapToNumList operator canonicalSource))
   | data, .locValue destination source =>
       let data := wordCseInvalidate data destination
       wordCseAddToFact data data.instrsMem destination [48, source]
