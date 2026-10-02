@@ -59731,5 +59731,95 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): stack_namesProofScript.sml:304-526 comp_correct [local]. Same ∀p s r t. Same single conjunctive premise, in HOL order: evaluate (p,s) = (r,t), BIJ (find_name f) UNIV UNIV (Function.Bijective (findNameSpt f)), ~s.use_alloc, ~s.use_store, ~s.use_stack, s.compile = (λcfg. c cfg o stack_names$compile f) (compileHOL f). Same conclusion: evaluate (comp f p, rename_state c f s) = (r, rename_state c f t) over the tagged StackSem evaluate, progCompHOL (comp_def) and renameState (rename_state_def). HOL's free f and c are implicit binders. The proof is the measure induction of evaluate_add_clock/evaluate_consts, using the ported rename_state lemmas, evaluate_consts, and the MAP_KEYS choice-rendering laws for FEMPTY, DOMSUB_MAP_KEYS, DRESTRICT_MAP_KEYS_IMAGE and MAP_KEYS_FUPDATE (Flapjack infrastructure, injective case only). Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration through the tagged StackSem evaluate (its Inst clause, StackSem instHOL / inst_def FP clauses), as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "semantics_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Semantics.lean",
+    "lean_name": "semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: (bead flapjack-pxn.18.5.15.7.17) stackSemScript.sml:1116-1143. Same argument order (start, s) and prog = Call NONE (INL start) NONE. Same Fail guard: ∃k with res ≠ SOME TimeOut, res ≠ SOME (Result (Loc 1 0)), ∀w res ≠ SOME (Halt (Word w)), ∀f res ≠ SOME (FinalFFI f), in HOL order. The Terminate case is the some-choice over ∃k t r outcome with evaluate = (SOME r,t), the FinalFFI/Halt (Word 0w test)/Result/else-F outcome case, and res = Terminate outcome t.ffi.io_events. Diverge is build_lprefix_lub over IMAGE (fromList of final io_events) UNIV. Renderings as in the reviewed wordSem semantics_def port: holOptionSome for some, HolLList.buildLprefixLub/fromList, IMAGE f UNIV as fun l => ∃k, l = f k, classical decisions. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration through the tagged StackSem evaluate (its Inst clause, StackSem instHOL / inst_def FP clauses), as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "compile_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/CompileSemantics.lean",
+    "lean_name": "compileSemantics",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: (bead flapjack-pxn.18.5.15.7) stack_namesProofScript.sml:526-543. Same single conjunctive premise in HOL order: BIJ (find_name f) UNIV UNIV (Function.Bijective (findNameSpt f)), ~s.use_alloc, ~s.use_store, ~s.use_stack, s.compile = (λcfg. c cfg o compile f). Same conclusion: semantics start (rename_state c f s) = semantics start s over the tagged stackSem semantics. HOL's free f c s start are implicit binders. Proof from comp_correct at Call NONE (INL start) NONE, as HOL. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration through the tagged StackSem evaluate (its Inst clause, StackSem instHOL / inst_def FP clauses), as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "compile_semantics_alt",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/CompileSemantics.lean",
+    "lean_name": "compileSemanticsAlt",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: (bead flapjack-pxn.18.5.15.7) stack_namesProofScript.sml:545-553 [local]. Same ∀s t. Same premise conjunction in HOL order: BIJ (find_name f) UNIV UNIV, rename_state t.compile f s = t, s.compile = (λc. t.compile c o compile f), ~s.use_alloc, ~s.use_store, ~s.use_stack. Same conclusion: semantics start t = semantics start s. Free f and start are implicit. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration through the tagged StackSem evaluate (its Inst clause, StackSem instHOL / inst_def FP clauses), as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "make_init_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/MakeInit.lean",
+    "lean_name": "makeInit",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: (bead flapjack-pxn.18.5.15.7) stack_namesProofScript.sml:555-566. Same arguments (f code oracle s) and the same five updated fields: code := code, regs := MAP_KEYS (LINV (find_name f) UNIV) s.regs, compile := (λcfg. s.compile cfg o compile f), compile_oracle := oracle, ffi_save_regs := IMAGE (LINV (find_name f) UNIV) s.ffi_save_regs. The commented-out buffer fields are excluded, as in HOL. LINV is the tagged holLinv over UNIV = fun _ => True. MAP_KEYS is the HolFiniteMapExact.mapKeys choice rendering, and IMAGE over the Boolean set is the decided existential, as in the reviewed rename_state_def. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "make_init_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/MakeInit.lean",
+    "lean_name": "makeInitSemantics",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: (bead flapjack-pxn.18.5.15.7) stack_namesProofScript.sml:568-585. Same premise conjunction in HOL order: ~s.use_alloc, ~s.use_store, ~s.use_stack, BIJ (find_name f) UNIV UNIV, ALL_DISTINCT (MAP FST code) (List.Nodup), s.code = fromAList (compile f code), s.compile_oracle = (I ## compile f ## I) o oracle (Prod.map id (Prod.map (compileHOL f) id) ∘ oracle). Same conclusion: semantics start s = semantics start (make_init f (fromAList code) oracle s). The ALL_DISTINCT premise is retained but unused by the proof (HOL's proof also does not need it for the spt_eq_thm code equality). Free variables are implicit binders. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration through the tagged StackSem evaluate (its Inst clause, StackSem instHOL / inst_def FP clauses), as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "HOL/src/pred_set/src/pred_setScript.sml",
+    "hol_name": "LINV_OPT_def",
+    "lean_path": "Flapjack/Misc/PredSet.lean",
+    "lean_name": "holLinvOpt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: pred_setScript.sml:2715-2718: LINV_OPT f s y = if y IN IMAGE f s then SOME (@x. x IN s /\\ f x = y) else NONE. Sets are predicates. IN IMAGE is ∃x. y = f x ∧ s x (IN_IMAGE). Under the guard, @ is Classical.choose of a witness of x IN s ∧ f x = y. As with the reviewed optionScript some_def port, the choice among several witnesses is unspecified and no cross-assistant equality of choices is asserted."
+  },
+  {
+    "hol_path": "HOL/src/pred_set/src/pred_setScript.sml",
+    "hol_name": "LINV_LO",
+    "lean_path": "Flapjack/Misc/PredSet.lean",
+    "lean_name": "holLinv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: pred_setScript.sml:2776-2778: LINV f s y = THE (LINV_OPT f s y), with THE the reviewed holThe (THE NONE unspecified). The [Nonempty α] binder is HOL's type inhabitedness, as for holThe."
   }
 ]
