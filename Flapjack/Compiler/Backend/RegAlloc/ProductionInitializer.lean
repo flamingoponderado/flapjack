@@ -208,6 +208,7 @@ theorem initializer_production (tree : WordClashTree) (forced : List (Nat × Nat
     rw [forwardEq]
     simp only [Translator.Monadic.MonadBase.ignoreBind]
     rw [firstRun]
+    dsimp only
     rw [secondRun]
     simpa only [secondDim] using tagRun
   · simpa only [cakeInitRaState, cakeInitRaStateFromBij, initializerProductionSeed,
