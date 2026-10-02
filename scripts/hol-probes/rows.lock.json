@@ -5720,6 +5720,12 @@
       "sha256": "d764338d63b66cdf65bea28a0e2ae7991b1683e0172bc305ba4a1d7d0d3bc16a"
     },
     {
+      "bytes": 512,
+      "out": "stack_remove_find_code_probe.out",
+      "rows": 4,
+      "sha256": "1e6753b672e4a1cab4b2d32546910f1f9d78db56d8d972337036142194326db0"
+    },
+    {
       "bytes": 160,
       "out": "stack_remove_helpers_probe.out",
       "rows": 8,
