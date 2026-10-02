@@ -54,9 +54,8 @@ inductive WordRegImm (α : Type u) where
            | Div reg reg reg | LongMul ... | LongDiv ... | AddCarry ...`.
     `WordArith` therefore carries the value type so that an immediate
     operand is represented by the immediate itself instead of by a
-    register holding a constant.  The port does not produce Cake's
-    `AddOverflow`/`SubOverflow` operations, so those carriers are not
-    introduced here (they are the only omission). -/
+    register holding a constant. Overflow arithmetic retains HOL's four
+    positional registers: destination, left, right, and overflow flag. -/
 inductive WordArith (α : Type u) where
   | longMul (destinationLeft destinationRight sourceLeft sourceRight : Nat)
   | longDiv (destinationLeft destinationRight sourceLeft sourceRight quotient : Nat)
@@ -67,6 +66,8 @@ inductive WordArith (α : Type u) where
      two-result primitive so the compiler boundary cannot silently encode a
      different operation. -/
   | cakeAddCarry (destination sourceLeft sourceRight carry : Nat)
+  | addOverflow (destination sourceLeft sourceRight overflow : Nat)
+  | subOverflow (destination sourceLeft sourceRight overflow : Nat)
   | div (destination dividend divisor : Nat)
   /- CakeML's `inst_select` materialises the operands of an ordinary binary
      operation through fresh temporaries and then emits

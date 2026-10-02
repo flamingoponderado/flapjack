@@ -1,5 +1,4 @@
 import Flapjack.RiscV.PipelineDiagnostics
-import Flapjack.RiscV.RuntimeBytes
 
 /-!
 # Pancake-compatible RISC-V artifact formatting
@@ -69,46 +68,6 @@ def assemblyRuntimeSymbolLines : List String :=
    "    makesym(cml__Halt0_1, 0, 0)",
    "    makesym(cml__Halt2_2, 0, 0)",
    "    makesym(cml__GC_3, 0, 0)"]
-
-def runtimeSectionSymbolName (crepe : List (CompiledFunction (RiscV.Word 64)))
-    (label : Nat) : String :=
-  if label == 0 then
-    "cml__Raise_4"
-  else if label == 1 then
-    "cml__StoreConsts_5"
-  else if label == 2 then
-    "cml__GC_3"
-  else if label == 3 then
-    "cml_generated_main_6"
-  else
-    match crepe[label - 3]? with
-    | some function => s!"cml_{sanitizeSymbolName function.name}_{label + 3}"
-    | none => s!"cml_section_{label + 3}"
-
-def runtimeAssemblySectionLines (crepe : List (CompiledFunction (RiscV.Word 64))) :
-    Nat → List (RiscV.EncodedRiscVSection 64) → List String
-  | _, [] => []
-  | offset, encoded :: rest =>
-      if encoded.label < 3 then
-        runtimeAssemblySectionLines crepe offset rest
-      else
-        s!"    makesym({runtimeSectionSymbolName crepe encoded.label}, {offset}, {encoded.bytes.length})" ::
-          runtimeAssemblySectionLines crepe (offset + encoded.bytes.length) rest
-
-def runtimeAssemblySymbolLines (crepe : List (CompiledFunction (RiscV.Word 64)))
-    (sections : List (RiscV.EncodedRiscVSection 64)) : List String :=
-  ["    makesym(cml__Init_0, 0, 756)",
-   "    makesym(cml__Halt0_1, 756, 8)",
-   "    makesym(cml__Halt2_2, 764, 8)",
-   "    makesym(cml__GC_3, 772, 40)",
-   "    makesym(cml__Raise_4, 812, 36)",
-   "    makesym(cml__StoreConsts_5, 848, 152)"] ++
-    runtimeAssemblySectionLines crepe 1000 sections
-
-def runtimeFunctionBytes
-    (sections : List (RiscV.EncodedRiscVSection 64)) : List (BitVec 8) :=
-  (sections.filter (fun entry => entry.label >= 3)).flatMap
-    (fun entry => entry.bytes)
 
 /-! CakeML's exporter serializes one bitmap word for each call-site that has a
     return continuation, with a terminator bit above the frame's slot count.
@@ -208,10 +167,29 @@ def pancakeAssembly (crepe : List (CompiledFunction (RiscV.Word 64)))
       ++ assemblySymbolLines crepe 0 sections
       ++ [""])
 
+/-- Symbols derived from the actual original-namespace initialized sections. -/
+def initializedRuntimeSymbolName (crepe : List (CompiledFunction (RiscV.Word 64)))
+    (ordinal label : Nat) : String :=
+  if label == 0 then s!"cml__Init_{ordinal}"
+  else if label == 1 then s!"cml__Halt0_{ordinal}"
+  else if label == 2 then s!"cml__Halt2_{ordinal}"
+  else if label == Flapjack.Compiler.Backend.StackLang.gcStubLocation then s!"cml__GC_{ordinal}"
+  else if label == Flapjack.raiseStubLocation then s!"cml__Raise_{ordinal}"
+  else if label == Flapjack.storeConstsStubLocation then s!"cml__StoreConsts_{ordinal}"
+  else if label == Flapjack.firstLoopName then s!"cml_generated_main_{ordinal}"
+  else match crepe[label - Flapjack.firstLoopName]? with
+    | some function => s!"cml_{sanitizeSymbolName function.name}_{ordinal}"
+    | none => s!"cml_section_{ordinal}"
+
+def initializedRuntimeSymbolLines (crepe : List (CompiledFunction (RiscV.Word 64)))
+    (sections : List (EncodedRiscVSection 64)) : List String :=
+  sections.zipIdx.map (fun (entry, ordinal) =>
+    s!"    makesym({initializedRuntimeSymbolName crepe ordinal entry.label}, {entry.address.toNat}, {entry.bytes.length})")
+
 def pancakeRuntimeAssembly
     (crepe : List (CompiledFunction (RiscV.Word 64)))
     (image : Flapjack.SourceRiscVRuntimeImage 64) : String :=
-  let bytes := cakeRuntimeBytes ++ runtimeFunctionBytes image.sections
+  let bytes := image.sections.flatMap (fun entry => entry.bytes)
   let ffiStubLines := image.ffiNames.reverse.flatMap (fun name =>
     [s!"cake_ffi{name}:", s!"     tail cdecl(ffi{name})", "     .p2align 4", ""])
   String.intercalate "\n"
@@ -246,7 +224,7 @@ def pancakeRuntimeAssembly
           "     .space CODE_BUFFER_SIZE", "#endif", "     .p2align 12",
           "     .globl cdecl(cake_codebuffer_end)",
           "cdecl(cake_codebuffer_end):", "     .space 4096"]
-      ++ runtimeAssemblySymbolLines crepe image.sections
+      ++ initializedRuntimeSymbolLines crepe image.sections
       ++ [""])
 
 end Flapjack.RiscV

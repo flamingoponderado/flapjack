@@ -1,0 +1,157 @@
+lab_lookup_def=∀(k1 :num) (k2 :num) (labs :α sptree$num_map sptree$num_map).
+  lab_lookup k1 k2 labs =
+  case lookup k1 labs of
+    (NONE :α sptree$num_map option) => (NONE :α option)
+  | SOME f => lookup k2 f
+lab_lookup_def_types=(k1 :num)::num;(k2 :num)::num;(labs :α sptree$num_map sptree$num_map)::α sptree$num_map sptree$num_map;
+lab_lookup_IMP=lab_lookup (l1 :num) (l2 :num) (labs :num sptree$num_map sptree$num_map) =
+SOME (x :num) ⇒
+find_pos (Lab l1 l2) labs = x
+lab_lookup_IMP_types=(x :num)::num;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(l2 :num)::num;(l1 :num)::num;
+line_ok_def=(line_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+   (ffis :ffiname list) (pos' :num)
+   (Label (v0 :num) (v1 :num) (l :num) :α line) ⇔ EVEN pos' ∧ l = (0 :num)) ∧
+(line_ok c labs ffis pos' (Asm (b :α asm_or_cbw) (bytes :word8 list) l) ⇔
+ enc_with_nop c.encode (cbw_to_asm b) bytes ∧ LENGTH bytes = l ∧
+ asm_ok (cbw_to_asm b) c) ∧
+(line_ok c labs ffis pos' (LabAsm (Halt :α asm_with_lab) (w :α word) bytes l) ⇔
+ (let
+    (w1 :α word) = (0w :α word) − (n2w (pos' + ffi_offset) :α word)
+  in
+    enc_with_nop c.encode (Jump w1 :α asm) bytes ∧ LENGTH bytes = l ∧
+    asm_ok (Jump w1 :α asm) c)) ∧
+(line_ok c labs ffis pos' (LabAsm (Install :α asm_with_lab) w bytes l) ⇔
+ (let
+    (w1 :α word) =
+      (0w :α word) − (n2w (pos' + (2 :num) * ffi_offset) :α word)
+  in
+    enc_with_nop c.encode (Jump w1 :α asm) bytes ∧ LENGTH bytes = l ∧
+    asm_ok (Jump w1 :α asm) c)) ∧
+(line_ok c labs ffis pos'
+   (LabAsm (CallFFI (index :mlstring) :α asm_with_lab) w bytes l) ⇔
+ (let
+    (w1 :α word) =
+      (0w :α word) −
+      (n2w
+         (pos' + ((3 :num) + get_ffi_index ffis (ExtCall index)) * ffi_offset) :
+       α word)
+  in
+    enc_with_nop c.encode (Jump w1 :α asm) bytes ∧ LENGTH bytes = l ∧
+    asm_ok (Jump w1 :α asm) c)) ∧
+(line_ok c labs ffis pos'
+   (LabAsm (Call (v24 :lab) :α asm_with_lab) w bytes l) ⇔ F) ∧
+(line_ok c labs ffis pos'
+   (LabAsm (Jump (v19 :lab) :α asm_with_lab) w bytes l) ⇔
+ case get_label (Jump v19 :α asm_with_lab) of
+   Lab l1 l2 =>
+     case lab_lookup l1 l2 labs of
+       (NONE :num option) => F
+     | SOME t =>
+       (let
+          (w1 :α word) = (n2w t :α word) − (n2w pos' :α word)
+        in
+          enc_with_nop c.encode (lab_inst w1 (Jump v19 :α asm_with_lab))
+            bytes ∧ LENGTH bytes = l ∧
+          asm_ok (lab_inst w1 (Jump v19 :α asm_with_lab)) c)) ∧
+(line_ok c labs ffis pos'
+   (LabAsm
+      (JumpCmp (v20 :cmp) (v21 :num) (v22 :α reg_imm) (v23 :lab) :
+       α asm_with_lab) w bytes l) ⇔
+ case get_label (JumpCmp v20 v21 v22 v23 :α asm_with_lab) of
+   Lab l1 l2 =>
+     case lab_lookup l1 l2 labs of
+       (NONE :num option) => F
+     | SOME t =>
+       (let
+          (w1 :α word) = (n2w t :α word) − (n2w pos' :α word)
+        in
+          enc_with_nop c.encode
+            (lab_inst w1 (JumpCmp v20 v21 v22 v23 :α asm_with_lab)) bytes ∧
+          LENGTH bytes = l ∧
+          asm_ok (lab_inst w1 (JumpCmp v20 v21 v22 v23 :α asm_with_lab)) c)) ∧
+(line_ok c labs ffis pos'
+   (LabAsm (LocValue (v26 :num) (v27 :lab) :α asm_with_lab) w bytes l) ⇔
+ case get_label (LocValue v26 v27 :α asm_with_lab) of
+   Lab l1 l2 =>
+     case lab_lookup l1 l2 labs of
+       (NONE :num option) => F
+     | SOME t =>
+       (let
+          (w1 :α word) = (n2w t :α word) − (n2w pos' :α word)
+        in
+          enc_with_nop c.encode
+            (lab_inst w1 (LocValue v26 v27 :α asm_with_lab)) bytes ∧
+          LENGTH bytes = l ∧
+          asm_ok (lab_inst w1 (LocValue v26 v27 :α asm_with_lab)) c))
+line_ok_def_types=(v27 :lab)::lab;(v26 :num)::num;(v23 :lab)::lab;(v22 :α reg_imm)::α reg_imm;(v21 :num)::num;(v20 :cmp)::cmp;(v19 :lab)::lab;(v24 :lab)::lab;(index :mlstring)::mlstring;(w :α word)::α word;(bytes :word8 list)::word8 list;(b :α asm_or_cbw)::α asm_or_cbw;(l :num)::num;(v1 :num)::num;(v0 :num)::num;(pos' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+lines_ok_def=(∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+     (ffis :ffiname list) (pos :num).
+   lines_ok c labs ffis pos ([] :α line list) ⇔ T) ∧
+∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (y :α line) (ys :α line list).
+  lines_ok c labs ffis pos (y::ys) ⇔
+  line_ok c labs ffis pos y ∧ lines_ok c labs ffis (pos + line_length y) ys
+lines_ok_def_types=
+all_enc_ok_def=(∀(pos :num) (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+     (c :α asm_config). all_enc_ok c labs ffis pos ([] :α sec list) ⇔ T) ∧
+(∀(xs :α sec list) (pos :num) (labs :num sptree$num_map sptree$num_map)
+     (k :num) (ffis :ffiname list) (c :α asm_config).
+   all_enc_ok c labs ffis pos (Section k ([] :α line list)::xs) ⇔
+   EVEN pos ∧ all_enc_ok c labs ffis pos xs) ∧
+∀(ys :α line list) (y :α line) (xs :α sec list) (pos :num)
+    (labs :num sptree$num_map sptree$num_map) (k :num) (ffis :ffiname list)
+    (c :α asm_config).
+  all_enc_ok c labs ffis pos (Section k (y::ys)::xs) ⇔
+  line_ok c labs ffis pos y ∧
+  all_enc_ok c labs ffis (pos + line_length y) (Section k ys::xs)
+all_enc_ok_def_types=
+all_enc_ok_cons=∀(ls :α line list) (pos :num).
+  all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) pos (Section (k :num) ls::(xs :α sec list)) ⇔
+  all_enc_ok c labs ffis
+    (pos + (SUM (MAP (line_length :α line -> num) ls) :num)) xs ∧
+  EVEN (pos + (SUM (MAP (line_length :α line -> num) ls) :num)) ∧
+  lines_ok c labs ffis pos ls
+all_enc_ok_cons_types=(ls :α line list)::α line list;(pos :num)::num;(xs :α sec list)::α sec list;(k :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+all_enc_ok_imp_sec_label_zero=∀(conf :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (n :num) (code :α sec list).
+  all_enc_ok conf labs ffis n code ⇒
+  EVERY (sec_label_zero :α sec -> bool) code
+all_enc_ok_imp_sec_label_zero_types=(conf :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(n :num)::num;(code :α sec list)::α sec list;
+pos_val_0=∀(xs :α sec list) (c :α asm_config) (enc :β)
+    (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+    (pos :num). all_enc_ok c labs ffis pos xs ⇒ pos_val (0 :num) pos xs = pos
+pos_val_0_types=(xs :α sec list)::α sec list;(c :α asm_config)::α asm_config;(enc :β)::β;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;
+pos_val_bound=∀(i :num) (pos :num) (code :α sec list) (conf :α asm_config)
+    (labs :num sptree$num_map sptree$num_map) (ffi :ffiname list) (n :num).
+  all_enc_ok conf labs ffi n code ⇒
+  pos_val i pos code ≤ pos + LENGTH (prog_to_bytes code)
+pos_val_bound_types=(i :num)::num;(pos :num)::num;(code :α sec list)::α sec list;(conf :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffi :ffiname list)::ffiname list;(n :num)::num;
+lookup_generic_bool=T
+lookup_outer_missing=T
+lookup_inner_missing=T
+label_even=T
+label_odd=T
+label_nonzero=T
+asm_skip=T
+asm_padding=T
+asm_bad_length=T
+asm_bad_bytes=T
+asm_bad_reg=T
+asm_cbw=T
+lab_halt=T
+lab_install=T
+lab_ffi_index=T
+lab_ffi_missing_default=T
+lab_call_unsupported=T
+lab_jump=T
+lab_jump_cmp=T
+lab_loc=T
+lab_missing_label=T
+all_empty=T
+all_empty_section_even=T
+all_empty_section_odd=T
+all_code_valid=T
+all_code_bytes=T
+all_zero_position=T
+independent_bound_position=T

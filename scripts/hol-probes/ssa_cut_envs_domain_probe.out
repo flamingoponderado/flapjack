@@ -1,0 +1,5 @@
+cut_envs_domain_full=⊢ cut_envs (x1,x2) locs = SOME x ⇒ domain x1 ⊆ domain locs ∧ domain x2 ⊆ domain locs
+cut_envs_type_first=:sptree$num_set
+cut_envs_type_second=:sptree$num_set
+cut_envs_type_locals=:α sptree$num_map
+cut_envs_type_output=:α sptree$num_map # α sptree$num_map

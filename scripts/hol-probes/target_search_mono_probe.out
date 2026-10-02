@@ -1,0 +1,7 @@
+search_mono_full_statement=∀k mc ffi ms res i.
+  find_next_interference mc ffi k ms = SOME res ⇒
+  find_next_interference mc ffi (k + i) ms = SOME res
+search_mono_statement_type=:bool
+search_unique_full_statement=find_next_interference mc ffi k1 ms = SOME res1 ∧
+find_next_interference mc ffi k2 ms = SOME res2 ⇒
+res1 = res2

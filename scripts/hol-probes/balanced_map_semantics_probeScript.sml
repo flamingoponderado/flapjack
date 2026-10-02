@@ -1,0 +1,12 @@
+load "balanced_mapTheory";
+open HolKernel Parse bossLib balanced_mapTheory finite_mapTheory;
+val _ = Globals.linewidth := 10000;
+fun out label q = (print(label ^ "="); print_term(rand(concl(SIMP_CONV (srw_ss()) [to_fmap_def,key_set_def,comparisonTheory.num_cmp_def,FLOOKUP_FUNION,FLOOKUP_UPDATE,FLOOKUP_EMPTY,pred_setTheory.EXTENSION] q))); print "\n");
+val _ = out "bmf_normal_10" ``FLOOKUP (to_fmap num_cmp ((Bin 0 10 100 (Bin 90 20 200 Tip Tip) (Bin 80 20 300 Tip Tip)):(num,num)balanced_map)) (key_set num_cmp 10)``;
+val _ = out "bmf_normal_20" ``FLOOKUP (to_fmap num_cmp ((Bin 0 10 100 (Bin 90 20 200 Tip Tip) (Bin 80 20 300 Tip Tip)):(num,num)balanced_map)) (key_set num_cmp 20)``;
+val _ = out "bmf_normal_30" ``FLOOKUP (to_fmap num_cmp ((Bin 0 10 100 (Bin 90 20 200 Tip Tip) (Bin 80 20 300 Tip Tip)):(num,num)balanced_map)) (key_set num_cmp 30)``;
+val _ = out "bmf_always_equal" ``FLOOKUP (to_fmap (\x y. Equal) ((Bin 0 10 100 (Bin 90 20 200 Tip Tip) (Bin 80 20 300 Tip Tip)):(num,num)balanced_map)) UNIV``;
+val _ = out "bmf_always_less" ``FLOOKUP (to_fmap (\x y. Less) ((Bin 0 10 100 (Bin 90 20 200 Tip Tip) (Bin 80 20 300 Tip Tip)):(num,num)balanced_map)) EMPTY``;
+val _ = out "bmf_empty" ``FLOOKUP (to_fmap num_cmp (Tip:(num,num)balanced_map)) (key_set num_cmp 10)``;
+val _ = (print "bmf_key_set_definition="; print_thm key_set_def; print "\n");
+val _ = (print "bmf_map_definition="; print_thm to_fmap_def; print "\n");

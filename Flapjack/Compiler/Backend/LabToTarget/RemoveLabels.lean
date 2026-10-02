@@ -184,4 +184,30 @@ def progToBytes {width : Nat} [NeZero width] :
   | ⟨_, []⟩ :: xs => progToBytes xs
   | ⟨k, y :: ys⟩ :: xs => lineBytes y ++ progToBytes (⟨k, ys⟩ :: xs)
 
+/-- Exact HOL `lab_to_target$prog_to_bytes_MAP`
+(`lab_to_targetScript.sml:341`): `∀ls. prog_to_bytes ls =
+FLAT (MAP (FLAT o MAP line_bytes o Section_lines) ls)`.  The result is the
+fixed HOL `word8 list`; the linked Section/Line carrier's only type-indexed
+word is translated to positive-width `BitVec width` (words_as_type_indexed_bitvec).
+HOL proves this by `prog_to_bytes_ind`; the Lean proof is the same well-founded
+induction over the shrinking section line list, with no added hypothesis or
+changed clause. -/
+@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "prog_to_bytes_MAP"
+  (words_as_type_indexed_bitvec)]
+theorem progToBytesMap {width : Nat} [NeZero width]
+    (ls : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
+    progToBytes ls =
+      (ls.map (fun s => (s.lines.map lineBytes).flatten)).flatten := by
+  induction ls using progToBytes.induct with
+  | case1 => simp only [progToBytes.eq_1, List.map_nil, List.flatten_nil]
+  | case2 a xs ih =>
+      rw [progToBytes.eq_2]
+      simp only [List.map_cons, List.map_nil, List.flatten_nil,
+        List.flatten_cons, List.nil_append]
+      exact ih
+  | case3 k y ys xs ih =>
+      rw [progToBytes.eq_3, ih]
+      simp only [List.map_cons, List.flatten_cons, List.append_assoc]
+
 end Flapjack.Compiler.Backend.LabToTarget

@@ -1,0 +1,253 @@
+ir_full_index_list_eq_ZIP=⊢ index_list xs k = ZIP (REVERSE (MAP ($+ k) (COUNT_LIST (LENGTH xs))),xs)
+ir_full_MEM_index_list_LIM=⊢ ∀ls n v k. MEM (n,v) (index_list ls k) ⇒ n − k < LENGTH ls
+ir_full_MEM_index_list_EL=⊢ ∀ls n v. MEM (n,v) (index_list ls k) ⇒ ls❲LENGTH ls − (n − k + 1)❳ = v
+ir_full_ALOOKUP_index_list=⊢ ∀ls n. n < LENGTH ls + k ⇒ ALOOKUP (index_list ls k) n = LLOOKUP ls (LENGTH ls + k − (n + 1))
+ir_output_0_0=⊢ index_list [] 0 = [] ⇔ T
+ir_recover_0_0=⊢ MAP (λp. (FST p,SND p,SOME []❲LENGTH [] − (FST p − 0 + 1)❳)) (index_list [] 0) = [] ⇔ T
+ir_lookup_0_0_0=⊢ (ALOOKUP (index_list [] 0) 0,LLOOKUP [] (LENGTH [] + 0 − (0 + 1)),0 < LENGTH [] + 0) = (NONE,NONE,F) ⇔ T
+ir_lookup_0_0_1=⊢ (ALOOKUP (index_list [] 0) 1,LLOOKUP [] (LENGTH [] + 0 − (1 + 1)),1 < LENGTH [] + 0) = (NONE,NONE,F) ⇔ T
+ir_lookup_0_0_2=⊢ (ALOOKUP (index_list [] 0) 2,LLOOKUP [] (LENGTH [] + 0 − (2 + 1)),2 < LENGTH [] + 0) = (NONE,NONE,F) ⇔ T
+ir_lookup_0_0_900=⊢ (ALOOKUP (index_list [] 0) 900,LLOOKUP [] (LENGTH [] + 0 − (900 + 1)),900 < LENGTH [] + 0) = (NONE,NONE,F) ⇔ T
+ir_output_0_1=⊢ index_list [] 1 = [] ⇔ T
+ir_recover_0_1=⊢ MAP (λp. (FST p,SND p,SOME []❲LENGTH [] − (FST p − 1 + 1)❳)) (index_list [] 1) = [] ⇔ T
+ir_lookup_0_1_0=⊢ (ALOOKUP (index_list [] 1) 0,LLOOKUP [] (LENGTH [] + 1 − (0 + 1)),0 < LENGTH [] + 1) = (NONE,NONE,T) ⇔ T
+ir_lookup_0_1_1=⊢ (ALOOKUP (index_list [] 1) 1,LLOOKUP [] (LENGTH [] + 1 − (1 + 1)),1 < LENGTH [] + 1) = (NONE,NONE,F) ⇔ T
+ir_lookup_0_1_2=⊢ (ALOOKUP (index_list [] 1) 2,LLOOKUP [] (LENGTH [] + 1 − (2 + 1)),2 < LENGTH [] + 1) = (NONE,NONE,F) ⇔ T
+ir_lookup_0_1_900=⊢ (ALOOKUP (index_list [] 1) 900,LLOOKUP [] (LENGTH [] + 1 − (900 + 1)),900 < LENGTH [] + 1) = (NONE,NONE,F) ⇔ T
+ir_output_0_4=⊢ index_list [] 4 = [] ⇔ T
+ir_recover_0_4=⊢ MAP (λp. (FST p,SND p,SOME []❲LENGTH [] − (FST p − 4 + 1)❳)) (index_list [] 4) = [] ⇔ T
+ir_lookup_0_4_0=⊢ (ALOOKUP (index_list [] 4) 0,LLOOKUP [] (LENGTH [] + 4 − (0 + 1)),0 < LENGTH [] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_0_4_1=⊢ (ALOOKUP (index_list [] 4) 1,LLOOKUP [] (LENGTH [] + 4 − (1 + 1)),1 < LENGTH [] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_0_4_2=⊢ (ALOOKUP (index_list [] 4) 2,LLOOKUP [] (LENGTH [] + 4 − (2 + 1)),2 < LENGTH [] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_0_4_3=⊢ (ALOOKUP (index_list [] 4) 3,LLOOKUP [] (LENGTH [] + 4 − (3 + 1)),3 < LENGTH [] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_0_4_4=⊢ (ALOOKUP (index_list [] 4) 4,LLOOKUP [] (LENGTH [] + 4 − (4 + 1)),4 < LENGTH [] + 4) = (NONE,NONE,F) ⇔ T
+ir_lookup_0_4_5=⊢ (ALOOKUP (index_list [] 4) 5,LLOOKUP [] (LENGTH [] + 4 − (5 + 1)),5 < LENGTH [] + 4) = (NONE,NONE,F) ⇔ T
+ir_lookup_0_4_900=⊢ (ALOOKUP (index_list [] 4) 900,LLOOKUP [] (LENGTH [] + 4 − (900 + 1)),900 < LENGTH [] + 4) = (NONE,NONE,F) ⇔ T
+ir_output_0_99=⊢ index_list [] 99 = [] ⇔ T
+ir_recover_0_99=⊢ MAP (λp. (FST p,SND p,SOME []❲LENGTH [] − (FST p − 99 + 1)❳)) (index_list [] 99) = [] ⇔ T
+ir_lookup_0_99_0=⊢ (ALOOKUP (index_list [] 99) 0,LLOOKUP [] (LENGTH [] + 99 − (0 + 1)),0 < LENGTH [] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_0_99_1=⊢ (ALOOKUP (index_list [] 99) 1,LLOOKUP [] (LENGTH [] + 99 − (1 + 1)),1 < LENGTH [] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_0_99_2=⊢ (ALOOKUP (index_list [] 99) 2,LLOOKUP [] (LENGTH [] + 99 − (2 + 1)),2 < LENGTH [] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_0_99_98=⊢ (ALOOKUP (index_list [] 99) 98,LLOOKUP [] (LENGTH [] + 99 − (98 + 1)),98 < LENGTH [] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_0_99_99=⊢ (ALOOKUP (index_list [] 99) 99,LLOOKUP [] (LENGTH [] + 99 − (99 + 1)),99 < LENGTH [] + 99) = (NONE,NONE,F) ⇔ T
+ir_lookup_0_99_100=⊢ (ALOOKUP (index_list [] 99) 100,LLOOKUP [] (LENGTH [] + 99 − (100 + 1)),100 < LENGTH [] + 99) = (NONE,NONE,F) ⇔ T
+ir_lookup_0_99_900=⊢ (ALOOKUP (index_list [] 99) 900,LLOOKUP [] (LENGTH [] + 99 − (900 + 1)),900 < LENGTH [] + 99) = (NONE,NONE,F) ⇔ T
+ir_output_1_0=⊢ index_list [0] 0 = [(0,0)] ⇔ T
+ir_recover_1_0=⊢ MAP (λp. (FST p,SND p,SOME [0]❲LENGTH [0] − (FST p − 0 + 1)❳)) (index_list [0] 0) = [(0,0,SOME 0)] ⇔ T
+ir_lookup_1_0_0=⊢ (ALOOKUP (index_list [0] 0) 0,LLOOKUP [0] (LENGTH [0] + 0 − (0 + 1)),0 < LENGTH [0] + 0) = (SOME 0,SOME 0,T) ⇔ T
+ir_lookup_1_0_1=⊢ (ALOOKUP (index_list [0] 0) 1,LLOOKUP [0] (LENGTH [0] + 0 − (1 + 1)),1 < LENGTH [0] + 0) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_1_0_2=⊢ (ALOOKUP (index_list [0] 0) 2,LLOOKUP [0] (LENGTH [0] + 0 − (2 + 1)),2 < LENGTH [0] + 0) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_1_0_900=⊢ (ALOOKUP (index_list [0] 0) 900,LLOOKUP [0] (LENGTH [0] + 0 − (900 + 1)),900 < LENGTH [0] + 0) = (NONE,SOME 0,F) ⇔ T
+ir_output_1_1=⊢ index_list [0] 1 = [(1,0)] ⇔ T
+ir_recover_1_1=⊢ MAP (λp. (FST p,SND p,SOME [0]❲LENGTH [0] − (FST p − 1 + 1)❳)) (index_list [0] 1) = [(1,0,SOME 0)] ⇔ T
+ir_lookup_1_1_0=⊢ (ALOOKUP (index_list [0] 1) 0,LLOOKUP [0] (LENGTH [0] + 1 − (0 + 1)),0 < LENGTH [0] + 1) = (NONE,NONE,T) ⇔ T
+ir_lookup_1_1_1=⊢ (ALOOKUP (index_list [0] 1) 1,LLOOKUP [0] (LENGTH [0] + 1 − (1 + 1)),1 < LENGTH [0] + 1) = (SOME 0,SOME 0,T) ⇔ T
+ir_lookup_1_1_2=⊢ (ALOOKUP (index_list [0] 1) 2,LLOOKUP [0] (LENGTH [0] + 1 − (2 + 1)),2 < LENGTH [0] + 1) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_1_1_3=⊢ (ALOOKUP (index_list [0] 1) 3,LLOOKUP [0] (LENGTH [0] + 1 − (3 + 1)),3 < LENGTH [0] + 1) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_1_1_900=⊢ (ALOOKUP (index_list [0] 1) 900,LLOOKUP [0] (LENGTH [0] + 1 − (900 + 1)),900 < LENGTH [0] + 1) = (NONE,SOME 0,F) ⇔ T
+ir_output_1_4=⊢ index_list [0] 4 = [(4,0)] ⇔ T
+ir_recover_1_4=⊢ MAP (λp. (FST p,SND p,SOME [0]❲LENGTH [0] − (FST p − 4 + 1)❳)) (index_list [0] 4) = [(4,0,SOME 0)] ⇔ T
+ir_lookup_1_4_0=⊢ (ALOOKUP (index_list [0] 4) 0,LLOOKUP [0] (LENGTH [0] + 4 − (0 + 1)),0 < LENGTH [0] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_1_4_1=⊢ (ALOOKUP (index_list [0] 4) 1,LLOOKUP [0] (LENGTH [0] + 4 − (1 + 1)),1 < LENGTH [0] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_1_4_2=⊢ (ALOOKUP (index_list [0] 4) 2,LLOOKUP [0] (LENGTH [0] + 4 − (2 + 1)),2 < LENGTH [0] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_1_4_3=⊢ (ALOOKUP (index_list [0] 4) 3,LLOOKUP [0] (LENGTH [0] + 4 − (3 + 1)),3 < LENGTH [0] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_1_4_4=⊢ (ALOOKUP (index_list [0] 4) 4,LLOOKUP [0] (LENGTH [0] + 4 − (4 + 1)),4 < LENGTH [0] + 4) = (SOME 0,SOME 0,T) ⇔ T
+ir_lookup_1_4_5=⊢ (ALOOKUP (index_list [0] 4) 5,LLOOKUP [0] (LENGTH [0] + 4 − (5 + 1)),5 < LENGTH [0] + 4) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_1_4_6=⊢ (ALOOKUP (index_list [0] 4) 6,LLOOKUP [0] (LENGTH [0] + 4 − (6 + 1)),6 < LENGTH [0] + 4) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_1_4_900=⊢ (ALOOKUP (index_list [0] 4) 900,LLOOKUP [0] (LENGTH [0] + 4 − (900 + 1)),900 < LENGTH [0] + 4) = (NONE,SOME 0,F) ⇔ T
+ir_output_1_99=⊢ index_list [0] 99 = [(99,0)] ⇔ T
+ir_recover_1_99=⊢ MAP (λp. (FST p,SND p,SOME [0]❲LENGTH [0] − (FST p − 99 + 1)❳)) (index_list [0] 99) = [(99,0,SOME 0)] ⇔ T
+ir_lookup_1_99_0=⊢ (ALOOKUP (index_list [0] 99) 0,LLOOKUP [0] (LENGTH [0] + 99 − (0 + 1)),0 < LENGTH [0] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_1_99_1=⊢ (ALOOKUP (index_list [0] 99) 1,LLOOKUP [0] (LENGTH [0] + 99 − (1 + 1)),1 < LENGTH [0] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_1_99_2=⊢ (ALOOKUP (index_list [0] 99) 2,LLOOKUP [0] (LENGTH [0] + 99 − (2 + 1)),2 < LENGTH [0] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_1_99_98=⊢ (ALOOKUP (index_list [0] 99) 98,LLOOKUP [0] (LENGTH [0] + 99 − (98 + 1)),98 < LENGTH [0] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_1_99_99=⊢ (ALOOKUP (index_list [0] 99) 99,LLOOKUP [0] (LENGTH [0] + 99 − (99 + 1)),99 < LENGTH [0] + 99) = (SOME 0,SOME 0,T) ⇔ T
+ir_lookup_1_99_100=⊢ (ALOOKUP (index_list [0] 99) 100,LLOOKUP [0] (LENGTH [0] + 99 − (100 + 1)),100 < LENGTH [0] + 99) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_1_99_101=⊢ (ALOOKUP (index_list [0] 99) 101,LLOOKUP [0] (LENGTH [0] + 99 − (101 + 1)),101 < LENGTH [0] + 99) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_1_99_900=⊢ (ALOOKUP (index_list [0] 99) 900,LLOOKUP [0] (LENGTH [0] + 99 − (900 + 1)),900 < LENGTH [0] + 99) = (NONE,SOME 0,F) ⇔ T
+ir_output_2_0=⊢ index_list [9] 0 = [(0,9)] ⇔ T
+ir_recover_2_0=⊢ MAP (λp. (FST p,SND p,SOME [9]❲LENGTH [9] − (FST p − 0 + 1)❳)) (index_list [9] 0) = [(0,9,SOME 9)] ⇔ T
+ir_lookup_2_0_0=⊢ (ALOOKUP (index_list [9] 0) 0,LLOOKUP [9] (LENGTH [9] + 0 − (0 + 1)),0 < LENGTH [9] + 0) = (SOME 9,SOME 9,T) ⇔ T
+ir_lookup_2_0_1=⊢ (ALOOKUP (index_list [9] 0) 1,LLOOKUP [9] (LENGTH [9] + 0 − (1 + 1)),1 < LENGTH [9] + 0) = (NONE,SOME 9,F) ⇔ T
+ir_lookup_2_0_2=⊢ (ALOOKUP (index_list [9] 0) 2,LLOOKUP [9] (LENGTH [9] + 0 − (2 + 1)),2 < LENGTH [9] + 0) = (NONE,SOME 9,F) ⇔ T
+ir_lookup_2_0_900=⊢ (ALOOKUP (index_list [9] 0) 900,LLOOKUP [9] (LENGTH [9] + 0 − (900 + 1)),900 < LENGTH [9] + 0) = (NONE,SOME 9,F) ⇔ T
+ir_output_2_1=⊢ index_list [9] 1 = [(1,9)] ⇔ T
+ir_recover_2_1=⊢ MAP (λp. (FST p,SND p,SOME [9]❲LENGTH [9] − (FST p − 1 + 1)❳)) (index_list [9] 1) = [(1,9,SOME 9)] ⇔ T
+ir_lookup_2_1_0=⊢ (ALOOKUP (index_list [9] 1) 0,LLOOKUP [9] (LENGTH [9] + 1 − (0 + 1)),0 < LENGTH [9] + 1) = (NONE,NONE,T) ⇔ T
+ir_lookup_2_1_1=⊢ (ALOOKUP (index_list [9] 1) 1,LLOOKUP [9] (LENGTH [9] + 1 − (1 + 1)),1 < LENGTH [9] + 1) = (SOME 9,SOME 9,T) ⇔ T
+ir_lookup_2_1_2=⊢ (ALOOKUP (index_list [9] 1) 2,LLOOKUP [9] (LENGTH [9] + 1 − (2 + 1)),2 < LENGTH [9] + 1) = (NONE,SOME 9,F) ⇔ T
+ir_lookup_2_1_3=⊢ (ALOOKUP (index_list [9] 1) 3,LLOOKUP [9] (LENGTH [9] + 1 − (3 + 1)),3 < LENGTH [9] + 1) = (NONE,SOME 9,F) ⇔ T
+ir_lookup_2_1_900=⊢ (ALOOKUP (index_list [9] 1) 900,LLOOKUP [9] (LENGTH [9] + 1 − (900 + 1)),900 < LENGTH [9] + 1) = (NONE,SOME 9,F) ⇔ T
+ir_output_2_4=⊢ index_list [9] 4 = [(4,9)] ⇔ T
+ir_recover_2_4=⊢ MAP (λp. (FST p,SND p,SOME [9]❲LENGTH [9] − (FST p − 4 + 1)❳)) (index_list [9] 4) = [(4,9,SOME 9)] ⇔ T
+ir_lookup_2_4_0=⊢ (ALOOKUP (index_list [9] 4) 0,LLOOKUP [9] (LENGTH [9] + 4 − (0 + 1)),0 < LENGTH [9] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_2_4_1=⊢ (ALOOKUP (index_list [9] 4) 1,LLOOKUP [9] (LENGTH [9] + 4 − (1 + 1)),1 < LENGTH [9] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_2_4_2=⊢ (ALOOKUP (index_list [9] 4) 2,LLOOKUP [9] (LENGTH [9] + 4 − (2 + 1)),2 < LENGTH [9] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_2_4_3=⊢ (ALOOKUP (index_list [9] 4) 3,LLOOKUP [9] (LENGTH [9] + 4 − (3 + 1)),3 < LENGTH [9] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_2_4_4=⊢ (ALOOKUP (index_list [9] 4) 4,LLOOKUP [9] (LENGTH [9] + 4 − (4 + 1)),4 < LENGTH [9] + 4) = (SOME 9,SOME 9,T) ⇔ T
+ir_lookup_2_4_5=⊢ (ALOOKUP (index_list [9] 4) 5,LLOOKUP [9] (LENGTH [9] + 4 − (5 + 1)),5 < LENGTH [9] + 4) = (NONE,SOME 9,F) ⇔ T
+ir_lookup_2_4_6=⊢ (ALOOKUP (index_list [9] 4) 6,LLOOKUP [9] (LENGTH [9] + 4 − (6 + 1)),6 < LENGTH [9] + 4) = (NONE,SOME 9,F) ⇔ T
+ir_lookup_2_4_900=⊢ (ALOOKUP (index_list [9] 4) 900,LLOOKUP [9] (LENGTH [9] + 4 − (900 + 1)),900 < LENGTH [9] + 4) = (NONE,SOME 9,F) ⇔ T
+ir_output_2_99=⊢ index_list [9] 99 = [(99,9)] ⇔ T
+ir_recover_2_99=⊢ MAP (λp. (FST p,SND p,SOME [9]❲LENGTH [9] − (FST p − 99 + 1)❳)) (index_list [9] 99) = [(99,9,SOME 9)] ⇔ T
+ir_lookup_2_99_0=⊢ (ALOOKUP (index_list [9] 99) 0,LLOOKUP [9] (LENGTH [9] + 99 − (0 + 1)),0 < LENGTH [9] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_2_99_1=⊢ (ALOOKUP (index_list [9] 99) 1,LLOOKUP [9] (LENGTH [9] + 99 − (1 + 1)),1 < LENGTH [9] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_2_99_2=⊢ (ALOOKUP (index_list [9] 99) 2,LLOOKUP [9] (LENGTH [9] + 99 − (2 + 1)),2 < LENGTH [9] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_2_99_98=⊢ (ALOOKUP (index_list [9] 99) 98,LLOOKUP [9] (LENGTH [9] + 99 − (98 + 1)),98 < LENGTH [9] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_2_99_99=⊢ (ALOOKUP (index_list [9] 99) 99,LLOOKUP [9] (LENGTH [9] + 99 − (99 + 1)),99 < LENGTH [9] + 99) = (SOME 9,SOME 9,T) ⇔ T
+ir_lookup_2_99_100=⊢ (ALOOKUP (index_list [9] 99) 100,LLOOKUP [9] (LENGTH [9] + 99 − (100 + 1)),100 < LENGTH [9] + 99) = (NONE,SOME 9,F) ⇔ T
+ir_lookup_2_99_101=⊢ (ALOOKUP (index_list [9] 99) 101,LLOOKUP [9] (LENGTH [9] + 99 − (101 + 1)),101 < LENGTH [9] + 99) = (NONE,SOME 9,F) ⇔ T
+ir_lookup_2_99_900=⊢ (ALOOKUP (index_list [9] 99) 900,LLOOKUP [9] (LENGTH [9] + 99 − (900 + 1)),900 < LENGTH [9] + 99) = (NONE,SOME 9,F) ⇔ T
+ir_output_3_0=⊢ index_list [10; 20] 0 = [(1,10); (0,20)] ⇔ T
+ir_recover_3_0=⊢ MAP (λp. (FST p,SND p,SOME [10; 20]❲LENGTH [10; 20] − (FST p − 0 + 1)❳)) (index_list [10; 20] 0) = [(1,10,SOME 10); (0,20,SOME 20)] ⇔ T
+ir_lookup_3_0_0=⊢ (ALOOKUP (index_list [10; 20] 0) 0,LLOOKUP [10; 20] (LENGTH [10; 20] + 0 − (0 + 1)),0 < LENGTH [10; 20] + 0) = (SOME 20,SOME 20,T) ⇔ T
+ir_lookup_3_0_1=⊢ (ALOOKUP (index_list [10; 20] 0) 1,LLOOKUP [10; 20] (LENGTH [10; 20] + 0 − (1 + 1)),1 < LENGTH [10; 20] + 0) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_3_0_2=⊢ (ALOOKUP (index_list [10; 20] 0) 2,LLOOKUP [10; 20] (LENGTH [10; 20] + 0 − (2 + 1)),2 < LENGTH [10; 20] + 0) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_3_0_3=⊢ (ALOOKUP (index_list [10; 20] 0) 3,LLOOKUP [10; 20] (LENGTH [10; 20] + 0 − (3 + 1)),3 < LENGTH [10; 20] + 0) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_3_0_900=⊢ (ALOOKUP (index_list [10; 20] 0) 900,LLOOKUP [10; 20] (LENGTH [10; 20] + 0 − (900 + 1)),900 < LENGTH [10; 20] + 0) = (NONE,SOME 10,F) ⇔ T
+ir_output_3_1=⊢ index_list [10; 20] 1 = [(2,10); (1,20)] ⇔ T
+ir_recover_3_1=⊢ MAP (λp. (FST p,SND p,SOME [10; 20]❲LENGTH [10; 20] − (FST p − 1 + 1)❳)) (index_list [10; 20] 1) = [(2,10,SOME 10); (1,20,SOME 20)] ⇔ T
+ir_lookup_3_1_0=⊢ (ALOOKUP (index_list [10; 20] 1) 0,LLOOKUP [10; 20] (LENGTH [10; 20] + 1 − (0 + 1)),0 < LENGTH [10; 20] + 1) = (NONE,NONE,T) ⇔ T
+ir_lookup_3_1_1=⊢ (ALOOKUP (index_list [10; 20] 1) 1,LLOOKUP [10; 20] (LENGTH [10; 20] + 1 − (1 + 1)),1 < LENGTH [10; 20] + 1) = (SOME 20,SOME 20,T) ⇔ T
+ir_lookup_3_1_2=⊢ (ALOOKUP (index_list [10; 20] 1) 2,LLOOKUP [10; 20] (LENGTH [10; 20] + 1 − (2 + 1)),2 < LENGTH [10; 20] + 1) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_3_1_3=⊢ (ALOOKUP (index_list [10; 20] 1) 3,LLOOKUP [10; 20] (LENGTH [10; 20] + 1 − (3 + 1)),3 < LENGTH [10; 20] + 1) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_3_1_4=⊢ (ALOOKUP (index_list [10; 20] 1) 4,LLOOKUP [10; 20] (LENGTH [10; 20] + 1 − (4 + 1)),4 < LENGTH [10; 20] + 1) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_3_1_900=⊢ (ALOOKUP (index_list [10; 20] 1) 900,LLOOKUP [10; 20] (LENGTH [10; 20] + 1 − (900 + 1)),900 < LENGTH [10; 20] + 1) = (NONE,SOME 10,F) ⇔ T
+ir_output_3_4=⊢ index_list [10; 20] 4 = [(5,10); (4,20)] ⇔ T
+ir_recover_3_4=⊢ MAP (λp. (FST p,SND p,SOME [10; 20]❲LENGTH [10; 20] − (FST p − 4 + 1)❳)) (index_list [10; 20] 4) = [(5,10,SOME 10); (4,20,SOME 20)] ⇔ T
+ir_lookup_3_4_0=⊢ (ALOOKUP (index_list [10; 20] 4) 0,LLOOKUP [10; 20] (LENGTH [10; 20] + 4 − (0 + 1)),0 < LENGTH [10; 20] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_3_4_1=⊢ (ALOOKUP (index_list [10; 20] 4) 1,LLOOKUP [10; 20] (LENGTH [10; 20] + 4 − (1 + 1)),1 < LENGTH [10; 20] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_3_4_2=⊢ (ALOOKUP (index_list [10; 20] 4) 2,LLOOKUP [10; 20] (LENGTH [10; 20] + 4 − (2 + 1)),2 < LENGTH [10; 20] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_3_4_3=⊢ (ALOOKUP (index_list [10; 20] 4) 3,LLOOKUP [10; 20] (LENGTH [10; 20] + 4 − (3 + 1)),3 < LENGTH [10; 20] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_3_4_4=⊢ (ALOOKUP (index_list [10; 20] 4) 4,LLOOKUP [10; 20] (LENGTH [10; 20] + 4 − (4 + 1)),4 < LENGTH [10; 20] + 4) = (SOME 20,SOME 20,T) ⇔ T
+ir_lookup_3_4_5=⊢ (ALOOKUP (index_list [10; 20] 4) 5,LLOOKUP [10; 20] (LENGTH [10; 20] + 4 − (5 + 1)),5 < LENGTH [10; 20] + 4) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_3_4_6=⊢ (ALOOKUP (index_list [10; 20] 4) 6,LLOOKUP [10; 20] (LENGTH [10; 20] + 4 − (6 + 1)),6 < LENGTH [10; 20] + 4) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_3_4_7=⊢ (ALOOKUP (index_list [10; 20] 4) 7,LLOOKUP [10; 20] (LENGTH [10; 20] + 4 − (7 + 1)),7 < LENGTH [10; 20] + 4) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_3_4_900=⊢ (ALOOKUP (index_list [10; 20] 4) 900,LLOOKUP [10; 20] (LENGTH [10; 20] + 4 − (900 + 1)),900 < LENGTH [10; 20] + 4) = (NONE,SOME 10,F) ⇔ T
+ir_output_3_99=⊢ index_list [10; 20] 99 = [(100,10); (99,20)] ⇔ T
+ir_recover_3_99=⊢ MAP (λp. (FST p,SND p,SOME [10; 20]❲LENGTH [10; 20] − (FST p − 99 + 1)❳)) (index_list [10; 20] 99) = [(100,10,SOME 10); (99,20,SOME 20)] ⇔ T
+ir_lookup_3_99_0=⊢ (ALOOKUP (index_list [10; 20] 99) 0,LLOOKUP [10; 20] (LENGTH [10; 20] + 99 − (0 + 1)),0 < LENGTH [10; 20] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_3_99_1=⊢ (ALOOKUP (index_list [10; 20] 99) 1,LLOOKUP [10; 20] (LENGTH [10; 20] + 99 − (1 + 1)),1 < LENGTH [10; 20] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_3_99_2=⊢ (ALOOKUP (index_list [10; 20] 99) 2,LLOOKUP [10; 20] (LENGTH [10; 20] + 99 − (2 + 1)),2 < LENGTH [10; 20] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_3_99_98=⊢ (ALOOKUP (index_list [10; 20] 99) 98,LLOOKUP [10; 20] (LENGTH [10; 20] + 99 − (98 + 1)),98 < LENGTH [10; 20] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_3_99_99=⊢ (ALOOKUP (index_list [10; 20] 99) 99,LLOOKUP [10; 20] (LENGTH [10; 20] + 99 − (99 + 1)),99 < LENGTH [10; 20] + 99) = (SOME 20,SOME 20,T) ⇔ T
+ir_lookup_3_99_100=⊢ (ALOOKUP (index_list [10; 20] 99) 100,LLOOKUP [10; 20] (LENGTH [10; 20] + 99 − (100 + 1)),100 < LENGTH [10; 20] + 99) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_3_99_101=⊢ (ALOOKUP (index_list [10; 20] 99) 101,LLOOKUP [10; 20] (LENGTH [10; 20] + 99 − (101 + 1)),101 < LENGTH [10; 20] + 99) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_3_99_102=⊢ (ALOOKUP (index_list [10; 20] 99) 102,LLOOKUP [10; 20] (LENGTH [10; 20] + 99 − (102 + 1)),102 < LENGTH [10; 20] + 99) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_3_99_900=⊢ (ALOOKUP (index_list [10; 20] 99) 900,LLOOKUP [10; 20] (LENGTH [10; 20] + 99 − (900 + 1)),900 < LENGTH [10; 20] + 99) = (NONE,SOME 10,F) ⇔ T
+ir_output_4_0=⊢ index_list [10; 10] 0 = [(1,10); (0,10)] ⇔ T
+ir_recover_4_0=⊢ MAP (λp. (FST p,SND p,SOME [10; 10]❲LENGTH [10; 10] − (FST p − 0 + 1)❳)) (index_list [10; 10] 0) = [(1,10,SOME 10); (0,10,SOME 10)] ⇔ T
+ir_lookup_4_0_0=⊢ (ALOOKUP (index_list [10; 10] 0) 0,LLOOKUP [10; 10] (LENGTH [10; 10] + 0 − (0 + 1)),0 < LENGTH [10; 10] + 0) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_4_0_1=⊢ (ALOOKUP (index_list [10; 10] 0) 1,LLOOKUP [10; 10] (LENGTH [10; 10] + 0 − (1 + 1)),1 < LENGTH [10; 10] + 0) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_4_0_2=⊢ (ALOOKUP (index_list [10; 10] 0) 2,LLOOKUP [10; 10] (LENGTH [10; 10] + 0 − (2 + 1)),2 < LENGTH [10; 10] + 0) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_4_0_3=⊢ (ALOOKUP (index_list [10; 10] 0) 3,LLOOKUP [10; 10] (LENGTH [10; 10] + 0 − (3 + 1)),3 < LENGTH [10; 10] + 0) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_4_0_900=⊢ (ALOOKUP (index_list [10; 10] 0) 900,LLOOKUP [10; 10] (LENGTH [10; 10] + 0 − (900 + 1)),900 < LENGTH [10; 10] + 0) = (NONE,SOME 10,F) ⇔ T
+ir_output_4_1=⊢ index_list [10; 10] 1 = [(2,10); (1,10)] ⇔ T
+ir_recover_4_1=⊢ MAP (λp. (FST p,SND p,SOME [10; 10]❲LENGTH [10; 10] − (FST p − 1 + 1)❳)) (index_list [10; 10] 1) = [(2,10,SOME 10); (1,10,SOME 10)] ⇔ T
+ir_lookup_4_1_0=⊢ (ALOOKUP (index_list [10; 10] 1) 0,LLOOKUP [10; 10] (LENGTH [10; 10] + 1 − (0 + 1)),0 < LENGTH [10; 10] + 1) = (NONE,NONE,T) ⇔ T
+ir_lookup_4_1_1=⊢ (ALOOKUP (index_list [10; 10] 1) 1,LLOOKUP [10; 10] (LENGTH [10; 10] + 1 − (1 + 1)),1 < LENGTH [10; 10] + 1) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_4_1_2=⊢ (ALOOKUP (index_list [10; 10] 1) 2,LLOOKUP [10; 10] (LENGTH [10; 10] + 1 − (2 + 1)),2 < LENGTH [10; 10] + 1) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_4_1_3=⊢ (ALOOKUP (index_list [10; 10] 1) 3,LLOOKUP [10; 10] (LENGTH [10; 10] + 1 − (3 + 1)),3 < LENGTH [10; 10] + 1) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_4_1_4=⊢ (ALOOKUP (index_list [10; 10] 1) 4,LLOOKUP [10; 10] (LENGTH [10; 10] + 1 − (4 + 1)),4 < LENGTH [10; 10] + 1) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_4_1_900=⊢ (ALOOKUP (index_list [10; 10] 1) 900,LLOOKUP [10; 10] (LENGTH [10; 10] + 1 − (900 + 1)),900 < LENGTH [10; 10] + 1) = (NONE,SOME 10,F) ⇔ T
+ir_output_4_4=⊢ index_list [10; 10] 4 = [(5,10); (4,10)] ⇔ T
+ir_recover_4_4=⊢ MAP (λp. (FST p,SND p,SOME [10; 10]❲LENGTH [10; 10] − (FST p − 4 + 1)❳)) (index_list [10; 10] 4) = [(5,10,SOME 10); (4,10,SOME 10)] ⇔ T
+ir_lookup_4_4_0=⊢ (ALOOKUP (index_list [10; 10] 4) 0,LLOOKUP [10; 10] (LENGTH [10; 10] + 4 − (0 + 1)),0 < LENGTH [10; 10] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_4_4_1=⊢ (ALOOKUP (index_list [10; 10] 4) 1,LLOOKUP [10; 10] (LENGTH [10; 10] + 4 − (1 + 1)),1 < LENGTH [10; 10] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_4_4_2=⊢ (ALOOKUP (index_list [10; 10] 4) 2,LLOOKUP [10; 10] (LENGTH [10; 10] + 4 − (2 + 1)),2 < LENGTH [10; 10] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_4_4_3=⊢ (ALOOKUP (index_list [10; 10] 4) 3,LLOOKUP [10; 10] (LENGTH [10; 10] + 4 − (3 + 1)),3 < LENGTH [10; 10] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_4_4_4=⊢ (ALOOKUP (index_list [10; 10] 4) 4,LLOOKUP [10; 10] (LENGTH [10; 10] + 4 − (4 + 1)),4 < LENGTH [10; 10] + 4) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_4_4_5=⊢ (ALOOKUP (index_list [10; 10] 4) 5,LLOOKUP [10; 10] (LENGTH [10; 10] + 4 − (5 + 1)),5 < LENGTH [10; 10] + 4) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_4_4_6=⊢ (ALOOKUP (index_list [10; 10] 4) 6,LLOOKUP [10; 10] (LENGTH [10; 10] + 4 − (6 + 1)),6 < LENGTH [10; 10] + 4) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_4_4_7=⊢ (ALOOKUP (index_list [10; 10] 4) 7,LLOOKUP [10; 10] (LENGTH [10; 10] + 4 − (7 + 1)),7 < LENGTH [10; 10] + 4) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_4_4_900=⊢ (ALOOKUP (index_list [10; 10] 4) 900,LLOOKUP [10; 10] (LENGTH [10; 10] + 4 − (900 + 1)),900 < LENGTH [10; 10] + 4) = (NONE,SOME 10,F) ⇔ T
+ir_output_4_99=⊢ index_list [10; 10] 99 = [(100,10); (99,10)] ⇔ T
+ir_recover_4_99=⊢ MAP (λp. (FST p,SND p,SOME [10; 10]❲LENGTH [10; 10] − (FST p − 99 + 1)❳)) (index_list [10; 10] 99) = [(100,10,SOME 10); (99,10,SOME 10)] ⇔ T
+ir_lookup_4_99_0=⊢ (ALOOKUP (index_list [10; 10] 99) 0,LLOOKUP [10; 10] (LENGTH [10; 10] + 99 − (0 + 1)),0 < LENGTH [10; 10] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_4_99_1=⊢ (ALOOKUP (index_list [10; 10] 99) 1,LLOOKUP [10; 10] (LENGTH [10; 10] + 99 − (1 + 1)),1 < LENGTH [10; 10] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_4_99_2=⊢ (ALOOKUP (index_list [10; 10] 99) 2,LLOOKUP [10; 10] (LENGTH [10; 10] + 99 − (2 + 1)),2 < LENGTH [10; 10] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_4_99_98=⊢ (ALOOKUP (index_list [10; 10] 99) 98,LLOOKUP [10; 10] (LENGTH [10; 10] + 99 − (98 + 1)),98 < LENGTH [10; 10] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_4_99_99=⊢ (ALOOKUP (index_list [10; 10] 99) 99,LLOOKUP [10; 10] (LENGTH [10; 10] + 99 − (99 + 1)),99 < LENGTH [10; 10] + 99) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_4_99_100=⊢ (ALOOKUP (index_list [10; 10] 99) 100,LLOOKUP [10; 10] (LENGTH [10; 10] + 99 − (100 + 1)),100 < LENGTH [10; 10] + 99) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_4_99_101=⊢ (ALOOKUP (index_list [10; 10] 99) 101,LLOOKUP [10; 10] (LENGTH [10; 10] + 99 − (101 + 1)),101 < LENGTH [10; 10] + 99) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_4_99_102=⊢ (ALOOKUP (index_list [10; 10] 99) 102,LLOOKUP [10; 10] (LENGTH [10; 10] + 99 − (102 + 1)),102 < LENGTH [10; 10] + 99) = (NONE,SOME 10,F) ⇔ T
+ir_lookup_4_99_900=⊢ (ALOOKUP (index_list [10; 10] 99) 900,LLOOKUP [10; 10] (LENGTH [10; 10] + 99 − (900 + 1)),900 < LENGTH [10; 10] + 99) = (NONE,SOME 10,F) ⇔ T
+ir_output_5_0=⊢ index_list [30; 20; 10] 0 = [(2,30); (1,20); (0,10)] ⇔ T
+ir_recover_5_0=⊢ MAP (λp. (FST p,SND p,SOME [30; 20; 10]❲LENGTH [30; 20; 10] − (FST p − 0 + 1)❳)) (index_list [30; 20; 10] 0) = [(2,30,SOME 30); (1,20,SOME 20); (0,10,SOME 10)] ⇔ T
+ir_lookup_5_0_0=⊢ (ALOOKUP (index_list [30; 20; 10] 0) 0,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 0 − (0 + 1)),0 < LENGTH [30; 20; 10] + 0) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_5_0_1=⊢ (ALOOKUP (index_list [30; 20; 10] 0) 1,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 0 − (1 + 1)),1 < LENGTH [30; 20; 10] + 0) = (SOME 20,SOME 20,T) ⇔ T
+ir_lookup_5_0_2=⊢ (ALOOKUP (index_list [30; 20; 10] 0) 2,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 0 − (2 + 1)),2 < LENGTH [30; 20; 10] + 0) = (SOME 30,SOME 30,T) ⇔ T
+ir_lookup_5_0_3=⊢ (ALOOKUP (index_list [30; 20; 10] 0) 3,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 0 − (3 + 1)),3 < LENGTH [30; 20; 10] + 0) = (NONE,SOME 30,F) ⇔ T
+ir_lookup_5_0_4=⊢ (ALOOKUP (index_list [30; 20; 10] 0) 4,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 0 − (4 + 1)),4 < LENGTH [30; 20; 10] + 0) = (NONE,SOME 30,F) ⇔ T
+ir_lookup_5_0_900=⊢ (ALOOKUP (index_list [30; 20; 10] 0) 900,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 0 − (900 + 1)),900 < LENGTH [30; 20; 10] + 0) = (NONE,SOME 30,F) ⇔ T
+ir_output_5_1=⊢ index_list [30; 20; 10] 1 = [(3,30); (2,20); (1,10)] ⇔ T
+ir_recover_5_1=⊢ MAP (λp. (FST p,SND p,SOME [30; 20; 10]❲LENGTH [30; 20; 10] − (FST p − 1 + 1)❳)) (index_list [30; 20; 10] 1) = [(3,30,SOME 30); (2,20,SOME 20); (1,10,SOME 10)] ⇔ T
+ir_lookup_5_1_0=⊢ (ALOOKUP (index_list [30; 20; 10] 1) 0,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 1 − (0 + 1)),0 < LENGTH [30; 20; 10] + 1) = (NONE,NONE,T) ⇔ T
+ir_lookup_5_1_1=⊢ (ALOOKUP (index_list [30; 20; 10] 1) 1,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 1 − (1 + 1)),1 < LENGTH [30; 20; 10] + 1) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_5_1_2=⊢ (ALOOKUP (index_list [30; 20; 10] 1) 2,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 1 − (2 + 1)),2 < LENGTH [30; 20; 10] + 1) = (SOME 20,SOME 20,T) ⇔ T
+ir_lookup_5_1_3=⊢ (ALOOKUP (index_list [30; 20; 10] 1) 3,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 1 − (3 + 1)),3 < LENGTH [30; 20; 10] + 1) = (SOME 30,SOME 30,T) ⇔ T
+ir_lookup_5_1_4=⊢ (ALOOKUP (index_list [30; 20; 10] 1) 4,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 1 − (4 + 1)),4 < LENGTH [30; 20; 10] + 1) = (NONE,SOME 30,F) ⇔ T
+ir_lookup_5_1_5=⊢ (ALOOKUP (index_list [30; 20; 10] 1) 5,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 1 − (5 + 1)),5 < LENGTH [30; 20; 10] + 1) = (NONE,SOME 30,F) ⇔ T
+ir_lookup_5_1_900=⊢ (ALOOKUP (index_list [30; 20; 10] 1) 900,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 1 − (900 + 1)),900 < LENGTH [30; 20; 10] + 1) = (NONE,SOME 30,F) ⇔ T
+ir_output_5_4=⊢ index_list [30; 20; 10] 4 = [(6,30); (5,20); (4,10)] ⇔ T
+ir_recover_5_4=⊢ MAP (λp. (FST p,SND p,SOME [30; 20; 10]❲LENGTH [30; 20; 10] − (FST p − 4 + 1)❳)) (index_list [30; 20; 10] 4) = [(6,30,SOME 30); (5,20,SOME 20); (4,10,SOME 10)] ⇔ T
+ir_lookup_5_4_0=⊢ (ALOOKUP (index_list [30; 20; 10] 4) 0,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 4 − (0 + 1)),0 < LENGTH [30; 20; 10] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_5_4_1=⊢ (ALOOKUP (index_list [30; 20; 10] 4) 1,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 4 − (1 + 1)),1 < LENGTH [30; 20; 10] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_5_4_2=⊢ (ALOOKUP (index_list [30; 20; 10] 4) 2,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 4 − (2 + 1)),2 < LENGTH [30; 20; 10] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_5_4_3=⊢ (ALOOKUP (index_list [30; 20; 10] 4) 3,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 4 − (3 + 1)),3 < LENGTH [30; 20; 10] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_5_4_4=⊢ (ALOOKUP (index_list [30; 20; 10] 4) 4,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 4 − (4 + 1)),4 < LENGTH [30; 20; 10] + 4) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_5_4_6=⊢ (ALOOKUP (index_list [30; 20; 10] 4) 6,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 4 − (6 + 1)),6 < LENGTH [30; 20; 10] + 4) = (SOME 30,SOME 30,T) ⇔ T
+ir_lookup_5_4_7=⊢ (ALOOKUP (index_list [30; 20; 10] 4) 7,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 4 − (7 + 1)),7 < LENGTH [30; 20; 10] + 4) = (NONE,SOME 30,F) ⇔ T
+ir_lookup_5_4_8=⊢ (ALOOKUP (index_list [30; 20; 10] 4) 8,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 4 − (8 + 1)),8 < LENGTH [30; 20; 10] + 4) = (NONE,SOME 30,F) ⇔ T
+ir_lookup_5_4_900=⊢ (ALOOKUP (index_list [30; 20; 10] 4) 900,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 4 − (900 + 1)),900 < LENGTH [30; 20; 10] + 4) = (NONE,SOME 30,F) ⇔ T
+ir_output_5_99=⊢ index_list [30; 20; 10] 99 = [(101,30); (100,20); (99,10)] ⇔ T
+ir_recover_5_99=⊢ MAP (λp. (FST p,SND p,SOME [30; 20; 10]❲LENGTH [30; 20; 10] − (FST p − 99 + 1)❳)) (index_list [30; 20; 10] 99) = [(101,30,SOME 30); (100,20,SOME 20); (99,10,SOME 10)] ⇔ T
+ir_lookup_5_99_0=⊢ (ALOOKUP (index_list [30; 20; 10] 99) 0,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 99 − (0 + 1)),0 < LENGTH [30; 20; 10] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_5_99_1=⊢ (ALOOKUP (index_list [30; 20; 10] 99) 1,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 99 − (1 + 1)),1 < LENGTH [30; 20; 10] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_5_99_2=⊢ (ALOOKUP (index_list [30; 20; 10] 99) 2,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 99 − (2 + 1)),2 < LENGTH [30; 20; 10] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_5_99_98=⊢ (ALOOKUP (index_list [30; 20; 10] 99) 98,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 99 − (98 + 1)),98 < LENGTH [30; 20; 10] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_5_99_99=⊢ (ALOOKUP (index_list [30; 20; 10] 99) 99,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 99 − (99 + 1)),99 < LENGTH [30; 20; 10] + 99) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_5_99_101=⊢ (ALOOKUP (index_list [30; 20; 10] 99) 101,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 99 − (101 + 1)),101 < LENGTH [30; 20; 10] + 99) = (SOME 30,SOME 30,T) ⇔ T
+ir_lookup_5_99_102=⊢ (ALOOKUP (index_list [30; 20; 10] 99) 102,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 99 − (102 + 1)),102 < LENGTH [30; 20; 10] + 99) = (NONE,SOME 30,F) ⇔ T
+ir_lookup_5_99_103=⊢ (ALOOKUP (index_list [30; 20; 10] 99) 103,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 99 − (103 + 1)),103 < LENGTH [30; 20; 10] + 99) = (NONE,SOME 30,F) ⇔ T
+ir_lookup_5_99_900=⊢ (ALOOKUP (index_list [30; 20; 10] 99) 900,LLOOKUP [30; 20; 10] (LENGTH [30; 20; 10] + 99 − (900 + 1)),900 < LENGTH [30; 20; 10] + 99) = (NONE,SOME 30,F) ⇔ T
+ir_output_6_0=⊢ index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 0 = [(11,0); (10,1); (9,2); (8,3); (7,4); (6,5); (5,6); (4,7); (3,8); (2,9); (1,10); (0,11)] ⇔ T
+ir_recover_6_0=⊢ MAP (λp. (FST p,SND p,SOME [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11]❲LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] − (FST p − 0 + 1)❳)) (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 0) = [(11,0,SOME 0); (10,1,SOME 1); (9,2,SOME 2); (8,3,SOME 3); (7,4,SOME 4); (6,5,SOME 5); (5,6,SOME 6); (4,7,SOME 7); (3,8,SOME 8); (2,9,SOME 9); (1,10,SOME 10); (0,11,SOME 11)] ⇔ T
+ir_lookup_6_0_0=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 0) 0,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0 − (0 + 1)),0 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0) = (SOME 11,SOME 11,T) ⇔ T
+ir_lookup_6_0_1=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 0) 1,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0 − (1 + 1)),1 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_6_0_2=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 0) 2,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0 − (2 + 1)),2 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0) = (SOME 9,SOME 9,T) ⇔ T
+ir_lookup_6_0_11=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 0) 11,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0 − (11 + 1)),11 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0) = (SOME 0,SOME 0,T) ⇔ T
+ir_lookup_6_0_12=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 0) 12,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0 − (12 + 1)),12 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_6_0_13=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 0) 13,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0 − (13 + 1)),13 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_6_0_900=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 0) 900,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0 − (900 + 1)),900 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 0) = (NONE,SOME 0,F) ⇔ T
+ir_output_6_1=⊢ index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 1 = [(12,0); (11,1); (10,2); (9,3); (8,4); (7,5); (6,6); (5,7); (4,8); (3,9); (2,10); (1,11)] ⇔ T
+ir_recover_6_1=⊢ MAP (λp. (FST p,SND p,SOME [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11]❲LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] − (FST p − 1 + 1)❳)) (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 1) = [(12,0,SOME 0); (11,1,SOME 1); (10,2,SOME 2); (9,3,SOME 3); (8,4,SOME 4); (7,5,SOME 5); (6,6,SOME 6); (5,7,SOME 7); (4,8,SOME 8); (3,9,SOME 9); (2,10,SOME 10); (1,11,SOME 11)] ⇔ T
+ir_lookup_6_1_0=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 1) 0,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1 − (0 + 1)),0 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1) = (NONE,NONE,T) ⇔ T
+ir_lookup_6_1_1=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 1) 1,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1 − (1 + 1)),1 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1) = (SOME 11,SOME 11,T) ⇔ T
+ir_lookup_6_1_2=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 1) 2,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1 − (2 + 1)),2 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1) = (SOME 10,SOME 10,T) ⇔ T
+ir_lookup_6_1_12=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 1) 12,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1 − (12 + 1)),12 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1) = (SOME 0,SOME 0,T) ⇔ T
+ir_lookup_6_1_13=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 1) 13,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1 − (13 + 1)),13 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_6_1_14=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 1) 14,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1 − (14 + 1)),14 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_6_1_900=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 1) 900,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1 − (900 + 1)),900 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 1) = (NONE,SOME 0,F) ⇔ T
+ir_output_6_4=⊢ index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 4 = [(15,0); (14,1); (13,2); (12,3); (11,4); (10,5); (9,6); (8,7); (7,8); (6,9); (5,10); (4,11)] ⇔ T
+ir_recover_6_4=⊢ MAP (λp. (FST p,SND p,SOME [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11]❲LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] − (FST p − 4 + 1)❳)) (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 4) = [(15,0,SOME 0); (14,1,SOME 1); (13,2,SOME 2); (12,3,SOME 3); (11,4,SOME 4); (10,5,SOME 5); (9,6,SOME 6); (8,7,SOME 7); (7,8,SOME 8); (6,9,SOME 9); (5,10,SOME 10); (4,11,SOME 11)] ⇔ T
+ir_lookup_6_4_0=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 4) 0,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4 − (0 + 1)),0 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_6_4_1=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 4) 1,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4 − (1 + 1)),1 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_6_4_2=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 4) 2,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4 − (2 + 1)),2 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_6_4_3=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 4) 3,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4 − (3 + 1)),3 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4) = (NONE,NONE,T) ⇔ T
+ir_lookup_6_4_4=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 4) 4,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4 − (4 + 1)),4 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4) = (SOME 11,SOME 11,T) ⇔ T
+ir_lookup_6_4_15=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 4) 15,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4 − (15 + 1)),15 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4) = (SOME 0,SOME 0,T) ⇔ T
+ir_lookup_6_4_16=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 4) 16,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4 − (16 + 1)),16 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_6_4_17=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 4) 17,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4 − (17 + 1)),17 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_6_4_900=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 4) 900,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4 − (900 + 1)),900 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 4) = (NONE,SOME 0,F) ⇔ T
+ir_output_6_99=⊢ index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 99 = [(110,0); (109,1); (108,2); (107,3); (106,4); (105,5); (104,6); (103,7); (102,8); (101,9); (100,10); (99,11)] ⇔ T
+ir_recover_6_99=⊢ MAP (λp. (FST p,SND p,SOME [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11]❲LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] − (FST p − 99 + 1)❳)) (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 99) = [(110,0,SOME 0); (109,1,SOME 1); (108,2,SOME 2); (107,3,SOME 3); (106,4,SOME 4); (105,5,SOME 5); (104,6,SOME 6); (103,7,SOME 7); (102,8,SOME 8); (101,9,SOME 9); (100,10,SOME 10); (99,11,SOME 11)] ⇔ T
+ir_lookup_6_99_0=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 99) 0,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99 − (0 + 1)),0 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_6_99_1=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 99) 1,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99 − (1 + 1)),1 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_6_99_2=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 99) 2,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99 − (2 + 1)),2 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_6_99_98=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 99) 98,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99 − (98 + 1)),98 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99) = (NONE,NONE,T) ⇔ T
+ir_lookup_6_99_99=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 99) 99,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99 − (99 + 1)),99 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99) = (SOME 11,SOME 11,T) ⇔ T
+ir_lookup_6_99_110=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 99) 110,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99 − (110 + 1)),110 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99) = (SOME 0,SOME 0,T) ⇔ T
+ir_lookup_6_99_111=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 99) 111,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99 − (111 + 1)),111 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_6_99_112=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 99) 112,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99 − (112 + 1)),112 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99) = (NONE,SOME 0,F) ⇔ T
+ir_lookup_6_99_900=⊢ (ALOOKUP (index_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] 99) 900,LLOOKUP [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] (LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99 − (900 + 1)),900 < LENGTH [0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11] + 99) = (NONE,SOME 0,F) ⇔ T

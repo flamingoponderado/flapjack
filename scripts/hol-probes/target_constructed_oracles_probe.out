@@ -1,0 +1,30 @@
+oracles_ffi_step_full_statement=next_interference mc ffi ms =
+SOME (FfiApp index new_bytes ms_pre ms_post,mc',ffi') ⇒
+target_io_regs mc ffi ms 0 name r =
+(if
+   MEM r mc.callee_saved_regs ∨ ¬(r < mc.target.config.reg_count) ∨
+   MEM r mc.target.config.avoid_regs
+ then
+   NONE
+ else SOME (mc.target.get_reg ms_post r)) ∧
+target_io_fp_regs mc ffi ms 0 i = mc.target.get_fp_reg ms_post i ∧
+target_io_regs mc ffi ms (SUC k) name r =
+target_io_regs mc' ffi' ms_post k name r ∧
+target_io_fp_regs mc ffi ms (SUC k) i =
+target_io_fp_regs mc' ffi' ms_post k i ∧
+target_cc_regs mc ffi ms k r = target_cc_regs mc' ffi' ms_post k r ∧
+target_cc_fp_regs mc ffi ms k i = target_cc_fp_regs mc' ffi' ms_post k i
+oracles_cc_step_full_statement=next_interference mc ffi ms = SOME (CcApp a1 a2 ms_pre ms_post,mc',ffi') ⇒
+target_cc_regs mc ffi ms 0 r =
+(if
+   MEM r mc.callee_saved_regs ∨ r = mc.ptr_reg ∨
+   ¬(r < mc.target.config.reg_count) ∨ MEM r mc.target.config.avoid_regs
+ then
+   NONE
+ else SOME (mc.target.get_reg ms_post r)) ∧
+target_cc_fp_regs mc ffi ms 0 i = mc.target.get_fp_reg ms_post i ∧
+target_cc_regs mc ffi ms (SUC k) r = target_cc_regs mc' ffi' ms_post k r ∧
+target_cc_fp_regs mc ffi ms (SUC k) i =
+target_cc_fp_regs mc' ffi' ms_post k i ∧
+target_io_regs mc ffi ms k name r = target_io_regs mc' ffi' ms_post k name r ∧
+target_io_fp_regs mc ffi ms k i = target_io_fp_regs mc' ffi' ms_post k i

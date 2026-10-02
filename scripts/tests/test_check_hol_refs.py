@@ -3476,5 +3476,107 @@ class MachineIeeeGeneratedDeclarationsTest(unittest.TestCase):
                 self.assertIn("52/11/64", fn(root))
 
 
+
+
+
+
+class FmapResultObservationTest(unittest.TestCase):
+    def fixture(self):
+        import json
+        root = CHECKER["ROOT"]
+        records = json.loads((root / "docs/HOL-THEOREM-MAP.json").read_text())
+        return root, records
+
+    def errors(self, signature=None, producers=("toFmap",), records=None, root=None):
+        default_root, default_records = self.fixture()
+        return CHECKER["fmap_result_observation_errors"](
+            ["import Flapjack.Misc.BalancedMap.Semantics"], "Fixture",
+            signature or "theorem observer : (toFmap cmp tree).lookup keys ≠ none → True",
+            producers, default_records if records is None else records,
+            default_root if root is None else root)
+
+    def test_reviewed_real_producer(self):
+        self.assertEqual([], self.errors())
+
+    def test_unused_producer(self):
+        self.assertTrue(any("unused" in e for e in self.errors("theorem observer : True")))
+
+    def test_unreviewed_producer(self):
+        self.assertTrue(any("manifest" in e for e in self.errors(records=[])))
+
+    def test_nonmap_producer(self):
+        self.assertTrue(any("return HolFiniteMapExact" in e for e in
+                            self.errors("theorem observer : keySet cmp key = keys", ("keySet",))))
+
+    def test_unqualified_and_missing_witness(self):
+        root, records = self.fixture()
+        source = (root / "Flapjack/Misc/BalancedMap/Semantics.lean").read_text()
+        for alteration, expected in [
+            (source.replace("(fmap_as_finite_support_result)", ""), "qualification"),
+            (source.replace("holFmapAsFiniteSupportResultWitness_toFmap", "removedWitness"), "witness"),
+        ]:
+            with tempfile.TemporaryDirectory() as directory:
+                temporary = Path(directory)
+                path = temporary / "Flapjack/Misc/BalancedMap/Semantics.lean"
+                path.parent.mkdir(parents=True)
+                path.write_text(alteration)
+                self.assertTrue(any(expected in e for e in self.errors(records=records, root=temporary)))
+
+    def test_empty_duplicate_unknown_names(self):
+        for names in [(), ("toFmap", "toFmap"), ("unknown",)]:
+            self.assertTrue(self.errors(producers=names))
+
+    def test_scanner_retains_producer_list(self):
+        source = ['@[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "to_fmap_key_set"',
+                  ' (fmap_as_finite_support_result_observations := [BalancedMap.toFmap])]',
+                  'theorem observer : True := by trivial']
+        self.assertEqual(("BalancedMap.toFmap",), next(SITES(source, include_result_observations=True))[-1])
+
+
+class FmapResultObservationShadowTest(unittest.TestCase):
+    def test_observer_binder_cannot_impersonate_producer(self):
+        fixture = FmapResultObservationTest()
+        errors = fixture.errors("theorem observer (toFmap : Nat) : toFmap = toFmap")
+        self.assertTrue(any("shadowed" in error for error in errors))
+
+
+class FmapResultObservationLiteralTest(unittest.TestCase):
+    def test_string_literal_does_not_establish_dependency(self):
+        errors = FmapResultObservationTest().errors('theorem observer : "toFmap" = "toFmap"')
+        self.assertTrue(any("unused" in error for error in errors))
+
+
+class FmapResultObservationQualifiedTest(unittest.TestCase):
+    def test_fully_qualified_producer(self):
+        producer = "Flapjack.Misc.BalancedMap.toFmap"
+        fixture = FmapResultObservationTest()
+        self.assertEqual([], fixture.errors(
+            f"theorem observer : ({producer} cmp tree).lookup keys ≠ none → True", (producer,)))
+
+    def test_local_shadow_rejected(self):
+        root, records = FmapResultObservationTest().fixture()
+        errors = CHECKER["fmap_result_observation_errors"](
+            ["import Flapjack.Misc.BalancedMap.Semantics", "def toFmap : Nat := 0"],
+            "Fixture", "theorem observer : toFmap = toFmap", ("toFmap",), records, root)
+        self.assertTrue(any("shadowed" in error for error in errors))
+
+
+class FmapResultObservationAmbiguityTest(unittest.TestCase):
+    def test_unqualified_imported_shadow_rejected(self):
+        root, records = FmapResultObservationTest().fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            temporary = Path(directory)
+            producer = temporary / "Flapjack/Misc/BalancedMap/Semantics.lean"
+            producer.parent.mkdir(parents=True)
+            producer.write_text((root / "Flapjack/Misc/BalancedMap/Semantics.lean").read_text())
+            shadow = temporary / "Flapjack/Other.lean"
+            shadow.write_text("namespace Other\ndef toFmap : Nat := 0\nend Other\n")
+            errors = CHECKER["fmap_result_observation_errors"](
+                ["import Flapjack.Misc.BalancedMap.Semantics", "import Flapjack.Other"],
+                "Fixture", "theorem observer : (toFmap cmp tree).lookup keys ≠ none → True",
+                ("toFmap",), records, temporary)
+            self.assertTrue(any("ambiguous" in error for error in errors))
+
+
 if __name__ == "__main__":
     unittest.main()

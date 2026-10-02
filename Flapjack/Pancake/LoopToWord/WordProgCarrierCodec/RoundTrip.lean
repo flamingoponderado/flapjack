@@ -10,6 +10,8 @@ def wordLangArithToHOL {width : Nat} :
   | .longDiv a b c d e => some (.longDiv a b c d e)
   | .addCarry _ _ _ _ _ => none
   | .cakeAddCarry a b c d => some (.addCarry a b c d)
+  | .addOverflow a b c d => some (.addOverflow a b c d)
+  | .subOverflow a b c d => some (.subOverflow a b c d)
   | .div a b c => some (.div a b c)
   | .binOp op a b c => some (.binop op a b c)
   | .shift op a b c => some (.shift op a b c)

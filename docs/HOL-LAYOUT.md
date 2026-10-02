@@ -46,36 +46,49 @@ the cited name occurs in one of the two syntactic forms.
 | --- | --- |
 | `panLangScript.sml` | `Flapjack/Pancake/PanLang.lean` (exact `mlstring`-named syntax over the faithful carriers in `Flapjack/Pancake/PanLang/Shape.lean`, `Flapjack/Pancake/PanLang/Exp.lean` and `Flapjack/Pancake/PanLang/Prog.lean` and `Flapjack/Pancake/PanLang/Decl.lean` (`fun_decl`, `decl`, `struct_info`, byte-ranged production roundtrips and the MlString-keyed struct-context pass-boundary bridge), and follow-ups) |
 | `compiler/backend/word_simpScript.sml` | `Flapjack/Compiler/Backend/WordSimp.lean` |
+| `compiler/backend/proofs/word_simpProofScript.sml` | `Flapjack/Compiler/Backend/WordSimp/Proofs/` (`GcWordConst.lean` `is_gc_word_const`) |
 | `compiler/backend/proofs/wordConvsProofScript.sml` | `Flapjack/Pancake/Proofs/WordConvs/` |
 | `compiler/backend/wordLangScript.sml` | `Flapjack/Pancake/WordLang.lean` |
 | `compiler/backend/backend_commonScript.sml` | `Flapjack/Compiler/Backend/BackendCommon.lean` |
 | `compiler/backend/semantics/wordConvsScript.sml` | `Flapjack/Pancake/WordConvs.lean` |
-| `compiler/backend/stackLangScript.sml` | `Flapjack/Compiler/Backend/StackLang.lean`, `Flapjack/Compiler/Encoders/Asm.lean`, `Flapjack/Compiler/Backend/StackLang/Prog.lean`, `Flapjack/Compiler/Backend/StackCarrier.lean`, `Flapjack/Compiler/Backend/MlStringBridge.lean` |
+| `compiler/backend/stackLangScript.sml` | `Flapjack/Compiler/Backend/StackLang.lean`, `Flapjack/Compiler/Encoders/Asm.lean`, `Flapjack/Compiler/Backend/StackLang/Prog.lean`, `Flapjack/Compiler/Backend/StackLang/Overloads.lean` (`While`/`move`/arithmetic overloads, `list_Seq`, `gc_stub_location`), `Flapjack/Compiler/Backend/StackCarrier.lean`, `Flapjack/Compiler/Backend/MlStringBridge.lean` |
 | `basis/pure/mlstringScript.sml` | `Flapjack/Basis/Pure/MlString.lean` (`mlstring = implode string`, `string = char list`; HOL `char` modeled by `HolChar = BitVec 8`, the canonical 256-element carrier); kernel-checked `String`<->`mlstring` bridge and stack-program embedding in `Flapjack/Compiler/Backend/MlStringBridge.lean` |
 | `basis/pure/mllistScript.sml` (`sort`) | `Flapjack/Basis/Pure/MlList.lean` (tagged `sort_def`, with an untagged clause-for-clause rendering of HOL `mergesort_tail`) |
 | `compiler/backend/word_allocScript.sml` | `Flapjack/Compiler/Backend/WordAlloc/` (`Expressions.lean` exact expression renaming and live sets) |
+| `compiler/backend/word_removeScript.sml` | `Flapjack/Compiler/Backend/WordRemove.lean` |
+| `compiler/backend/word_unreachScript.sml` | `Flapjack/Compiler/Backend/WordUnreach.lean` |
+| `compiler/backend/word_copyScript.sml` | `Flapjack/Compiler/Backend/WordCopy.lean` |
+| `misc/miscScript.sml` (`anub`) | `Flapjack/Misc/Anub.lean` |
+| `compiler/backend/data_to_wordScript.sml` | `Flapjack/Compiler/Backend/DataToWord/` (`Config.lean` gc_kind/config and pointer-layout helpers) |
+| `compiler/backend/proofs/word_gcFunctionsScript.sml` | `Flapjack/Compiler/Backend/WordGcFunctions.lean` (copying, generational and partial GC definitions and `word_gc_fun`); `WordGcFunctions/Roots.lean` (root `EVERY2`/`LENGTH` theorems) |
 | `compiler/backend/proofs/word_allocProofScript.sml` | `Flapjack/Compiler/Backend/WordAlloc/Proofs/` (`StrongLocalsRel.lean` live-scoped lookup transport) |
+| `compiler/backend/proofs/word_unreachProofScript.sml` | `Flapjack/Compiler/Backend/WordUnreach/Proofs.lean` |
+| `compiler/backend/proofs/word_copyProofScript.sml` | `Flapjack/Compiler/Backend/WordCopy/Proofs/` (`Invariant.lean` CPstate_inv group, `Models.lean` CPstate_models group, `Move.lean` copy_prop_move and invariant preservation, `Store.lean` move/store models and expression congruences, `Inst.lean` copy_prop_inst semantics, `Correct.lean` copy_prop_correct and evaluate_copy_prop) |
 | `compiler/backend/semantics/wordSemScript.sml` | `Flapjack/Compiler/Backend/Semantics/WordSem/` (`State.lean` carriers, `Accessors.lean` state accessors and `word_exp`, `Env.lean` env/stack/cut helpers, `CallHelpers.lean` call/loop helpers, `Alloc.lean` find_code/gc/alloc/assign, `ShMem.lean` sh_mem_*/share_inst, `Inst.lean` inst_def, `Evaluate.lean` evaluate_def, `EvaluateClock.lean` clock lemmas, `EvaluateInd.lean` rebound evaluate_ind/evaluate_def, `Semantics.lean` semantics_def); the older call-aware executable analogue `Flapjack/WordSemantics.lean` is not a port |
 | `compiler/backend/semantics/wordPropsScript.sml` | `Flapjack/Compiler/Backend/Semantics/WordSem/EnvListSupport.lean` (`env_to_list_lookup_equiv`, over the exact `wordSemEnvToList` result and Spt lookup carriers); `Flapjack/Compiler/Backend/Semantics/WordSem/Props/` (`EvaluateAddClock.lean` clock-constancy lemmas and `evaluate_add_clock`) |
-| `compiler/backend/semantics/stackPropsScript.sml` | `Flapjack/Compiler/Backend/StackProps.lean` (recursive `stack_asm_ok` clauses and `addr_ok`, linked to the `asm_config` predicates) |
+| `compiler/backend/semantics/stackPropsScript.sml` | `Flapjack/Compiler/Backend/StackProps.lean` (recursive `stack_asm_ok` clauses and `addr_ok`, linked to the `asm_config` predicates; `StackProps/EvaluateAddClock.lean` and `StackProps/EvaluateConsts.lean` prove `evaluate_add_clock` and `evaluate_consts` over the exact StackSem evaluator; `StackProps/CallArgs.lean` `call_args_def`) |
 | `compiler/backend/semantics/backendPropsScript.sml` | `Flapjack/Compiler/Backend/BackendProps.lean` (nonzero-entry label restriction and set support) |
-| `compiler/backend/semantics/stackSemScript.sml` | `Flapjack/Compiler/Backend/Semantics/StackSem/State.lean` (exact state/result carriers and canonical finite-support state roundtrip), `StackSem/StateOps.lean` (memory/register/clock primitives), `StackSem/Control.lean` (code lookup and clock clamp/bound), `StackSem/Bitmap.lean` (polymorphic bitmap filter/map and length theorems), `StackSem/WordBitmap.lean` (word bit length and bitmap decoding), `StackSem/StackCodec.lean` (descriptor and recursive stack codecs; evaluator remains open) |
+| `compiler/backend/semantics/stackSemScript.sml` | `Flapjack/Compiler/Backend/Semantics/StackSem/State.lean` (exact state/result carriers and canonical finite-support state roundtrip), `StackSem/StateOps.lean` (memory/register/clock primitives), `StackSem/Control.lean` (code lookup and clock clamp/bound), `StackSem/Bitmap.lean` (polymorphic bitmap filter/map and length theorems), `StackSem/WordBitmap.lean` (word bit length and bitmap decoding), `StackSem/StackCodec.lean` (descriptor and recursive stack codecs), `StackSem/Evaluate.lean` (assembled total evaluator), `StackSem/EvaluateDef.lean` (`evaluate` and the 34-clause `evaluate_def`), `StackSem/Semantics.lean` (observational `semantics_def`) |
 | `compiler/encoders/asm/asmScript.sml` | `Flapjack/Compiler/Encoders/Asm.lean` (asm_config validity predicates: `reg_ok`, `fp_reg_ok`, `reg_imm_ok`, `offset_ok`, `arith_ok`, `fp_ok`, `cmp_ok`, `inst_ok`; exact carriers `reg_imm`, `addr`, `inst`, `arith`, `fp`, `binop`, `cmp`, `memop`, `asm`) |
+| `compiler/encoders/asm/asmSemScript.sml` | `Flapjack/Compiler/Encoders/AsmSem/` (`State.lean` asm_state, `Arithmetic.lean` register/arith updates, `FpUpdates.lean` fp_upd, `Memory.lean` addr/read_mem_word/write_mem_word, `MemOps.lean` mem_load/mem_store/mem_op, `Step.lean` inst/jump_to_offset/asm/asm_step) |
+| `compiler/encoders/asm/asmPropsScript.sml` | `Flapjack/Compiler/Encoders/AsmProps/` (`Target.lean` target carrier and target_state_rel, `Encoding.lean` enc_ok/target_ok, `Interference.lean`, `Assertions.lean` asserts/asserts2, `PcCoverage.lean` all_pcs, `Memory.lean` memory-word invariants, `EncoderCorrect.lean` encoder_correct) |
 | `compiler/backend/labLangScript.sml` | `Flapjack/Compiler/Backend/LabLang.lean` (generic HOL `lab`, `line`, and `sec` syntax) |
 | `compiler/backend/lab_to_targetScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`cbw_to_asm` carrier boundary only; target encoding remains open), `Flapjack/Compiler/Backend/LabToTarget/` (exact encoding/labels/positions/second-pass/padding/remove-labels/shmem-info and the `config`/`compile_lab`/`compile` entry) |
 | `compiler/backend/lab_filterScript.sml` | `Flapjack/Compiler/Backend/LabFilter.lean` |
 | `misc/miscScript.sml` (`list_subset`) | `Flapjack/Misc/ListSubset.lean` |
-| `compiler/backend/proofs/lab_to_targetProofScript.sml` | `Flapjack/Compiler/Backend/LabToTarget/` (code similarity and structural preservation) |
+| `compiler/backend/proofs/lab_to_targetProofScript.sml` | `Flapjack/Compiler/Backend/LabToTarget/` (code similarity and structural preservation; `ShareMemDomain.lean` share_mem_domain_code_rel, `ShareMemState.lean` share_mem_state_rel) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labSemScript.sml` | `Flapjack/Compiler/Backend/LabSem.lean` (`is_Label`) |
 | `semantics/astScript.sml` | `Flapjack/AstHOL.lean` (exact `ast$shift` carrier; the remaining `ast` declarations are an open inventory item) |
 | `compiler/backend/stack_namesScript.sml` | `Flapjack/Compiler/Backend/StackNames.lean` |
+| `compiler/backend/proofs/stack_namesProofScript.sml` | `Flapjack/Compiler/Backend/StackNames/` (`NamesOk.lean` names_ok lemmas, `AsmAdmissibility/` stack_asm_ok, `Proofs/RenameState.lean` rename_state group over the MAP_KEYS rendering in `Flapjack/FiniteMap/MapKeys.lean`, `Proofs/CompCorrect.lean` comp_correct, `Proofs/CompileSemantics.lean` compile_semantics(_alt), `Proofs/MakeInit.lean` make_init_def/make_init_semantics, `Proofs/LabelsCallArgs.lean` stack_names_lab_pres/stack_names_call_args) |
 | `compiler/backend/riscv/riscv_configScript.sml` | `Flapjack/Compiler/Backend/RiscVConfig/Names.lean` |
 | `compiler/backend/stackLangScript.sml` (shared-word `prog`) | `Flapjack/Compiler/Backend/StackCarrier.lean` |
 | `compiler/backend/stack_removeScript.sml` | `Flapjack/Compiler/Backend/StackRemove.lean` (`max_stack_alloc`, `word_offset`, `store_list`, `store_length`, `stack_err_lab`, `halt_inst`; also the tagged stackLang instruction overloads `left_shift_inst`/`right_shift_inst`/`const_inst`/`load_inst`/`store_inst` over the exact `HolProg` carrier) |
 | `compiler/backend/proofs/stack_removeProofScript.sml` | `Flapjack/Compiler/Backend/StackRemove.lean` (`is_SOME_Word`, `read_mem`/`LENGTH_read_mem`, `addresses`/`IN_addresses`; `names_ok` Prop-shaped tag) |
-| `compiler/backend/stack_allocScript.sml` | `Flapjack/Compiler/Backend/StackAlloc.lean` (`next_lab`; executable pass counterpart remains `Flapjack/StackAlloc.lean`) |
+| `compiler/backend/proofs/stack_allocProofScript.sml` | `Flapjack/Compiler/Backend/StackAlloc/Proofs/` (`WordLemmas.lean` word/bit-length lemmas, `Bitmap.lean` bitmap list lemmas and `enc_dec_stack`, `GcBitmaps.lean` proof-side GC definitions, `Unroll.lean` bitmap-collector unrolling theorems, `Submap.lean` SUBMAP lemmas, `CodeThm/` GC code simulation theorems) |
+| `compiler/backend/stack_allocScript.sml` | `Flapjack/Compiler/Backend/StackAlloc.lean` (generic `next_lab`; executable pass counterpart remains `Flapjack/StackAlloc.lean`); `StackAlloc/GcCode.lean` (GC stub code); `StackAlloc/Compile.lean` (`next_lab`, `comp`, `prog_comp`, `stubs`, `compile` over `HolProg`) |
 | `compiler/backend/stack_to_labScript.sml` | `Flapjack/Compiler/Backend/StackToLab.lean` (`flatten` and `prog_to_section`; `compile` remains open) |
 | `compiler/backend/reg_alloc/parmoveScript.sml` | `Flapjack/Compiler/Backend/Parmove.lean` |
 | `compiler/backend/word_to_stackScript.sml` | `Flapjack/Compiler/Backend/WordToStack.lean`, `Flapjack/Compiler/Backend/WordToStackRegFormat.lean` |
@@ -111,6 +124,7 @@ the cited name occurs in one of the two syntactic forms.
 | `semantics/loopSemScript.sml` | `Flapjack/Pancake/Semantics/LoopSem.lean`; exact width-indexed `state` carrier + production bridge in `Flapjack/Pancake/Semantics/LoopSemState.lean` (untagged pending exact sub-carriers) |
 | `semantics/ffi/ffiScript.sml` | `Flapjack/Ffi.lean` (production FFI state/events), `Flapjack/FfiHOL.lean` (exact ffi_outcome/oracle_result/shmem_op/ffiname/oracle/oracle_function/io_event/final_event/ffi_state/ffi_result carriers + call_FFI) |
 | `semantics/fpSemScript.sml` | `Flapjack/FpSemHOL.lean` (tagged `fpfma_def`, over the untagged HOL `binary_ieee`/`machine_ieee` renderings in `Flapjack/Misc/BinaryIeee*.lean` and `MachineIeee.lean`) |
+| `semantics/proofs/evaluatePropsScript.sml` | `Flapjack/EvaluateProps.lean` |
 | `semantics/proofs/semanticsPropsScript.sml` | `Flapjack/SemanticsProps.lean` (structural behavior and `implements'` analogue; HOL `llist` representation bridge remains open) |
 | `proofs/pan_simpProofScript.sml` | `Flapjack/Pancake/Proofs/PanSimp.lean`, `PanSimp/Evaluate.lean` |
 | `proofs/pan_to_wordProofScript.sml` | `Flapjack/Pancake/Proofs/PanToWord.lean` |
@@ -135,3 +149,44 @@ The pinned external `hol4/src/coretypes/optionScript.sml` counterpart is
 The pinned external `hol4/src/coalgebras/llistScript.sml` counterpart is
 `Flapjack/Misc/LList.lean`; `lprefix_lubScript.sml` chain and least-upper-bound
 declarations remain in `Flapjack/Misc/LprefixLub.lean`.
+
+The pinned external `HOL/src/n-bit/byteScript.sml` counterpart is
+`Flapjack/Byte.lean` (byte extraction and arbitrary-count word serialization).
+
+The pinned external `HOL/src/n-bit/alignmentScript.sml` counterpart is
+`Flapjack/Misc/Alignment.lean` (`align`, `aligned`, `byte_align`, `byte_aligned`, and
+`wordsScript.sml`'s `word_slice`), with production bridges in `Flapjack/Misc/Alignment/Production.lean`.
+
+The pinned external `HOL/src/pred_set/src/pred_setScript.sml` counterpart is
+`Flapjack/Misc/PredSet.lean` (the left inverse `LINV_OPT`/`LINV`, sets as predicates).
+
+The pinned external `HOL/src/num/extra_theories/logrootScript.sml` counterpart is
+`Flapjack/Misc/Logroot.lean` (the specified `LOG`, rendered by Hilbert choice like HOL's
+`new_specification`), and `HOL/src/num/extra_theories/bitScript.sml`'s is `Flapjack/Misc/Bit.lean`
+(`LOG2`).
+
+The pinned external `hol4/src/finite_maps/sptreeScript.sml` counterpart is
+`Flapjack/Misc/Sptree.lean` with submodules under `Flapjack/Misc/Sptree/` (for example
+`Map.lean` for `map_def`/`lookup_map` and `InterEq.lean` for `inter_eq_def`).
+
+The pinned external `HOL/src/sort/mergesortScript.sml` counterpart is
+`Flapjack/Misc/Mergesort.lean` (the non-tail `sort2`/`sort3`/`merge`/`mergesortN`, their
+sortedness, and the tail-recursive correctness lemmas over the untagged tail rendering in
+`Flapjack/Basis/Pure/MlList.lean`).
+
+
+### Computed finite-map result observations
+
+`(fmap_as_finite_support_result_observations := [Producer, ...])` records
+only the canonical finite-support representation of explicitly named imported
+map producers used in a tagged declaration's type. Each producer must return
+`HolFiniteMapExact`, carry the standalone result qualifier, have its checked
+same-module lookup witness, and have a source-reviewed result manifest record.
+The observer has its own `reviewed_fmap_as_finite_support_result_observations`
+record with exactly the same producer list and a complete source comparison.
+Producer acceptance does not establish observer acceptance. The checker rejects
+unused, ambiguous, shadowed, unqualified, unreviewed, non-map, and unwitnessed
+producers. This narrow qualifier cannot combine with other representations and
+permits no changed quantifiers, hypotheses, evaluator, or conclusion. The
+syntactic checks and kernel witnesses do not prove cross-language equivalence;
+the complete observer still requires manual HOL source comparison.

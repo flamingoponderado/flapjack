@@ -1,0 +1,10 @@
+load "bossLib";
+load "balanced_mapTheory";
+open HolKernel Parse bossLib balanced_mapTheory;
+val _ = Globals.linewidth := 10000;
+fun checked label th = (if null(hyp th) then () else raise Fail "open HOL hypotheses"; print(label ^ "="); print_thm th; print "\n");
+val _ = checked "kse_equiv" key_set_equiv;
+val key_set_nonempty_replay = Tactical.prove (``good_cmp cmp ==> key_set cmp k <> {}``, Tactical.THEN (rw [pred_setTheory.EXTENSION], metis_tac [key_set_equiv]));
+val _ = checked "kse_nonempty" key_set_nonempty_replay;
+val _ = checked "kse_partition" key_set_partition;
+val _ = checked "kse_eq" key_set_eq;

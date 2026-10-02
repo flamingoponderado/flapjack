@@ -1,0 +1,63 @@
+target_io_regs_type=:(α, β, γ) machine_config ->
+δ ffi_state -> β -> num -> ffiname -> num -> α word option
+target_io_regs_definition=∀mc ffi ms k name r.
+  target_io_regs mc ffi ms k name r =
+  case interference_pos is_ffi_app mc ffi ms k of
+    NONE => NONE
+  | SOME n =>
+    case interference_app_seq mc ffi ms n of
+      NONE => NONE
+    | SOME (FfiApp v18 v19 v20 v21,v5) =>
+      if
+        MEM r mc.callee_saved_regs ∨ ¬(r < mc.target.config.reg_count) ∨
+        MEM r mc.target.config.avoid_regs
+      then
+        NONE
+      else SOME (mc.target.get_reg v21 r)
+    | SOME (CcApp v22 v23 v24 v25,v5) => NONE
+target_io_fp_regs_type=:(α, β, γ) machine_config -> δ ffi_state -> β -> num -> num -> word64
+target_io_fp_regs_definition=∀mc ffi ms k i.
+  target_io_fp_regs mc ffi ms k i =
+  case interference_pos is_ffi_app mc ffi ms k of
+    NONE => 0w
+  | SOME n =>
+    case interference_app_seq mc ffi ms n of
+      NONE => 0w
+    | SOME (FfiApp v18 v19 v20 v21,v5) => mc.target.get_fp_reg v21 i
+    | SOME (CcApp v22 v23 v24 v25,v5) => 0w
+target_cc_regs_type=:(α, β, γ) machine_config -> δ ffi_state -> β -> num -> num -> α word option
+target_cc_regs_definition=∀mc ffi ms k r.
+  target_cc_regs mc ffi ms k r =
+  case interference_pos (λapp. ¬is_ffi_app app) mc ffi ms k of
+    NONE => NONE
+  | SOME n =>
+    case interference_app_seq mc ffi ms n of
+      NONE => NONE
+    | SOME (FfiApp v18 v19 v20 v21,v5) => NONE
+    | SOME (CcApp v22 v23 v24 v25,v5) =>
+      if
+        MEM r mc.callee_saved_regs ∨ r = mc.ptr_reg ∨
+        ¬(r < mc.target.config.reg_count) ∨ MEM r mc.target.config.avoid_regs
+      then
+        NONE
+      else SOME (mc.target.get_reg v25 r)
+target_cc_fp_regs_type=:(α, β, γ) machine_config -> δ ffi_state -> β -> num -> num -> word64
+target_cc_fp_regs_definition=∀mc ffi ms k i.
+  target_cc_fp_regs mc ffi ms k i =
+  case interference_pos (λapp. ¬is_ffi_app app) mc ffi ms k of
+    NONE => 0w
+  | SOME n =>
+    case interference_app_seq mc ffi ms n of
+      NONE => 0w
+    | SOME (FfiApp v18 v19 v20 v21,v5) => 0w
+    | SOME (CcApp v22 v23 v24 v25,v5) => mc.target.get_fp_reg v25 i
+target_io_absent=T
+target_io_fp_absent=T
+target_io_fp_present=T
+target_io_callee=T
+target_io_allowed=T
+target_cc_absent=T
+target_cc_fp_absent=T
+target_cc_fp_present=T
+target_cc_callee=T
+target_cc_allowed=T

@@ -10,6 +10,8 @@ private def arithToHOL {α : Type u} : WordArith α → Option (WordLangArith α
   | .longDiv a b c d e => some (.longDiv a b c d e)
   | .addCarry _ _ _ _ _ => none
   | .cakeAddCarry a b c d => some (.addCarry a b c d)
+  | .addOverflow a b c d => some (.addOverflow a b c d)
+  | .subOverflow a b c d => some (.subOverflow a b c d)
   | .div a b c => some (.div a b c)
   | .binOp op a b c => some (.binop op a b c)
   | .shift op a b c => some (.shift op a b c)
@@ -18,11 +20,11 @@ private def arithFromHOL {α : Type u} : WordLangArith α → Option (WordArith 
   | .longMul a b c d => some (.longMul a b c d)
   | .longDiv a b c d e => some (.longDiv a b c d e)
   | .addCarry a b c d => some (.cakeAddCarry a b c d)
+  | .addOverflow a b c d => some (.addOverflow a b c d)
+  | .subOverflow a b c d => some (.subOverflow a b c d)
   | .div a b c => some (.div a b c)
   | .binop op a b c => some (.binOp op a b c)
   | .shift op a b c => some (.shift op a b c)
-  | .addOverflow _ _ _ _ => none
-  | .subOverflow _ _ _ _ => none
 
 /-- Execute the reviewed recursion for every shared arithmetic constructor.
 Five-register AddCarry retains its distinct Flapjack semantics; it is not a

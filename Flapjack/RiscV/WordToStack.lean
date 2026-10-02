@@ -704,6 +704,31 @@ def wordStackLongMulAliasLocationsSafe {α : Type} (config : WordStackConfig)
       | _, _, _, _ => false
   | _ => false
 
+/-- Flapjack executed counterpart of the two original overflow wInst clauses.
+SSA has already moved the flag output through its fixed register 0, so only
+its destination can spill; flag stack locations are rejected explicitly. -/
+def wordStackOverflowInst {α : Type} (config : WordStackConfig)
+    (build : Nat → Nat → Nat → Nat → WordArith α) (destination left right flag : Nat) :
+    Option (StackProg α) := do
+  let destinationLocation ← wordStackLocation config destination
+  let leftLocation ← wordStackLocation config left
+  let rightLocation ← wordStackLocation config right
+  let flagLocation ← wordStackLocation config flag
+  let flagRegister ← match flagLocation with
+    | .register register => some register
+    | .stack _ => none
+  let d := match destinationLocation with
+    | .register register => register | .stack _ => config.scratch
+  let l := match leftLocation with
+    | .register register => register | .stack _ => config.scratch
+  let r := match rightLocation with
+    | .register register => register | .stack _ => config.addressScratch
+  let loadLeft ← wordStackLongMulMoveToPhysical config left l
+  let loadRight ← wordStackLongMulMoveToPhysical config right r
+  let writeDestination ← wordStackLongMulMoveFromPhysical config destination d
+  pure (wordStackJoin loadLeft (wordStackJoin loadRight
+    (wordStackJoin (.inst (.arith (build d l r flagRegister))) writeDestination)))
+
 def wordStackArithInst {α : Type} (config : WordStackConfig) (operation : WordArith α) :
     Option (StackProg α) :=
   if wordSpecialArithLocationsSafe operation config.locations = true then
@@ -714,6 +739,8 @@ def wordStackArithInst {α : Type} (config : WordStackConfig) (operation : WordA
       wordStackAddCarryInst config operation
     | .cakeAddCarry _ _ _ _ =>
       wordStackCakeAddCarryInst config operation
+    | .addOverflow d l r flag => wordStackOverflowInst config WordArith.addOverflow d l r flag
+    | .subOverflow d l r flag => wordStackOverflowInst config WordArith.subOverflow d l r flag
     | .div destination dividend divisor =>
       wordStackDivInst config destination dividend divisor
     | .longDiv _ _ _ _ _ => wordStackLongDivInst config operation
@@ -1638,9 +1665,8 @@ def wordStackCompileStoreNatNested (config : WordStackConfig) (address : WordExp
     (value : WordExp Nat) : Option (StackProg Nat) := do
   /- Cake's `word_to_stack` keeps `Addr base offset` through a store.  The
      source-shaped Word expression presents the same address as `base + offset`;
-     preserve the static displacement here instead of materialising both the
-     address and a register-resident store value.  The Lab pass recognises the
-     const/add/store shape and emits the same `memOffset` instruction as Cake. -/
+     preserve the static displacement on the instruction itself. Native Lab
+     lowering receives the original Addr form without a later fusion rule. -/
   let general : Option (StackProg Nat) := do
     let addressPrelude ← wordStackCompileExpToRegisterNat config config.addressScratch
       (wordStackExpressionTemporaries config config.addressScratch) address
@@ -1654,24 +1680,13 @@ def wordStackCompileStoreNatNested (config : WordStackConfig) (address : WordExp
   | .op operator [.var base, .const offset], .var valueName =>
       let offsetFits :=
         match operator with
-        | .add =>
-            offset < 2 ^ 11 ||
-              (offset ≥ 2 ^ 64 - 2 ^ 11 && offset < 2 ^ 64)
+        | .add => offset < 2 ^ 11 || (offset ≥ 2 ^ 64 - 2 ^ 11 && offset < 2 ^ 64)
         | .sub => offset ≤ 2 ^ 11
         | _ => false
-      match wordStackLocation config base, wordStackLocation config valueName with
-      | some (.register baseRegister), some (.register valueRegister) =>
-          if (operator == .add || operator == .sub) && offset = 0 then
-            pure (.inst (.mem .store valueRegister baseRegister))
-          else if offsetFits && baseRegister != config.scratch &&
-              valueRegister != config.scratch && valueRegister != config.addressScratch then
-            pure (wordStackJoin
-              (.seq (.const config.scratch offset)
-                (.arith operator config.addressScratch baseRegister config.scratch))
-              (.inst (.mem .store valueRegister config.addressScratch)))
-          else
-            general
-      | _, _ => general
+      if offsetFits then
+        let nativeOffset := if operator == .sub then (2 ^ 64 - offset) % 2 ^ 64 else offset
+        wordStackStoreOffsetInst config .store valueName base nativeOffset
+      else general
   | .op operator [.var base, .const offset], _ =>
       if (operator == .add || operator == .sub) && offset = 0 then
         match wordStackLocation config base with
@@ -1691,21 +1706,9 @@ def wordStackCompileStoreNatNested (config : WordStackConfig) (address : WordExp
 
 def wordStackCompileLoadNatNested (config : WordStackConfig) (destination : Nat)
     (address : WordExp Nat) : Option (StackProg Nat) := do
-  /- Cake's `word_to_stack` keeps `Addr base offset` through a load exactly as
-     it does through a store, so preserve the static displacement here too
-     instead of materialising the whole address in `addressScratch`.  The Lab
-     pass already recognises the const/arith/memory triple for loads as well
-     as stores and emits Cake's `memOffset`; the triple is built as the first
-     component of the sequence so that a spilled destination, whose write is
-     `Seq (body scratch) (StackStore scratch slot)`, still presents that
-     triple to the recogniser.
-
-     Without this a load whose destination is spilled came out as
-     `addi x23, base, off; ld scratch, 0(x23); sd scratch, slot(x24)` against
-     Cake's `ld scratch, off(base); sd scratch, slot(x24)` -- one instruction
-     more, and only for the spilled one, since every register-destination load
-     in the same run already fused.  `g1_double`, `swu_g1` and `ecp_add` in
-     the stateless-pancaketh guest are this shape. -/
+  /- Source-selected Addr offsets remain attached to the native memory
+     instruction. Reload only a spilled base and write back only a spilled
+     destination, as in word_to_stack wInst; no final Lab fusion is required. -/
   let general : Option (StackProg Nat) := do
     let addressPrelude ← wordStackCompileExpToRegisterNat config config.addressScratch
       (wordStackExpressionTemporaries config config.addressScratch) address
@@ -1721,29 +1724,10 @@ def wordStackCompileLoadNatNested (config : WordStackConfig) (destination : Nat)
               (offset ≥ 2 ^ 64 - 2 ^ 11 && offset < 2 ^ 64)
         | .sub => offset ≤ 2 ^ 11
         | _ => false
-      match wordStackLocation config base with
-      | some (.register baseRegister) =>
-          if (operator == .add || operator == .sub) && offset = 0 then
-            wordStackWritePhysicalNat config destination
-              (fun register => .inst (.mem .load register baseRegister))
-          else if operator == .add && offsetFits then
-            wordStackLoadOffsetInst config .load destination base offset
-          else general
-      | some (.stack baseSlot) =>
-          /- Cake reloads a spilled base into the spare register and then
-             keeps the displacement on the memory instruction:
-             `ld scratch, slot(sp); ld dst, off(scratch)`.  Materializing the
-             whole address instead costs an `addi` per access, which is what
-             a call with twenty-six or more word arguments hits -- the base
-             is spilled there, so the register case above never fires. -/
-          if (operator == .add || operator == .sub) && offset = 0 then
-            general
-          else if operator == .add && offsetFits then do
-            let body ← wordStackWritePhysicalNat config destination
-              (fun register => .inst (.memOffset .load register config.scratch offset))
-            pure (.seq (.stackLoad config.scratch (wordStackOffset config baseSlot)) body)
-          else general
-      | _ => general
+      if offsetFits then
+        let nativeOffset := if operator == .sub then (2 ^ 64 - offset) % 2 ^ 64 else offset
+        wordStackLoadOffsetInst config .load destination base nativeOffset
+      else general
   | _ => general
 
 def wordStackCompileSharedNat (config : WordStackConfig)
@@ -2540,6 +2524,20 @@ def evalWordStackMachine [NeZero width]
         (BitVec.ofNat width total)
       some (wordStackMachineWriteRegister state carry
         (BitVec.ofNat width (total / 2 ^ width)))
+  | .inst (.arith (.addOverflow destination left right flag)) =>
+      let left := state.registers left
+      let right := state.registers right
+      let result := left + right
+      let overflow := if result.toInt ≠ left.toInt + right.toInt then 1 else 0
+      let state := wordStackMachineWriteRegister state destination result
+      some (wordStackMachineWriteRegister state flag overflow)
+  | .inst (.arith (.subOverflow destination left right flag)) =>
+      let left := state.registers left
+      let right := state.registers right
+      let result := left - right
+      let overflow := if result.toInt ≠ left.toInt - right.toInt then 1 else 0
+      let state := wordStackMachineWriteRegister state destination result
+      some (wordStackMachineWriteRegister state flag overflow)
   | .inst (.arith (.div destination dividend divisor)) =>
       let divisorValue := state.registers divisor
       let value := if divisorValue == 0 then
@@ -4102,6 +4100,8 @@ def wordArithToNat : WordArith (Word width) → WordArith Nat
   | .longDiv a b c d e => .longDiv a b c d e
   | .addCarry a b c d e => .addCarry a b c d e
   | .cakeAddCarry a b c d => .cakeAddCarry a b c d
+  | .addOverflow a b c d => .addOverflow a b c d
+  | .subOverflow a b c d => .subOverflow a b c d
   | .div a b c => .div a b c
   | .binOp operator destination sourceLeft sourceRight =>
       .binOp operator destination sourceLeft (wordRegImmToNat sourceRight)

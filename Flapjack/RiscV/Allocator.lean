@@ -235,6 +235,7 @@ def wordArithReadVars {α : Type u} (operation : WordArith α) : List Nat :=
           [sourceLeft, sourceRight, carryIn]
       | .cakeAddCarry _ sourceLeft sourceRight carry =>
           [sourceLeft, sourceRight, carry]
+      | .addOverflow _ l r _ | .subOverflow _ l r _ => [l, r]
       | .div _ dividend divisor => [dividend, divisor]
       | .binOp _ _ sourceLeft sourceRight =>
           sourceLeft :: (match sourceRight with
@@ -266,6 +267,8 @@ def wordInstWriteVars {α : Type u} : WordInst α → List Nat
           [destinationLeft, destinationRight]
       | .addCarry destination resultCarry _ _ _ =>
           [destination, resultCarry]
+      | .addOverflow destination _ _ carry
+      | .subOverflow destination _ _ carry
       | .cakeAddCarry destination _ _ carry =>
           [destination, carry]
       | .div destination _ _ => [destination]
@@ -298,6 +301,8 @@ def wordInstForcedClashes {α : Type u} : WordInst α → List (Nat × Nat)
   | .arith (.addCarry destination resultCarry sourceLeft sourceRight _) =>
       [(destination, resultCarry),
         (destination, sourceLeft), (destination, sourceRight)]
+  | .arith (.addOverflow d _ r _) | .arith (.subOverflow d _ r _) =>
+      if d = r then [] else [(d, r)]
   | .arith (.cakeAddCarry destination _sourceLeft sourceRight carry) =>
       [(destination, carry),
         (destination, sourceRight)]
@@ -501,6 +506,18 @@ def wordSsaRenameInst (state : WordSsaState) :
           let (state, freshCarry) := wordSsaFresh state carry
           (state, .arith (.cakeAddCarry freshDestination sourceLeft
             sourceRight freshCarry))
+      | .addOverflow d l r flag =>
+          let l := wordSsaRead state l
+          let r := wordSsaRead state r
+          let (state, d) := wordSsaFresh state d
+          let (state, flag) := wordSsaFresh state flag
+          (state, .arith (.addOverflow d l r flag))
+      | .subOverflow d l r flag =>
+          let l := wordSsaRead state l
+          let r := wordSsaRead state r
+          let (state, d) := wordSsaFresh state d
+          let (state, flag) := wordSsaFresh state flag
+          (state, .arith (.subOverflow d l r flag))
       | .div destination dividend divisor =>
           let dividend := wordSsaRead state dividend
           let divisor := wordSsaRead state divisor
@@ -831,6 +848,20 @@ def wordSsaRenameProgramWithLoops [OfNat α 0] (frames : List WordSsaLoopFrame)
           .inst (.arith (.cakeAddCarry freshDestination sourceLeft sourceRight 0))
         let moveOut : WordProg α := .move 1 [(freshCarry, 0)]
         (state, wordSsaSeq moveIn (wordSsaSeq addCarry moveOut))
+    | .inst (.arith (.addOverflow d l r flag)) =>
+        let l := wordSsaRead state l
+        let r := wordSsaRead state r
+        let (state, d) := wordSsaFresh state d
+        let (state, flag) := wordSsaFresh state flag
+        (state, wordSsaSeq (.inst (.arith (.addOverflow d l r 0)))
+          (.move 1 [(flag, 0)]))
+    | .inst (.arith (.subOverflow d l r flag)) =>
+        let l := wordSsaRead state l
+        let r := wordSsaRead state r
+        let (state, d) := wordSsaFresh state d
+        let (state, flag) := wordSsaFresh state flag
+        (state, wordSsaSeq (.inst (.arith (.subOverflow d l r 0)))
+          (.move 1 [(flag, 0)]))
     | .inst instruction =>
         wordSsaRenameInstProgram state instruction
     | .get destination store =>
@@ -1185,6 +1216,7 @@ def wordInstReadVarsFastAcc {α : Type u} : WordInst α → List Nat → List Na
           sourceLeft :: sourceRight :: carryIn :: tail
       | .cakeAddCarry _ sourceLeft sourceRight carry =>
           sourceLeft :: sourceRight :: carry :: tail
+      | .addOverflow _ l r _ | .subOverflow _ l r _ => l :: r :: tail
       | .div _ dividend divisor => dividend :: divisor :: tail
       | .binOp _ _ sourceLeft sourceRight =>
           sourceLeft :: match sourceRight with
@@ -1213,6 +1245,8 @@ def wordInstWriteVarsFastAcc {α : Type u} : WordInst α → List Nat → List N
           destinationLeft :: destinationRight :: tail
       | .addCarry destination resultCarry _ _ _ =>
           destination :: resultCarry :: tail
+      | .addOverflow destination _ _ carry
+      | .subOverflow destination _ _ carry
       | .cakeAddCarry destination _ _ carry => destination :: carry :: tail
       | .div destination _ _ => destination :: tail
       | .binOp _ destination _ _ => destination :: tail
@@ -1401,6 +1435,8 @@ def wordArithCakeMaxVar : WordArith α → Nat
         (max sourceLeft (max sourceRight quotient)))
   | .addCarry destination resultCarry sourceLeft sourceRight carryIn =>
       max destination (max resultCarry (max sourceLeft (max sourceRight carryIn)))
+  | .addOverflow destination sourceLeft sourceRight carry
+  | .subOverflow destination sourceLeft sourceRight carry
   | .cakeAddCarry destination sourceLeft sourceRight carry =>
       max destination (max sourceLeft (max sourceRight carry))
   | .div destination dividend divisor =>
@@ -1752,6 +1788,8 @@ def wordClashTreeDeltaInst {α : Type u} : WordInst α → WordClashTree
       .delta [destination, resultCarry] [carryIn, sourceRight, sourceLeft]
   | .arith (.cakeAddCarry destination sourceLeft sourceRight carry) =>
       .delta [destination, carry] [carry, sourceRight, sourceLeft]
+  | .arith (.addOverflow d l r flag) | .arith (.subOverflow d l r flag) =>
+      .delta [d, flag] [r, l]
   | .arith (.div destination dividend divisor) =>
       .delta [destination] [divisor, dividend]
   | .arith (.binOp _ destination sourceLeft sourceRight) =>
@@ -2358,6 +2396,8 @@ def wordApplyColourArith (colour : Nat → Nat) : WordArith α → WordArith α
   | .cakeAddCarry destination sourceLeft sourceRight carry =>
       .cakeAddCarry (colour destination) (colour sourceLeft)
         (colour sourceRight) (colour carry)
+  | .addOverflow d l r flag => .addOverflow (colour d) (colour l) (colour r) (colour flag)
+  | .subOverflow d l r flag => .subOverflow (colour d) (colour l) (colour r) (colour flag)
   | .div destination dividend divisor =>
       .div (colour destination) (colour dividend) (colour divisor)
   | .binOp operator destination sourceLeft sourceRight =>
@@ -2882,6 +2922,16 @@ def wordSpecialArithLocationsSafe {α : Type u} (operation : WordArith α)
                 .register sourceRight, .register carry =>
                 destination != sourceRight && destination != 31 &&
                   sourceLeft != 31 && sourceRight != 31 && carry != 31
+            | _, _, _, _ => true
+      | _, _, _, _ => false
+  | .addOverflow d l r flag | .subOverflow d l r flag =>
+      match lookupNatInfo d locations, lookupNatInfo l locations,
+        lookupNatInfo r locations, lookupNatInfo flag locations with
+      | some d, some l, some r, some flag =>
+          d != r &&
+            match d, l, r, flag with
+            | .register d, .register l, .register r, .register flag =>
+                d != 31 && l != 31 && r != 31 && flag != 31
             | _, _, _, _ => true
       | _, _, _, _ => false
   | .longDiv _ _ _ _ _ | .div _ _ _ | .binOp _ _ _ _ | .shift _ _ _ _ => true

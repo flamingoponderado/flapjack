@@ -1,3 +1,96 @@
+`target_sequence_laws_probe.out` captures complete original sequence equality, exact tail and count monotonicity statements. Native generic proofs keep all initial and returned configurations/FFI states, arbitrary predicates and universal sequence/count indices.
+
+`target_search_const_probe.out` captures the complete clocked and unbounded original configuration-preservation statements. Native generic proofs preserve the entire target plus exact callee-saved list and pointer register, without validity or bounds hypotheses.
+
+`target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
+
+`target_search_mono_probe.out` captures the complete original find_next_interference_mono and find_next_interference_unique statements. Native kernel proofs retain arbitrary clock limits, all machine/FFI parameters and equality of the entire returned tuple, with no added bounds or validity premise.
+
+`target_register_oracles_probe.out` captures all four full native targetProps register-oracle types/equations and ten generic IO/cache presence, absence, callee filtering and allowed register/FP branches, replayed by TargetRegisterOraclesParity. Fixed word64 FP fallback and unused FFI name remain literal.
+
+`target_interference_sequence_probe.out` captures the full original types and equations for next_interference, interference_app_seq, interference_count and interference_pos (source215-249), with generic recurrence replays. Native kernel regressions preserve all generic parameters and unspecified option choice.
+`byte_word_slice_alt_probe.out` records the full original alternate-slice
+definition/type and66 complete numeric boundary results.
+`byte_decoder_native_probe.out` records set_byte/word_of_bytes definitions/types
+and252 complete numeric outputs;318 matching kernel fixtures cover widths
+1/7/8/16/64/80, both endians, truncated/oversized/inverted/huge slice bounds,
+wrapped addresses, repeated byte lanes and empty/single/five/eleven-byte lists.
+Registering original MOD_0 before EVAL avoids exponential residual expression
+expansion at sub-byte dimensions; this changes only probe reduction order.
+
+`mmio_index_probe.out` captures the full original optional-boundary definition
+and inferred type plus40 assumption-free proved choice equations for every
+external/read/write name list of length0..3. Matching kernel fixtures preserve
+all-external/end-of-list boundaries, all-shared/zero boundaries and mixed-order
+rejection. A generic kernel uniqueness proof justifies the choice translation.
+
+`init_memory_probe.out` records the full original initializer definition/type,
+64 complete output trees, and 64 true equalities to independently written
+constructor trees. Matching kernel fixtures cover widths1/8/64/80, zero/aliased/
+arbitrary-large pointer registers, empty/word/register/mixed stores and word
+truncation. The full executed initializer route remains a separate parent.
+
+`evaluate_props_ffi_relation_probe.out` captures the full original FFI-step
+definition and inferred state-relation type, and checks an assumption-free
+identity step using the empty external call. `Flapjack/EvaluateProps.lean`
+retains all four existential witnesses and kernel-checks the same generic
+identity step. The reflexive-transitive closure and full LabToTarget
+shared-memory relation remain separate obligations.
+`target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
+
+`target_search_mono_probe.out` captures the complete original find_next_interference_mono and find_next_interference_unique statements. Native kernel proofs retain arbitrary clock limits, all machine/FFI parameters and equality of the entire returned tuple, with no added bounds or validity premise.
+
+`target_register_oracles_probe.out` captures all four full native targetProps register-oracle types/equations and ten generic IO/cache presence, absence, callee filtering and allowed register/FP branches, replayed by TargetRegisterOraclesParity. Fixed word64 FP fallback and unused FFI name remain literal.
+
+`target_interference_sequence_probe.out` captures the full original types and equations for next_interference, interference_app_seq, interference_count and interference_pos (source215-249), with generic recurrence replays. Native kernel regressions preserve all generic parameters and unspecified option choice.
+
+`word_to_stack_native_addr_probe.out` records72 original wInst memory trees across Load/Store/Load8/Store8/Load32/Store32, register/spilled operands and zero/positive/negative64bit offsets; five selected Store trees include signed12 endpoints and out-of-range2048. Native kernel fixtures replay all72 source trees; production fixtures preserve Addr instead of macro address sequences, with unchanged original artifact/corpus goldens.
+
+`stack_remove_prog_comp_probe.out` captures full original section-wrapper definition/type and15 native outputs at widths1/8/32/64/80 with independent Bool/ListBool/Nat section names. Kernel fixtures retain generic Name/configuration and unconditional name preservation; actual runtime replacement remains36ez.3.
+
+`stack_remove_comp_probe.out` captures full native comp definition/type and52 compiled trees plus52 original clause equations (allT). Kernel fixtures cover all34 input constructors, every wildcard, both CurrHeap/store arms, zero/wrapped/signed-offset/direct/fallback paths, both alloc modes, widths1/8/32/64/80 and all four Call optional-continuation combinations. Actual runtime activation remains separate.
+
+`stack_remove_copy_loop_probe.out` captures complete copy_each/copy_loop definitions/types and30 fully expanded native constructor trees at widths1/8/32/64/80, zero/ordinary/aliased arbitrary registers. Kernel trees preserve exact Loop/If/Break0, signed Less vs zero, Test branch, all address operands and right-associated sequences.
+
+`stacklang_inst_builders_probe.out` captures native While/move/add/sub/add-bytes overload terms and full types, list_Seq full definition/type and45 native constructors at widths1/8/32/64/80. Kernel fixtures retain Or-source duplication, Loop/If/Break0, byte strides, empty/singleton/right-associated Seq.
+
+`stack_remove_store_address_probe.out` captures both complete storage-address definitions/types, all48storedname positions, absentCurrHeap and30 modular offsets at widths1/8/32/64/80. Identical kernel fixtures check exact search equality, one-based positions and modular subtraction.
+
+`stack_remove_stack_alloc_probe.out` captures complete allocation definitions/types and 28 native constructors: both jump modes, zero and chunk boundaries, widths1/8/64/80, arbitrary pointer and single-builder word wrapping. Kernel fixtures retain every original overflow check.
+
+`stack_remove_stack_address_probe.out` captures all four complete native address-builder definitions/types and forty original constructors at zero, 255/chunk boundaries, widths1/8/64/80 and arbitrary registers. Kernel fixtures preserve immediate instructions, word wrapping and nested Seq.
+
+`stack_remove_stack_free_probe.out` records the two complete original
+builder definitions/types and exact native immediate constructors across
+zero/255/256/multiple chunks and widths1/8/64/80. Kernel parity preserves
+literal Seq association and word-offset wrapping; executable runtime-route
+replacement remains open on36ez.3, with no macro/peephole equivalence claim.
+
+`ssa_reconcile_get_vars_probe.out` replays the literal original full theorem
+and list-induction proof, and records all universally quantified binder types.
+The Lean counterpart keeps distinctness, native get_vars result existence,
+length and every in-bounds EL/THE lookup; the replay is source-review evidence,
+not a cross-assistant equivalence proof.
+
+`riscv_jumpcmp_polarity_probe.out` records 32 fresh original encoder byte
+vectors: all eight JumpCmp predicates, register/immediate operands, and
+short/long ranges. RiscVBranchPolarity kernel-checks actual executed Lab
+emission against these complete bytes; no full compiler theorem is asserted.
+
+`lab_implicit_section_zero_probe.out` records six original ignored-zero,
+implicit-section-base and nonzero-label positions. Executed collectors replay
+matching pre-encoding lines using actual instruction counts. This pins the
+section-zero convention and exact original target bytes for a direct cross-section
+jump followed by Const. It is not complete encoded-line-length or finite-map
+correspondence for all inputs or duplicate section names.
+
+`stack_to_lab_executed_input_probe.out` records seven original native fallback
+and section observations. The four residual operations flatten to empty lines;
+the new Flapjack native boundary rejects them. Skip remains a valid empty
+program. Seq and distinct LocValue fields pin original final-label and target
+order without extra entry aliases or fresh-label maxima. HOL has no such guard:
+these rows do not claim a compiler simulation or original guard declaration.
+
 `stack_to_lab_executed_codec_probe.out` records nine fresh original native
 constructor/operand observations, including AddCarry's four positions, an
 unsupported overflow result, memory offsets, Cbw's address/value/store order,
@@ -1897,7 +1990,7 @@ scripts/hol-probes/regenerate.sh`. The `evaluateSeq`/`evaluateIf`/`evaluateLoop`
 fragments are untagged; the tagged ports of `fix_clock_def`, `cont_loop_def`,
 `exit_loop_def`, `get_var_imm_def`, `empty_env_def` and `dec_clock_def` live in
 `StackSem/Control.lean` and `StackSem/StateOps.lean`, and assembled full
-evaluation remains on `y19g`/`y19g.18`.
+evaluation remains on `y19g`/`y19g.18`. The same eleven rows are also replayed through the assembled total evaluator `evaluateHOL` (no stubbed sub-evaluations) in `Flapjack/Test/StackSemEvaluateParity.lean`.
 
 `stacksem_jumplower_probeScript.sml` records eight direct original
 `stackSem$evaluate` observations for the `JumpLower` clause
@@ -2770,6 +2863,20 @@ the executed allocator. Regenerate read-only with
 
 `word_alloc_get_forced_probeScript.sml` captures twenty-eight original `get_forced` rows over `c with ISA := _`: each forced `AddCarry`/`AddOverflow`/`SubOverflow`/`LongMul` ISA guard and its rejected ISA, omitted equal-register pairs, `FPMovToReg`/`FPMovFromReg` at 32 and 64 bits, an unforced instruction, `Seq`/`If`/`MustTerminate`/`Loop`, returning calls with and without a handler, a tail call with a handler, `Skip`, and registers above 2^64. `Flapjack/Test/GetForcedParity.lean` replays each row and instantiates `getForcedInGetClashTree`. These are proof-side ports; the executed RISC-V allocator still uses its own forced-edge traversal.
 
+`data_to_word_config_probeScript.sml` captures six original `data_to_word` pointer-layout rows: `shift_length` and `small_shift_length` of one configuration, and `get_gen_size` for an empty list, an in-range first generation, an overflowing first generation at 64 bits and a 32-bit size. `Flapjack/Test/DataToWordConfigParity.lean` replays every row in the kernel.
+
+`word_gc_functions_probeScript.sml` captures original `word_gcFunctions` and `word_simp` GC-constant rows at 64 bits: `ptr_to_addr`, `update_addr`, `decode_length`, both `is_ref_header` outcomes, `memcpy` with its result memory and a failing domain check, `word_gc_move` on a zero and a non-zero `Loc`, a small word, a copied object and a forwarding pointer, `word_gen_gc_move` copying a data object and a reference object, `word_gen_gc_partial_move` outside and inside the young generation, `word_gc_move_roots`, `word_gc_move_list`, `glob_real` on a word and a `Loc`, the four `new_trig` branches, and `is_gc_const`/`is_gc_word_const` on an even and odd word and a `Loc` (twenty-eight rows in all). `Flapjack/Test/WordGcFunctionsParity.lean` replays every row in the kernel, comparing memories at the probed addresses.
+
+`stack_alloc_gc_code_probeScript.sml` captures eleven original `stack_alloc` rows, each printed on one line: `memcpy_code`, `clear_top_inst`, a 32-bit `SetNewTrigger`, `word_gc_code` for `None`, `Simple`, `Generational [10]` and `Generational []` at 64 bits and `Generational [10]` at 32 bits, `prog_comp` on two programs and `compile` with the `None` collector. `Flapjack/Test/StackAllocGcCodeParity.lean` replays every row in the kernel; each HOL term is translated constructor for constructor into the tagged `HolProg` ports and compared by `rfl` (or `simp` for the well-founded `next_lab`/`comp`).
+
+`stack_alloc_get_bits_probeScript.sml` captures four original `stack_allocProof` `get_bits` rows: an 8-bit word with three decoded bits, the words 1 and 0 (empty results) and a 64-bit word with its top bit set. `Flapjack/Test/StackAllocGetBitsParity.lean` replays every row in the kernel.
+
+`stack_alloc_gc_bitmaps_probeScript.sml` captures five original 64-bit `stack_allocProof` rows: `word_gc_move_bitmap` over a four-word stack (copying, constant and forwarded roots) and over a too-short stack, `word_gc_move_bitmaps` with a valid and a zero frame descriptor, and `word_gc_move_roots_bitmaps` over an encoded stack. `Flapjack/Test/StackAllocGcBitmapsParity.lean` replays every row in the kernel, comparing memories at the probed addresses.
+
+`stacksem_inst_probeScript.sml` captures six original StackSem `evaluate (Inst i, s)` rows at 64 bits: `Const`, an immediate `Add`, an `Add` from a missing register and from a `Loc` register (both `Error` with the original state), a `Load` outside the memory domain and `Skip`, each observed as result, register 1 and clock. `Flapjack/Test/StackSemInstParity.lean` replays every row in the kernel through `evaluateInst`.
+
+`word_remove_must_terminate_probeScript.sml` captures eight original `remove_must_terminate` rows: a `MustTerminate` over a `Seq`, nested `MustTerminate`, a `Seq` of two `MustTerminate`s, an `If` branch, a `Loop` body, a returning call with both a `MustTerminate` return handler and exception handler, a tail call with a `MustTerminate` handler, and the catchall `Tick`. `Flapjack/Test/WordRemoveMustTerminateParity.lean` replays every row in the kernel.
+
 `word_alloc_remove_dead_probeScript.sml` captures twenty-five original `remove_dead`/`remove_dead_prog` rows over one live set (each observed as program, `toAList` keys and dead stores): partial and fully dead `Move`, dead and live `Inst`, `Get`, `OpCurrHeap`, dead `LocValue`, `Set` of a register to a dead and a live store, `Set` of a compound expression, `Seq` dropping a `Skip` and keeping both children, `MustTerminate`, a fully dead `If` and an immediate `If`, a returning call with a handler, a tail call, `Alloc`, `Loop`, `Break`, a `Continue` outside its loop context, the catchall `Tick`, and `remove_dead_prog`. Two `live_store_rel` rows are decided by proving the row or its negation. `Flapjack/Test/WordAllocRemoveDeadParity.lean` replays every row in the kernel.
 
 `word_alloc_nlive_store_probeScript.sml` captures twelve original `nlive_store` rows: a dead and a live `Lookup`, `Var`/`Const`, `Op` with a dead, a live and no argument, live and dead `Load`, `Shift` with each operand dead, and a live `Shift`. `Flapjack/Test/WordAllocNliveStoreParity.lean` proves each `T` row and refutes each `F` row in the kernel.
@@ -2781,6 +2888,10 @@ the executed allocator. Regenerate read-only with
 `reg_alloc_accessors_probeScript.sml` captures eighteen original rows of the `ml_monadBaseLib`-generated `ra_state` accessors on one concrete state: `get_dim`/`get_stack`/`get_avail_moves_wl`, `set_dim` and a `set_` that leaves other fields, `adj_ls_length`, in-range and out-of-range (including a key above 2^64) `node_tag_sub`/`adj_ls_sub`/`degrees_sub`/`coalesced_sub`, in-range and out-of-range `update_degrees` (failure keeps the state), `update_move_related`/`update_node_tag`, `st_ex_MAP adj_ls_sub` with and without an out-of-range index, and `Mupdate`. `Flapjack/Test/RegAllocAccessorsParity.lean` replays each row and applies `updateDegreesEqn` and the provisional `degreesSubEqn`/`stExMapAdjLsSub` to the same inputs.
 
 `reg_alloc_colouring_probeScript.sml` captures eighteen original rows of `remove_colours` (empty colours taking priority, no nodes, fixed neighbours, duplicate colours, out-of-range nodes before and after the colours run out), `assign_Atemp_tag` (no-preference and last-colour oracles, no remaining colour, non-`Atemp` node unchanged, out-of-range node), `assign_Atemps` (heuristic order with an out-of-range entry, oracle choice, a single colour) and `first_match_col` (hit, colour outside `ks`, empty list, an index above 2^64). `Flapjack/Test/RegAllocColouringParity.lean` replays each row in the kernel.
+
+`word_alloc_select_reg_alloc_probeScript.sml` captures the original type of `select_reg_alloc` and seven runs for algorithms 0-5: Simple (0, 1), IRC without and with spill costs (2, 3), and linear scan (4, 5) including a spill and a forced pair under a branch cutset, each observed through `toAList` of the returned colouring; the linear-scan rows colour differently from the graph allocator. `Flapjack/Test/WordAllocSelectRegAllocParity.lean` replays each row in the kernel.
+
+`reg_alloc_allocator_probeScript.sml` captures twelve original rows of the complete `reg_alloc` allocator (Simple and IRC, a coalescing move and a move chain, spill choice by cost and by degree with `k = 1`, a forced pair under a branch cutset, physical registers, stack variables, a forced-stack set, high register pressure, and the empty tree), each observed through `toAList` of the returned colouring. `Flapjack/Test/RegAllocAllocatorParity.lean` replays each row in the kernel; it exercises every phase ported in `Flapjack/Compiler/Backend/RegAlloc/Allocator.lean`.
 
 `reg_alloc_exception_functions_probeScript.sml` captures eleven original rows of the generated `raise_Fail`/`raise_Subscript`/`handle_Fail`/`handle_Subscript`: both raises, success passing through, each handler catching its own constructor and passing the other, continuation from the failing state, and `handle_Subscript` around an out-of-range `node_tag_sub`. `Flapjack/Test/RegAllocExceptionFunctionsParity.lean` replays each row in the kernel.
 
@@ -3028,6 +3139,13 @@ types and 11 EVAL results at the pinned HOL revision (including a
 non-transitive relation for `SORTED`), kernel-replayed in `HolSortingParity`.
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=hol_sorting_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`hol_mergesort_probe` captures the original HOL `mergesort$sort2`, `sort3`, `merge` and
+`mergesortN` types and 14 EVAL results at the pinned HOL revision (a non-strict, a strict
+and a non-total relation, unsorted `merge` inputs, and `mergesortN` counts below, above and
+equal to the list length), kernel-replayed in `HolMergesortParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=hol_mergesort_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `hol_list_el_probe` captures the original HOL `HD`/`EL` types and six in-range
 values at the pinned HOL revision (`HD []` and out-of-range `EL` are
@@ -4122,6 +4240,21 @@ The new kernel replay covers domain failure, Loc rejection, missing operands,
 operator lists, wraparound, shift bounds and successful/failed assignment.
 The full recursive theorem imposes no success, size or clock bound. These
 captures provide regression evidence, not HOL-to-Lean equivalence.
+`ssa_fake_moves_correct_right_probeScript.sml` replays the literal right fake-move simulation and its local prerequisites, capturing the full five-conclusion statement and seven inferred types.
+
+`ssa_fix_inconsistencies_correct_left_probeScript.sml` replays the literal left reconciliation assembly and its original merge/fake prerequisites; captures the full statement and six types, including identical source/target word/code/FFI dimensions.
+
+`ssa_fix_inconsistencies_correct_right_probeScript.sml` replays the literal right reconciliation assembly and original map-agreement prerequisites, capturing the full returned-left-map result and six inferred types.
+
+`stackprops_instruction_constants_probeScript.sml` captures four complete
+original instruction support statements and their full types, plus ten native
+observations of success, failure, clock updates and FFI updates. The two local
+clock-neutral lemmas replay the original source statement and proof verbatim.
+The FFI theorem preserves HOL's independent updated host type. The published
+`set_var_with_const` FFI conjunct is likewise repaired to retain that independent
+host; its original 26-row state-constants capture was freshly regenerated and
+remains unchanged. These probes do not establish cross-language equivalence or
+remove the inherited external real-carrier assumption.
 ### Full native compiler no-install preservation
 
 `word_to_stack_comp_no_install_probeScript.sml` freshly captures original
@@ -4187,6 +4320,1159 @@ evidence, not a cross-prover equivalence proof.
 
 - `ssa_rename_shifted_properties_probeScript.sml` replays the original raw-list derived pipeline and shifted move wrapper with nine original prerequisites; full statements and twelve type rows distinguish their input map-bound counters and conjunction orders.
 
+`lab_to_target_maplemmas_probeScript.sml` reads the two original `lab_to_target` MAP lemmas directly: `pad_code_MAP` (`pad_code nop = MAP (\x. Section (Section_num x) (pad_section nop (Section_lines x) []))`, line 226) and `prog_to_bytes_MAP` (`!ls. prog_to_bytes ls = FLAT (MAP (FLAT o MAP line_bytes o Section_lines) ls)`, line 341). Its 8 rows EVAL both sides of each theorem on concrete 64-bit `labLang$sec` values: `pad_code_MAP` empty and over a two-section list (`[Section 1 [Label 1 2 0; Asm (Asmi (Inst Skip)) [1w;2w;9w] 3]; Section 2 []]`), printing the equality (`T`) plus the observed left/right-hand section lists; and `prog_to_bytes_MAP` empty and over the three-section `bytesCode` list from the sibling label-removal probe (the empty middle section is skipped, giving `[1w;2w;3w]`), printing the equality (`T`) plus the observed left/right-hand byte lists. The rows are kernel-replayed in `Flapjack.Test.LabToTargetMapLemmasParity` (bead `flapjack-pxn.18.5.15.10.29`). Regenerate with `HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_maplemmas_probeScript.sml scripts/hol-probes/regenerate.sh`.
+- `ssa_cc_trans_props_move_probeScript.sml` replays the original marked Move case of program allocation/map properties after its original native compiler unfolding, with four original local prerequisites, full case statement and eight carrier captures.
+
+`asmprops_arithmetic_preservation_probeScript.sml` captures the three full
+original PC/binop/arithmetic preservation statements and their inferred types,
+plus nine native observations. The arithmetic rows include failures from shift
+bounds and zero divisors while memory, domain, alignment, link register and
+endianness remain preserved. The Lean fixture derives arbitrary-operation
+domain preservation from the full theorem and checks the other observed fields.
+### WordProps code-map no-install convention
+
+`word_props_no_install_code_probeScript.sml` freshly captures full original
+`no_install_code_def`, three carrier queries and sixteen concrete lookup and
+source-predicate observations over widths1/80 and all Spt constructors.
+Malformed trees, missing keys and actual forbidden Install entries remain in
+scope. `Flapjack/Test/WordPropsNoInstallCodeParity.lean` checks the observations
+and arbitrary-width empty/safe-malformed/forbidden-map convention properties.
+Captures are regressions, not a HOL-to-Lean equivalence proof or new original
+proof replay. The predicate does not narrow the source code-map carrier.
+
+Selector: `HOL_PROBE_ONLY=word_props_no_install_code_probeScript.sml`.
+
+### Full native code-map top no-install theorem
+
+`word_to_stack_no_install_top_probeScript.sml` freshly captures full original
+`word_to_stack_compile_no_install`, six carriers, sixteen actual
+ALL_DISTINCT/source-list/target-list observations and three complete HOL
+finite-code guard proofs using original lookup/fromAList definitions.
+The safe-first/bad-later duplicate-key map has a true complete code guard but
+false source/target list predicates. The theorem therefore retains the
+original distinct-key hypothesis. Widths1/32/64/80, underflow/large register
+counts and both injected stubs are covered. Matching kernel fixtures retain
+complete map guard proofs and full-signature applications. These are
+regression observations and small concrete HOL guard proofs, not a new proof
+replay of the full compiler theorem or a HOL-to-Lean equivalence proof.
+Whole compiler semantic correctness remains unfinished.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_top_probeScript.sml`.
+
+- `ssa_cc_trans_props_allocation_probeScript.sml` replays the literal original Alloc/Install/FFI case tactics and native compiler unfolding with original shifted-list derivation and local prerequisites; three full cases and 31 type captures check the counter/map/cutset/loop-table/program and exact mlstring carriers.
+
+- `ssa_cc_trans_props_loop_control_probeScript.sml` specializes the original functional induction rule to the full native program invariant and replays literal Resume Loop/Break/Continue tactics. Three full clauses and29 carrier captures retain Loop setup binders/guards and its actual-context body IH.
+`lab_to_target_padding_length_probeScript.sml` exports original `LENGTH_pad_bytes` (lab_to_targetProofScript.sml:3195) and six direct `pad_bytes` EVAL observations over natural-number and Boolean lists: extension, multi-element nop truncation, exact fit, zero length, Boolean payloads, and the empty-nop sentinel outside the theorem premise. The full original premise remains nonempty nop and bytes length at most the requested length. `Flapjack.Test.LabToTargetPaddingLengthParity` kernel-replays all six concrete rows and exercises the public arbitrary-carrier theorem. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_padding_length_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+### SSA Call allocation/map invariant
+
+`ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
+`lab_to_target_padding_similarity_probeScript.sml` captures the complete
+original add-nop, section-padding and code-padding similarity statements and
+full quantified types. Its local add-nop theorem replays the original statement
+and proof literally. Six direct padding observations include empty nop chunks,
+label-only code, nonempty accumulators and unchanged resolved offsets. Kernel
+fixtures replay them and apply the full theorem at arbitrary positive width and
+arbitrary accumulator; no full compiler or cross-language equivalence is claimed.
+
+`lab_to_target_encoding_similarity_probeScript.sml` captures four complete
+original similarity statements and their inferred types; both local lemmas
+replay literal source statements and proofs. Six native observations exercise
+initial encoding, unchanged and changed offsets, length growth/failure flags,
+nonempty accumulators and multiple sections. The full line theorem retains
+HOL's complete result tail `(position, flag)` and arbitrary prefix premise.
+Kernel fixtures replay the observations and apply the full section theorem.
+### SSA Call allocation/map invariant
+
+`ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
 ### Generic force_rename repair
 
 `ssa_force_rename_generic_probe.out` replays the literal three complete lookup/domain proofs at word_allocProofScript.sml:6347–6381 and captures the original arbitrary-payload definition type. The Lean Bool/Unit fixtures exercise the generalized definition and theorem instances; SSA bounds retain their Nat specialization.
+
+`byte_word_to_bytes_aux_probeScript.sml` directly EVALs pinned original HOL `byteTheory`: 14 concrete observations for arbitrary-count `word_to_bytes_aux`, whole `word_to_bytes`, `byte_index` and `get_byte`. Original `EVAL` residuals at zero modulus are discharged by the pinned `arithmeticTheory.MOD_0` rewrite followed by `EVAL`. It checks little/big endian cyclic extraction beyond 16/32/8-bit word byte counts, zero count, and positive sub-byte width1 with natural MOD0 and modular `n2w` index wrap. `Flapjack.Test.ByteWordToBytesAuxParity` replays all rows in the kernel. This is the exact mapped-write prerequisite of `targetSem.evaluate_def`, whose count is not bounded by the word byte length. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=byte_word_to_bytes_aux_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_section_length_probeScript.sml` evaluates original `section_labels` and `sec_length` for `section_labels_sec_length` (lab_to_targetProofScript.sml:3205). Eight original/kernel rows include empty and mixed native lines, zero and nonzero label numbers/lengths, duplicate labels, arbitrary starting positions and preexisting accumulators. Full pair observations pin the label ordering alongside the position equation. Lean counterpart is `LabToTarget.SectionLength`, and `Flapjack.Test.LabToTargetSectionLengthParity` replays the rows. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_section_length_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_line_len_probeScript.sml` captures five original `line_len_def` observations (lab_to_targetProofScript.sml:3127). They cover all three native constructors, empty bytes with a nonzero annotation, nonempty bytes with a zero annotation, and word widths8/64. The value is always the recorded length, with no byte-length consistency check. `Flapjack.Test.LabToTargetLineLenParity` kernel-replays the rows. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_line_len_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+The section-length probe additionally captures five `sec_length_add` (lab_to_targetProofScript.sml:3135) observations: arbitrary nonzero additive offsets, empty/mixed lists, zero annotations and empty encoded bytes with a large recorded annotation. All original eight section-label rows remain mandatory. The same Lean parity module kernel-replays all thirteen observations.
+
+`lab_to_target_padding_similarity_probeScript.sml` captures the complete
+original add-nop, section-padding and code-padding similarity statements and
+full quantified types. Its local add-nop theorem replays the original statement
+and proof literally. Six direct padding observations include empty nop chunks,
+label-only code, nonempty accumulators and unchanged resolved offsets. Kernel
+fixtures replay them and apply the full theorem at arbitrary positive width and
+arbitrary accumulator; no full compiler or cross-language equivalence is claimed.
+
+### SSA primitive program invariants
+`binary_ieee_real_carrier_source_probeScript.sml` captures all 14 original
+real-rounding/sqrt and fixed64 codec definitions, with their full quantified
+types (28 rows), for the source review of `BinaryIeeeSqrt.RealCarrier`.
+The seven original exact-square observations remain in
+`machine_ieee_fp64_sqrt_exact_probe.out`; these source/type captures and examples
+provide review/regression evidence, not cross-assistant equivalence.
+### SSA Call allocation/map invariant
+### SSA primitive program invariants
+
+`ssa_cc_trans_props_primitives_probe.out` captures the original 15 nonrecursive primitive invariant statements and actual constructor types. It replays the literal StoreConsts, instruction, expression tactic, CBW/DBW and ShareInst proofs after the original compiler simplification, including original instruction/extension/allocation prerequisites. The Lean cases derive all three invariants from only the original compiler equality and map/allocation premise.
+`ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
+
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
+## Native Word CSE instruction keys
+
+`word_cse_instruction_keys_probeScript.sml` regenerates all ten original
+definitions and function types plus 93 evaluations from `word_cseTheory`.
+The cases cover every shift, binop, memory operation, arithmetic and FP
+constructor, widths 1/32/64/80, unsigned all-ones words, and the instruction
+catch-all. `Flapjack/Test/WordCseInstructionKeysParity.lean` kernel-replays
+the values. FPFma retains all three registers; the other destination omissions
+follow the original. These fixtures are regression evidence, not a CSE
+simulation proof. Production carrier replacement and knowledge maps remain
+tracked on `flapjack-word-cse-defs`.
+
+## Native Word CSE register and key prerequisites
+
+`word_cse_register_keys_probeScript.sml` exports the six original register
+classifier definitions and their inferred types, plus all four unrestricted
+encoding injectivity theorems. It replays the complete original proofs with no
+remaining hypotheses, and evaluates 104 original observations. The cases cover
+all arithmetic and FP constructors, immediate/register splits, carry versus
+overflow flags, all memory-operation store classifiers, and widths 8/80.
+`Flapjack/Test/WordCseRegisterKeysParity.lean` kernel-replays the observations
+and applies the four full injectivity theorems at arbitrary inputs. Regression
+fixtures do not prove HOL-to-Lean equivalence or the remaining CSE simulation.
+
+## Word CSE insertion equality
+
+`word_cse_insert_equality_probeScript.sml` exports the complete original
+`insert_eq` and literally replays its proof with no open hypotheses. Ten
+observations cover equal/unequal writes on empty, leaf, malformed BN/BS and
+nested sparse trees. `WordCseInsertEqualityParity.lean` kernel-checks those
+cases and applies the unrestricted theorem at arbitrary carriers/trees and an
+80-bit carrier with a large Nat key. The original unused `n2` is omitted in
+Lean only because it occurs in no premise or conclusion.
+
+## Full Word CSE arithmetic-key simulation
+
+`word_cse_arithmetic_keys_probeScript.sml` captures the entire original
+`arith_keys_eq` and literally replays its proof with no open hypotheses. Three
+original carrier types and 60 full theorem applications cover all five binops
+with both register/immediate operands, all four immediate shifts and signed
+division at widths 1/32/64/80. Each application proves the original key/eligibility
+premises and retains the full universally quantified faithful evaluation
+implication, plus both read/eligibility conclusions.
+`WordCseArithmeticKeysParity.lean` applies the complete kernel theorem to all
+60 cases and at arbitrary width/state/value. The theorem uses the actual
+clocked WordSem evaluator, its reviewed finite-support state and its inherited
+IEEE rational-cut assumption (SOUNDNESS item 8). This is a CSE simulation
+prerequisite, not the entire CSE invariant/pass or compiler theorem.
+
+`stackprops_shared_memory_clock_probeScript.sml` replays all nine original
+StackProps shared-memory clock-commutation proofs verbatim and captures their
+full statements/types (18 rows), then checks fifteen native returned/final/error
+observations at clock 37. `StackPropsSharedMemoryClockParity.lean` kernel-replays
+those observations and applies the full arbitrary-state dispatch theorem.
+### Complete SSA program invariant
+
+`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
+
+### SSA reconciliation list prerequisites
+
+`ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
+### Complete SSA program invariant
+
+`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
+### Full target machine evaluator
+
+`target_sem_evaluate_probeScript.sml` evaluates the original `targetSem`
+`evaluate_def` over 8-bit configurations, arbitrary untouched target fields,
+and natural-number machine/FFI host states. Twenty rows check clock exhaustion,
+branch priority, both halt outcomes, cache/FFI oracle shifts, normal success and
+post-interference rollback, missing/conflicting MMIO, mapped full/narrow reads
+and writes, returned host/event state, terminal-event rollback and guard errors.
+The normal-step rows first prove the exact encoded-memory existential with an
+`Inst Skip`/zero-drop witness, then use its normalized kernel theorem after
+bounded `EVAL`; they do not simplify with the recursive evaluator as an unbounded
+rewrite. Every captured row has a kernel example in
+`Flapjack.Test.TargetSemEvaluateParity`. These are regression checks, not a
+cross-assistant equivalence proof. The compiler executable is not rerouted.
+
+The same shared-memory source probe now replays original `sh_mem_op_const`,
+records its full twelve-field statement and types, and proves fifteen actual
+success/final/failure applications with no undischarged hypotheses. The Lean
+fixture applies the full twelve-conjunct theorem to the same native cases,
+preserving arbitrary GC/compiler/domain functions as equalities.
+## Full Word CSE load evaluation transports
+
+`word_cse_load_evaluation_probeScript.sml` literally replays all three original
+proofs at word_cseProofScript221-270, including the local address-substitution
+theorem, and captures their complete conclusions with no open hypotheses. Four
+original inferred types and 80 complete theorem applications cover word/byte/16/32
+loads at widths 1/32/64/80, both target/address aliasing and write/destination
+aliasing. Store cases are excluded only by the original guard; Load16 remains
+quantified with the same impossible source-success premise.
+`WordCseLoadEvaluationParity.lean` applies the full kernel theorems in all 80
+cases on arbitrary host/state/value inputs. The proofs use actual clocked WordSem
+evaluation and internally derive the loaded value from insertion equality;
+no target evaluation or memory-domain premise is added. Native finite-map/word
+translations and the evaluator's inherited IEEE rational-cut assumption
+(SOUNDNESS item 8) are retained. These are invariant-update prerequisites,
+not a completed CSE/compiler correctness proof.
+
+`ssa_reconcile_alookup_zip_probe.out` replays both original generic indexed-SOME and absent-key-NONE ALOOKUP ZIP proofs6551–6590, recording full statements and nine original argument types. Canonical opaque EL and all original domain/injection/index/length premises are retained.
+`target_sem_machine_sem_probeScript.sml` kernel-proves the full original
+Terminate/Diverge/Fail clauses for arbitrary machine and FFI carriers, checking
+exact conclusions and empty theorem hypotheses before capture. Divergence uses
+all clocks and the original IMAGE/UNIV lazy-list least upper bound. Generic Lean
+clause checks live in `Flapjack.Test.TargetSemMachineSemParity`; these check
+local definition shape and are not a cross-language equivalence theorem.
+### Complete SSA program invariant
+
+`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
+
+### SSA reconciliation list prerequisites
+
+`ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
+
+`ssa_reconcile_empty_probe.out` replays the complete original local evaluator reconciliation proof and its literal prerequisites, then specializes the genuine empty-moves branch. Six native types are captured; this is regression evidence, and the Lean branch independently derives the evaluator/post-state conclusions. Full SSA simulation remains unfinished.
+`stackprops_stack_lengths_probeScript.sml` literally replays the complete
+original `map_bitmap_length` and `dec_stack_length` proofs, capturing full
+statements and quantified types (four rows), plus eighteen generic payload and
+independent bitmap/stack-width decoder observations.
+`StackPropsStackLengthsParity.lean` kernel-replays the observations and applies
+both full theorems, including an 80-bit multi-frame decoded-stack result.
+A one-bit bitmap continuation with no following word correctly returns NONE.
+`ssa_reconcile_empty_probe.out` replays the complete original local evaluator reconciliation proof and its literal prerequisites, then specializes the genuine empty-moves branch. Six native types are captured; this is regression evidence, and the Lean branch independently derives the evaluator/post-state conclusions. Full SSA simulation remains unfinished.
+`ssa_reconcile_alookup_zip_probe.out` replays both original generic indexed-SOME and absent-key-NONE ALOOKUP ZIP proofs6551–6590, recording full statements and nine original argument types. Canonical opaque EL and all original domain/injection/index/length premises are retained.
+## Full Word CSE evaluation frames and state agreement
+
+`word_cse_evaluation_frames_probeScript.sml` literally replays all four original
+proofs: arithmetic register writes, arbitrary memory replacement, arithmetic
+locals agreement, and load locals/memory/domain/endianness agreement. It captures
+complete conclusions with no open hypotheses, four inferred types and 256 full
+theorem applications at widths 1/32/64/80. The applications cover all eligible
+arithmetic forms, both binop operand forms, every immediate shift, signed division,
+all four load variants, and writes to the destination or another unread register.
+The original `firstRegOfArith` expression is retained for HOL theorem matching.
+`WordCseEvaluationFramesParity.lean` applies the full kernel theorems on arbitrary
+values, states and memory functions. Eligibility/read guards and each exact set
+of input field equalities are preserved; target evaluation or global invariants
+are not assumed. The shared proof-only value factoring is checked against actual
+native Inst clauses; LoadEvaluation support was exposed without changing its
+implementation or old theorem statements. Existing finite-map/positive-word
+translations and inherited rational-cut assumption (SOUNDNESS item 8) remain.
+These are invariant-update prerequisites, not full CSE/compiler correctness.
+
+The same `ssa_reconcile_empty_probe.out` also backs full `evaluateSSAReconcile`: `re_original_full` is the complete original result without a branch guard; its literal source proof and all six native carrier types were replayed before the assembling Lean theorem was tagged.
+
+`ssa_lt_ok_probe.out` captures the complete original loop-table predicate and its inferred native product/list/tree type, confirming independently arbitrary entry/exit name-set payloads. The Lean definition retains both original domain injections; this supports full SSA simulation rather than certifying it.
+
+`ssa_cc_trans_correct_control_probe.out` replays both literal resumed Break/Continue semantic correctness proofs against their full original theorem specializations, including all six premises, existential permutation and complete result-sensitive postcondition. Six native carrier types are captured. Other native SSA correctness cases and compiler composition remain unfinished.
+
+`stackprops_ordered_code_labels_probeScript.sml` captures full original
+ordered label/lookup/set declarations and replays the complete original
+lookup-containment proof (ten source/type rows), then checks eight generic
+Bool/list/Nat register-key observations. It discovered and guards the
+register-key polymorphism of StackSem `find_code_def`;
+`StackSemGenericCodeLookupParity.lean` kernel-replays those observations.
+The full ordered extractor/containment ports remain separate work on qipb.
+The same `ssa_reconcile_empty_probe.out` also backs full `evaluateSSAReconcile`: `re_original_full` is the complete original result without a branch guard; its literal source proof and all six native carrier types were replayed before the assembling Lean theorem was tagged.
+
+`ssa_lt_ok_probe.out` captures the complete original loop-table predicate and its inferred native product/list/tree type, confirming independently arbitrary entry/exit name-set payloads. The Lean definition retains both original domain injections; this supports full SSA simulation rather than certifying it.
+
+`ssa_cc_trans_correct_control_probe.out` replays both literal resumed Break/Continue semantic correctness proofs against their full original theorem specializations, including all six premises, existential permutation and complete result-sensitive postcondition. Six native carrier types are captured. Other native SSA correctness cases and compiler composition remain unfinished.
+
+`target_props_clock_probeScript.sml` checks the original closed
+`evaluate_add_clock` theorem against its entire quantified statement and captures
+halt/error equality at clocks one and five. The Lean theorem and generic replay
+are in `TargetProps/EvaluateAddClock.lean` and `TargetPropsClockParity.lean`.
+The proof uses clock induction on the literal evaluator, with a local heartbeat
+budget for the complete constructor case analysis. No default target or gate is
+shortened. Source-reviewed total `holEl`/`holHd` behavior is retained at both
+clocks and explicitly recorded for the evaluator and machine semantics.
+
+`ssa_reconcile_empty_probe.out` replays the complete original local evaluator reconciliation proof and its literal prerequisites, then specializes the genuine empty-moves branch. Six native types are captured; this is regression evidence, and the Lean branch independently derives the evaluator/post-state conclusions. Full SSA simulation remains unfinished.
+`word_cse_deletion_frames_probeScript.sml` regenerates the two complete local
+`evaluate_arith_unset_var` / `evaluate_load_unset_var` proofs from original
+`word_cseProofScript.sml`, requiring closed hypotheses, plus four inferred types
+and 152 full theorem applications at widths 1/32/64/80. Fixtures cover all
+eligible arithmetic families and all non-store memory constructors, deletion
+of destination or an unrelated register, arbitrary full states and word-loc
+values. `WordCseDeletionFramesParity.lean` kernel-checks matching applications.
+The statements retain the original input guards and both evaluation directions.
+These regressions supplement source review; they do not prove cross-language
+equivalence or complete CSE correctness.
+
+The `stackprops_ordered_code_labels_probe.out` capture additionally records ten
+original ordered `extract_labels` observations: tail-call ignored handler,
+return and handler labels, nested outer-before-inner order, duplicates,
+sequence, loop, If and non-continuation label leaves. Native kernel fixtures
+live in `Flapjack/Test/StackPropsOrderedLabelsParity.lean`.
+`ssa_cc_trans_correct_primitives_probe.out` replays the literal original Skip/Tick semantic correctness proofs and original exists_tac against their complete original theorem specializations. All six premises, full existential postconditions and five native carrier types are captured; Tick retains both zero/positive-clock paths in Lean.
+
+`ssa_locals_get_var_probe.out` replays the complete original SSA get_var lookup transport and captures six original types, including independently arbitrary source/target configuration and FFI hosts. It supports expression-producing SSA semantic cases without adding a target-read-success premise.
+
+Native SSA register-writing probe replays original Assign/Get/LocValue exp_tac2 and its local prerequisites, omitting only the discarded recursive-induction assumption for primitive cases. Captures full statements and source carrier types. This HOL evidence supplements source review and Lean kernel checks.
+
+SSA state-writing probe replays original Set/Store semantic cases and local prerequisites, captures full statements and six original carrier types. Primitive Set omits only discarded recursive IH bookkeeping; Store substitutes its expression binder. Source errors and successful native store/memory updates are preserved.
+`stackprops_allocation_constants_probe.out` replays the five complete original
+StackProps allocation/GC/constant-store field and clock proofs, their full types,
+and the original generic-result `store_const_sem_def`. Six allocation and five
+copy/error branches check all original fields and full clock commutation, with
+four direct GC clock cases and explicit state1/result80 and state80/result1
+operation checks (51 rows). Native applications/outcomes are kernel
+checked in `Flapjack/Test/StackPropsAllocationConstantsParity.lean`.
+`word_cse_list_order_probeScript.sml` captures original `listCmp_def`, replays
+the complete equality, antisymmetry and transitivity proof bodies with no open
+hypotheses, evaluates 64 independent empty/prefix/long-prefix/large-numeral
+comparison pairs, and applies the original full laws to 144 pairs/triples
+with arbitrary suffixes. The matching `WordCseListOrderParity.lean` checks
+all 208 values/applications. This group does not establish external
+`TotOrd`/`good_cmp`, the balanced-map carrier or full CSE correctness.
+The production list-key comparator route is tracked separately.
+`target_props_io_events_probeScript.sml` replays the full original `evaluate_io_events_mono` quantified theorem with no open hypotheses. `TargetPropsIoEventsParity.lean` checks the same unrestricted statement over the full literal evaluator. Clock induction composes exact returning FFI append with recursive prefix preservation; all failed/final paths retain the original trace.
+
+Native SSA MustTerminate probe replays original recursive case with its specialized smaller-body IH, omitting already-discharged prog_size bookkeeping. Captures full recursive/original statements and six carrier types; no desired target evaluation or frame is assumed.
+`stack_props_register_bounds_probeScript.sml` captures all three original
+register-bound definitions and evaluates 504 constructor/boundary cases across
+widths 1/64/80, including all expression/asm/program constructors, ignored FP
+fields, missing-return Call handlers, Set BitmapBase, StoreConsts minimum bound,
+and first-slot StackLoad/StackStore bounds. `StackPropsRegisterBoundsParity.lean`
+checks matching cases and additional arbitrary-width equations. These predicates
+are prerequisites of StackRemove correctness, not its semantic simulation.
+
+`word_to_stack_bitmap_word_lemmas_probeScript.sml` replays five complete
+original WordToStack proof bodies (two even-register maxima and three bitmap
+OR/shift primitives), requiring no open hypotheses, plus three original inferred
+types. Its 267 further cases
+cover empty/singleton register sequences, widths 1/2/32/64/80, zero/all-ones,
+MSB values and discarded top bits. `WordToStackBitmapWordParity.lean` checks
+matching observations/full applications plus arbitrary width/count instances.
+These are full original helper theorems, not a bitmap decoder simulation.
+`target_props_io_events_probeScript.sml` replays the full original `evaluate_io_events_mono` quantified theorem with no open hypotheses. `TargetPropsIoEventsParity.lean` checks the same unrestricted statement over the full literal evaluator. Clock induction composes exact returning FFI append with recursive prefix preservation; all failed/final paths retain the original trace.
+
+`lab_to_target_ignore_clocks_probeScript.sml` replays the complete original local proof18-27 and checks the full closed statement. `LabToTargetIgnoreClocksParity.lean` applies the corresponding unrestricted kernel theorem; both original non-TimeOut runs are retained.
+
+Native SSA register-writing probe replays original Assign/Get/LocValue exp_tac2 and its local prerequisites, omitting only the discarded recursive-induction assumption for primitive cases. Captures full statements and source carrier types. This HOL evidence supplements source review and Lean kernel checks.
+
+SSA state-writing probe replays original Set/Store semantic cases and local prerequisites, captures full statements and six original carrier types. Primitive Set omits only discarded recursive IH bookkeeping; Store substitutes its expression binder. Source errors and successful native store/memory updates are preserved.
+
+`lab_to_target_ignore_clocks_probeScript.sml` replays the complete original local proof18-27 and checks the full closed statement. `LabToTargetIgnoreClocksParity.lean` applies the corresponding unrestricted kernel theorem; both original non-TimeOut runs are retained.
+
+`target_props_clock_io_events_probeScript.sml` replays the full original `evaluate_add_clock_io_events_mono` theorem (targetPropsScript.sml:1112-1137), including only clock order and no open hypotheses. `TargetPropsClockIoEventsParity.lean` checks the same full statement over the literal evaluator. Paired clock induction retains every transition and uses full input-event prefix preservation at clock zero.
+
+`target_props_interference_app_probeScript.sml` captures all four original constructor/projection types and simplifies the four unrestricted constructor equations with the literal definitions (targetProps:95-106). `TargetInterferenceAppParity.lean` checks the same generic equations. FFI byte width eight, phantom machine-word parameter, and arbitrary pre/post states are retained. Oracle search and compilation simulation remain separate prerequisites.
+
+`asmprops_interference_ok_probeScript.sml` checks the entire original projection-preservation predicate equation (asmProps:75-77), captures its independent polymorphic state/projection type, and checks identity and changed environments. `AsmPropsInterferenceParity.lean` replays the full generic equation and both cases. No oracle-search validity premise is assumed.
+
+### Native asmProps encoding predicates
+
+`asmprops_encoding_ok_probeScript.sml` captures the original inferred types and
+complete equations for `offset_monotonic`, `enc_ok`, and `target_ok`. Encoding
+payload and offset word dimension are independently polymorphic in the first
+predicate. Signed offset boundaries are checked at widths 1, 2, 8, 32, 64, and
+80; constant encoding, empty output, and alignment fixtures check the length
+conditions. `Flapjack.Test.AsmPropsEncodingParity` kernel-checks the corresponding
+Lean equations and conditions. These probes provide regressions, not a
+cross-language equivalence proof.
+
+### Native Lab code-safety predicates
+
+`lab_code_safety_probeScript.sml` explicitly qualifies `labProps$no_install`
+(the unqualified name can resolve to StackLang) and captures its full type and
+equation, together with `no_share_mem_inst` and the Lab-to-Target safety
+disjunction. Empty programs, forbidden fetched Install/ShareMem constructors,
+and both alternatives of the code/FFI-name disjunction have original HOL
+fixtures and matching kernel regressions in `Flapjack.Test.LabCodeSafetyParity`.
+All positions and constructor payloads remain universally quantified.
+`word_alloc_def_probe` captures the original HOL `word_alloc` type and eight EVAL results on
+small 64-bit programs: each allocator branch (Simple, IRC, linear scan), an accepted and a
+clashing oracle colouring (the latter falls back to the allocator), stack variables under
+IRC and linear scan, and a physical register. HOL's free `asm_config` is only read through
+`ISA`. Kernel-replayed through a structural observation in `WordAllocDefParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_unreach_def_probe` captures the original HOL `remove_unreach` and `merge_moves` types
+and 18 EVAL results of `dest_Seq_Move`, `merge_moves`, `SimpSeq` and `remove_unreach`
+(through `Seq_assoc_right`) on small 64-bit programs, including the source's
+`remove_unreach_test`, continuations dropped after `Return`/`Raise`, a `Call` without return
+continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a structural
+observation in `WordUnreachDefParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_copy_def_probe` captures the original HOL `copy_prop` and `copy_prop_prog` types and 41
+EVAL results of `copy_prop` and `copy_prop_prog` (program and final `copy_state`) on small
+64-bit programs: Move chains, overlapping and non-alloc moves, every `copy_prop_inst` arith,
+memory and FP clause shape including the self-reference guards, `Set`/`Get` store
+equivalences, `If` merging (`merge_eqs`/`inter_eq`), the `Loop` reset, `ShareInst`,
+`OpCurrHeap`, buffer writes, `StoreConsts`/`LocValue` removal and the
+`Call`/`Alloc`/`Assign`/`Store`/`Install` resets. Kernel-replayed in `WordCopyDefParity`
+through a structural program observation and lookups of the `num_map`s on keys `0..31`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_copy_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`logroot_log_spec_probe` captures the original HOL kernel statements of `LOG_exists`, the
+`new_specification` theorem `LOG`, `LOG_UNIQUE` and `LOG2_def`, and four `LOG2` values on
+positive arguments proved in HOL from `LOG_UNIQUE` (`LOG2` is `[nocompute]`). No value of
+`LOG2 0` is derivable from the specification. `LogrootParity` checks the Lean statements
+against the captured ones and proves the same values. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=logroot_log_spec_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`alignment_align_probe` captures the original HOL `align`/`byte_align` types and EVAL results
+of `word_slice` (including a bound above `^HB` and an empty slice), `align` (exponents 0, 3 and
+40 on a 32-bit word) and `aligned`, plus `byte_align`/`byte_aligned` at 64 bits proved in HOL
+through `LOG2 8 = 3`. Kernel-replayed in `AlignmentParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=alignment_align_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_share_mem_domain_probe` captures the original typed `share_mem_domain_code_rel`
+definition and three HOL-proved consumers: its reduction on code with no lines to the
+`byte_align` domain closure and `shared_addresses` equation, the full-domain instance, and the
+64-bit singleton `{8w}` counterexample (`byte_align 9w = 8w` through `LOG2 8 = 3`).
+`LabToTargetShareMemDomainParity` replays the three consumers in the kernel. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=lab_to_target_share_mem_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_share_mem_state_probe` captures the original typed `share_mem_state_rel`
+definition (independent labSem and machine word widths, vacuous outer `t1`/`ms1`) and two
+HOL-proved consumers: the instance with no FFI names and the counterexample with one shared-memory
+name whose entry PC is the halt PC (via `mmio_pcs_min_index [SharedMem MappedRead] = SOME 0`).
+`LabToTargetShareMemStateParity` replays both. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=lab_to_target_share_mem_state_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`asm_sem_mem_ops_probe` captures 14 original HOL results of `mem_load`, `mem_store` and
+`mem_op` on an 8-bit state: little/big-endian two-byte loads, misaligned and out-of-domain
+failures, one-byte stores, four `mem_op` opcodes, and the zero-count load, whose failure flag is
+proved equal to `¬aligned (LOG2 0) 1w` with `LOG2 0` left unconstrained. Positive `LOG2` values
+are proved from `LOG_UNIQUE` (`LOG2` is `[nocompute]`). Kernel-replayed in `AsmSemMemOpsParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=asm_sem_mem_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`asm_sem_step_probe` captures 12 original HOL results of `asm` (with `inst`/`jump_to_offset`)
+on an 8-bit state: every assembly clause, `Const`/`Arith`/`Mem`/`Skip` instructions, both
+`JumpCmp` branches, `JumpReg` with a satisfied and a violated `aligned s.align` guard, and the
+HOL-proved projection of `asm_step` onto its transition and non-failure conjuncts.
+Kernel-replayed in `AsmSemStepParity`. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=asm_sem_step_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`asm_props_encoder_correct_probe` captures the original typed `encoder_correct` definition and
+two HOL-proved consumers: its `target_ok` projection and the specialization to the identity
+interference environment. `AsmPropsEncoderCorrectParity` replays both. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=asm_props_encoder_correct_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+
+
+`word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
+original missing-bit, SNOC and prefix-reconstruction proofs plus their local
+original bit-index context, each with no open hypotheses. It prints two
+original types and 187 cases across widths 1/2/8/64/80, including truncating
+long lists, empty prefixes, missing bits and true/false terminal bits.
+`WordToStackBitmapBitStructureParity.lean` checks matching observations and
+whole theorem applications. The HOL context replay uses original EL read-only;
+no new Lean total-EL port or provenance allowance is introduced.
+Native SSA Seq probe replays the original semantic case and local locals-more proof, with specialized legitimate first/second body IHs and already-discharged size bookkeeping omitted. Captures full recursive/original statements and seven carrier types; actual scheduler-swap and second-context validity are retained.
+
+### Native SSA semantic If case
+
+`ssa_cc_trans_correct_if_probeScript.sml` replays the literal resumed If
+proof with its complete two specialized smaller-branch IHs. It omits only
+structural size bookkeeping already discharged by specialization and selects
+the corresponding branch IH explicitly. Original non-exported getVar,
+map/locals bound, merge-move, and fix-inconsistencies local proofs are replayed.
+The capture records the recursive and original full statements and native
+state/program/map/fresh-bound/loop-table carriers. This is source evidence,
+not a cross-assistant equivalence proof; final assembly must discharge the IHs.
+
+### Native SSA OpCurrHeap semantic case
+
+`ssa_cc_trans_correct_heap_probeScript.sml` replays the literal resumed
+OpCurrHeap case and its original local variable/expression/fresh-update helpers.
+Only the discarded primitive induction bookkeeping is omitted. The capture
+records the complete original statement and native state/binop/register/table
+carriers; it is source evidence, not a cross-assistant equivalence proof.
+
+### Native first-interference search
+
+`target_find_next_interference_probeScript.sml` captures the full original
+definition and polymorphic type, normal/halt/lookup/guard failures, and complete
+cache, mapped-read/write/narrow-write, final and empty-external return equations.
+The normal-to-cache row checks pre/post states and both shifted oracles.
+`Flapjack.Test.TargetFindNextInterferenceParity` checks native counterparts
+including complete continuation configurations and returned FFI events.
+The full definition retains total EL without an added bounds premise.
+`riscv_overflow_target_probeScript.sml` captures both original RV64 six-instruction overflow expansions and their encoded bytes for eight register tuples, including zero, scratch-register and alias cases. These source observations support a staged target-helper prerequisite; the production overflow carrier and codec remain separate work.
+
+`word_alloc_def_probe` captures the original HOL `word_alloc` type and eight EVAL results on
+small 64-bit programs: each allocator branch (Simple, IRC, linear scan), an accepted and a
+clashing oracle colouring (the latter falls back to the allocator), stack variables under
+IRC and linear scan, and a physical register. HOL's free `asm_config` is only read through
+`ISA`. Kernel-replayed through a structural observation in `WordAllocDefParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Native SSA Raise semantic case
+
+`ssa_cc_trans_correct_raise_probeScript.sml` replays the literal resumed Raise
+proof and its original non-exported getVar transport helper. No recursive IH
+or additional success/target-evaluation premise is introduced. The capture
+records the complete original statement and native state/register/map/table
+carriers; it is source evidence, not a cross-assistant equivalence proof.
+`word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
+original missing-bit, SNOC and prefix-reconstruction proofs plus their local
+original bit-index context, each with no open hypotheses. It prints two
+original types and 187 cases across widths 1/2/8/64/80, including truncating
+long lists, empty prefixes, missing bits and true/false terminal bits.
+`WordToStackBitmapBitStructureParity.lean` checks matching observations and
+whole theorem applications. The HOL context replay uses original EL read-only;
+no new Lean total-EL port or provenance allowance is introduced.
+
+### Native SSA list-register transport
+
+`ssa_locals_rel_get_vars_probeScript.sml` replays the literal original local
+get_vars theorem and its get_var prerequisite without changing premises.
+It captures the full statement and native list/value/map/bound carriers;
+source and target state captures establish their independent code/FFI hosts.
+The capture is source evidence, not a cross-assistant equivalence proof.
+
+
+### Balanced-map ordering/domain equivalence
+
+`balanced_map_keyordered_probeScript.sml` replays the original local
+`key_ordered_to_fmap` proof with its full statement and no open hypotheses.
+It retains arbitrary trees and only the original good comparator premise.
+This source capture does not assert cross-assistant equivalence or production wiring.
+`store_list_code_probeScript.sml` records the full original definition/type and 24 complete initializer trees at widths 1/8/64/80, with empty, constant, register and mixed lists, aliasing, arbitrary large registers, and word truncation. Native kernel fixtures retain the terminal Skip and literal right-nesting. Full init/compiler routing is tracked separately.
+
+### Native SSA Return semantic case
+
+`ssa_cc_trans_correct_return_probeScript.sml` replays the literal resumed Return
+proof and its original getVar/getVars, physical list-write, and set/read local
+helpers, without added target-run or success premises. The capture records the
+complete original statement and native state/register/list/map/table carriers.
+It is source evidence, not a cross-assistant equivalence proof.
+`word_unreach_def_probe` captures the original HOL `remove_unreach` and `merge_moves` types
+and 18 EVAL results of `dest_Seq_Move`, `merge_moves`, `SimpSeq` and `remove_unreach`
+(through `Seq_assoc_right`) on small 64-bit programs, including the source's
+`remove_unreach_test`, continuations dropped after `Return`/`Raise`, a `Call` without return
+continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a structural
+observation in `WordUnreachDefParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+
+`target_position_unique_probeScript.sml` captures the complete original
+`interference_count_lt` and `interference_pos_unique` theorem statements,
+checking that both compiled original theorems have no undischarged hypotheses.
+The native Lean counterparts are in `TargetProps/PositionUnique.lean`.
+
+`target_position_laws_probeScript.sml` prints the full original
+`interference_count_tail` and `interference_pos_head` statements and checks
+that the original compiled theorems have no undischarged hypotheses.
+Native counterparts are in `TargetProps/PositionLaws.lean`.
+
+`target_position_tail_probeScript.sml` captures complete original
+`interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
+checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
+
+`target_constructed_oracles_probeScript.sml` captures full six-conjunct original
+`constructed_oracles_ffi_step` and `constructed_oracles_cc_step` statements,
+checking no undischarged hypotheses. Native ports are in `TargetProps/ConstructedOracles.lean`.
+### Balanced-map ordering/domain equivalence
+
+`balanced_map_domain_probe.out` captures the complete original `to_fmap_key_set`
+with no open hypotheses. The Lean theorem retains arbitrary comparators and
+malformed cached sizes, requires only a defined semantic lookup, and constructs
+a key whose comparator class equals the queried set. The observation qualifier
+records the already reviewed canonical result-map translation of `toFmap`; it
+does not add a map parameter, comparator law, or invariant assumption.
+
+### Native SSA Inst.Const semantic case
+
+`ssa_cc_trans_correct_inst_const_probeScript.sml` replays the literal original
+Const opcode proof and its original fresh-update locals helper. Fixed-constructor
+selection and discarded primitive induction bookkeeping are omitted. The capture
+records the full original pass statement and native register/word/state/map/table
+carriers. It is source evidence, not a cross-assistant equivalence proof; the
+whole Inst semantic assembly remains open.
+
+### Native SSA Inst.Binop semantic case
+
+`ssa_cc_trans_correct_inst_binop_probeScript.sml` replays the literal original
+Binop opcode branch for both register/immediate operands, including the original
+expression setup and local helpers. Fixed-constructor selection and discarded
+primitive induction bookkeeping are omitted. It captures the complete pass
+statement and native operand/operator/state/map/table carriers. This is source
+evidence, not a cross-assistant equivalence proof; whole Inst assembly remains open.
+`balanced_map_keyordered_probeScript.sml` replays the original local
+`key_ordered_to_fmap` proof with its full statement and no open hypotheses.
+It retains arbitrary trees and only the original good comparator premise.
+This source capture does not assert cross-assistant equivalence or production wiring.
+`store_list_code_probeScript.sml` records the full original definition/type and 24 complete initializer trees at widths 1/8/64/80, with empty, constant, register and mixed lists, aliasing, arbitrary large registers, and word truncation. Native kernel fixtures retain the terminal Skip and literal right-nesting. Full init/compiler routing is tracked separately.
+`word_unreach_def_probe` captures the original HOL `remove_unreach` and `merge_moves` types
+and 18 EVAL results of `dest_Seq_Move`, `merge_moves`, `SimpSeq` and `remove_unreach`
+(through `Seq_assoc_right`) on small 64-bit programs, including the source's
+`remove_unreach_test`, continuations dropped after `Return`/`Raise`, a `Call` without return
+continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a structural
+observation in `WordUnreachDefParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cc_trans_correct_inst_shift_probeScript.sml` replays the literal original
+Shift opcode proof (7881–7919), local getVar/setVar/physical insertion helpers
+and setup tactic. Only fixed-constructor selection and discarded primitive
+induction bookkeeping are omitted. The full six-premise simulation and native
+state/operator/register/immediate/SSA/table carrier types are captured.
+
+`ssa_cc_trans_correct_inst_div_probeScript.sml` captures `Q.SPEC` of the
+original kernel-checked `ssa_cc_trans_correct` at native Div, including its
+full six-premise simulation and all state/register/SSA/table carriers. The
+opcode proof at 7919–7944 is manually compared; this probe does not claim a
+standalone replay of that tactic fragment.
+`word_overflow_production_probeScript.sml` captures 150 original overflow observations: 12 CSE classifier/key tuples at 8/80 bits including arbitrary large register naturals; two SSA result/map/next projections; four copy-propagation outputs including the right-operand/destination collision; four full WordToStack outputs including two spilled inputs and a spilled destination; and 128 full asmSem result/flag/input/failure observations at widths 1/8/64/80 with signed boundaries and destination/flag aliases. `WordOverflowProduction.lean` replays actual executed consumers, including the validated RV64 byte dispatcher against the earlier original target capture. No pass simulation or new HOL datatype tag is asserted.
+### Generic label-tree domain
+
+`lab_to_target_labs_domain_probeScript.sml` captures all three full original
+`labs_domain` declarations and its polymorphic nested-tree type. Six original
+EVAL observations of its literal defining `lab_lookup ≠ NONE` condition cover
+empty/hit/two-level misses and fresh insertion preserving old and adding new
+keys; Lean checks the corresponding actual domain memberships. Finite fixtures
+are not a cross-assistant proof.
+
+`ssa_cc_trans_correct_inst_longmul_probeScript.sml` captures the original
+kernel theorem specialization at LongMul, its full six-premise simulation and
+complete native state/register/SSA/table types. Source opcode7943–8004 and
+actual physical input/output moves are manually compared; no standalone tactic
+replay of the fragment is claimed.
+
+`ssa_cc_trans_correct_inst_longdiv_probeScript.sml` captures the original
+kernel theorem specialization at LongDiv and complete state/register/SSA/table
+carriers. Full six-premise simulation, physical input/output moves and mapped
+divisor preservation are manually compared to opcode7998–8030; no standalone
+tactic replay is claimed.
+
+`store_init_probeScript.sml` captures the original complete function-update definition/type and 32 full lookup snapshots: output widths 1/8/64/80, both gen_gc branches, and pointer values 0/1/23/2^80+9. Each snapshot covers all 17 fixed store-name constructors plus all 32 values of the fixed five-bit Temp field, for 1,568 original observations. `StackRemoveStoreInit.lean` kernel-replays the complete native sum-valued outputs, including every default zero-word case and unbounded pointer values. Full initialization/compile routing remains on the linked initializer beads.
+### Full comparator bundle
+
+`comparison_bundle_probeScript.sml` captures the complete original `cmp_thms`
+LIST_CONJ, with and without type annotations and with no open hypotheses.
+The full original LIST_CONJ shares its type variable between datatype case
+results and comparator keys; Lean retains this and every original conjunct.
+
+
+### Heterogeneous balanced-map keys and queries
+
+`balanced_map_heterogeneous_probeScript.sml` captures the original full typed
+key-set, semantic-map and domain declarations. Comparator key and query types
+are independent. The Lean repair preserves this in the producer, raw codec and
+unconditional lookup witness; generic consumers and Bool/Nat fixtures check it.
+`ssa_cc_trans_correct_inst_addcarry_probeScript.sml` captures the original
+kernel theorem specialization and complete native state/register/SSA/table
+carriers at AddCarry. Opcode8031–8068, input/output moves and original physical
+and fresh locals relations are manually compared. No standalone tactic replay
+is claimed.
+
+`ssa_cc_trans_correct_inst_addoverflow_probeScript.sml` captures the original
+kernel theorem specialization at AddOverflow, its full simulation and native
+state/register/SSA/table carriers. Opcode8069–8090, signed overflow test and
+actual physical/fresh-flag output path are manually compared. No standalone
+tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_suboverflow_probeScript.sml` captures the original
+kernel theorem specialization at SubOverflow, full six-premise simulation and
+complete native state/register/SSA/table carriers. Opcode8092–8113, signed
+wrapped difference test and physical/fresh-flag output path are manually
+compared. No standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_load_probeScript.sml` captures the original kernel
+theorem specialization at native Mem Load and full state/register/offset-word/
+SSA/table carriers. Original opcode8115–8123, address expression, domain errors
+and fresh destination relation are manually compared; no standalone tactic
+replay is claimed.
+
+`ssa_cc_trans_correct_inst_load8_probeScript.sml` captures the original kernel
+theorem specialization at Mem Load8 and complete native state/register/offset/
+SSA/table carriers. Opcode8124–8132, domain/endianness byte-load branches and
+HOL w2w byte-to-word fresh update are manually compared; no standalone tactic
+replay is claimed.
+
+`ssa_cc_trans_correct_inst_load32_probeScript.sml` captures the original kernel
+theorem specialization at Mem Load32 and complete native state/register/offset/
+SSA/table carriers. Opcode8133–8142, alignment/domain/endianness errors and
+HOL w2w 32-bit-to-word fresh update are manually compared; no standalone tactic
+replay is claimed.
+
+`ssa_cc_trans_correct_inst_store_probeScript.sml` captures the original kernel
+theorem specialization at Mem Store and complete native state/register/offset/
+SSA/table carriers. Opcode8143–8154, arbitrary WordLoc data, domain errors and
+memory-update frame/unchanged locals are manually compared; no standalone
+tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_store8_probeScript.sml` captures the original kernel
+theorem specialization at Mem Store8 and complete native state/register/offset/
+SSA/table carriers. Opcode8155–8163, word-to-byte/data-type errors, byte-store
+domain/endianness update and unchanged-locals frame are manually compared; no
+standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_store32_probeScript.sml` captures the original kernel
+theorem specialization at Mem Store32 and complete native state/register/offset/
+SSA/table carriers. Opcode8164–8173, word-to-32-bit/data-type errors, alignment,
+domain and four-byte endianness update, and unchanged-locals frame are manually
+compared; no standalone tactic replay is claimed.
+### Balanced-map core independent carriers
+
+`balanced_map_core_types_probeScript.sml` captures the complete fully typed original
+`lookup_def` and `member_def`, including independent query/stored-key/payload types
+and all recursive ordering branches. Both captured theorems have no hypotheses.
+The heterogeneous kernel fixtures instantiate query Bool, stored key Nat and
+payload String; existing homogeneous observations remain unchanged.
+
+### Balanced-map key-order full carriers
+
+`balanced_map_key_ordered_types_probeScript.sml` captures complete typed
+`key_ordered_def` and `invariant_def` without hypotheses. The former permits
+independent query/key/result/payload types; the latter forces a homogeneous
+Ordering comparator. `BalancedMapKeyOrderedTypes` checks generic constructors
+and Bool-query/Nat-key/String-result/Bool-payload examples, including malformed sizes.
+
+`ssa_cc_trans_correct_inst_fpcompare_probeScript.sml` captures original kernel
+FPLess/FPLessEqual/FPEqual specializations and full native state/register/SSA/table
+carriers. Original FP proof8174–8222 and fixed binary64 comparison/fresh word
+result cases are manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fpunary_probeScript.sml` captures original kernel
+FPMov/FPAbs/FPNeg specializations and native carriers. Original FP proof8174–8222
+and unchanged-SSA finite-map FP writes, bit copying and sign-only updates are
+manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fparith_probeScript.sml` captures original kernel
+FPSqrt/FPAdd/FPSub/FPMul/FPDiv/FPFma specializations and native carriers. Original
+FP proof8174–8222, unchanged-SSA FP writes and inherited rational/choice arithmetic
+operations are manually compared; no standalone tactic replay is claimed.
+`target_oracle_equality_probeScript.sml` captures the complete original
+`interference_count_EQ` and `constructed_oracles_EQ` statements with no
+undischarged hypotheses. Native counterparts are in `TargetProps/OracleEquality.lean`.
+
+`target_callee_saved_probeScript.sml` captures complete original
+`target_io_regs_callee_saved` and `target_cc_regs_callee_saved` statements
+with no open hypotheses. Native ports are in `TargetProps/CalleeSaved.lean`.
+
+`target_next_cases_probeScript.sml` captures complete original
+`next_interference_ExtCall` and `next_interference_ccache` statements and
+checks no undischarged hypotheses. Native ports are in `TargetProps/NextCases.lean`.
+### Full balanced-map rotation arithmetic
+
+`balanced_map_balance_arithmetic_probeScript.sml` captures both typed
+`almost_balancedL/R_def` equations and replays all seven local `balanced_lem`
+proofs with their original statements and tactic bodies. It recreates local
+`TIMES_MIN` using the original proof. Every replay has no open hypotheses.
+The fourteen predicate observations cover left/right zero, one, two and strict
+boundary cases, matched by kernel fixtures in `BalancedMapBalanceArithmeticParity`.
+Lemma7 retains the original unused, independently typed first binder.
+
+### Balanced-map recursive membership law
+
+`balanced_map_membership_probeScript.sml` replays the full original local
+`member_eq_lookup` proof and prints its complete inferred types with no hypotheses.
+The original `gen_tac` script alias is spelled `Tactic.GEN_TAC` in standalone batch mode.
+Six actual member observations use Bool queries, Nat stored keys/payloads, arbitrary
+comparators and malformed cached sizes. Kernel fixtures cover nil, root equality,
+absent left/right branches and successful left/right recursive searches.
+
+### Balanced-map null characterization
+
+`balanced_map_null_probeScript.sml` captures the complete exported `null_thm`
+with and without full types, checks no open hypotheses and observes Tip and
+malformed cached-size Bin. `BalancedMapNullParity` checks the full independent
+key/query theorem and a Bool/Nat/String nonempty root, without comparator laws.
+`target_position_unique_probeScript.sml` captures the complete original
+`interference_count_lt` and `interference_pos_unique` theorem statements,
+checking that both compiled original theorems have no undischarged hypotheses.
+The native Lean counterparts are in `TargetProps/PositionUnique.lean`.
+
+`target_position_laws_probeScript.sml` prints the full original
+`interference_count_tail` and `interference_pos_head` statements and checks
+that the original compiled theorems have no undischarged hypotheses.
+Native counterparts are in `TargetProps/PositionLaws.lean`.
+
+`target_position_tail_probeScript.sml` captures complete original
+`interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
+checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
+
+`ssa_cc_trans_correct_inst_fpint_probeScript.sml` captures original kernel
+FPToInt/FPFromInt specializations and native carriers. Original FP proof8174–8222,
+width branches, signed range/rounding failures and half-register writes are
+manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fpmovtoreg_probeScript.sml` captures original kernel
+FPMovToReg specialization and native carriers. Original FP proof8174–8222,
+width64 one-write and otherwidth two-write low/high extraction and destination
+aliases are manually reviewed; no standalone tactic replay is claimed.
+`target_next_mapped_probeScript.sml` captures the complete original
+`next_interference_MappedRead` and `next_interference_MappedWrite` statements
+with no open hypotheses. Native ports are in `TargetProps/NextMapped.lean`.
+`balanced_map_invariant_eq_probeScript.sml` captures the entire exported
+`invariant_eq`, including its typed independent Tip payload and all three
+comparator-guarded semantic clauses, with no open HOL hypotheses. It also
+captures a valid singleton, an invalid cached size, and an equal-key child.
+`BalancedMapInvariantEqParity` kernel-checks the corresponding observations.
+The capture also replays the original private `key_ordered_to_fmap` proof
+and the complete original `invariant_eq` proof body, checking the replay has
+no open hypotheses. Batch tactics use their equivalent qualified HOL names.
+The same probe now replays the complete private `inv_props` statement and
+literal original proof, prints its fully typed closed theorem, and evaluates
+a valid tree with two nonempty children. The Lean fixtures also instantiate
+all three `invProps` conclusions for a checked three-key comparator, using
+actual nonempty canonical child lookups rather than assumed domain facts.
+
+`ssa_cc_trans_correct_inst_fpmovfromreg_probeScript.sml` captures original kernel
+FPMovFromReg specialization and carriers (first=n FP destination, second=n0 left
+source, fp=n1 right source). Original FP proof8174–8209, width branches and real
+alias-input Move/fresh SSA locals are manually reviewed; no tactic replay claimed.
+
+`ssa_cc_trans_correct_inst_common_probeScript.sml` captures original kernel
+Skip/Load16/Store16 specializations and carriers. Original initial Inst split
+7860–7865, unchanged Skip and original unsupported16 Error exemptions are
+manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_probeScript.sml` captures original kernel arbitrary
+Inst specialization and native instruction/state/SSA/table carriers. Original
+Inst7860–8222 and all34 constructor cases are compared with the exhaustive
+Lean assembly; no standalone tactic replay is claimed.
+
+`target_next_shared_mem_probeScript.sml` captures the complete original
+`next_interference_SharedMem` statement with no open hypotheses; native
+assembly is in `TargetProps/NextSharedMem.lean`.
+The capture also replays the entire original `lookup_thm` statement and proof,
+with typed closed output, and evaluates left/root/right hits, whole-tree and
+child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
+consume the full generic theorem and derive actual semantic finite-map results
+for nonempty children and a distinct equivalent key with an independent payload.
+
+### Misc byte-region prerequisites
+
+`misc_memory_regions_probeScript.sml` captures the complete original
+`bytes_in_memory_APPEND` and `bytes_in_memory_change_mem` theorem conclusions
+from compiled `miscTheory`; `misc_memory_regions_probe.out` is statement review
+and regression evidence, not a cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=misc_memory_regions_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`init_code_probeScript.sml` captures the full original definition/type and120 complete native-tree equalities across positive widths1/8/32/64/80, heap-limit multiplication below/at/above overflow, GC modes, and zero/large/aliased register indices. The original word_shift is2 for32-bit words and3 otherwise; narrow immediate truncation is preserved. `stack_remove_compile_native_probeScript.sml` adds full init_stubs/compile definitions/types and50 outputs with50 equality checks for all three initializer labels, tail-call start, both jump modes, empty/nonempty section lists, repeated section labels, and huge natural labels. Matching Lean fixtures use kernel-checked literal trees/equations. These are proof-side definitions; production routing and compile_semantics remain separate obligations.
+`ssa_locals_force_rename_probe` captures the original proved generic
+`ssa_locals_rel_force_rename` (word_allocProof:6383–6403) and five inferred
+carriers: source/target alpha Spt, Nat SSA Spt, Nat pair list, and Nat bound.
+The original three premises and conclusion were manually compared with
+`SSALocalsForceRename.lean`; the Lean proof uses induction over the same
+force-rename updates. This is an original theorem capture, not a replay of
+the isolated source tactic or a cross-language equivalence proof. Regenerate
+with `HOL_PROBE_ONLY=ssa_locals_force_rename_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Target evaluation induction base
+
+`target_evaluate_eq_probeScript.sml` captures the full original
+`evaluate_EQ_evaluate_lemma` and its zero specialization in
+`target_evaluate_eq_probe.out`. This is source-review regression evidence,
+not a proof of cross-language equivalence.
+Regenerate with `HOL_PROBE_ONLY=target_evaluate_eq_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+### Rotation auxiliary completion audit
+
+`balanced_map_rotation_aux_probeScript.sml` captures the complete typed
+specified equations for `singleL/R`, `doubleL/R`, `rotateL/R`, `bal`, `balL`,
+and `balR`, and actual single-rotation outputs with malformed cached sizes.
+The `bmra_unspecified_unreduced` row is an **unreduced expression**, not a true
+shared-ARB equality. `bmra_completed_singleR` is a **conditional theorem**;
+`bmra_completion_hyp` records its constructor-existence hypothesis explicitly.
+Do not use this capture to claim unconditional missing-case equivalence.
+
+Source audit: HOL `src/tfl/src/Defn.sml:1156-1171` sends constructor-pattern
+nonrecursive definitions to `Prim_rec.new_recursive_definition`.
+`src/1/Prim_rec.sml:259-266` proves function existence from the supplied
+equations, then calls `new_specification`. The existence construction at
+lines127-164 selects the requested constructor equations from the recursion
+axiom; it does not supply a Tip equation absent from the source specification.
+Thus the exported single-rotation equations constrain Bin cases, while the
+choice of the total function leaves the missing outputs unspecified. A shared
+map-valued ARB fallback is one possible realization, not established original
+behavior. A faithful port must retain that unspecified function specification
+(or prove a justified defining-body correspondence), and its missing-case
+outputs must not be treated as concrete parity fixtures. Full rotation proofs
+still need their original constructor premises and specified equations.
+
+### Target encoding nonemptiness
+
+`target_encoding_nonempty_probeScript.sml` replays the literal original local
+`enc_ok_not_empty` statement and proof in HOL; local declarations are not
+exported from `targetPropsTheory`. Its output captures the full kernel-checked
+conclusion, retaining `asm_ok`. This is regression/source-review evidence.
+Regenerate with `HOL_PROBE_ONLY=target_encoding_nonempty_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`target_next_shared_mem_probeScript.sml` captures the complete original
+`next_interference_SharedMem` statement with no open hypotheses; native
+assembly is in `TargetProps/NextSharedMem.lean`.
+The capture also replays the entire original `lookup_thm` statement and proof,
+with typed closed output, and evaluates left/root/right hits, whole-tree and
+child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
+consume the full generic theorem and derive actual semantic finite-map results
+for nonempty children and a distinct equivalent key with an independent payload.
+
+`ssa_cc_trans_correct_move_probe` captures the original proved theorem
+`ssa_cc_trans_correct` specialized to arbitrary `Move pri ls`, with seven
+original inferred carriers. Original resumed Move proof7740–7858 and all six
+premises/full simulation were manually compared with `SSASemanticMove.lean`.
+The port derives the provisional parallel-write locals relation and filtered
+force-rename premises from actual successful source reads; duplicate destination
+and missing-read errors retain the original exemption. Bounded list observations
+use the existing guarded holEl translation. This is a theorem specialization
+capture, not an isolated tactic replay or equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_move_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Full ASM-step target evaluation theorem
+
+`target_encoding_nonempty_probeScript.sml` replays the literal original local
+`enc_ok_not_empty` statement and proof in HOL; local declarations are not
+exported from `targetPropsTheory`. Its output captures the full kernel-checked
+conclusion, retaining `asm_ok`. This is regression/source-review evidence.
+Regenerate with `HOL_PROBE_ONLY=target_encoding_nonempty_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`ssa_cc_trans_correct_buffer_writes_probe` captures the full original theorem
+specialized to CodeBufferWrite/DataBufferWrite and seven inferred numeric/state/SSA/table
+carriers. Original exp_tac2:6294 and resumed cases9860/9864, compiler124/126, and
+evaluator1152/1160 were compared with `SSASemanticBufferWrites.lean`. All six premises
+and the entire simulation conclusion remain; source-read and buffer-write failures
+use only the original Error exemption. Native buffers and exact byte narrowing
+retain their source clauses. Original proved theorem specialization capture, not
+an isolated tactic replay or equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_buffer_writes_probeScript.sml scripts/hol-probes/regenerate.sh`.
+### Misc byte-region prerequisites
+
+`misc_memory_regions_probeScript.sml` captures the complete original
+`bytes_in_memory_APPEND` and `bytes_in_memory_change_mem` theorem conclusions
+from compiled `miscTheory`; `misc_memory_regions_probe.out` is statement review
+and regression evidence, not a cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=misc_memory_regions_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+`RotationAux.lean` now follows the approved whole-function specification
+route: existence witnesses establish satisfiability; `Classical.choose`
+selects a function constrained only by the original clauses; four tagged
+equation theorems prove those entire clauses. No default in an existence
+witness becomes an equation about the selected function. The five complete
+rotate/balancing definitions retain their literal branch order and arithmetic.
+`BalancedMapRotationAuxParity` uses only specified equations, matching actual
+single/double outputs and both branches of each rotate wrapper. The extra
+conditional and unreduced audit rows remain explicitly qualified above.
+
+`stack_initialized_boundary_probeScript.sml` captures40 original post-allocation compositions: stack_remove.compile ->stack_names.compile with riscv_names ->MAPprog_to_section. Positive dimensions1/8/32/64/80, both GC/jump settings, zero/huge heap bounds and start labels, zero/23 register pointers, empty/mixed input lists, duplicate section9 and reserved section0 are retained. The native executed list boundary checks each concrete section name/line count; its universal kernel recovery theorem recovers all decoded native section fields. Numeric projections use an explicit constructor case, not a symbolic pattern-lambda capture. Actual artifact prefix replacement remains on the parent production bead.
+
+`ssa_locals_delete_probe` captures the original generic deletion-left/right
+locals relation theorems6321–6350 and five inferred carrier types. Original
+premises and arbitrary alpha native Spt payloads are unchanged in
+`SSALocalsDelete.lean`. Source deletion only removes read obligations; physical
+target deletion preserves all SSA-image reads because ssa_map_ok excludes that
+register. Original proved theorem capture and manual source comparison, not
+a cross-language equivalence proof or isolated source tactic replay. Regenerate
+with `HOL_PROBE_ONLY=ssa_locals_delete_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cc_trans_correct_store_consts_probe` captures the original full theorem
+specialized to StoreConsts and nine inferred types, including the Boolean/word
+constant list. Original StoreConsts9608–9647 was manually compared with
+`SSASemanticStoreConsts.lean`: six premises and full simulation retained, actual
+scratch Move/store/fresh Move target execution derived, source/target deletions
+and physical insertions preserve provisional locals before two fresh assignments.
+Native constant flags, memory writes, domain checks and result/error branches are
+unchanged. Original proved theorem capture, not isolated tactic replay or
+equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_store_consts_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cut_envs_domain_probe` captures original `cut_envs_domain_SUBSET`6451–6457
+and four inferred carrier types: two native num_sets and generic alpha locals/output
+trees. `SSACutEnvsDomain.lean` retains the sole original successful-cut equation
+and both input-domain subset conclusions, derived from actual cut_names guards.
+Original theorem capture/manual source comparison, not isolated tactic replay or
+equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cut_envs_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`data_max_heap_limit_probeScript.sml` records the full original numeric heap-limit definition/type and64 configurations across dimensions1/7/8/31/32/33/64/80, varied native config fields and GC carriers, exact default RV64layout4/4/2/32, and shifts above dimension. Independent integer MIN/division expectations are checked in the kernel and agree with every original numeric output. Original wordLang329 shift overload is backend_common.word_shift; both denominator exponent groupings are preserved. Actual initializer route must use this reviewed helper to compute2*limit-1 rather than freeze a captured heap word.
+
+`ssa_rename_move_distinct_probe` captures the original full scoped injection
+theorem6405–6423 and six inferred carriers. `SSARenameMoveDistinct.lean` retains
+the producer equation, distinct input names, both memberships, and equal selectors;
+distinct generated names plus the existing successful-lookup theorem derive
+input equality. Standard positive indexed-word program translation is explicit.
+Original theorem capture/manual source comparison, not isolated tactic replay
+or equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_rename_move_distinct_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cc_trans_correct_ffi_probe` captures the original full theorem specialized
+to FFI and nine inferred carriers, including native mlstring and paired num_sets.
+Original FFI9868–10010 was manually compared with `SSASemanticFFI.lean`: all six
+premises/full simulation retained, actual refresh/scratch/cut/FFI/restore execution
+derived for both final and returning outcomes; Error branches remain exempt.
+Original proved theorem specialization capture, not isolated tactic replay or
+cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_ffi_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`target_asm_step_evaluate_probeScript.sml` captures the complete original
+`asm_step_IMP_evaluate_step_find_next` statement, including all six hypotheses
+and both equalities, the assembly post-state relation, and nonzero step count.
+This is source-review regression evidence, not cross-language equivalence.
+Regenerate with `HOL_PROBE_ONLY=target_asm_step_evaluate_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+### Full single-right rotation correctness
+
+`balanced_map_singleR_probeScript.sml` replays the entire original local
+`singleR_thm` proof with its original local prerequisites, checking no open
+hypotheses. The typed statement retains all nine premise conjuncts and both
+invariant and map equality conclusions. Actual defined rotation, invariant,
+three recursive lookup values, and invalid cached-size rejection are captured.
+`BalancedMapSingleRParity` consumes both full native conclusions and derives
+all three canonical semantic lookups; missing constructor outputs are unused.
+
+The same assembly-step probe also captures the full original evaluator-only
+`asm_step_IMP_evaluate_step` conclusion (1038), projected by
+`asmStepImpEvaluateOnly`; its nonzero step count and all source premises remain.
+
+### Native encoder target-state simulation
+
+`target_encoder_step_state_probeScript.sml` captures the complete original
+`encoder_correct_asm_step_target_state_rel` and its RTC consequence from
+`targetPropsScript.sml:1207-1277`, including strict-prefix encoded-byte/PC/state
+invariants and inclusive-prefix out-of-domain byte preservation. Lean proofs
+live in `TargetProps/EncoderStepState.lean`. These original full statements
+provide regression evidence, not cross-language equivalence.
+
+Native insertion-wf probes replay both complete original proofs and168 whole
+native Spt/input/output-wf fixtures. Matching kernel cases retain empty and
+unequal lists, repeated keys, Nat/Bool payloads and malformed trees.
+Regression evidence is not HOL-to-Lean equivalence.
+`target_next_shared_mem_probeScript.sml` captures the complete original
+`next_interference_SharedMem` statement with no open hypotheses; native
+assembly is in `TargetProps/NextSharedMem.lean`.
+The capture also replays the entire original `lookup_thm` statement and proof,
+with typed closed output, and evaluates left/root/right hits, whole-tree and
+child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
+consume the full generic theorem and derive actual semantic finite-map results
+for nonempty children and a distinct equivalent key with an independent payload.
+
+`ssa_cc_trans_correct_move_probe` captures the original proved theorem
+`ssa_cc_trans_correct` specialized to arbitrary `Move pri ls`, with seven
+original inferred carriers. Original resumed Move proof7740–7858 and all six
+premises/full simulation were manually compared with `SSASemanticMove.lean`.
+The port derives the provisional parallel-write locals relation and filtered
+force-rename premises from actual successful source reads; duplicate destination
+and missing-read errors retain the original exemption. Bounded list observations
+use the existing guarded holEl translation. This is a theorem specialization
+capture, not an isolated tactic replay or equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_move_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Full double-right rotation correctness
+
+`balanced_map_doubleR_probeScript.sml` replays the entire original local
+`doubleR_thm` proof and its literal local antisymmetry, balanced_lem4,
+structural-size and map prerequisites. Equivalent batch names are qualified;
+the closed typed result retains all nine premises and both conclusions.
+Defined double rotation, invariant, three key lookups and invalid cached-size
+rejection are original observations. `BalancedMapDoubleRParity` kernel-checks
+both full native conclusions and derives the three semantic lookups. The
+inner Bin is proved from original premises, with no missing-output assumption.
+`ssa_cc_trans_correct_share_inst_probe` captures the full original theorem
+specialized to ShareInst and eight inferred carriers. Original ShareInst10012–10045
+was manually compared with `SSASemanticShareInst.lean`: all eight native shared
+load/store operators, six original premises and full simulation are retained.
+Successful stores preserve locals; returning loads use fresh SSA insertion;
+final FFI outcomes flush locals. Original proved theorem specialization capture,
+not isolated tactic replay or cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_share_inst_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Full right-rotation correctness assembly
+
+`balanced_map_rotateR_probeScript.sml` replays the complete original local
+`rotateR_thm` proof with the entire original singleR/doubleR proofs and local
+prerequisites. Its typed closed statement retains all eight premise conjuncts
+and both invariant/map conclusions. Original actual single/double branch
+outputs, invariants and all three key values are captured.
+`BalancedMapRotateRParity` consumes both complete native conclusions and
+derives six semantic finite-map lookups through the native full lookup theorem.
+### Native FFI and cache-clear interference contracts
+
+`target_interference_contracts_probeScript.sml` captures both complete original
+`targetSem` contract definitions and both complete `targetProps` post-state
+theorems. It retains the ordinary FFI branch, the existential MMIO lookup and
+its read/write promises, every source entry/alignment condition, and all
+memory/register postconditions. Counterparts are
+`TargetSem/InterferenceContracts.lean` and
+`TargetProps/PostInterferenceState.lean`. Full original statement/definition
+captures are regression evidence, not HOL-to-Lean equivalence proofs.
+### Full single-right rotation correctness
+
+`balanced_map_singleR_probeScript.sml` replays the entire original local
+`singleR_thm` proof with its original local prerequisites, checking no open
+hypotheses. The typed statement retains all nine premise conjuncts and both
+invariant and map equality conclusions. Actual defined rotation, invariant,
+three recursive lookup values, and invalid cached-size rejection are captured.
+`BalancedMapSingleRParity` consumes both full native conclusions and derives
+all three canonical semantic lookups; missing constructor outputs are unused.
+
+### Native LabToTarget word/location byte conversion
+
+`lab_to_target_word_loc_byte_probeScript.sml` captures the complete original
+`word_loc_val_byte_def` and word32 endian/aligned-memory/label hit and miss
+observations. Word1 constant-memory observations and address-dependent symbolic
+alignment retain the original unconstrained `LOG2(0)`; they assert no chosen zero
+completion. Matching kernel checks are in `LabToTargetWordLocValByteParity.lean`.
+ALookupMap probes replay three complete original lookup mapping proofs and
+302 matching full Option/scoped-injection observations. Nat/Bool key
+and payload carriers, repeated/absent/large keys and noninjective sentinels
+retain the original injection boundary. Regression evidence does not establish
+cross-language equivalence.
+`ssa_loop_semantic_helpers_probe` replays the two original local HOL statements
+and literal source proof scripts at word_allocProof7018–7034: successful-first
+sequence collapse and empty-list cut identity. Six inferred carrier types are
+captured; `SSALoopSemanticHelpers.lean` keeps the sole original run premise and
+unconditional generic cut identity respectively. This original local-proof
+replay and source comparison is not a cross-language equivalence proof.
+Regenerate with `HOL_PROBE_ONLY=ssa_loop_semantic_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_fake_const_chain_probe` replays the three original local statements and
+literal source proof scripts at word_allocProof6715–6761. Five inferred types
+confirm native register lists, word_loc trees and full WordSem states.
+`SSAFakeConstChain.lean` retains unconditional constant-insertion commutation,
+actual fake-Move chain evaluation, and all four original locals/frame conclusions.
+Duplicate registers remain allowed. Original local HOL proof replay and manual
+source comparison are not a cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_fake_const_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Original production/proof left-balancing equality
+
+`balanced_map_balanceL_eq_probeScript.sml` replays the complete original
+local `balanceL_balL` proof and prints its typed closed generic equality.
+Ten actual original executable equalities cover empty/singleton, both one-sided
+children, nonempty single/double rotations, left Tip, nonempty-right fallback,
+and both heavy branches. Kernel fixtures check their input invariants and
+consume the full equality. Small-child constructors and impossible malformed
+heavy branches are derived from invariants; no stronger premises are added.
+### Native SSA Loop setup
+
+`ssa_loop_setup_correct_probeScript.sml` replays the literal original local
+`loop_setup_correct` proof, with its local prerequisites, and captures the full
+five-premise/ten-conclusion statement and nine native carriers. The pinned
+original HOL kernel replay and Lean kernel check are regression/source-review
+evidence, not a cross-language equivalence proof. Full Loop simulation remains open.
+
+### Full original left-balancing correctness
+
+`balanced_map_balanceL_correct_probeScript.sml` replays the entire original
+local `balanceL_thm` proof and full prerequisite proof chain, checking its
+typed theorem is closed. Six actual branches capture output trees, invariants
+and inserted-key lookups. `BalancedMapBalanceLCorrectParity` checks all original
+input premises, consumes both native invariant/map conclusions, and derives
+the actual canonical inserted-key observations. No compiler caller changes.

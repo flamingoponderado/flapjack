@@ -1,0 +1,193 @@
+bs_source_bit=⊢ ∀bs i. i < dimindex (:α) ∧ i < LENGTH bs ⇒ (bits_to_word bs ' i ⇔ bs❲i❳)
+bs_full_miss=⊢ ∀bs i. i < dimindex (:α) ∧ LENGTH bs ≤ i ⇒ ¬bits_to_word bs ' i
+bs_full_snoc=⊢ ∀bs b. bits_to_word (SNOC b bs) = (if b then 1w else 0w) ≪ LENGTH bs ‖ bits_to_word bs
+bs_full_prefix=⊢ LENGTH (xs ++ ys) ≤ dimindex (:α) ⇒ GENLIST (λi. bits_to_word (xs ++ ys) ' i) (LENGTH xs) = xs
+bs_snoc_0_0_1=⊢ bits_to_word (SNOC F []) = (if F then 1w else 0w) ≪ LENGTH [] ‖ bits_to_word [] ⇔ T
+bs_value_0_0_1=⊢ w2n (bits_to_word (SNOC F [])) = 0
+bs_snoc_0_1_1=⊢ bits_to_word (SNOC T []) = (if T then 1w else 0w) ≪ LENGTH [] ‖ bits_to_word [] ⇔ T
+bs_value_0_1_1=⊢ w2n (bits_to_word (SNOC T [])) = 1
+bs_miss_0_0_1=⊢ ¬bits_to_word [] ' 0 ⇔ T
+bs_snoc_1_0_1=⊢ bits_to_word (SNOC F [F]) = (if F then 1w else 0w) ≪ LENGTH [F] ‖ bits_to_word [F] ⇔ T
+bs_value_1_0_1=⊢ w2n (bits_to_word (SNOC F [F])) = 0
+bs_snoc_1_1_1=⊢ bits_to_word (SNOC T [F]) = (if T then 1w else 0w) ≪ LENGTH [F] ‖ bits_to_word [F] ⇔ T
+bs_value_1_1_1=⊢ w2n (bits_to_word (SNOC T [F])) = 0
+bs_snoc_2_0_1=⊢ bits_to_word (SNOC F [T]) = (if F then 1w else 0w) ≪ LENGTH [T] ‖ bits_to_word [T] ⇔ T
+bs_value_2_0_1=⊢ w2n (bits_to_word (SNOC F [T])) = 1
+bs_snoc_2_1_1=⊢ bits_to_word (SNOC T [T]) = (if T then 1w else 0w) ≪ LENGTH [T] ‖ bits_to_word [T] ⇔ T
+bs_value_2_1_1=⊢ w2n (bits_to_word (SNOC T [T])) = 1
+bs_snoc_3_0_1=⊢ bits_to_word (SNOC F [T; F; T]) = (if F then 1w else 0w) ≪ LENGTH [T; F; T] ‖ bits_to_word [T; F; T] ⇔ T
+bs_value_3_0_1=⊢ w2n (bits_to_word (SNOC F [T; F; T])) = 1
+bs_snoc_3_1_1=⊢ bits_to_word (SNOC T [T; F; T]) = (if T then 1w else 0w) ≪ LENGTH [T; F; T] ‖ bits_to_word [T; F; T] ⇔ T
+bs_value_3_1_1=⊢ w2n (bits_to_word (SNOC T [T; F; T])) = 1
+bs_snoc_4_0_1=⊢ bits_to_word (SNOC F [F; T; F; T]) = (if F then 1w else 0w) ≪ LENGTH [F; T; F; T] ‖ bits_to_word [F; T; F; T] ⇔ T
+bs_value_4_0_1=⊢ w2n (bits_to_word (SNOC F [F; T; F; T])) = 0
+bs_snoc_4_1_1=⊢ bits_to_word (SNOC T [F; T; F; T]) = (if T then 1w else 0w) ≪ LENGTH [F; T; F; T] ‖ bits_to_word [F; T; F; T] ⇔ T
+bs_value_4_1_1=⊢ w2n (bits_to_word (SNOC T [F; T; F; T])) = 0
+bs_snoc_5_0_1=⊢ bits_to_word (SNOC F [T; T; T]) = (if F then 1w else 0w) ≪ LENGTH [T; T; T] ‖ bits_to_word [T; T; T] ⇔ T
+bs_value_5_0_1=⊢ w2n (bits_to_word (SNOC F [T; T; T])) = 1
+bs_snoc_5_1_1=⊢ bits_to_word (SNOC T [T; T; T]) = (if T then 1w else 0w) ≪ LENGTH [T; T; T] ‖ bits_to_word [T; T; T] ⇔ T
+bs_value_5_1_1=⊢ w2n (bits_to_word (SNOC T [T; T; T])) = 1
+bs_prefix_0_1=⊢ GENLIST (λi. bits_to_word ([] ++ []) ' i) 0 = [] ⇔ T
+bs_prefix_1_1=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+bs_prefix_2_1=⊢ GENLIST (λi. bits_to_word ([T] ++ []) ' i) 1 = [T] ⇔ T
+bs_prefix_3_1=⊢ GENLIST (λi. bits_to_word ([F] ++ []) ' i) 1 = [F] ⇔ T
+bs_prefix_6_1=⊢ GENLIST (λi. bits_to_word ([T] ++ []) ' i) 1 = [T] ⇔ T
+bs_snoc_0_0_2=⊢ bits_to_word (SNOC F []) = (if F then 1w else 0w) ≪ LENGTH [] ‖ bits_to_word [] ⇔ T
+bs_value_0_0_2=⊢ w2n (bits_to_word (SNOC F [])) = 0
+bs_snoc_0_1_2=⊢ bits_to_word (SNOC T []) = (if T then 1w else 0w) ≪ LENGTH [] ‖ bits_to_word [] ⇔ T
+bs_value_0_1_2=⊢ w2n (bits_to_word (SNOC T [])) = 1
+bs_miss_0_0_2=⊢ ¬bits_to_word [] ' 0 ⇔ T
+bs_miss_0_1_2=⊢ ¬bits_to_word [] ' 1 ⇔ T
+bs_snoc_1_0_2=⊢ bits_to_word (SNOC F [F]) = (if F then 1w else 0w) ≪ LENGTH [F] ‖ bits_to_word [F] ⇔ T
+bs_value_1_0_2=⊢ w2n (bits_to_word (SNOC F [F])) = 0
+bs_snoc_1_1_2=⊢ bits_to_word (SNOC T [F]) = (if T then 1w else 0w) ≪ LENGTH [F] ‖ bits_to_word [F] ⇔ T
+bs_value_1_1_2=⊢ w2n (bits_to_word (SNOC T [F])) = 2
+bs_miss_1_1_2=⊢ ¬bits_to_word [F] ' 1 ⇔ T
+bs_snoc_2_0_2=⊢ bits_to_word (SNOC F [T]) = (if F then 1w else 0w) ≪ LENGTH [T] ‖ bits_to_word [T] ⇔ T
+bs_value_2_0_2=⊢ w2n (bits_to_word (SNOC F [T])) = 1
+bs_snoc_2_1_2=⊢ bits_to_word (SNOC T [T]) = (if T then 1w else 0w) ≪ LENGTH [T] ‖ bits_to_word [T] ⇔ T
+bs_value_2_1_2=⊢ w2n (bits_to_word (SNOC T [T])) = 3
+bs_miss_2_1_2=⊢ ¬bits_to_word [T] ' 1 ⇔ T
+bs_snoc_3_0_2=⊢ bits_to_word (SNOC F [T; F; T]) = (if F then 1w else 0w) ≪ LENGTH [T; F; T] ‖ bits_to_word [T; F; T] ⇔ T
+bs_value_3_0_2=⊢ w2n (bits_to_word (SNOC F [T; F; T])) = 1
+bs_snoc_3_1_2=⊢ bits_to_word (SNOC T [T; F; T]) = (if T then 1w else 0w) ≪ LENGTH [T; F; T] ‖ bits_to_word [T; F; T] ⇔ T
+bs_value_3_1_2=⊢ w2n (bits_to_word (SNOC T [T; F; T])) = 1
+bs_snoc_4_0_2=⊢ bits_to_word (SNOC F [F; T; F; T]) = (if F then 1w else 0w) ≪ LENGTH [F; T; F; T] ‖ bits_to_word [F; T; F; T] ⇔ T
+bs_value_4_0_2=⊢ w2n (bits_to_word (SNOC F [F; T; F; T])) = 2
+bs_snoc_4_1_2=⊢ bits_to_word (SNOC T [F; T; F; T]) = (if T then 1w else 0w) ≪ LENGTH [F; T; F; T] ‖ bits_to_word [F; T; F; T] ⇔ T
+bs_value_4_1_2=⊢ w2n (bits_to_word (SNOC T [F; T; F; T])) = 2
+bs_snoc_5_0_2=⊢ bits_to_word (SNOC F [T; T; T; T]) = (if F then 1w else 0w) ≪ LENGTH [T; T; T; T] ‖ bits_to_word [T; T; T; T] ⇔ T
+bs_value_5_0_2=⊢ w2n (bits_to_word (SNOC F [T; T; T; T])) = 3
+bs_snoc_5_1_2=⊢ bits_to_word (SNOC T [T; T; T; T]) = (if T then 1w else 0w) ≪ LENGTH [T; T; T; T] ‖ bits_to_word [T; T; T; T] ⇔ T
+bs_value_5_1_2=⊢ w2n (bits_to_word (SNOC T [T; T; T; T])) = 3
+bs_prefix_0_2=⊢ GENLIST (λi. bits_to_word ([] ++ []) ' i) 0 = [] ⇔ T
+bs_prefix_1_2=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+bs_prefix_2_2=⊢ GENLIST (λi. bits_to_word ([T] ++ []) ' i) 1 = [T] ⇔ T
+bs_prefix_3_2=⊢ GENLIST (λi. bits_to_word ([F] ++ []) ' i) 1 = [F] ⇔ T
+bs_prefix_4_2=⊢ GENLIST (λi. bits_to_word ([T] ++ [F]) ' i) 1 = [T] ⇔ T
+bs_prefix_6_2=⊢ GENLIST (λi. bits_to_word ([T; T] ++ []) ' i) 2 = [T; T] ⇔ T
+bs_snoc_0_0_8=⊢ bits_to_word (SNOC F []) = (if F then 1w else 0w) ≪ LENGTH [] ‖ bits_to_word [] ⇔ T
+bs_value_0_0_8=⊢ w2n (bits_to_word (SNOC F [])) = 0
+bs_snoc_0_1_8=⊢ bits_to_word (SNOC T []) = (if T then 1w else 0w) ≪ LENGTH [] ‖ bits_to_word [] ⇔ T
+bs_value_0_1_8=⊢ w2n (bits_to_word (SNOC T [])) = 1
+bs_miss_0_0_8=⊢ ¬bits_to_word [] ' 0 ⇔ T
+bs_miss_0_7_8=⊢ ¬bits_to_word [] ' 7 ⇔ T
+bs_snoc_1_0_8=⊢ bits_to_word (SNOC F [F]) = (if F then 1w else 0w) ≪ LENGTH [F] ‖ bits_to_word [F] ⇔ T
+bs_value_1_0_8=⊢ w2n (bits_to_word (SNOC F [F])) = 0
+bs_snoc_1_1_8=⊢ bits_to_word (SNOC T [F]) = (if T then 1w else 0w) ≪ LENGTH [F] ‖ bits_to_word [F] ⇔ T
+bs_value_1_1_8=⊢ w2n (bits_to_word (SNOC T [F])) = 2
+bs_miss_1_1_8=⊢ ¬bits_to_word [F] ' 1 ⇔ T
+bs_miss_1_7_8=⊢ ¬bits_to_word [F] ' 7 ⇔ T
+bs_snoc_2_0_8=⊢ bits_to_word (SNOC F [T]) = (if F then 1w else 0w) ≪ LENGTH [T] ‖ bits_to_word [T] ⇔ T
+bs_value_2_0_8=⊢ w2n (bits_to_word (SNOC F [T])) = 1
+bs_snoc_2_1_8=⊢ bits_to_word (SNOC T [T]) = (if T then 1w else 0w) ≪ LENGTH [T] ‖ bits_to_word [T] ⇔ T
+bs_value_2_1_8=⊢ w2n (bits_to_word (SNOC T [T])) = 3
+bs_miss_2_1_8=⊢ ¬bits_to_word [T] ' 1 ⇔ T
+bs_miss_2_7_8=⊢ ¬bits_to_word [T] ' 7 ⇔ T
+bs_snoc_3_0_8=⊢ bits_to_word (SNOC F [T; F; T]) = (if F then 1w else 0w) ≪ LENGTH [T; F; T] ‖ bits_to_word [T; F; T] ⇔ T
+bs_value_3_0_8=⊢ w2n (bits_to_word (SNOC F [T; F; T])) = 5
+bs_snoc_3_1_8=⊢ bits_to_word (SNOC T [T; F; T]) = (if T then 1w else 0w) ≪ LENGTH [T; F; T] ‖ bits_to_word [T; F; T] ⇔ T
+bs_value_3_1_8=⊢ w2n (bits_to_word (SNOC T [T; F; T])) = 13
+bs_miss_3_3_8=⊢ ¬bits_to_word [T; F; T] ' 3 ⇔ T
+bs_miss_3_7_8=⊢ ¬bits_to_word [T; F; T] ' 7 ⇔ T
+bs_snoc_4_0_8=⊢ bits_to_word (SNOC F [F; T; F; T]) = (if F then 1w else 0w) ≪ LENGTH [F; T; F; T] ‖ bits_to_word [F; T; F; T] ⇔ T
+bs_value_4_0_8=⊢ w2n (bits_to_word (SNOC F [F; T; F; T])) = 10
+bs_snoc_4_1_8=⊢ bits_to_word (SNOC T [F; T; F; T]) = (if T then 1w else 0w) ≪ LENGTH [F; T; F; T] ‖ bits_to_word [F; T; F; T] ⇔ T
+bs_value_4_1_8=⊢ w2n (bits_to_word (SNOC T [F; T; F; T])) = 26
+bs_miss_4_4_8=⊢ ¬bits_to_word [F; T; F; T] ' 4 ⇔ T
+bs_miss_4_7_8=⊢ ¬bits_to_word [F; T; F; T] ' 7 ⇔ T
+bs_snoc_5_0_8=⊢ bits_to_word (SNOC F [T; T; T; T; T; T; T; T; T; T]) = (if F then 1w else 0w) ≪ LENGTH [T; T; T; T; T; T; T; T; T; T] ‖ bits_to_word [T; T; T; T; T; T; T; T; T; T] ⇔ T
+bs_value_5_0_8=⊢ w2n (bits_to_word (SNOC F [T; T; T; T; T; T; T; T; T; T])) = 255
+bs_snoc_5_1_8=⊢ bits_to_word (SNOC T [T; T; T; T; T; T; T; T; T; T]) = (if T then 1w else 0w) ≪ LENGTH [T; T; T; T; T; T; T; T; T; T] ‖ bits_to_word [T; T; T; T; T; T; T; T; T; T] ⇔ T
+bs_value_5_1_8=⊢ w2n (bits_to_word (SNOC T [T; T; T; T; T; T; T; T; T; T])) = 255
+bs_prefix_0_8=⊢ GENLIST (λi. bits_to_word ([] ++ []) ' i) 0 = [] ⇔ T
+bs_prefix_1_8=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+bs_prefix_2_8=⊢ GENLIST (λi. bits_to_word ([T] ++ []) ' i) 1 = [T] ⇔ T
+bs_prefix_3_8=⊢ GENLIST (λi. bits_to_word ([F] ++ []) ' i) 1 = [F] ⇔ T
+bs_prefix_4_8=⊢ GENLIST (λi. bits_to_word ([T] ++ [F]) ' i) 1 = [T] ⇔ T
+bs_prefix_5_8=⊢ GENLIST (λi. bits_to_word ([T; F] ++ [T]) ' i) 2 = [T; F] ⇔ T
+bs_prefix_6_8=⊢ GENLIST (λi. bits_to_word ([T; T; T; T; T; T; T; T] ++ []) ' i) 8 = [T; T; T; T; T; T; T; T] ⇔ T
+bs_snoc_0_0_64=⊢ bits_to_word (SNOC F []) = (if F then 1w else 0w) ≪ LENGTH [] ‖ bits_to_word [] ⇔ T
+bs_value_0_0_64=⊢ w2n (bits_to_word (SNOC F [])) = 0
+bs_snoc_0_1_64=⊢ bits_to_word (SNOC T []) = (if T then 1w else 0w) ≪ LENGTH [] ‖ bits_to_word [] ⇔ T
+bs_value_0_1_64=⊢ w2n (bits_to_word (SNOC T [])) = 1
+bs_miss_0_0_64=⊢ ¬bits_to_word [] ' 0 ⇔ T
+bs_miss_0_63_64=⊢ ¬bits_to_word [] ' 63 ⇔ T
+bs_snoc_1_0_64=⊢ bits_to_word (SNOC F [F]) = (if F then 1w else 0w) ≪ LENGTH [F] ‖ bits_to_word [F] ⇔ T
+bs_value_1_0_64=⊢ w2n (bits_to_word (SNOC F [F])) = 0
+bs_snoc_1_1_64=⊢ bits_to_word (SNOC T [F]) = (if T then 1w else 0w) ≪ LENGTH [F] ‖ bits_to_word [F] ⇔ T
+bs_value_1_1_64=⊢ w2n (bits_to_word (SNOC T [F])) = 2
+bs_miss_1_1_64=⊢ ¬bits_to_word [F] ' 1 ⇔ T
+bs_miss_1_63_64=⊢ ¬bits_to_word [F] ' 63 ⇔ T
+bs_snoc_2_0_64=⊢ bits_to_word (SNOC F [T]) = (if F then 1w else 0w) ≪ LENGTH [T] ‖ bits_to_word [T] ⇔ T
+bs_value_2_0_64=⊢ w2n (bits_to_word (SNOC F [T])) = 1
+bs_snoc_2_1_64=⊢ bits_to_word (SNOC T [T]) = (if T then 1w else 0w) ≪ LENGTH [T] ‖ bits_to_word [T] ⇔ T
+bs_value_2_1_64=⊢ w2n (bits_to_word (SNOC T [T])) = 3
+bs_miss_2_1_64=⊢ ¬bits_to_word [T] ' 1 ⇔ T
+bs_miss_2_63_64=⊢ ¬bits_to_word [T] ' 63 ⇔ T
+bs_snoc_3_0_64=⊢ bits_to_word (SNOC F [T; F; T]) = (if F then 1w else 0w) ≪ LENGTH [T; F; T] ‖ bits_to_word [T; F; T] ⇔ T
+bs_value_3_0_64=⊢ w2n (bits_to_word (SNOC F [T; F; T])) = 5
+bs_snoc_3_1_64=⊢ bits_to_word (SNOC T [T; F; T]) = (if T then 1w else 0w) ≪ LENGTH [T; F; T] ‖ bits_to_word [T; F; T] ⇔ T
+bs_value_3_1_64=⊢ w2n (bits_to_word (SNOC T [T; F; T])) = 13
+bs_miss_3_3_64=⊢ ¬bits_to_word [T; F; T] ' 3 ⇔ T
+bs_miss_3_63_64=⊢ ¬bits_to_word [T; F; T] ' 63 ⇔ T
+bs_snoc_4_0_64=⊢ bits_to_word (SNOC F [F; T; F; T]) = (if F then 1w else 0w) ≪ LENGTH [F; T; F; T] ‖ bits_to_word [F; T; F; T] ⇔ T
+bs_value_4_0_64=⊢ w2n (bits_to_word (SNOC F [F; T; F; T])) = 10
+bs_snoc_4_1_64=⊢ bits_to_word (SNOC T [F; T; F; T]) = (if T then 1w else 0w) ≪ LENGTH [F; T; F; T] ‖ bits_to_word [F; T; F; T] ⇔ T
+bs_value_4_1_64=⊢ w2n (bits_to_word (SNOC T [F; T; F; T])) = 26
+bs_miss_4_4_64=⊢ ¬bits_to_word [F; T; F; T] ' 4 ⇔ T
+bs_miss_4_63_64=⊢ ¬bits_to_word [F; T; F; T] ' 63 ⇔ T
+bs_snoc_5_0_64=⊢ bits_to_word (SNOC F [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T]) = (if F then 1w else 0w) ≪ LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ‖ bits_to_word [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ⇔ T
+bs_value_5_0_64=⊢ w2n (bits_to_word (SNOC F [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T])) = 18446744073709551615
+bs_snoc_5_1_64=⊢ bits_to_word (SNOC T [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T]) = (if T then 1w else 0w) ≪ LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ‖ bits_to_word [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ⇔ T
+bs_value_5_1_64=⊢ w2n (bits_to_word (SNOC T [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T])) = 18446744073709551615
+bs_prefix_0_64=⊢ GENLIST (λi. bits_to_word ([] ++ []) ' i) 0 = [] ⇔ T
+bs_prefix_1_64=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+bs_prefix_2_64=⊢ GENLIST (λi. bits_to_word ([T] ++ []) ' i) 1 = [T] ⇔ T
+bs_prefix_3_64=⊢ GENLIST (λi. bits_to_word ([F] ++ []) ' i) 1 = [F] ⇔ T
+bs_prefix_4_64=⊢ GENLIST (λi. bits_to_word ([T] ++ [F]) ' i) 1 = [T] ⇔ T
+bs_prefix_5_64=⊢ GENLIST (λi. bits_to_word ([T; F] ++ [T]) ' i) 2 = [T; F] ⇔ T
+bs_prefix_6_64=⊢ GENLIST (λi. bits_to_word ([T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ++ []) ' i) 64 = [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ⇔ T
+bs_snoc_0_0_80=⊢ bits_to_word (SNOC F []) = (if F then 1w else 0w) ≪ LENGTH [] ‖ bits_to_word [] ⇔ T
+bs_value_0_0_80=⊢ w2n (bits_to_word (SNOC F [])) = 0
+bs_snoc_0_1_80=⊢ bits_to_word (SNOC T []) = (if T then 1w else 0w) ≪ LENGTH [] ‖ bits_to_word [] ⇔ T
+bs_value_0_1_80=⊢ w2n (bits_to_word (SNOC T [])) = 1
+bs_miss_0_0_80=⊢ ¬bits_to_word [] ' 0 ⇔ T
+bs_miss_0_79_80=⊢ ¬bits_to_word [] ' 79 ⇔ T
+bs_snoc_1_0_80=⊢ bits_to_word (SNOC F [F]) = (if F then 1w else 0w) ≪ LENGTH [F] ‖ bits_to_word [F] ⇔ T
+bs_value_1_0_80=⊢ w2n (bits_to_word (SNOC F [F])) = 0
+bs_snoc_1_1_80=⊢ bits_to_word (SNOC T [F]) = (if T then 1w else 0w) ≪ LENGTH [F] ‖ bits_to_word [F] ⇔ T
+bs_value_1_1_80=⊢ w2n (bits_to_word (SNOC T [F])) = 2
+bs_miss_1_1_80=⊢ ¬bits_to_word [F] ' 1 ⇔ T
+bs_miss_1_79_80=⊢ ¬bits_to_word [F] ' 79 ⇔ T
+bs_snoc_2_0_80=⊢ bits_to_word (SNOC F [T]) = (if F then 1w else 0w) ≪ LENGTH [T] ‖ bits_to_word [T] ⇔ T
+bs_value_2_0_80=⊢ w2n (bits_to_word (SNOC F [T])) = 1
+bs_snoc_2_1_80=⊢ bits_to_word (SNOC T [T]) = (if T then 1w else 0w) ≪ LENGTH [T] ‖ bits_to_word [T] ⇔ T
+bs_value_2_1_80=⊢ w2n (bits_to_word (SNOC T [T])) = 3
+bs_miss_2_1_80=⊢ ¬bits_to_word [T] ' 1 ⇔ T
+bs_miss_2_79_80=⊢ ¬bits_to_word [T] ' 79 ⇔ T
+bs_snoc_3_0_80=⊢ bits_to_word (SNOC F [T; F; T]) = (if F then 1w else 0w) ≪ LENGTH [T; F; T] ‖ bits_to_word [T; F; T] ⇔ T
+bs_value_3_0_80=⊢ w2n (bits_to_word (SNOC F [T; F; T])) = 5
+bs_snoc_3_1_80=⊢ bits_to_word (SNOC T [T; F; T]) = (if T then 1w else 0w) ≪ LENGTH [T; F; T] ‖ bits_to_word [T; F; T] ⇔ T
+bs_value_3_1_80=⊢ w2n (bits_to_word (SNOC T [T; F; T])) = 13
+bs_miss_3_3_80=⊢ ¬bits_to_word [T; F; T] ' 3 ⇔ T
+bs_miss_3_79_80=⊢ ¬bits_to_word [T; F; T] ' 79 ⇔ T
+bs_snoc_4_0_80=⊢ bits_to_word (SNOC F [F; T; F; T]) = (if F then 1w else 0w) ≪ LENGTH [F; T; F; T] ‖ bits_to_word [F; T; F; T] ⇔ T
+bs_value_4_0_80=⊢ w2n (bits_to_word (SNOC F [F; T; F; T])) = 10
+bs_snoc_4_1_80=⊢ bits_to_word (SNOC T [F; T; F; T]) = (if T then 1w else 0w) ≪ LENGTH [F; T; F; T] ‖ bits_to_word [F; T; F; T] ⇔ T
+bs_value_4_1_80=⊢ w2n (bits_to_word (SNOC T [F; T; F; T])) = 26
+bs_miss_4_4_80=⊢ ¬bits_to_word [F; T; F; T] ' 4 ⇔ T
+bs_miss_4_79_80=⊢ ¬bits_to_word [F; T; F; T] ' 79 ⇔ T
+bs_snoc_5_0_80=⊢ bits_to_word (SNOC F [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T]) = (if F then 1w else 0w) ≪ LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ‖ bits_to_word [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ⇔ T
+bs_value_5_0_80=⊢ w2n (bits_to_word (SNOC F [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T])) = 1208925819614629174706175
+bs_snoc_5_1_80=⊢ bits_to_word (SNOC T [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T]) = (if T then 1w else 0w) ≪ LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ‖ bits_to_word [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ⇔ T
+bs_value_5_1_80=⊢ w2n (bits_to_word (SNOC T [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T])) = 1208925819614629174706175
+bs_prefix_0_80=⊢ GENLIST (λi. bits_to_word ([] ++ []) ' i) 0 = [] ⇔ T
+bs_prefix_1_80=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+bs_prefix_2_80=⊢ GENLIST (λi. bits_to_word ([T] ++ []) ' i) 1 = [T] ⇔ T
+bs_prefix_3_80=⊢ GENLIST (λi. bits_to_word ([F] ++ []) ' i) 1 = [F] ⇔ T
+bs_prefix_4_80=⊢ GENLIST (λi. bits_to_word ([T] ++ [F]) ' i) 1 = [T] ⇔ T
+bs_prefix_5_80=⊢ GENLIST (λi. bits_to_word ([T; F] ++ [T]) ' i) 2 = [T; F] ⇔ T
+bs_prefix_6_80=⊢ GENLIST (λi. bits_to_word ([T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ++ []) ' i) 80 = [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ⇔ T
+bs_type_word=:bool list -> α word
+bs_type_list=:bool list

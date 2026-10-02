@@ -1,0 +1,7 @@
+guard_source_get_drop=(List [],F,2)
+guard_source_alloc_drop=(List [],F,2)
+guard_source_stackstore_drop=(List [],F,2)
+guard_source_datawrite_drop=(List [],F,2)
+guard_source_skip_section=Section 7 [Label 7 1 0]
+guard_source_seq_section=Section 7 [Asm (Asmi (Inst Skip)) [] 0; Label 7 1 0; Label 7 2 0]
+guard_source_loc_section=Section 7 [LabAsm (LocValue 2 (Lab 17 29)) 0w [] 0; Label 7 1 0]

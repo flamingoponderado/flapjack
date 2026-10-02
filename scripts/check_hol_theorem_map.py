@@ -1734,6 +1734,9 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileEmpty.lean", "evaluateSSAReconcileEmpty"): (
+        'Flapjack-specific empty-moves branch factoring; the extra compiler-filter guard is derived inside evaluateSSAReconcile, not an independent HOL theorem. Full original evaluate_ssa_reconcile is separately tagged and assembled in SSAReconcile.lean. Useful helper retained without a HOL tag; this classification is not an additional completed port.'
+    ),
     ("Flapjack/Pancake/Semantics/CrepSem/EvaluateIndWhile.lean", "evalCrepSemHOLProgExact_inductWhile"): (
         "Flapjack-specific well-founded clock/sizeOf induction interface, no standalone "
         "HOL declaration. Derives guarded While body and plain-state NONE/Continue0 "
@@ -1820,6 +1823,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_result_observations",
     "reviewed_fmap_as_finite_support_parameters",
     "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_existentials",
@@ -1992,13 +1996,14 @@ def tagged_declarations(
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions,
              fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality) in HOL_ATTRIBUTE_SITES(
+             fmap_equality, result_observations) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
                  include_fmap_heterogeneous_function=True,
                  include_reals_as_rational_cuts=True,
                  include_fmap_as_finite_support_equality=True,
+                 include_result_observations=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -2009,7 +2014,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -2025,7 +2030,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-        fmap_equality,
+        fmap_equality, result_observations,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -2051,6 +2056,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_heterogeneous_function"] = list(
                 fmap_heterogeneous_function_positions
             )
+        if result_observations:
+            entry["fmap_as_finite_support_result_observations"] = list(result_observations)
         if fmap_parameters:
             entry["fmap_as_finite_support_parameters"] = list(fmap_parameters)
         if fmap_existentials:
@@ -2375,6 +2382,18 @@ def validate_inventory(
         )
         reals_cuts = bool(tag[15]) if tag is not None and len(tag) > 15 else False
         fmap_equality = bool(tag[16]) if tag is not None and len(tag) > 16 else False
+        result_observations = tag[17] if tag is not None and len(tag) > 17 else ()
+        manifest_observations = tuple(record.get("fmap_as_finite_support_result_observations", ()))
+        observation_status = "reviewed_fmap_as_finite_support_result_observations"
+        if manifest_observations != result_observations:
+            errors.append(f"{key[0]}:{key[1]}: manifest result observation producers do not match @[hol] tag")
+        if bool(result_observations) != (status == observation_status):
+            errors.append(f"{key[0]}:{key[1]}: result observations require matching reviewed result-observation status")
+        if result_observations:
+            if any(tag[2:17]):
+                errors.append(f"{key[0]}:{key[1]}: result observations cannot combine with other representation qualifiers")
+            if not isinstance(reviewer, str) or not reviewer.strip():
+                errors.append(f"{key[0]}:{key[1]}: result observations require source-comparison note")
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))

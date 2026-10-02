@@ -1,0 +1,25 @@
+(* Full native immediate stack-free constructors and width wrapping. *)
+load "preamble";
+load "stack_removeTheory";
+open bossLib HolKernel Parse preamble stack_removeTheory;
+val _ = Globals.linewidth := 10000;
+val _ = print ("single_stack_free_full_def=" ^ term_to_string (concl single_stack_free_def) ^ "\n");
+val _ = print ("stack_free_full_def=" ^ term_to_string (concl stack_free_def) ^ "\n");
+fun emit label q = print (label ^ "=" ^ term_to_string (rconc (EVAL q)) ^ "\n");
+val _ = emit "single_stack_free_equation" ``!k n. (single_stack_free k n : 64 stackLang$prog) = Inst (Arith (Binop Add k k (Imm (word_offset n))))``;
+val _ = print ("single_stack_free_type=" ^ type_to_string (type_of ``single_stack_free``) ^ "\n");
+val _ = print ("stack_free_type=" ^ type_to_string (type_of ``stack_free``) ^ "\n");
+val _ = emit "free_64_0" ``stack_free 24 0 : 64 stackLang$prog``;
+val _ = emit "free_64_1" ``stack_free 24 1 : 64 stackLang$prog``;
+val _ = emit "free_64_255" ``stack_free 24 255 : 64 stackLang$prog``;
+val _ = emit "free_64_256" ``stack_free 24 256 : 64 stackLang$prog``;
+val _ = emit "free_64_510" ``stack_free 24 510 : 64 stackLang$prog``;
+val _ = emit "free_64_511" ``stack_free 24 511 : 64 stackLang$prog``;
+val _ = emit "free_64_512" ``stack_free 24 512 : 64 stackLang$prog``;
+val _ = emit "free_8_256" ``stack_free 24 256 : 8 stackLang$prog``;
+val _ = emit "free_1_256" ``stack_free 24 256 : 1 stackLang$prog``;
+val _ = emit "free_80_511" ``stack_free 24 511 : 80 stackLang$prog``;
+val _ = emit "single_8_256" ``single_stack_free 1234 256 : 8 stackLang$prog``;
+val _ = emit "single_8_511" ``single_stack_free 1234 511 : 8 stackLang$prog``;
+val _ = emit "single_1_255" ``single_stack_free 1234 255 : 1 stackLang$prog``;
+val _ = emit "single_80_511" ``single_stack_free 1234 511 : 80 stackLang$prog``;

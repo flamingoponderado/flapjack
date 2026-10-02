@@ -1,0 +1,14 @@
+ByteAuxLE16Cycle=T
+ByteAuxBE16Cycle=T
+ByteAuxLE32Cycle=T
+ByteAuxBE32Cycle=T
+ByteAuxOneByteCycle=T
+ByteAuxSubByteLEWrap=T
+ByteAuxSubByteBEWrap=T
+ByteAuxZero=T
+ByteWholeLE16=T
+ByteWholeBE16=T
+ByteWholeSubByte=T
+ByteIndexSubByteLE=T
+ByteIndexSubByteBE=T
+ByteGetSubByteShift=T

@@ -1,0 +1,5 @@
+next_intro_full_statement=find_next_interference mc ffi k ms = SOME res ⇒
+next_interference mc ffi ms = SOME res
+next_shift_full_statement=(∀k. find_next_interference mc1 ffi1 (k + l) ms1 =
+     find_next_interference mc2 ffi2 k ms2) ⇒
+next_interference mc1 ffi1 ms1 = next_interference mc2 ffi2 ms2

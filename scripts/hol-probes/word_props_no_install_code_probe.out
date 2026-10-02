@@ -1,0 +1,20 @@
+nic_def=⊢ ∀code. no_install_code code ⇔ ∀k n p. lookup k code = SOME (n,p) ⇒ no_install p
+nic_code_type=:(num # α prog) sptree$num_map
+nic_program_type=:α prog
+nic_argument_type=:num
+nic_empty_1=T
+nic_leaf_zero_1=T
+nic_leaf_missing_1=T
+nic_bad_leaf_1=T
+nic_malformed_empty_1=T
+nic_malformed_value_1=T
+nic_nested_left_1=T
+nic_nested_right_1=T
+nic_empty_80=T
+nic_leaf_zero_80=T
+nic_leaf_missing_80=T
+nic_bad_leaf_80=T
+nic_malformed_empty_80=T
+nic_malformed_value_80=T
+nic_nested_left_80=T
+nic_nested_right_80=T
