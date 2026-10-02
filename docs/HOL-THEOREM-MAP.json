@@ -62438,5 +62438,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original4448/4460, both full quantified statements freshly captured in lab_to_target_validity_nop_probe.out. Full native arbitrary AsmConfigExact/labs/ffis/position/Line or List carriers; sole premise original lineOk or linesOk, conclusion full actual lineEncWithNop or linesEncWithNop on c.encode. Every original constructor retained, including label parity/zero, actual cbw conversion, negative Halt/Install/FFI offsets, unsupported Call false, and successful label lookup establishing findPos through original lab_lookup_IMP, not a new premise. BitVec subtraction/negative addition identity and Nat FFI index commutativity normalize only original arithmetic. Original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and byte8/native Spt maps unchanged, sole positive word dimension words_as_type_indexed_bitvec. Nine fresh original/native observations establish actual valid premise instances across all supported constructors and a physically threaded list; two full arbitrary-width consumers retain source shape. No target evaluation, desired output, callback or successful compiler assumption. Real checked .100 dependency retained; no production body change or HD/EL hold dependency; full padding-to-NOP/remove_labels_loop/end-to-end correctness remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Misc/TakeFlatReplicate.lean",
+    "lean_name": "takeFlatReplicateLeq",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "TAKE_FLAT_REPLICATE_LEQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original miscScript3063, complete theorem and quantified j/k/alpha-list/len types freshly captured in misc_take_flat_replicate_probe.out. Full generic list carrier and independent original len binder retained, same conjunction len=LENGTH ls and k<=j, same TAKE(k*len)(FLAT(REPLICATE j ls))=FLAT(REPLICATE k ls). Ordinary List translation needs no qualifier; no fixed byte/word specialization, positivity or nonempty assumptions. Kernel induction on k preserves zero/empty chunks and equal counts. Seven original/native observations and full generic/actual empty-list consumers include both length and count guard counterexamples. Genuine dependency of full lab_to_targetProof enc_with_nop_pad_bytes4507; no other backend source change, no total HD/EL hold use, full padding-to-encoding/remove_labels_loop/end-to-end unfinished."
   }
 ]
