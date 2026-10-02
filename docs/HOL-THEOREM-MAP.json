@@ -52501,5 +52501,13 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a full source comparison flapjack-26yt: Complete original6593-6706 theorem, only original ssa_locals_rel and INJ option_lookup target map over names domain premises, full existential total-pair NONE evaluation,21-field wordStateEqRel and domain-scoped strongLocalsRel result. Arbitrary delta payload name map, native Spt maps, word_loc values and independent positive-width/native configuration/FFI carriers confirmed by fresh literal full original proof and6type capture in ssa_reconcile_empty_probe.out re_original_full. No target execution/read success/output values/branch guard/post-frame premise in final statement. Empty branch uses checked original case; nonempty derives filtered key domain/current map presence, target-map distinctness, actual native getVars existence+length+all-index facts, alist insert and both unchanged/changed-target cases. Canonical THE/EL retain opaque values; successful lookups discharge selector observations. fmap_as_finite_support_relation translates only imported owner fpRegs/store with same-module broad/exact roundtrip witness; words_as_type_indexed_bitvec only conventional positive words and native host types. Inherits reals_as_rational_cuts through evaluate, SOUNDNESS item8; Skip/Move only. Consumed checked peer58wf087ed5f ordinary merge, acceptance remains coordinator-owned. Full ssa_cc_trans_correct and final compiler composition remain unfinished."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "lt_ok_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALoopTable.lean",
+  "lean_name": "ltOK",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-a source comparison flapjack-whba: Complete original6709 EVERY predicate, both INJ option_lookup domains and their conjunction preserved. HOL EVERY as ordinary forall member in a native List; INJ into UNIV as precisely domain-restricted equality implication (range tautological). Native product/Spt/Nat carriers unchanged; fresh original definition and complete inferred lt type capture confirm independent arbitrary alpha/beta payloads for entry/exit name trees, target Spt Nat. Unit specialization is not baked into full definition. No map-validity, lookup-success or evaluator premise. Kernel checked definition; proof predicate only, original Break10108/Continue10127 extraction and full simulation remain subsequent work."
 }
 ]

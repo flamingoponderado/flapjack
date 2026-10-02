@@ -4033,3 +4033,7 @@ run_probe ssa_reconcile_empty_probeScript.sml ssa_reconcile_empty_probe.out \
 run_probe ssa_reconcile_get_vars_probeScript.sml ssa_reconcile_get_vars_probe.out \
   ssa_reconcile_get_vars_original_proof ssa_reconcile_get_vars_original_type \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_lt_ok_probeScript.sml ssa_lt_ok_probe.out \
+  lt_ok_full lt_ok_type_lt \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
