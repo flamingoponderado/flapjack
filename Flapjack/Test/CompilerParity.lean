@@ -10,6 +10,7 @@ import Flapjack.Test.LabToTargetShmemDistinctParity
 import Flapjack.Test.LabToTargetShmemPrefixParity
 import Flapjack.Test.LabToTargetShmemMembershipParity
 import Flapjack.Test.LabToTargetShmemNamesParity
+import Flapjack.Test.LabToTargetMmioShmemParity
 import Flapjack.Test.LabToTargetEncodingValidityClosureParity
 import Flapjack.Test.LabToTargetProgramByteLengthsParity
 import Flapjack.Test.LabToTargetPositionExtensionParity

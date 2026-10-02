@@ -5887,3 +5887,9 @@ run_probe lab_to_target_shmem_names_probeScript.sml lab_to_target_shmem_names_pr
 run_probe stackprops_code_bitmaps_probeScript.sml stackprops_code_bitmaps_probe.out \
   evaluate_code_bitmaps evaluate_code_bitmaps_hypotheses \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe lab_to_target_mmio_shmem_probeScript.sml lab_to_target_mmio_shmem_probe.out \
+  mmio_pcs_min_index_APPEND_thm mmio_pcs_min_index_APPEND_thm_types mmio_pcs_min_index_APPEND_thm_hypotheses \
+  mmio_pcs_min_index_get_shmem_info_ok mmio_pcs_min_index_get_shmem_info_ok_types mmio_pcs_min_index_get_shmem_info_ok_hypotheses \
+  empty_boundary external_boundary shared_boundary mixed_boundary suffix_guard prefix_guard extraction_boundary \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
