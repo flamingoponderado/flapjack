@@ -1434,6 +1434,7 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveBitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveBitmaps
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRootsBitmaps
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveBitmap
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveBitmaps
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveList
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveLoop
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveBitmap
