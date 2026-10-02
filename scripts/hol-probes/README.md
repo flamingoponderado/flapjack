@@ -5591,3 +5591,14 @@ conditions, distinct/overlapping singleton assertions, independent witness
 types, and an infinite domain. `Flapjack.Test.SetSepElementary` supplies sixteen
 Lean kernel fixtures. The port adds no finite-heap, word-width or validity
 restriction.
+
+`stack_remove_word_selector_probe.out` records the complete selector type,
+exported Word equation, and original primitive WFREC definition. The probe
+derives well-foundedness of the selected relation from `WF_EMPTY_REL`, then
+applies `WFREC_COROLLARY` to kernel-prove the full totalization. Nine fixtures
+cover generic Word/NONE/Loc cases, NONE-to-Loc equality, location-field
+independence, and widths 1/8/64/80. Invalid inputs remain the same symbolic
+`bool$ARB`; no numeric value is asserted. `Flapjack.Test.StackRemoveWordSelector`
+replays nine kernel fixtures using the existing shared opaque `holArb`.
+Pinned `boolScript.sml:245` declares ARB as an uninterpreted constant; it is not
+a HOL definition by Hilbert choice. The full state relation remains open.

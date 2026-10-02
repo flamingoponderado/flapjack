@@ -4851,3 +4851,7 @@ run_probe set_sep_fun2set_probeScript.sml set_sep_fun2set_probe.out \
 run_probe set_sep_elementary_probeScript.sml set_sep_elementary_probe.out \
   se_one_def se_one_type se_emp_def se_emp_type se_cond_def se_cond_type se_split_def se_split_type se_star_def se_star_type se_exists_def se_exists_type se_one_fixture se_emp_fixture se_cond_fixture se_false_fixture se_nonempty_fixture se_split_empty_fixture se_overlap_fixture se_extra_fixture se_star_empty_fixture se_star_distinct_fixture se_star_overlap_fixture se_witness_fixture se_no_witness_fixture se_infinite_fixture \
   "$repo_dir/HOL/examples/machine-code/hoare-triple/set_sepScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_selector_probeScript.sml stack_remove_word_selector_probe.out \
+  sw_type sw_def sw_primitive sw_full sw_word_generic sw_none_generic sw_loc_generic sw_none_loc sw_all_loc sw_word1 sw_word8 sw_word64 sw_word80 \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
