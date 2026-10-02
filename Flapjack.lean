@@ -1,5 +1,8 @@
 import Flapjack.RiscV.L3.Defs.MMU.Walk
 import Flapjack.RiscV.L3.Defs.MMU.Insert
+import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
+import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
+import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
 import Flapjack.RiscV.L3.Defs.MMU.TLB
 import Flapjack.RiscV.L3.Defs.MMU.Access
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape

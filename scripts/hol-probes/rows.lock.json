@@ -1664,6 +1664,12 @@
       "sha256": "605e93cb1ffe67f53763f513eeacca11dbc86c3205435e82d988b99c665446d1"
     },
     {
+      "bytes": 1224,
+      "out": "lab_to_target_computed_label_positions_probe.out",
+      "rows": 8,
+      "sha256": "80600152a30fd093c34efc9980a548919248e1281ad44c125c2547bbfc65e2a6"
+    },
+    {
       "bytes": 2062,
       "out": "lab_to_target_computed_label_preservation_probe.out",
       "rows": 17,
@@ -1728,6 +1734,12 @@
       "out": "lab_to_target_initial_encoding_navigation_probe.out",
       "rows": 12,
       "sha256": "478dd25b59916c697fd60a7ecbe73d6de812e03387dd778f2d35b5941100a510"
+    },
+    {
+      "bytes": 370,
+      "out": "lab_to_target_initial_encoding_preconditions_probe.out",
+      "rows": 7,
+      "sha256": "93feff59d140d2929278342696cc1d26a62f81eb1411bfb801d01beb020db6c4"
     },
     {
       "bytes": 1110,
@@ -1962,6 +1974,12 @@
       "out": "lab_to_target_prefix_zero_probe.out",
       "rows": 20,
       "sha256": "7bf59ae9deca13d13db4726488c56950ddf0f5b354e0fcc03258211230e581de"
+    },
+    {
+      "bytes": 2027,
+      "out": "lab_to_target_remove_labels_loop_probe.out",
+      "rows": 11,
+      "sha256": "f863ecab984b9d644e720f146ca156a3798ddf82ca7cdf1e47960d1d9aa0cbf5"
     },
     {
       "bytes": 908,

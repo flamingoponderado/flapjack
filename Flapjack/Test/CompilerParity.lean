@@ -1,5 +1,8 @@
 import Flapjack.Test.L3MmuWalkParity
 import Flapjack.Test.L3MmuInsertParity
+import Flapjack.Test.LabToTargetInitialEncodingPreconditionsParity
+import Flapjack.Test.LabToTargetRemoveLabelsLoopParity
+import Flapjack.Test.LabToTargetComputedLabelPositionsParity
 import Flapjack.Test.L3MmuTlbParity
 import Flapjack.Test.L3MmuAccessParity
 import Flapjack.Test.L3MmuPrimitivesParity

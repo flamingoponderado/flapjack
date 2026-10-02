@@ -5615,6 +5615,23 @@ run_probe lab_to_target_initial_encoding_navigation_probeScript.sml lab_to_targe
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_computed_label_positions_probeScript.sml lab_to_target_computed_label_positions_probe.out \
+  lab_lookup_compute_labels_test lab_lookup_compute_labels_test_types hypotheses \
+  head_zero trailing_label next_instruction tail_section empty_prefix \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_initial_encoding_preconditions_probeScript.sml lab_to_target_initial_encoding_preconditions_probe.out \
+  all_enc_ok_pre_enc_sec_list all_enc_ok_pre_enc_sec_list_types hypotheses empty label asm_stale labasm \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_remove_labels_loop_probeScript.sml lab_to_target_remove_labels_loop_probe.out \
+  remove_labels_loop_thm remove_labels_loop_thm_types hypotheses \
+  empty retry_zero retry_one odd_padding labels_only light_reject width1_large width80_large \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_section_lookup_positions_probeScript.sml lab_to_target_section_lookup_positions_probe.out \
   ALOOKUP_section_labels ALOOKUP_section_labels_types ALOOKUP_section_labels_hypotheses \
   empty boundary_duplicate_acc head_success asm_prefix labasm_boundary missing distinct_guard_needed owner_guard_false length_guard_needed width1_large_pos width80_large_pos \
