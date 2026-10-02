@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
@@ -243,5 +244,137 @@ theorem returningRestoreRegisters {width : Nat} [NeZero width] {C F : Type}
       ssaMapOKMore counter _ (counter+2) ⟨ssaMapOKInter counter ssa names valid,by omega⟩,frame⟩
   dsimp only at restored ⊢
   exact ⟨restored.1,restored.2.1,restored.2.2.1⟩
+
+
+/-- Flapjack-specific original8477-8550 pop-environment lookup factoring.
+The key/value stack facts are produced by total callee stack-swap transport;
+actual successful pops, full frame, cut domains and all popped value lookups
+are derived. No popped-local relation or desired target run is assumed. -/
+theorem returningPopCutRelation {width : Nat} [NeZero width] {C F : Type}
+    (source target returned : WordSemStateFiniteExact width C F)
+    (first second targetFirst targetSecond : Spt (WordLocW width))
+    (handler targetHandler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (targetStack : List (WordSemStackFrame width)) (f : Nat → Nat)
+    (sourceRoots targetRoots : List (Nat × WordLocW width))
+    (sourcePerm targetPerm : Nat → Nat → Nat)
+    (sameStack : source.stack = target.stack)
+    (sourceRootRead : wordSemEnvToList second source.permute = (sourceRoots,sourcePerm))
+    (targetRootRead : wordSemEnvToList targetSecond target.permute = (targetRoots,targetPerm))
+    (rootMap : sourceRoots.map (fun (key,value) => (f key,value)) = targetRoots)
+    (firstRelated : Flapjack.WordAlloc.strongLocalsRel f (sptDomain first) first targetFirst)
+    (injective : ∀ a b, (sptDomain first a ∨ sptDomain second a) →
+      (sptDomain first b ∨ sptDomain second b) → f a = f b → a = b)
+    (sourceKeys : WordSemStackEq.sKeyEq
+      (WordSemStateFiniteExact.pushEnv (first,second) handler source).stack returned.stack)
+    (targetKeys : WordSemStackEq.sKeyEq
+      (WordSemStateFiniteExact.pushEnv (targetFirst,targetSecond) targetHandler target).stack targetStack)
+    (values : WordSemStackEq.sValEq returned.stack targetStack) :
+    ∃ popped targetPopped,
+      WordSemStateFiniteExact.popEnv returned = some popped ∧
+      WordSemStateFiniteExact.popEnv {returned with stack := targetStack} = some targetPopped ∧
+      Flapjack.WordAlloc.wordStateEqRel popped targetPopped ∧
+      sptDomain popped.locals = (fun key => sptDomain first key ∨ sptDomain second key) ∧
+      (∀ live, Flapjack.WordAlloc.strongLocalsRel f live popped.locals targetPopped.locals) := by
+  open WordSemStackEq in
+    obtain ⟨nS,lS,restS,optS,sourceShape,popped,sourcePop,sourceLocals,sourceDomain,sourceTail⟩ :=
+      pushEnvPopEnvSKeyEq (first,second) handler source returned sourceKeys
+  open WordSemStackEq in
+    obtain ⟨nT,lT,restT,optT,targetShape,targetPopped,targetPop,targetLocals,targetDomain,targetTail⟩ :=
+      pushEnvPopEnvSKeyEq (targetFirst,targetSecond) targetHandler target
+        {returned with stack := targetStack} targetKeys
+  have frame := Flapjack.WordAlloc.popEnvFrame returned popped targetPopped targetStack
+    ⟨values,WordSemStackEq.sKeyEqTrans _ _ _
+      ⟨(WordSemStackEq.sKeyEqSym _ _).mp sourceTail,by rw [sameStack]; exact targetTail⟩,
+      targetPop,sourcePop⟩
+  have sourceRootKeys := Flapjack.WordAlloc.sKeyEqPushEnvImpMapFst source first second handler
+    nS (sptToAList first) lS optS restS sourceRoots sourcePerm
+    ⟨by rw [←sourceShape]; exact sourceKeys,sourceRootRead⟩
+  have targetRootKeys := Flapjack.WordAlloc.sKeyEqPushEnvImpMapFst target targetFirst targetSecond targetHandler
+    nT (sptToAList targetFirst) lT optT restT targetRoots targetPerm
+    ⟨by rw [←targetShape]; exact targetKeys,targetRootRead⟩
+  change targetStack = WordSemStackFrame.stackFrame nT (sptToAList targetFirst) lT optT :: restT at targetShape
+  have rootValues : lS.map Prod.snd = lT.map Prod.snd := by
+    rw [sourceShape,targetShape] at values
+    exact ((WordSemStackEq.sFrameValEqDef2 _ _ _ _ _ _ _ _).mp values.2).1
+  have keyMap : lT.map Prod.fst = (lS.map Prod.fst).map f := by
+    rw [←targetRootKeys.1,←Flapjack.WordAlloc.keyMapImplies f sourceRoots targetRoots rootMap,
+      sourceRootKeys.1]
+  have keysDomain := Flapjack.WordAlloc.envToListKeys second source.permute
+  rw [sourceRootRead] at keysDomain
+  have inSecond : ∀ key ∈ lS.map Prod.fst, sptDomain second key := by
+    intro key member
+    rw [←sourceRootKeys.1] at member
+    rw [←keysDomain]
+    exact member
+  refine ⟨popped,targetPopped,sourcePop,targetPop,frame,?_,?_⟩
+  · funext key
+    apply propext
+    have equal := congrFun sourceDomain key
+    rw [←equal]
+    exact Or.comm
+  · intro live
+    rw [sourceLocals,targetLocals]
+    have zip : lS = (lS.map Prod.fst).zip (lT.map Prod.snd) := by
+      rw [←rootValues]
+      have pairs : ∀ entries : List (Nat × WordLocW width),
+          (entries.map Prod.fst).zip (entries.map Prod.snd) = entries := by
+        intro entries
+        induction entries with
+        | nil => rfl
+        | cons pair rest ih => simp [ih]
+      exact (pairs lS).symm
+    rw [zip]
+    apply Flapjack.WordAlloc.allocLocalsRel f first targetFirst (lS.map Prod.fst) lT keyMap
+      _ firstRelated live
+    intro a b inA inB equal
+    apply injective a b _ _ equal
+    · exact inA.elim (fun h => Or.inr (inSecond a h)) Or.inl
+    · exact inB.elim (fun h => Or.inr (inSecond b h)) Or.inl
+
+/-- Flapjack-specific original8477-8550 restricted SSA reconstruction.
+Actual popped cut domain and remapped lookup relation establish every conjunct
+of the restricted SSA map, including defined lookups and original source bounds.
+These internal lookup/domain facts are derived by returningPopCutRelation; no
+output SSA relation is assumed. No standalone HOL declaration or tag exists. -/
+theorem returningCutSSA {α : Type} (next : Nat) (ssa : Spt Nat)
+    (names : Spt Unit) (source target : Spt α)
+    (mapped : ∀ key, sptDomain names key → sptDomain ssa key)
+    (sourceDomain : sptDomain source = sptDomain names)
+    (matching : Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
+      (sptDomain names) source target)
+    (below : ∀ key, sptDomain names key → key < next) :
+    ssaLocalsRel next (sptInter ssa names) source target := by
+  have interRead : ∀ key register, sptLookup key (sptInter ssa names) = some register →
+      sptLookup key ssa = some register ∧ sptDomain names key := by
+    intro key register read
+    rw [sptLookup_sptInterCases] at read
+    cases left : sptLookup key ssa with
+    | none => simp [left] at read
+    | some value =>
+      cases right : sptLookup key names with
+      | none => simp [left,right] at read
+      | some payload =>
+        have equal : value = register := by simpa [left,right] using read
+        subst value
+        exact ⟨rfl,(sptMem_iff_lookup key names).mpr ⟨payload,right⟩⟩
+  refine ⟨?_,?_⟩
+  · intro key register read
+    obtain ⟨original,inNames⟩ := interRead key register read
+    have inSource : sptDomain source key := by rw [sourceDomain]; exact inNames
+    obtain ⟨value,sourceRead⟩ := (sptMem_iff_lookup key source).mp inSource
+    have targetRead := matching key value ⟨inNames,sourceRead⟩
+    apply (sptMem_iff_lookup register target).mpr
+    exact ⟨value,by simpa [optionLookup,original] using targetRead⟩
+  · intro key value read
+    have inNames : sptDomain names key := by
+      rw [←sourceDomain]
+      exact (sptMem_iff_lookup key source).mpr ⟨value,read⟩
+    obtain ⟨register,original⟩ := (sptMem_iff_lookup key ssa).mp (mapped key inNames)
+    obtain ⟨payload,nameRead⟩ := (sptMem_iff_lookup key names).mp inNames
+    have interLookup : sptLookup key (sptInter ssa names) = some register := by
+      simp [sptLookup_sptInterCases,original,nameRead]
+    refine ⟨(sptMem_iff_lookup key _).mpr ⟨register,interLookup⟩,?_,fun _ => below key inNames⟩
+    simpa only [interLookup,Option.getD_some,optionLookup,original] using
+      matching key value ⟨inNames,read⟩
 
 end Flapjack.Compiler.Backend.WordAlloc
