@@ -5544,3 +5544,7 @@ run_probe word_to_stack_extract_labels_compiler_probeScript.sml word_to_stack_ex
 run_probe stack_sem_evaluate_clock_probeScript.sml stack_sem_evaluate_clock_probe.out \
   gc_clock_statement gc_clock_proved alloc_clock_statement alloc_clock_proved store_const_sem_clock_statement store_const_sem_clock_proved inst_clock_statement inst_clock_proved sh_mem_op_clock_statement sh_mem_op_clock_proved evaluate_clock_statement evaluate_clock_proved fix_clock_evaluate_statement fix_clock_evaluate_proved \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_remove_comp_seq_probeScript.sml stack_remove_comp_seq_probe.out \
+  cc_seq_statement cc_seq_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
