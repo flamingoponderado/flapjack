@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 
@@ -144,5 +145,63 @@ theorem returningPrepareArguments {width : Nat} [NeZero width] {C F : Type}
   simp only [WordSemStateFiniteExact.evaluate,List.map_fst_zip (Nat.le_of_eq same),
     List.map_snd_zip (Nat.le_of_eq same.symm),distinct,if_true]
   rw [show WordSemStateFiniteExact.getVars renamed refreshed = some values from renamedRead]
+
+/-- Flapjack-specific original returning Call8422-8477 pushed-stack/callee
+transport. The source root permutation is chosen from actual cut relations;
+full callee-entry state equality after stack replacement and stack values are
+derived. Total body stack-swap transport is available for every result branch.
+No target run or desired callee-state equality premise; no standalone HOL tag. -/
+theorem returningCalleeTransport {width : Nat} [NeZero width] {C F : Type}
+    (source target : WordSemStateFiniteExact width C F)
+    (sourceFirst sourceSecond targetFirst targetSecond : Spt (WordLocW width))
+    (f : Nat → Nat)
+    (handler targetHandler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (args : List (WordLocW width)) (size : Option Nat) (body : WordLangProgHOL (BitVec width))
+    (frame : Flapjack.WordAlloc.wordStateEqRel source target)
+    (firstDomain : sptDomain targetFirst =
+      (fun key => ∃ name, sptDomain sourceFirst name ∧ f name = key))
+    (secondDomain : sptDomain targetSecond =
+      (fun key => ∃ name, sptDomain sourceSecond name ∧ f name = key))
+    (firstInjective : ∀ a b, sptDomain sourceFirst a → sptDomain sourceFirst b → f a = f b → a = b)
+    (secondInjective : ∀ a b, sptDomain sourceSecond a → sptDomain sourceSecond b → f a = f b → a = b)
+    (secondRelated : Flapjack.WordAlloc.strongLocalsRel f (sptDomain sourceSecond)
+      sourceSecond targetSecond)
+    (handlerAligned : match handler with
+      | none => targetHandler = none
+      | some (_,_,l1,l2) => match targetHandler with
+        | none => False
+        | some (_,_,r1,r2) => r1 = l1 ∧ r2 = l2) :
+    ∃ perm,
+      let sourceEntry := WordSemStateFiniteExact.callEnv args size
+        (WordSemStateFiniteExact.pushEnv (sourceFirst,sourceSecond) handler
+          {WordSemStateFiniteExact.decClock source with permute := perm});
+      let targetEntry := WordSemStateFiniteExact.callEnv args size
+        (WordSemStateFiniteExact.pushEnv (targetFirst,targetSecond) targetHandler
+          (WordSemStateFiniteExact.decClock target));
+      (wordSemEnvToList sourceSecond perm).2 = (wordSemEnvToList targetSecond target.permute).2 ∧
+      {sourceEntry with stack := targetEntry.stack} = targetEntry ∧
+      WordSemStackEq.sValEq sourceEntry.stack targetEntry.stack ∧
+      WordSemStackEq.stackSwapPost body sourceEntry := by
+  have fields := frame
+  rcases fields with ⟨h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21⟩
+  obtain ⟨perm,roots,values⟩ := Flapjack.WordAlloc.pushEnvSValEq
+    (WordSemStateFiniteExact.decClock source) (WordSemStateFiniteExact.decClock target)
+    sourceSecond sourceFirst targetSecond targetFirst f handler targetHandler
+    (wordSemEnvToList targetSecond target.permute).2
+    ⟨h12.symm,h4.symm,h3.symm,secondDomain,secondInjective,firstDomain,firstInjective,secondRelated,handlerAligned⟩
+  have permutation : (wordSemEnvToList sourceSecond perm).2 =
+      (wordSemEnvToList targetSecond target.permute).2 := roots.1
+  have sameKind : handler.isSome = targetHandler.isSome := by
+    cases handler with
+    | none => rw [handlerAligned]
+    | some payload =>
+      rcases payload with ⟨name,prog,l1,l2⟩
+      cases targetHandler with
+      | none => exact False.elim handlerAligned
+      | some payload => rfl
+  have entry := Flapjack.WordAlloc.calleeSwap frame sourceFirst sourceSecond targetFirst targetSecond
+    handler targetHandler sameKind perm permutation values args size
+  refine ⟨perm,permutation,entry,values,?_⟩
+  exact WordSemStackEq.evaluateStackSwap body _
 
 end Flapjack.Compiler.Backend.WordAlloc
