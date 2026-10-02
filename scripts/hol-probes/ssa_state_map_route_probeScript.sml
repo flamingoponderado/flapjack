@@ -1,0 +1,12 @@
+load "preamble"; load "word_allocTheory";
+open HolKernel Parse bossLib preamble word_allocTheory sptreeTheory;
+val _ = Globals.linewidth := 1000;
+fun out label term = (print(label ^ "="); print_term(rconc(EVAL term)); print "\n");
+val _ = out "fresh_empty" ``let (r,m,n) = next_var_rename 0 LN 1 in (r,toAList m,n)``;
+val _ = out "fresh_duplicate" ``let (r,m,n) = next_var_rename 5 (fromAList [(2,7);(2,9);(0,3)]) 10 in (r,toAList m,n)``;
+val _ = out "fresh_overwrite" ``let (r,m,n) = next_var_rename 2 (fromAList [(2,7);(2,9);(0,3)]) 10 in (r,toAList m,n)``;
+val _ = out "fresh_big" ``let (r,m,n) = next_var_rename 18446744073709551616 (fromAList [(2,7)]) 18446744073709551616 in (r,toAList m,n)``;
+val _ = out "force_empty" ``toAList (force_rename [] (fromAList [(2,7);(0,3);(2,9)]))``;
+val _ = out "force_duplicate" ``toAList (force_rename [(2,11);(2,13);(1,17)] (fromAList [(2,7);(2,9);(0,3)]))``;
+val _ = out "force_linear_registers" ``toAList (force_rename [(0,200);(1,204);(5,208);(6,212)] (fromAList [(2,100);(3,101);(4,102)]))``;
+val _ = out "keys_order" ``MAP FST (toAList (fromAList [(6,212);(5,208);(1,204);(0,200);(2,100);(3,101);(4,102)]))``;

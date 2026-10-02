@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.SSAStateRoute
 import Flapjack.Compiler.Backend.WordAlloc.MergeMovesRoute
 import Flapjack.Compiler.Backend.WordAlloc.InstructionRoute
 import Flapjack.Compiler.Backend.WordAlloc.KeyMapRoute
@@ -404,10 +405,8 @@ def wordSsaReadCutsets (state : WordSsaState)
     NumSet.fromAList ((NumSet.fromAList cutsets.2).map (wordSsaRead state)))
 
 def wordSsaFresh (state : WordSsaState) (name : Nat) : WordSsaState × Nat :=
-  ({ current := (name, state.next) ::
-        state.current.filter (fun entry => entry.1 != name),
-      next := state.next + 4 },
-    state.next)
+  let (name,current,next) := Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable name state.current state.next
+  ({current := current,next := next},name)
 
 theorem wordSsaFresh_next (state : WordSsaState) (name : Nat) :
     (wordSsaFresh state name).1.next = state.next + 4 := by
@@ -416,7 +415,8 @@ theorem wordSsaFresh_next (state : WordSsaState) (name : Nat) :
 theorem wordSsaFresh_preserves_residue (state : WordSsaState) (name : Nat)
     (residue : Nat) (hresidue : state.next % 4 = residue) :
     (wordSsaFresh state name).1.next % 4 = residue := by
-  simp [wordSsaFresh, hresidue]
+  rw [wordSsaFresh_next]
+  omega
 
 def wordSsaFreshList (state : WordSsaState) : List Nat →
     WordSsaState × List Nat
@@ -437,14 +437,8 @@ def wordSsaRenameReturns (state : WordSsaState) :
       let (state, destinations) := wordSsaFreshList state destinations
       (state, some (destinations, cutsets, returnCode, returnLabel, entryLabel))
 
-def wordSsaForceRename : List (Nat × Nat) → WordSsaState → WordSsaState
-  | [], state => state
-  | (source, destination) :: renamings, state =>
-      wordSsaForceRename renamings
-        { state with current := (source, destination) ::
-            state.current.filter (fun entry => entry.1 != source) }
-termination_by renamings => sizeOf renamings
-decreasing_by all_goals decreasing_trivial
+def wordSsaForceRename (renamings : List (Nat × Nat)) (state : WordSsaState) : WordSsaState :=
+  {state with current := Compiler.Backend.WordAlloc.ssaForceRenameExecutable renamings state.current}
 
 /-! Refresh a cut set while retaining the source-to-current mapping used by
     the surrounding SSA block.  CakeML uses this helper around ABI-sensitive
@@ -633,7 +627,7 @@ def wordSsaSeq (first second : WordProg α) : WordProg α :=
   | first, second => .seq first second
 
 def wordSsaKeys (state : WordSsaState) : List Nat :=
-  state.current.map (fun entry => entry.1)
+  Compiler.Backend.WordAlloc.ssaMapKeysExecutable state.current
 
 /-! CakeML enumerates `num_set`/`num_map` keys with
     `MAP FST (toAList ...)`, whose order is the Patricia-tree traversal
@@ -1115,9 +1109,16 @@ theorem wordSsaRenameProgram_ite [OfNat α 0] :
             (.seq (.move 1 [(18, 14)]) .skip))) := by
   have merge : Compiler.Backend.WordAlloc.mergeMovesExecutable [1] [(1,10)] [(1,14)] 18 =
       ([(18,10)],[(18,14)],22,[(1,18)],[(1,18)]) := by decide +kernel
+
+  have freshLeft : wordSsaFresh {current := [], next := 10} 1 =
+      ({current := [(1,10)], next := 14},10) := by decide +kernel
+  have freshRight : wordSsaFresh {current := [], next := 14} 1 =
+      ({current := [(1,14)], next := 18},14) := by decide +kernel
+  have keysLeft : wordSsaKeys {current := [(1,10)], next := 14} = [1] := by decide +kernel
+  have keysRight : wordSsaKeys {current := [(1,14)], next := 18} = [1] := by decide +kernel
   simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRenameExp, wordSsaRenameRegImm,
-    wordSsaRead, wordSsaFresh, wordSsaKeys,
+    wordSsaRead, freshLeft, freshRight, keysLeft, keysRight,
     wordSsaFixInconsistencies, wordSsaPriorityMove,
     wordSsaBranchPriority, wordSsaMergeMoves, merge,
     wordSsaFakeInconsistencyMoves,
@@ -2769,11 +2770,11 @@ theorem wordSsaRenameLinear_addCarry :
         { current := [(2, 100), (3, 101), (4, 102)], next := 200 }
         ([.arith (.addCarry 0 1 2 3 4), .arith (.addCarry 5 6 0 1 2)] :
           List (WordInst Nat)) =
-      ({ current := [(6, 212), (5, 208), (1, 204), (0, 200),
-          (2, 100), (3, 101), (4, 102)], next := 216 },
+      ({ current := [(3, 101), (1, 204), (5, 208), (0, 200),
+          (4, 102), (2, 100), (6, 212)], next := 216 },
         [.arith (.addCarry 200 204 100 101 102),
           .arith (.addCarry 208 212 200 204 100)]) := by
-  rfl
+  decide +kernel
 
 theorem wordAllocateLinearInstructions_example :
     wordAllocateLinearInstructions (α := Nat)

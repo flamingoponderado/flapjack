@@ -1,0 +1,10 @@
+load "preamble"; load "word_to_stackTheory";
+open HolKernel Parse bossLib preamble;
+val _ = Globals.linewidth := 1000000;
+fun emit label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = emit "rbo_must_alloc" ``word_to_stack$comp (c:64 asm$asm_config) F (MustTerminate (Seq (Alloc 2 (LN,sptree$insert 32 () LN)) (Get 80 CurrHeap)):64 wordLang$prog) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = emit "rbo_loop_if_reg" ``word_to_stack$comp (c:64 asm$asm_config) F (Loop (sptree$insert 32 () LN) (If Equal 80 (Reg 82) (Alloc 2 (LN,sptree$insert 32 () LN)) (Get 80 CurrHeap)) (sptree$insert 34 () LN):64 wordLang$prog) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = emit "rbo_seq_loops" ``word_to_stack$comp (c:64 asm$asm_config) F (Seq (Loop LN (Alloc 2 (LN,sptree$insert 32 () LN)) LN) (Loop LN (Get 80 CurrHeap) LN):64 wordLang$prog) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = emit "rbo_tail_indirect" ``word_to_stack$comp (c:64 asm$asm_config) F (Call NONE NONE [0;2;4;6;8;10] NONE:64 wordLang$prog) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = emit "rbo_return_direct" ``word_to_stack$comp (c:64 asm$asm_config) F (Call (SOME([2;4],(LN,sptree$insert 32 () LN),Get 80 CurrHeap,7,9)) (SOME 11) [2;4;6;8;10] NONE:64 wordLang$prog) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = emit "rbo_handler_indirect" ``word_to_stack$comp (c:64 asm$asm_config) F (Call (SOME([2;4],(LN,sptree$insert 32 () LN),Loop LN (Alloc 2 (LN,sptree$insert 32 () LN)) LN,7,9)) NONE [2;4;6;8;10] (SOME(2,MustTerminate (Get 80 CurrHeap),70,90)):64 wordLang$prog) (Append (List [4w]) (List [7w]),17) (4,7,9)``;

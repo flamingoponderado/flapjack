@@ -9,11 +9,11 @@ example :
     wordSsaRenameLinear (α := Nat)
         { current := [(2, 100), (3, 101), (4, 102)], next := 200 }
         [.arith (.addCarry 0 1 2 3 4), .arith (.addCarry 5 6 0 1 2)] =
-      ({ current := [(6, 212), (5, 208), (1, 204), (0, 200),
-          (2, 100), (3, 101), (4, 102)], next := 216 },
+      ({ current := sptToAList (sptFromAList [(6, 212), (5, 208), (1, 204), (0, 200),
+          (2, 100), (3, 101), (4, 102)]), next := 216 },
         [.arith (.addCarry 200 204 100 101 102),
           .arith (.addCarry 208 212 200 204 100)]) := by
-  exact wordSsaRenameLinear_addCarry
+  simpa [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext] using wordSsaRenameLinear_addCarry
 
 example :
     wordInstForcedClashes (α := Nat)
@@ -31,10 +31,10 @@ example :
     wordSsaRenameProgram
         ({ current := [(10, 6)], next := 100 } : WordSsaState)
         ((.inst (.arith (.shift .asr 20 6 (.reg 10)))) : WordProg Nat) =
-        ({ current := [(20, 100), (10, 6)], next := 104 },
+        ({ current := sptToAList (sptFromAList [(20, 100), (10, 6)]), next := 104 },
         .seq (.move 1 [(8, 6)])
           (.inst (.arith (.shift .asr 100 0 (.reg 8))))) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRenameInstProgram, wordSsaFresh, wordSsaRead,
     wordSsaReadMoveSource, lookupNatInfo]
 
@@ -49,16 +49,16 @@ example :
         ({ current := [(2, 100)], next := 200 } : WordSsaState)
         ((.shareInst .load 1
           (.op .add [.var 2, .const (4 : Nat)])) : WordProg Nat) =
-      ({ current := [(1, 200), (2, 100)], next := 204 },
+      ({ current := sptToAList (sptFromAList [(1, 200), (2, 100)]), next := 204 },
         .shareInst .load 200 (.op .add [.var 100, .const 4])) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRenameExp, wordSsaFresh, wordSsaRead, lookupNatInfo]
 
 example :
     wordSsaRenameProgram
         ({ current := [(2, 100)], next := 200 } : WordSsaState)
         ((.call (some ([3, 4], ([2], []), .skip, 0, 0)) (some 7) [2, 5] none) : WordProg Nat) =
-      ({ current := [(4, 216), (3, 212), (2, 208)], next := 220 },
+      ({ current := sptToAList (sptFromAList [(4, 216), (3, 212), (2, 208)]), next := 220 },
         .seq (.move 0 [(202, 100)])
           (.seq (.move 1 [(2, 100), (4, 0)])
             (.call (some ([2, 4], ([202], []),
@@ -66,7 +66,7 @@ example :
                 (.seq (.move 1 [(212, 2), (216, 4)]) .skip), 0, 0))
               (some 7) [2, 4] none))) := by
   have hAbi : wordSsaCallAbiRegisters 1 2 = [2, 4] := by rfl
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaListNextVarRenameMove, hAbi,
     wordSsaFreshList, wordSsaFresh, wordSsaRead, lookupNatInfo,
     wordSsaReadCutsets, wordSsaRestrict, wordSsaSeq, List.eraseDups,
@@ -78,10 +78,10 @@ example :
     wordSsaRenameProgram
         ({ current := [(2, 100)], next := 200 } : WordSsaState)
         ((.seq (.locValue 3 2) (.return 0 [3])) : WordProg Nat) =
-        ({ current := [(3, 200), (2, 100)], next := 204 },
+        ({ current := sptToAList (sptFromAList [(3, 200), (2, 100)]), next := 204 },
         .seq (.locValue 200 2)
           (.seq (.move 0 [(2, 200)]) (.return 0 [2]))) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaCallAbiRegisters, wordSsaFresh, wordSsaRead, wordSsaSeq,
     lookupNatInfo]
 
@@ -102,7 +102,7 @@ example :
         ({ current := [(1, 100)], next := 200 } : WordSsaState)
         ((.call (some ([2], ([1], []), .skip, 0, 0)) (some 7) [1]
           (some (3, .assign 4 (.var 1), 0, 0)) : WordProg Nat)) =
-        ({ current := [(3, 232), (4, 228), (2, 224), (1, 208)], next := 236 },
+        ({ current := sptToAList (sptFromAList [(3, 232), (4, 228), (2, 224), (1, 208)]), next := 236 },
         .seq (.move 0 [(202, 100)])
           (.seq (.move 1 [(2, 100)])
             (.call (some ([2], ([202], []),
@@ -130,9 +130,9 @@ example :
                         (.move 1 [(228, 220)]))
                       (.move 1 [(232, 216)]))), 0, 0))))) := by
   have merge : Compiler.Backend.WordAlloc.mergeMovesExecutable [3,1,4,2]
-      [(2,212),(1,208)] [(4,220),(3,216),(1,208)] 224 =
+      [(1,208),(2,212)] [(3,216),(1,208),(4,220)] 224 =
       ([],[],224,[(1,208),(2,212)],[(3,216),(1,208),(4,220)]) := by decide +kernel
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaListNextVarRenameMove, wordSsaCallAbiRegisters,
     wordSsaReadCutsets, wordSsaRestrict, wordSsaFreshList,
     wordSsaFresh, wordSsaRenameExp, wordSsaRead, wordSsaKeys,
@@ -183,8 +183,8 @@ example :
         ({ current := [(1, 100)], next := 200 } : WordSsaState)
       ((.loop [1] (.seq (.assign 1 (.var 1)) (.break 0)) [1]) :
           WordProg Nat)).1 =
-      { current := [(1, 200)], next := 208 } := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+      { current := sptToAList (sptFromAList [(1, 200)]), next := 208 } := by
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaLoopSetup, wordSsaFakeMoves,
     NumSet.fromList, NumSet.toAList, NumSet.toSet, NumSet.insert, NumSet.insertFuel, NumSet.lrnext, NumSet.lrnextFuel, NumSet.insertList, wordSsaListNextVarRenameMove,
     wordSsaFreshList, wordSsaRestrict, wordSsaFresh,
@@ -206,13 +206,13 @@ example :
         ({ current := [(1, 100), (2, 104), (3, 108), (4, 112)], next := 200 } :
           WordSsaState)
       ((.install 1 2 3 4 ([1], [2]) : WordProg Nat)) =
-      ({ current := [(2, 220), (1, 216), (202, 212)], next := 224 },
+      ({ current := sptToAList (sptFromAList [(2, 220), (1, 216), (202, 212)]), next := 224 },
         .seq (.move 0 [(202, 100), (206, 104)])
           (.seq (.move 1 [(2, 202), (4, 206)])
             (.seq (.install 2 4 108 112 ([202], [206]))
               (.seq (.move 1 [(212, 2)])
                 (.move 0 [(216, 202), (220, 206)]))))) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaListNextVarRenameMove, wordSsaReadCutsets, wordSsaRestrict,
     wordSsaFreshList, wordSsaFresh, wordSsaRead, wordSsaSeq,
     List.eraseDups, List.eraseDupsBy, List.eraseDupsBy.loop, lookupNatInfo,
@@ -224,21 +224,21 @@ example :
         ({ current := [(1, 100), (2, 104), (3, 108), (4, 112)], next := 200 } :
           WordSsaState)
       ((.storeConsts 1 2 3 4 [] : WordProg Nat)) =
-      ({ current := [(3, 204), (4, 200), (1, 100), (2, 104)], next := 208 },
+      ({ current := sptToAList (sptFromAList [(3, 204), (4, 200), (1, 100), (2, 104)]), next := 208 },
         .seq (.move 1 [(4, 108), (6, 112)])
           (.seq (.storeConsts 0 2 4 6 [])
             (.move 1 [(204, 4), (200, 6)]))) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaFresh, wordSsaRead, wordSsaSeq, lookupNatInfo]
 
 example :
     wordSsaRenameProgram
         ({ current := [], next := 10 } : WordSsaState)
       ((.loop [1] (.break 0) []) : WordProg Nat) =
-      ({ current := [], next := 14 },
+      ({ current := sptToAList (sptFromAList []), next := 14 },
         .seq (.seq (.seq (.inst (.const 10 0)) .skip) (.move 0 []))
           (.loop [10] (.break 0) [])) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     WordAlloc.applyNummapKeyExecutable, WordAlloc.numSetFromExact,
     WordAlloc.numSetToExact, WordAlloc.applyNummapKey,
     sptFromAList, sptToAList, sptFoldi, sptInsert, lrNext,
@@ -253,12 +253,12 @@ example :
     wordSsaRenameProgram
         ({ current := [(1, 100)], next := 200 } : WordSsaState)
       ((.alloc 3 ([1], []) : WordProg Nat)) =
-      ({ current := [(1, 208)], next := 212 },
+      ({ current := sptToAList (sptFromAList [(1, 208)]), next := 212 },
         .seq (.move 0 [(202, 100)])
           (.seq (.move 1 [(2, 0)])
             (.seq (.alloc 2 ([202], []))
               (.move 0 [(208, 202)])))) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaListNextVarRenameMove, wordSsaReadCutsets, wordSsaRestrict,
     wordSsaFreshList, wordSsaFresh, wordSsaRead, wordSsaSeq,
     List.eraseDups, List.eraseDupsBy, List.eraseDupsBy.loop, lookupNatInfo,
@@ -269,9 +269,9 @@ example :
     wordSsaRenameProgram
         ({ current := [(1, 100)], next := 200 } : WordSsaState)
         ((.move 7 [(2, 1), (3, 2)]) : WordProg Nat) =
-        ({ current := [(1, 200), (3, 204), (2, 200)], next := 208 },
+        ({ current := sptToAList (sptFromAList [(1, 200), (3, 204), (2, 200)]), next := 208 },
         .move 7 [(200, 100), (204, 0)]) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRenameMove, wordSsaFreshList, wordSsaFresh, wordSsaRead,
     wordSsaForceRename, lookupNatInfo]
 
@@ -295,7 +295,7 @@ example :
         ({ current := [], next := 10 } : WordSsaState)
         ((.ite .equal 0 (.reg 0)
           (.assign 1 (.var 0)) .skip) : WordProg Nat) =
-      ({ current := [(1, 14)], next := 18 },
+      ({ current := sptToAList (sptFromAList [(1, 14)]), next := 18 },
         .ite .equal 0 (.reg 0)
           (.seq (.assign 10 (.var 0))
             (.seq (.move 1 [])
@@ -305,7 +305,7 @@ example :
               (.seq .skip (.inst (.const 14 0)))))) := by
   have merge : Compiler.Backend.WordAlloc.mergeMovesExecutable [1] [(1,10)] [] 14 =
       ([],[],14,[(1,10)],[]) := by decide +kernel
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRenameExp, wordSsaRenameRegImm, wordSsaRead, wordSsaFresh,
     wordSsaKeys, wordSsaFixInconsistencies,
     wordSsaPriorityMove, wordSsaBranchPriority, wordSsaMergeMoves, merge,
@@ -330,9 +330,9 @@ example :
 example :
     wordSsaRenameMove (α := Nat)
         ({ current := [], next := 200 } : WordSsaState) 0 [(15, 4), (16, 12)] =
-      ({ current := [(12, 204), (4, 200), (16, 204), (15, 200)], next := 208 },
+      ({ current := sptToAList (sptFromAList [(12, 204), (4, 200), (16, 204), (15, 200)]), next := 208 },
         (.move 0 [(200, 0), (204, 0)] : WordProg Nat)) := by
-  simp [wordSsaRenameMove, wordSsaFreshList, wordSsaFresh, wordSsaReadMoveSource,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameMove, wordSsaFreshList, wordSsaFresh, wordSsaReadMoveSource,
     wordSsaForceRename, lookupNatInfo]
 
 example :

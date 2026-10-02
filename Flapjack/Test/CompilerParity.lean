@@ -1,3 +1,6 @@
+import Flapjack.Test.WordToStackRegOutputParity
+import Flapjack.Test.LabToTargetCodeOffsetPaddingParity
+import Flapjack.Test.LabToTargetOffsetPaddingParity
 import Flapjack.Test.BinaryIeeeDirectedFp64Parity
 import Flapjack.Test.LabToTargetOffsetEstablishmentParity
 import Flapjack.Test.BinaryIeeeDirectedFp32Parity
@@ -1870,6 +1873,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetAlignmentParity.runChecks,
     Flapjack.Test.LabToTargetPrefixZeroParity.runChecks,
     Flapjack.Test.LabToTargetPrefixPreservationParity.runChecks,
+    Flapjack.Test.LabToTargetCodeOffsetPaddingParity.runChecks,
+    Flapjack.Test.LabToTargetOffsetPaddingParity.runChecks,
     Flapjack.Test.LabToTargetOffsetEstablishmentParity.runChecks,
     Flapjack.Test.LabToTargetOffsetInvariantParity.runChecks,
     Flapjack.Test.LabToTargetCodeLabelPositionPaddingParity.runChecks,
