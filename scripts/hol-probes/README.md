@@ -1,3 +1,9 @@
+`ssa_reconcile_get_vars_probe.out` replays the literal original full theorem
+and list-induction proof, and records all universally quantified binder types.
+The Lean counterpart keeps distinctness, native get_vars result existence,
+length and every in-bounds EL/THE lookup; the replay is source-review evidence,
+not a cross-assistant equivalence proof.
+
 `riscv_jumpcmp_polarity_probe.out` records 32 fresh original encoder byte
 vectors: all eight JumpCmp predicates, register/immediate operands, and
 short/long ranges. RiscVBranchPolarity kernel-checks actual executed Lab
@@ -4439,6 +4445,7 @@ translations and the evaluator's inherited IEEE rational-cut assumption
 (SOUNDNESS item 8) are retained. These are invariant-update prerequisites,
 not a completed CSE/compiler correctness proof.
 
+`ssa_reconcile_alookup_zip_probe.out` replays both original generic indexed-SOME and absent-key-NONE ALOOKUP ZIP proofs6551–6590, recording full statements and nine original argument types. Canonical opaque EL and all original domain/injection/index/length premises are retained.
 `target_sem_machine_sem_probeScript.sml` kernel-proves the full original
 Terminate/Diverge/Fail clauses for arbitrary machine and FFI carriers, checking
 exact conclusions and empty theorem hypotheses before capture. Divergence uses
@@ -4474,6 +4481,27 @@ native Inst clauses; LoadEvaluation support was exposed without changing its
 implementation or old theorem statements. Existing finite-map/positive-word
 translations and inherited rational-cut assumption (SOUNDNESS item 8) remain.
 These are invariant-update prerequisites, not full CSE/compiler correctness.
+
+`target_props_clock_probeScript.sml` checks the original closed
+`evaluate_add_clock` theorem against its entire quantified statement and captures
+halt/error equality at clocks one and five. The Lean theorem and generic replay
+are in `TargetProps/EvaluateAddClock.lean` and `TargetPropsClockParity.lean`.
+The proof uses clock induction on the literal evaluator, with a local heartbeat
+budget for the complete constructor case analysis. No default target or gate is
+shortened. Source-reviewed total `holEl`/`holHd` behavior is retained at both
+clocks and explicitly recorded for the evaluator and machine semantics.
+
+`ssa_reconcile_empty_probe.out` replays the complete original local evaluator reconciliation proof and its literal prerequisites, then specializes the genuine empty-moves branch. Six native types are captured; this is regression evidence, and the Lean branch independently derives the evaluator/post-state conclusions. Full SSA simulation remains unfinished.
+`word_cse_deletion_frames_probeScript.sml` regenerates the two complete local
+`evaluate_arith_unset_var` / `evaluate_load_unset_var` proofs from original
+`word_cseProofScript.sml`, requiring closed hypotheses, plus four inferred types
+and 152 full theorem applications at widths 1/32/64/80. Fixtures cover all
+eligible arithmetic families and all non-store memory constructors, deletion
+of destination or an unrelated register, arbitrary full states and word-loc
+values. `WordCseDeletionFramesParity.lean` kernel-checks matching applications.
+The statements retain the original input guards and both evaluation directions.
+These regressions supplement source review; they do not prove cross-language
+equivalence or complete CSE correctness.
 
 ## Literal balanced-map core
 
