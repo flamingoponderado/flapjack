@@ -242,6 +242,7 @@
     {"bytes": 75, "out": "keep_tok_probe.out", "rows": 2, "sha256": "95504f40249189b9e583ccef958d4bba570b1cae1a408fc1a27ff9c4997749a7"},
     {"bytes": 3036, "out": "l3_riscv_decode_probe.out", "rows": 126, "sha256": "fe36f5803ee6a6af249008db908c0f3d743338c9009f2a58cbef993df090c3fa"},
     {"bytes": 3633, "out": "l3_riscv_fp_compare_probe.out", "rows": 83, "sha256": "2f525e80992640353723714adb5cdb2c32baa01208138ef925ca936f87f1b4a1"},
+    {"bytes": 4964, "out": "l3_riscv_fp_to_int_probe.out", "rows": 96, "sha256": "3f2a58fcfe114f90a66e6d67b3f3e610b21e3d49ecb7ee6eced11c200bfbba24"},
     {"bytes": 333, "out": "l3_riscv_mmu_fetch_probe.out", "rows": 12, "sha256": "b953f8032503c1c3a89ef84c0b960c29d60204c543ab198ec6f44e56bf331ab0"},
     {"bytes": 424, "out": "l3_riscv_rounding_probe.out", "rows": 3, "sha256": "ebd365f7fb724988be764365998d47292ec8ffa21ffed8f1c57949d3338f2ef0"},
     {"bytes": 413, "out": "lab_code_safety_probe.out", "rows": 14, "sha256": "e31c9294f0730336f1427bea37142eddc3d953a75c2beaca41d9749b2bfc71d0"},

@@ -11,6 +11,15 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 
 class L3DefsToLeanTest(unittest.TestCase):
+    def test_complete_float_to_integer_closure_is_present(self):
+        body = (ROOT / 'Flapjack/RiscV/L3/Defs.lean').read_text()
+        for precision in ('S', 'D'):
+            for result in ('W', 'WU', 'L', 'LU'):
+                self.assertIn(f"def «dfn'FCVT_{result}_{precision}»", body)
+        self.assertIn('holFloatToInt', body)
+        self.assertIn('(BitVec.ofNat 32 4286578688)', body)
+        self.assertIn('(BitVec.ofNat 64 18442240474082181120)', body)
+
     def test_bit_field_insert_rejects_out_of_range_input(self):
         spec = importlib.util.spec_from_file_location('l3_bound_renderer', ROOT / 'scripts/hol_terms_to_lean.py')
         renderer = importlib.util.module_from_spec(spec)

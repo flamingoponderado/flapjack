@@ -5666,9 +5666,9 @@ invalid page-table entries at levels0/2, compressed/full instruction Fetch
 and Skip, LD and a cross-word store. `L3RiscvMmuFetchParity` kernel replays
 those observations on the actual native state. The numeric greater-than
 rendering unlocks41 full original definitions; walk64 terminates on its
-original page-table level. Of the 252 emitted definitions, ten FP transition equations have declaration-level
+original page-table level. Of the 260 emitted definitions, eighteen FP transition equations have declaration-level
 source review with the real representation assumption; older model bodies still
-need review. Forty FP-dependent declarations including whole Run and
+need review. Thirty-two FP-dependent declarations including whole Run and
 NextRISCV are still omitted and tracked separately. No reduced ISA is substituted.
 
 
@@ -5701,3 +5701,15 @@ new transition tags retain `(reals_as_rational_cuts)` and SOUNDNESS item8.
 The ten complete transition equations have declaration-level source comparison
 recorded in the theorem map. Full model dependency and Run/NextRISCV transition
 review remain separate open obligations; the probes are regression evidence.
+
+## Native L3 float-to-integer conversion
+
+`l3_riscv_fp_to_int_probeScript.sml` evaluates all eight original signed/unsigned
+W/L conversion equations from binary32/binary64. Ninety-six fully numeric tuples
+cover ties, negative values, all four rounding modes, dynamic rounding, invalid
+mode rejection, NaNs, infinities and range saturation. The native kernel replays
+observe the destination GPR, preserved source FPR/NV and Illegal_Instr trap.
+The fixed machine_ieee codecs and complete float_to_int clauses retain the
+`reals_as_rational_cuts` assumption of SOUNDNESS item8. Eighteen FP equations
+have declaration-level source comparison; older model bodies and32 missing
+definitions including full Run/NextRISCV remain separate obligations.

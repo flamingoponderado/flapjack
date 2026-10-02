@@ -709,7 +709,7 @@ def uses_ieee_real_rendering(text: str) -> bool:
     # Their real carrier is the existing rational-cut translation; do not
     # conceal it when mapping the generated machine_ieee wrappers.
     return any(re.search(r'\b' + name + r'\b', text)
-               for name in ('holFloatCompare', 'holFloatIsNan'))
+               for name in ('holFloatCompare', 'holFloatIsNan', 'holFloatToInt'))
 
 
 CONSTANTS = {
@@ -785,6 +785,9 @@ CONSTANTS = {
 
 
 for _width, _t, _w in ((32, 23, 8), (64, 52, 11)):
+    CONSTANTS['machine_ieee', f'fp{_width}_to_int'] = (
+        2, lambda r, c, xs, raw, t=_t, w=_w:
+        f'(holFloatToInt {xs[0]} {ieee_codec(xs[1], t, w)})')
     CONSTANTS['machine_ieee', f'fp{_width}_compare'] = (
         2, lambda r, c, xs, raw, t=_t, w=_w:
         f'(holFloatCompare {ieee_codec(xs[0], t, w)} {ieee_codec(xs[1], t, w)})')
@@ -795,6 +798,9 @@ for _width, _t, _w in ((32, 23, 8), (64, 52, 11)):
     CONSTANTS['machine_ieee', f'fp{_width}_posInf'] = (
         0, lambda r, c, xs, raw, width=_width, t=_t, w=_w:
         f'(BitVec.ofNat {width} {((1 << w) - 1) << t})')
+    CONSTANTS['machine_ieee', f'fp{_width}_negInf'] = (
+        0, lambda r, c, xs, raw, width=_width, t=_t, w=_w:
+        f'(BitVec.ofNat {width} {(1 << (width - 1)) | (((1 << w) - 1) << t)})')
 for _name in ('LT', 'EQ', 'GT', 'UN'):
     CONSTANTS['binary_ieee', _name] = (
         0, lambda r, c, xs, raw, name=_name: f'HolFloatCompare.{name.lower()}')

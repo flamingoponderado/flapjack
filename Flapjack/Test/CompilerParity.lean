@@ -1,3 +1,4 @@
+import Flapjack.Test.L3RiscvFpToIntParity
 import Flapjack.Test.L3RiscvFpCompareParity
 import Flapjack.Test.L3RiscvRoundingParity
 import Flapjack.Test.L3RiscvMmuFetchParity
