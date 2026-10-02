@@ -31,6 +31,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstallCase
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAllocCase
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallReturn
 import Flapjack.Misc.TakeFlatReplicate
+import Flapjack.Compiler.Backend.LabToTarget.PreconditionPreservation
+import Flapjack.Compiler.Backend.LabToTarget.ValidityEstablishment
 import Flapjack.Compiler.Backend.LabToTarget.ValidityNop
 import Flapjack.Compiler.Backend.LabToTarget.NopInvariant
 import Flapjack.Compiler.Backend.LabToTarget.LengthCorrectness
@@ -110,6 +112,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.AllocationArithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackAllocSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ShiftSimulation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
