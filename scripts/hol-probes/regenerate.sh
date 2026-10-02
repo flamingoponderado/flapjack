@@ -4323,3 +4323,11 @@ run_probe target_interference_sequence_probeScript.sml target_interference_seque
 run_probe target_register_oracles_probeScript.sml target_register_oracles_probe.out \
   target_io_regs_type target_io_regs_definition target_io_fp_regs_type target_io_fp_regs_definition target_cc_regs_type target_cc_regs_definition target_cc_fp_regs_type target_cc_fp_regs_definition target_io_absent target_io_fp_absent target_io_fp_present target_io_callee target_io_allowed target_cc_absent target_cc_fp_absent target_cc_fp_present target_cc_callee target_cc_allowed \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe ssa_cc_trans_correct_inst_shift_probeScript.sml ssa_cc_trans_correct_inst_shift_probe.out \
+  inst_shift_full inst_shift_type_st inst_shift_type_cst inst_shift_type_operator inst_shift_type_dst inst_shift_type_src inst_shift_type_imm inst_shift_type_ssa inst_shift_type_next inst_shift_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_inst_div_probeScript.sml ssa_cc_trans_correct_inst_div_probe.out \
+  inst_div_full inst_div_type_st inst_div_type_cst inst_div_type_dst inst_div_type_src inst_div_type_divisor inst_div_type_ssa inst_div_type_next inst_div_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

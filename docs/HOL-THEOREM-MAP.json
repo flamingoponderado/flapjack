@@ -56328,5 +56328,33 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02, native-target-register-oracles: full original definition at source294 and polymorphic type captured in target_register_oracles_probe.out compared literally. Independent machine state/projection/FFI host retained; IO unused ffiname retained as exact HolFfiName. Predicates isFfiApp=true and its negation render HOL Boolean predicates. IO integer guard callee/range/avoid, cache additionally pointer exclusion; FP has no added index guard and fixed BitVec64 zero fallback. Uses initial mc register projection on application post state, no updated-config substitution. Native generic ten branch consumers kernel checked. EL provenance: through interferencePos/interferenceAppSeq/nextInterference to reviewed findNextInterference, literal source112-211 EL index ffi_names is native holEl with shared opaque holHdNil/holArb out of range, no bound/fallback premise. No executable compiler route change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstShift.lean",
+    "lean_name": "ssaCcTransCorrectInstShift",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: full original resumedInst Shift7881-7919 opcode case, both register/immediate branches. Original six premises and full Error-exempt source permutation/result/frame/result-sensitive locals conclusion, no extra targeteval/success/poststate/IH. Native Shift, Nat registers and WordRegImm(BitVec width) match ast shift/num/alpha reg_imm. Actual compiler Move1 into physical8 then Shift is evaluated; physical insertion/getVar relation preserves source read and fresh setVar proves destination relation. Failed reads/wordShiftHOL NONE retain original Error exemption, without extra count bound. Shared arbitrary Type0 code/FFI carriers, canonical fpRegs/store finite-support and positive-widthBitVec translations reviewed. Inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Literal original opcode proof/setup/local helpers and complete native carrier replay PASS; only fixed-constructor selection and discarded primitive induction bookkeeping omitted. Lean kernel checked; full Inst assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstDiv.lean",
+    "lean_name": "ssaCcTransCorrectInstDiv",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: full native Div opcode7919-7944 of original ssa_cc_trans_correct, same six premises/full Error-exempt source permutation/result/frame/result-sensitive locals. No extra targetrun/success/poststate/IH. Actual source getVars divisor then dividend, nonword/missing/zero Error branches and signed quotient match native inst; original HOL word slash is signed word_quot, native BitVec.sdiv. Native compiler reads original SSA operands before fresh destination rename. Accepted original getVars/setVar helpers prove target reads and fresh locals internally. Native Nat registers/positive BitVec/shared Type0 code-FFI/state/SSA/table carriers compared with captured original proven theorem specialization. Canonical fpRegs/store finite-support and words translation only, inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Original opcode proof manually reviewed; captured Q.SPEC of actual kernel theorem PASS, no standalone tactic replay claimed. Lean kernel PASS, full Inst remains open."
   }
 ]

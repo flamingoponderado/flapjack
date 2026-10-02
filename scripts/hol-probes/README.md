@@ -4788,3 +4788,23 @@ evidence, not a cross-assistant equivalence proof; whole Inst assembly remains o
 It retains arbitrary trees and only the original good comparator premise.
 This source capture does not assert cross-assistant equivalence or production wiring.
 `store_list_code_probeScript.sml` records the full original definition/type and 24 complete initializer trees at widths 1/8/64/80, with empty, constant, register and mixed lists, aliasing, arbitrary large registers, and word truncation. Native kernel fixtures retain the terminal Skip and literal right-nesting. Full init/compiler routing is tracked separately.
+`word_unreach_def_probe` captures the original HOL `remove_unreach` and `merge_moves` types
+and 18 EVAL results of `dest_Seq_Move`, `merge_moves`, `SimpSeq` and `remove_unreach`
+(through `Seq_assoc_right`) on small 64-bit programs, including the source's
+`remove_unreach_test`, continuations dropped after `Return`/`Raise`, a `Call` without return
+continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a structural
+observation in `WordUnreachDefParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cc_trans_correct_inst_shift_probeScript.sml` replays the literal original
+Shift opcode proof (7881–7919), local getVar/setVar/physical insertion helpers
+and setup tactic. Only fixed-constructor selection and discarded primitive
+induction bookkeeping are omitted. The full six-premise simulation and native
+state/operator/register/immediate/SSA/table carrier types are captured.
+
+`ssa_cc_trans_correct_inst_div_probeScript.sml` captures `Q.SPEC` of the
+original kernel-checked `ssa_cc_trans_correct` at native Div, including its
+full six-premise simulation and all state/register/SSA/table carriers. The
+opcode proof at 7919–7944 is manually compared; this probe does not claim a
+standalone replay of that tactic fragment.
