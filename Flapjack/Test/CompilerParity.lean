@@ -11,6 +11,7 @@ import Flapjack.Test.CanonicalL3ArbParity
 import Flapjack.Test.L3RiscvFpCompareParity
 import Flapjack.Test.L3RiscvFpToIntParity
 import Flapjack.Test.L3RiscvRoundingParity
+import Flapjack.Test.BinaryIeeeRoundFp32Parity
 import Flapjack.Test.LabToTargetNopInsertEncodingParity
 import Flapjack.Test.LabToTargetNopPaddingParity
 import Flapjack.Test.MiscTakeFlatReplicateParity

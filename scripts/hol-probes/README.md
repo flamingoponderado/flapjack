@@ -5881,3 +5881,21 @@ Lab/machine word dimensions and unused outer shared-memory carrier types are
 retained. Lean `StateTransport` derives the actual shifted interference
 condition at index i+l and preserves every conjunct of the full state relation.
 These proof-side laws do not change the executed compiler.
+
+## Complete binary32 nearest-even rounding agreement
+
+`binary_ieee_round_fp32_probeScript.sml` evaluates the original choice-based
+`float_round roundTiesToEven` and `float_to_fp32` through the pinned HOL
+library's certified conversion. All50 numeric rows cover both requested zero
+signs at integer ties, binade boundaries, signed/unsigned integer extremes,
+half/min/max subnormal values, the normal boundary, largest finite values,
+threshold-adjacent values and positive/negative threshold overflow.
+`BinaryIeeeRoundFp32Parity` rewrites that complete rational specification using
+`holFloatRound_rte_fp32` before50 kernel evaluations; no numerical equality is
+assumed. `BinaryIeeeRoundFp32` proves agreement for every rational argument and
+both zero signs. This is Flapjack algorithm/proof infrastructure; HOL does not
+name the algorithm, and the HOL-real rendering assumption remains unchanged.
+Directed modes and the full eight L3 integer-to-FP case acceptance stay open on
+linked prerequisites; these regressions do not stand in for those modes.
+Regenerate using `HOL_PROBE_ONLY=binary_ieee_round_fp32_probeScript.sml` with
+the matching built original HOL and the standard probe driver.
