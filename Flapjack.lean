@@ -11,6 +11,7 @@ import Flapjack.Test.LabToTargetLabelValidityParity
 import Flapjack.Test.LabToTargetSimilarLabelsParity
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateEq
 import Flapjack.Test.LabToTargetGoodCodeParity
+import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
 import Flapjack.Compiler.Backend.StackToLab.InitializedProduction
 import Flapjack.Compiler.Backend.StackRemove.InitCode
 import Flapjack.Compiler.Backend.StackRemove.InitStubs

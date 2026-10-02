@@ -3,6 +3,7 @@ import Flapjack.Test.LabToTargetEncd0Parity
 import Flapjack.Test.LabToTargetLabelValidityParity
 import Flapjack.Test.LabToTargetSimilarLabelsParity
 import Flapjack.Test.LabToTargetGoodCodeParity
+import Flapjack.Test.DataMaxHeapLimit
 import Flapjack.Test.InitializedProduction
 import Flapjack.Test.StackRemoveInitCode
 import Flapjack.Test.StackRemoveCompile

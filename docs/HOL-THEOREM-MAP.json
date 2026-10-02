@@ -59712,5 +59712,14 @@
     "lean_name": "cutEnvsDomainSubset",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original6451-6457, sole cut_envs(first,second)locals=SOMEoutput premise and both original inputdomains subset locals conclusion. Native cutsets Unit Spt pair, generic alpha locals Spt and alpha output Spt pair confirmed by original proved theorem/fourcarrier capture. Cut_names guards derive both inclusions, no extra subset/validity/success premise. HOL set subset translated by quantified domainmembership implication, native existing cutNames/cutEnvs preserve sourceclauses. No word/fmap translation or executedbehaviorchange. Originalsource manually compared, actual theoremcapture and Lean kernel PASS; no isolated tactic replay claimed. FullFFI/returningCall/Alloc/Install and fullSSA remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/MaxHeapLimit.lean",
+    "lean_name": "maxHeapLimit",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "max_heap_limit_def",
+    "statement_status": "reviewed_word_dimension_as_width",
+    "word_dimension_as_width": "width",
+    "reviewer": "flapjack-sol source comparison2026-10-02; bead .6.6.6.2: original116-120 MIN(dimword(:a) DIV2^shift_length c)(dimword(:a) DIV2^(shift(:a)+1)), full imported Config25-36 retained. wordLang329 overload explicitly identifies shift as reviewed backend_common.word_shift,2 at dimension32 and3 otherwise. Lean preserves both denominator exponent groupings and MIN/Nat DIV, no extra config validity/shift bounds or word carriers. Only numeric dimension translated to explicit positive width/[NeZero width] and dimword to2^width, hence word_dimension_as_width qualifier. Fresh original full definition/type and64 independent numeric/kernel expectations at dimensions1/7/8/31/32/33/64/80, varying allconfig fields/gcKind and shifts below/above dimension, including exact RV64data config4/4/2/lenSize32. Actual backend73/165/222 supplies2*maxHeapLimit-1 to full initializer; its production caller remains on linked .6.6.6 parent, not completed by this definition."
   }
 ]
