@@ -52460,5 +52460,18 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-cse-evaluation-frames, original179-218/272-285/521-550: Complete local original op/r/address/offset/w/s1/s2, source evaluation then not-store and only locals/memory/domain/be equalities, derives target evaluation. No target state/frame/simulation premise; Load16 and all8memops retained. Actual faithful clocked evaluate Inst and native set_var retained. Internal arithValue/instArithMap factor/prove exact native clauses under original eligibility, all8arithmetic constructors audited and no simplified tagged evaluator; typed signed division, both binop operands and Shift immediate match original. Value extraction uses unrestricted insert_eq through shared AssignmentResults, not an extra public hypothesis. LoadValue implementation unchanged while exposing checked proof-only support namespace for reuse; all prior load theorem signatures/manifest rows preserved. fmap_as_finite_support_relation names reviewed imported owner WordSemStateFiniteExact.fpRegs/store, not duplicated; same-module EvaluationFramesWitness genuine broad/exact roundtrip, original locals/code Spt not qualified. words_as_type_indexed_bitvec records only positive word dimensions/NeZero and arbitrary universe-0 config/FFI hosts. Inherits reals_as_rational_cuts through actual evaluate/inst, SOUNDNESS item8, no added IEEE assumption. Four literal complete original proof replays hyp=[] including three local declarations, four original inferred types and256whole theorem applications at1/32/64/80; matching256full kernel applications include write/destination alias and independent memory/state functions. Initial original harness prematurely reduced firstReg to99 and failed syntactic match; corrected original destination expression before successful complete regeneration. Whole CSE invariant/pass/compiler goal remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileGetVars.lean",
+    "lean_name": "ssaReconcileGetVarsLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_reconcile_get_vars_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (58wf), original lines6524-6549: forall source list/current SSA tree/native WordSem state, original ALL_DISTINCT and per-member lookup existence imply existential get_vars of MAP(THE lookup), exact LENGTH and all in-bounds EL lookup equations. List/Nodup/MEM and sptree num_map stay literal; exact holThe and holEl retain missing/out-of-bounds unspecified values, no premise requiring SSA lookup success added. Imported canonical native WordSem carrier only fpRegs/store are finite-support maps, locals/current SSA are trees; same-module non-vacuous full toBroad/ofBroad carrier roundtrip. Standard positive BitVec width and universe-zero code/FFI host translation, no changed quantifier/premise/conclusion. Native getVars/getVar list induction kernel checked; distinctness retained though unused beyond induction."
   }
 ]

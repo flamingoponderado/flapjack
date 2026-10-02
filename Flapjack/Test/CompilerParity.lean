@@ -14,6 +14,7 @@ import Flapjack.Test.WordAllocGetClashTreeParity
 import Flapjack.Test.TargetSemMachineSemParity
 import Flapjack.Test.RiscVBranchPolarity
 import Flapjack.Test.LabImplicitSectionZero
+import Flapjack.Test.SSAReconcileGetVars
 import Flapjack.Test.LabToTargetLineLenParity
 import Flapjack.Test.LabToTargetSectionLengthParity
 import Flapjack.Test.ByteWordToBytesAuxParity
