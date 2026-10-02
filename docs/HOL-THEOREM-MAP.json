@@ -51731,5 +51731,21 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol-a source comparison flapjack-hyxt: full original all-program ssa_cc_trans_props5951ff, including resumed Loop/Break/Continue cases. Quantified native program/map/counter/loop-table/output tuple; actual compiler equality then original ssa_map_ok/is_alloc_var premise imply counter monotonicity/allocated counter/output-map bound. No case IH, desired target evaluation, validity or output-frame premise in final theorem. Native datatype induction includes both nested option-product handler programs and all27functional cases; scoped original case IHs are discharged by induction. Exact original HOL functional-induction assembly from literal27case proof replays, full source types captured. Spt Nat map, List of Spt Nat/two Spt Unit loop-table triples, native constructor arities and positive width BitVec match reviewed owning carriers. No executable behavior change."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_reconcile_moves_eq",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",
+  "lean_name": "ssaReconcileMovesEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-a source comparison flapjack-li4v: Original6485∀L, free m:α num_map and f:num→α; both payload/function fully generic with lawful DecidableEq equality, HOL universal type inhabitedness as Nonempty α. SourceTHE becomes imported exact holThe, opaque NONE remains unobservable through the actual filtered successful lookups, no invented fallback. No lookup-success/domain/distinctness premise. Fresh literal original proof kernel replay and full original types captured; native List/Nat/Spt and ordinary constructors unchanged. Actual original evaluator-reconcile proof6609/6612 consumes these statements; proof-only behavior unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_reconcile_filtered_all_distinct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",
+  "lean_name": "ssaReconcileFilteredAllDistinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-a source comparison flapjack-li4v: Original6500 unconditional filtered native toAList key ALL_DISTINCT; current/target maps Spt Nat as forced by option_lookup, names Spt α with arbitrary payload. ALL_DISTINCT as List.Nodup, actual Boolean lookup/inequality filter. No injection/map/tree-validity/Nodup input premise. Fresh literal original proof kernel replay and full original types captured; native List/Nat/Spt and ordinary constructors unchanged. Actual original evaluator-reconcile proof6609/6612 consumes these statements; proof-only behavior unchanged."
 }
 ]

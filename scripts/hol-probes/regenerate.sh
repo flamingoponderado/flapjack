@@ -3972,3 +3972,7 @@ run_probe ssa_cc_trans_props_control_probeScript.sml ssa_cc_trans_props_control_
 run_probe ssa_cc_trans_props_probeScript.sml ssa_cc_trans_props_probe.out \
   ssa_props_full ssa_props_type_prog ssa_props_type_ssa ssa_props_type_na ssa_props_type_lt ssa_props_type_progOut ssa_props_type_ssaOut ssa_props_type_naOut \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_reconcile_list_props_probeScript.sml ssa_reconcile_list_props_probe.out \
+  sr_moves_full sr_filtered_full sr_type_L sr_type_m sr_type_f sr_type_cur_ssa sr_type_tgt_ssa sr_type_ns \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
