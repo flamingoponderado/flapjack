@@ -34,7 +34,7 @@ fields and only the original false-performance guard; no compiler result premise
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
 theorem wordToStackAllocArgSkip {width : Nat} [NeZero width]
-    (conf : AsmConfigExact width) (perf : Bool) 
+    (conf : AsmConfigExact width) (perf : Bool)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
     (plain : perf = false) :
     allocArg (compNative conf perf (.skip) bs frame).1 := by
@@ -192,7 +192,7 @@ fields and only the original false-performance guard; no compiler result premise
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
 theorem wordToStackAllocArgTick {width : Nat} [NeZero width]
-    (conf : AsmConfigExact width) (perf : Bool) 
+    (conf : AsmConfigExact width) (perf : Bool)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
     (plain : perf = false) :
     allocArg (compNative conf perf (.tick) bs frame).1 := by
