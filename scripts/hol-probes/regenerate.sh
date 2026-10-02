@@ -4135,3 +4135,7 @@ run_probe comparison_good_cmp_probeScript.sml comparison_good_cmp_probe.out \
 run_probe balanced_map_keysets_probeScript.sml balanced_map_keysets_probe.out \
   kse_equiv kse_nonempty kse_partition kse_eq \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"
+
+run_probe balanced_map_keycmp_probeScript.sml balanced_map_keycmp_probe.out \
+  ksc_definition ksc_full_theorem ksc_pair_definition \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"

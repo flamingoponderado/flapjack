@@ -53983,5 +53983,29 @@
   "hol_name": "key_set_eq",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL220-229 actual key-class Set equality iff comparator Equal, same good_cmp hypothesis and arbitrary keys; no key-equality antisymmetry or relation hypothesis. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+},
+{
+  "lean_path": "Flapjack/Misc/BalancedMap/KeySetComparison.lean",
+  "lean_name": "keySetCmp",
+  "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+  "hol_name": "key_set_cmp_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL229-232 arbitrary Set and result; for every member query the queried key comparison has that exact result, no good_cmp in definition. Standard predicate-set and Ordering constructor translations only; full original declarations captured without open hypotheses and unrestricted Lean theorem kernel-checks. No cross-language or full lookup/production correctness claim."
+},
+{
+  "lean_path": "Flapjack/Misc/BalancedMap/KeySetComparison.lean",
+  "lean_name": "keySetCmpThm",
+  "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+  "hol_name": "key_set_cmp_thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL234-243 full iff under good_cmp only; arbitrary queried key, representative key and result. Forward specializes to representative using reflexivity; backward Less/Equal use exact mixed/equality laws, Greater uses reversal and Equal/Less law. No assumed class congruence/target predicate or extra premise. Standard predicate-set and Ordering constructor translations only; full original declarations captured without open hypotheses and unrestricted Lean theorem kernel-checks. No cross-language or full lookup/production correctness claim."
+},
+{
+  "lean_path": "Flapjack/Misc/BalancedMap/KeySetComparison.lean",
+  "lean_name": "keySetCmp2",
+  "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+  "hol_name": "key_set_cmp2_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL245-248 universal pair of members from arbitrary left/right Sets, conjunctive membership hypothesis, same cmp left-key right-key=result. No nonempty/class/ordering condition added. Standard predicate-set and Ordering constructor translations only; full original declarations captured without open hypotheses and unrestricted Lean theorem kernel-checks. No cross-language or full lookup/production correctness claim."
 }
 ]

@@ -4607,3 +4607,7 @@ These are full original helper theorems, not a bitmap decoder simulation.
 ## Full balanced-map key-class laws
 
 `balanced_map_keysets_probe.out` captures all four original equivalence/nonempty/partition/equality theorem statements and rejects open HOL hypotheses. The local nonempty theorem is replayed with its original EXTENSION/metis proof; other statements come directly from the original theory. Lean checks the unrestricted counterparts using only good_cmp, not key equality antisymmetry. This does not establish lookup or insertion correctness.
+
+## Full balanced-map comparator-class law
+
+`balanced_map_keycmp_probe.out` captures both complete predicates and the full original comparator-class theorem without open hypotheses. The Lean proof covers arbitrary result Ordering and all keys under only good_cmp; Greater follows reversed Less with the original equality interaction. This does not assume class congruence or complete lookup correctness.

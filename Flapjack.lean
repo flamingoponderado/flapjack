@@ -1242,6 +1242,7 @@ import Flapjack.Misc.BalancedMap.Insert
 import Flapjack.Misc.BalancedMap.Invariants
 import Flapjack.Misc.BalancedMap.Semantics
 import Flapjack.Misc.BalancedMap.KeySets
+import Flapjack.Misc.BalancedMap.KeySetComparison
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
 import Flapjack.Compiler.Backend.LinearScan.Proofs
 import Flapjack.Misc.Sptree.ToAList
