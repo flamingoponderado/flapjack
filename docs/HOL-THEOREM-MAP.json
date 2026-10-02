@@ -64397,5 +64397,17 @@
     "hol_name": "name_cases",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.10: literal local name_cases1076-1085 quantified store_name != CurrHeap implies MEM store_list. Exact constructor-for-constructor StoreName, sixteen fixed nonCurrHeap constructors and Temp(BitVec5) matching HOL fixed5word; ordinary List carrier and fixed ordered48store slots. No generic word width replacing fixed5 payload, no extra enumerated-input premise, no state/evaluator or weakened result. Cases preserve all fixed names; Temp branch converts equality to toNat and derives complete0..31disjunction from intrinsic five-bit bound via kernel checked omega. No native_decide/bv_decide/trustCompiler. Full original source proof is replayed fresh, including its complete fixed5 Temp case argument. This lemma serves Get/Set membership prerequisites; neither fullcase nor global compiler theorem is claimed here."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StoreHeapReads.lean",
+    "lean_name": "memLoadLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "mem_load_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.11: full local mem_load_lemma1088-1128 original three conjuncts store_list membership, source store lookup SOME arbitrary WordLoc value, and complete five-factor separated heap imply actual target mem_load(base+store_offset name)=SOME value. All source memory/domain, shifted BitmapBase/bitmaps/dataBuffer content/spaceLeft, reverse word_store and stack factors retain original order and native definitions. MAP Word bitmaps ++ MAP Word buffer is represented by equivalent List.map over concatenation; bitmap-space address retains buffer.length+bitmaps.length. Bool state domains denote true entries. No fullstateRel, target success/domain/read, heap bound/finiteness, frame simulation or extra word-width premise. Actual canonical imported native state store has genuine same-module broad/exact codec witness; positive widthNeZero/BitVec, independent C/F Type0, exact fixed5 Temp carrier. Untagged proof factoring derives every actual first-match storePos slot, arbitrary reverse-list modular membership, lifts it through actual five-factor heap, and extracts target domain/value by graph membership before actual native memLoad. Full whole heap premise retained; extraction does not weaken statement. Native kernel proof and fresh original full statement/type/proof replay checked; full Get and compiler theorem remain separate obligations."
   }
 ]

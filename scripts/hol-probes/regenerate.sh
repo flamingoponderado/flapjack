@@ -5182,3 +5182,7 @@ run_probe stack_remove_word_store_curr_heap_probeScript.sml stack_remove_word_st
 run_probe stack_remove_name_cases_probeScript.sml stack_remove_name_cases_probe.out \
   nc_statement nc_types nc_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_store_heap_read_probeScript.sml stack_remove_store_heap_read_probe.out \
+  sr_statement sr_types sr_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
