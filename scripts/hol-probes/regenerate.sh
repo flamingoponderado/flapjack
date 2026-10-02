@@ -4374,3 +4374,7 @@ run_probe ssa_cc_trans_correct_inst_longdiv_probeScript.sml ssa_cc_trans_correct
 run_probe store_init_probeScript.sml store_init_probe.out \
   store_init_full_def store_init_type store_init_1_0_0 store_init_1_0_1 store_init_1_0_2 store_init_1_0_3 store_init_1_1_0 store_init_1_1_1 store_init_1_1_2 store_init_1_1_3 store_init_8_0_0 store_init_8_0_1 store_init_8_0_2 store_init_8_0_3 store_init_8_1_0 store_init_8_1_1 store_init_8_1_2 store_init_8_1_3 store_init_64_0_0 store_init_64_0_1 store_init_64_0_2 store_init_64_0_3 store_init_64_1_0 store_init_64_1_1 store_init_64_1_2 store_init_64_1_3 store_init_80_0_0 store_init_80_0_1 store_init_80_0_2 store_init_80_0_3 store_init_80_1_0 store_init_80_1_1 store_init_80_1_2 store_init_80_1_3 \
   "$cake_dir/compiler/backend/stack_removeScript.sml" "$cake_dir/compiler/backend"
+
+run_probe comparison_bundle_probeScript.sml comparison_bundle_probe.out \
+  cmp_full_bundle cmp_full_typed \
+  "$repo_dir/HOL/src/finite_maps/comparisonScript.sml" "$hol_dir/src/finite_maps"

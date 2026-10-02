@@ -36,6 +36,7 @@
     {"bytes": 121, "out": "cexp_heads_probe.out", "rows": 5, "sha256": "6008ea6cbd045b498a9b2ab282fbd0734ddd6c4760faa5e59cd7aa29a438f184"},
     {"bytes": 1359, "out": "code_rel_probe.out", "rows": 12, "sha256": "0559bf17f96c64ae36db4fa489b78498f46371b7283616c9ec61145900840cf0"},
     {"bytes": 153, "out": "comp_field_probe.out", "rows": 5, "sha256": "eb0013d93ce5805887e256e5b988b7f2d147737eb05ead5b9124eabec3ce13b1"},
+    {"bytes": 1807, "out": "comparison_bundle_probe.out", "rows": 2, "sha256": "674b4848e61e0efd844565fb00f1d34d984e5e87037c181925eb722fe9d92b8f"},
     {"bytes": 532, "out": "comparison_good_cmp_probe.out", "rows": 6, "sha256": "e229ef4460874fde9c9a7725feef3f71e7a0c70b3847661e9a1e45c5d066a403"},
     {"bytes": 112, "out": "compile_crepop_probe.out", "rows": 2, "sha256": "624955095c6fbe0f4e10f8d8b17d6d02a3cacc561d2fed87cf9e2b2743f09278"},
     {"bytes": 5629, "out": "compile_def_probe.out", "rows": 74, "sha256": "abf3846cb89cea5583b98d47e3ba5d99615cc4eb0259b85de99a379c2270bbca"},
