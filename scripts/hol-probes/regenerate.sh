@@ -4079,3 +4079,7 @@ run_probe ssa_cc_trans_correct_primitives_probeScript.sml ssa_cc_trans_correct_p
 run_probe ssa_locals_get_var_probeScript.sml ssa_locals_get_var_probe.out \
   lg_full lg_type_st lg_type_cst lg_type_ssa lg_type_na lg_type_n lg_type_x \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_register_writes_probeScript.sml ssa_cc_trans_correct_register_writes_probe.out \
+  sw_assign_full sw_get_full sw_loc_full sw_type_st sw_type_cst sw_type_expr sw_type_store sw_type_label sw_type_lt \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
