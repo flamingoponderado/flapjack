@@ -1,3 +1,4 @@
+import Flapjack.Test.LabPropsLabelSetsParity
 import Flapjack.Test.LabToTargetWordLocationParity
 import Flapjack.Test.WordCseProductionRegisterClassifiers
 import Flapjack.Test.WordCseProductionInstructionKeys
@@ -1774,6 +1775,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordGcFunctionsParity.runChecks,
     Flapjack.Test.StackAllocGcCodeParity.runChecks,
     Flapjack.Test.StackAllocGetBitsParity.runChecks,
+    Flapjack.Test.LabPropsLabelSetsParity.runChecks,
     Flapjack.Test.LabToTargetWordLocationParity.runChecks,
     Flapjack.Test.LabToTargetFetchValidityParity.runChecks,
     Flapjack.Test.LabToTargetEncodingValidityParity.runChecks,
