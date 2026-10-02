@@ -12,6 +12,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.FiniteMap.Comparison
+import Flapjack.FiniteMap.Comparison.Properties
 import Flapjack.Misc.BalancedMap.Core
 import Flapjack.Misc.BalancedMap.Insert
 import Flapjack.Misc.BalancedMap.Invariants

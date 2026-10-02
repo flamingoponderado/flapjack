@@ -56193,5 +56193,13 @@
     "hol_name": "labs_domain_insert",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL364-381: arbitrary alpha nested Spt values and native generic labLookup; labs_domain is set of pairs whose two-level lookup is not NONE, LN domain empty, fresh outer key insertion is image of inner domain union original domain. Full outside-domain guard retained; no Nat specialization, callback, representation qualifier, success or post-state premise. Spt/Nat pair/Set/Option carriers correspond literally; inner isSome membership is equivalent to lookup not NONE. Both directions of set image and union preserved."
+  },
+  {
+    "lean_path": "Flapjack/FiniteMap/Comparison/Properties.lean",
+    "lean_name": "cmpThms",
+    "hol_path": "HOL/src/finite_maps/comparisonScript.sml",
+    "hol_name": "cmp_thms",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 comparisonScript41 LIST_CONJ: full constructor-distinct triple; three universal case equations with arbitrary result carrier identical to comparator key carrier, as verified by full typed LIST_CONJ capture; universal Less/Equal/Greater exhaustion; universal iff unfolding all seven good_cmp laws in original order/direction. Literal Ordering constructor translation, generic Type carriers, no word/map/FFI difference or qualifier. No comparator law assumed in premises; entire bundled conclusion kernel-proved. Original full typed/untyped theorem capture has no open hypotheses. This is a prerequisite for original balanced_map invariant_eq proof, not completion of that theorem or production CSE."
   }
 ]

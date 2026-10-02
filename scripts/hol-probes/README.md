@@ -4749,3 +4749,10 @@ EVAL observations of its literal defining `lab_lookup ≠ NONE` condition cover
 empty/hit/two-level misses and fresh insertion preserving old and adding new
 keys; Lean checks the corresponding actual domain memberships. Finite fixtures
 are not a cross-assistant proof.
+
+### Full comparator bundle
+
+`comparison_bundle_probeScript.sml` captures the complete original `cmp_thms`
+LIST_CONJ, with and without type annotations and with no open hypotheses.
+The full original LIST_CONJ shares its type variable between datatype case
+results and comparator keys; Lean retains this and every original conjunct.

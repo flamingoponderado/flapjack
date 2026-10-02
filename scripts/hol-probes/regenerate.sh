@@ -4285,3 +4285,7 @@ run_probe word_to_stack_filter_bitmap_probeScript.sml word_to_stack_filter_bitma
 run_probe lab_to_target_labs_domain_probeScript.sml lab_to_target_labs_domain_probe.out \
   ld_definition ld_empty_theorem ld_insert_theorem ld_type ld_empty ld_hit ld_inner_miss ld_outer_miss ld_insert_preserves ld_insert_new \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe comparison_bundle_probeScript.sml comparison_bundle_probe.out \
+  cmp_full_bundle cmp_full_typed \
+  "$repo_dir/HOL/src/finite_maps/comparisonScript.sml" "$hol_dir/src/finite_maps"
