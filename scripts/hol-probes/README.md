@@ -5247,3 +5247,7 @@ capture, not an isolated tactic replay or equivalence proof. Regenerate with
 and both equalities, the assembly post-state relation, and nonzero step count.
 This is source-review regression evidence, not cross-language equivalence.
 Regenerate with `HOL_PROBE_ONLY=target_asm_step_evaluate_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+The same assembly-step probe also captures the full original evaluator-only
+`asm_step_IMP_evaluate_step` conclusion (1038), projected by
+`asmStepImpEvaluateOnly`; its nonzero step count and all source premises remain.

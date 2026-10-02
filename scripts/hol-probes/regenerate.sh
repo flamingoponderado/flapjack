@@ -102,7 +102,7 @@ run_probe() {
 }
 
 run_probe target_asm_step_evaluate_probeScript.sml target_asm_step_evaluate_probe.out \
-  asm_step_evaluate_full_statement \
+  asm_step_evaluate_full_statement asm_step_evaluate_only_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe target_encoding_nonempty_probeScript.sml target_encoding_nonempty_probe.out \
