@@ -4794,3 +4794,9 @@ kernel theorem specialization at SubOverflow, full six-premise simulation and
 complete native state/register/SSA/table carriers. Opcode8092–8113, signed
 wrapped difference test and physical/fresh-flag output path are manually
 compared. No standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_load_probeScript.sml` captures the original kernel
+theorem specialization at native Mem Load and full state/register/offset-word/
+SSA/table carriers. Original opcode8115–8123, address expression, domain errors
+and fresh destination relation are manually compared; no standalone tactic
+replay is claimed.

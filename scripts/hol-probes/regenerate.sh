@@ -4314,3 +4314,7 @@ run_probe ssa_cc_trans_correct_inst_addoverflow_probeScript.sml ssa_cc_trans_cor
 run_probe ssa_cc_trans_correct_inst_suboverflow_probeScript.sml ssa_cc_trans_correct_inst_suboverflow_probe.out \
   inst_suboverflow_full inst_suboverflow_type_st inst_suboverflow_type_cst inst_suboverflow_type_dst inst_suboverflow_type_src inst_suboverflow_type_left inst_suboverflow_type_right inst_suboverflow_type_ssa inst_suboverflow_type_next inst_suboverflow_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_inst_load_probeScript.sml ssa_cc_trans_correct_inst_load_probe.out \
+  inst_load_full inst_load_type_st inst_load_type_cst inst_load_type_dst inst_load_type_src inst_load_type_offset inst_load_type_ssa inst_load_type_next inst_load_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
