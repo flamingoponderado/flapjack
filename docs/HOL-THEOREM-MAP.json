@@ -66572,5 +66572,21 @@
     "hol_name": "rawWriteData_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal source comparison: Full arbitrary Nat byte counts;64-bit mask (1 shifted nbytes*8)-1, aligned/single-word/cross-word branches and higher-word then lower-word state updates. No nbytes bound or alignment premise. Fixed source dimensions and original state carrier retained. Original288-row access regression and Lean kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/TLB.lean",
+    "lean_name": "mkTLBEntry",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mkTLBEntry_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Complete nine-field entry from canonical ARB, arbitrary Nat level, original64-bit mask and arithmetic right/left address alignment, current-core cycle age without bounds. Original14-row TLB regression and Lean4.33.1 kernel replay. Fixed source word widths and literal carrier fields retained."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/TLB.lean",
+    "lean_name": "lookupTLB",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lookupTLB_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Inclusive original0..15 FOR scan and first-match priority; global-or-ASID guard and masked virtual-address equality; complete Some/None branches, no hit premise. Original14-row TLB regression and Lean4.33.1 kernel replay. Fixed source word widths and literal carrier fields retained."
   }
 ]
