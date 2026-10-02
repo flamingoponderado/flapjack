@@ -715,6 +715,60 @@ End
         self.assertIn("holFp64Sqrt", names)
         self.assertIn("holFp64Add", names)
 
+    def test_bit_only_ieee_forms_do_not_require_real_qualifier(self):
+        root = CHECKER["ROOT"]
+        names = CHECKER["reals_rendering_names"](root)
+        forms = CHECKER["REAL_FREE_IEEE_FORMS"]
+        self.assertEqual(len(CHECKER["real_free_ieee_names"](root)), 9)
+        for (_, name), form in forms.items():
+            self.assertNotIn(name, names)
+            self.assertEqual(CHECKER["reals_as_rational_cuts_errors"](form, False, names), [])
+        # Rational values/rounding/sqrt still need the marker.
+        for name in ("holFloatToReal", "holFp64Add", "holFp64SqrtReal"):
+            self.assertIn(name, names)
+            self.assertTrue(CHECKER["reals_as_rational_cuts_errors"](
+                "def caller := " + name, False, names))
+
+    def test_bit_only_ieee_dependency_changes_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for relative in {path for path, _ in CHECKER["REAL_FREE_IEEE_FORMS"]}:
+                target = root / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text((CHECKER["ROOT"] / relative).read_text())
+            self.assertEqual(len(CHECKER["real_free_ieee_names"](root)), 9)
+            target = root / "Flapjack/Misc/BinaryIeee.lean"
+            target.write_text(target.read_text().replace(
+                "{ x with sign := 0 }", "{ x with sign := holFloatToReal x }"))
+            self.assertEqual(CHECKER["real_free_ieee_names"](root), set())
+            names = CHECKER["reals_rendering_names"](root)
+            self.assertIn("holFp64ToFloat", names)
+            self.assertIn("holFloatAbs", names)
+
+    def test_bit_only_ieee_changed_width_or_duplicate_rejected(self):
+        for change in ("width", "duplicate", "namespace", "shadow", "theorem_shadow", "field"):
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                for relative in {path for path, _ in CHECKER["REAL_FREE_IEEE_FORMS"]}:
+                    target = root / relative
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text((CHECKER["ROOT"] / relative).read_text())
+                target = root / "Flapjack/Misc/MachineIeee.lean"
+                if change == "width":
+                    target.write_text(target.read_text().replace("extractLsb' 52 11", "extractLsb' 51 12"))
+                elif change == "duplicate":
+                    target.write_text(target.read_text() + "\ndef holFp64Abs (a : BitVec 64) := a\n")
+                elif change == "namespace":
+                    target.write_text(target.read_text().replace("namespace Flapjack", "namespace Other"))
+                elif change == "shadow":
+                    (root / "Flapjack/Shadow.lean").write_text("abbrev Local.holFp64Abs := Nat\n")
+                elif change == "theorem_shadow":
+                    (root / "Flapjack/Shadow.lean").write_text("theorem Local.holFp64Abs : True := by trivial\n")
+                else:
+                    target = root / "Flapjack/Misc/BinaryIeee.lean"
+                    target.write_text(target.read_text().replace("x.exponent ≠ 0", "x.exponent = 0"))
+                self.assertEqual(CHECKER["real_free_ieee_names"](root), set())
+
     def test_reals_rendering_names_cover_nested_sqrt_real(self):
         names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
         self.assertIn("holFp64SqrtReal", names)

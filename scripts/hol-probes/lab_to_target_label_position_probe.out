@@ -1,0 +1,39 @@
+line_lab_len_pos_ok_def=(line_lab_len_pos_ok (pos' :num) (Label (v0 :num) (v1 :num) (l :num) :α line) ⇔
+ if EVEN pos' then l = (0 :num) else l = (1 :num)) ∧
+(line_lab_len_pos_ok (v2 :num)
+   (Asm (v8 :α asm_or_cbw) (v9 :word8 list) (v10 :num)) ⇔ T) ∧
+(line_lab_len_pos_ok v2
+   (LabAsm (v11 :α asm_with_lab) (v12 :α word) (v13 :word8 list) (v14 :num)) ⇔
+ T)
+line_lab_len_pos_ok_def_types=(v14 :num)::num;(v13 :word8 list)::word8 list;(v12 :α word)::α word;(v11 :α asm_with_lab)::α asm_with_lab;(v10 :num)::num;(v9 :word8 list)::word8 list;(v8 :α asm_or_cbw)::α asm_or_cbw;(v2 :num)::num;(l :num)::num;(v1 :num)::num;(v0 :num)::num;(pos' :num)::num;
+lab_len_pos_ok_def=(∀(pos :num). lab_len_pos_ok pos ([] :α line list) ⇔ T) ∧
+∀(pos :num) (l :α line) (ls :α line list).
+  lab_len_pos_ok pos (l::ls) ⇔
+  line_lab_len_pos_ok pos l ∧ lab_len_pos_ok (pos + line_len l) ls
+lab_len_pos_ok_def_types=
+lab_len_pos_ok_append=∀(l1 :α line list) (pos :num) (l2 :α line list).
+  lab_len_pos_ok pos (l1 ++ l2) ⇔
+  lab_len_pos_ok pos l1 ∧
+  lab_len_pos_ok (pos + (SUM (MAP (line_len :α line -> num) l1) :num)) l2
+lab_len_pos_ok_append_types=(l1 :α line list)::α line list;(pos :num)::num;(l2 :α line list)::α line list;
+all_lab_len_pos_ok_def=(∀(v0 :num). all_lab_len_pos_ok v0 ([] :α sec list) ⇔ T) ∧
+∀(ss :α sec list) (pos :num) (ls :α line list) (k :num).
+  all_lab_len_pos_ok pos (Section k ls::ss) ⇔
+  lab_len_pos_ok pos ls ∧
+  all_lab_len_pos_ok (pos + sec_length ls (0 :num)) ss
+all_lab_len_pos_ok_def_types=
+even_label_zero=T
+odd_label_one=T
+even_wrong_one=T
+odd_wrong_zero=T
+other_annotation_rejected=T
+asm_unconstrained=T
+labasm_unconstrained_width80=T
+list_annotation_not_bytes=T
+append_actual_both_sides=T
+append_false_sides=T
+empty_list_width1=T
+empty_code=T
+empty_sections=T
+section_annotation_not_bytes=T
+section_bad_parity=T

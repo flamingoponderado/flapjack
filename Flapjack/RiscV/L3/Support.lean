@@ -26,5 +26,11 @@ input width; this helper's false result there is not an unconditional HOL port. 
 def holBitFieldInsert {m n : Nat} (h l : Nat) (a : BitVec m) (w : BitVec n) : BitVec n :=
   Flapjack.holFcpWord fun i => if l ≤ i ∧ i ≤ h then a.getLsbD (i - l) else w.getLsbD i
 
+/-- Library rendering of `bitstring$v2w_def`: FCP of `testbit`, whose list
+is most-significant-bit first. FCLASS uses singleton Boolean lists at width1.
+This helper is untagged infrastructure, not a claim about the whole model. -/
+def holV2w (a : Nat) (v : List Bool) : BitVec a :=
+  Flapjack.holFcpWord fun i => decide (i < v.length) && v.getD (v.length - 1 - i) false
+
 
 end Flapjack.RiscV.L3

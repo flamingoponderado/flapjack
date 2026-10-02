@@ -1,0 +1,4 @@
+we_source=∀s e w. state_rel jump off k s t ∧ reg_bound_exp e k ∧ word_exp s e = SOME w ⇒ word_exp t e = SOME w
+we_statement=∀jump off k s t e w. state_rel jump off k s t ∧ reg_bound_exp e k ∧ word_exp s e = SOME w ⇒ word_exp t e = SOME w
+we_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;e:α exp;w:α word
+we_proved=T

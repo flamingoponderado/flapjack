@@ -1,4 +1,13 @@
+import Flapjack.Test.LabToTargetLabelPositionPaddingParity
+import Flapjack.Test.LabToTargetLabelPositionPrefixParity
+import Flapjack.Test.LabToTargetLabelPositionEncodingParity
+import Flapjack.Test.LabToTargetLabelPositionUpdatesParity
+import Flapjack.Test.LabToTargetLabelPositionParity
+import Flapjack.Test.LabToTargetCodeNopEncodingParity
+import Flapjack.Test.LabToTargetSectionAligned0NopParity
+import Flapjack.Test.LabToTargetSectionAlignedNopParity
 import Flapjack.Test.LabToTargetSectionPrefixNopParity
+import Flapjack.Test.L3RiscvFclassParity
 import Flapjack.Test.LabToTargetSectionNopEncodingParity
 import Flapjack.Test.L3RiscvFpStateUpdatesParity
 import Flapjack.Test.CanonicalL3ArbParity
@@ -1854,6 +1863,14 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetAlignmentParity.runChecks,
     Flapjack.Test.LabToTargetPrefixZeroParity.runChecks,
     Flapjack.Test.LabToTargetPrefixPreservationParity.runChecks,
+    Flapjack.Test.LabToTargetLabelPositionPaddingParity.runChecks,
+    Flapjack.Test.LabToTargetLabelPositionPrefixParity.runChecks,
+    Flapjack.Test.LabToTargetLabelPositionEncodingParity.runChecks,
+    Flapjack.Test.LabToTargetLabelPositionUpdatesParity.runChecks,
+    Flapjack.Test.LabToTargetLabelPositionParity.runChecks,
+    Flapjack.Test.LabToTargetCodeNopEncodingParity.runChecks,
+    Flapjack.Test.LabToTargetSectionAligned0NopParity.runChecks,
+    Flapjack.Test.LabToTargetSectionAlignedNopParity.runChecks,
     Flapjack.Test.LabToTargetSectionPrefixNopParity.runChecks,
     Flapjack.Test.LabToTargetSectionNopEncodingParity.runChecks,
     Flapjack.Test.LabToTargetNopInsertEncodingParity.runChecks,

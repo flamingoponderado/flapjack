@@ -786,6 +786,16 @@ CONSTANTS = {
 
 
 for _width, _t, _w in ((32, 23, 8), (64, 52, 11)):
+    # machine_ieeeLib.lift1b applies the fixed codec to literal field predicates.
+    for _classification in ('Normal', 'Subnormal'):
+        CONSTANTS['machine_ieee', f'fp{_width}_is{_classification}'] = (
+            1, lambda r, c, xs, raw, t=_t, w=_w, classification=_classification:
+            f'(holFloatIs{classification} {ieee_codec(xs[0], t, w)})')
+    CONSTANTS['machine_ieee', f'fp{_width}_posZero'] = (
+        0, lambda r, c, xs, raw, width=_width: f'(BitVec.ofNat {width} 0)')
+    CONSTANTS['machine_ieee', f'fp{_width}_negZero'] = (
+        0, lambda r, c, xs, raw, width=_width:
+        f'(BitVec.ofNat {width} {1 << (width - 1)})')
     CONSTANTS['machine_ieee', f'fp{_width}_to_int'] = (
         2, lambda r, c, xs, raw, t=_t, w=_w:
         f'(holFloatToInt {xs[0]} {ieee_codec(xs[1], t, w)})')

@@ -1,0 +1,36 @@
+oracle_tie_clock_full=oracle_tie mc_conf ms s1 ⇒ oracle_tie mc_conf ms (s1 with clock := k)
+oracle_tie_clock_types=oracle_tie (mc_conf :(α, β, γ) machine_config) (ms :β)
+  (s1 :(α, δ, ε) labSem$state) ⇒
+oracle_tie mc_conf ms (s1 with clock := (k :num))
+state_rel_clock_full=state_rel x s1 t1 ms ⇒ state_rel x (s1 with clock := k) t1 ms
+state_rel_clock_types=(state_rel
+   (x :(α, β, γ) machine_config #
+       α sec list # num sptree$num_map sptree$num_map # α word)
+   (s1 :(α, config, δ) labSem$state) (t1 :α asm_state) (ms :β) :bool) ⇒
+(state_rel x (s1 with clock := (k :num)) t1 ms :bool)
+share_mem_state_rel_shift_interfer_full=share_mem_state_rel mc_conf s1 t1 x ⇒
+share_mem_state_rel
+  (mc_conf with next_interfer := (λi. mc_conf.next_interfer (i + l))) s1 t1 x
+share_mem_state_rel_shift_interfer_types=share_mem_state_rel (mc_conf :(α, β, γ) machine_config)
+  (s1 :(δ, config, ε) labSem$state) (t1 :ζ) (x :η) ⇒
+share_mem_state_rel
+  (mc_conf with
+   next_interfer := (λ(i :num). mc_conf.next_interfer (i + (l :num)))) s1 t1
+  x
+share_mem_domain_code_rel_shift_interfer_full=share_mem_domain_code_rel mc_conf p code2 s1.shared_mem_domain ⇒
+share_mem_domain_code_rel
+  (mc_conf with next_interfer := (λi. mc_conf.next_interfer (i + l))) p code2
+  s1.shared_mem_domain
+share_mem_domain_code_rel_shift_interfer_types=share_mem_domain_code_rel (mc_conf :(α, β, γ) machine_config) (p :α word)
+  (code2 :α sec list) (s1 :(α, δ, ε) labSem$state).shared_mem_domain ⇒
+share_mem_domain_code_rel
+  (mc_conf with
+   next_interfer := (λ(i :num). mc_conf.next_interfer (i + (l :num)))) p
+  code2 s1.shared_mem_domain
+state_rel_shift_interfer_full=state_rel (mc_conf,code2,labs,p) s1 t1 x ⇒
+state_rel (shift_interfer l mc_conf,code2,labs,p) s1 t1 x
+state_rel_shift_interfer_types=(state_rel
+   ((mc_conf :(α, β, γ) machine_config),(code2 :α sec list),
+    (labs :num sptree$num_map sptree$num_map),(p :α word))
+   (s1 :(α, config, δ) labSem$state) (t1 :α asm_state) (x :β) :bool) ⇒
+(state_rel (shift_interfer (l :num) mc_conf,code2,labs,p) s1 t1 x :bool)

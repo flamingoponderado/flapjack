@@ -5821,3 +5821,78 @@ result-dependent FFI/state-relation conclusion. Full binder types are captured.
 Halt permits either Word or Loc payloads; Alloc is excluded by the original
 relation's allocation flag and original non-Error premise. No target run is
 assumed. The remaining constructor cases and assembly are still required.
+
+## Full original L3 FCLASS state observations
+
+`l3_riscv_fclass_probe.out` records28 complete original FCLASS_S/D state
+observations: all ten classes, noncanonical and negative quiet NaNs (original
+canonical-only bit9), negative signaling NaNs and zero destination. Kernel
+replays preserve source words, NV/NX, MFS, Delta.data1 and other-core GPRs.
+These fixtures are regression evidence, not whole-model equivalence.
+### Full StackRemove Tick and control-transfer simulation cases
+
+`stack_remove_comp_control_probeScript.sml` reproves the genuine Tick, Return,
+Raise, Break and Continue cases with the same complete original four premises
+and existential target evaluation/result condition. Each complete statement,
+quantified binder type and kernel proof is captured. Tick includes the zero
+clock TimeOut path and arbitrary nonzero decrement path; Return/Raise derive
+Loc-only success from the original run/non-Error premises. Break/Continue
+retain their actual successful results and unchanged state. No target run or
+extra successful lookup is supplied. Full remaining simulation is still open.
+
+### Native StackRemove register relation updates
+
+`stack_remove_stateupdates_probeScript.sml` reproves complete
+`state_rel_set_var`, `state_rel_get_fp_var` and `state_rel_set_fp_var`,
+recording the full statements, all quantified types and kernel proof rows.
+Integer updates take arbitrary Word/Loc values below the original bound and
+preserve reserved registers and the full relation. FP lookup/update retain
+the original fixed 64-bit payload and have no integer-register bound. The
+Lean proofs use the actual evaluator state's canonical maps; no FP execution
+equation or rounding mode changes. These are instruction-simulation
+prerequisites, not the full `state_rel_inst` theorem.
+
+### Complete StackRemove separated memory read/load preservation
+
+`stack_remove_memoryreads_probeScript.sml` independently reproves
+`memory_fun2set_IMP_read`, `state_rel_read` and `state_rel_mem_load_imp` from
+the pinned full separation/memory/state definitions. Complete statements,
+all binder types and kernel proof rows are captured. The generic frame lemma
+retains independent arbitrary address/payload types and permits infinite
+domains. Native read/load use the actual full state relation and derive target
+domain/value facts through all five separated heap assertions. No target
+read/load or partial representation is supplied as a premise.
+
+### Complete native StackRemove expression simulation
+
+`stack_remove_wordexp_simulation_probeScript.sml` captures the exported original
+`state_rel_word_exp`, then kernel-replays its complete explicitly quantified
+statement using that original theorem. Full binder types are recorded. The
+Lean theorem independently proves all six constructors and uses a genuine
+nested-list induction for every Op operand, exact native domain-checked Loads
+and both Shift children. No successful target expression or callback is a
+premise. Instruction simulation and full pass assembly remain separate work.
+`ssa_call_returning_none_probe.out` captures the full original no-handler returning Call specialization of `ssa_cc_trans_correct`, retaining all six premises and its complete existential source-permutation/Error-exempt result, frame and result-sensitive locals. The native case adds only the genuine smaller continuation induction hypothesis and derives guards, argument prefix, callee stack transport, return restoration and oracle suffix internally. Handler SOME and full SSA assembly remain open. This capture supports source review, not cross-language equivalence.
+## Complete native LabToTarget clock and state shift group
+
+`lab_to_target_state_transport_probeScript.sml` captures all five original
+clock/shift laws1098–1153 and their complete inferred HOL types. Independent
+Lab/machine word dimensions and unused outer shared-memory carrier types are
+retained. Lean `StateTransport` derives the actual shifted interference
+condition at index i+l and preserves every conjunct of the full state relation.
+These proof-side laws do not change the executed compiler.
+
+### Generational GC move-loop simulation
+
+`stack_alloc_gen_loop_statement_probeScript.sml` elaborates the full original local
+`word_gen_gc_move_loop_code_thm` statement (including free `c1` and `conf`) and
+captures five determinate original `word_gen_gc_move_loop` evaluations: immediate
+stop, data branch with zero/one fuel, and reference branch with zero/one fuel.
+`Flapjack/Test/GenGcMoveLoopParity.lean` replays these collector observations in
+the kernel. This capture does not replay the original simulation proof or claim
+coverage of unspecified nonword headers.
+
+Recursive register-bound probes capture seven full generic original cases and210 guard EVAL/whole-theorem application pairs at widths1/2/8/64/80 and three frames including70bit offset. Kernel fixtures apply each complete recursive case, discharging only proper-subprogram hypotheses through the checked Alloc case. Seq, If and returning/handler Calls retain actual bitmap threading; direct, empty-indirect, spilled-indirect, ignored invalid tail handlers and arbitrary configuration immediate acceptance/rejection are covered. No eager irrelevant bitmap EVAL, full original proof replay, cross-language equivalence or full compiler correctness is claimed. Full register-bound assembly remains open. Selector: HOL_PROBE_ONLY=word_to_stack_reg_recursive_probeScript.sml.
+
+Full native register-bound compiler probe captures the entire original generic theorem and135 guard EVAL/full original theorem application pairs. Kernel matches cover widths1/2/8/64/80,threeframesincluding70bitoffset,nonempty live maps,deep MustTerminate/Loop/If/Seq/returned and handler Calls,spilled source registers and indirect destinations,ignored invalid tail handlers and arbitrary configurations. The public Lean theorem discharges all induction hypotheses internally and retains exactly original post_alloc_conventions,4<=frame,perf=F premises. These are original theorem applications and regression observations, not whole original proof replay or cross-language equivalence. Full pass semantics and compiler composition remain unfinished. Selector: HOL_PROBE_ONLY=word_to_stack_reg_compiler_probeScript.sml.
+`ssa_call_returning_some_probe.out` captures the full arbitrary handler-present specialization of original `ssa_cc_trans_correct`, all six premises and complete existential source-permutation/Error-exempt result, frame and result-sensitive locals. The native case adds only the two genuine smaller continuation IHs, derives exception-frame/root restoration and both native reconciliation paths, and retains the exception binder counter after compiling the return continuation. This is source-review regression evidence, not cross-language equivalence; full returning Call/SSA assembly remains open.

@@ -119,12 +119,22 @@ def «write'FPRD» (arg0 : ((BitVec 64) × (BitVec 5))) : (riscv_state → riscv
   | (value, n) =>
   (fun (state : riscv_state) => («write'fpr» (value, n) state))
 
+/-- HOL `riscv$FP32_Sign` (`FP32_Sign_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FP32_Sign_def"]
+def FP32_Sign (x : (BitVec 32)) : Bool :=
+  (x.getLsbD 31)
+
 /-- HOL `riscv$writeFPRS` (`writeFPRS_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "writeFPRS_def"]
 def writeFPRS (arg0 : ((BitVec 5) × (BitVec 32))) : (riscv_state → riscv_state) :=
   match arg0 with
   | (rd, val) =>
   (fun (state : riscv_state) => (match (let s : riscv_state := («write'FPRS» (val, rd) state); ((MCSR s), s)) with | (v, s) => (match (let s0 : riscv_state := («write'MCSR» ((let r := v; { r with mstatus := ((fun (_eta1 : mstatus) => ((let r := v.mstatus; { r with MFS := ((fun (_eta1 : (BitVec 2)) => (ext_status ExtStatus.Dirty))) r.MFS })))) r.mstatus })) s); ((MCSR s0), s0)) with | (v_1, s_1) => (match (let s0 : riscv_state := («write'MCSR» ((let r := v_1; { r with mstatus := ((fun (_eta1 : mstatus) => ((let r := v_1.mstatus; { r with MSD := ((fun (_eta1 : Bool) => true)) r.MSD })))) r.mstatus })) s_1); ((Delta s0), s0)) with | (v, s) => («write'Delta» ((let r := v; { r with data1 := ((fun (_eta1 : (Option (BitVec 64))) => ((some (BitVec.setWidth 64 val))))) r.data1 })) s)))))
+
+/-- HOL `riscv$FP64_Sign` (`FP64_Sign_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FP64_Sign_def"]
+def FP64_Sign (x : (BitVec 64)) : Bool :=
+  (x.getLsbD 63)
 
 /-- HOL `riscv$writeFPRD` (`writeFPRD_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "writeFPRD_def"]
@@ -224,6 +234,13 @@ def FP32_IsSignalingNan (x : (BitVec 32)) : Bool :=
 def RV32_CanonicalNan  : (BitVec 32) :=
   (BitVec.ofNat 32 2143289344)
 
+/-- HOL `riscv$dfn'FCLASS_S` (`dfn'FCLASS_S_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FCLASS_S_def"]
+def «dfn'FCLASS_S» (arg0 : ((BitVec 5) × (BitVec 5))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, rs) =>
+  (fun (state : riscv_state) => (match ((FPRS rs state), (((BitVec.ofNat 10 0), state))) with | (v, s) => («write'GPR» ((((BitVec.setWidth 64 ((holBitFieldInsert 9 9 ((holV2w 1 (((v == RV32_CanonicalNan) :: (([] : (List Bool))))))) ((holBitFieldInsert 8 8 ((holV2w 1 (((FP32_IsSignalingNan v) :: (([] : (List Bool))))))) ((holBitFieldInsert 7 7 ((holV2w 1 ((((v == (BitVec.ofNat 32 2139095040))) :: (([] : (List Bool))))))) ((holBitFieldInsert 6 6 ((holV2w 1 ((((((!(FP32_Sign v))) && ((holFloatIsNormal ({ sign := v.extractLsb' 31 1, exponent := v.extractLsb' 23 8, significand := v.extractLsb' 0 23 } : HolFloat 23 8))))) :: (([] : (List Bool))))))) ((holBitFieldInsert 5 5 ((holV2w 1 ((((((!(FP32_Sign v))) && ((holFloatIsSubnormal ({ sign := v.extractLsb' 31 1, exponent := v.extractLsb' 23 8, significand := v.extractLsb' 0 23 } : HolFloat 23 8))))) :: (([] : (List Bool))))))) ((holBitFieldInsert 4 4 ((holV2w 1 ((((v == (BitVec.ofNat 32 0))) :: (([] : (List Bool))))))) ((holBitFieldInsert 3 3 ((holV2w 1 ((((v == (BitVec.ofNat 32 2147483648))) :: (([] : (List Bool))))))) ((holBitFieldInsert 2 2 ((holV2w 1 (((((FP32_Sign v) && ((holFloatIsSubnormal ({ sign := v.extractLsb' 31 1, exponent := v.extractLsb' 23 8, significand := v.extractLsb' 0 23 } : HolFloat 23 8))))) :: (([] : (List Bool))))))) ((holBitFieldInsert 1 1 ((holV2w 1 (((((FP32_Sign v) && ((holFloatIsNormal ({ sign := v.extractLsb' 31 1, exponent := v.extractLsb' 23 8, significand := v.extractLsb' 0 23 } : HolFloat 23 8))))) :: (([] : (List Bool))))))) ((holBitFieldInsert 0 0 ((holV2w 1 ((((v == (BitVec.ofNat 32 4286578688))) :: (([] : (List Bool))))))) s.1)))))))))))))))))))))), rd)) s.2)))
+
 /-- HOL `riscv$FP64_IsSignalingNan` (`FP64_IsSignalingNan_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FP64_IsSignalingNan_def"]
 def FP64_IsSignalingNan (x : (BitVec 64)) : Bool :=
@@ -233,6 +250,13 @@ def FP64_IsSignalingNan (x : (BitVec 64)) : Bool :=
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "RV64_CanonicalNan_def"]
 def RV64_CanonicalNan  : (BitVec 64) :=
   (BitVec.ofNat 64 9221120237041090560)
+
+/-- HOL `riscv$dfn'FCLASS_D` (`dfn'FCLASS_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FCLASS_D_def"]
+def «dfn'FCLASS_D» (arg0 : ((BitVec 5) × (BitVec 5))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, rs) =>
+  (fun (state : riscv_state) => (match ((FPRD rs state), (((BitVec.ofNat 10 0), state))) with | (v, s) => («write'GPR» ((((BitVec.setWidth 64 ((holBitFieldInsert 9 9 ((holV2w 1 (((v == RV64_CanonicalNan) :: (([] : (List Bool))))))) ((holBitFieldInsert 8 8 ((holV2w 1 (((FP64_IsSignalingNan v) :: (([] : (List Bool))))))) ((holBitFieldInsert 7 7 ((holV2w 1 ((((v == (BitVec.ofNat 64 9218868437227405312))) :: (([] : (List Bool))))))) ((holBitFieldInsert 6 6 ((holV2w 1 ((((((!(FP64_Sign v))) && ((holFloatIsNormal ({ sign := v.extractLsb' 63 1, exponent := v.extractLsb' 52 11, significand := v.extractLsb' 0 52 } : HolFloat 52 11))))) :: (([] : (List Bool))))))) ((holBitFieldInsert 5 5 ((holV2w 1 ((((((!(FP64_Sign v))) && ((holFloatIsSubnormal ({ sign := v.extractLsb' 63 1, exponent := v.extractLsb' 52 11, significand := v.extractLsb' 0 52 } : HolFloat 52 11))))) :: (([] : (List Bool))))))) ((holBitFieldInsert 4 4 ((holV2w 1 ((((v == (BitVec.ofNat 64 0))) :: (([] : (List Bool))))))) ((holBitFieldInsert 3 3 ((holV2w 1 ((((v == (BitVec.ofNat 64 9223372036854775808))) :: (([] : (List Bool))))))) ((holBitFieldInsert 2 2 ((holV2w 1 (((((FP64_Sign v) && ((holFloatIsSubnormal ({ sign := v.extractLsb' 63 1, exponent := v.extractLsb' 52 11, significand := v.extractLsb' 0 52 } : HolFloat 52 11))))) :: (([] : (List Bool))))))) ((holBitFieldInsert 1 1 ((holV2w 1 (((((FP64_Sign v) && ((holFloatIsNormal ({ sign := v.extractLsb' 63 1, exponent := v.extractLsb' 52 11, significand := v.extractLsb' 0 52 } : HolFloat 52 11))))) :: (([] : (List Bool))))))) ((holBitFieldInsert 0 0 ((holV2w 1 ((((v == (BitVec.ofNat 64 18442240474082181120))) :: (([] : (List Bool))))))) s.1)))))))))))))))))))))), rd)) s.2)))
 
 /-- HOL `riscv$dfn'FMIN_S` (`dfn'FMIN_S_def`), mechanically rendered from the elaborated HOL definition. Uses the original fixed binary32/binary64 field codecs and generic IEEE value/comparison operations with `(reals_as_rational_cuts)` (docs/SOUNDNESS.md item 8). Existing model dependency/body acceptance remains open. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FMIN_S_def" (reals_as_rational_cuts)]
