@@ -4732,6 +4732,14 @@ definition and three HOL-proved consumers: its reduction on code with no lines t
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=lab_to_target_share_mem_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`asm_sem_mem_ops_probe` captures 14 original HOL results of `mem_load`, `mem_store` and
+`mem_op` on an 8-bit state: little/big-endian two-byte loads, misaligned and out-of-domain
+failures, one-byte stores, four `mem_op` opcodes, and the zero-count load, whose failure flag is
+proved equal to `¬aligned (LOG2 0) 1w` with `LOG2 0` left unconstrained. Positive `LOG2` values
+are proved from `LOG_UNIQUE` (`LOG2` is `[nocompute]`). Kernel-replayed in `AsmSemMemOpsParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=asm_sem_mem_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 
 
 `word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete

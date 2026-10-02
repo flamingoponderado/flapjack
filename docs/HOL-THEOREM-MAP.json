@@ -58151,7 +58151,7 @@
     "lean_path": "Flapjack/Misc/Logroot.lean",
     "lean_name": "holLOG",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:289 new_specification(\"LOG\", [\"LOG\"], LOG_exists) introduces the constant LOG : num -> num -> num about which only the specification theorem holds. Lean renders the constant as Classical.choose of the LOG_exists rendering, the same Hilbert-choice translation already used for float_some_qnan (holFloatSomeQnan). No Lean theorem determines its value outside 1 < a ∧ 0 < n, in particular LOG 2 0 / LOG2 0, exactly as in HOL. No extra axiom (Classical.choice is already in the base), premise or width restriction. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:289 new_specification(\"LOG\", [\"LOG\"], LOG_exists) introduces the constant LOG : num -> num -> num about which only the specification theorem holds. Lean renders the constant as Classical.choose of the LOG_exists rendering, the same Hilbert-choice translation already used for float_some_qnan (holFloatSomeQnan). The specification does not constrain its value outside 1 < a ∧ 0 < n, in particular LOG 2 0 / LOG2 0, as in HOL; this renders the HOL constant and is not a cross-language equivalence proof. No extra axiom (Classical.choice is already in the base), premise or width restriction. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
   },
   {
     "hol_path": "HOL/src/num/extra_theories/logrootScript.sml",
@@ -58230,5 +58230,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.61): lab_to_targetProofScript.sml:688-717 against the HOL kernel typing (mc_conf : ('a,'b,'c) machine_config, p : 'a word, code2 : 'a sec list, s1_shared_mem_domain : 'a word -> bool). All four conjuncts are literal. (1) ∀pc op re a inst len i: asm_fetch_aux pc code2 = SOME (Asm (ShareMem op re a) inst len) ∧ mmio_pcs_min_index mc_conf.ffi_names = SOME i ⇒ ∃index. i ≤ index ∧ find_index (p + n2w (pos_val pc 0 code2)) mc_conf.ffi_entry_pcs 0 = SOME index ∧ (let (name,nb) = get_memop_info op in EL index ffi_names = SharedMem name ∧ ALOOKUP mmio_info index = SOME (nb,a,re,p + n2w (pos_val pc 0 code2 + len))), with EL as the reviewed total holEl, ALOOKUP as List.lookup, find_index/mmio_pcs_min_index/pos_val/get_memop_info/asm_fetch_aux as the tagged ports. (2) ∀pc line: the fetched non-ShareMem line ⇒ DISJOINT (set ffi_entry_pcs) {p + n2w a + n2w (pos_val pc 0 code2) | a < LENGTH (line_bytes line)}, DISJOINT rendered as ∀x. x ∈ ffi_entry_pcs → ¬(∃a. x = ... ∧ a < length), the repo's predicate-set convention. (3) ∀a. byte_align a ∈ d ⇒ a ∈ d with byte_align as the exact holByteAlign over the specified LOG2, so no width restriction or LOG2 0 choice. (4) mc_conf.shared_addresses = d as predicate equality. MachineConfig width β γ carries HOL 'a,'b,'c, with words_as_type_indexed_bitvec for 'a. Original HOL probe lab_to_target_share_mem_domain_probe captures the typed definition and HOL-proved nil reduction, full-domain instance and 64-bit singleton counterexample; Flapjack/Test/LabToTargetShareMemDomainParity.lean kernel-replays them via the untagged shareMemDomainCodeRel_nil."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "mem_load_def",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/MemOps.lean",
+    "lean_name": "memLoad",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.2): asmSemScript.sml:191-197, the four lets literal: a = addr a s; (w,s) = read_mem_word (if s.be then a + n2w (n - 1) else a) n s with the read result at the state word width (it feeds upd_reg r w s); then assert (aligned (LOG2 n) a) s. Arbitrary n including 0. aligned/LOG2 are the exact holAligned/holLOG2, so aligned (LOG2 0) keeps the unconstrained LOG2 0. No width or count restriction. Sole carrier translation words_as_type_indexed_bitvec ('a word/'a addr/'a asm_state to BitVec width/HolAddr width/AsmState width with [NeZero width]). Original HOL probe asm_sem_mem_ops_probe (14 rows on an 8-bit state, including big-endian, misalignment, domain failure and the zero count) kernel-replayed in Flapjack/Test/AsmSemMemOpsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "mem_store_def",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/MemOps.lean",
+    "lean_name": "memStore",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.2): asmSemScript.sml:206-212, the four lets literal: a = addr a s; w = read_reg r s; s = write_mem_word (if s.be then a + n2w (n - 1) else a) n w s with the register word as value; assert (aligned (LOG2 n) a) s. Arbitrary n; writes are kept on failure as in HOL. Sole carrier translation words_as_type_indexed_bitvec ('a word/'a addr/'a asm_state to BitVec width/HolAddr width/AsmState width with [NeZero width]). Original HOL probe asm_sem_mem_ops_probe (14 rows on an 8-bit state, including big-endian, misalignment, domain failure and the zero count) kernel-replayed in Flapjack/Test/AsmSemMemOpsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "mem_op_def",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/MemOps.lean",
+    "lean_name": "memOp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.2): asmSemScript.sml:214-223, all eight clauses: Load/Store at dimindex (:'a) DIV 8 (width / 8, 0 below width 8), Load8/Store8 at 1, Load16/Store16 at 2, Load32/Store32 at 4. Sole carrier translation words_as_type_indexed_bitvec ('a word/'a addr/'a asm_state to BitVec width/HolAddr width/AsmState width with [NeZero width]). Original HOL probe asm_sem_mem_ops_probe (14 rows on an 8-bit state, including big-endian, misalignment, domain failure and the zero count) kernel-replayed in Flapjack/Test/AsmSemMemOpsParity.lean."
   }
 ]

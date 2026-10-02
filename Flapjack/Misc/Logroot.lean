@@ -6,9 +6,10 @@ import Flapjack.HolRef
 Counterpart of the pinned `hol4/src/num/extra_theories/logrootScript.sml` for `LOG`. HOL
 introduces `LOG` by `new_specification("LOG", ["LOG"], LOG_exists)`: a constant about which
 exactly the specification is known. The Lean rendering is the matching Hilbert choice
-`Classical.choose LOG_exists`, as for the reviewed `float_some_qnan` rendering; no Lean
-theorem can determine `holLOG a n` outside `1 < a ∧ 0 < n` (in particular `holLOG 2 0`), just
-as in HOL. HOL `SUC p` is `p + 1`.
+`Classical.choose LOG_exists`, as for the reviewed `float_some_qnan` rendering. The
+specification does not constrain `holLOG a n` outside `1 < a ∧ 0 < n` (in particular
+`holLOG 2 0`), as in HOL; this renders the HOL constant and is not a cross-language
+equivalence proof. HOL `SUC p` is `p + 1`.
 -/
 
 namespace Flapjack
