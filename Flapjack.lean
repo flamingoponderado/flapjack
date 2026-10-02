@@ -1303,6 +1303,8 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Submap
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.Memcpy
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMove
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize

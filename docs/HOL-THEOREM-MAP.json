@@ -55192,6 +55192,53 @@
     "reviewer": "flapjack-sol3 source comparison2026-10-02, beads .18.5.15.10.46-.48, original line6423: complete original definitions/theorems and all binder types freshly captured in lab_to_target_position_append_probe.out. Native word-indexed LabLineHOL/Section preserves ASM, cmp/reg_imm/MlString, fixed word8 lists and natural annotation fields; only positive source word dimensions translate to BitVec. labelZero distinguishes Label annotation zero and returns true on both instruction constructors; secLabelZero retains EVERY over the section lines. Full zero-position theorem has only EVERY sec_label_zero xs, with all xs/pos quantified. Full append theorem retains forall c1/i/pos/c2, same native carrier forced by list append, EVERY sec_label_zero c2 as sole premise, exact <= boundary branch posVal i pos c1 and strict-past branch natural subtraction plus full SUM physical-byte offset. Prefix labels may be nonzero and no validity premise on c1 is inserted. Actual native posVal/section decomposition/exhaustion used, no success callback, encoding-validity assumption or target evaluation premise, no HD/EL dependency. Seventeen original predicate/position observations all true and twenty-two native checks include nonzero prefix padding, zero suffix labels, instruction annotation/byte-length disagreement, exact and past boundaries, empty operands, label-only prefixes and full arbitrary-width boundary/shift consequences. No full pass correctness, executed compiler routing or cross-language equivalence closure claimed."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "memcpy_code_thm",
+    "hol_line": 390,
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/Memcpy.lean",
+    "lean_name": "memcpy_code_thm_n",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.1), stackAllocProof memcpy_code_thm [local] (390-442): !n a b m dm b1 m1 s, all eight hypotheses (memcpy (n2w n) a b m dm = (b1,m1,T), n < dimword as n < 2 ^ width, memory/mdomain, get_var 0/2/3, 1 IN FDOM) and the conclusion ?r1. evaluate (memcpy_code, s with clock := s.clock + n) = (NONE, s with <| memory := m1; regs := s.regs |++ [(0,Word 0w);(1,r1);(2,Word (a + n2w n * bytes_in_word));(3,Word b1)] |>). Over the exact StackSem evaluate (tagged evaluate_def) and the reviewed memcpy_code (GcCode) and memcpy (word_gcFunctions); 'a word as positive-width BitVec with [NeZero width], regs/fpRegs/store as the canonical HolFiniteMapExact fields of StackSemStateFiniteExact, HOL memory/mdomain as the state's function fields, 1 IN FDOM s.regs as (s.regs.lookup 1).isSome, |++ as updateListEq, the existential r1 kept; no extra hypothesis, success or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "memcpy_code_thm",
+    "hol_line": 444,
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/Memcpy.lean",
+    "lean_name": "memcpy_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.1), stackAllocProof memcpy_code_thm (444-463): !w a b m dm b1 m1 s with the seven hypotheses and conclusion with clock offset w2n w and register 2 = Word (a + w * bytes_in_word). Over the exact StackSem evaluate (tagged evaluate_def) and the reviewed memcpy_code (GcCode) and memcpy (word_gcFunctions); 'a word as positive-width BitVec with [NeZero width], regs/fpRegs/store as the canonical HolFiniteMapExact fields of StackSemStateFiniteExact, HOL memory/mdomain as the state's function fields, 1 IN FDOM s.regs as (s.regs.lookup 1).isSome, |++ as updateListEq, the existential r1 kept; no extra hypothesis, success or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GcMove.lean",
+    "lean_name": "word_gc_move_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.2), stack_allocProofScript.sml:875-961 word_gc_move_code_thm: all seventeen hypotheses in HOL order (word_gc_move conf (w,i,pa,old,m,dm) = (w1,i1,pa1,m1,T); shift_length conf < dimindex; word_shift < dimindex; 2 < dimindex; len_size <> 0; !w. w << word_shift = w * bytes_in_word; FLOOKUP s.store CurrHeap = SOME (Word old); s.use_store; s.memory = m; s.mdomain = dm; 0,1,2,6 IN FDOM s.regs; get_var 3/4/5) with HOL's free variables implicit, and the conclusion ?ck r0 r1 r2 r6. evaluate (word_gc_move_code conf, s with clock := s.clock + ck) = (NONE, s with <| memory := m1; regs := s.regs |++ [(0,r0);(1,r1);(2,r2);(3,Word pa1);(4,Word i1);(5,w1);(6,r6)] |>). Over the exact StackSem evaluate (evaluate_def), the reviewed word_gc_move_code (GcCode) and word_gc_move (word_gcFunctions); dimindex as width, word_shift as wordShiftAmount, FLOOKUP/FDOM/|++ as the canonical HolFiniteMapExact lookup/updateListEq, 'a word as positive-width BitVec with [NeZero width]; no extra hypothesis, success or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabelLookup.lean",
     "lean_name": "labLookup",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
