@@ -306,4 +306,81 @@ theorem fp32_same_sign_value_injective (a b : HolFloat 23 8)
     · have := fp32N_strictMono h; omega
   rw [← fp32OfPat_pat a, ← fp32OfPat_pat b, hs, hp]
 
+/-- Finite zero classification depends only on the represented value. -/
+theorem fp32_finite_zero_value (f : HolFloat 23 8)
+    (hf : holFloatIsFinite f = true) :
+    holFloatIsZero f = true ↔ holFloatToReal f = 0 := by
+  rw [fp32_isZero_iff f hf]
+  rw [holFloatToReal_fp32]
+  have hD := fp32_D_pos
+  constructor
+  · intro hp
+    rw [hp]
+    have hz : fp32N 0 = 0 := by decide
+    rw [hz]
+    grind
+  · intro hv
+    have hn : ((fp32N (fp32Pat f) : Nat) : Rat) = 0 := by
+      by_cases hs : f.sign = 1 <;> simp only [hs, if_true, if_false] at hv <;> grind
+    have hn' : fp32N (fp32Pat f) = 0 := by exact_mod_cast hn
+    exact fp32N_eq_zero.mp hn'
+
+/-- Nonzero equal values force equal signs; the only sign ambiguity is zero. -/
+theorem fp32_equal_nonzero_value (a b : HolFloat 23 8)
+    (hv : holFloatToReal a = holFloatToReal b)
+    (hn : holFloatToReal b ≠ 0) : a = b := by
+  apply fp32_same_sign_value_injective a b _ hv
+  have ha : a.sign = 0 ∨ a.sign = 1 := by
+    have h := a.sign.isLt
+    have : a.sign.toNat = 0 ∨ a.sign.toNat = 1 := by omega
+    rcases this with h | h
+    · left; exact BitVec.eq_of_toNat_eq (by simpa using h)
+    · right; exact BitVec.eq_of_toNat_eq (by simpa using h)
+  have hb : b.sign = 0 ∨ b.sign = 1 := by
+    have h := b.sign.isLt
+    have : b.sign.toNat = 0 ∨ b.sign.toNat = 1 := by omega
+    rcases this with h | h
+    · left; exact BitVec.eq_of_toNat_eq (by simpa using h)
+    · right; exact BitVec.eq_of_toNat_eq (by simpa using h)
+  have hD := fp32_D_pos
+  have hna : (0 : Rat) ≤ ((fp32N (fp32Pat a) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
+  have hnb : (0 : Rat) ≤ ((fp32N (fp32Pat b) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
+  rw [holFloatToReal_fp32, holFloatToReal_fp32] at hv
+  rw [holFloatToReal_fp32] at hn
+  rcases ha with ha | ha <;> rcases hb with hb | hb
+  · rw [ha, hb]
+  · simp only [ha, hb] at hv hn
+    grind
+  · simp only [ha, hb] at hv hn
+    grind
+  · rw [ha, hb]
+
+/-- Equal finite represented values become equal records after zero-sign selection. -/
+theorem fp32_zero_sign_value_eq (a b : HolFloat 23 8)
+    (ha : holFloatIsFinite a = true) (hb : holFloatIsFinite b = true)
+    (hv : holFloatToReal a = holFloatToReal b) (z : HolFloat 23 8) :
+    (if holFloatIsZero a then z else a) =
+      (if holFloatIsZero b then z else b) := by
+  have hz : holFloatIsZero a = holFloatIsZero b := by
+    have he : holFloatIsZero a = true ↔ holFloatIsZero b = true := by
+      rw [fp32_finite_zero_value a ha, fp32_finite_zero_value b hb, hv]
+    cases hza : holFloatIsZero a <;> cases hzb : holFloatIsZero b <;> simp_all
+  rw [hz]
+  cases hzb : holFloatIsZero b
+  · have hn : holFloatToReal b ≠ 0 := by
+      intro h
+      have := (fp32_finite_zero_value b hb).2 h
+      rw [hzb] at this
+      contradiction
+    rw [fp32_equal_nonzero_value a b hv hn]
+  · rfl
+
+/-- A witnessed closest candidate discharges the choice specification. -/
+theorem fp32_closest_spec (s : HolFloat 23 8 → Prop) (x : Rat)
+    (a : HolFloat 23 8) (ha : holIsClosest s x a) :
+    holIsClosest s x (holClosest s x) := by
+  unfold holClosest
+  apply (holClosestSuch_spec (fun _ => True) s x _).1
+  exact ⟨a, ha, fun _ _ => True.intro⟩
+
 end Flapjack.Binary32Rounding
