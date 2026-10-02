@@ -50522,5 +50522,50 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison of entire word_to_stack_stack_convs11609-11666 and actual native compile/compile_word_to_stack/compile_prog/stubs. All original conf/source programs/bytes/config/frame-list/output-list/k binders retained. Exactly original compile ac F p tuple equality,EVERY post_alloc_conventions k source bodies,k=ac.reg_count-(5+LENGTH avoid_regs),4<=k premises; source Bool List.all translates original EVERY and conclusion membership quantifiers over outputs.map Prod.snd translate all three original EVERY alloc_arg/reg_bound(k+2)/call_args1 2 3 4 0 conjuncts. Entire actual output includes original raise/storeConsts stubs and actual compileProg StackAlloc prefix/frame formula. Internal list induction retains arbitrary independent identifier carrier and actual sequential residual bitmaps; all head/tail hypotheses discharged through full checked comp alloc/register/call laws. No assumed target conventions, evaluation, successful pass or strengthened source guards. Config/Spt/AppList/wordLang/stackLang/asm/mlstring carriers retained; positive-width BitVec is the only words_as_type_indexed_bitvec translation. Fresh full original theorem and derived compiler-output projection hyp=[],90 source-EVERY EVALs and270 original whole-compiler target-predicate theorem applications matched kernel across widths1/2/8/64/80,registercounts4/8,empty and malformed duplicate/70bit avoid lists,empty/multiple/duplicate identifiers,nested Alloc/Loop/If/Seq/returned-handler Calls,70bit source registers and argument counts,ignored invalid tail handler;30negative source guards. Regression/theorem application evidence not full original proof replay or HOL-to-Lean equivalence. This establishes the full convention declaration; pass simulation,production semantic correspondence and compiler composition remain open. No held ancestry/pin/policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmRemoveHelpers.lean",
+    "lean_name": "callDestStackAsmRemove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "call_dest_stack_asm_remove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-stack-asm-remove-helpers: original 11129-11143: original reduced-count room guard and actual destination preparation output equality imply removal plus original INR register upper bound; direct labels and arbitrary argument lists retained. Configuration and native program widths are independently positive, as confirmed by original inferred alpha asm_config/beta stackLang prog type; qualifier records only standard word dimension translation. No post-allocation, minimum frame, desired target safety/result or extra range hypothesis. All five literal original HOL local proofs replayed freshly, regression evidence only, not cross-language equivalence. Coordinator independent acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmRemoveHelpers.lean",
+    "lean_name": "wLiveStackAsmRemove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wLive_stack_asm_remove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-stack-asm-remove-helpers: original 11145-11156: original reduced-count room guard and actual wLive pair equality imply removal; arbitrary cutsets, full bitmap/state pair and frame retained. Configuration and native program widths are independently positive, as confirmed by original inferred alpha asm_config/beta stackLang prog type; qualifier records only standard word dimension translation. No post-allocation, minimum frame, desired target safety/result or extra range hypothesis. All five literal original HOL local proofs replayed freshly, regression evidence only, not cross-language equivalence. Coordinator independent acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmRemoveHelpers.lean",
+    "lean_name": "stackMoveStackAsmRemove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_stack_asm_remove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-stack-asm-remove-helpers: original 11158-11165: sole reg_name temporary-register premise establishes iff with arbitrary continuation; n/start/offset unbounded, recursive higher-slot order unchanged. Configuration and native program widths are independently positive, as confirmed by original inferred alpha asm_config/beta stackLang prog type; qualifier records only standard word dimension translation. No post-allocation, minimum frame, desired target safety/result or extra range hypothesis. All five literal original HOL local proofs replayed freshly, regression evidence only, not cross-language equivalence. Coordinator independent acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmRemoveHelpers.lean",
+    "lean_name": "copyRetAuxStackAsmRemove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_aux_stack_asm_remove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-stack-asm-remove-helpers: original 11167-11175: sole reg_name k premise establishes removal of all descending return copies for arbitrary f/n. Configuration and native program widths are independently positive, as confirmed by original inferred alpha asm_config/beta stackLang prog type; qualifier records only standard word dimension translation. No post-allocation, minimum frame, desired target safety/result or extra range hypothesis. All five literal original HOL local proofs replayed freshly, regression evidence only, not cross-language equivalence. Coordinator independent acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmRemoveHelpers.lean",
+    "lean_name": "copyRetStackAsmRemove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_stack_asm_remove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-stack-asm-remove-helpers: original 11177-11182: sole reg_name frame-first premise establishes full iff for false-performance wrapper, arbitrary handler flag, continuation, list and unused frame-tail types. Independent list/frame carriers preserved. Configuration and native program widths are independently positive, as confirmed by original inferred alpha asm_config/beta stackLang prog type; qualifier records only standard word dimension translation. No post-allocation, minimum frame, desired target safety/result or extra range hypothesis. All five literal original HOL local proofs replayed freshly, regression evidence only, not cross-language equivalence. Coordinator independent acceptance pending."
   }
 ]
