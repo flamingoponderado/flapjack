@@ -5080,3 +5080,6 @@ run_probe stack_remove_memoryreads_probeScript.sml stack_remove_memoryreads_prob
 run_probe lab_to_target_label_position_probeScript.sml lab_to_target_label_position_probe.out \
   line_lab_len_pos_ok_def line_lab_len_pos_ok_def_types lab_len_pos_ok_def lab_len_pos_ok_def_types lab_len_pos_ok_append lab_len_pos_ok_append_types all_lab_len_pos_ok_def all_lab_len_pos_ok_def_types even_label_zero odd_label_one even_wrong_one odd_wrong_zero other_annotation_rejected asm_unconstrained labasm_unconstrained_width80 list_annotation_not_bytes append_actual_both_sides append_false_sides empty_list_width1 empty_code empty_sections section_annotation_not_bytes section_bad_parity \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_wordexp_simulation_probeScript.sml stack_remove_wordexp_simulation_probe.out \
+  we_source we_statement we_types we_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
