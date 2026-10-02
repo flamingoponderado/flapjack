@@ -49107,5 +49107,31 @@
     "hol_name": "EVEN_DIV2_INJ",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 full source comparison2026-10-02: Original1312-1338 arbitrary payload lists and natural indices. Native IsPrefix/drop matches original isPREFIX/DROP; optional getElem? matches LLOOKUP = oEL including out-of-range none, independent of held total EL. Lookup retains exact m<n guard and both subtraction offsets. EVEN is remainderzero at divisor2, DIV2 is natural division2, both even and equaldivision antecedents retained; arbitrary unbounded naturals. No extra assumptions, altered carriers or target success premises. Native kernel proofs and fresh literal original proof replays/244 matching closed implication boundary fixtures; no full evaluate_wLive or compiler simulation claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/WordListLength.lean",
+    "lean_name": "divAddOne",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DIV_ADD_1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Original655-686 full division increment and both native word_list length statements. All Boolean lists including empty; arbitrary Nat chunk size including zero, positive lemma retains exactly 0<d. Full formula uses truncated Nat length-minus-one and division, zerochunk always singleton. Native executed wordListW already literal reviewed original recursion, word values may truncate when d exceeds width but length formula and original quantifiers are unchanged. Positive-width BitVec standard translation only; no width>=8, chunk<width, sentinel, listnonempty, target result or encoding-success premise. Kernel strong induction uses actual recursive drop and exact positive-divisor increment. Fresh three literal whole original proofs hyp=[] and246 matching closed original/kernel boundary laws across1/2/8/64/80bit widths, chunk0/1/2/7/80/99, empty/oneword/multiword81bit input and80bit naturals, plus generic fulltheorem application. Standard Lean axioms only; no totalHD/EL dependency or external sourceallowance change. Full frame relation and compiler theorem remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/WordListLength.lean",
+    "lean_name": "lengthWordListPositive",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LENGTH_word_list_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Original655-686 full division increment and both native word_list length statements. All Boolean lists including empty; arbitrary Nat chunk size including zero, positive lemma retains exactly 0<d. Full formula uses truncated Nat length-minus-one and division, zerochunk always singleton. Native executed wordListW already literal reviewed original recursion, word values may truncate when d exceeds width but length formula and original quantifiers are unchanged. Positive-width BitVec standard translation only; no width>=8, chunk<width, sentinel, listnonempty, target result or encoding-success premise. Kernel strong induction uses actual recursive drop and exact positive-divisor increment. Fresh three literal whole original proofs hyp=[] and246 matching closed original/kernel boundary laws across1/2/8/64/80bit widths, chunk0/1/2/7/80/99, empty/oneword/multiword81bit input and80bit naturals, plus generic fulltheorem application. Standard Lean axioms only; no totalHD/EL dependency or external sourceallowance change. Full frame relation and compiler theorem remain unfinished.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/WordListLength.lean",
+    "lean_name": "lengthWordList",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LENGTH_word_list",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Original655-686 full division increment and both native word_list length statements. All Boolean lists including empty; arbitrary Nat chunk size including zero, positive lemma retains exactly 0<d. Full formula uses truncated Nat length-minus-one and division, zerochunk always singleton. Native executed wordListW already literal reviewed original recursion, word values may truncate when d exceeds width but length formula and original quantifiers are unchanged. Positive-width BitVec standard translation only; no width>=8, chunk<width, sentinel, listnonempty, target result or encoding-success premise. Kernel strong induction uses actual recursive drop and exact positive-divisor increment. Fresh three literal whole original proofs hyp=[] and246 matching closed original/kernel boundary laws across1/2/8/64/80bit widths, chunk0/1/2/7/80/99, empty/oneword/multiword81bit input and80bit naturals, plus generic fulltheorem application. Standard Lean axioms only; no totalHD/EL dependency or external sourceallowance change. Full frame relation and compiler theorem remain unfinished.",
+    "words_as_type_indexed_bitvec": true
   }
 ]

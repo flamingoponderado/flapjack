@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.WordListLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys

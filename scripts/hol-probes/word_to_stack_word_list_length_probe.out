@@ -1,0 +1,249 @@
+wl_full_DIV_ADD_1=⊢ 0 < d ⇒ m DIV d + 1 = (m + d) DIV d
+wl_full_LENGTH_word_list_lemma=⊢ ∀xs d. 0 < d ⇒ LENGTH (word_list xs d) = (LENGTH xs − 1) DIV d + 1
+wl_full_LENGTH_word_list=⊢ ∀xs d. LENGTH (word_list xs d) = if d = 0 then 1 else (LENGTH xs − 1) DIV d + 1
+wl_length_1_0_0=⊢ LENGTH (word_list [] 0) = (if 0 = 0 then 1 else (LENGTH [] − 1) DIV 0 + 1) ⇔ T
+wl_length_1_0_1=⊢ LENGTH (word_list [] 1) = (if 1 = 0 then 1 else (LENGTH [] − 1) DIV 1 + 1) ⇔ T
+wl_length_1_0_2=⊢ LENGTH (word_list [] 2) = (if 2 = 0 then 1 else (LENGTH [] − 1) DIV 2 + 1) ⇔ T
+wl_length_1_0_7=⊢ LENGTH (word_list [] 7) = (if 7 = 0 then 1 else (LENGTH [] − 1) DIV 7 + 1) ⇔ T
+wl_length_1_0_80=⊢ LENGTH (word_list [] 80) = (if 80 = 0 then 1 else (LENGTH [] − 1) DIV 80 + 1) ⇔ T
+wl_length_1_0_99=⊢ LENGTH (word_list [] 99) = (if 99 = 0 then 1 else (LENGTH [] − 1) DIV 99 + 1) ⇔ T
+wl_length_1_1_0=⊢ LENGTH (word_list [T] 0) = (if 0 = 0 then 1 else (LENGTH [T] − 1) DIV 0 + 1) ⇔ T
+wl_length_1_1_1=⊢ LENGTH (word_list [T] 1) = (if 1 = 0 then 1 else (LENGTH [T] − 1) DIV 1 + 1) ⇔ T
+wl_length_1_1_2=⊢ LENGTH (word_list [T] 2) = (if 2 = 0 then 1 else (LENGTH [T] − 1) DIV 2 + 1) ⇔ T
+wl_length_1_1_7=⊢ LENGTH (word_list [T] 7) = (if 7 = 0 then 1 else (LENGTH [T] − 1) DIV 7 + 1) ⇔ T
+wl_length_1_1_80=⊢ LENGTH (word_list [T] 80) = (if 80 = 0 then 1 else (LENGTH [T] − 1) DIV 80 + 1) ⇔ T
+wl_length_1_1_99=⊢ LENGTH (word_list [T] 99) = (if 99 = 0 then 1 else (LENGTH [T] − 1) DIV 99 + 1) ⇔ T
+wl_length_1_2_0=⊢ LENGTH (word_list [F] 0) = (if 0 = 0 then 1 else (LENGTH [F] − 1) DIV 0 + 1) ⇔ T
+wl_length_1_2_1=⊢ LENGTH (word_list [F] 1) = (if 1 = 0 then 1 else (LENGTH [F] − 1) DIV 1 + 1) ⇔ T
+wl_length_1_2_2=⊢ LENGTH (word_list [F] 2) = (if 2 = 0 then 1 else (LENGTH [F] − 1) DIV 2 + 1) ⇔ T
+wl_length_1_2_7=⊢ LENGTH (word_list [F] 7) = (if 7 = 0 then 1 else (LENGTH [F] − 1) DIV 7 + 1) ⇔ T
+wl_length_1_2_80=⊢ LENGTH (word_list [F] 80) = (if 80 = 0 then 1 else (LENGTH [F] − 1) DIV 80 + 1) ⇔ T
+wl_length_1_2_99=⊢ LENGTH (word_list [F] 99) = (if 99 = 0 then 1 else (LENGTH [F] − 1) DIV 99 + 1) ⇔ T
+wl_length_1_3_0=⊢ LENGTH (word_list [T; F; T] 0) = (if 0 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 0 + 1) ⇔ T
+wl_length_1_3_1=⊢ LENGTH (word_list [T; F; T] 1) = (if 1 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 1 + 1) ⇔ T
+wl_length_1_3_2=⊢ LENGTH (word_list [T; F; T] 2) = (if 2 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 2 + 1) ⇔ T
+wl_length_1_3_7=⊢ LENGTH (word_list [T; F; T] 7) = (if 7 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 7 + 1) ⇔ T
+wl_length_1_3_80=⊢ LENGTH (word_list [T; F; T] 80) = (if 80 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 80 + 1) ⇔ T
+wl_length_1_3_99=⊢ LENGTH (word_list [T; F; T] 99) = (if 99 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 99 + 1) ⇔ T
+wl_length_1_4_0=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 0) = (if 0 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 0 + 1) ⇔ T
+wl_length_1_4_1=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 1) = (if 1 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 1 + 1) ⇔ T
+wl_length_1_4_2=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 2) = (if 2 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 2 + 1) ⇔ T
+wl_length_1_4_7=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 7) = (if 7 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 7 + 1) ⇔ T
+wl_length_1_4_80=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 80) = (if 80 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 80 + 1) ⇔ T
+wl_length_1_4_99=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 99) = (if 99 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 99 + 1) ⇔ T
+wl_length_1_5_0=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 0) = (if 0 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 0 + 1) ⇔ T
+wl_length_1_5_1=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 1) = (if 1 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 1 + 1) ⇔ T
+wl_length_1_5_2=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 2) = (if 2 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 2 + 1) ⇔ T
+wl_length_1_5_7=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 7) = (if 7 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 7 + 1) ⇔ T
+wl_length_1_5_80=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 80) = (if 80 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 80 + 1) ⇔ T
+wl_length_1_5_99=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 99) = (if 99 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 99 + 1) ⇔ T
+wl_length_1_6_0=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 0) = (if 0 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 0 + 1) ⇔ T
+wl_length_1_6_1=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 1) = (if 1 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 1 + 1) ⇔ T
+wl_length_1_6_2=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 2) = (if 2 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 2 + 1) ⇔ T
+wl_length_1_6_7=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 7) = (if 7 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 7 + 1) ⇔ T
+wl_length_1_6_80=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 80) = (if 80 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 80 + 1) ⇔ T
+wl_length_1_6_99=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 99) = (if 99 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 99 + 1) ⇔ T
+wl_length_2_0_0=⊢ LENGTH (word_list [] 0) = (if 0 = 0 then 1 else (LENGTH [] − 1) DIV 0 + 1) ⇔ T
+wl_length_2_0_1=⊢ LENGTH (word_list [] 1) = (if 1 = 0 then 1 else (LENGTH [] − 1) DIV 1 + 1) ⇔ T
+wl_length_2_0_2=⊢ LENGTH (word_list [] 2) = (if 2 = 0 then 1 else (LENGTH [] − 1) DIV 2 + 1) ⇔ T
+wl_length_2_0_7=⊢ LENGTH (word_list [] 7) = (if 7 = 0 then 1 else (LENGTH [] − 1) DIV 7 + 1) ⇔ T
+wl_length_2_0_80=⊢ LENGTH (word_list [] 80) = (if 80 = 0 then 1 else (LENGTH [] − 1) DIV 80 + 1) ⇔ T
+wl_length_2_0_99=⊢ LENGTH (word_list [] 99) = (if 99 = 0 then 1 else (LENGTH [] − 1) DIV 99 + 1) ⇔ T
+wl_length_2_1_0=⊢ LENGTH (word_list [T] 0) = (if 0 = 0 then 1 else (LENGTH [T] − 1) DIV 0 + 1) ⇔ T
+wl_length_2_1_1=⊢ LENGTH (word_list [T] 1) = (if 1 = 0 then 1 else (LENGTH [T] − 1) DIV 1 + 1) ⇔ T
+wl_length_2_1_2=⊢ LENGTH (word_list [T] 2) = (if 2 = 0 then 1 else (LENGTH [T] − 1) DIV 2 + 1) ⇔ T
+wl_length_2_1_7=⊢ LENGTH (word_list [T] 7) = (if 7 = 0 then 1 else (LENGTH [T] − 1) DIV 7 + 1) ⇔ T
+wl_length_2_1_80=⊢ LENGTH (word_list [T] 80) = (if 80 = 0 then 1 else (LENGTH [T] − 1) DIV 80 + 1) ⇔ T
+wl_length_2_1_99=⊢ LENGTH (word_list [T] 99) = (if 99 = 0 then 1 else (LENGTH [T] − 1) DIV 99 + 1) ⇔ T
+wl_length_2_2_0=⊢ LENGTH (word_list [F] 0) = (if 0 = 0 then 1 else (LENGTH [F] − 1) DIV 0 + 1) ⇔ T
+wl_length_2_2_1=⊢ LENGTH (word_list [F] 1) = (if 1 = 0 then 1 else (LENGTH [F] − 1) DIV 1 + 1) ⇔ T
+wl_length_2_2_2=⊢ LENGTH (word_list [F] 2) = (if 2 = 0 then 1 else (LENGTH [F] − 1) DIV 2 + 1) ⇔ T
+wl_length_2_2_7=⊢ LENGTH (word_list [F] 7) = (if 7 = 0 then 1 else (LENGTH [F] − 1) DIV 7 + 1) ⇔ T
+wl_length_2_2_80=⊢ LENGTH (word_list [F] 80) = (if 80 = 0 then 1 else (LENGTH [F] − 1) DIV 80 + 1) ⇔ T
+wl_length_2_2_99=⊢ LENGTH (word_list [F] 99) = (if 99 = 0 then 1 else (LENGTH [F] − 1) DIV 99 + 1) ⇔ T
+wl_length_2_3_0=⊢ LENGTH (word_list [T; F; T] 0) = (if 0 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 0 + 1) ⇔ T
+wl_length_2_3_1=⊢ LENGTH (word_list [T; F; T] 1) = (if 1 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 1 + 1) ⇔ T
+wl_length_2_3_2=⊢ LENGTH (word_list [T; F; T] 2) = (if 2 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 2 + 1) ⇔ T
+wl_length_2_3_7=⊢ LENGTH (word_list [T; F; T] 7) = (if 7 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 7 + 1) ⇔ T
+wl_length_2_3_80=⊢ LENGTH (word_list [T; F; T] 80) = (if 80 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 80 + 1) ⇔ T
+wl_length_2_3_99=⊢ LENGTH (word_list [T; F; T] 99) = (if 99 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 99 + 1) ⇔ T
+wl_length_2_4_0=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 0) = (if 0 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 0 + 1) ⇔ T
+wl_length_2_4_1=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 1) = (if 1 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 1 + 1) ⇔ T
+wl_length_2_4_2=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 2) = (if 2 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 2 + 1) ⇔ T
+wl_length_2_4_7=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 7) = (if 7 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 7 + 1) ⇔ T
+wl_length_2_4_80=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 80) = (if 80 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 80 + 1) ⇔ T
+wl_length_2_4_99=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 99) = (if 99 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 99 + 1) ⇔ T
+wl_length_2_5_0=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 0) = (if 0 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 0 + 1) ⇔ T
+wl_length_2_5_1=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 1) = (if 1 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 1 + 1) ⇔ T
+wl_length_2_5_2=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 2) = (if 2 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 2 + 1) ⇔ T
+wl_length_2_5_7=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 7) = (if 7 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 7 + 1) ⇔ T
+wl_length_2_5_80=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 80) = (if 80 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 80 + 1) ⇔ T
+wl_length_2_5_99=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 99) = (if 99 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 99 + 1) ⇔ T
+wl_length_2_6_0=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 0) = (if 0 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 0 + 1) ⇔ T
+wl_length_2_6_1=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 1) = (if 1 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 1 + 1) ⇔ T
+wl_length_2_6_2=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 2) = (if 2 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 2 + 1) ⇔ T
+wl_length_2_6_7=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 7) = (if 7 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 7 + 1) ⇔ T
+wl_length_2_6_80=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 80) = (if 80 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 80 + 1) ⇔ T
+wl_length_2_6_99=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 99) = (if 99 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 99 + 1) ⇔ T
+wl_length_8_0_0=⊢ LENGTH (word_list [] 0) = (if 0 = 0 then 1 else (LENGTH [] − 1) DIV 0 + 1) ⇔ T
+wl_length_8_0_1=⊢ LENGTH (word_list [] 1) = (if 1 = 0 then 1 else (LENGTH [] − 1) DIV 1 + 1) ⇔ T
+wl_length_8_0_2=⊢ LENGTH (word_list [] 2) = (if 2 = 0 then 1 else (LENGTH [] − 1) DIV 2 + 1) ⇔ T
+wl_length_8_0_7=⊢ LENGTH (word_list [] 7) = (if 7 = 0 then 1 else (LENGTH [] − 1) DIV 7 + 1) ⇔ T
+wl_length_8_0_80=⊢ LENGTH (word_list [] 80) = (if 80 = 0 then 1 else (LENGTH [] − 1) DIV 80 + 1) ⇔ T
+wl_length_8_0_99=⊢ LENGTH (word_list [] 99) = (if 99 = 0 then 1 else (LENGTH [] − 1) DIV 99 + 1) ⇔ T
+wl_length_8_1_0=⊢ LENGTH (word_list [T] 0) = (if 0 = 0 then 1 else (LENGTH [T] − 1) DIV 0 + 1) ⇔ T
+wl_length_8_1_1=⊢ LENGTH (word_list [T] 1) = (if 1 = 0 then 1 else (LENGTH [T] − 1) DIV 1 + 1) ⇔ T
+wl_length_8_1_2=⊢ LENGTH (word_list [T] 2) = (if 2 = 0 then 1 else (LENGTH [T] − 1) DIV 2 + 1) ⇔ T
+wl_length_8_1_7=⊢ LENGTH (word_list [T] 7) = (if 7 = 0 then 1 else (LENGTH [T] − 1) DIV 7 + 1) ⇔ T
+wl_length_8_1_80=⊢ LENGTH (word_list [T] 80) = (if 80 = 0 then 1 else (LENGTH [T] − 1) DIV 80 + 1) ⇔ T
+wl_length_8_1_99=⊢ LENGTH (word_list [T] 99) = (if 99 = 0 then 1 else (LENGTH [T] − 1) DIV 99 + 1) ⇔ T
+wl_length_8_2_0=⊢ LENGTH (word_list [F] 0) = (if 0 = 0 then 1 else (LENGTH [F] − 1) DIV 0 + 1) ⇔ T
+wl_length_8_2_1=⊢ LENGTH (word_list [F] 1) = (if 1 = 0 then 1 else (LENGTH [F] − 1) DIV 1 + 1) ⇔ T
+wl_length_8_2_2=⊢ LENGTH (word_list [F] 2) = (if 2 = 0 then 1 else (LENGTH [F] − 1) DIV 2 + 1) ⇔ T
+wl_length_8_2_7=⊢ LENGTH (word_list [F] 7) = (if 7 = 0 then 1 else (LENGTH [F] − 1) DIV 7 + 1) ⇔ T
+wl_length_8_2_80=⊢ LENGTH (word_list [F] 80) = (if 80 = 0 then 1 else (LENGTH [F] − 1) DIV 80 + 1) ⇔ T
+wl_length_8_2_99=⊢ LENGTH (word_list [F] 99) = (if 99 = 0 then 1 else (LENGTH [F] − 1) DIV 99 + 1) ⇔ T
+wl_length_8_3_0=⊢ LENGTH (word_list [T; F; T] 0) = (if 0 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 0 + 1) ⇔ T
+wl_length_8_3_1=⊢ LENGTH (word_list [T; F; T] 1) = (if 1 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 1 + 1) ⇔ T
+wl_length_8_3_2=⊢ LENGTH (word_list [T; F; T] 2) = (if 2 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 2 + 1) ⇔ T
+wl_length_8_3_7=⊢ LENGTH (word_list [T; F; T] 7) = (if 7 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 7 + 1) ⇔ T
+wl_length_8_3_80=⊢ LENGTH (word_list [T; F; T] 80) = (if 80 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 80 + 1) ⇔ T
+wl_length_8_3_99=⊢ LENGTH (word_list [T; F; T] 99) = (if 99 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 99 + 1) ⇔ T
+wl_length_8_4_0=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 0) = (if 0 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 0 + 1) ⇔ T
+wl_length_8_4_1=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 1) = (if 1 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 1 + 1) ⇔ T
+wl_length_8_4_2=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 2) = (if 2 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 2 + 1) ⇔ T
+wl_length_8_4_7=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 7) = (if 7 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 7 + 1) ⇔ T
+wl_length_8_4_80=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 80) = (if 80 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 80 + 1) ⇔ T
+wl_length_8_4_99=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 99) = (if 99 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 99 + 1) ⇔ T
+wl_length_8_5_0=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 0) = (if 0 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 0 + 1) ⇔ T
+wl_length_8_5_1=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 1) = (if 1 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 1 + 1) ⇔ T
+wl_length_8_5_2=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 2) = (if 2 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 2 + 1) ⇔ T
+wl_length_8_5_7=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 7) = (if 7 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 7 + 1) ⇔ T
+wl_length_8_5_80=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 80) = (if 80 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 80 + 1) ⇔ T
+wl_length_8_5_99=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 99) = (if 99 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 99 + 1) ⇔ T
+wl_length_8_6_0=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 0) = (if 0 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 0 + 1) ⇔ T
+wl_length_8_6_1=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 1) = (if 1 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 1 + 1) ⇔ T
+wl_length_8_6_2=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 2) = (if 2 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 2 + 1) ⇔ T
+wl_length_8_6_7=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 7) = (if 7 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 7 + 1) ⇔ T
+wl_length_8_6_80=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 80) = (if 80 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 80 + 1) ⇔ T
+wl_length_8_6_99=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 99) = (if 99 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 99 + 1) ⇔ T
+wl_length_64_0_0=⊢ LENGTH (word_list [] 0) = (if 0 = 0 then 1 else (LENGTH [] − 1) DIV 0 + 1) ⇔ T
+wl_length_64_0_1=⊢ LENGTH (word_list [] 1) = (if 1 = 0 then 1 else (LENGTH [] − 1) DIV 1 + 1) ⇔ T
+wl_length_64_0_2=⊢ LENGTH (word_list [] 2) = (if 2 = 0 then 1 else (LENGTH [] − 1) DIV 2 + 1) ⇔ T
+wl_length_64_0_7=⊢ LENGTH (word_list [] 7) = (if 7 = 0 then 1 else (LENGTH [] − 1) DIV 7 + 1) ⇔ T
+wl_length_64_0_80=⊢ LENGTH (word_list [] 80) = (if 80 = 0 then 1 else (LENGTH [] − 1) DIV 80 + 1) ⇔ T
+wl_length_64_0_99=⊢ LENGTH (word_list [] 99) = (if 99 = 0 then 1 else (LENGTH [] − 1) DIV 99 + 1) ⇔ T
+wl_length_64_1_0=⊢ LENGTH (word_list [T] 0) = (if 0 = 0 then 1 else (LENGTH [T] − 1) DIV 0 + 1) ⇔ T
+wl_length_64_1_1=⊢ LENGTH (word_list [T] 1) = (if 1 = 0 then 1 else (LENGTH [T] − 1) DIV 1 + 1) ⇔ T
+wl_length_64_1_2=⊢ LENGTH (word_list [T] 2) = (if 2 = 0 then 1 else (LENGTH [T] − 1) DIV 2 + 1) ⇔ T
+wl_length_64_1_7=⊢ LENGTH (word_list [T] 7) = (if 7 = 0 then 1 else (LENGTH [T] − 1) DIV 7 + 1) ⇔ T
+wl_length_64_1_80=⊢ LENGTH (word_list [T] 80) = (if 80 = 0 then 1 else (LENGTH [T] − 1) DIV 80 + 1) ⇔ T
+wl_length_64_1_99=⊢ LENGTH (word_list [T] 99) = (if 99 = 0 then 1 else (LENGTH [T] − 1) DIV 99 + 1) ⇔ T
+wl_length_64_2_0=⊢ LENGTH (word_list [F] 0) = (if 0 = 0 then 1 else (LENGTH [F] − 1) DIV 0 + 1) ⇔ T
+wl_length_64_2_1=⊢ LENGTH (word_list [F] 1) = (if 1 = 0 then 1 else (LENGTH [F] − 1) DIV 1 + 1) ⇔ T
+wl_length_64_2_2=⊢ LENGTH (word_list [F] 2) = (if 2 = 0 then 1 else (LENGTH [F] − 1) DIV 2 + 1) ⇔ T
+wl_length_64_2_7=⊢ LENGTH (word_list [F] 7) = (if 7 = 0 then 1 else (LENGTH [F] − 1) DIV 7 + 1) ⇔ T
+wl_length_64_2_80=⊢ LENGTH (word_list [F] 80) = (if 80 = 0 then 1 else (LENGTH [F] − 1) DIV 80 + 1) ⇔ T
+wl_length_64_2_99=⊢ LENGTH (word_list [F] 99) = (if 99 = 0 then 1 else (LENGTH [F] − 1) DIV 99 + 1) ⇔ T
+wl_length_64_3_0=⊢ LENGTH (word_list [T; F; T] 0) = (if 0 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 0 + 1) ⇔ T
+wl_length_64_3_1=⊢ LENGTH (word_list [T; F; T] 1) = (if 1 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 1 + 1) ⇔ T
+wl_length_64_3_2=⊢ LENGTH (word_list [T; F; T] 2) = (if 2 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 2 + 1) ⇔ T
+wl_length_64_3_7=⊢ LENGTH (word_list [T; F; T] 7) = (if 7 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 7 + 1) ⇔ T
+wl_length_64_3_80=⊢ LENGTH (word_list [T; F; T] 80) = (if 80 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 80 + 1) ⇔ T
+wl_length_64_3_99=⊢ LENGTH (word_list [T; F; T] 99) = (if 99 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 99 + 1) ⇔ T
+wl_length_64_4_0=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 0) = (if 0 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 0 + 1) ⇔ T
+wl_length_64_4_1=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 1) = (if 1 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 1 + 1) ⇔ T
+wl_length_64_4_2=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 2) = (if 2 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 2 + 1) ⇔ T
+wl_length_64_4_7=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 7) = (if 7 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 7 + 1) ⇔ T
+wl_length_64_4_80=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 80) = (if 80 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 80 + 1) ⇔ T
+wl_length_64_4_99=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 99) = (if 99 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 99 + 1) ⇔ T
+wl_length_64_5_0=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 0) = (if 0 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 0 + 1) ⇔ T
+wl_length_64_5_1=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 1) = (if 1 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 1 + 1) ⇔ T
+wl_length_64_5_2=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 2) = (if 2 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 2 + 1) ⇔ T
+wl_length_64_5_7=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 7) = (if 7 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 7 + 1) ⇔ T
+wl_length_64_5_80=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 80) = (if 80 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 80 + 1) ⇔ T
+wl_length_64_5_99=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 99) = (if 99 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 99 + 1) ⇔ T
+wl_length_64_6_0=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 0) = (if 0 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 0 + 1) ⇔ T
+wl_length_64_6_1=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 1) = (if 1 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 1 + 1) ⇔ T
+wl_length_64_6_2=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 2) = (if 2 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 2 + 1) ⇔ T
+wl_length_64_6_7=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 7) = (if 7 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 7 + 1) ⇔ T
+wl_length_64_6_80=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 80) = (if 80 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 80 + 1) ⇔ T
+wl_length_64_6_99=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 99) = (if 99 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 99 + 1) ⇔ T
+wl_length_80_0_0=⊢ LENGTH (word_list [] 0) = (if 0 = 0 then 1 else (LENGTH [] − 1) DIV 0 + 1) ⇔ T
+wl_length_80_0_1=⊢ LENGTH (word_list [] 1) = (if 1 = 0 then 1 else (LENGTH [] − 1) DIV 1 + 1) ⇔ T
+wl_length_80_0_2=⊢ LENGTH (word_list [] 2) = (if 2 = 0 then 1 else (LENGTH [] − 1) DIV 2 + 1) ⇔ T
+wl_length_80_0_7=⊢ LENGTH (word_list [] 7) = (if 7 = 0 then 1 else (LENGTH [] − 1) DIV 7 + 1) ⇔ T
+wl_length_80_0_80=⊢ LENGTH (word_list [] 80) = (if 80 = 0 then 1 else (LENGTH [] − 1) DIV 80 + 1) ⇔ T
+wl_length_80_0_99=⊢ LENGTH (word_list [] 99) = (if 99 = 0 then 1 else (LENGTH [] − 1) DIV 99 + 1) ⇔ T
+wl_length_80_1_0=⊢ LENGTH (word_list [T] 0) = (if 0 = 0 then 1 else (LENGTH [T] − 1) DIV 0 + 1) ⇔ T
+wl_length_80_1_1=⊢ LENGTH (word_list [T] 1) = (if 1 = 0 then 1 else (LENGTH [T] − 1) DIV 1 + 1) ⇔ T
+wl_length_80_1_2=⊢ LENGTH (word_list [T] 2) = (if 2 = 0 then 1 else (LENGTH [T] − 1) DIV 2 + 1) ⇔ T
+wl_length_80_1_7=⊢ LENGTH (word_list [T] 7) = (if 7 = 0 then 1 else (LENGTH [T] − 1) DIV 7 + 1) ⇔ T
+wl_length_80_1_80=⊢ LENGTH (word_list [T] 80) = (if 80 = 0 then 1 else (LENGTH [T] − 1) DIV 80 + 1) ⇔ T
+wl_length_80_1_99=⊢ LENGTH (word_list [T] 99) = (if 99 = 0 then 1 else (LENGTH [T] − 1) DIV 99 + 1) ⇔ T
+wl_length_80_2_0=⊢ LENGTH (word_list [F] 0) = (if 0 = 0 then 1 else (LENGTH [F] − 1) DIV 0 + 1) ⇔ T
+wl_length_80_2_1=⊢ LENGTH (word_list [F] 1) = (if 1 = 0 then 1 else (LENGTH [F] − 1) DIV 1 + 1) ⇔ T
+wl_length_80_2_2=⊢ LENGTH (word_list [F] 2) = (if 2 = 0 then 1 else (LENGTH [F] − 1) DIV 2 + 1) ⇔ T
+wl_length_80_2_7=⊢ LENGTH (word_list [F] 7) = (if 7 = 0 then 1 else (LENGTH [F] − 1) DIV 7 + 1) ⇔ T
+wl_length_80_2_80=⊢ LENGTH (word_list [F] 80) = (if 80 = 0 then 1 else (LENGTH [F] − 1) DIV 80 + 1) ⇔ T
+wl_length_80_2_99=⊢ LENGTH (word_list [F] 99) = (if 99 = 0 then 1 else (LENGTH [F] − 1) DIV 99 + 1) ⇔ T
+wl_length_80_3_0=⊢ LENGTH (word_list [T; F; T] 0) = (if 0 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 0 + 1) ⇔ T
+wl_length_80_3_1=⊢ LENGTH (word_list [T; F; T] 1) = (if 1 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 1 + 1) ⇔ T
+wl_length_80_3_2=⊢ LENGTH (word_list [T; F; T] 2) = (if 2 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 2 + 1) ⇔ T
+wl_length_80_3_7=⊢ LENGTH (word_list [T; F; T] 7) = (if 7 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 7 + 1) ⇔ T
+wl_length_80_3_80=⊢ LENGTH (word_list [T; F; T] 80) = (if 80 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 80 + 1) ⇔ T
+wl_length_80_3_99=⊢ LENGTH (word_list [T; F; T] 99) = (if 99 = 0 then 1 else (LENGTH [T; F; T] − 1) DIV 99 + 1) ⇔ T
+wl_length_80_4_0=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 0) = (if 0 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 0 + 1) ⇔ T
+wl_length_80_4_1=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 1) = (if 1 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 1 + 1) ⇔ T
+wl_length_80_4_2=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 2) = (if 2 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 2 + 1) ⇔ T
+wl_length_80_4_7=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 7) = (if 7 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 7 + 1) ⇔ T
+wl_length_80_4_80=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 80) = (if 80 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 80 + 1) ⇔ T
+wl_length_80_4_99=⊢ LENGTH (word_list [F; F; F; F; F; F; F; F] 99) = (if 99 = 0 then 1 else (LENGTH [F; F; F; F; F; F; F; F] − 1) DIV 99 + 1) ⇔ T
+wl_length_80_5_0=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 0) = (if 0 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 0 + 1) ⇔ T
+wl_length_80_5_1=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 1) = (if 1 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 1 + 1) ⇔ T
+wl_length_80_5_2=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 2) = (if 2 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 2 + 1) ⇔ T
+wl_length_80_5_7=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 7) = (if 7 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 7 + 1) ⇔ T
+wl_length_80_5_80=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 80) = (if 80 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 80 + 1) ⇔ T
+wl_length_80_5_99=⊢ LENGTH (word_list [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] 99) = (if 99 = 0 then 1 else (LENGTH [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] − 1) DIV 99 + 1) ⇔ T
+wl_length_80_6_0=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 0) = (if 0 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 0 + 1) ⇔ T
+wl_length_80_6_1=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 1) = (if 1 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 1 + 1) ⇔ T
+wl_length_80_6_2=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 2) = (if 2 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 2 + 1) ⇔ T
+wl_length_80_6_7=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 7) = (if 7 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 7 + 1) ⇔ T
+wl_length_80_6_80=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 80) = (if 80 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 80 + 1) ⇔ T
+wl_length_80_6_99=⊢ LENGTH (word_list [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] 99) = (if 99 = 0 then 1 else (LENGTH [T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F; T; F; F] − 1) DIV 99 + 1) ⇔ T
+wl_div_0_0=⊢ 0 < 0 ⇒ 0 DIV 0 + 1 = (0 + 0) DIV 0 ⇔ T
+wl_div_0_1=⊢ 0 < 1 ⇒ 0 DIV 1 + 1 = (0 + 1) DIV 1 ⇔ T
+wl_div_0_2=⊢ 0 < 2 ⇒ 0 DIV 2 + 1 = (0 + 2) DIV 2 ⇔ T
+wl_div_0_7=⊢ 0 < 7 ⇒ 0 DIV 7 + 1 = (0 + 7) DIV 7 ⇔ T
+wl_div_0_80=⊢ 0 < 80 ⇒ 0 DIV 80 + 1 = (0 + 80) DIV 80 ⇔ T
+wl_div_0_99=⊢ 0 < 99 ⇒ 0 DIV 99 + 1 = (0 + 99) DIV 99 ⇔ T
+wl_div_1_0=⊢ 0 < 0 ⇒ 1 DIV 0 + 1 = (1 + 0) DIV 0 ⇔ T
+wl_div_1_1=⊢ 0 < 1 ⇒ 1 DIV 1 + 1 = (1 + 1) DIV 1 ⇔ T
+wl_div_1_2=⊢ 0 < 2 ⇒ 1 DIV 2 + 1 = (1 + 2) DIV 2 ⇔ T
+wl_div_1_7=⊢ 0 < 7 ⇒ 1 DIV 7 + 1 = (1 + 7) DIV 7 ⇔ T
+wl_div_1_80=⊢ 0 < 80 ⇒ 1 DIV 80 + 1 = (1 + 80) DIV 80 ⇔ T
+wl_div_1_99=⊢ 0 < 99 ⇒ 1 DIV 99 + 1 = (1 + 99) DIV 99 ⇔ T
+wl_div_2_0=⊢ 0 < 0 ⇒ 2 DIV 0 + 1 = (2 + 0) DIV 0 ⇔ T
+wl_div_2_1=⊢ 0 < 1 ⇒ 2 DIV 1 + 1 = (2 + 1) DIV 1 ⇔ T
+wl_div_2_2=⊢ 0 < 2 ⇒ 2 DIV 2 + 1 = (2 + 2) DIV 2 ⇔ T
+wl_div_2_7=⊢ 0 < 7 ⇒ 2 DIV 7 + 1 = (2 + 7) DIV 7 ⇔ T
+wl_div_2_80=⊢ 0 < 80 ⇒ 2 DIV 80 + 1 = (2 + 80) DIV 80 ⇔ T
+wl_div_2_99=⊢ 0 < 99 ⇒ 2 DIV 99 + 1 = (2 + 99) DIV 99 ⇔ T
+wl_div_3_0=⊢ 0 < 0 ⇒ 7 DIV 0 + 1 = (7 + 0) DIV 0 ⇔ T
+wl_div_3_1=⊢ 0 < 1 ⇒ 7 DIV 1 + 1 = (7 + 1) DIV 1 ⇔ T
+wl_div_3_2=⊢ 0 < 2 ⇒ 7 DIV 2 + 1 = (7 + 2) DIV 2 ⇔ T
+wl_div_3_7=⊢ 0 < 7 ⇒ 7 DIV 7 + 1 = (7 + 7) DIV 7 ⇔ T
+wl_div_3_80=⊢ 0 < 80 ⇒ 7 DIV 80 + 1 = (7 + 80) DIV 80 ⇔ T
+wl_div_3_99=⊢ 0 < 99 ⇒ 7 DIV 99 + 1 = (7 + 99) DIV 99 ⇔ T
+wl_div_4_0=⊢ 0 < 0 ⇒ 1208925819614629174706176 DIV 0 + 1 = (1208925819614629174706176 + 0) DIV 0 ⇔ T
+wl_div_4_1=⊢ 0 < 1 ⇒ 1208925819614629174706176 DIV 1 + 1 = (1208925819614629174706176 + 1) DIV 1 ⇔ T
+wl_div_4_2=⊢ 0 < 2 ⇒ 1208925819614629174706176 DIV 2 + 1 = (1208925819614629174706176 + 2) DIV 2 ⇔ T
+wl_div_4_7=⊢ 0 < 7 ⇒ 1208925819614629174706176 DIV 7 + 1 = (1208925819614629174706176 + 7) DIV 7 ⇔ T
+wl_div_4_80=⊢ 0 < 80 ⇒ 1208925819614629174706176 DIV 80 + 1 = (1208925819614629174706176 + 80) DIV 80 ⇔ T
+wl_div_4_99=⊢ 0 < 99 ⇒ 1208925819614629174706176 DIV 99 + 1 = (1208925819614629174706176 + 99) DIV 99 ⇔ T
+wl_div_5_0=⊢ 0 < 0 ⇒ 1208925819614629174706177 DIV 0 + 1 = (1208925819614629174706177 + 0) DIV 0 ⇔ T
+wl_div_5_1=⊢ 0 < 1 ⇒ 1208925819614629174706177 DIV 1 + 1 = (1208925819614629174706177 + 1) DIV 1 ⇔ T
+wl_div_5_2=⊢ 0 < 2 ⇒ 1208925819614629174706177 DIV 2 + 1 = (1208925819614629174706177 + 2) DIV 2 ⇔ T
+wl_div_5_7=⊢ 0 < 7 ⇒ 1208925819614629174706177 DIV 7 + 1 = (1208925819614629174706177 + 7) DIV 7 ⇔ T
+wl_div_5_80=⊢ 0 < 80 ⇒ 1208925819614629174706177 DIV 80 + 1 = (1208925819614629174706177 + 80) DIV 80 ⇔ T
+wl_div_5_99=⊢ 0 < 99 ⇒ 1208925819614629174706177 DIV 99 + 1 = (1208925819614629174706177 + 99) DIV 99 ⇔ T
