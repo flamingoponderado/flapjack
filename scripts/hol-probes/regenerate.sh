@@ -5811,3 +5811,9 @@ run_probe lab_to_target_shmem_extraction_probeScript.sml lab_to_target_shmem_ext
   independent_validity full_prefix_output full_extraction empty_preserves_prefixes zero_labels wide_unsigned nonzero_label_guard \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_shmem_distinct_probeScript.sml lab_to_target_shmem_distinct_probe.out \
+  get_shmem_info_ALL_DISTINCT get_shmem_info_ALL_DISTINCT_types get_shmem_info_ALL_DISTINCT_hypotheses \
+  full_guards entry_values distinct independent_query empty zero_validity encoding_guard zero_duplicate \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
