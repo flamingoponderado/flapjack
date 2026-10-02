@@ -1,5 +1,6 @@
 import Flapjack.RiscV.CakeRegAlloc
 import Flapjack.RiscV.WordDeadCode
+import Flapjack.Compiler.Backend.RegAlloc.ProductionHandledColourReads
 
 /-!
 # Cake register-allocation stack-only analysis parity
@@ -614,6 +615,34 @@ def firstMatchColGuard : Bool :=
     cakeFirstMatchCol state [5] [8, 3] == none
 
 #guard firstMatchColGuard
+
+-- Exact S0 from reg_alloc_colouring_probeScript.sml. The original rows
+-- fmc_oob_before_match and fmc_handled_oob_before_match distinguish an
+-- immediate failed lookup from incorrectly scanning on to Fixed 0.
+private def firstMatchOracleState : Flapjack.RegAlloc.State :=
+  { adj_ls := [[1], [0, 2], [1]], node_tag := [.Fixed 0, .Atemp, .Stemp]
+    degrees := [1, 2, 1], dim := 3, simp_wl := [], spill_wl := [], freeze_wl := []
+    avail_moves_wl := [], unavail_moves_wl := [], coalesced := [0, 1, 2]
+    move_related := [false, false, false], stack := [] }
+
+example : Flapjack.RegAlloc.firstMatchCol [0] [9, 0] firstMatchOracleState =
+    (.failure .Subscript, firstMatchOracleState) := by decide
+
+example : Flapjack.RegAlloc.handleSubscript
+    (Flapjack.RegAlloc.firstMatchCol [0] [9, 0])
+    (Flapjack.Translator.Monadic.MonadBase.ret none) firstMatchOracleState =
+    (.success none, firstMatchOracleState) := by decide
+
+example : cakeFirstMatchCol firstMatchOracleState.toProduction [0] [9, 0] = none := by
+  have nativeRun : Flapjack.RegAlloc.handleSubscript
+      (Flapjack.RegAlloc.firstMatchCol [0] [9, 0])
+      (Flapjack.Translator.Monadic.MonadBase.ret none) firstMatchOracleState =
+      (.success none, firstMatchOracleState) := by decide
+  have correspondence := Flapjack.RegAlloc.handledFirstMatchCol_production [0] [9, 0]
+    firstMatchOracleState.toProduction_rel
+  rw [nativeRun] at correspondence
+  exact (Flapjack.Translator.Monadic.MonadBase.Exc.success.inj
+    (congrArg Prod.fst correspondence)).symm
 
 /- Cake's `assign_Stemps` visits every node in ascending range order and
    assigns each Stemp the first available colour at or above k. -/

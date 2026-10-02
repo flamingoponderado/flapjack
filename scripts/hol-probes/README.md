@@ -1,5 +1,11 @@
 `stack_rawcall_state_rel_probe.out` captures the complete original full-state relation type/equation and generic reflexivity under state_ok and exact compile-oracle preservation. Native kernel consequences retain arbitrary whole states and independent per-entry frame-info witnesses; this establishes no evaluator simulation or production replacement.
 
+`reg_alloc_colouring_probe.out` includes a fresh original observation of an
+out-of-range partner before a later matching colour: the raw scan fails with
+Subscript and its handler immediately returns NONE. CakeRegAlloc kernel-replays
+the identical S0 state and the repaired executed scan; generic handled-query
+correspondence additionally covers arbitrary partner lists.
+
 `target_sequence_laws_probe.out` captures complete original sequence equality, exact tail and count monotonicity statements. Native generic proofs keep all initial and returned configurations/FFI states, arbitrary predicates and universal sequence/count indices.
 
 `target_search_const_probe.out` captures the complete clocked and unbounded original configuration-preservation statements. Native generic proofs preserve the entire target plus exact callee-saved list and pointer register, without validity or bounds hypotheses.
