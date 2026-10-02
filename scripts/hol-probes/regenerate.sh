@@ -5614,3 +5614,7 @@ run_probe l3_mmu_write_frame_probeScript.sml l3_mmu_write_frame_probe.out \
 run_probe stack_remove_comp_if_probeScript.sml stack_remove_comp_if_probe.out \
   cc_if_statement cc_if_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_loop_probeScript.sml stack_remove_comp_loop_probe.out \
+  cc_loop_statement cc_loop_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
