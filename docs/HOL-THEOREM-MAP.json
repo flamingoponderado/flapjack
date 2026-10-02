@@ -65892,5 +65892,13 @@
     "statement_status": "reviewed_reals_as_rational_cuts",
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.9: complete original line9827; fixed rd/rs1/rs2/rs3 word5 and round word3, native state->state. Original successful round branch performs fp32/fp64_mul with selected mode, encodes its rounded word, decodes that word for separately rounded add (FMADD/FNMADD) or subtract (FMSUB/FNMSUB). Negative variants negate the final encoded add/sub result, not an operand or rounding mode. No hardware-fused float_mul_add substitution. Original NONE->Illegal_Instr and exact FPRS/FPRD reads plus writeFPRS/FPRD whole-state effects preserved, with original flag SND discard and unchanged NV/NX. Generic arithmetic source-ready from checked .8, whose acceptance remains open. Canonical82definitionclosure0fail. Fresh240original cases:208numeric eleven-field state tuples +32complete symbolic invalid-product whole-state equations, matching Lean kernel regressions. Covers all4modes/dynamic/invalidstatic/dynamic, signedzero/infinity/negativefinite and separate-rounding discriminator (1+ulp)*(1-ulp)-1 returning zero at ties-even for bothformats. Nested NaN choices stay unspecified. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external real/float correspondence assumption; no HOL-to-Lean equivalence or full model/compiler correctness inferred."
+  },
+  {
+    "lean_path": "Flapjack/Misc/StateTransformer.lean",
+    "lean_name": "holFor",
+    "hol_path": "HOL/src/monad/more_monads/state_transformerScript.sml",
+    "hol_name": "FOR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: pinned HOL source48-54 defines inclusive total FOR on Nat endpoints and unit-valued state actions. Lean preserves equal endpoint action, ascending increment, descending truncated decrement, BIND state threading discarding Unit, and distance termination with no extra premise. Original state_transformer_for probe covers both directions, equal zero and descending through zero with initial state; Lean kernel replays all four."
   }
 ]

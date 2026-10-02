@@ -5429,3 +5429,7 @@ run_probe lab_to_target_computed_label_preservation_probeScript.sml lab_to_targe
 run_probe stack_remove_word_address_probeScript.sml stack_remove_word_address_probe.out \
   wa_inverse_statement wa_inverse_proved wa_offset_statement wa_offset_proved wa_forward_statement wa_forward_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe state_transformer_for_probeScript.sml state_transformer_for_probe.out \
+  for_ascending for_descending for_equal_zero for_descending_zero \
+  "$hol_dir/src/monad/more_monads/state_transformerScript.sml" "$hol_dir/src/monad/more_monads"

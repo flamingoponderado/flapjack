@@ -6095,3 +6095,5 @@ choices without selecting payloads. `Flapjack.Test.L3RiscvMaddParity` replays
 the same inputs, states and expectations in the kernel. Full IEEE arithmetic
 uses the existing rational-real rendering assumption (docs/SOUNDNESS.md item 8);
 this does not establish HOL-to-Lean equivalence or full model correctness.
+
+`state_transformer_for_probe.out` records four complete original unit/state results for inclusive ascending, descending, equal-zero and descending-through-zero FOR. Kernel regressions in Misc/StateTransformer preserve all endpoints and the initial list state.
