@@ -60874,6 +60874,577 @@
     "reviewer": "flapjack-sol-c source comparison2026-10-02 original534-539: full arbitrary positive word dimension, base, nested native Spt labels, actual arbitrary memory function, address and endian. Literal word_loc_val on memory(byte_align address); NONE preserved, SOME word passed to original get_byte fixed word8. Uses accepted native holByteAlign/holLOG2 and HolByte.getByte. All widths1-7 retain symbolic global LOG2(0); no zero completion, width restriction or production panByteAlignHOL equality. Production correspondence bead .18.5.4.3.9 stays open. words_as_type_indexed_bitvec is the only representation translation. Generic kernel word/hit/miss cases and one-bit symbolic actual memory plus eleven fresh original rows cover full equation/types, endian, aligned nonconstant memory, actual label hit/misses and narrow widths. Native relation helper, not completed state relation or executable compiler replacement."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MoveReconstruction.lean",
+    "lean_name": "alistInsertGetVars",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "alist_insert_get_vars",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-alist-move-reconstruction): full original3612-3701 all six original premises retained: distinct destination keys, actual successful native getVars, distinct IS_SOME-filtered option list, wf locals, selected destination subset, nonself destination coverage. Whole native Spt equality with exact MAP THE/FILTER/ALOOKUP/get_var updates and actual successful value-list insertion, no desired lookup/output/extra bound premise. Both distinctness premises retained even though the observation proof works without using them. Original omitted-self case uses coverage to derive destination=source and read success to derive unchanged lookup. Imported canonical WordSem state actual fpRegs/store |-> fields, locals original Spt not fmap, local roundtrip witness; arbitrary positive type-indexed WordLoc/BitVec width and C/F Type0, no word width restriction. Existing approved option THE only, no NONE default specified or list HD/EL hold bypass. Five literal whole original proof replays hyp=[] and560 matching kernel/original full read/whole-tree/six-guard packets across1/2/8/64/80 widths, parallel swaps/duplicate guards/omitted self/missing reads/malformed trees/70bit keys. Fifteen additional isolated subset-failure packets observe successful reads plus absent selected-key lookup and exactly the false subset guard, without attempting THE NONE. No production/whole compiler equivalence claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_roots_bitmaps_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenPartialMoveRootsBitmaps.lean",
+    "lean_name": "word_gen_gc_partial_move_roots_bitmaps_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.15), stack_allocProofScript.sml:3566-3703 word_gen_gc_partial_move_roots_bitmaps_code_thm: HOL binder order !bitmaps s i pa curr m dm new stack1 a1 i1 pa1 m1 old explicit (new and a1 quantified but never mentioned by HOL's statement; retained as vacuous _new/_a1), free conf, init, stack, gs and rs implicit; the single premise conjunction kept in HOL order including the duplicated good_dimindex (word_gen_gc_partial_move_roots_bitmaps conf (stack,bitmaps,i,pa,curr,m,dm,gs,rs) = (stack1,i1,pa1,m1,T), LENGTH bitmaps < dimword - 1, bounds, !w. w << word_shift = w * bytes_in_word, FLOOKUP CurrHeap, use_store, memory/mdomain/bitmaps, use_stack, 0,1,2 IN FDOM, get_var 3/4, 5,6,7 IN FDOM, get_var 8, get_var 9 = SOME (HD stack), FLOOKUP Temp 0w = Word gs and Temp 1w = Word rs, stack layout/stack_space, dimindex DIV 8 * LENGTH s.stack < dimword); HD stack is rendered by holHd (HOL listScript HD: HD (h::t) = h, HD [] unspecified, the opaque holHdNil), compared against the pinned HOL HD definition, and only appears in that get_var 9 premise. Conclusion ?ck r0 r1 r2 r5 r6 r7 r8 r9 with HOL's unused existential r9 kept (the |++ sets register 9 to Word 0w), memory m1, stack init ++ old ++ stack1, HOL's explicit clock := s.clock and an unchanged store, over the exact StackSem evaluate. Proved as HOL does by complete induction on LENGTH stack composing word_gen_gc_partial_move_bitmaps_code_thm with the IH through the tagged evaluate_add_clock. Temp nw as WordStore.temp, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_list_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenGcMoveList.lean",
+    "lean_name": "word_gen_gc_move_list_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.16), stack_allocProofScript.sml:3705-3807 word_gen_gc_move_list_code_thm: HOL binder order !l a s pa1 pa old m1 m i1 i dm conf a1 ib ib1 pb pb1 explicit, with HOL's three curried premise groups kept (word_gen_gc_move_list conf (a,l,i,pa,ib,pb,old,m,dm) = (a1,i1,pa1,ib1,pb1,m1,T), shift_length/word_shift/2 < dimindex, len_size <> 0, !w. w << word_shift = w * bytes_in_word, FLOOKUP CurrHeap = Word old, use_store, memory/mdomain, Temp 0w/1w IN FDOM s.store, FLOOKUP Temp 2w = Word pb and Temp 3w = Word ib, 0,1,2 IN FDOM, get_var 3/4, 5 IN FDOM ==> 6 IN FDOM ==> get_var 7 = Word l and get_var 8 = Word a). Conclusion ?ck r0 r1 r2 r5 r6 t0 t1 with memory m1, the four-slot Temp store |++ and the nine-register |++ ((7,Word 0w), (8,Word a1)), over the exact StackSem evaluate. Proved as HOL does by induction on the count n2w n, composing word_gen_gc_move_code_thm with the IH through the tagged evaluate_add_clock. Temp nw as WordStore.temp, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_list_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenPartialMoveList.lean",
+    "lean_name": "word_gen_gc_partial_move_list_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.17), stack_allocProofScript.sml:3809-3897 word_gen_gc_partial_move_list_code_thm: HOL binder order !l a s pa1 pa old m1 m i1 i dm conf a1 gs rs explicit, with HOL's three curried premise groups kept (word_gen_gc_partial_move_list conf (a,l,i,pa,old,m,dm,gs,rs) = (a1,i1,pa1,m1,T), shift_length/word_shift/2 < dimindex, len_size <> 0, !w. w << word_shift = w * bytes_in_word, FLOOKUP CurrHeap = Word old, use_store, memory/mdomain, good_dimindex, FLOOKUP Temp 0w = Word gs and Temp 1w = Word rs, 0,1,2 IN FDOM, get_var 3/4, 5 IN FDOM ==> 6 IN FDOM ==> get_var 7 = Word l and get_var 8 = Word a). Conclusion ?ck r0 r1 r2 r5 r6 with memory m1 and the nine-register |++ ((7,Word 0w), (8,Word a1)) and an unchanged store, over the exact StackSem evaluate. Proved as HOL does by induction on the count n2w n, composing word_gen_gc_partial_move_code_thm with the IH through the tagged evaluate_add_clock. Temp nw as WordStore.temp, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/UpdatePosition.lean",
+    "lean_name": "linesUpdLabLen_position",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "SND_lines_upd_lab_len",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original3286 and4023 with fresh complete original statements/quantified types in lab_to_target_update_position_probe.out. Full arbitrary pos/lines/acc preserved; exact Nat subtraction equation unconditional. Evenness retains complete if NULL lines premise, both empty conjuncts and nonempty LAST-label plus EVEN(pos+accumulator annotated length). Guarded optional LAST classifier used solely nonempty, no total HOL LAST or HD/EL claim. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and byte8 match; sole words_as_type_indexed_bitvec translates arbitrary positive word dimension. Proof establishes arithmetic conservation and ending-label final-position parity, assumes neither output relation nor success. Seven fresh original/native fixtures include odd position/odd accumulator valid case and counterexamples showing parity and final-label guards required; two full arbitrary-width kernel consumers. Full remove_labels_loop and end-to-end remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/UpdatePosition.lean",
+    "lean_name": "linesUpdLabLen_evenLength",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EVEN_sec_length_lines_upd_lab_len",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original3286 and4023 with fresh complete original statements/quantified types in lab_to_target_update_position_probe.out. Full arbitrary pos/lines/acc preserved; exact Nat subtraction equation unconditional. Evenness retains complete if NULL lines premise, both empty conjuncts and nonempty LAST-label plus EVEN(pos+accumulator annotated length). Guarded optional LAST classifier used solely nonempty, no total HOL LAST or HD/EL claim. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and byte8 match; sole words_as_type_indexed_bitvec translates arbitrary positive word dimension. Proof establishes arithmetic conservation and ending-label final-position parity, assumes neither output relation nor success. Seven fresh original/native fixtures include odd position/odd accumulator valid case and counterexamples showing parity and final-label guards required; two full arbitrary-width kernel consumers. Full remove_labels_loop and end-to-end remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroPreservation.lean",
+    "lean_name": "everyLabelZero_addNop",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EVERY_label_zero_add_nop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 complete original3953-3993. Fresh unchanged literal local EVERY_label_zero_add_nop proof replay and all five complete statements/quantified types captured in lab_to_target_zero_preservation_probe.out. Full EVERY iff retains arbitrary source and nop. Padding section premise ONLY constrains accumulator labels, source lines unrestricted; padding code result unconditional. Repeated simple/section encoding preserves actual pair equality with arbitrary output Bool and original source EVERY predicate, not narrowed to true. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, nested Spt Nat label maps and fixed byte8 match; only arbitrary positive word dimension translated by words_as_type_indexed_bitvec. Recursive proofs inspect original constructors and encoder clauses; no successful-output callbacks or desired relation assumptions. Nine original/native fixtures include nonzero source labels reset, NOP modifies only first nonlabel accumulated instruction, bad old accumulator guard counterexample, false output flag with genuinely enlarged reencoding and full two-section tuple. Five complete arbitrary-width kernel statement consumers. Full update/alignment/prefix/remove-labels loop and end-to-end remain unfinished; no totalHD/EL dependency or executable body changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroPreservation.lean",
+    "lean_name": "everyLabelZero_padSection",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EVERY_label_zero_pad_section",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 complete original3953-3993. Fresh unchanged literal local EVERY_label_zero_add_nop proof replay and all five complete statements/quantified types captured in lab_to_target_zero_preservation_probe.out. Full EVERY iff retains arbitrary source and nop. Padding section premise ONLY constrains accumulator labels, source lines unrestricted; padding code result unconditional. Repeated simple/section encoding preserves actual pair equality with arbitrary output Bool and original source EVERY predicate, not narrowed to true. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, nested Spt Nat label maps and fixed byte8 match; only arbitrary positive word dimension translated by words_as_type_indexed_bitvec. Recursive proofs inspect original constructors and encoder clauses; no successful-output callbacks or desired relation assumptions. Nine original/native fixtures include nonzero source labels reset, NOP modifies only first nonlabel accumulated instruction, bad old accumulator guard counterexample, false output flag with genuinely enlarged reencoding and full two-section tuple. Five complete arbitrary-width kernel statement consumers. Full update/alignment/prefix/remove-labels loop and end-to-end remain unfinished; no totalHD/EL dependency or executable body changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroPreservation.lean",
+    "lean_name": "everySecLabelZero_padCode",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EVERY_sec_label_zero_pad_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 complete original3953-3993. Fresh unchanged literal local EVERY_label_zero_add_nop proof replay and all five complete statements/quantified types captured in lab_to_target_zero_preservation_probe.out. Full EVERY iff retains arbitrary source and nop. Padding section premise ONLY constrains accumulator labels, source lines unrestricted; padding code result unconditional. Repeated simple/section encoding preserves actual pair equality with arbitrary output Bool and original source EVERY predicate, not narrowed to true. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, nested Spt Nat label maps and fixed byte8 match; only arbitrary positive word dimension translated by words_as_type_indexed_bitvec. Recursive proofs inspect original constructors and encoder clauses; no successful-output callbacks or desired relation assumptions. Nine original/native fixtures include nonzero source labels reset, NOP modifies only first nonlabel accumulated instruction, bad old accumulator guard counterexample, false output flag with genuinely enlarged reencoding and full two-section tuple. Five complete arbitrary-width kernel statement consumers. Full update/alignment/prefix/remove-labels loop and end-to-end remain unfinished; no totalHD/EL dependency or executable body changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroPreservation.lean",
+    "lean_name": "encLinesAgainSimp_labelZero",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_lines_again_simp_label_zero",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 complete original3953-3993. Fresh unchanged literal local EVERY_label_zero_add_nop proof replay and all five complete statements/quantified types captured in lab_to_target_zero_preservation_probe.out. Full EVERY iff retains arbitrary source and nop. Padding section premise ONLY constrains accumulator labels, source lines unrestricted; padding code result unconditional. Repeated simple/section encoding preserves actual pair equality with arbitrary output Bool and original source EVERY predicate, not narrowed to true. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, nested Spt Nat label maps and fixed byte8 match; only arbitrary positive word dimension translated by words_as_type_indexed_bitvec. Recursive proofs inspect original constructors and encoder clauses; no successful-output callbacks or desired relation assumptions. Nine original/native fixtures include nonzero source labels reset, NOP modifies only first nonlabel accumulated instruction, bad old accumulator guard counterexample, false output flag with genuinely enlarged reencoding and full two-section tuple. Five complete arbitrary-width kernel statement consumers. Full update/alignment/prefix/remove-labels loop and end-to-end remain unfinished; no totalHD/EL dependency or executable body changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroPreservation.lean",
+    "lean_name": "encSecsAgain_labelZero",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_secs_again_label_zero",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison2026-10-02 complete original3953-3993. Fresh unchanged literal local EVERY_label_zero_add_nop proof replay and all five complete statements/quantified types captured in lab_to_target_zero_preservation_probe.out. Full EVERY iff retains arbitrary source and nop. Padding section premise ONLY constrains accumulator labels, source lines unrestricted; padding code result unconditional. Repeated simple/section encoding preserves actual pair equality with arbitrary output Bool and original source EVERY predicate, not narrowed to true. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, nested Spt Nat label maps and fixed byte8 match; only arbitrary positive word dimension translated by words_as_type_indexed_bitvec. Recursive proofs inspect original constructors and encoder clauses; no successful-output callbacks or desired relation assumptions. Nine original/native fixtures include nonzero source labels reset, NOP modifies only first nonlabel accumulated instruction, bad old accumulator guard counterexample, false output flag with genuinely enlarged reencoding and full two-section tuple. Five complete arbitrary-width kernel statement consumers. Full update/alignment/prefix/remove-labels loop and end-to-end remain unfinished; no totalHD/EL dependency or executable body changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/StateRel.lean",
+    "lean_name": "stateRel",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "state_rel_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c full original source/type comparison2026-10-02 lines959-1096. All original relation conditions retained over actual MachineConfig/LabSem.State Config F/AsmState and shared positive BitVec width; machine state/projection/FFI host independently Type0. Original tuple parameter order retained. Complete target/dimension/domain/register/normal-FFI/cache/oracle/label/position/register/memory/code-buffer/code-safety conditions, actual compileLab equality, original list_subset/get_ffi_index/find_index/EL/THE/byte_align and original full encoder/code/shared-memory relations. holEl/holHd source review: normal-FFI names and imported shared-memory entry/name reads use literal total EL recursion on TL, HD nil is shared opaque holHdNil/holArb, and no bounds or fallback are added to the original guards. holThe retains SOME identity and shared opaque holTheNone at NONE; no chosen MMIO boundary completion. Source inner quantifiers and record updates are literal, including return register s1.linkReg, cache ptrReg preservation, ordinary FFI ffi-state closure and bytes read, no extra runtime-state/evaluation assumption. Native Boolean Lab domains enter Prop-based ASM/machine/bytes/shared-domain relations only through pointwise equality-to-true; same-module domainTruth_roundtrip kernel-checks both Boolean values, no changed membership or out-of-domain convention. Full quantified width retained; original good_dimindex guard remains a conjunct, no new width premise or LOG2zero completion. Fixed word8/word64 payloads literal. words_as_type_indexed_bitvec is the standard word/FFI translation. Fresh original whole equation/inferred types and generic target/compile/memory projections, complete clock-update equivalence and original one-index rejection are mirrored by native kernel consumers. Production alignment .18.5.4.3.9 remains open; declaration defines source state relation, not pass simulation or completed compiler correctness."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "singleL_thm",
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/SingleL.lean",
+    "lean_name": "singleLThm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against original1343-1372: all nine original premises and BOTH invariant/canonical map union-update conclusions retained; generic constructor-for-constructor key,payload,comparator and tree carriers. Actual singleL constructor equation; structural-size arithmetic and balanced_lem6; original good_cmp greater transitivity derives root ordering and left-map root absence. Canonical toFmap observer translation only. Literal original full proof replay has no open hypotheses; native complete premise/invariant/map/three lookup fixtures and original whole tree/invariant/lookups/badsize observations checked. No executable definition change."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "doubleL_thm",
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/DoubleL.lean",
+    "lean_name": "doubleLThm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against original1374 onward doubleL_thm: all nine original hypotheses and BOTH invariant and canonical to_fmap union/update conclusions preserved, generic constructor-for-constructor key/payload/comparator/tree carriers. Original heavy/ratio/size invariants exclude inner Tip before actual doubleLDef; balanced_lem7 and structural sizes prove both new subtree/root invariants; original good_cmp transitivity and strict ordering derive map absence and lookup extensionality. Only canonical toFmap observer representation translation. Full literal original closed proof replay and complete-premise native tree/invariant/map/three lookup consumers checked, with seven original full statement/tree/invariant/lookups/badcache rows. No executable behavior change."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "rotateL_thm",
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/RotateL.lean",
+    "lean_name": "rotateLThm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full original rotateL_thm: all eight original premises and BOTH invariant/canonical to_fmap union-update conclusions preserved; generic original comparator,key,payload,tree carriers. Heavy premise excludes outer Tip; literal strict ratio guard selects full singleL_thm or doubleL_thm with original size-addition commutation only. Canonical toFmap observer translation only. Literal full original constructor and assembly proofs replay hyp=[]; two complete-premise native dispatch fixtures consume invariant/map and six lookup observations. No executed definition change."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanceR_balR",
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/BalanceR.lean",
+    "lean_name": "balanceRBalR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full original balanceR_balR: same generic key/payload/tree/comparator quantifiers, ONLY good_cmp and both input invariants, full actual balanceR=balR conclusion. Constructor-for-constructor list-free/tree carrier; invariant structural sizes derive all small/singleton child constraints; literal heavy and ratio guards retained and impossible malformed rotation branches excluded from original invariants. Literal full original induction proof replay hyp=[] and ten valid constructor/guard/ratio equality observations; native consumers prove both invariants for all ten cases. No executable behavior change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rawInstType",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "rawInstType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:6-6, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "accessType",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "accessType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:8-8, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "fetchType",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "fetchType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:10-10, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Architecture",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Architecture",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:12-13, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Privilege",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Privilege",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:15-17, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "VM_Mode",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "VM_Mode",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:19-22, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ExtStatus",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "ExtStatus",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:24-25, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Interrupt",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Interrupt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:27-27, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ExceptionType",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "ExceptionType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:29-34, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mcpuid",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mcpuid",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:36-39, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mimpid",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mimpid",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:41-41, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mstatus",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mstatus",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:43-48, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mtdeleg",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mtdeleg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:50-50, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mip",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mip",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:52-55, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mie",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mie",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:57-60, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mcause",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mcause",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:62-62, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "MachineCSR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "MachineCSR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:64-71, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "HypervisorCSR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "HypervisorCSR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:73-77, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "sstatus",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "sstatus",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:79-82, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "sip",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "sip",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:84-84, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "sie",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "sie",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:86-86, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "SupervisorCSR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "SupervisorCSR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:88-92, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FPCSR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FPCSR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:94-97, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "UserCSR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "UserCSR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:99-102, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "SynchronousTrap",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "SynchronousTrap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:104-105, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "TransferControl",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "TransferControl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:107-110, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Rounding",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Rounding",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:112-114, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "StateDelta",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "StateDelta",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:116-120, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "SV_PTE",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "SV_PTE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:122-125, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "SV_Vaddr",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "SV_Vaddr",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:127-129, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "TLBEntry",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "TLBEntry",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:131-135, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Internal",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Internal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:137-138, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "System",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "System",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:140-148, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FConv",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FConv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:150-178, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FArith",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FArith",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:180-209, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FPStore",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FPStore",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:211-214, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FPLoad",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FPLoad",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:216-219, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "AMO",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "AMO",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:221-244, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Store",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Store",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:246-251, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Load",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Load",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:253-261, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Branch",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Branch",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:263-271, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "MulDiv",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "MulDiv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:273-287, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Shift",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Shift",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:289-302, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ArithR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "ArithR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:304-314, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ArithI",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "ArithI",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:316-325, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "instruction",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "instruction",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:327-336, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FetchResult",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FetchResult",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:338-340, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rvc",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "rvc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:342-342, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "exception",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "exception",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:344-346, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "riscv_state",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "riscv_state",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:348-362, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "ssa_cc_trans_Loop_helper",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALoopIteration.lean",
