@@ -1390,6 +1390,7 @@ import Flapjack.Compiler.Backend.StackAlloc.Compile
 import Flapjack.Compiler.Backend.StackAlloc.GcCode
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcSimple
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveList

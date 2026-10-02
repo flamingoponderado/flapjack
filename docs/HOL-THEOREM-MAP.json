@@ -58108,5 +58108,34 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.9), stack_allocProofScript.sml:1439-1573 word_gc_move_roots_bitmaps_code_thm: HOL binder order !bitmaps s i pa curr m dm new stack1 a1 i1 pa1 m1 old explicit (new and a1 quantified but never mentioned by HOL's statement; retained as vacuous _new/_a1), free conf, init and stack implicit; the single premise conjunction kept in HOL order including the duplicated good_dimindex (word_gc_move_roots_bitmaps conf (stack,bitmaps,i,pa,curr,m,dm) = (stack1,i1,pa1,m1,T), LENGTH bitmaps < dimword - 1, shift/dimindex/len_size bounds, !w. w << word_shift = w * bytes_in_word, FLOOKUP CurrHeap, use_store, memory/mdomain/bitmaps, use_stack, 0,1,2 IN FDOM, get_var 3/4, 5,6,7 IN FDOM, get_var 8 = Word (bytes_in_word * n2w (LENGTH old)), get_var 9 = SOME (HD stack), stack layout and stack_space, dimindex DIV 8 * LENGTH s.stack < dimword); HD stack is rendered by holHd (HOL listScript HD: HD (h::t) = h, HD [] unspecified, the opaque holHdNil), compared against the pinned HOL HD definition, and only appears in that get_var 9 premise. Conclusion ?ck r0 r1 r2 r5 r6 r7 r8 r9 with HOL's unused existential r9 kept (the |++ sets register 9 to Word 0w), memory m1, stack init ++ old ++ stack1 and HOL's explicit clock := s.clock, over the exact StackSem evaluate. Proved as HOL does by complete induction on LENGTH stack: each frame goes through word_gc_move_bitmaps_code_thm composed with the IH through the tagged evaluate_add_clock, until the Word 0w sentinel. 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_fun_thm",
+    "hol_line": 481,
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcSimple.lean",
+    "lean_name": "word_gc_fun_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "s"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.8.1), stack_allocProofScript.sml:481-517 word_gc_fun_thm[local] (the Simple declaration; the same name at 1731 is the generational one, hence the line): conf.gc_kind = Simple ==> word_gc_fun conf (roots,m,dm,s) = the word_gc_move (s ' Globals, 0w, theWord (s ' OtherHeap), theWord (s ' CurrHeap), m, dm) / word_gc_move_roots / word_gc_move_loop (dimword) composition, the seven-entry |++ store update and if word_gc_fun_assum conf s /\\ c2 then SOME (ws2,m1,s1) else NONE. Free roots m dm s conf implicit; s ' X as holFapply, theWord as wordSemTheWord, dimword as 2 ^ width; the store binder s is the canonical HolFiniteMapExact carrier (bare relation entry). 'a word as positive-width BitVec with [NeZero width]; no hypothesis, side condition or conclusion change. Through word_gc_fun's Simple clause these statements reach holHd (HOL HD on the moved roots list, HD (h::t) = h; the roots list here is the non-empty Globals :: roots, so holHd and the opaque holHdNil agree with HOL), compared against the pinned HOL HD definition.",
+    "inherits_reals_as_rational_cuts": false
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "gc_thm",
+    "hol_line": 554,
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcSimple.lean",
+    "lean_name": "gc_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.8.1), stack_allocProofScript.sml:554-605 gc_thm[local] (the Simple declaration; the same name at 1884 is the generational one, hence the line): s.gc_fun = word_gc_fun conf /\\ conf.gc_kind = Simple ==> gc s = if LENGTH s.stack < s.stack_space then NONE else the TAKE/DROP split, word_gc_move on s.store ' Globals, word_gc_move_roots_bitmaps over the dropped stack, word_gc_move_loop (dimword) with c1 /\\ c2, the seven-entry |++ store update and if word_gc_fun_assum conf s.store /\\ c2 then SOME (s with stack := unused ++ stack; store := s1; regs := FEMPTY; memory := m1) else NONE, over the tagged StackSem gc (gc_def). Free s and conf implicit; s.store ' X as holFapply, theWord as wordSemTheWord, dimword as 2 ^ width, FEMPTY as HolFiniteMapExact.empty. 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no hypothesis, side condition or conclusion change. Through word_gc_fun's Simple clause these statements reach holHd (HOL HD on the moved roots list, HD (h::t) = h; the roots list here is the non-empty Globals :: roots, so holHd and the opaque holHdNil agree with HOL), compared against the pinned HOL HD definition."
   }
 ]
