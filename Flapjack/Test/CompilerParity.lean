@@ -1,3 +1,5 @@
+import Flapjack.Test.L3RiscvSqrtParity
+import Flapjack.Test.L3RiscvArithmeticParity
 import Flapjack.Test.SetNewTriggerParity
 import Flapjack.Test.LabToTargetLabelLookupEvennessParity
 import Flapjack.Test.LabToTargetStrongEvenLabelsParity

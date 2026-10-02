@@ -1,0 +1,12 @@
+ag_statement=∀t1 s2 s r off n k jump. state_rel jump off k s t1 ∧ (r,s2) = (if s.stack_space < n then (SOME (Halt (Word 2w)),empty_env s) else (NONE,s with stack_space := s.stack_space − n)) ∧ n ≠ 0 ∧ n ≤ max_stack_alloc ⇒ ∃ck t2. evaluate (single_stack_alloc jump k n,t1 with clock := t1.clock + ck) = (r,t2) ∧ if s.stack_space < n then t2.ffi = s2.ffi else state_rel jump off k s2 t2
+ag_proved=T
+ag_32_0=(T,T)
+ag_32_1=(F,F)
+ag_32_2=(T,T)
+ag_32_3=(F,F)
+ag_32_4=(F,F)
+ag_64_0=(T,T)
+ag_64_1=(F,F)
+ag_64_2=(T,T)
+ag_64_3=(F,F)
+ag_64_4=(F,F)
