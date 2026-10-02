@@ -61043,5 +61043,405 @@
     "lean_name": "balanceRBalR",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full original balanceR_balR: same generic key/payload/tree/comparator quantifiers, ONLY good_cmp and both input invariants, full actual balanceR=balR conclusion. Constructor-for-constructor list-free/tree carrier; invariant structural sizes derive all small/singleton child constraints; literal heavy and ratio guards retained and impossible malformed rotation branches excluded from original invariants. Literal full original induction proof replay hyp=[] and ten valid constructor/guard/ratio equality observations; native consumers prove both invariants for all ten cases. No executable behavior change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rawInstType",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "rawInstType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:6-6, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "accessType",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "accessType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:8-8, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "fetchType",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "fetchType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:10-10, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Architecture",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Architecture",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:12-13, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Privilege",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Privilege",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:15-17, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "VM_Mode",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "VM_Mode",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:19-22, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ExtStatus",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "ExtStatus",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:24-25, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Interrupt",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Interrupt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:27-27, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ExceptionType",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "ExceptionType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:29-34, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mcpuid",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mcpuid",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:36-39, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mimpid",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mimpid",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:41-41, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mstatus",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mstatus",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:43-48, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mtdeleg",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mtdeleg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:50-50, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mip",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mip",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:52-55, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mie",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mie",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:57-60, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "mcause",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "mcause",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:62-62, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "MachineCSR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "MachineCSR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:64-71, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "HypervisorCSR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "HypervisorCSR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:73-77, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "sstatus",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "sstatus",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:79-82, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "sip",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "sip",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:84-84, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "sie",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "sie",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:86-86, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "SupervisorCSR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "SupervisorCSR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:88-92, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FPCSR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FPCSR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:94-97, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "UserCSR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "UserCSR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:99-102, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "SynchronousTrap",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "SynchronousTrap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:104-105, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "TransferControl",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "TransferControl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:107-110, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Rounding",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Rounding",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:112-114, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "StateDelta",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "StateDelta",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:116-120, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "SV_PTE",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "SV_PTE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:122-125, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "SV_Vaddr",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "SV_Vaddr",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:127-129, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "TLBEntry",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "TLBEntry",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:131-135, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Internal",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Internal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:137-138, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "System",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "System",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:140-148, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FConv",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FConv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:150-178, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FArith",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FArith",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:180-209, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FPStore",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FPStore",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:211-214, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FPLoad",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FPLoad",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:216-219, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "AMO",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "AMO",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:221-244, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Store",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Store",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:246-251, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Load",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Load",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:253-261, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Branch",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Branch",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:263-271, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "MulDiv",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "MulDiv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:273-287, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Shift",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "Shift",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:289-302, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ArithR",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "ArithR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:304-314, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ArithI",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "ArithI",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:316-325, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "instruction",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "instruction",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:327-336, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FetchResult",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "FetchResult",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:338-340, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rvc",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "rvc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:342-342, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "exception",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "exception",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Construct at riscvScript.sml:344-346, constructor for constructor with the same argument arity and types, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "riscv_state",
+    "lean_path": "Flapjack/RiscV/L3/Types.lean",
+    "lean_name": "riscv_state",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:348-362, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
   }
 ]

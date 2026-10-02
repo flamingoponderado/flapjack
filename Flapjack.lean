@@ -1249,6 +1249,7 @@ import Flapjack.PanValueFfiEventMonotonicity
 import Flapjack.PanValueFfiClockProjection
 import Flapjack.PanCost
 import Flapjack.RiscV.Model
+import Flapjack.RiscV.L3.Types
 import Flapjack.RiscV.Encoding
 import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.RiscV.PanMemory
