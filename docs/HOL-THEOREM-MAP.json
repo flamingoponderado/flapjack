@@ -59411,5 +59411,19 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol-a source comparison 2026-10-02: fulloriginal6405-6423, exactly producer equation/distinct names/two memberships/equaloptionLookup5premises and inputkey equality. Actual listNextVarRenameMove is decomposed; original arithmetic lemma1 gives distinct generated names, original lookup lemma2prime identifies that list with mapped selectors. All selected inputs have successful outputmap lookups by original lemma2 fourthconjunct, so guarded THE/getD rendering remains justified; selector-independent infrastructure already checked, no THE NONE agreement claimed. Native Nat SSA/input/output maps, names/keys/counters and original word-indexed program confirmed by original theorem/sixcarriers. Sole standard words_as_type_indexed_bitvec positiveword translation explicit, no finite-map carrier changes/globalinjectivity/allocation/success/newpremise. Source manually compared/HOLcapture/Lean kernel PASS; no isolated tactic replay claimed. FullFFI/fullSSA/end-to-end remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticFFI.lean",
+  "lean_name": "ssaCcTransCorrectFFI",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02: full resumed FFI9868-10010 of original7666 sixpremise SSA simulation. Entire source permutation/Error exemption/result equality/frame and result-sensitive locals conclusion retained. Actual first refresh Move at next+2, scratch physical2/4/6/8 writes, renamed cut via scoped original injection/cutEnvLemma, original bytearray reads/callFFI and final flush or returning writeBytearray/emptyfpRegs/updateffi followed by actual restoration Move at counter+2 derived. Native mlstring function name, Nat registers/counters, Unit Spt cutsets pair, Spt SSA/tables, indexedword/native WordLoc payloads and Type0 FFI retained. Only canonical fpRegs/store finite-support and positive indexedword translations qualified; locals/code native Spt are not finite-map-qualified. Internal successfulbranch/read/cut premises fully discharged by public source evaluator splits, no targetrun/postlocals/newsuccess/publicextra hypothesis. Inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Original manually compared/proved theorem specialization capture/Lean kernel evidence; no isolated tactic replay or equivalence proof claimed. FullSSA/end-to-end remain open."
 }
 ]

@@ -5272,3 +5272,12 @@ input equality. Standard positive indexed-word program translation is explicit.
 Original theorem capture/manual source comparison, not isolated tactic replay
 or equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_rename_move_distinct_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cc_trans_correct_ffi_probe` captures the original full theorem specialized
+to FFI and nine inferred carriers, including native mlstring and paired num_sets.
+Original FFI9868–10010 was manually compared with `SSASemanticFFI.lean`: all six
+premises/full simulation retained, actual refresh/scratch/cut/FFI/restore execution
+derived for both final and returning outcomes; Error branches remain exempt.
+Original proved theorem specialization capture, not isolated tactic replay or
+cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_ffi_probeScript.sml scripts/hol-probes/regenerate.sh`.

@@ -4692,3 +4692,7 @@ run_probe ssa_cut_envs_domain_probeScript.sml ssa_cut_envs_domain_probe.out \
 run_probe ssa_rename_move_distinct_probeScript.sml ssa_rename_move_distinct_probe.out \
   rename_move_distinct_full rename_move_distinct_type_input rename_move_distinct_type_output rename_move_distinct_type_names rename_move_distinct_type_move rename_move_distinct_type_next rename_move_distinct_type_key \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_ffi_probeScript.sml ssa_cc_trans_correct_ffi_probe.out \
+  ffi_full ffi_type_name ffi_type_pointer ffi_type_length ffi_type_cutsets ffi_type_st ffi_type_cst ffi_type_ssa ffi_type_next ffi_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
