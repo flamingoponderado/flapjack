@@ -5952,6 +5952,7 @@ Lean algorithm regressions. The independent certified-converter bead remains
 open for the complete144-row original int-to-FP oracle; no modes are dropped.
 `word_to_stack_asm_remove_helpers_probe` freshly replays the five complete original local proofs at word_to_stackProofScript.sml:11129-11182, then captures 95 cross-width helper predicates (five independent width pairs, direct/empty/register/spilled destinations, zero/nonzero live bitmaps, arbitrary-continuation movement equivalences, auxiliary copies and both handler modes). Lean fixtures replay all observations. Regression evidence does not prove HOL-to-Lean equivalence.
 
+
 ### Independent Word-to-Stack register-bound compiler output observations
 
 `word_to_stack_reg_output_probeScript.sml` calls HOL `EVAL` directly on
@@ -6007,3 +6008,9 @@ remains unsupported; the separate converter bead retains full144-row L3 scope.
 `word_to_stack_asm_name_helpers_probe` captures the original shared config/program word type, freshly replays five exact local proofs at10958-11005 with their original local simp registrations, and records230 naming observations at widths1/2/8/64/80. Both performance/handler flags, empty/direct/indirect/spilled destinations, arbitrary-continuation movement, return-copy counts and zero/nonzero live bitmaps are tested. Count-underflow cases show five nonzero live failures while unconditional helpers still succeed (225T/5F). Lean fixtures replay captured expectations; original proof/kernel validity and regression observations do not establish HOL-to-Lean equivalence.
 
 `word_convs_full_inst_native_probe` captures the complete original predicate/type and828 literal validity observations at widths1/2/8/32/64/80 and both two_reg_arith flags. It covers all26 source constructor families, all16 FP forms, immediate validity, all8 ShareInst offset classes, recursive bad bodies and the ignored NONE-return handler. Address/halfword/byte policies have distinct ranges, while non-policy config fields remain arbitrary. Exact native Lean fixtures replay every original expectation. Broad original output/fixture behavior is retained through one shared recursive traversal; broad encoder and width carriers remain explicitly untagged. Regression evidence does not establish HOL-to-Lean equivalence.
+
+`ssa_cutset_route_probe.out` captures six original heterogeneous `sptree$inter` cutset observations: empty map/set, repeated first-match keys, missing keys, native traversal order and names/values beyond 64 bits. `SSAStateMapRouteParity.lean` replays complete outputs through the actual `wordSsaRestrict` caller. The full native program SSA route remains open.
+
+`ssa_reconcile_route_probe.out` captures seven original complete `ssa_reconcile` outputs, including Skip/identity, missing source/target, repeated first-match keys, native order and values beyond 64 bits. `SSAStateMapRouteParity.lean` kernel-replays the entire production caller program. Its API codec has a checked full result reconstruction theorem at every positive word width.
+
+`ssa_listmove_route_probe.out` captures six original full `list_next_var_rename_move` program/map/counter tuples. Cases include an empty renaming over a noncanonical duplicate-key input codec, missing names, repeated names, source/destination aliases, native map order and counters beyond 64 bits. Kernel fixtures replay the entire actual caller output, including its independent initial state counter and both returned counters.

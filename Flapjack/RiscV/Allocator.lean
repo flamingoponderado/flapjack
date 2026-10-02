@@ -446,9 +446,9 @@ def wordSsaForceRename (renamings : List (Nat × Nat)) (state : WordSsaState) : 
     the generated Move makes that refresh explicit in the Word program. -/
 def wordSsaListNextVarRenameMove (state : WordSsaState) (next : Nat)
     (names : List Nat) : WordSsaState × Nat × WordProg α :=
-  let sources := names.map (wordSsaRead state)
-  let (state, destinations) := wordSsaFreshList { state with next := next } names
-  (state, state.next, .move 0 (destinations.zip sources))
+  let (moves, current, next) :=
+    Compiler.Backend.WordAlloc.ssaListNextVarRenameMoveExecutable state.current next names
+  ({ state with current := current, next := next }, next, .move 0 moves)
 
 def wordSsaCallAbiRegisters (start count : Nat) : List Nat :=
   (List.range count).map (fun index => 2 * (start + index))
@@ -730,7 +730,7 @@ structure WordSsaLoopFrame where
   deriving DecidableEq, Repr
 
 def wordSsaRestrict (state : WordSsaState) (names : List Nat) : WordSsaState :=
-  { state with current := state.current.filter (fun entry => entry.1 ∈ names) }
+  { state with current := Compiler.Backend.WordAlloc.ssaRestrictExecutable state.current names }
 
 /-- `ssa_reconcile` (`word_allocScript.sml:318-330`): one parallel
     `Move 1` over CakeML's `MAP FST (toAList ns)` variable order.  Variables missing from the
@@ -738,16 +738,9 @@ def wordSsaRestrict (state : WordSsaState) (names : List Nat) : WordSsaState :=
     to register `0` (CakeML's `option_lookup`). -/
 def wordSsaReconcileTo (source target : WordSsaState) (names : List Nat) :
     WordProg α :=
-  let moves := (NumSet.fromList names.eraseDups).filterMap (fun name =>
-    match lookupNatInfo name source.current with
-      | none => none
-      | some sourceName =>
-          let targetName := (lookupNatInfo name target.current).getD 0
-          if targetName = sourceName then none
-          else some (targetName, sourceName))
-  match moves with
+  match Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable source.current target.current names with
   | [] => .skip
-  | _ => .move 1 moves
+  | moves => .move 1 moves
 
 def wordSsaRefreshList (state : WordSsaState) : List Nat →
     WordSsaState × WordProg α

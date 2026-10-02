@@ -5166,6 +5166,7 @@ run_probe word_to_stack_asm_remove_helpers_probeScript.sml word_to_stack_asm_rem
 
 
 
+
 run_probe stack_remove_comp_inst_probeScript.sml stack_remove_comp_inst_probe.out \
   ci_statement ci_types ci_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -5218,3 +5219,15 @@ run_probe lab_to_target_label_existence_encoding_probeScript.sml lab_to_target_l
 run_probe lab_to_target_label_existence_domain_probeScript.sml lab_to_target_label_existence_domain_probe.out \
   line_labs_exist_get_labels line_labs_exist_get_labels_types sec_labs_exist_get_labels sec_labs_exist_get_labels_types all_labs_exist_get_labels all_labs_exist_get_labels_types line_present_false_value line_missing_outer line_missing_inner call_nonreference_empty_domain section_full_extraction code_full_extraction empty_inner_map_failure zero_label_reference unconstrained_nonreferences empty_width1 \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cutset_route_probeScript.sml ssa_cutset_route_probe.out \
+  cut_empty_map cut_empty_names cut_duplicates cut_missing cut_order cut_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_reconcile_route_probeScript.sml ssa_reconcile_route_probe.out \
+  rec_empty rec_identity rec_missing_source rec_missing_target rec_duplicate rec_order rec_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_listmove_route_probeScript.sml ssa_listmove_route_probe.out \
+  lm_empty lm_missing lm_repeated lm_source_alias lm_order lm_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
