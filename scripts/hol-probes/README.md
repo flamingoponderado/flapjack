@@ -4184,3 +4184,12 @@ cover empty/singleton register sequences, widths 1/2/32/64/80, zero/all-ones,
 MSB values and discarded top bits. `WordToStackBitmapWordParity.lean` checks
 matching observations/full applications plus arbitrary width/count instances.
 These are full original helper theorems, not a bitmap decoder simulation.
+
+`word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
+original missing-bit, SNOC and prefix-reconstruction proofs plus their local
+original bit-index context, each with no open hypotheses. It prints two
+original types and 187 cases across widths 1/2/8/64/80, including truncating
+long lists, empty prefixes, missing bits and true/false terminal bits.
+`WordToStackBitmapBitStructureParity.lean` checks matching observations and
+whole theorem applications. The HOL context replay uses original EL read-only;
+no new Lean total-EL port or provenance allowance is introduced.
