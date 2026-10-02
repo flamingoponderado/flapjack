@@ -4670,3 +4670,11 @@ long lists, empty prefixes, missing bits and true/false terminal bits.
 `WordToStackBitmapBitStructureParity.lean` checks matching observations and
 whole theorem applications. The HOL context replay uses original EL read-only;
 no new Lean total-EL port or provenance allowance is introduced.
+
+### Native SSA list-register transport
+
+`ssa_locals_rel_get_vars_probeScript.sml` replays the literal original local
+get_vars theorem and its get_var prerequisite without changing premises.
+It captures the full statement and native list/value/map/bound carriers;
+source and target state captures establish their independent code/FFI hosts.
+The capture is source evidence, not a cross-assistant equivalence proof.

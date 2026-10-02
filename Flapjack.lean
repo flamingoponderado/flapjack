@@ -131,6 +131,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
 import Flapjack.Compiler.Backend.WordAlloc.SSASetup
 import Flapjack.Compiler.Encoders.AsmProps.Assertions

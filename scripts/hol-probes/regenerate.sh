@@ -4221,3 +4221,7 @@ run_probe ssa_cc_trans_correct_heap_probeScript.sml ssa_cc_trans_correct_heap_pr
 run_probe ssa_cc_trans_correct_raise_probeScript.sml ssa_cc_trans_correct_raise_probe.out \
   raise_full raise_type_st raise_type_cst raise_type_reg raise_type_ssa raise_type_na raise_type_lt \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_rel_get_vars_probeScript.sml ssa_locals_rel_get_vars_probe.out \
+  get_vars_full get_vars_type_source get_vars_type_target get_vars_type_names get_vars_type_values get_vars_type_ssa get_vars_type_next \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
