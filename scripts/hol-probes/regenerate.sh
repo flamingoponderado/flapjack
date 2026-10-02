@@ -5838,3 +5838,9 @@ run_probe lab_to_target_shmem_membership_probeScript.sml lab_to_target_shmem_mem
   load_membership store_membership load_fetch exit_expression paired_lengths empty_lengths wrong_pair \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_shmem_names_probeScript.sml lab_to_target_shmem_names_probe.out \
+  get_shmem_info_MappedRead_or_MappedWrite get_shmem_info_MappedRead_or_MappedWrite_types get_shmem_info_MappedRead_or_MappedWrite_hypotheses \
+  word8_names narrow_names wide_names extcall_prefix all_ops ffi_only empty \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
