@@ -65,6 +65,8 @@ import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CallArgsCompiler
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnCallArgs
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundMono
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnRegisterBounds
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Compiler

@@ -49,6 +49,15 @@ class HolRefExportTest(unittest.TestCase):
     def test_reviewed_row_matches_its_declaration(self):
         self.assertEqual(MODULE.check_records(self.manifest, self.export), 1)
 
+    def test_escaped_source_leaf_matches_elaborated_name(self):
+        manifest = [{**self.manifest[0], "lean_name": "«dfn'FMIN_S»"}]
+        exported = [{**self.export[0], "lean_name": "Flapjack.RiscV.L3.dfn'FMIN_S"}]
+        self.assertEqual(MODULE.check_records(manifest, exported), 1)
+        with self.assertRaisesRegex(ValueError, "found 0"):
+            MODULE.check_records(manifest, [{**exported[0], "lean_name": "Flapjack.dfn'FMIN_D"}])
+        with self.assertRaisesRegex(ValueError, "found 2"):
+            MODULE.check_records(manifest, exported + exported)
+
     def test_only_reviewed_rows_are_checked(self):
         pending = [{**self.manifest[0], "statement_status": "pending_statement_review"}]
         self.assertEqual(MODULE.check_records(pending, []), 0)

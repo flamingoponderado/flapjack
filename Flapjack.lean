@@ -1,8 +1,11 @@
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRefs
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveData
+import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
 import Flapjack.Compiler.Backend.LabToTarget.NopInsertEncoding
 import Flapjack.Compiler.Backend.LabToTarget.NopPadding
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstallCase
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAllocCase
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallReturn
 import Flapjack.Misc.TakeFlatReplicate
 import Flapjack.Compiler.Backend.LabToTarget.ValidityNop
 import Flapjack.Compiler.Backend.LabToTarget.NopInvariant
@@ -52,6 +55,7 @@ import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
 import Flapjack.Test.LabToTargetSimpleEncoderParity
 import Flapjack.Misc.BalancedMap.RotationCorrect.SingleR
 import Flapjack.Test.LabToTargetEncd0Parity
+import Flapjack.RiscV.L3.Defs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStoreConsts
@@ -228,6 +232,8 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CallArgsCompiler
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnCallArgs
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundMono
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnRegisterBounds
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Compiler
