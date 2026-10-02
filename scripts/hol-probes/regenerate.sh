@@ -4501,3 +4501,8 @@ run_probe init_memory_probeScript.sml init_memory_probe.out \
 run_probe mmio_index_probeScript.sml mmio_index_probe.out \
   mmio_full_def mmio_type mmio_empty mmio_0 mmio_1 mmio_2 mmio_00 mmio_01 mmio_02 mmio_10 mmio_11 mmio_12 mmio_20 mmio_21 mmio_22 mmio_000 mmio_001 mmio_002 mmio_010 mmio_011 mmio_012 mmio_020 mmio_021 mmio_022 mmio_100 mmio_101 mmio_102 mmio_110 mmio_111 mmio_112 mmio_120 mmio_121 mmio_122 mmio_200 mmio_201 mmio_202 mmio_210 mmio_211 mmio_212 mmio_220 mmio_221 mmio_222 \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe lab_to_target_similar_labels_probeScript.sml lab_to_target_similar_labels_probe.out \
+  code_similar_MAP_Section_num code_similar_MAP_Section_num_types code_similar_extract_labels code_similar_extract_labels_types line_similar_line_get_code_labels line_similar_line_get_code_labels_types code_similar_get_code_labels code_similar_get_code_labels_types line_similar_line_get_labels line_similar_line_get_labels_types code_similar_get_labels code_similar_get_labels_types \
+  changed_encoding_similar section_numbers ordered_extraction reference_hit call_ignored code_section_owner code_wrong_owner empty_section_zero numbers_preserved extraction_preserved code_labels_preserved references_preserved label_names_preserved line_refs_preserved changed_reference_rejected \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

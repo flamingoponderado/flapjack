@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetSimilarLabelsParity
 import Flapjack.Test.LabToTargetGoodCodeParity
 import Flapjack.Test.TargetRegisterOraclesParity
 import Flapjack.Test.TargetInterferenceSequenceParity
@@ -1791,6 +1792,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordGcFunctionsParity.runChecks,
     Flapjack.Test.StackAllocGcCodeParity.runChecks,
     Flapjack.Test.StackAllocGetBitsParity.runChecks,
+    Flapjack.Test.LabToTargetSimilarLabelsParity.runChecks,
     Flapjack.Test.LabToTargetGoodCodeParity.runChecks,
     Flapjack.Test.LabToTargetByteLengthsParity.runChecks,
     Flapjack.Test.LabPropsLabelSetsParity.runChecks,
