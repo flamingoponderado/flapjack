@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
 import Flapjack.Compiler.Backend.StackRemove.InitMemory
 import Flapjack.Compiler.Backend.StackRemove.StoreInit
 import Flapjack.Compiler.Backend.StackRemove.StoreListCode

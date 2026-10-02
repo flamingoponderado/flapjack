@@ -330,6 +330,7 @@
     {"bytes": 344, "out": "mknode_probe.out", "rows": 3, "sha256": "28c4ad224cbd50e28ce00412f7d61105bae92a4a8d3dea9457d2646badbc3009"},
     {"bytes": 174, "out": "mksubtree_probe.out", "rows": 2, "sha256": "91f7cb50b5c4d177f3a2e810ad42c815fdf8d38bdf4f31a60c385c51c8ee523c"},
     {"bytes": 124, "out": "mlstring_carrier_probe.out", "rows": 8, "sha256": "e8b8357a39a6b420d116bbc50825e2a3524450ef6e638d914bc8639d4dccbaf8"},
+    {"bytes": 870, "out": "mmio_index_probe.out", "rows": 42, "sha256": "86e15df3e87fc692913a79de8a99c582bff836461236bd46f7ed25027800b47c"},
     {"bytes": 129, "out": "monad_array_length_probe.out", "rows": 6, "sha256": "407821e56eb5ebca18e92fd0bb9320bba0843b5f8e2c059f57547ecf63c1f823"},
     {"bytes": 176, "out": "monad_arrays_probe.out", "rows": 11, "sha256": "5c67190b46f6c254947a53fef2353fb6ffddf035c698564335b55d19c0959691"},
     {"bytes": 278, "out": "monad_base_probe.out", "rows": 10, "sha256": "676b6f2fa69d0482ac1fd8f7b2e0d5bfa5eeacc973929d93562f31086cb58e56"},

@@ -1,3 +1,9 @@
+`mmio_index_probe.out` captures the full original optional-boundary definition
+and inferred type plus40 assumption-free proved choice equations for every
+external/read/write name list of length0..3. Matching kernel fixtures preserve
+all-external/end-of-list boundaries, all-shared/zero boundaries and mixed-order
+rejection. A generic kernel uniqueness proof justifies the choice translation.
+
 `init_memory_probe.out` records the full original initializer definition/type,
 64 complete output trees, and 64 true equalities to independently written
 constructor trees. Matching kernel fixtures cover widths1/8/64/80, zero/aliased/
