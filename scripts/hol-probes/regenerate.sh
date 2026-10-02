@@ -4013,3 +4013,7 @@ run_probe target_sem_machine_sem_probeScript.sml target_sem_machine_sem_probe.ou
 run_probe ssa_reconcile_get_vars_probeScript.sml ssa_reconcile_get_vars_probe.out \
   ssa_reconcile_get_vars_original_proof ssa_reconcile_get_vars_original_type \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_stack_free_probeScript.sml stack_remove_stack_free_probe.out \
+  single_stack_free_full_def stack_free_full_def single_stack_free_equation single_stack_free_type stack_free_type free_64_0 free_64_1 free_64_255 free_64_256 free_64_510 free_64_511 free_64_512 free_8_256 free_1_256 free_80_511 single_8_256 single_8_511 single_1_255 single_80_511 \
+  "$cake_dir/compiler/backend/stack_removeScript.sml" "$cake_dir/compiler/backend"

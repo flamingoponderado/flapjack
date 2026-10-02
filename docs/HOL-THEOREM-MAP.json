@@ -52235,5 +52235,23 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-02 (58wf), original lines6524-6549: forall source list/current SSA tree/native WordSem state, original ALL_DISTINCT and per-member lookup existence imply existential get_vars of MAP(THE lookup), exact LENGTH and all in-bounds EL lookup equations. List/Nodup/MEM and sptree num_map stay literal; exact holThe and holEl retain missing/out-of-bounds unspecified values, no premise requiring SSA lookup success added. Imported canonical native WordSem carrier only fpRegs/store are finite-support maps, locals/current SSA are trees; same-module non-vacuous full toBroad/ofBroad carrier roundtrip. Standard positive BitVec width and universe-zero code/FFI host translation, no changed quantifier/premise/conclusion. Native getVars/getVar list induction kernel checked; distinctness retained though unused beyond induction."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StackFree.lean",
+    "lean_name": "singleStackFree",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "single_stack_free_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.1), stack_removeScript.sml 89-92: exact native Inst(Arith(Binop Add k k (Imm(word_offset n)))); arbitrary Nat pointer/count, no register range or word-fit premise, no macro constant/scratch register. Full native HolProg uses original constructor arities/asm payloads and faithful mlstring; standard positive BitVec width with NeZero translates HOL dimension, byte stride width DIV8 and n2w wraps at that same width. No changed quantified inputs/conditions/result. Native definition/equation proofs kernel checked. Production replacement and full recursive comp remain separately open on dependency-linked36ez.3; no compiler simulation asserted."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StackFree.lean",
+    "lean_name": "stackFree",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "stack_free_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.1), stack_removeScript.sml 94-102: zero Skip, count<=255 single_stack_free, larger ordered Seq single255 then recursion(count-255); same Nat measure/termination, no output normalization or redundant terminal Skip. Uses reviewed max_stack_alloc255 and numeric word_offset. Full native HolProg uses original constructor arities/asm payloads and faithful mlstring; standard positive BitVec width with NeZero translates HOL dimension, byte stride width DIV8 and n2w wraps at that same width. No changed quantified inputs/conditions/result. Native definition/equation proofs kernel checked. Production replacement and full recursive comp remain separately open on dependency-linked36ez.3; no compiler simulation asserted."
   }
 ]
