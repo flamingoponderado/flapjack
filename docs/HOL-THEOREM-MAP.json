@@ -66818,6 +66818,23 @@
     "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-remove-seq: genuine original comp_correct Seq1645-1663, full theorem1481-1490. Same four evaluation/nonError/full26conjunct state relation/register bound premises and existential target run at ck+target.clock; same Halt/TimeOut/FinalFFI ffi equality versus full stateRelHOL result split. Only original subprogram induction hypotheses: first fixed at actual source, second guarded by actual first NONE run; both retain arbitrary result/poststate/target/pointer/bounds/jump quantifiers. Rewritten HOL evaluator equation recovered in Lean from checked unconditional full fixClockEvaluate; actual target NONE run extended by original evaluateAddClock (NONE is not TimeOut), additional allowances combined by Nat associativity/commutativity. No target-evaluation, global simulation law, extra clock bound or successful-pass premise. Canonical native finite-support regs/fpRegs/store witness reexported from owning imported state; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scoped HOL statement proved by literal original Seq case body, prefixed only rpt strip_tac for standalone constructor goal."
   },
   {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Insert.lean",
+    "lean_name": "addToTLB",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "addToTLB_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript5079-5385, complete sixteen-slot FOR scan. The six-component accumulator retains found-empty, candidate index, minimum age, updated table, new entry, and native state. Some uses strict unsigned age comparison and changes only candidate/minimum; None fills only the first empty slot. The initial candidate is zero and minimum is sign-extended one-bit one, so a full all-maximum-age table replaces slot zero. Final replacement occurs only when no empty slot was filled. mkTLBEntry retains arbitrary level and current-core age; no core, address, level or table restriction is added. Eight original HOL rows observe every slot at empty/multiple-hole/last-hole/full ascending/tie/all-max/last-oldest/early-oldest tables, replayed in L3MmuInsertParity. Fixed BitVec 4/6/64 and native SV_PTE/TLBEntry/riscv_state are literal source carriers. Original function-valued table retained; no finite-map representation qualifier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_seq_neq_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompSeqShape.lean",
+    "lean_name": "compSeqNeqImp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.7: original74-83 full comp_seq_neq_IMP. Arbitrary native first/second/default programs and actual Spt Nat info; sole original comp_seq inequality implies exists natural k,dest with first StackFree k and second Call NONE(INL dest)NONE. No successful lookup, frame bound, target evaluation or extra shape premise. Direct matcher proof uses literal compSeq/destCase. Sole positive type-indexed word carrier translation, native tree maps unchanged. Fresh original full statement hypcount0 and five independent branch observations matched kernel fixtures; generic theorem application separates proof from observations. Axiom audit only propext/Quot.sound. Full label/simulation parents remain open."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/If.lean",
     "lean_name": "compCorrectIf",
     "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
@@ -66831,6 +66848,210 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-remove-if: genuine original comp_correct If1687-1702/full theorem1481-1490. Same four actual source evaluation/nonError/full26state relation/register bound premises; same existential native target run at ck+target.clock and Halt/TimeOut/FinalFFI ffi equality versus full stateRelHOL result split. Only original branch IHs guarded by actual source get_var/get_var_imm lookups and word_cmp SOME true/false; both retain arbitrary result/poststate/target/pointer/bounds/jump quantifiers. Target register/immediate lookups derived from full relation and original operand register bound, unchanged under added clock; comparison follows same native wordSemWordCmp on identical full WordLocW values. Native comp preserves condition and compiles actual branches. No target-evaluation, target lookup/comparison, unconditional simulation or successful-pass premise added. Invalid source lookup/comparison errors eliminated only by original nonError premise. Imported owning native finite-support regs/fpRegs/store codec witness reexported; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scopedHOL statement proved with literal original If case body, only standalone rpt strip_tac prefix and recreated original local state_rel_get_var helper."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Walk.lean",
+    "lean_name": "walk64",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "walk64_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript4745-4960 complete recursive tDef. The original measure is level, retained directly for termination. PTE address uses the 36-bit VPN shifted by level*9, its low nine bits widened and shifted by three. Invalid PTE and level-zero pointer return None with unchanged state. Other pointers recur at level-1 with the PPN shifted within 38 bits before widening. Leaves retain permission-returned state, set R and set D only for Write, and write eight bytes only when either bit changes. Superpage PPN/VPN mixing keeps 38-bit and 36-bit operations before concatenation with the 12-bit offset; no alignment rejection or global-bit accumulation is added. The whole returned option, updated PTE, level, global bit, PTE address and native state are retained. Fixed word widths/native carriers and function-valued MEM8 are literal. Explicit level measure agrees with original tDef termination argument; no added premise or bounded evaluator. Original probes replay complete result payload plus both PTE memory words in L3MmuWalkParity."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_LN",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompLn.lean",
+    "lean_name": "compLn",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.1: original55-71 full forall (i:num num_map) b, comp_top LN b=b and comp LN b=b. Retains unused arbitrary i at actual Spt Nat and arbitrary native HolProg b, full conjunction/order, no hypothesis. Actual comp functional induction includes Seq/If/Loop/returning continuation/optional handler and remaining constructors; NONE-return handlers unchanged. Empty info makes every compSeq lookup fallback, explicit matcher split retains source behavior. Sole positive type-indexed word translation. Fresh original full statement hypcount0 and four complete paired output trees matched kernel fixtures separately from generic theorem application; axiomsonlypropext/Quot.sound. Full simulation/production obligations remainOPEN."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ComputedLabelPositions.lean",
+    "lean_name": "labLookup_computeLabels_position",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lab_lookup_compute_labels_test",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: complete original six guards, arbitrary nested numeric sptree accumulator, actual loc_to_pc premise and computed lab_lookup equality to pos_val preserved. Native constructor carriers and type-indexed positive-width word translation reviewed; no desired lookup, callback, freshness or successful encoding premise added. Original unused nop : beta binder is explicitly retained at independent generic beta, never specialized to a word/list carrier; repaired per coordinator source-shape review. Original local literal Q.prove replays full statement/proof with zero open hypotheses and captures all quantified types. Original source and native section-boundary/accumulator regression cases supplement kernel checking, not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabelsLoop.lean",
+    "lean_name": "removeLabelsLoop_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "remove_labels_loop_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison5922-6129: complete original twelve guards (actual execution, ending labels, section validity, both distinctness conditions, accumulator-domain disjointness, restricted label inclusion, encoding precondition, encd0, encOk, initial parity and OPTION_ALL parity of every initial lookup) and all eight conclusions retained. Clock induction uses actual recursive encoder output, establishing all retry guards; successful branch establishes NOP/alignment/prefix/position/offset/label existence, full allEncOk, code similarity, odd-instruction alignment, every returned-label evenness, preservation of every initial lookup, and complete original navigation equality. Canonical nested numeric sptrees, native original constructors/opaque mlstring and positive-width word translation reviewed; no fmap qualifier, callback, returned-success or poststate premise added. Explicit original arbitrary unused nop:beta binder retained in full139 dependency. Original literal complete local proof and13 original local prerequisites replay with zero open hypotheses/full types; eight fresh original/native branch cases and genuine discharged-guard theorem consumer supplement kernel checking without asserting cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InitialEncodingPreconditions.lean",
+    "lean_name": "encSecList_pre",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_pre_enc_sec_list",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison6159-6167: arbitrary code, encoder enc and independent configuration c retained; sole original all_enc_ok_pre premise and complete same-predicate result over actual enc_sec_list. Initial encoding changes only bytes/length/offset caches and retains the asm payload inspected by original precondition. Native original constructor carriers, opaque mlstring and positive-width word translation reviewed; no enc=configuration.encode or encoding-success premise. Literal original local full proof/type capture0openhyps, fresh original cases and native fullgeneric/actual arbitrary independent encoder consumer; kernel validity and probes do not establish cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Translate.lean",
+    "lean_name": "translate64",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "translate64_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript5491-5623 complete hit/miss equation. Current ASID and current-core TLB select the first matching entry. A hit checks permission, retains its returned state, and combines physical base with masked virtual offset. Only a Write hit with D=false sets D, writes exactly eight PTE bytes, and updates the same TLB index; R and age remain unchanged. Failure forwards None and the permission-returned state. A miss walks from original SCSR.sptbr at the supplied level, forwards a failed walk state, or inserts the entire successful result into the returned state's TLB using the original ASID. No hit, permission, alignment, level or core-bound hypothesis is added. Fixed word64/ASID6/index4, native state/SV_PTE/TLBEntry and function-valued core maps retained exactly. Nine original observations replay complete optional physical address, all nine entry fields in every slot and the PTE memory word. Both observation languages leave other state fields unobserved; this regression scope does not replace full source comparison."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "get_labels_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Labels.lean",
+    "lean_name": "getLabelsComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.8: original85-108 full forall info/body get_labels(comp info body)=get_labels body AND get_labels(comp_top info body)=get_labels body. Actual Spt Nat info and positive-width HolProg; faithful StackSem.getLabelsExact predicate sets, not ordered extractor. No validity/success/evaluation/target premise or public IH. Native functional induction handles all recursive/returning/handler clauses; changedSeq derives original literal StackFree/tailCall shape via comp_seq_neq_IMP, splits source lookup/frame comparisons, and proves empty labelset for rewritten rawcall sequences. NONE-return labels ignore handler exactly source. Sole positive type-indexed word translation; actual tree map unchanged. Fresh original full statement hyp0 plus five complete finite set pairs independently kernel-replayed, generic theorem application separate. Axiomsonlypropext/Classical.choice/Quot.sound. Full simulation/production parent remainsOPEN."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListLookup.lean",
+    "lean_name": "llookup",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "LLOOKUP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: original miscScript182-195 overload and direct listTheory reexports compared against actual pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae listScript5482-5528, with six fully closed GEN_ALL source statements captured. LLOOKUP is list-first ordinary zero-based oEL, not reverse indexing. Native getElem? retains both complete nil/cons clauses with natural subtraction and unconditional none outside bounds. DROP uses original m+n offset; TAKE retains only source successful-lookup premise; LUPDATE native List.set preserves all equal/different index and in/out-of-range branches. Arbitrary source payload type and unbounded natural indices retained; no bounds, equality instances or success premises added. Native implementation is shared getElem?, with definitional compatibility witness; 480 fresh original complete outputs include312 Nat and168 positive-width WordLoc rows at widths1/8/64/80 with70bit metadata, empty/duplicate lists and complete prefix/update outputs. Kernel/runtime expected literals come only from original capture. Five optional-only declarations reviewed; source EL-facing THM/EQ_EL captured for audit only, no total-HD/EL port, external trust expansion or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListLookup.lean",
+    "lean_name": "llookupDef",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "LLOOKUP_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: original miscScript182-195 overload and direct listTheory reexports compared against actual pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae listScript5482-5528, with six fully closed GEN_ALL source statements captured. LLOOKUP is list-first ordinary zero-based oEL, not reverse indexing. Native getElem? retains both complete nil/cons clauses with natural subtraction and unconditional none outside bounds. DROP uses original m+n offset; TAKE retains only source successful-lookup premise; LUPDATE native List.set preserves all equal/different index and in/out-of-range branches. Arbitrary source payload type and unbounded natural indices retained; no bounds, equality instances or success premises added. Native implementation is shared getElem?, with definitional compatibility witness; 480 fresh original complete outputs include312 Nat and168 positive-width WordLoc rows at widths1/8/64/80 with70bit metadata, empty/duplicate lists and complete prefix/update outputs. Kernel/runtime expected literals come only from original capture. Five optional-only declarations reviewed; source EL-facing THM/EQ_EL captured for audit only, no total-HD/EL port, external trust expansion or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListLookup.lean",
+    "lean_name": "llookupDrop",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "LLOOKUP_DROP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: original miscScript182-195 overload and direct listTheory reexports compared against actual pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae listScript5482-5528, with six fully closed GEN_ALL source statements captured. LLOOKUP is list-first ordinary zero-based oEL, not reverse indexing. Native getElem? retains both complete nil/cons clauses with natural subtraction and unconditional none outside bounds. DROP uses original m+n offset; TAKE retains only source successful-lookup premise; LUPDATE native List.set preserves all equal/different index and in/out-of-range branches. Arbitrary source payload type and unbounded natural indices retained; no bounds, equality instances or success premises added. Native implementation is shared getElem?, with definitional compatibility witness; 480 fresh original complete outputs include312 Nat and168 positive-width WordLoc rows at widths1/8/64/80 with70bit metadata, empty/duplicate lists and complete prefix/update outputs. Kernel/runtime expected literals come only from original capture. Five optional-only declarations reviewed; source EL-facing THM/EQ_EL captured for audit only, no total-HD/EL port, external trust expansion or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListLookup.lean",
+    "lean_name": "llookupTakeImp",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "LLOOKUP_TAKE_IMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: original miscScript182-195 overload and direct listTheory reexports compared against actual pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae listScript5482-5528, with six fully closed GEN_ALL source statements captured. LLOOKUP is list-first ordinary zero-based oEL, not reverse indexing. Native getElem? retains both complete nil/cons clauses with natural subtraction and unconditional none outside bounds. DROP uses original m+n offset; TAKE retains only source successful-lookup premise; LUPDATE native List.set preserves all equal/different index and in/out-of-range branches. Arbitrary source payload type and unbounded natural indices retained; no bounds, equality instances or success premises added. Native implementation is shared getElem?, with definitional compatibility witness; 480 fresh original complete outputs include312 Nat and168 positive-width WordLoc rows at widths1/8/64/80 with70bit metadata, empty/duplicate lists and complete prefix/update outputs. Kernel/runtime expected literals come only from original capture. Five optional-only declarations reviewed; source EL-facing THM/EQ_EL captured for audit only, no total-HD/EL port, external trust expansion or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListLookup.lean",
+    "lean_name": "llookupLupdate",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "LLOOKUP_LUPDATE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: original miscScript182-195 overload and direct listTheory reexports compared against actual pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae listScript5482-5528, with six fully closed GEN_ALL source statements captured. LLOOKUP is list-first ordinary zero-based oEL, not reverse indexing. Native getElem? retains both complete nil/cons clauses with natural subtraction and unconditional none outside bounds. DROP uses original m+n offset; TAKE retains only source successful-lookup premise; LUPDATE native List.set preserves all equal/different index and in/out-of-range branches. Arbitrary source payload type and unbounded natural indices retained; no bounds, equality instances or success premises added. Native implementation is shared getElem?, with definitional compatibility witness; 480 fresh original complete outputs include312 Nat and168 positive-width WordLoc rows at widths1/8/64/80 with70bit metadata, empty/duplicate lists and complete prefix/update outputs. Kernel/runtime expected literals come only from original capture. Five optional-only declarations reviewed; source EL-facing THM/EQ_EL captured for audit only, no total-HD/EL port, external trust expansion or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Translate.lean",
+    "lean_name": "translateAddr",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "translateAddr_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript5624-5691 complete wrapper. MMPRV selects MPRV1 only for Data; other cases use MPRV. The VM selector always calls vmType and retains its returned state. Mbare and any Machine pair return the original address; Sv39 and Sv48 call exact translate64 at levels two and three. Other pairs return None. Invalid VM selectors retain vmType's original exception and canonical unspecified VM result; no preferred mode or default is introduced. All native carriers, fixed word widths, arbitrary addresses and core maps remain unchanged, with no alignment, privilege or successful-translation premise. Full original definition/type captured;256 original observations and kernel replays cover all8specified VM modes,2fetch kinds,2access kinds,4privilege codes and MMPRV false/true with complementary MPRV1. Observe full optional physical address, all9entry fields×16current-core slots and PTE memory word. Other state fields remain unobserved in both languages; the regression scope does not replace full source comparison. Canonical unspecified invalid VM result is inherited from reviewed vmType; no concrete choice is asserted."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/StateRelation.lean",
+    "lean_name": "stateRel",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "state_rel_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 bead .4.9: literal source30-46 full relation. Arbitrary info Spt Nat and full imported 22-field StackSem state, positive width and independently quantified Type0 configuration/FFI. Existential Spt code has exact predicate-domain equality; target is whole source updated only at code. Therefore all other fields, including compile and compileOracle, remain equal; commented source transport clauses are inactive. Outer state_ok info source.code retained. Every successful source code lookup retains existential independent entryInfo, state_ok entryInfo source.code and exact compTop lookup. Inner source i shadows outer i; no equality between witnesses added. Native code uses actual Spt, not finite-support qualifier. Whole-state equality includes canonical regs/fpRegs/store; imported owner reused without shadowing and same-module genuine roundtrip witness reexported. Lists remain lists, widths and full word/program/FFI carriers unchanged under existing standard translation. Original HOL full type/equation capture and assumption-free generic self/oracle consequences terminal PASS, matching kernel generic proofs. No evaluation/validity/success premise or changed state field. This definition does not establish comp_correct, compile_semantics or executed compiler replacement."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabelsCorrectness.lean",
+    "lean_name": "removeLabels_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "remove_labels_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison6169-6215: complete original eleven guards and six conclusions retained over actual remove_labels success. Encoder validity, ending/valid/distinct labels, domain disjointness, restricted reference inclusion, original encoding precondition, initial parity and OPTION_ALL parity are the only source guards. Initial encoding establishes all genuine loop prerequisites, full remove_labels_loop theorem establishes output encoding validity/similarity/odd-instruction alignment/alllookup parity/initiallookup preservation and every source location-to-physical-position lookup. No callback, returned state validity or desired lookup premise. Native constructor carriers/opaque mlstring and positive-width word translation reviewed; canonical nested numeric sptree is not fmap-qualified. Full139 dependency retains independent arbitrary unused nop binder. Exported original complete theorem/fulltypes0openhyps; nine fresh original/native cases incl arbitrary accumulator preservation, both encoder alignments and1/80bit widths, plus fullgeneric fixture and actual discharged11guard theorem consumer. Kernel checking and oracle regressions do not establish cross-language equivalence or full machine/compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "dropDropEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_DROP_EQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "takeTakeMin",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "TAKE_TAKE_MIN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "takeDropEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "TAKE_DROP_EQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "dropTakeNil",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_TAKE_NIL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "takeLupdate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "TAKE_LUPDATE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "dropLupdateGe",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_LUPDATE_lemma1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "dropLupdateLt",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_LUPDATE_lemma2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "dropLupdate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_LUPDATE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "minAdd",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MIN_ADD",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Loop.lean",

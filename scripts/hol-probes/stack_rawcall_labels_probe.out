@@ -1,0 +1,7 @@
+labels_statement=∀i e. get_labels (comp i e) = get_labels e ∧ get_labels (comp_top i e) = get_labels e
+labels_hypotheses=0
+labels_equal=(∅,∅)
+labels_smaller=(∅,∅)
+labels_larger=(∅,∅)
+labels_return_handler=({(3,4); (31,37)},{(3,4); (31,37)})
+labels_tail_handler=(∅,∅)
