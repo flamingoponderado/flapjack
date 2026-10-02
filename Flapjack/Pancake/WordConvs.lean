@@ -275,10 +275,13 @@ def instOkLess {width : Nat} (config : AsmConfig width) :
       asmFpRegOk config destination && asmFpRegOk config source
   | _ => true
 
-/-- HOL `wordConvs$full_inst_ok_less_def` (`wordConvsScript.sml:318-345`): the
-weaker per-instruction validity predicate lifted over the program, with the
-`ShareInst` address-expression restriction via `expToAddr`. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "full_inst_ok_less_def"]
+/-- Broad program-validity predicate retained as Flapjack infrastructure.
+It is not an exact full_inst_ok_less port: AsmConfig.encode consumes AsmData
+and returns UInt8 lists, unlike HOL asm_config's HolAsm/word8 encoder, and its
+width-general binder admits BitVec0. It delegates to the deliberately untagged
+broad instOkLess. Faithful exact-carrier lifting is tracked by
+flapjack-word-convs-full-inst-native, a prerequisite of full assembler naming.
+The predicate's clauses and executed behavior are unchanged by tag withdrawal. -/
 def fullInstOkLess {width : Nat} (config : AsmConfig width) :
     WordLangProgHOL (BitVec width) → Bool
   | .inst value => instOkLess config value
