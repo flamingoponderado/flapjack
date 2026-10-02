@@ -1934,7 +1934,7 @@ scripts/hol-probes/regenerate.sh`. The `evaluateSeq`/`evaluateIf`/`evaluateLoop`
 fragments are untagged; the tagged ports of `fix_clock_def`, `cont_loop_def`,
 `exit_loop_def`, `get_var_imm_def`, `empty_env_def` and `dec_clock_def` live in
 `StackSem/Control.lean` and `StackSem/StateOps.lean`, and assembled full
-evaluation remains on `y19g`/`y19g.18`.
+evaluation remains on `y19g`/`y19g.18`. The same eleven rows are also replayed through the assembled total evaluator `evaluateHOL` (no stubbed sub-evaluations) in `Flapjack/Test/StackSemEvaluateParity.lean`.
 
 `stacksem_jumplower_probeScript.sml` records eight direct original
 `stackSem$evaluate` observations for the `JumpLower` clause

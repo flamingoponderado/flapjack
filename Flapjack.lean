@@ -596,6 +596,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
 import Flapjack.Compiler.Backend.Semantics.StackSem.FpInstructions
 import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
 import Flapjack.Compiler.Backend.Semantics.StackSem.InstCase
+import Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
