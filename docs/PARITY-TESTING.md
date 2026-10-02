@@ -361,3 +361,16 @@ widths 1/2/8/64/80, two frames, and 70-bit register names. All captured Boolean
 results are true. This is regression evidence, not a HOL-to-Lean equivalence
 proof or a replay of the complete original theorem proof. Full recursive
 register-bound assembly remains separate work.
+
+The `word_to_stack_reg_flat_probeScript.sml` capture supplies 19 full original
+nonrecursive register-bound case applications with all original guards. Its
+matched Lean fixtures cover 420 positive source-guard/target pairs and 120
+negative source guards, at widths 1/2/8/64/80 and three frames. There are 375
+direct original compiler-predicate EVALs and 45 original Alloc case applications;
+the latter avoid evaluating bitmap contents irrelevant to the bound. Cases
+include cycles and the scheduler temporary, self moves, 70-bit registers and
+frame offsets, malformed cutsets, rejected Set expressions, empty returns, and
+original Install/FFI register conventions. All 840 positive Boolean observations
+are true and all 120 negative guards are false. This is regression evidence,
+not a replay of the complete original proof or cross-language equivalence.
+Recursive/Call register-bound assembly remains separate unfinished work.
