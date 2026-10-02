@@ -66834,5 +66834,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison5922-6129: complete original twelve guards (actual execution, ending labels, section validity, both distinctness conditions, accumulator-domain disjointness, restricted label inclusion, encoding precondition, encd0, encOk, initial parity and OPTION_ALL parity of every initial lookup) and all eight conclusions retained. Clock induction uses actual recursive encoder output, establishing all retry guards; successful branch establishes NOP/alignment/prefix/position/offset/label existence, full allEncOk, code similarity, odd-instruction alignment, every returned-label evenness, preservation of every initial lookup, and complete original navigation equality. Canonical nested numeric sptrees, native original constructors/opaque mlstring and positive-width word translation reviewed; no fmap qualifier, callback, returned-success or poststate premise added. Explicit original arbitrary unused nop:beta binder retained in full139 dependency. Original literal complete local proof and13 original local prerequisites replay with zero open hypotheses/full types; eight fresh original/native branch cases and genuine discharged-guard theorem consumer supplement kernel checking without asserting cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InitialEncodingPreconditions.lean",
+    "lean_name": "encSecList_pre",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_pre_enc_sec_list",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison6159-6167: arbitrary code, encoder enc and independent configuration c retained; sole original all_enc_ok_pre premise and complete same-predicate result over actual enc_sec_list. Initial encoding changes only bytes/length/offset caches and retains the asm payload inspected by original precondition. Native original constructor carriers, opaque mlstring and positive-width word translation reviewed; no enc=configuration.encode or encoding-success premise. Literal original local full proof/type capture0openhyps, fresh original cases and native fullgeneric/actual arbitrary independent encoder consumer; kernel validity and probes do not establish cross-language equivalence."
   }
 ]

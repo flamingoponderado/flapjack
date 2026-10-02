@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
 import Flapjack.RiscV.L3.Defs.MMU.TLB
