@@ -49083,5 +49083,29 @@
     "hol_name": "transitive_GT",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 full source comparison2026-10-02 sorted-relations: Complete original local1266-1290 arbitrary relations/payload lists and Nat registers. Adjacent Boolean relation zip/tail all representation compared to original SORTED_DEF, ALL_DISTINCT is native List.Nodup. Weakening keeps exactly source sorted R, distinct list and member/member/neq/Rxy guards on transfer to Rprime; no allpairs sortedness or unconditional relation inclusion premise. EVEN is Nat remainderzero at divisor2 (reviewed equivalent to original EVEN_EXISTS), division is truncating Nat division; strictdivision order retains both even premises and strictgreater. Natural greater transitivity retains original two antecedents. All full native proofs via list induction and Nat arithmetic, no additional target hypothesis/instance/carrier constraint. Fresh3literal whole original proofs hyp=[],oneoriginalrelationtype and99matching kernel/oracle closed whole-theorem applications (36relation/distinctness boundary fixtures,36even/division and27transitive cases incl80bit naturals);103labels plus1generic arbitrarypayload/relation application. Finite EVERY member tests in weakening fixtures instantiate the original universal transfer restricted to inputlist; full Lean theorem keeps universal guard. Native adjacent helper untagged Flapjack-only infrastructure, no new external sortedness/even tags or source allowance. Source1515ff filter_bitmap reconstruction dependency; full environment sort/pass/compiler simulations remainunfinished, individual totalHD/EL/GC holds intact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LiveListSupport.lean",
+    "lean_name": "prefixDrop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "isPREFIX_DROP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Original1312-1338 arbitrary payload lists and natural indices. Native IsPrefix/drop matches original isPREFIX/DROP; optional getElem? matches LLOOKUP = oEL including out-of-range none, independent of held total EL. Lookup retains exact m<n guard and both subtraction offsets. EVEN is remainderzero at divisor2, DIV2 is natural division2, both even and equaldivision antecedents retained; arbitrary unbounded naturals. No extra assumptions, altered carriers or target success premises. Native kernel proofs and fresh literal original proof replays/244 matching closed implication boundary fixtures; no full evaluate_wLive or compiler simulation claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LiveListSupport.lean",
+    "lean_name": "lookupConsSuc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LLOOKUP_cons_SUC",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Original1312-1338 arbitrary payload lists and natural indices. Native IsPrefix/drop matches original isPREFIX/DROP; optional getElem? matches LLOOKUP = oEL including out-of-range none, independent of held total EL. Lookup retains exact m<n guard and both subtraction offsets. EVEN is remainderzero at divisor2, DIV2 is natural division2, both even and equaldivision antecedents retained; arbitrary unbounded naturals. No extra assumptions, altered carriers or target success premises. Native kernel proofs and fresh literal original proof replays/244 matching closed implication boundary fixtures; no full evaluate_wLive or compiler simulation claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LiveListSupport.lean",
+    "lean_name": "evenDiv2Inj",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EVEN_DIV2_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Original1312-1338 arbitrary payload lists and natural indices. Native IsPrefix/drop matches original isPREFIX/DROP; optional getElem? matches LLOOKUP = oEL including out-of-range none, independent of held total EL. Lookup retains exact m<n guard and both subtraction offsets. EVEN is remainderzero at divisor2, DIV2 is natural division2, both even and equaldivision antecedents retained; arbitrary unbounded naturals. No extra assumptions, altered carriers or target success premises. Native kernel proofs and fresh literal original proof replays/244 matching closed implication boundary fixtures; no full evaluate_wLive or compiler simulation claim."
   }
 ]

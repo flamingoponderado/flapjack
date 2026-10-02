@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackLiveListParity
 import Flapjack.Test.LabValidityNativeParity
 import Flapjack.Test.StackToLabNativeParity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
