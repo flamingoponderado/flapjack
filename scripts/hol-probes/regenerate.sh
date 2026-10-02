@@ -4047,3 +4047,7 @@ run_probe balanced_map_core_probeScript.sml balanced_map_core_probe.out \
 run_probe balanced_map_rotations_probeScript.sml balanced_map_rotations_probe.out \
   bml_0 bml_1 bml_2 bml_3 bml_4 bml_5 bml_6 bml_7 bml_8 bml_9 bml_10 bml_11 bml_12 bml_13 bmr_0 bmr_1 bmr_2 bmr_3 bmr_4 bmr_5 bmr_6 bmr_7 bmr_8 bmr_9 bmr_10 bmr_11 bmr_12 bmr_13 bml_definition bmr_definition \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"
+
+run_probe balanced_map_insert_probeScript.sml balanced_map_insert_probe.out \
+  bmi_0_3 bmi_0_10 bmi_0_17 bmi_1_3 bmi_1_10 bmi_1_17 bmi_2_3 bmi_2_10 bmi_2_17 bmi_3_3 bmi_3_10 bmi_3_17 bmi_4_3 bmi_4_10 bmi_4_17 bmi_equal_distinct bmi_definition \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"

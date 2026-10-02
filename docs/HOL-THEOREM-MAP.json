@@ -52620,5 +52620,13 @@
     "hol_name": "balanceR_def",
     "statement_status": "pending_statement_review",
     "reviewer": "flapjack-sol-b local source comparison 2026-10-02, balanced-map.2: literal HOL479-540 seven outer clauses per direction; cached-size sums, strict delta and ratio guards and malformed-child fallback Tip retained. No invariant premise or primed-helper substitution. All28 original complete output trees kernel replayed, including ignored non-leaf child payloads, inconsistent cached sizes, ratio equality and delta equality. Independent source acceptance open; no insertion invariant or production carrier claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Insert.lean",
+    "lean_name": "insert",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "insert_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source comparison2026-10-02 balanced-map.3 HOL542-549: Tip singleton, Less recursive left then literal balanceL, Greater recursive right then literal balanceR, Equal replaces stored key/value with inserted key/value while retaining original cached size and children. Arbitrary comparator and malformed trees, no invariant/success premise.16 original complete outputs kernel checked plus universal Equal clause. Independent coordinator source acceptance pending, no insertion invariant or executed carrier claim."
   }
 ]

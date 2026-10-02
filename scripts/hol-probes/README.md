@@ -4510,3 +4510,7 @@ equivalence or complete CSE correctness.
 ## Literal balanced-map rotations
 
 `balanced_map_rotations_probe.out` captures28 complete original balanceL/balanceR trees and both full defining equations. Kernel fixtures replay all seven outer patterns, ratio and delta equality thresholds, malformed error branches and cached-size inconsistencies. This is definition regression evidence, not insertion invariant correctness or production wiring.
+
+## Literal balanced-map insertion
+
+`balanced_map_insert_probe.out` captures16 full original insertion trees and the defining equation. Matching kernel fixtures include malformed cached sizes and a comparator equating distinct keys; the latter replaces key and value while retaining size and subtrees. The universal Equal clause is kernel checked. No insertion invariant or production map correspondence is claimed.
