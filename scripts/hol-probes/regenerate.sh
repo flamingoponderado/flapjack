@@ -5479,6 +5479,10 @@ run_probe lab_to_target_update_pad_ending_probeScript.sml lab_to_target_update_p
 run_probe numeric_formatting_probeScript.sml numeric_formatting_probe.out \
   digits_0_0 digits_0_1 digits_0_37 digits_0_123456 digits_1_0 digits_1_1 digits_1_37 digits_1_123456 digits_2_0 digits_2_1 digits_2_37 digits_2_123456 digits_3_0 digits_3_1 digits_3_37 digits_3_123456 digits_10_0 digits_10_1 digits_10_37 digits_10_123456 digits_16_0 digits_16_1 digits_16_37 digits_16_123456 digits_37_0 digits_37_1 digits_37_37 digits_37_123456 hex_0 hex_1 hex_2 hex_3 hex_4 hex_5 hex_6 hex_7 hex_8 hex_9 hex_10 hex_11 hex_12 hex_13 hex_14 hex_15 hex_16 hex_17 hex_999 custom_0 custom_1 custom_3 custom_17 decimal_0 decimal_1 decimal_9 decimal_10 decimal_999 decimal_18446744073709551615 decimal_1329227995784915872903807060280344699 word_base_0 word_base_1 word_base_2 word_base_3 word_hex_0 word_hex_1 word_hex_2 word_hex_3 word_hex_4 word_hex_5 word_hex_6 word_hex_7 \
   "$hol_dir/src/string/ASCIInumbersScript.sml" "$hol_dir/src/n-bit"
+
+run_probe l3_raise_exception_probeScript.sml l3_raise_exception_probe.out \
+  raise_exception_type raise_exception_equation \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
 run_probe stack_remove_comp_load_any_probeScript.sml stack_remove_comp_load_any_probe.out \
   cla_statement cla_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

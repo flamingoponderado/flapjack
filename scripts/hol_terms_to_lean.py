@@ -947,7 +947,8 @@ def render_def(r: Renderer, lean_name: str, term) -> tuple[str, bool]:
     tvs = tyvars(type_of(lhs), [])
     for p in params:
         tyvars(type_of(p), tvs)
-    tv_binders = ''.join(f'{{{tyvar_name(v)} : Type}} [Inhabited {tyvar_name(v)}] ' for v in tvs)
+    # HOL type variables range over nonempty carriers. No chosen Lean default is required.
+    tv_binders = ''.join(f'{{{tyvar_name(v)} : Type}} [Nonempty {tyvar_name(v)}] ' for v in tvs)
     head = f'def {lean_name} ' + tv_binders + ' '.join(binders) + f' : {result_ty} :=\n  {body}'
     return head, recursive
 
