@@ -1,7 +1,7 @@
 name = "Flapjack"
 version = "0.1.0"
 testDriver = "FlapjackTest"
-defaultTargets = ["Flapjack"]
+defaultTargets = ["Flapjack", "FlapjackTest"]
 
 [[require]]
 name = "mathlib"

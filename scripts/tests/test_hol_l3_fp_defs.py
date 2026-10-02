@@ -1,0 +1,56 @@
+"""The isolated FP section is the complete original HOL root dependency closure."""
+import gzip
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parents[2]
+
+class L3FpDefsTest(unittest.TestCase):
+    def args(self, export):
+        return [str(ROOT / 'scripts/hol_terms_to_lean.py'), str(export),
+                str(ROOT / 'Flapjack/RiscV/L3/Types.lean'),
+                'riscv=HOL/examples/l3-machine-code/riscv/model/riscvScript.sml',
+                'riscv_step=HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml']
+
+    def test_complete_selected_closure_matches_source_export(self):
+        roots = json.loads((ROOT / 'scripts/l3/fp_roots.json').read_text())
+        with tempfile.TemporaryDirectory() as directory:
+            export = Path(directory) / 'definitions.sexp'
+            export.write_bytes(gzip.decompress((ROOT / 'scripts/l3/riscv_defs.sexp.gz').read_bytes()))
+            rendered = subprocess.run([sys.executable, *self.args(export), '--roots=' + ','.join(roots)],
+                                      check=True, capture_output=True, text=True).stdout
+        committed = (ROOT / 'Flapjack/RiscV/L3/Defs.lean').read_text()
+        marker = 'open Flapjack.Basis.Pure.MlString\n\n'
+        body = committed.split(marker, 1)[1].rsplit('end Flapjack.RiscV.L3', 1)[0]
+        self.assertEqual(body.rstrip('\n'), rendered.rstrip('\n'))
+        for name in ('writeFPRS', 'writeFPRD', 'setFP_Invalid', 'round', 'setTrap', 'Delta'):
+            self.assertIn('def ' + name + ' ', body)
+        for precision in ('S', 'D'):
+            for op in ('FMIN', 'FMAX', 'FLT', 'FLE', 'FEQ', 'FCLASS'):
+                self.assertIn("def «dfn'" + op + '_' + precision + '»', body)
+            for kind in ('W', 'WU', 'L', 'LU'):
+                self.assertIn("def «dfn'FCVT_" + kind + '_' + precision + '»', body)
+        self.assertNotIn('def walk64 ', body)
+        self.assertNotIn('def Run ', body)
+
+    def test_invalid_root_selection_fails_closed(self):
+        spec = importlib.util.spec_from_file_location('fp_selection_renderer', ROOT / 'scripts/hol_terms_to_lean.py')
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory() as directory:
+            export = Path(directory) / 'definitions.sexp'
+            export.write_bytes(gzip.decompress((ROOT / 'scripts/l3/riscv_defs.sexp.gz').read_bytes()))
+            for selection in ('--roots=riscv$missing', '--roots='):
+                with self.subTest(selection=selection), self.assertRaisesRegex(ValueError, 'unknown or empty'):
+                    module.main(['renderer', *self.args(export)[1:], selection])
+            with self.assertRaisesRegex(ValueError, 'at most one'):
+                module.main(['renderer', *self.args(export)[1:], '--roots=riscv$GPR', '--roots=riscv$GPR'])
+
+if __name__ == '__main__':
+    unittest.main()

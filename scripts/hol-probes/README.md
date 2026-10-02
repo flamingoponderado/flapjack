@@ -5746,3 +5746,61 @@ stack-space overflow, missing/non-word bitmap values, and missing/non-word
 base registers; corresponding Lean fixtures use the actual evaluator carrier.
 The source's local `num_stubs` is `stack_num_stubs`. This evidence verifies
 the relation definition, not the unfinished pass simulation theorem.
+`ssa_install_case_probe.out` captures the full original `ssa_cc_trans_correct` Install specialization, all six premises and complete source-permutation/Error-exempt result/frame/locals conclusion. Native proof derives input guards, compiled preparation, actual callback execution, pointer copy and final rename. Full SSA/end-to-end assembly remain open.
+`ssa_alloc_case_probe.out` captures the full original `ssa_cc_trans_correct` Alloc specialization with all six premises, source permutation/Error exemption, actual target result/frame and result-sensitive locals. Native SSA Alloc derives rename/count preparation, GC transport, normal restoration and exhausted-space stopping; full SSA assembly remains open.
+
+Return CallArgs probe captures the full original call_args_def and replays three complete original helper proofs with no open hypotheses.786 direct predicate EVAL observations (627true159false) match kernel fixtures with expectations read from fresh original captures, widths1/2/8/64/80. Full program/instruction families, two five-register conventions, ignored/active handlers,330stack-move/return cases, all Boolean modes and70bit offsets are covered. Full compiler call-argument preservation remains open; this regression evidence is not cross-language equivalence. Selector: HOL_PROBE_ONLY=word_to_stack_return_call_args_probeScript.sml.
+
+### Native StackRemove relation register and clock laws
+
+`stack_remove_statelaws_probeScript.sml` independently reproves the literal
+`state_rel_get_var`, `state_rel_IMP`, `state_rel_with_clock`, and
+`state_rel_const` statements from the pinned full state relation and actual
+StackSem state operations. These source-local results are not all exported
+by the original theory, so the probe proves their complete original statements
+and records every quantified binder type. The constant-field result retains
+both compile/oracle transports, and decrement/common-clock laws quantify
+arbitrary clocks, including zero. This does not prove `comp_correct`.
+
+## Isolated native L3 floating-point section
+
+The selected roots are complete original FP comparison and float-to-integer
+state equations at both precisions, with their entire source dependency closure.
+The isolated module includes50 model declarations; full Run/NextRISCV and other
+instructions remain tracked elsewhere. The original comparison probe captures
+83 rows with80 transition kernel replays; the conversion probe captures96
+fully numeric tuples, all kernel replayed; the rounding probe covers22 inputs.
+The real rendering assumption is explicit as SOUNDNESS item8 and qualified
+at the18 declarations that directly use those operations. Remaining state
+access/update/rounding equations have individual complete source comparisons.
+The source-derived root selection validates dependencies; it does not prove
+HOL-to-Lean equivalence, and the broader pending model is not integrated here.
+Full compiler CallArgs probe captures the entire original generic theorem application,140direct post-allocation guard EVALs and140same-input full theorem applications, matched in kernel across widths1/2/8/64/80 and all source constructors/three Call branches. Includes nested allocations and malformed ignored tail handlers. Lean theorem retains the full original post_alloc_conventions/perf=F premises and discharges every recursive hypothesis internally. No direct target EVAL/full original proof replay/cross-language equivalence is claimed. Selector: HOL_PROBE_ONLY=word_to_stack_call_args_compiler_probeScript.sml.
+### Full StackRemove simulation Skip/Halt/Alloc cases
+
+`stack_remove_comp_atoms_probeScript.sml` reproves the first three genuine
+`comp_correct` cases from the pinned original compiler, evaluator and full
+state relation. Every case keeps all four original premises and the
+existential extra clock/target poststate, same-result evaluation and complete
+result-dependent FFI/state-relation conclusion. Full binder types are captured.
+Halt permits either Word or Loc payloads; Alloc is excluded by the original
+relation's allocation flag and original non-Error premise. No target run is
+assumed. The remaining constructor cases and assembly are still required.
+
+## Full original L3 FCLASS state observations
+
+`l3_riscv_fclass_probe.out` records28 complete original FCLASS_S/D state
+observations: all ten classes, noncanonical and negative quiet NaNs (original
+canonical-only bit9), negative signaling NaNs and zero destination. Kernel
+replays preserve source words, NV/NX, MFS, Delta.data1 and other-core GPRs.
+These fixtures are regression evidence, not whole-model equivalence.
+### Full StackRemove Tick and control-transfer simulation cases
+
+`stack_remove_comp_control_probeScript.sml` reproves the genuine Tick, Return,
+Raise, Break and Continue cases with the same complete original four premises
+and existential target evaluation/result condition. Each complete statement,
+quantified binder type and kernel proof is captured. Tick includes the zero
+clock TimeOut path and arbitrary nonzero decrement path; Return/Raise derive
+Loc-only success from the original run/non-Error premises. Break/Continue
+retain their actual successful results and unchanged state. No target run or
+extra successful lookup is supplied. Full remaining simulation is still open.
