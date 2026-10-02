@@ -4998,3 +4998,6 @@ run_probe word_to_stack_reg_bound_mono_probeScript.sml word_to_stack_reg_bound_m
 run_probe lab_to_target_nop_insert_encoding_probeScript.sml lab_to_target_nop_insert_encoding_probe.out \
   lines_enc_with_nop_add_nop lines_enc_with_nop_add_nop_types mixed_before_after mixed_full_tuple labfirst_before_after labfirst_full_tuple all_labels_unchanged empty_unchanged halt_before_after call_before_after one_byte_guard_required \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_staterel_probeScript.sml stack_remove_staterel_probe.out \
+  sr_def sr_type sr_star_shape sr_width1 sr_width8 sr_width80 sr_source_stack sr_source_store sr_target_stack sr_target_store sr_source_alloc sr_target_alloc sr_stack_space sr_bitmap_none sr_bitmap_loc sr_base_none sr_base_loc \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

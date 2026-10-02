@@ -2,6 +2,7 @@ import Flapjack.Test.LabToTargetNopInsertEncodingParity
 import Flapjack.Test.LabToTargetNopPaddingParity
 import Flapjack.Test.MiscTakeFlatReplicateParity
 import Flapjack.Test.LabToTargetValidityNopParity
+import Flapjack.Test.StackRemoveStateRelation
 import Flapjack.Test.LabToTargetNopInvariantParity
 import Flapjack.Test.LabToTargetLengthCorrectnessParity
 import Flapjack.Test.LabToTargetPaddingLengthPropsParity
