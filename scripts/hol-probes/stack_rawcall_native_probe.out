@@ -1,14 +1,7 @@
 rawcall_equal=RawCall 7
-
 rawcall_smaller=Seq (StackFree 2) (RawCall 7)
-
 rawcall_larger=Seq Tick (Seq (StackAlloc 2) (RawCall 7))
-
 rawcall_missing=Seq (StackFree 4) (Call NONE (INL 7) NONE)
-
 rawcall_top_preserved=Seq (StackFree 4) (Call NONE (INL 7) NONE)
-
 rawcall_tail_handler_untouched=Call NONE (INL 9) (SOME (Seq (StackFree 4) (Call NONE (INL 7) NONE),31,37))
-
 rawcall_return_handler_compiled=Call (SOME (RawCall 7,2,3,4)) (INL 9) (SOME (RawCall 7,31,37))
-

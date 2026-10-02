@@ -1,7 +1,7 @@
 load "preamble"; load "stack_rawcallTheory";
 open HolKernel Parse bossLib preamble stack_rawcallTheory;
 val _ = Globals.linewidth := 1000000;
-fun emit label tm = (print(label ^ "="); print_term(rconc(EVAL tm)); print "\n");
+fun emit label tm = (print(label ^ "="); print_term(rconc(EVAL tm)));
 val _ = emit "rawcall_equal" ``comp (insert 7 4 LN) (Seq (StackFree 4) (Call NONE (INL 7) NONE):64 stackLang$prog)``;
 val _ = emit "rawcall_smaller" ``comp (insert 7 2 LN) (Seq (StackFree 4) (Call NONE (INL 7) NONE):64 stackLang$prog)``;
 val _ = emit "rawcall_larger" ``comp (insert 7 6 LN) (Seq (StackFree 4) (Call NONE (INL 7) NONE):64 stackLang$prog)``;
