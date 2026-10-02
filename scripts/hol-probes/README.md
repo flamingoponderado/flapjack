@@ -4602,3 +4602,7 @@ These are full original helper theorems, not a bitmap decoder simulation.
 Native SSA register-writing probe replays original Assign/Get/LocValue exp_tac2 and its local prerequisites, omitting only the discarded recursive-induction assumption for primitive cases. Captures full statements and source carrier types. This HOL evidence supplements source review and Lean kernel checks.
 
 SSA state-writing probe replays original Set/Store semantic cases and local prerequisites, captures full statements and six original carrier types. Primitive Set omits only discarded recursive IH bookkeeping; Store substitutes its expression binder. Source errors and successful native store/memory updates are preserved.
+
+`lab_to_target_ignore_clocks_probeScript.sml` replays the complete original local proof18-27 and checks the full closed statement. `LabToTargetIgnoreClocksParity.lean` applies the corresponding unrestricted kernel theorem; both original non-TimeOut runs are retained.
+
+`target_props_clock_io_events_probeScript.sml` replays the full original `evaluate_add_clock_io_events_mono` theorem (targetPropsScript.sml:1112-1137), including only clock order and no open hypotheses. `TargetPropsClockIoEventsParity.lean` checks the same full statement over the literal evaluator. Paired clock induction retains every transition and uses full input-event prefix preservation at clock zero.

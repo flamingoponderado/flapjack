@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
+import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackRemove.Comp
 import Flapjack.Compiler.Backend.StackRemove.CopyLoop
@@ -25,7 +27,6 @@ import Flapjack.Compiler.Backend.StackRemove.StoreAddress
 import Flapjack.Compiler.Backend.StackRemove.StackAlloc
 import Flapjack.Compiler.Backend.StackRemove.StackAddress
 import Flapjack.Compiler.Backend.StackRemove.StackFree
-import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl

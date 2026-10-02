@@ -4129,3 +4129,11 @@ run_probe ssa_cc_trans_correct_register_writes_probeScript.sml ssa_cc_trans_corr
 run_probe ssa_cc_trans_correct_state_writes_probeScript.sml ssa_cc_trans_correct_state_writes_probe.out \
   ss_set_full ss_store_full ss_type_st ss_type_cst ss_type_expr ss_type_store ss_type_n ss_type_lt \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_ignore_clocks_probeScript.sml lab_to_target_ignore_clocks_probe.out \
+  lt_ignore_full_statement lt_ignore_type \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe target_props_clock_io_events_probeScript.sml target_props_clock_io_events_probe.out \
+  tp_clock_io_full_statement tp_clock_io_type \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
