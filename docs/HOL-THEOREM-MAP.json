@@ -65121,5 +65121,35 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 original420-548: exactly original fullstateRel, result/postsource pair equality to available-space conditional (HaltWord2/emptyEnv or NONE/stackSpace-count), countnonzero and maxStackAlloc bound. Existential native singleStackAlloc targetevaluation with target.clock+clock and original ifspace<count FFI equality else fullpostrelation. Both jumptrue and conditionalfalse native paths retained, actual Sub/Add/SeqfixClock/operandcodec/evaluation; original bounds derive unsigned guard via kernel allocationGuard, no guardresult premise. Overflow actual StackErrLab stub lookup from fullstateRel, findCode/decClock/const/halt executed; clock1 witness supplies jumpclock. Conditional overflow also clock1 witness allowed by original existential/FFIonly branch. Successful clock0 and full26postrelation derived by untagged source-local stateRelAllocStep, no supplied postrelation. Positive width nativeBitVec/HolProg, Type0 C/F and actual canonical imported regs/fpRegs/store with same-module genuine witness; Sptcode excluded. Entire evaluator inherits reals_as_rational_cuts assumption explicitly retained. Fresh literal original full theorem proof already replayed in allocation-guard probe ag_statement/ag_proved; no executablechange or newtrust."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackAllocSimulation.lean",
+    "lean_name": "evaluateStackAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "evaluate_stack_alloc",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-alloc): original stack_removeProofScript.sml550-618 recursive evaluate_stack_alloc and2107-2117 genuine StackAlloc compiler case. Same original source evaluation/nonError/full state relation hypotheses, constructor regBound retained, existential clock/native target execution and full postrelation or FFI conclusion. Original recursive forall non-Halt conditional retained. Both native jump modes, arbitrary counts including overflow, actual Seq clock clamps, reserved pointer guard derived from source reserve/upper bounds; no supplied target evaluation or postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains exact Spt. Inherited reals_as_rational_cuts assumption from the faithful total evaluator; this allocation case has no local real operation. Fresh literal original recursive and constructor proofs replayed successfully."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StackSpace.lean",
+    "lean_name": "compCorrectStackAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-alloc): original stack_removeProofScript.sml550-618 recursive evaluate_stack_alloc and2107-2117 genuine StackAlloc compiler case. Same original source evaluation/nonError/full state relation hypotheses, constructor regBound retained, existential clock/native target execution and full postrelation or FFI conclusion. Original recursive forall non-Halt conditional retained. Both native jump modes, arbitrary counts including overflow, actual Seq clock clamps, reserved pointer guard derived from source reserve/upper bounds; no supplied target evaluation or postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains exact Spt. Inherited reals_as_rational_cuts assumption from the faithful total evaluator; this allocation case has no local real operation. Fresh literal original recursive and constructor proofs replayed successfully."
   }
 ]

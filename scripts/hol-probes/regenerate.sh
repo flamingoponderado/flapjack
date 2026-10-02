@@ -5357,3 +5357,11 @@ run_probe stack_remove_comp_free_probeScript.sml stack_remove_comp_free_probe.ou
 run_probe stack_remove_alloc_guard_probeScript.sml stack_remove_alloc_guard_probe.out \
   ag_statement ag_proved ag_32_0 ag_32_1 ag_32_2 ag_32_3 ag_32_4 ag_64_0 ag_64_1 ag_64_2 ag_64_3 ag_64_4 \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_recursive_alloc_probeScript.sml stack_remove_recursive_alloc_probe.out \
+  ra_statement ra_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_alloc_probeScript.sml stack_remove_comp_alloc_probe.out \
+  ca_statement ca_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
