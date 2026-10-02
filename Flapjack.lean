@@ -311,6 +311,7 @@ import Flapjack.Compiler.Encoders.AsmProps.Encoding
 import Flapjack.Compiler.Encoders.AsmProps.Interference
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp
 import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.StoreConsts
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp

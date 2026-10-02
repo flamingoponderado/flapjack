@@ -6248,6 +6248,12 @@
       "sha256": "5ed33e13f64a4972311c80750d1740ddc36c6425e43153086eebc526220b9dc4"
     },
     {
+      "out": "stackprops_code_bitmaps_probe.out",
+      "sha256": "76c90e781bd2f675dbd0086fc7b97a75362d26f8f81d7c47cd8d38d6abb4891b",
+      "bytes": 1213,
+      "rows": 2
+    },
+    {
       "bytes": 267,
       "out": "stackprops_code_labels_probe.out",
       "rows": 15,

@@ -1,0 +1,27 @@
+evaluate_code_bitmaps=∀(c :α stackLang$prog) (s :(α, β, γ) state) (r :α result option)
+    (s1 :(α, β, γ) state).
+  (evaluate (c,s) :α result option # (α, β, γ) state) = (r,s1) ⇒
+  ∃(n :num).
+    s1.compile_oracle = shift_seq n s.compile_oracle ∧
+    s1.code =
+    FOLDL
+      (union :α stackLang$prog sptree$num_map ->
+              α stackLang$prog sptree$num_map ->
+              α stackLang$prog sptree$num_map) s.code
+      (MAP
+         ((fromAList :(num # α stackLang$prog) list ->
+                      α stackLang$prog sptree$num_map) ∘
+          (FST :(num # α stackLang$prog) list # α word list ->
+                (num # α stackLang$prog) list) ∘
+          (SND :β # (num # α stackLang$prog) list # α word list ->
+                (num # α stackLang$prog) list # α word list))
+         (GENLIST s.compile_oracle n)) ∧
+    s1.bitmaps =
+    s.bitmaps ++
+    FLAT
+      (MAP
+         ((SND :(num # α stackLang$prog) list # α word list -> α word list) ∘
+          (SND :β # (num # α stackLang$prog) list # α word list ->
+                (num # α stackLang$prog) list # α word list))
+         (GENLIST s.compile_oracle n))
+evaluate_code_bitmaps_hypotheses=0
