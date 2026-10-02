@@ -4944,3 +4944,8 @@ and Bool-query/Nat-key/String-result/Bool-payload examples, including malformed 
 FPLess/FPLessEqual/FPEqual specializations and full native state/register/SSA/table
 carriers. Original FP proof8174–8222 and fixed binary64 comparison/fresh word
 result cases are manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fpunary_probeScript.sml` captures original kernel
+FPMov/FPAbs/FPNeg specializations and native carriers. Original FP proof8174–8222
+and unchanged-SSA finite-map FP writes, bit copying and sign-only updates are
+manually reviewed; no standalone tactic replay is claimed.
