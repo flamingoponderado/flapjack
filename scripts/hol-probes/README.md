@@ -6003,3 +6003,5 @@ The directed64 probe freshly captures30 original toward-zero numeric rows and
 Lean kernel replays them. Six up/down signed tie checks are algorithm tests,
 not original HOL oracle evidence. Pinned original finite up/down conversion
 remains unsupported; the separate converter bead retains full144-row L3 scope.
+
+`word_to_stack_asm_name_helpers_probe` captures the original shared config/program word type, freshly replays five exact local proofs at10958-11005 with their original local simp registrations, and records230 naming observations at widths1/2/8/64/80. Both performance/handler flags, empty/direct/indirect/spilled destinations, arbitrary-continuation movement, return-copy counts and zero/nonzero live bitmaps are tested. Count-underflow cases show five nonzero live failures while unconditional helpers still succeed (225T/5F). Lean fixtures replay captured expectations; original proof/kernel validity and regression observations do not establish HOL-to-Lean equivalence.

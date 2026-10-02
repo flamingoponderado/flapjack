@@ -11554,12 +11554,12 @@
     "reviewer": "Codex source review against wordLangScript.sml:323-326: exact Var and Op Add [Var,Const] clauses over WordLangExpHOL, whose Lookup field uses the fixed store_name carrier; all other expressions return none. Direct ShareInst address rows in word_convs_full_inst_ok_less_probe.out exercise this exact function."
   },
   {
-    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
-    "hol_name": "full_inst_ok_less_def",
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/WordConvs.lean",
     "lean_name": "fullInstOkLess",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex source review against wordConvsScript.sml:318-345: Inst delegates to inst_ok_less; recursive clauses and Call NONE behavior match; ShareInst uses exact expToAddrHOL then the matching address-offset class for each memop. Uses exact WordLangProgHOL/WordLangExpHOL and the checked AsmConfig width; all direct fiol_* rows in word_convs_full_inst_ok_less_probe.out are reproduced in WordLangFullInstOkLessParity.lean."
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack broad program-validity predicate, not a faithful HOL port: AsmConfig.encode consumes AsmData and returns UInt8 lists, unlike original positive-width asm_config HolAsm/word8 encoder; width zero is admitted and instOkLess is deliberately width-general/untagged. False reviewed_exact tag withdrawn after comparing original wordConvsScript.sml318-345 and exact config carrier. All semantic clauses/body and broad callers remain unchanged in this focused repair. Faithful positive-width exact program lifting tracked by flapjack-word-convs-full-inst-native and blocks full WordToStack assembler naming; production carrier disposition remains tracked separately. No blanket config encoding equality or cross-language equivalence is claimed."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
@@ -64600,5 +64600,50 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-02 full original4963-4991 offset_ok_pad_code, quantified labs/ffis/pos/code and original free nop retained explicitly. Native positive-word Line/Section HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/BitVec payloads, fixed word8 nop, nested Spt label maps and native HolFfiName list; sole words_as_type_indexed_bitvec translation. All five original conjuncts retained: non-one-byte nop implies EVERY sec_label_zero, EVERY sec_label_one, EVERY sec_label_prefix_zero, all_lab_len_pos_ok input and offset_ok input. Conclusion full offset_ok of actual padCode. Full section induction uses original section padding offset theorem and original one-byte prefix-guarded or arbitrary-NOP zero-label annotation conservation, preserving actual cumulative annotation positions. No encoder/config/alignment/success/callback/output premise or total HD/EL dependency. Fresh full original statement/type capture and nine original/native observations cover original five guards, complete mixed two-section tuples and offsets with nonempty nested label map, zero-label guards, empty/multibyte NOPs, prefix/input-offset counterexamples and width1 empty code; full arbitrary-width statement consumer kernel-checked. Executed compiler bodies unchanged; full remove_labels_loop and end-to-end correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameHelpers.lean",
+    "lean_name": "callDestStackAsmName",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "call_dest_stack_asm_name",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 10958-10971: actual destination output equality implies full setup naming plus INR <= frame-first+1, no room or reg_name premise. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameHelpers.lean",
+    "lean_name": "wLiveStackAsmName",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wLive_stack_asm_name",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 10973-10983: reduced-count room and actual live pair output equality imply setup naming. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameHelpers.lean",
+    "lean_name": "stackMoveStackAsmName",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_stack_asm_name",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 10985-10991: unconditional arbitrary continuation movement naming iff, no reg_name premise. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameHelpers.lean",
+    "lean_name": "copyRetAuxStackAsmName",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_aux_stack_asm_name",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 10993-10999: unconditional return auxiliary naming for all register/offset/count naturals. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameHelpers.lean",
+    "lean_name": "copyRetStackAsmName",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_stack_asm_name",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 11001-11005: unconditional complete wrapper iff, both performance/handler flags and independent original list/frame-tail types. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
   }
 ]
