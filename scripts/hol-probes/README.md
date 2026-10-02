@@ -6153,3 +6153,5 @@ rules after `allow_rebind`, and resolves `state_component_equality` with
 uses the faithful evaluator clauses before the clock-identity rewrite.
 
 `stack_rawcall_ln_probe.out` captures the full universally quantified comp_LN conjunction with no hypotheses and four complete paired comp_top/comp output trees. Generic identity application and kernel tree fixtures retain Seq, Loop, returning handler and ignored tail-handler cases; this is a proof helper, not full compiler simulation.
+
+`stack_rawcall_labels_probe.out` captures the full original get_labels_comp conjunction with zero hypotheses and five complete finite set pairs. Independent kernel fixtures compare predicate sets for all frame comparisons, returning labels/handler labels and ignored NONE-return handlers. The generic proof uses exact StackSem label sets, not ordered extract_labels; no full simulation is claimed.

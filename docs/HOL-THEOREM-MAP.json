@@ -66834,5 +66834,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.1: original55-71 full forall (i:num num_map) b, comp_top LN b=b and comp LN b=b. Retains unused arbitrary i at actual Spt Nat and arbitrary native HolProg b, full conjunction/order, no hypothesis. Actual comp functional induction includes Seq/If/Loop/returning continuation/optional handler and remaining constructors; NONE-return handlers unchanged. Empty info makes every compSeq lookup fallback, explicit matcher split retains source behavior. Sole positive type-indexed word translation. Fresh original full statement hypcount0 and four complete paired output trees matched kernel fixtures separately from generic theorem application; axiomsonlypropext/Quot.sound. Full simulation/production obligations remainOPEN."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "get_labels_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Labels.lean",
+    "lean_name": "getLabelsComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.8: original85-108 full forall info/body get_labels(comp info body)=get_labels body AND get_labels(comp_top info body)=get_labels body. Actual Spt Nat info and positive-width HolProg; faithful StackSem.getLabelsExact predicate sets, not ordered extractor. No validity/success/evaluation/target premise or public IH. Native functional induction handles all recursive/returning/handler clauses; changedSeq derives original literal StackFree/tailCall shape via comp_seq_neq_IMP, splits source lookup/frame comparisons, and proves empty labelset for rewritten rawcall sequences. NONE-return labels ignore handler exactly source. Sole positive type-indexed word translation; actual tree map unchanged. Fresh original full statement hyp0 plus five complete finite set pairs independently kernel-replayed, generic theorem application separate. Axiomsonlypropext/Classical.choice/Quot.sound. Full simulation/production parent remainsOPEN."
   }
 ]

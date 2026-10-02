@@ -110,6 +110,9 @@ run_probe() {
 run_probe stack_rawcall_state_ok_probeScript.sml stack_rawcall_state_ok_probe.out \
   state_ok_type state_ok_definition state_ok_empty state_ok_entry state_ok_zero state_ok_bare_rejected state_ok_wrong_size \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_labels_probeScript.sml stack_rawcall_labels_probe.out \
+  labels_statement labels_hypotheses labels_equal labels_smaller labels_larger labels_return_handler labels_tail_handler \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_ln_probeScript.sml stack_rawcall_ln_probe.out \
   ln_statement ln_hypotheses ln_seq ln_loop ln_return_handler ln_tail_handler \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"

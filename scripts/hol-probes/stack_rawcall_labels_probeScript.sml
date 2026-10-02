@@ -1,0 +1,11 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallTheory stack_rawcallProofTheory stackSemTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "labels_statement="; print_term(concl get_labels_comp));
+val _ = print("labels_hypotheses=" ^ Int.toString(length(hyp get_labels_comp)) ^ "\n");
+fun emit label tm = (print(label ^ "="); print_term(rconc(EVAL tm)));
+val _ = emit "labels_equal" ``(get_labels(comp (insert 7 4 LN) (Loop(Seq(StackFree 4)(Call NONE(INL 7)NONE)):64 stackLang$prog)),get_labels(comp_top (insert 7 4 LN) (Loop(Seq(StackFree 4)(Call NONE(INL 7)NONE)):64 stackLang$prog)))``;
+val _ = emit "labels_smaller" ``(get_labels(comp (insert 7 2 LN) (Loop(Seq(StackFree 4)(Call NONE(INL 7)NONE)):64 stackLang$prog)),get_labels(comp_top (insert 7 2 LN) (Loop(Seq(StackFree 4)(Call NONE(INL 7)NONE)):64 stackLang$prog)))``;
+val _ = emit "labels_larger" ``(get_labels(comp (insert 7 6 LN) (Loop(Seq(StackFree 4)(Call NONE(INL 7)NONE)):64 stackLang$prog)),get_labels(comp_top (insert 7 6 LN) (Loop(Seq(StackFree 4)(Call NONE(INL 7)NONE)):64 stackLang$prog)))``;
+val _ = emit "labels_return_handler" ``(get_labels(comp (insert 7 4 LN) (Call(SOME(Seq(StackFree 4)(Call NONE(INL 7)NONE),2,3,4))(INL 9)(SOME(Loop(Seq(StackFree 4)(Call NONE(INL 7)NONE)),31,37)):64 stackLang$prog)),get_labels(comp_top (insert 7 4 LN) (Call(SOME(Seq(StackFree 4)(Call NONE(INL 7)NONE),2,3,4))(INL 9)(SOME(Loop(Seq(StackFree 4)(Call NONE(INL 7)NONE)),31,37)):64 stackLang$prog)))``;
+val _ = emit "labels_tail_handler" ``(get_labels(comp (insert 7 4 LN) (Call NONE(INL 9)(SOME(Call(SOME(Skip,2,3,4))(INL 9)NONE,31,37)):64 stackLang$prog)),get_labels(comp_top (insert 7 4 LN) (Call NONE(INL 9)(SOME(Call(SOME(Skip,2,3,4))(INL 9)NONE,31,37)):64 stackLang$prog)))``;

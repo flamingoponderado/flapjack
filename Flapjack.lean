@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.Labels
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompLn
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateOk
