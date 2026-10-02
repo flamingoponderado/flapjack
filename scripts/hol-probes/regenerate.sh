@@ -5186,3 +5186,7 @@ run_probe stack_remove_name_cases_probeScript.sml stack_remove_name_cases_probe.
 run_probe stack_remove_store_heap_read_probeScript.sml stack_remove_store_heap_read_probe.out \
   sr_statement sr_types sr_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_store_heap_domain_probeScript.sml stack_remove_store_heap_domain_probe.out \
+  sd_statement sd_types sd_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

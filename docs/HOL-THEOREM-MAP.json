@@ -64409,5 +64409,17 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.11: full local mem_load_lemma1088-1128 original three conjuncts store_list membership, source store lookup SOME arbitrary WordLoc value, and complete five-factor separated heap imply actual target mem_load(base+store_offset name)=SOME value. All source memory/domain, shifted BitmapBase/bitmaps/dataBuffer content/spaceLeft, reverse word_store and stack factors retain original order and native definitions. MAP Word bitmaps ++ MAP Word buffer is represented by equivalent List.map over concatenation; bitmap-space address retains buffer.length+bitmaps.length. Bool state domains denote true entries. No fullstateRel, target success/domain/read, heap bound/finiteness, frame simulation or extra word-width premise. Actual canonical imported native state store has genuine same-module broad/exact codec witness; positive widthNeZero/BitVec, independent C/F Type0, exact fixed5 Temp carrier. Untagged proof factoring derives every actual first-match storePos slot, arbitrary reverse-list modular membership, lifts it through actual five-factor heap, and extracts target domain/value by graph membership before actual native memLoad. Full whole heap premise retained; extraction does not weaken statement. Native kernel proof and fresh original full statement/type/proof replay checked; full Get and compiler theorem remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StoreHeapReads.lean",
+    "lean_name": "memLoadLemma2",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "mem_load_lemma2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.12: full original local mem_load_lemma2 1131-1167. Exactly store_list membership AND complete original five-factor heap imply target mdomain membership at base+store_offset. No source store lookup, target success/domain/frame, fullstateRel, dimension bound or heap finiteness assumption. Fresh original quantified carrier types show source(alpha,delta,epsilon) and target(alpha,gamma,beta), so Lean preserves independent SourceC/SourceF/TargetC/TargetF Type0 at the shared positive native word width; unlike mem_load_lemma it must not identify host/config parameters. Original shifted BitmapBase/bitmaps/buffer/spaceLeft/source graph/reverse word_store/stack factors and source buffer.length+bitmaps.length offset retained, MAP Word over concatenation equivalent by List.map_append. Source canonicalstore has same-module genuine broad/exact roundtrip witness; Bool domains denote true entries. Proof uses independent modular slot extraction and exact all48 first-match positions, lifts concrete default-or-present store slot through the fullheap, derives target graphdomain without any lookup premise or use of the stronger read theorem. Fresh literal original proof3rows and native full kernel proof checked; Set and global compiler theorem remain separate obligations."
   }
 ]

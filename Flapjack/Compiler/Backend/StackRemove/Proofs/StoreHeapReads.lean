@@ -156,4 +156,53 @@ theorem memLoadLemma {width : Nat} [NeZero width] {C F : Type}
     (base + storeOffset name) value).mp inTarget
   simp only [StackSemStateOps.memLoad, loadFacts.1, loadFacts.2, ite_true]
 
+/-- Full original store-slot domain theorem: the complete five-factor heap
+and ordered store membership suffice without any source store lookup premise. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "mem_load_lemma2"
+  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem memLoadLemma2 {width : Nat} [NeZero width] {SourceC SourceF TargetC TargetF : Type}
+    (name : StoreName) (source : StackSemStateFiniteExact width SourceC SourceF)
+    (target : StackSemStateFiniteExact width TargetC TargetF)
+    (base : BitVec width)
+    (hypothesis : name ∈ storeList ∧
+      SetSep.star
+        (SetSep.star
+          (SetSep.star
+            (SetSep.star (memoryHOL source.memory (fun address => source.mdomain address = true))
+              (Misc.wordList
+                (theSomeWord ((source.store.lookup .bitmapBase).map wordLocWToGeneric) <<< wordShiftAmount width)
+                ((source.bitmaps ++ source.dataBuffer.buffer).map WordLocW.word)))
+            (Misc.wordListExists
+              ((theSomeWord ((source.store.lookup .bitmapBase).map wordLocWToGeneric) <<< wordShiftAmount width) +
+                bytesInWord width * BitVec.ofNat width (source.dataBuffer.buffer.length + source.bitmaps.length))
+              source.dataBuffer.spaceLeft))
+          (wordStoreHOL base source.store))
+        (Misc.wordList base source.stack)
+        (SetSep.fun2Set (target.memory, fun address => target.mdomain address = true))) :
+    target.mdomain (base + storeOffset name) = true := by
+  rcases hypothesis with ⟨membership, heaps⟩
+  rcases heaps with ⟨heap4, heapStack, split4, assertion4, _stack⟩
+  rcases assertion4 with ⟨heap3, heapStore, split3, _assertion3, storeAssertion⟩
+  obtain ⟨index, bound, nameEq, positionEq⟩ := storeSlot name membership
+  let values := storeList.map fun slot =>
+    (source.store.lookup (StackSemRegisterTransfers.storeOfSyntax slot)).getD (.word 0)
+  have mappedBound : index < values.length := by simpa [values] using bound
+  have member := wordListRevNth base values heapStore index mappedBound storeAssertion
+  have addressEq : base - bytesInWord width * BitVec.ofNat width (index + 1) =
+      base + storeOffset name := by
+    simp [storeOffset, wordOffset, positionEq, bytesInWord, BitVec.ofNat_mul,
+      BitVec.sub_eq_add_neg]
+  rw [addressEq] at member
+  have inHeap4 : heap4 (base + storeOffset name, values[index]) := by
+    rw [← split3.1]
+    exact Or.inr member
+  have inTarget : SetSep.fun2Set (target.memory, fun address => target.mdomain address = true)
+      (base + storeOffset name, values[index]) := by
+    rw [← split4.1]
+    exact Or.inl inHeap4
+  have loadFacts := (SetSep.fun2SetThm target.memory (fun address => target.mdomain address = true)
+    (base + storeOffset name) values[index]).mp inTarget
+  exact loadFacts.2
+
 end Flapjack.Compiler.Backend.StackRemove.StoreHeapReads
