@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateRelation
 import Flapjack.RiscV.L3.Defs.MMU.Translate
 import Flapjack.RiscV.L3.Defs.MMU.Walk
 import Flapjack.RiscV.L3.Defs.MMU.Insert
+import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
@@ -541,6 +542,7 @@ import Flapjack.Misc.Sptree.Map
 import Flapjack.Misc.Sptree.InterEq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
+import Flapjack.Misc.ListLookup
 import Flapjack.Compiler.Backend.Parmove.Independence
 import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
 import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
@@ -625,6 +627,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionStep
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInitAlloc
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAllocLoop
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourReads
+import Flapjack.Compiler.Backend.RegAlloc.ProductionStempReads
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
