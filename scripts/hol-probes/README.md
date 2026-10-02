@@ -5764,6 +5764,41 @@ arbitrary clocks, including zero. This does not prove `comp_correct`.
 
 ## Isolated native L3 floating-point section
 
+### Reproduce the original source export
+
+Build the committed HOL submodule revision and its original `riscv_step`
+theory first. A separate built HOL checkout is permitted only at the same
+revision; the export driver checks its Git HEAD against this checkout's HOL pin.
+Run from the Flapjack checkout:
+
+```bash
+HOL4=/path/to/built/pinned/HOL bash scripts/l3/regenerate-export.sh --update
+HOL4=/path/to/built/pinned/HOL bash scripts/l3/regenerate-export.sh --check
+```
+
+The driver loads the original HOL `riscv_stepTheory`, runs
+`scripts/l3/export_riscv_defs.sml` in a temporary directory, and traverses the
+complete original `NextRISCV` dependency closure in dependency order. The
+292 complete elaborated definition conclusions are serialized into
+`scripts/l3/riscv_defs.sexp.gz` with deterministic `gzip -9 -n`. No source or
+output is written into HOL/CakeML. `--check` independently reruns original HOL
+and compares its uncompressed terms byte for byte with the captured artifact.
+The ordinary probe regeneration driver also regenerates this export; selecting
+`HOL_PROBE_ONLY=export_riscv_defs.sml` runs only this source export.
+
+The Python generator/output tests are **self-consistency checks**, not an
+independent semantic oracle. The original export comparison establishes
+reproducibility of the captured HOL terms, not correctness of their Lean
+rendering. Literal source/carrier review and the four separately regenerated
+finite original HOL probes remain necessary; none proves cross-language
+equivalence or complete machine correctness.
+
+L3 ARB expressions name the canonical `Flapjack.holArb` directly. The former
+independent L3 opaque is absent; WordConvs' `holArbMemOp` is likewise a transparent
+alias of that same constant at its carrier. Kernel regressions check sharing
+with the canonical missing-list-head clause and arbitrary Nonempty witnesses, and normalize
+the complete trap update without assuming an arbitrary value.
+
 The selected roots are complete original FP comparison and float-to-integer
 state equations at both precisions, with their entire source dependency closure.
 The isolated module includes50 model declarations; full Run/NextRISCV and other

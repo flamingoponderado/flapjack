@@ -1,17 +1,15 @@
 import Flapjack.RiscV.L3.Types
 import Flapjack.Misc.Option
 import Flapjack.Misc.Alignment
+import Flapjack.HolArb
 
 /-! Flapjack library-rendering infrastructure required by the complete L3 FP
 section. These helpers implement UPDATE and the guarded in-range word operations
-used by the original equations. ARB remains an uninterpreted inhabitant; no
+used by the original equations. ARB uses the single canonical Flapjack constant; no
 arbitrary record field is replaced with a chosen default. General model
 renderings outside this section are deliberately absent. -/
 namespace Flapjack.RiscV.L3
 open Flapjack.Basis.Pure.MlString
-
-/-- HOL `ARB : α`, an uninterpreted constant (the inhabitedness every HOL type has). -/
-opaque holArb (α : Type) [Inhabited α] : α
 
 /-- HOL `combin$UPDATE a b f` (`(a =+ b) f`). -/
 def holUpdate {α β : Type} [DecidableEq α] (a : α) (b : β) (f : α → β) : α → β :=
