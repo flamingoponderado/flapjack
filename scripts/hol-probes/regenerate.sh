@@ -4031,3 +4031,7 @@ run_probe ssa_reconcile_get_vars_probeScript.sml ssa_reconcile_get_vars_probe.ou
 run_probe target_props_clock_probeScript.sml target_props_clock_probe.out \
   tp_clock_theorem_closed tp_clock_type tp_clock_statement tp_halt_stable tp_error_stable \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe ssa_reconcile_empty_probeScript.sml ssa_reconcile_empty_probe.out \
+  re_original_full re_empty_full re_type_na re_type_cur_ssa re_type_tgt_ssa re_type_st_locs re_type_cst re_type_ns \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

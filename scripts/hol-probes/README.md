@@ -4445,6 +4445,7 @@ translations and the evaluator's inherited IEEE rational-cut assumption
 (SOUNDNESS item 8) are retained. These are invariant-update prerequisites,
 not a completed CSE/compiler correctness proof.
 
+`ssa_reconcile_alookup_zip_probe.out` replays both original generic indexed-SOME and absent-key-NONE ALOOKUP ZIP proofs6551–6590, recording full statements and nine original argument types. Canonical opaque EL and all original domain/injection/index/length premises are retained.
 `target_sem_machine_sem_probeScript.sml` kernel-proves the full original
 Terminate/Diverge/Fail clauses for arbitrary machine and FFI carriers, checking
 exact conclusions and empty theorem hypotheses before capture. Divergence uses
@@ -4489,3 +4490,5 @@ The proof uses clock induction on the literal evaluator, with a local heartbeat
 budget for the complete constructor case analysis. No default target or gate is
 shortened. Source-reviewed total `holEl`/`holHd` behavior is retained at both
 clocks and explicitly recorded for the evaluator and machine semantics.
+
+`ssa_reconcile_empty_probe.out` replays the complete original local evaluator reconciliation proof and its literal prerequisites, then specializes the genuine empty-moves branch. Six native types are captured; this is regression evidence, and the Lean branch independently derives the evaluator/post-state conclusions. Full SSA simulation remains unfinished.

@@ -52482,5 +52482,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.31.1): Entire original1063-1080 statement: arbitrary mc ffi k ms extra result ms1 ffi1, actual evaluator equality and result not TimeOut imply identical entire result/machine/FFI triple at k+extra. No extra source-validity, initial-state, target-result or simulation premise. Natural clock induction generalizes machine/config/FFI and applies IH only to actual recursive normal/cache/FFI-return branches; literal guards and terminal rollback retain the same triple. words_as_type_indexed_bitvec records only positive width and universe0 FFI host translation. The evaluator dependency uses source-reviewed total holEl/holHd: in-bounds list element, outside bounds shared holHdNil/holArb, no extra length guard or concrete fallback, identically at both clocks. Fresh original full quantified theorem check and halt/error rows plus generic Lean statement/kernel examples are regressions, not cross-assistant equivalence evidence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_ssa_reconcile",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileEmpty.lean",
+    "lean_name": "evaluateSSAReconcileEmpty",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-2nhb: Genuine original6593-6650 empty-moves branch of evaluate_ssa_reconcile: both original SSA-locals/injection premises retained and only actual filtered moves=[] branch guard added. Native total pair evaluate, existential poststate, full21-field wordStateEqRel and original domain-scoped strongLocalsRel derived; no output/result/simulation premise. Injection unused here retained for assembly. Fresh literal full original reconciliation proof replay plus branch specialization and6carrier types confirms arbitrary names delta num_map, positive word width, native word_loc and independent configuration/FFI host types. Guard uses exact compiler filter/flatten and lawful Nat equality. Native Spt locals/names/maps unchanged; fmap_as_finite_support_relation translates only actual imported owner fpRegs/store with same-module genuine broad/exact roundtrip witness; words_as_type_indexed_bitvec only conventional positive-width/FFI translation. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item8); Skip-only branch. Full nonempty assembly and native SSA simulation remain open."
   }
 ]
