@@ -5462,6 +5462,12 @@
       "sha256": "9facf63a25ece1df7fb60cc395fd651b372c302577a16669f94c66519af2e33b"
     },
     {
+      "bytes": 644,
+      "out": "stack_code_bitmaps_seq_probe.out",
+      "rows": 3,
+      "sha256": "7b0663572e4bfba0aab95f69eb1bbf98d029ee72701d15a61c12cf8e48d5cae4"
+    },
+    {
       "bytes": 2330,
       "out": "stack_initialized_boundary_probe.out",
       "rows": 40,

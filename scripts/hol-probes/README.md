@@ -6008,3 +6008,5 @@ sptree_wf_definition_probeScript.sml captures the full original wf_def and254 co
 `stack_remove_bytearray_read_probeScript.sml` replays the complete original bytearray-read preservation proof and its original local memory/read/load prerequisites. Two rows capture the full arbitrary-length/address statement and kernel proof success.
 
 `stack_code_bitmaps_install_probe` captures the complete original evaluate_code_bitmaps, zero external hypotheses, and Install specialization. Native proof retains arbitrary positive width and all failure branches; this is statement evidence, not runtime parity or full theorem assembly.
+
+`stack_code_bitmaps_seq_probe` captures full original evaluate_code_bitmaps, zero external hypotheses, and Seq specialization. The native case composes genuine subprogram IHs through actual clock clamping; statement evidence only, not fullassembly or runtime parity.

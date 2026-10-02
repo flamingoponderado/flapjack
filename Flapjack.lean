@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Seq
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Install
 import Flapjack.Misc.Sptree.Subspt
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop

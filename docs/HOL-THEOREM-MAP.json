@@ -67537,5 +67537,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 original424-440: genuine Install constructor case, actual evaluate equality sole premise, arbitrary positive width/configuration/Type0 FFI/full native state/result. All three existential conjuncts retained: exact shifted compileOracle, left-accumulator FOLDL union over original oracle prefix fromAList, original bitmap append FLAT. GENLIST becomes List.range followed by map without order change. Native Install dispatch covers register/buffer/compile/empty-program/equality failures with count0 and success with count1; actual oracle destructuring equations discharge both output projections. No successful execution, target evaluation, prefix or count assumption. Canonical regs/fpRegs/store imported owner and same-module genuine state codec witness; code Spt and lists List unchanged. Full evaluator closure inherits reals_as_rational_cuts assurance limit; no new real translation. Fresh original closed full statement and Install specialization are statement evidence only, not executed parity or assembled theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Seq.lean",
+    "lean_name": "evaluateCodeBitmapsSeq",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 original421-440 genuine Seq induction case: actual source evaluation equality plus only first/second subprogram IHs, each universally states full original result for arbitrary input state/result/output. CodeBitmaps expands definitionally to all three existential conjuncts, without extra side conditions. Actual Seq uses first evaluation then fixClock, which changes clock only; non-NONE returns that state, NONE executes second at actual clamped state. Derive count a+b, exact shifted oracle via associativity, original GENLIST prefix concatenation via List.range_add and map composition, left-accumulator FOLDL union via foldl_append and bitmap FLAT/append in same order. No count/prefix/target execution or postrelation assumption outside genuine IHs. Canonical imported native state regs/fpRegs/store and same-module real codec roundtrip re-export; code Spt and lists List unchanged, positive width and Type0 hosts retained. Full evaluator closure inherits reals_as_rational_cuts assumption; no new real rendering. Original full closed statement and Seq specialization are statement evidence only; no fullassembly or runtime parity claim."
   }
 ]
