@@ -4489,3 +4489,24 @@ The same `ssa_reconcile_empty_probe.out` also backs full `evaluateSSAReconcile`:
 `ssa_lt_ok_probe.out` captures the complete original loop-table predicate and its inferred native product/list/tree type, confirming independently arbitrary entry/exit name-set payloads. The Lean definition retains both original domain injections; this supports full SSA simulation rather than certifying it.
 
 `ssa_cc_trans_correct_control_probe.out` replays both literal resumed Break/Continue semantic correctness proofs against their full original theorem specializations, including all six premises, existential permutation and complete result-sensitive postcondition. Six native carrier types are captured. Other native SSA correctness cases and compiler composition remain unfinished.
+
+`target_props_clock_probeScript.sml` checks the original closed
+`evaluate_add_clock` theorem against its entire quantified statement and captures
+halt/error equality at clocks one and five. The Lean theorem and generic replay
+are in `TargetProps/EvaluateAddClock.lean` and `TargetPropsClockParity.lean`.
+The proof uses clock induction on the literal evaluator, with a local heartbeat
+budget for the complete constructor case analysis. No default target or gate is
+shortened. Source-reviewed total `holEl`/`holHd` behavior is retained at both
+clocks and explicitly recorded for the evaluator and machine semantics.
+
+`ssa_reconcile_empty_probe.out` replays the complete original local evaluator reconciliation proof and its literal prerequisites, then specializes the genuine empty-moves branch. Six native types are captured; this is regression evidence, and the Lean branch independently derives the evaluator/post-state conclusions. Full SSA simulation remains unfinished.
+`word_cse_deletion_frames_probeScript.sml` regenerates the two complete local
+`evaluate_arith_unset_var` / `evaluate_load_unset_var` proofs from original
+`word_cseProofScript.sml`, requiring closed hypotheses, plus four inferred types
+and 152 full theorem applications at widths 1/32/64/80. Fixtures cover all
+eligible arithmetic families and all non-store memory constructors, deletion
+of destination or an unrelated register, arbitrary full states and word-loc
+values. `WordCseDeletionFramesParity.lean` kernel-checks matching applications.
+The statements retain the original input guards and both evaluation directions.
+These regressions supplement source review; they do not prove cross-language
+equivalence or complete CSE correctness.

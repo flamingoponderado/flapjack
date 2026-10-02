@@ -1,0 +1,5 @@
+tp_clock_theorem_closed=T
+tp_clock_type=:bool
+tp_clock_statement=T
+tp_halt_stable=T
+tp_error_stable=T

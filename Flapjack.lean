@@ -5,11 +5,12 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcile
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopTable
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileGetVars
+import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClock
+import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
 import Flapjack.Compiler.Backend.LabToTarget.LineLength
 import Flapjack.Compiler.Backend.LabToTarget.SectionLength
@@ -34,6 +35,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
 import Flapjack.Compiler.Backend.WordCse.Proofs.ArithmeticKeys
