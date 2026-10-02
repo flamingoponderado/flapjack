@@ -107,6 +107,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackAllocSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ShiftSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordAddressArithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads

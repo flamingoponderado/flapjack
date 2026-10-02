@@ -65190,5 +65190,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-stack-heap): original stack_removeProofScript.sml49-56 word_list_APPEND. Same arbitrary first/second lists, payload type, base word and whole assertion equality; original prefix length address offset uses bytes_in_word times n2w length. Positive-width word translation only, no bounds/heap validity/injectivity premise. Original word_list_def and generic separation associativity used unchanged. Native wordListNth and full-relation slot-read extraction are deliberately untagged source-local compiler-case factoring, not substitutions for this port. Fresh literal original append proof replay recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordAddressArithmetic.lean",
+    "lean_name": "bytesInWordWordShift",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "bytes_in_word_word_shift",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-word-address): full original bytes_in_word_word_shift99-110, word_offset_eq112-116, lsl_word_shift908-914. Original inverse byte-scaling shift, retaining the good-dimension and no-wrap bound. Same quantified natural count or word and exact modular equality, good_dimindex32-or64 only where original requires it; inverse retains exact w2n bytes times w2n word below dimword. Positive-width BitVec/[NeZero width] translation only. Native bytesInWord and wordSemBytesInWord bodies compared: both ofNat width(width/8), same wordShiftAmount and goodDimindex. Reused accepted corresponding native StackAlloc/WordGc facts after original statements/body comparison, no alternate evaluator or carrier and no extra premise. Fresh literal original HOL proof replays recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordAddressArithmetic.lean",
+    "lean_name": "wordOffsetEq",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_offset_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-word-address): full original bytes_in_word_word_shift99-110, word_offset_eq112-116, lsl_word_shift908-914. Original unconditional word-offset equality, including modular natural conversion. Same quantified natural count or word and exact modular equality, good_dimindex32-or64 only where original requires it; inverse retains exact w2n bytes times w2n word below dimword. Positive-width BitVec/[NeZero width] translation only. Native bytesInWord and wordSemBytesInWord bodies compared: both ofNat width(width/8), same wordShiftAmount and goodDimindex. Reused accepted corresponding native StackAlloc/WordGc facts after original statements/body comparison, no alternate evaluator or carrier and no extra premise. Fresh literal original HOL proof replays recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordAddressArithmetic.lean",
+    "lean_name": "lslWordShift",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "lsl_word_shift",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-word-address): full original bytes_in_word_word_shift99-110, word_offset_eq112-116, lsl_word_shift908-914. Original forward word shift, with only its good-dimension premise. Same quantified natural count or word and exact modular equality, good_dimindex32-or64 only where original requires it; inverse retains exact w2n bytes times w2n word below dimword. Positive-width BitVec/[NeZero width] translation only. Native bytesInWord and wordSemBytesInWord bodies compared: both ofNat width(width/8), same wordShiftAmount and goodDimindex. Reused accepted corresponding native StackAlloc/WordGc facts after original statements/body comparison, no alternate evaluator or carrier and no extra premise. Fresh literal original HOL proof replays recorded."
   }
 ]

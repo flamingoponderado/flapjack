@@ -5373,3 +5373,7 @@ run_probe stack_remove_shifts_probeScript.sml stack_remove_shifts_probe.out \
 run_probe stack_remove_stack_heap_probeScript.sml stack_remove_stack_heap_probe.out \
   sa_statement sa_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_address_probeScript.sml stack_remove_word_address_probe.out \
+  wa_inverse_statement wa_inverse_proved wa_offset_statement wa_offset_proved wa_forward_statement wa_forward_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
