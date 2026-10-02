@@ -45,7 +45,7 @@
       "regs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.5), stackSemScript645-651: target num+num, regs finite map num->positive-width word_loc, code polymorphic alpha Spt tree and Option alpha result. Direct INL lookup ignores regs; INR accepts only SOME(Loc loc0), all missing/Word/nonzero Loc cases NONE. Canonical map is bare regs parameter (no owning field/witness obligation); code remains Spt and payload stays polymorphic. Accepted imported carrier with same-module canonical roundtrip re-export for state fields, no duplicate owner. No evaluator or production-path claim. Coordinator review required."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.5), stackSemScript645-651: target num+num, regs finite map num->positive-width word_loc, code polymorphic alpha Spt tree and Option alpha result. Direct INL lookup ignores regs; INR accepts only SOME(Loc loc0), all missing/Word/nonzero Loc cases NONE. Canonical map is bare regs parameter (no owning field/witness obligation); code remains Spt and payload stays polymorphic. Accepted imported carrier with same-module canonical roundtrip re-export for state fields, no duplicate owner. No evaluator or production-path claim. Coordinator review required. Full original type audit/repair (62gq): stackSem find_code_def has target num+beta, regs beta|->gamma word_loc, arbitrary alpha num_map. Register key beta is genuinely independent of the register word dimension and code payload; replaced earlier Nat specialization by arbitrary kappa:Type with no added equality/BEq/inhabitance premises. Nat-key semantic callers infer their existing specialization unchanged. Both original clauses retain exact spt lookup, FLOOKUP, only Loc label0 accepted, missing/Word/nonzero Loc rejected. Fresh full original definition/type capture plus Bool/list-key source/kernel observations. Existing fmap_as_finite_support_relation bare regs binder and words_as_type_indexed_bitvec cover only canonical fmap/positive word representation, not carrier specialization. No actual caller/source behavior changes or full containment theorem port inferred."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
@@ -52790,5 +52790,22 @@
     "lean_name": "doSpillSuccess",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.5): reg_allocProofScript.sml:2790-2837, scost (num_map option, the reviewed Option (Spt Nat)) and k free in HOL (explicit parameters), ∀s; do_spill the exact tagged doSpill. Conclusion ∃s' b with do_spill scost k s = (M_success b,s') ∧ good_ra_state s' ∧ is_subgraph s.adj_ls s'.adj_ls ∧ s.dim = s'.dim ∧ s.node_tag = s'.node_tag, as in HOL. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, M_success Exc.success, record update `s with f := v` the Lean structure update, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StackLengths.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "lean_name": "mapBitmapLengths",
+    "hol_name": "map_bitmap_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison (j7j6): original stackProps740-754 full generic bool list/shared arbitrary alpha payload lists a/b/c/x/y/z, original map_bitmap success premise and both conjuncts LENGTH c = LENGTH x + LENGTH z AND LENGTH x = LENGTH a. Every quantified list retained, no payload/length/domain assumption. Distinct from uppercase StackSem map_bitmap_LENGTH upper bounds. Exact List/Option/Prod and generic payload carriers, no qualifier needed. Literal full original proof and inferred types replayed; generic Nat/list payload, missing roots/values and mixed flags observed with kernel counterparts. Actual WordToStack consumers1872/1940."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StackLengths.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "lean_name": "decStackLength",
+    "hol_name": "dec_stack_length",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (j7j6): original stackProps756-771 full success-only stack length theorem; full original types show bs:alpha word list and roots/original/decoded:beta word_loc lists with independent dimensions. Lean keeps independent bitmapWidth/width positive BitVec/WordLocW, every list and exact decode equality premise; no encoding-success, shape, domain or roots-exhaustion assumption added. Source sentinel/header/full_read_bitmap/map_bitmap/recursive roots/remainder behavior unchanged. Kernel strong induction on actual stack length uses reviewed mapBitmap_LENGTH bound and new full map_bitmap_length equation. Literal original full proof/types replayed; original/native cases cover bitmap8/stack1, bitmap1/stack80, multiframe word80, location payload, missing/extra roots, missing sentinel, bad header and zero-with-tail. words_as_type_indexed_bitvec records only positive source type-dimension translation, both NeZero instances retained. Actual WordToStack2015/2187 and StackAlloc5156 consumers; no larger frame/compiler result claimed."
   }
 ]
