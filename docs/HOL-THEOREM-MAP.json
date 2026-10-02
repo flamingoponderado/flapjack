@@ -65974,5 +65974,23 @@
     "hol_name": "FOR_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison: pinned HOL source48-54 defines inclusive total FOR on Nat endpoints and unit-valued state actions. Lean preserves equal endpoint action, ascending increment, descending truncated decrement, BIND state threading discarding Unit, and distance termination with no extra premise. Original state_transformer_for probe covers both directions, equal zero and descending through zero with initial state; Lean kernel replays all four."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmConventions.lean",
+    "lean_name": "compileWordToStackConvs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_convs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-convs.1: entire original11257-11293 top-level and11660-11695 compile-list assembler convention assembly. All four original per-program source conjuncts, strict4<k and original reduced-count room guard are retained. EVERY is rendered by equivalent List membership quantifiers. The source compile-list output equation aliases the actual tuple; its residual retains both frame sizes and bitmaps, and the identifier type remains arbitrary. No desired target convention/evaluation/simulation premise. Actual compileProgNative StackAlloc prefix and left-to-right residual bitmap threading are preserved. Top-level room is derived from the original strict minimum at natural subtraction regCount-(LENGTH avoidRegs+5); both complete raise/storeConsts stubs are included. The list result retains all five naming/removal/alloc_arg/reg_bound/call_args predicates. words_as_type_indexed_bitvec records only the standard positive word translation with same config/program dimension; other original carriers are unchanged. Fresh original theorem statements have no open hypotheses;208 complete evaluated comp/list/top outputs and72 complete source guards cover widths1/8/64/80, zero/positive frames, spilling return/handler, duplicate IDs,70-bit fields/counts and ignored tail handlers. Kernel fixtures compare whole constructor trees, bitmap AppLists/counters, frame sizes, both configuration fields and both stubs independently of144 full theorem applications. Full pass/compiler semantics remain separate unfinished work; regression evidence is not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmConventions.lean",
+    "lean_name": "wordToStackStackAsmConvs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_convs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-convs.1: entire original11257-11293 top-level and11660-11695 compile-list assembler convention assembly. All four original per-program source conjuncts, strict4<k and original reduced-count room guard are retained. EVERY is rendered by equivalent List membership quantifiers. The source compile-list output equation aliases the actual tuple; its residual retains both frame sizes and bitmaps, and the identifier type remains arbitrary. No desired target convention/evaluation/simulation premise. Actual compileProgNative StackAlloc prefix and left-to-right residual bitmap threading are preserved. Top-level room is derived from the original strict minimum at natural subtraction regCount-(LENGTH avoidRegs+5); both complete raise/storeConsts stubs are included. The list result retains all five naming/removal/alloc_arg/reg_bound/call_args predicates. words_as_type_indexed_bitvec records only the standard positive word translation with same config/program dimension; other original carriers are unchanged. Fresh original theorem statements have no open hypotheses;208 complete evaluated comp/list/top outputs and72 complete source guards cover widths1/8/64/80, zero/positive frames, spilling return/handler, duplicate IDs,70-bit fields/counts and ignored tail handlers. Kernel fixtures compare whole constructor trees, bitmap AppLists/counters, frame sizes, both configuration fields and both stubs independently of144 full theorem applications. Full pass/compiler semantics remain separate unfinished work; regression evidence is not HOL-to-Lean equivalence."
   }
 ]
