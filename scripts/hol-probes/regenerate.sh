@@ -4051,3 +4051,7 @@ run_probe ssa_cc_trans_correct_control_probeScript.sml ssa_cc_trans_correct_cont
 run_probe ssa_cc_trans_correct_primitives_probeScript.sml ssa_cc_trans_correct_primitives_probe.out \
   sp_skip_full sp_tick_full sp_type_st sp_type_cst sp_type_ssa sp_type_na sp_type_lt \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_get_var_probeScript.sml ssa_locals_get_var_probe.out \
+  lg_full lg_type_st lg_type_cst lg_type_ssa lg_type_na lg_type_n lg_type_x \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

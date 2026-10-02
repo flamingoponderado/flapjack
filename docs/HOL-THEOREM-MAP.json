@@ -52602,5 +52602,18 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a full source comparison flapjack-7rtj: Genuine original resumed Tick semantic case7736/9689 ofssa_cc_trans_correct7666. Exactly original six premises wordStateEqRel/ssaLocalsRel/allocation/everyVar/map/ltOK, no extra positive-clock, target execution/result/frame/simulation or IH premise. Complete source permutation existential and original Error-exempt result-sensitive conclusion through transparent checked ssaSimulation, no predicate premise. Actual native compiler/evaluate Tick clauses, including Tick zero-clock flush/timeout and positive-clock decClock, both outputs derived from original frame/locals. Fresh literal original exists_tac and resumed proofs, complete original specialized statements and5carrier types confirm shared positive-width/native state hosts, SptNat maps and Unit name sets. fmap_as_finite_support_relation translates only imported ownerfpRegs/store with same-module broad/exact roundtrip witness; words_as_type_indexed_bitvec only standard positive-width/native host translation. Inherits reals_as_rational_cuts via evaluate, SOUNDNESSitem8, no executed FP step. Native fullSSA other constructorcases/composition remainunfinished."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_locals_rel_get_var",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsGetVar.lean",
+  "lean_name": "ssaLocalsRelGetVar",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol-a complete source comparison flapjack-2iko: Full original4598 SSA locals relation and source get_var SOME x imply native target get_var at option_lookup SSA same SOME x. Exactly original2premises, no full-state frame, destination bound, source-domain or target-success premise. Fresh literal original proof/type replay confirms st:(alpha,beta,gamma)state and cst:(alpha,delta,epsilon)state with independently arbitrary configuration/FFI hosts, same positive word width, native WordLocW value and SptNat renaming/locals maps. Guarded canonical selector NONE never observed: original relation proves source map membership/SOME, then exact native option_lookup/getVar equality. fmap_as_finite_support_relation records imported native state ownerfpRegs/store canonical representation with genuine broad/exact roundtrip, while actual accessor observes unchanged native Spt locals. words_as_type_indexed_bitvec only conventional positive words/host translation. No IEEE rendering dependency in this accessor path. Full SSA primitive cases/simulation/compiler composition remainunfinished."
 }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileListProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileLookupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileEmpty
