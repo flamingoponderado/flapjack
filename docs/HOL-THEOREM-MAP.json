@@ -52307,5 +52307,22 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.1), original68-86: full native HolProg, arbitrary Boolean jump and Nat pointer/count. single builder emits immediate Sub word_offset then original JumpLower k(k+1)2 or If Lower k(Reg(k+1))(halt_inst2w)Skip. Recursive builder retains zero Skip, <=255 single, larger ordered Seq chunk255 and recursion(count-255), with check after every chunk. Native halt_inst constant/register behavior unchanged. Width1 wraps halt value2 to zero exactly as original n2w; no positivity/fit/register/stack-safety/targetrun premise added. Only positive BitVec width and NeZero dimension translation qualified. Production route remains dependency-linked36ez.3; not a compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StoreAddress.lean",
+    "lean_name": "storePos",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "store_pos_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.2), original37-53: same native StoreName including fixed BitVec5 Temp payload and reviewed ordered48-element store_list. Private structural search reproduces INDEX_FIND0 first matching constructor/payload equality, NONE maps0 and SOME(index,payload) index+1; derived executable DecidableEq adds no hypothesis or changed equality. store_offset is literal modular0-word_offset(store_pos name), including absentCurrHeap0 and every Temp. No membership/wordfit/register or target-result assumptions. For offset only, standard positive BitVec width/NeZero translation qualified, byte stride DIV8 retained. Production replacement stays dependency-linked36ez.3; no compiler simulation asserted."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StoreAddress.lean",
+    "lean_name": "storeOffset",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "store_offset_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.2), original37-53: same native StoreName including fixed BitVec5 Temp payload and reviewed ordered48-element store_list. Private structural search reproduces INDEX_FIND0 first matching constructor/payload equality, NONE maps0 and SOME(index,payload) index+1; derived executable DecidableEq adds no hypothesis or changed equality. store_offset is literal modular0-word_offset(store_pos name), including absentCurrHeap0 and every Temp. No membership/wordfit/register or target-result assumptions. For offset only, standard positive BitVec width/NeZero translation qualified, byte stride DIV8 retained. Production replacement stays dependency-linked36ez.3; no compiler simulation asserted.",
+    "words_as_type_indexed_bitvec": true
   }
 ]
