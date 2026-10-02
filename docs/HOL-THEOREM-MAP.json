@@ -55237,5 +55237,32 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.2), stack_allocProofScript.sml:875-961 word_gc_move_code_thm: all seventeen hypotheses in HOL order (word_gc_move conf (w,i,pa,old,m,dm) = (w1,i1,pa1,m1,T); shift_length conf < dimindex; word_shift < dimindex; 2 < dimindex; len_size <> 0; !w. w << word_shift = w * bytes_in_word; FLOOKUP s.store CurrHeap = SOME (Word old); s.use_store; s.memory = m; s.mdomain = dm; 0,1,2,6 IN FDOM s.regs; get_var 3/4/5) with HOL's free variables implicit, and the conclusion ?ck r0 r1 r2 r6. evaluate (word_gc_move_code conf, s with clock := s.clock + ck) = (NONE, s with <| memory := m1; regs := s.regs |++ [(0,r0);(1,r1);(2,r2);(3,Word pa1);(4,Word i1);(5,w1);(6,r6)] |>). Over the exact StackSem evaluate (evaluate_def), the reviewed word_gc_move_code (GcCode) and word_gc_move (word_gcFunctions); dimindex as width, word_shift as wordShiftAmount, FLOOKUP/FDOM/|++ as the canonical HolFiniteMapExact lookup/updateListEq, 'a word as positive-width BitVec with [NeZero width]; no extra hypothesis, success or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticRaise.lean",
+    "lean_name": "ssaCcTransCorrectRaise",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: original resumed Raise9649-9654, all six original premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no extra IH/target-run/success/post-state premise. Native register Nat/result Exception word_lab and value carriers; getVar transport derives renamed lookup, actual singleton Move to physical register2 and original fixClock evaluator theorem derive target sequence. Original handler bound/LASTN stackframe/optional handler branches preserved; successful jumpExc replaces current locals by identical restored stackframe locals, full frame preserved. Canonical fpRegs/store finite-support and positive-width BitVec/Type0 hosts reviewed; Spt locals/code unchanged. Inherits reals_as_rational_cuts evaluator boundary SOUNDNESS8. Literal original resumed Raise proof and non-exported getVar helper PASS, full statement/native carriers captured. Lean kernel checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_get_vars",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsGetVars.lean",
+    "lean_name": "ssaLocalsRelGetVars",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: full original local ssa_locals_rel_get_vars4610-4623 with forall source register list/value list/fresh bound/SSA/source/target. Only original SSA locals relation and successful source getVars are premises; renamed target list-read success is proved by literal recursive getVars clauses and accepted original getVar transport, no extra target/domain/success assumption. Fresh literal original HOL statement/proof replay and native carriers PASS: shared word dimension, source (alpha,beta,gamma) state vs target (alpha,delta,epsilon) state confirm independent arbitrary Type0 code/FFI hosts. Positive-width BitVec word_loc and canonical fpRegs/store finite-support carrier translations reviewed; native Spt locals/SSA and List register/value carriers unchanged. Opaque THE is observed through original getVar transport only under original locals relation supplying source map domain. Lean kernel checked."
   }
 ]

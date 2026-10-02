@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRaise
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
@@ -132,6 +133,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
 import Flapjack.Compiler.Backend.WordAlloc.SSASetup
 import Flapjack.Compiler.Encoders.AsmProps.Assertions
