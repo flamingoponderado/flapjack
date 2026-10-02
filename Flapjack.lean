@@ -1,8 +1,13 @@
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateOk
+import Flapjack.RiscV.L3.Defs.MMU.Primitives
 import Flapjack.Compiler.Backend.StackRawCall
 import Flapjack.RiscV.L3.Defs.MMU.Exception
 import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
 import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
+import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPositions
+import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingNavigation
+import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPreservation
+import Flapjack.Compiler.Backend.LabProps.LabelExtractionValidity
 import Flapjack.Misc.Words.Formatting
 import Flapjack.Misc.Words.Replicate
 import Flapjack.Compiler.Backend.LabToTarget.ZeroLabelExistence
@@ -146,6 +151,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemoryAny
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSize
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.Clock
+import Flapjack.Compiler.Backend.Semantics.StackSem.ClockControl
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
@@ -478,6 +484,7 @@ import Flapjack.Compiler.Backend.StackProps.CodeLabels
 import Flapjack.Compiler.Backend.StackProps.ExtractLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsCompiler
+import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
 import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
@@ -597,6 +604,8 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionEdgeUpdate
 import Flapjack.Compiler.Backend.RegAlloc.ProductionCoalesceReal
 import Flapjack.Compiler.Backend.RegAlloc.ProductionParentCompression
 import Flapjack.Compiler.Backend.RegAlloc.ProductionBgOk
+import Flapjack.Compiler.Backend.RegAlloc.ProductionCoalesce
+import Flapjack.Compiler.Backend.RegAlloc.ProductionStep
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec

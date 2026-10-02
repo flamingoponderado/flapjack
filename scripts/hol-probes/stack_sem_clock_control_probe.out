@@ -1,0 +1,6 @@
+cseq_statement=∀p q s res t. (∀r u. evaluate (p,s) = (r,u) ⇒ u.clock ≤ s.clock) ∧ (∀r u. fix_clock s (evaluate (p,s)) = (r,u) ∧ r = NONE ⇒ ∀r2 u2. evaluate (q,u) = (r2,u2) ⇒ u2.clock ≤ u.clock) ∧ evaluate (Seq p q,s) = (res,t) ⇒ t.clock ≤ s.clock
+cseq_proved=T
+cif_statement=∀cmp reg ri p q s res t. (∀x y. get_var reg s = SOME x ∧ get_var_imm ri s = SOME y ∧ word_cmp cmp x y = SOME T ⇒ ∀r u. evaluate (p,s) = (r,u) ⇒ u.clock ≤ s.clock) ∧ (∀x y. get_var reg s = SOME x ∧ get_var_imm ri s = SOME y ∧ word_cmp cmp x y = SOME F ⇒ ∀r u. evaluate (q,s) = (r,u) ⇒ u.clock ≤ s.clock) ∧ evaluate (If cmp reg ri p q,s) = (res,t) ⇒ t.clock ≤ s.clock
+cif_proved=T
+cloop_statement=∀p s res t. (∀r u. evaluate (p,s) = (r,u) ⇒ u.clock ≤ s.clock) ∧ (∀r u. fix_clock s (evaluate (p,s)) = (r,u) ∧ cont_loop r ∧ u.clock ≠ 0 ⇒ ∀r2 u2. evaluate (Loop p,dec_clock u) = (r2,u2) ⇒ u2.clock ≤ (dec_clock u).clock) ∧ evaluate (Loop p,s) = (res,t) ⇒ t.clock ≤ s.clock
+cloop_proved=T
