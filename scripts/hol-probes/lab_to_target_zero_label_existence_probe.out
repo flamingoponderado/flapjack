@@ -1,0 +1,39 @@
+zero_labs_acc_of_eq_zero_labs_of=(domain (zero_labs_acc_of (l :α asm_with_lab) (acc :sptree$num_set)) :
+ num -> bool) =
+IMAGE (FST :num # num -> num) (restrict_zero (labs_of l)) ∪
+(domain acc :num -> bool)
+zero_labs_acc_of_eq_zero_labs_of_types=(acc :sptree$num_set)::sptree$num_set;(l :α asm_with_lab)::α asm_with_lab;
+zero_labs_acc_of_eq_zero_labs_of_hypotheses=0
+line_get_zero_labs_acc_eq_line_get_zero_labels=(domain (line_get_zero_labs_acc (l :α line) (acc :sptree$num_set)) :
+ num -> bool) =
+IMAGE (FST :num # num -> num) (restrict_zero (line_get_labels l)) ∪
+(domain acc :num -> bool)
+line_get_zero_labs_acc_eq_line_get_zero_labels_types=(acc :sptree$num_set)::sptree$num_set;(l :α line)::α line;
+line_get_zero_labs_acc_eq_line_get_zero_labels_hypotheses=0
+sec_get_zero_labs_acc_eq_sec_get_zero_labels=(domain (sec_get_zero_labs_acc (sec :α sec) (acc :sptree$num_set)) :
+ num -> bool) =
+IMAGE (FST :num # num -> num) (restrict_zero (sec_get_labels sec)) ∪
+(domain acc :num -> bool)
+sec_get_zero_labs_acc_eq_sec_get_zero_labels_types=(acc :sptree$num_set)::sptree$num_set;(sec :α sec)::α sec;
+sec_get_zero_labs_acc_eq_sec_get_zero_labels_hypotheses=0
+get_zero_labs_acc_eq_get_zero_labels=(domain
+   (FOLDR (sec_get_zero_labs_acc :α sec -> sptree$num_set -> sptree$num_set)
+      (acc :sptree$num_set) (code :α sec list)) :num -> bool) =
+IMAGE (FST :num # num -> num) (restrict_zero (get_labels code)) ∪
+(domain acc :num -> bool)
+get_zero_labs_acc_eq_get_zero_labels_types=(code :α sec list)::α sec list;(acc :sptree$num_set)::sptree$num_set;
+get_zero_labs_acc_eq_get_zero_labels_hypotheses=0
+zero_labs_acc_exist_eq=zero_labs_acc_exist (labs :α sptree$num_map sptree$num_map)
+  (code :β sec list) ⇔ restrict_zero (get_labels code) ⊆ labs_domain labs
+zero_labs_acc_exist_eq_types=(code :β sec list)::β sec list;(labs :α sptree$num_map sptree$num_map)::α sptree$num_map sptree$num_map;
+zero_labs_acc_exist_eq_hypotheses=0
+zero_reference=T
+nonzero_reference=T
+call_ignored=T
+loc_reference=T
+empty_code=T
+generic_value=T
+missing_outer=T
+wrong_inner_key=T
+width1=T
+width80_large_label=T
