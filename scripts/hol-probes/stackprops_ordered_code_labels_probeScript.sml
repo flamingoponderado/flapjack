@@ -34,3 +34,17 @@ val _ = observe "key_bool_word" ``stackSem$find_code (INR T : num+bool) (FEMPTY 
 val _ = observe "key_list_indirect" ``stackSem$find_code (INR [1;2] : num+num list) (FEMPTY |+ ([1;2], Loc 7 0 : 80 word_loc)) (sptree$fromAList [(7,41:num)])``;
 val _ = observe "key_list_missing_code" ``stackSem$find_code (INR [1;2] : num+num list) (FEMPTY |+ ([1;2], Loc 8 0 : 80 word_loc)) (sptree$fromAList [(7,41:num)])``;
 val _ = observe "key_nat_legacy" ``stackSem$find_code (INR 3 : num+num) (FEMPTY |+ (3, Loc 7 0 : 64 word_loc)) (sptree$fromAList [(7,41:num)])``;
+
+val _ = observe "ordered_skip" ``extract_labels (Skip : 64 stackLang$prog)``;
+val _ = observe "ordered_ignore_handler" ``extract_labels (Call NONE (INL 7) (SOME (Call (SOME (Skip,0,3,4)) (INL 8) NONE,1,2)) : 64 stackLang$prog)``;
+val _ = observe "ordered_return" ``extract_labels (Call (SOME (Skip,9,1,2)) (INR 7) NONE : 64 stackLang$prog)``;
+val _ = observe "ordered_both" ``extract_labels (Call (SOME (Skip,9,1,2)) (INL 7) (SOME (Skip,3,4)) : 64 stackLang$prog)``;
+val _ = observe "ordered_nested" ``extract_labels (Call (SOME (Call (SOME (Skip,0,5,6)) (INL 0) NONE,9,1,2)) (INL 7) (SOME (Call (SOME (Skip,0,7,8)) (INL 0) NONE,3,4)) : 64 stackLang$prog)``;
+val _ = observe "ordered_duplicate" ``extract_labels (Call (SOME (Call (SOME (Skip,0,1,2)) (INL 0) NONE,9,1,2)) (INL 7) (SOME (Skip,1,2)) : 1 stackLang$prog)``;
+val _ = observe "ordered_sequence" ``extract_labels (Seq (Call (SOME (Skip,0,3,4)) (INL 0) NONE) (Call (SOME (Skip,0,1,2)) (INL 0) NONE) : 80 stackLang$prog)``;
+val _ = observe "ordered_loop" ``extract_labels (Loop (Call (SOME (Skip,0,1,2)) (INL 0) NONE) : 64 stackLang$prog)``;
+val _ = observe "ordered_if" ``extract_labels (If Equal 0 (Reg 1) (Call (SOME (Skip,0,3,4)) (INL 0) NONE) (Call (SOME (Skip,0,1,2)) (INL 0) NONE) : 64 stackLang$prog)``;
+val _ = observe "ordered_leaf_labels" ``extract_labels (Seq (LocValue 0 1 2) (JumpLower 0 1 7) : 64 stackLang$prog)``;
+
+val _ = capture "containment_bool_direct" (MATCH_MP find_code_labels_source (EVAL ``stackSem$find_code (INL 7 : num+bool) (FEMPTY : bool |-> 1 word_loc) (sptree$fromAList [(7,Call (SOME (Skip,0,1,2)) (INL 0) NONE : 80 stackLang$prog)])``));
+val _ = capture "containment_list_indirect" (MATCH_MP find_code_labels_source (EVAL ``stackSem$find_code (INR [1;2] : num+num list) (FEMPTY |+ ([1;2],Loc 7 0 : 80 word_loc)) (sptree$fromAList [(7,Call (SOME (Skip,0,1,2)) (INL 0) NONE : 1 stackLang$prog)])``));

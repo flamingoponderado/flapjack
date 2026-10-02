@@ -53769,5 +53769,26 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-stack-bitmap-word-lemmas original174-229: Five complete original mathematical statements, actual bitmap decode1042/1069/1083 and compiler register-range6525/8001ff prerequisites. GENLIST f n is exactly map f (range n); Nat maximum empty default0 is represented by associative/commutative foldl max0, same MAX_LIST recursion value including empty input, no sortedness/bounds premise. Both unrestricted maximum formulae retain original natural subtraction/successor and n=0. Local word_or_eq_0 full iff, local shift_shift_lemma only original non-MSB premise, word_shift_or_1 unconditional including high bit/overflow and width1. words_as_type_indexed_bitvec where present records positive BitVec width/NeZero only; numeric lemmas need no dimension qualifier. Logical shifts use BitVec Nat shift counts, bitwise OR/add and zero/one modulo width exact. Kernel list induction/Nat order and bit-extensionality/core BitVec lemmas prove arbitrary width, no native_decide/sorry/new external source allowances. Fresh original five complete literal proof replays hyp=[] and267 numerical/full-law applications at1/2/32/64/80 with one-bit words/allones/MSB/losttopbit/zero/prefix-boundary counts,275captured labels (five proofs/three original inferred types/267 cases; initial standalone fixture word widths explicitly repaired before successful full outcome audit). Matching267kernel cases plus2further arbitrarywidth/count whole applications. No state relation, desired evaluation or provisional HD/EL dependency, no full bitmap decoder/compiler simulation closure.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/OrderedLabels.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "lean_name": "extractLabels",
+    "hol_name": "extract_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (qipb.1): complete original StackProps773-788 definition and inferred quantified types captured freshly. Exact HolProg retains single shared positive word dimension, all34 original constructors, fixed store_name, faithful asm payloads and MlString FFI field. Call NONE ignores handler; SOME return without handler emits return label then recursive return body; SOME handler emits both outer labels before recursive return then handler bodies. Loop recurses; Seq and If concatenate left then right; all other constructors empty. List order and duplicates unchanged, no set conversion or callback premises. words_as_type_indexed_bitvec records only the positive original word dimension; NeZero retained. Ten original/kernel observations include nested order, duplicates, ignored handler, 1/64/80 dimensions and leaf LocValue/JumpLower. Proof-script helper has no executed compiler path; no containment theorem or pass-correctness result claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/OrderedLabels.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "lean_name": "findCodeImpGetLabels",
+    "hol_name": "find_code_IMP_get_labels",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (qipb): full original StackProps790-798 theorem and literal original proof replayed with captured full inferred type: target:num+beta, regs:beta |-> gamma word_loc, code/e:alpha stackLang$prog. Lean retains arbitrary key kappa, independent positive registerWidth/programWidth, exact HolProg and Spt tree code, original successful input lookup equality, and complete predicate-set subset. fmap_as_finite_support_relation records only canonical standalone regs binder; words_as_type_indexed_bitvec records both independent positive word dimensions. No key equality/BEq, target evaluation, domain, offset-zero, output-state or label premise is added. Proof derives original successful Spt lookup in direct and all indirect branches then uses loc_check original existential disjunct. Full original/native theorem applications use Bool keys with register1/program80 and List Nat keys with register80/program1; missing/word/nonzero-offset source lookup observations retained. Dependent native findCode generic carrier repaired and coordinator accepted62gq before this port. No full compiler pass or source-to-RISC-V composition claim."
   }
 ]
