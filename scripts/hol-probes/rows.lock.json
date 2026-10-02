@@ -182,6 +182,7 @@
     {"bytes": 94, "out": "eval_nested_assign_distinct_eq_probe.out", "rows": 3, "sha256": "13e53c72478096199734fe0e784b90fa179dbc10be38c220380fd8902ab163c6"},
     {"bytes": 78, "out": "eval_nested_decs_load_globals_probe.out", "rows": 2, "sha256": "36a7401f16f797e3391445f10f5576ffe2fe08a40165c29e82f2bade4d94994f"},
     {"bytes": 224, "out": "eval_nested_decs_seq_res_var_eq_probe.out", "rows": 7, "sha256": "f40578ca33e43bf7246d23964358037da66c97aea8bf410d8b8e3c5730c96f43"},
+    {"bytes": 182, "out": "evaluate_props_ffi_relation_probe.out", "rows": 3, "sha256": "4ab54b094db487c471b0bbee41ab65f2f202f2084d72c6632f47410c4601f189"},
     {"bytes": 513, "out": "excp_rel_probe.out", "rows": 4, "sha256": "62344ca1abe68b4c69e84524d58746f9a9ab317532a5459065a69a010d782869"},
     {"bytes": 282, "out": "exp_hdl_probe.out", "rows": 5, "sha256": "c88c9bb99b7f1e43d34563796d7a755bcdbea104b71c8207688fef3bad23d6e1"},
     {"bytes": 13, "out": "extract_sum_probe.out", "rows": 2, "sha256": "45ddbb2fcd8d130d22b944b73003acffa491d090dd9d39711b2de060c89ccdbc"},

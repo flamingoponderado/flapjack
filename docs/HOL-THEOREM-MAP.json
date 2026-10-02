@@ -56165,5 +56165,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison: original stack_removeScript250-265 is the constant INL zero-word function updated at twelve DISTINCT StoreName constructor keys. Lean constructor matching is the extensional interpretation of these updates; grouping CurrHeap/GlobReal/NextFree retains INR(k+2), TriggerGC alone branches on gen_gc, EndOfHeap/OtherHeap give2, HeapLength5, BitmapBase3, BitmapBuffer4, BitmapBufferEnd6, CodeBuffer7, CodeBufferEnd1. The five other fixed constructors and every Temp payload retain default INL0. Native StoreName is the reviewed monomorphic exact stackLang store_name, including fixed BitVec5 Temp; no generic word replacement of that field. Only arbitrary positive output word translates to BitVec width with NeZero width. Source update keys are distinct, so overwrite ordering cannot change a lookup; no finite-map qualifier applies to this total function. Nat pointer/gen_gc/domain/result quantifiers and all cases retained without bounds or success premises. Full executed initialization/compile route remains dependency-linked on parent .6.6."
+  },
+  {
+    "lean_path": "Flapjack/EvaluateProps.lean",
+    "lean_name": "callFFIRelHOL",
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "call_FFI_rel_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.62.1): evaluatePropsScript20-22 existential name/conf/bytes/t and equality to FFI_return s2 t retained exactly. Native HolFfiState, HolFfiName (exact MlString), BitVec8 byte lists and callFFIHOL are the reviewed source carriers and operation. Both states quantify over universe-0 host Type; no result assumption or successful-call callback. Definition is a single step, not RTC; full LabToTarget share_mem_state_rel parent remains open. Unconditional identity step is separately kernel checked using empty ExtCall and empty lists. Coordinator source review pending."
   }
 ]

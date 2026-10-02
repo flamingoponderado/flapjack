@@ -1,3 +1,10 @@
+`evaluate_props_ffi_relation_probe.out` captures the full original FFI-step
+definition and inferred state-relation type, and checks an assumption-free
+identity step using the empty external call. `Flapjack/EvaluateProps.lean`
+retains all four existential witnesses and kernel-checks the same generic
+identity step. The reflexive-transitive closure and full LabToTarget
+shared-memory relation remain separate obligations.
+
 `word_to_stack_native_addr_probe.out` records72 original wInst memory trees across Load/Store/Load8/Store8/Load32/Store32, register/spilled operands and zero/positive/negative64bit offsets; five selected Store trees include signed12 endpoints and out-of-range2048. Native kernel fixtures replay all72 source trees; production fixtures preserve Addr instead of macro address sequences, with unchanged original artifact/corpus goldens.
 
 `stack_remove_prog_comp_probe.out` captures full original section-wrapper definition/type and15 native outputs at widths1/8/32/64/80 with independent Bool/ListBool/Nat section names. Kernel fixtures retain generic Name/configuration and unconditional name preservation; actual runtime replacement remains36ez.3.

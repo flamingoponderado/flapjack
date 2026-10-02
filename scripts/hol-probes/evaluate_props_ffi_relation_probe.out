@@ -1,0 +1,3 @@
+ffi_rel_full_def=∀s1 s2. call_FFI_rel s1 s2 ⇔ ∃n conf bytes t. call_FFI s1 n conf bytes = FFI_return s2 t
+ffi_rel_type=:α ffi_state -> α ffi_state -> bool
+ffi_rel_identity=T
