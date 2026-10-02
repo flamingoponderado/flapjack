@@ -22,6 +22,9 @@ import Flapjack.Compiler.Backend.LabToTarget.ProgramByteLengths
 import Flapjack.Compiler.Backend.LabToTarget.PositionExtension
 import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
 import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
+import Flapjack.Compiler.Backend.LabToTarget.MemoryTransport
+import Flapjack.Compiler.Backend.LabToTarget.LineInfo
+import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
@@ -659,6 +662,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionInitTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionNumSet
 import Flapjack.Compiler.Backend.RegAlloc.ProductionBijection
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInputCodec
+import Flapjack.Compiler.Backend.RegAlloc.ProductionGraphRows
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec

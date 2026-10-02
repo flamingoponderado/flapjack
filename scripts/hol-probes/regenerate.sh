@@ -5787,3 +5787,25 @@ run_probe lab_to_target_position_order_probeScript.sml lab_to_target_position_or
 run_probe l3_model_fetch_probeScript.sml l3_model_fetch_probe.out \
   model_fetch_full_definition model_fetch_full_type model_fetch_odd_generic_equation odd_unknown_vm odd_wrap none_vm_1 none_vm_2 none_vm_8 none_vm_11 none_vm_12 bare_0_0 bare_0_3 bare_2_3 bare_18446744073709551614_0 bare_18446744073709551614_3 hit_sv39 hit_sv48_half hit_denied walk_sv39 walk_sv48 walk_invalid \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe lab_to_target_memory_transport_probeScript.sml lab_to_target_memory_transport_probe.out \
+  bytes_in_memory_eq_mem bytes_in_memory_eq_mem_types bytes_in_memory_eq_mem_hypotheses \
+  wrap8 wrap1 wrap64 wrap80 outside_diff empty_domain missing_domain \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_line_info_probeScript.sml lab_to_target_line_info_probe.out \
+  line_to_info_def line_to_info_def_types line_to_info_def_hypotheses \
+  line_to_info_next line_to_info_next_types line_to_info_next_hypotheses \
+  line_to_info_hd_empty line_to_info_hd_empty_types line_to_info_hd_empty_hypotheses \
+  line_to_info_hd_Label line_to_info_hd_Label_types line_to_info_hd_Label_hypotheses \
+  GENLIST_asm_fetch_aux_next GENLIST_asm_fetch_aux_next_types GENLIST_asm_fetch_aux_next_hypotheses \
+  cross_width_first cross_width_boundary load load32 load16 load8 store store32 store16 store8 none label asmi cbw labasm empty_section zero_label four_dimensions enumeration_past_end \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_byte_interval_distinct_probeScript.sml lab_to_target_byte_interval_distinct_probe.out \
+  pos_val_asm_fetch_aux_distinct pos_val_asm_fetch_aux_distinct_types pos_val_asm_fetch_aux_distinct_hypotheses \
+  interval0 interval1 interval2 interval3 interval4 interval5 same_pc_guard byte_bound_guard dimensional_bound_guard \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
