@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchMono
 import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence
 import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference

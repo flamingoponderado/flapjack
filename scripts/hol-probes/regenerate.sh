@@ -4292,3 +4292,7 @@ run_probe target_interference_sequence_probeScript.sml target_interference_seque
 run_probe target_register_oracles_probeScript.sml target_register_oracles_probe.out \
   target_io_regs_type target_io_regs_definition target_io_fp_regs_type target_io_fp_regs_definition target_cc_regs_type target_cc_regs_definition target_cc_fp_regs_type target_cc_fp_regs_definition target_io_absent target_io_fp_absent target_io_fp_present target_io_callee target_io_allowed target_cc_absent target_cc_fp_absent target_cc_fp_present target_cc_callee target_cc_allowed \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_search_mono_probeScript.sml target_search_mono_probe.out \
+  search_mono_full_statement search_mono_statement_type search_unique_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

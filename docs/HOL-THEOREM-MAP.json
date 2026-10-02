@@ -56228,5 +56228,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02, native-target-register-oracles: full original definition at source294 and polymorphic type captured in target_register_oracles_probe.out compared literally. Independent machine state/projection/FFI host retained; IO unused ffiname retained as exact HolFfiName. Predicates isFfiApp=true and its negation render HOL Boolean predicates. IO integer guard callee/range/avoid, cache additionally pointer exclusion; FP has no added index guard and fixed BitVec64 zero fallback. Uses initial mc register projection on application post state, no updated-config substitution. Native generic ten branch consumers kernel checked. EL provenance: through interferencePos/interferenceAppSeq/nextInterference to reviewed findNextInterference, literal source112-211 EL index ffi_names is native holEl with shared opaque holHdNil/holArb out of range, no bound/fallback premise. No executable compiler route change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SearchMono.lean",
+    "lean_name": "findNextInterferenceMono",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "find_next_interference_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source305: full generic clock result statement compared against literal HOL. Whole exact application/config/FFI tuple preserved, independent S/Q/hostσ Type and positive word width NeZero retained; no extra validity/alignment/indexbounds or oracle premise. Mono uses original induction: normal branch guard and updated oracle/config recurse; remaining positive-clock branches independent of clock. Unique uses mono twice and addition commutativity exactly as original. EL provenance through findNextInterference: literal source112-211 EL index ffi_names is reviewed holEl with shared opaque holHdNil/holArb past end, no addedbounds/fallback assumption. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SearchMono.lean",
+    "lean_name": "findNextInterferenceUnique",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "find_next_interference_unique",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source319: full generic clock result statement compared against literal HOL. Whole exact application/config/FFI tuple preserved, independent S/Q/hostσ Type and positive word width NeZero retained; no extra validity/alignment/indexbounds or oracle premise. Mono uses original induction: normal branch guard and updated oracle/config recurse; remaining positive-clock branches independent of clock. Unique uses mono twice and addition commutativity exactly as original. EL provenance through findNextInterference: literal source112-211 EL index ffi_names is reviewed holEl with shared opaque holHdNil/holArb past end, no addedbounds/fallback assumption. No executed compiler change."
   }
 ]
