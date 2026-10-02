@@ -4956,3 +4956,7 @@ run_probe misc_wordlist_heap_probeScript.sml misc_wordlist_heap_probe.out \
 run_probe stack_remove_staterel_probeScript.sml stack_remove_staterel_probe.out \
   sr_def sr_type sr_star_shape sr_width1 sr_width8 sr_width80 sr_source_stack sr_source_store sr_target_stack sr_target_store sr_source_alloc sr_target_alloc sr_stack_space sr_bitmap_none sr_bitmap_loc sr_base_none sr_base_loc \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_statelaws_probeScript.sml stack_remove_statelaws_probe.out \
+  sl_getvar sl_getvar_types sl_getvar_proved sl_decclock sl_decclock_types sl_decclock_proved sl_withclock sl_withclock_types sl_withclock_proved sl_const sl_const_types sl_const_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

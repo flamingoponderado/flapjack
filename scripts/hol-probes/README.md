@@ -5732,3 +5732,14 @@ stack-space overflow, missing/non-word bitmap values, and missing/non-word
 base registers; corresponding Lean fixtures use the actual evaluator carrier.
 The source's local `num_stubs` is `stack_num_stubs`. This evidence verifies
 the relation definition, not the unfinished pass simulation theorem.
+
+### Native StackRemove relation register and clock laws
+
+`stack_remove_statelaws_probeScript.sml` independently reproves the literal
+`state_rel_get_var`, `state_rel_IMP`, `state_rel_with_clock`, and
+`state_rel_const` statements from the pinned full state relation and actual
+StackSem state operations. These source-local results are not all exported
+by the original theory, so the probe proves their complete original statements
+and records every quantified binder type. The constant-field result retains
+both compile/oracle transports, and decrement/common-clock laws quantify
+arbitrary clocks, including zero. This does not prove `comp_correct`.

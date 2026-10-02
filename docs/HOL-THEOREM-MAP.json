@@ -62473,5 +62473,61 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.7: complete original153-198 type bool->alpha word#alpha word->num->(alpha,beta,gamma)stackSemstate->same state->bool. Width has NeZero; independently quantified configuration C and FFI host F remain Type0. Imports actual evaluator StackSemStateFiniteExact with regs/fpRegs/store HolFiniteMapExact; code remains Spt, domain/save registers remain sets, lists stay lists. Same-module witness reexports genuine broad/exact codec roundtrips, no duplicate owner. All six mode flags, be/gc/clock/ffi/save-regs/fp-regs/code-buffer/shared-domain equalities preserved. Source compile transforms input list by exact progComp; target oracle transports only middle list while preserving config and data words. Oracle membership retains both full regBound and stackNumStubs<=name+1, source local num_stubs explicitly resolves to stackNumStubs. Dimension remains goodDimindex32or64 inside relation, not an added premise; lower-register lookup, full codeRel, stackErrLab exact halt2, CurrHeap alias, three FFI save registers, bitmap Word test, stack-space length, exact shifted bitmap base/data-buffer position all preserved. Existing unconditional WordLocW/generic constructor codecs and both inverse laws adapt native selector inputs without changing NONE/Loc shared ARB behavior. Base register rejects NONE/Loc, reserve-size and nonwrapping-stack arithmetic are numeric full-width bounds, top pointer uses modular word arithmetic. Five heap assertions retain original left-associative STAR grouping, complete memory graph, mapped Word bitmaps, existential free-space list, full48slot wordStore, source stack, and exact target whole memory graph. Boolean domain=true renders source predicate sets. No finite-memory, wf, output-success, run-result, equality-of-states or supplied separation premise, and no hidden extra hypothesis. Complete original type/equation and syntax-tree grouping plus same-input kernel exclusions provide source evidence; this definition alone does not establish comp_correct or compile_semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/RelationLaws.lean",
+    "lean_name": "stateRelGetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_get_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.1: actual StackSemStateFiniteExact evaluator state imported with canonical regs/fpRegs/store and Spt code, independent C/F Type0 and positive word width. Qualified relation fields cover exactly those three maps; same-module nested RelationLaws witness reexports genuine raw/exact codec roundtrips without duplicate/shadow state. Full stateRelHOL retains all original conjuncts, supported constructor codec for generic word selectors and no additional hypothesis. Original full statement/binder-type and kernel replay, Lean kernel theorem proof and full gates provide evidence. Original199-203 source state_rel AND register<k implies get_var source=get_var target. Proof projects original lower-register lookup conjunct and reverses its equality; original getVar evaluator operation used. No stronger bound or required lookup success."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/RelationLaws.lean",
+    "lean_name": "stateRelDecClock",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.1: actual StackSemStateFiniteExact evaluator state imported with canonical regs/fpRegs/store and Spt code, independent C/F Type0 and positive word width. Qualified relation fields cover exactly those three maps; same-module nested RelationLaws witness reexports genuine raw/exact codec roundtrips without duplicate/shadow state. Full stateRelHOL retains all original conjuncts, supported constructor codec for generic word selectors and no additional hypothesis. Original full statement/binder-type and kernel replay, Lean kernel theorem proof and full gates provide evidence. Original205-211 implication preserves state_rel through both actual StackSemStateOps.decClock truncating Nat subtraction1. Proof first projects equal clocks, then uses proved arbitrary common-clock transport, including clock0; no nonzero-clock premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/RelationLaws.lean",
+    "lean_name": "stateRelWithClock",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_with_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.1: actual StackSemStateFiniteExact evaluator state imported with canonical regs/fpRegs/store and Spt code, independent C/F Type0 and positive word width. Qualified relation fields cover exactly those three maps; same-module nested RelationLaws witness reexports genuine raw/exact codec roundtrips without duplicate/shadow state. Full stateRelHOL retains all original conjuncts, supported constructor codec for generic word selectors and no additional hypothesis. Original full statement/binder-type and kernel replay, Lean kernel theorem proof and full gates provide evidence. Original213-219 implication replaces both states clocks with any Nat c and preserves complete relation. Explicit full26conjunct decomposition retains every field/compile/oracle/separation conjunct while replacing only clock equality by reflexivity. No hidden clock monotonicity or evaluation premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/RelationLaws.lean",
+    "lean_name": "stateRelConst",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_const",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.1: actual StackSemStateFiniteExact evaluator state imported with canonical regs/fpRegs/store and Spt code, independent C/F Type0 and positive word width. Qualified relation fields cover exactly those three maps; same-module nested RelationLaws witness reexports genuine raw/exact codec roundtrips without duplicate/shadow state. Full stateRelHOL retains all original conjuncts, supported constructor codec for generic word selectors and no additional hypothesis. Original full statement/binder-type and kernel replay, Lean kernel theorem proof and full gates provide evidence. Original221-232 complete7conjunct conclusion: codeBuffer equality, shMdomain equality, target useStack false, source useStack true, ffi equality, target oracle mapped only middle list, and source compile transport. All quantifiers and directions retained; no dropped transport conjunct. Proof exact projections from full stateRel."
   }
 ]
