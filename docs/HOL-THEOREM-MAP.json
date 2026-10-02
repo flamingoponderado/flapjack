@@ -67978,5 +67978,20 @@
     "hol_name": "dfn'LD_def",
     "statement_status": "reviewed_exact",
     "reviewer": "Full source/body comparison pinned riscvScript7286-7324: Source7286-7324: complete LD; low 64 bits with raw word64. Original mode guard precedes address computation; its returned state is retained, including unspecified-mode behavior. HOL right-nested tuple word5 x word5 x word12 and full riscv_state -> riscv_state match native carriers. GPR rs1 plus signed12 offset wraps at64; translateAddr Data Read receives original/current-mode returned state. NONE calls signalAddressException(Load_Fault, original virtual address) on returned translation state; SOME reads rawReadData at physical address on that same state and writes original rd. Extraction high63/low0 within64 and original sign/zero/raw extension compared. Original GPR0 suppression and total core functions retained; no alignment/success/core bound or evaluator replacement. Full Run/Next/runtime routing remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/StoreConsts.lean",
+    "lean_name": "evaluateCodeBitmapsStoreConsts",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison: stackPropsScript421-440 StoreConsts case. Actual evaluate equation is sole premise, all useStore/useAlloc and optional-stub lookup guards and primitive errors retained. Full store_const_sem_const derives unchanged oracle/code/bitmaps, giving count0 for all outcomes. Conclusion retains original existential oracle shift, left-fold spt union over GENLIST encoded as range/map, and bitmap List append/flatten. No successful guard, field equality or trace premise assumed. Imported StackSemStateFiniteExact owns canonical regs/fpRegs/store finite maps; same-module non-vacuous codec witness re-export, code remains Spt, bitmaps remains List. All word dimensions positive NeZero width. No runtime change, no LOG2-zero equality or cross-language agreement obligation; StoreConsts uses word-copy operations. One case only, full theorem remains open. Elaborated constant closure inherits reals_as_rational_cuts through the full native evaluator (including its FP arms); recorded as inherited assurance scope, not a direct qualifier or proof that floating-point semantics agree cross-language.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

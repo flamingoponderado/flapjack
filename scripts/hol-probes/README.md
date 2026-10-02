@@ -6252,3 +6252,5 @@ NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 `stack_remove_memory_subset_probeScript.sml` replays the complete literal original generic separated-graph domain inclusion proof. Arbitrary address/value types, functions/domains and frame retained. Two rows capture the full statement and proof success.
 
 `stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.
+
+`stackprops_code_bitmaps_probe.out` captures the complete original existential oracle/code/bitmap theorem and explicitly checks zero theorem hypotheses. The StoreConsts case retains all dispatch guards and primitive errors, deriving count zero from the full preservation theorem. This is source evidence, not runtime parity or full theorem assembly.

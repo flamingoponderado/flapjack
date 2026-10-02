@@ -5883,3 +5883,7 @@ run_probe lab_to_target_shmem_names_probeScript.sml lab_to_target_shmem_names_pr
   word8_names narrow_names wide_names extcall_prefix all_ops ffi_only empty \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe stackprops_code_bitmaps_probeScript.sml stackprops_code_bitmaps_probe.out \
+  evaluate_code_bitmaps evaluate_code_bitmaps_hypotheses \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
