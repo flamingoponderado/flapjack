@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordCse.ListOrder
 import Flapjack.Word
 import Std.Data.TreeMap
 
@@ -23,8 +24,8 @@ The port keeps Cake's structure; its only deviations are about the carrier:
 * the two `num_map`s, the `store_name` alist and the two balanced maps are
   represented by association lists (`lookupNatInfo` is Cake's `lookup_any`,
   a first-match lookup, and `wordCseInsert` is a replacement insert);
-* Cake's balanced-map list keys compare by exact list equality (`listCmp`),
-  which is exactly `List` equality here;
+* the fact tables pass the reviewed native `listCmp` directly to TreeMap;
+  this comparator agrees unconditionally with the previous Lean list ordering;
 * `WordMemOp` has no immediate address offset, so the address offset in
   `loadToNumList` is always `0`;
 * Cake's `fpWrites`/FP rows and the `AddOverflow`/`SubOverflow` carriers do
@@ -89,7 +90,8 @@ before consing the new one -- and they are only ever read back by key, so
 replacing the lists with trees changes no value the pass computes.  The
 whole-program byte comparison in the commit message is the evidence. -/
 abbrev WordCseRegMap := Std.TreeMap Nat Nat
-abbrev WordCseFactMap := Std.TreeMap (List Nat) Nat
+abbrev WordCseFactMap :=
+  Std.TreeMap (List Nat) Nat Compiler.Backend.WordCse.listCmp
 
 /-- Cake's `knowledge` record.  `toCanonical` and `toLatest` are the two
     register maps, `getsMem` records the register that already holds a store

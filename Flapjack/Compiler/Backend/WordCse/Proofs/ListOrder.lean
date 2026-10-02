@@ -60,4 +60,25 @@ theorem transitListCmp (x y z : List Nat)
             have hgt : ¬ a > c := by omega
             simp [listCmp, hac, hgt]
 
+/-- Flapjack infrastructure: unconditional agreement with Lean's previous
+executed list comparator. There is no HOL declaration for Lean's `compare`. -/
+theorem listCmpEqStdCompare (x y : List Nat) : listCmp x y = compare x y := by
+  induction x generalizing y with
+  | nil => cases y <;> rfl
+  | cons a xs ih =>
+    cases y with
+    | nil => rfl
+    | cons b ys =>
+      simp only [listCmp, List.compare_cons_cons]
+      by_cases h : a = b
+      · subst b; simp [ih]
+      · by_cases hgt : a > b
+        · simp [h, hgt, Nat.compare_eq_gt.mpr hgt]
+        · have hlt : a < b := by omega
+          simp [h, hgt, Nat.compare_eq_lt.mpr hlt]
+/-- Function equality also covers comparator arguments passed to TreeMap,
+rather than only fully applied comparator calls. No separate HOL original. -/
+theorem listCmpFunctionEqStdCompare : listCmp = (compare : List Nat → List Nat → Ordering) :=
+  funext fun x => funext fun y => listCmpEqStdCompare x y
+
 end Flapjack.Compiler.Backend.WordCse
