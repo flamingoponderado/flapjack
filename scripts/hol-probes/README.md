@@ -5453,3 +5453,10 @@ children, nonempty single/double rotations, left Tip, nonempty-right fallback,
 and both heavy branches. Kernel fixtures check their input invariants and
 consume the full equality. Small-child constructors and impossible malformed
 heavy branches are derived from invariants; no stronger premises are added.
+### Native SSA Loop setup
+
+`ssa_loop_setup_correct_probeScript.sml` replays the literal original local
+`loop_setup_correct` proof, with its local prerequisites, and captures the full
+five-premise/ten-conclusion statement and nine native carriers. The pinned
+original HOL kernel replay and Lean kernel check are regression/source-review
+evidence, not a cross-language equivalence proof. Full Loop simulation remains open.

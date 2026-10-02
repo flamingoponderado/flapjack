@@ -4774,3 +4774,7 @@ run_probe ssa_fake_const_chain_probeScript.sml ssa_fake_const_chain_probe.out \
 run_probe balanced_map_balanceL_eq_probeScript.sml balanced_map_balanceL_eq_probe.out \
   bmbl_full bmbl_empty bmbl_singleton bmbl_lr_only bmbl_ll_only bmbl_single_tip bmbl_double_tip bmbl_left_tip bmbl_fallback bmbl_heavy_single bmbl_heavy_double \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe ssa_loop_setup_correct_probeScript.sml ssa_loop_setup_correct_probe.out \
+  loop_setup_full loop_setup_type_st loop_setup_type_cst loop_setup_type_ssa loop_setup_type_na loop_setup_type_names loop_setup_type_exit_names loop_setup_type_setup_prog loop_setup_type_ssa_refreshed loop_setup_type_na_refreshed \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
