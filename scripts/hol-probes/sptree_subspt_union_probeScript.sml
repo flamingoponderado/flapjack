@@ -1,0 +1,13 @@
+load "sptreeTheory";
+open HolKernel Parse bossLib sptreeTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "subspt_def_statement="; print_term(concl subspt_def));
+val _ = print("subspt_def_hypotheses=" ^ Int.toString(length(hyp subspt_def)) ^ "\n");
+val _ = (print "subspt_lookup_statement="; print_term(concl subspt_lookup));
+val _ = print("subspt_lookup_hypotheses=" ^ Int.toString(length(hyp subspt_lookup)) ^ "\n");
+val _ = (print "subspt_trans_statement="; print_term(concl subspt_trans));
+val _ = print("subspt_trans_hypotheses=" ^ Int.toString(length(hyp subspt_trans)) ^ "\n");
+val _ = (print "subspt_union_statement="; print_term(concl subspt_union));
+val _ = print("subspt_union_hypotheses=" ^ Int.toString(length(hyp subspt_union)) ^ "\n");
+val _ = (print "subspt_foldl_union_statement="; print_term(concl subspt_FOLDL_union));
+val _ = print("subspt_foldl_union_hypotheses=" ^ Int.toString(length(hyp subspt_FOLDL_union)) ^ "\n");
