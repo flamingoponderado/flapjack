@@ -446,4 +446,64 @@ theorem fp32_above_closest_negate (x : Rat) (c : HolFloat 23 8)
     rw [holFloatIsFinite_negate, holFloatToReal_negate]
     exact ⟨hb.1, by grind⟩
 
+/-- The three directed cases; nearest-even is proved in the imported module. -/
+inductive Fp32Direction where
+  | zero | positive | negative
+  deriving DecidableEq
+
+/-- Literal directed finite candidate predicates from HOL's three clauses. -/
+def fp32DirectedCandidates (d : Fp32Direction) (x : Rat) (b : HolFloat 23 8) : Prop :=
+  holFloatIsFinite b = true ∧ match d with
+    | .zero => holRatAbs (holFloatToReal b) ≤ holRatAbs x
+    | .positive => x ≤ holFloatToReal b
+    | .negative => holFloatToReal b ≤ x
+
+/-- Computable positive-domain directed magnitude selection. -/
+def fp32DirectedPositive (d : Fp32Direction) (X : Rat) : HolFloat 23 8 :=
+  fp32OfPat false (match d with
+    | .positive => fp32Upper X
+    | .zero | .negative => fp32Lower X)
+
+/-- Positive-domain selection is closest in the exact directed candidate set. -/
+theorem fp32DirectedPositive_closest (d : Fp32Direction) {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) :
+    holIsClosest (fp32DirectedCandidates d (X / 2 ^ 149))
+      (X / 2 ^ 149) (fp32DirectedPositive d X) := by
+  cases d
+  · exact fp32Lower_zero_isClosest hX hmax
+  · exact fp32Upper_isClosest hX hmax
+  · exact fp32Lower_isClosest hX hmax
+
+/-- Every directed closest candidate has the computed positive bracket's value. -/
+theorem fp32DirectedPositive_closest_value (d : Fp32Direction) {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) (b : HolFloat 23 8)
+    (hb : holIsClosest (fp32DirectedCandidates d (X / 2 ^ 149)) (X / 2 ^ 149) b) :
+    holFloatToReal b = holFloatToReal (fp32DirectedPositive d X) := by
+  cases d
+  · exact fp32Lower_zero_closest_value hX hmax b hb
+  · exact fp32Upper_closest_value hX hmax b hb
+  · exact fp32Lower_closest_value hX hmax b hb
+
+/-- Positive-domain selection is finite, including the largest endpoint. -/
+theorem fp32DirectedPositive_finite (d : Fp32Direction) {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) :
+    holFloatIsFinite (fp32DirectedPositive d X) = true := by
+  have hf := fp32Directed_finite_bracket hX hmax
+  cases d
+  · exact hf.1
+  · exact hf.2.1
+  · exact hf.1
+
+/-- Choice-based and computed directed candidates agree after selecting zero's sign. -/
+theorem fp32DirectedPositive_choice (d : Fp32Direction) {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) (z : HolFloat 23 8) :
+    let c := holClosest (fp32DirectedCandidates d (X / 2 ^ 149)) (X / 2 ^ 149)
+    let a := fp32DirectedPositive d X
+    (if holFloatIsZero c then z else c) = (if holFloatIsZero a then z else a) := by
+  have hc := fp32_closest_spec _ _ _ (fp32DirectedPositive_closest d hX hmax)
+  have hv := fp32DirectedPositive_closest_value d hX hmax _ hc
+  have hf : holFloatIsFinite
+      (holClosest (fp32DirectedCandidates d (X / 2 ^ 149)) (X / 2 ^ 149)) = true := hc.1.1
+  exact fp32_zero_sign_value_eq _ _ hf (fp32DirectedPositive_finite d hX hmax) hv z
+
 end Flapjack.Binary32Rounding
