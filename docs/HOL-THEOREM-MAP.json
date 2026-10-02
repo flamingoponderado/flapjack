@@ -63866,5 +63866,19 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-a author source comparison2026-10-02 original full theorem7666-7702 and returning Call handlerNONE8298-8692: all six premises retained plus only the genuine smaller return-body universal induction hypothesis. Full ssaSimulation source-permutation existential/Error exemption, actual target result/frame and result-sensitive locals retained. Native arbitrary Nat/List/Spt cutsets, program/code/stack/GC/FFI and result carriers; only canonical fpRegs/store finite-map relation and positive type-indexed words qualified, no tree-map translation. Actual source guards, convention moves, callee entry stack replacement, total callee result transport, native pop/domain/cut SSA, retMove and result binder, continuation IH premises, no-handler exception unchanged poststate, clock-zero flush and oracle suffix hot-swap derived internally. No successful guard, targetrun/result, postrelation or oracle suffix premise. Original full specialization captured freshly in ssa_call_returning_none_probe.out; regression/source evidence is not cross-language equivalence. Inherits evaluator reals_as_rational_cuts SOUNDNESS item8. HandlerSOME/full returningCall constructor/fullSSA/end-to-end remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallCase.lean",
+    "lean_name": "ssaCcTransCorrectCallReturningSome",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a author source comparison2026-10-02 original full theorem7666-7702 and resumed handlerSOME8688-9226: full six original premises plus only genuine universal IHs for the smaller return and exception bodies. Complete ssaSimulation existential source permutation, actual target result/frame and result-sensitive locals; Error exemption unchanged. Actual source guards, native convention prefix, pushed root key/value permutation and callee entry, total callee branches, normal native pop/return binder, selected new SOME exception frame with restored first/root domains and lookup remapping, physical2 preservation and later exception binder (counter after return compilation), both handler IH premises, actual mkPrio/fixInconsistencies correctL/R and oracle suffix hot-swap are proved internally. Every intermediate map/counter validity and increase follows actual producer equations; no targetrun/result, source guard success, desired postrelation, or reconciliation spec in the public premises. Original arbitrary Nat/List/Spt cutsets/program/code/stack/GC/FFI/result carriers retained; canonical fpRegs/store finite-map relation and positive type-indexed words only, same owning carrier/witness as handlerNONE, tree maps unqualified. Fresh original full specialization in ssa_call_returning_some_probe.out is regression/source evidence, not cross-language equivalence. Inherits evaluator reals_as_rational_cuts SOUNDNESS item8. Whole returningCall constructor/fullSSA/end-to-end still require assembly."
   }
 ]

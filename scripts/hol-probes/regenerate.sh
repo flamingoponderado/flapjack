@@ -5094,3 +5094,7 @@ run_probe word_to_stack_reg_flat_probeScript.sml word_to_stack_reg_flat_probe.ou
 run_probe ssa_call_returning_none_probeScript.sml ssa_call_returning_none_probe.out \
   returning_none_case_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_call_returning_some_probeScript.sml ssa_call_returning_some_probe.out \
+  returning_some_case_full \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
