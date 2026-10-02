@@ -64637,5 +64637,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 11001-11005: unconditional complete wrapper iff, both performance/handler flags and independent original list/frame-tail types. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/WordConvs/FullInstOkLess.lean",
+    "lean_name": "fullInstOkLessExact",
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "full_inst_ok_less_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 entire source comparison2026-10-02, bead flapjack-word-convs-full-inst-native: original318-345 all8 conjunct clauses retained. Exact positive-width AsmConfigExact whose encode field is HolAsm->BitVec8 list, actual faithful WordLangProgHOL and WordLangExpHOL; Inst converts constructor-for-constructor to reviewed HolInst and instOkLessExact. Seq/Loop/If/MustTerminate recurse literally; Call NONE ignores handler, SOME checks return and optional handler. ShareInst exact expToAddrHOL, NONE false, Load/Store/Load32/Store32 address offset, Load16/Store16 halfword offset, remaining byte offset. Other constructors true. Core traversal is shared with broad wrapper through Flapjack-only policies, no blanket config encoding equality. words_as_type_indexed_bitvec permits only standard positive word dimension translation. Fresh original type/full definition and comprehensive opcode/constructor/policy/word-width observations; old broad original fixtures remain unchanged. Regression evidence does not prove HOL-to-Lean equivalence."
   }
 ]
