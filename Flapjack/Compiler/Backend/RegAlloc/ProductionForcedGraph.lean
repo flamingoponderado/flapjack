@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionEdgeUpdate
+import Flapjack.Compiler.Backend.RegAlloc.ProductionCliqueBatch
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc
@@ -36,5 +36,39 @@ theorem extendGraphReference_production (ta : Nat → Nat) (forced : List (Nat �
     · simp only [extendGraph, Translator.Monadic.MonadBase.ignoreBind, firstRun, run]
     · simpa only [cakeExtendGraph, cakeExtendGraphSet, Option.map_map,
         Function.comp_def] using rel
+
+/-- Exact full-map materialization for the real forced-edge cache traversal.
+This unconditional equation covers equal endpoints, repeated pairs, missing
+rows and outside keys, as well as the descending row order. Untagged codec
+infrastructure for the actual graph producer, not a new HOL definition. -/
+theorem extendGraphSet_materialize (ta : Nat → Nat) (forced : List (Nat × Nat))
+    (cache : CakeNodeMap (Std.TreeSet Nat)) :
+    (cakeExtendGraphSet ta forced cache).mapValues cakeAdjSetList =
+      cakeExtendGraph ta forced (cache.mapValues cakeAdjSetList) := by
+  induction forced generalizing cache with
+  | nil => rfl
+  | cons pair rest ih =>
+    rcases pair with ⟨x, y⟩
+    rw [cakeExtendGraphSet, ih, cakeInsertEdgeSet_materialize_eq]
+    rfl
+
+/-- Full native correspondence for the cache-only forced graph operation
+the executed initializer actually calls. Original endpoint bounds supply the
+read/write domain; materialized rows and every resulting native state field
+are conclusions. This is untagged actual/native correspondence. -/
+theorem extendGraphSet_production (ta : Nat → Nat) (forced : List (Nat × Nat))
+    (cache : CakeNodeMap (Std.TreeSet Nat)) {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native {production with
+      adjLists := cache.mapValues cakeAdjSetList, adjSets := some cache})
+    (bounds : ∀ pair ∈ forced,
+      ta pair.1 < native.adj_ls.length ∧ ta pair.2 < native.adj_ls.length) :
+    ∃ result, extendGraph ta forced native = (.success (), result) ∧
+      result.adj_ls.length = native.adj_ls.length ∧
+      ProductionStateRel result {production with
+        adjLists := (cakeExtendGraphSet ta forced cache).mapValues cakeAdjSetList
+        adjSets := some (cakeExtendGraphSet ta forced cache)} := by
+  obtain ⟨result, run, length, rel⟩ := extendGraphReference_production ta forced related bounds
+  refine ⟨result, run, length, ?_⟩
+  simpa only [extendGraphSet_materialize, Option.map_some] using rel
 
 end Flapjack.RegAlloc
