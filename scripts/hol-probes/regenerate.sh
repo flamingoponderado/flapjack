@@ -4523,3 +4523,7 @@ run_probe mmio_index_probeScript.sml mmio_index_probe.out \
 run_probe target_next_mapped_probeScript.sml target_next_mapped_probe.out \
   next_mapped_read_full_statement next_mapped_write_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_next_shared_mem_probeScript.sml target_next_shared_mem_probe.out \
+  next_shared_mem_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

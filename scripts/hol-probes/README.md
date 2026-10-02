@@ -5007,3 +5007,7 @@ checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTa
 `target_next_mapped_probeScript.sml` captures the complete original
 `next_interference_MappedRead` and `next_interference_MappedWrite` statements
 with no open hypotheses. Native ports are in `TargetProps/NextMapped.lean`.
+
+`target_next_shared_mem_probeScript.sml` captures the complete original
+`next_interference_SharedMem` statement with no open hypotheses; native
+assembly is in `TargetProps/NextSharedMem.lean`.

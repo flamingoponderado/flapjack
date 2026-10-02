@@ -58138,5 +58138,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:712: fresh complete original statement in target_next_mapped_probe.out. All ten original conjuncts retained: nonprogram/FFI-entry PC, not halt/cache, findIndex, total EL SharedMem operator, ALOOKUP nb/Addr r off/reg/pc metadata, zero-nb alignment implication modulo width/8, shared domain, valid mapped instruction, actual callFFI return with conditional full wordToBytes or wordToBytesAux nb.toNat of data register followed by address bytes, as source let-bound w. Native predicate negation of program membership and not FFI-list membership is literal DIFF nonmembership. Exact application index/bytes/pre/oracle0 post, only ffiInterfer shifted1 in returned config, actual newFfi. Full generic native MachineConfig/HolFfiState state/projection/σ : Type with positive width NeZero, word8 byte lists and machine BitVec width; no width>=8 or indexbounds/extra guard. Kernel81jobs zero warnings. EL provenance: holEl ffi_names keeps in-range list element and shared opaque holHdNil/holArb out of range; same total EL equality assumed as HOL, no fallback or added bounds. No executed compiler body/routing change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/NextSharedMem.lean",
+    "lean_name": "nextInterferenceSharedMem",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "next_interference_SharedMem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:742: full original statement freshly captured in target_next_shared_mem_probe.out. Same eight common conjuncts for PC/index/total EL SharedMem op/ALOOKUP/zero-nb alignment/shared domain, then original two conditional conjuncts op=MappedRead implies valid read and exact read-byte FFI return, op=MappedWrite implies valid write and exact conditional data-word/aux bytes plus address FFI return. Neither implication replaced by uniform stronger premise; exact op datatype has two original constructors. Same application/pre/oracle0 post, only ffiInterfer shifted1 in updated configuration, actual newFfi. Generic native MachineConfig/InterferenceApp/HolFfiState carriers, independent σ : Type, positive width NeZero, fixed word8 bytes and machine words BitVec width; no width>=8/indexbounds. Native kernel82jobs zero warnings, proof original operator cases delegates to literal read/write theorems. EL provenance holEl ffi_names retains in-range list element and opaque holHdNil/holArb out of range; original total EL identity premise preserved, no fallback. No executed compiler body/routing change."
   }
 ]
