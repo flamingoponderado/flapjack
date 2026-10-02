@@ -66465,5 +66465,35 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-stack-clock-control): genuine Loop induction case of original evaluate_clock1079-1097, from source evaluate_def811-837 before fix_clock_evaluate rebind1109-1112. Same arbitrary actual native evaluation implication and post.clock<=source.clock conclusion, plus only constructor-specific original induction hypotheses. Original body IH fixed at source retained; reentry IH guarded by actual fixClock body pair, cont_loop and nonzero middle clock. STOP(Loop body) rewritten with original STOP_def663-665 identity. No global clock law, arbitrary context, target result or extra semantic premise. Actual clamped states and all error/result branches retained. Canonical finite-support regs/fpRegs/store and positive type-indexed words only; code Spt and stack List unchanged, same-module imported codec witness. Inherited reals_as_rational_cuts from faithful total evaluator. Fresh original scoped statement oracle specializes original evaluate_clock; it is not an isolated original tactic replay. Independent Lean kernel proof uses exact evaluate_def clauses and fix_clock_IMP. Full assembling clock theorem remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/EvaluateClock.lean",
+    "lean_name": "evaluateClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "evaluate_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-stack-evaluate-clock: full original stackSemScript1079-1106. Same arbitrary program/source/result/poststate actual evaluation equality implies post clock <= source clock; all native constructors, original clock-first well-founded induction and only original recursive hypotheses; Call retains actual fixClock outputs, return location comparisons, ignored-handler/error branches and guarded return/exception continuations. No callback, global clock law, restricted family or target-result assumption. Reviewed canonical finite-support regs/fpRegs/store and positive type-indexed words/Type0 host, Spt code and List stack unchanged. Same-module imported canonical state codec roundtrip; inherits reals_as_rational_cuts from faithful total evaluator. Original proof replay recreates unexported local atomic/fix_clock_IMP helpers; uses exported HOL evaluate_def/evaluate_ind after original allow_rebind and explicit DB.fetch stackSem state_component_equality in lieu of current-theory lookup. This replay is not an independent reconstruction of pre-rebind definitions; Lean proof independently uses actual pre-rebind evaluator clauses."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/EvaluateClock.lean",
+    "lean_name": "fixClockEvaluate",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "fix_clock_evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-stack-evaluate-clock: full original stackSemScript1079-1106. Same unconditional fix_clock input(evaluate program,input)=evaluate program,input identity, derived from full native evaluateClock with no added premise. Reviewed canonical finite-support regs/fpRegs/store and positive type-indexed words/Type0 host, Spt code and List stack unchanged. Same-module imported canonical state codec roundtrip; inherits reals_as_rational_cuts from faithful total evaluator. Original proof replay recreates unexported local atomic/fix_clock_IMP helpers; uses exported HOL evaluate_def/evaluate_ind after original allow_rebind and explicit DB.fetch stackSem state_component_equality in lieu of current-theory lookup. This replay is not an independent reconstruction of pre-rebind definitions; Lean proof independently uses actual pre-rebind evaluator clauses."
   }
 ]

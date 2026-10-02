@@ -6131,3 +6131,10 @@ production list; generic proofs cover arbitrary handlers and unchanged states.
 Ordered-label helper probe freshly replays five complete original local proofs10760-10802 with no open hypotheses and captures108 independent full label lists at widths1/8/64/80. Kernel fixtures retain arbitrary-continuation label order, duplicate return/handler labels, zero/multiple moves/copies, both flags,70bit frame/count fields, natural subtraction, empty/duplicate load lists, and five full generic theorem applications. These are regression observations and original proof replays, not cross-language equivalence or semantic compiler simulation. Selector: HOL_PROBE_ONLY=word_to_stack_extract_labels_helpers_probeScript.sml.
 
 Complete ordered-label compiler probe prints three original full statements with hyp=[] and312 independent full-label projections (104 each comp/program-list/top) at widths1/8/64/80 and both performance flags. Kernel equalities preserve duplicates, nested return/handler order, ignored tail handlers, repeated IDs,70bit labels, and both stub keys. Three generic full-theorem applications and standard-axiom audits are separate from those observations. Direct comp includes70bit register boundaries; list/top If uses register2 because an evaluated70bit maximum with live calls demands an enormous original bitmap (profiled live EVAL stalled before that row, no capture accepted). The same chosen input is used on both languages; no theorem quantifier or default gate is restricted. Original observations are regression evidence, not cross-language equivalence or semantic compiler simulation. Selector: HOL_PROBE_ONLY=word_to_stack_extract_labels_compiler_probeScript.sml.
+
+`stack_sem_evaluate_clock_probeScript.sml` replays the full original
+`evaluate_clock` and `fix_clock_evaluate` proof bodies, recreating their local
+atomic clock and `fix_clock_IMP` helpers. It uses the exported HOL evaluator
+rules after `allow_rebind`, and resolves `state_component_equality` with
+`DB.fetch` rather than a current-theory lookup. The Lean proof independently
+uses the faithful evaluator clauses before the clock-identity rewrite.
