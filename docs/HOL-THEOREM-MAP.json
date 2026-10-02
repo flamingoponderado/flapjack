@@ -64452,5 +64452,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.10: complete genuine FP outerconstructor case of originalstate_rel_inst767-870, all16opcodes, same3originalhyp fullrelation/regBoundInst/source nativeinstsuccess and EXISTS targetnativeinstsuccess/fullpostrelation. Actual StackSemInst.instHOL/instFp/native instFpRegister dispatch unchanged. Derive allFPoperand equality from original completefpRegs relation, derive lowerinteger transfer operands fromoriginalbound. Preserve native comparisons/arithmetic/Fma/sign/Sqrt/ToInt/FromInt/MovToReg/MovFromReg, conversion representability/width64/halfselection/NaN choices and ordered aliasedupdates. No output/rounding/inputword/width/representation/frame premise added. Actual canonical imported StackSemStateFiniteExact regs/fpRegs/store owner and local genuine broad/exact roundtrip witness; Spt code not named. Width NeZero/BitVec and independent C/F Type0 retained. Wholeinst closure inherits reals_as_rational_cuts assumption, explicitly retained and documented beside theorem; no cross-language real equivalence claimed. Freshfulloriginal FPcase/types/kernel replay and fullnativegeneric16caseproof checked. Fullinstruction parent stillneeds genuine allconstructor assembly."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InstructionSimulation.lean",
+    "lean_name": "stateRelInst",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4: COMPLETE original arbitrary state_rel_inst767-870, all5outerconstructors/all8arith/all8mem/all16FP. Literal3hypotheses fullnative stateRelHOL/regBoundInst/instHOL sourceSOMEpostsource imply EXISTS nativeposttarget instHOL targetSOMEposttarget AND fullpostrelation. No inputword/success-target/output/frame/simulation/clock/extra case premise; proof assembles genuine original-shaped kernelchecked constructor cases exhaustively. Actual imported StackSemStateFiniteExact canonical regs/fpRegs/store with genuine same-module broad/exact roundtrip witness; Spt code not named. Positive widthNeZero/BitVec, independent C/F Type0, original native instruction datatype/primitive semantics retained. Wholeinst closure inherits reals_as_rational_cuts assumption, explicitly noted and flagged; no unqualified cross-language real correspondence asserted. Fresh original full quantified theorem/types/kernel replay plus complete native kernel assembly verified. This closes only instruction simulation acceptance scope after coordinator integration, not comp_correct/compile_semantics/end-to-end parents."
   }
 ]
