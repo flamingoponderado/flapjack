@@ -3291,6 +3291,10 @@ run_probe asm_sem_mem_ops_probeScript.sml asm_sem_mem_ops_probe.out \
   mo_ld2_le_reg mo_ld2_le_ok mo_ld2_be_reg mo_ld2_misaligned mo_ld2_dom mo_ld0_reg mo_ld0_failed mo_st1_mem mo_st1_ok mo_st2_misaligned mo_op_load mo_op_load32_failed mo_op_store8_mem mo_op_load16_reg \
   "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
 
+run_probe asm_sem_step_probeScript.sml asm_sem_step_probe.out \
+  as_skip_pc as_const as_arith as_mem as_jump as_jcmp_t as_jcmp_f as_call as_jumpreg_ok as_jumpreg_bad as_loc as_step_proj \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
+
 
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
   sc_store sc_store8 sc_store16 sc_store32 sc_load sc_load8 sc_load16 sc_load32 \

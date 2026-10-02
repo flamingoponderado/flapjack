@@ -4764,6 +4764,13 @@ are proved from `LOG_UNIQUE` (`LOG2` is `[nocompute]`). Kernel-replayed in `AsmS
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=asm_sem_mem_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`asm_sem_step_probe` captures 12 original HOL results of `asm` (with `inst`/`jump_to_offset`)
+on an 8-bit state: every assembly clause, `Const`/`Arith`/`Mem`/`Skip` instructions, both
+`JumpCmp` branches, `JumpReg` with a satisfied and a violated `aligned s.align` guard, and the
+HOL-proved projection of `asm_step` onto its transition and non-failure conjuncts.
+Kernel-replayed in `AsmSemStepParity`. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=asm_sem_step_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 
 
 `word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete

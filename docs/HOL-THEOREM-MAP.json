@@ -58293,5 +58293,44 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.62): lab_to_targetProofScript.sml:720-774 compared against the HOL kernel typing: mc_conf : ('b,'c,'d) machine_config, s1 : ('a, lab_to_target$config, 'ffi) labSem$state, t1 : 'e, ms1 : 'f. The two word widths are independent binders labWidth (labSem, used only in dimindex(:'a) DIV 8) and width (machine), each with [NeZero]. The outer t1/ms1 are vacuous in HOL (t1 is shadowed, ms1 unused); they are retained as binders. The first conjunct keeps all 14 inner binders ms2 k index new_bytes t1 nb ad offs re pc' ad' st new_st i and its 8-way hypothesis in order: mmio_pcs_min_index = SOME i, i ≤ index, index < LENGTH ffi_names, call_FFI_rel^* s1.ffi st (Relation.ReflTransGen callFFIRelHOL), ALOOKUP mmio_info index = SOME (nb, Addr ad offs, re, pc') (List.lookup), prog_addresses = t1.mem_domain, ad' = get_reg ms2 ad + offs, and target_state_rel at pc := EL index ffi_entry_pcs (EL as the reviewed total holEl). Conclusion: ∃op. EL index ffi_names = SharedMem op ∧ the two case branches, each with the literal (if nb = 0w then w2n ad' MOD (dimindex DIV 8) = 0 else T) ∧ ad' ∈ shared_addresses ∧ is_valid_mapped_read/write ∧ call_FFI ... = FFI_return new_st new_bytes ⇒ target_state_rel of the HOL record update (read: pc and regs with word_of_bytes F 0w new_bytes at re; write: pc only) under ffi_interfer k (index,new_bytes,ms2). The write bytes are (let w = get_reg ms2 re in if nb = 0w then word_to_bytes w F else word_to_bytes_aux (w2n nb) w F) ++ word_to_bytes ad' F. The second conjunct is the halt/ccache PC exclusion with holEl. Uses peer sol word_of_bytes (c64ffa845) and mmio_pcs_min_index (bbee684c2). Original HOL probe lab_to_target_share_mem_state_probe captures the typed definition and the HOL-proved no-FFI-names instance and halt-PC counterexample; Flapjack/Test/LabToTargetShareMemStateParity.lean replays them through the untagged shareMemStateRel_nil and not_shareMemStateRel_halt."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "inst_def",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Step.lean",
+    "lean_name": "instUpd",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-native-asm-step): asmSemScript.sml:225-231, the five clauses literal: Skip unchanged, Const r imm = upd_reg r imm, Arith = arith_upd, Mem m r a = mem_op m r a (the exact generic wrapper over holLOG2), FP = fp_upd. Sole carrier translation words_as_type_indexed_bitvec ('a inst/asm/asm_state/asm_config to the HolInst/HolAsm/AsmState/AsmConfigExact width carriers with [NeZero width]). Original HOL probe asm_sem_step_probe (12 rows: every asm clause, instruction clauses including Mem through mem_op, both JumpCmp branches, JumpReg alignment success/failure, and the HOL-proved asm_step projection) kernel-replayed in Flapjack/Test/AsmSemStepParity.lean. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "jump_to_offset_def",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Step.lean",
+    "lean_name": "jumpToOffset",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-native-asm-step): asmSemScript.sml:233-235, jump_to_offset w s = upd_pc (s.pc + w) s. Sole carrier translation words_as_type_indexed_bitvec ('a inst/asm/asm_state/asm_config to the HolInst/HolAsm/AsmState/AsmConfigExact width carriers with [NeZero width]). Original HOL probe asm_sem_step_probe (12 rows: every asm clause, instruction clauses including Mem through mem_op, both JumpCmp branches, JumpReg alignment success/failure, and the HOL-proved asm_step projection) kernel-replayed in Flapjack/Test/AsmSemStepParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "asm_def",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Step.lean",
+    "lean_name": "asmUpd",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-native-asm-step): asmSemScript.sml:237-248, the six clauses literal: Inst i = upd_pc pc (inst i s); Jump l = jump_to_offset l; JumpCmp = if word_cmp cmp (read_reg r s) (reg_imm ri s) then jump_to_offset l s else upd_pc pc s; Call l = jump_to_offset l (upd_reg s.lr pc s); JumpReg r = let a = read_reg r s in upd_pc a (assert (aligned s.align a) s) with the exact holAligned; Loc r l = upd_pc pc (upd_reg r (s.pc + l) s). Sole carrier translation words_as_type_indexed_bitvec ('a inst/asm/asm_state/asm_config to the HolInst/HolAsm/AsmState/AsmConfigExact width carriers with [NeZero width]). Original HOL probe asm_sem_step_probe (12 rows: every asm clause, instruction clauses including Mem through mem_op, both JumpCmp branches, JumpReg alignment success/failure, and the HOL-proved asm_step projection) kernel-replayed in Flapjack/Test/AsmSemStepParity.lean. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "asm_step_def",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Step.lean",
+    "lean_name": "asmStep",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-native-asm-step): asmSemScript.sml:250-258, the seven conjuncts in order: bytes_in_memory s1.pc (c.encode i) s1.mem s1.mem_domain; case c.link_reg of SOME r => s1.lr = r | NONE => T; s1.be = c.big_endian; s1.align = c.code_alignment; asm i (s1.pc + n2w (LENGTH (c.encode i))) s1 = s2; ~s2.failed; asm_ok i c (the tagged asmOkExact). Sole carrier translation words_as_type_indexed_bitvec ('a inst/asm/asm_state/asm_config to the HolInst/HolAsm/AsmState/AsmConfigExact width carriers with [NeZero width]). Original HOL probe asm_sem_step_probe (12 rows: every asm clause, instruction clauses including Mem through mem_op, both JumpCmp branches, JumpReg alignment success/failure, and the HOL-proved asm_step projection) kernel-replayed in Flapjack/Test/AsmSemStepParity.lean. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

@@ -944,6 +944,7 @@ import Flapjack.Test.SSAMergeMovesRouteParity
 import Flapjack.Test.LabToTargetShareMemDomainParity
 import Flapjack.Test.LabToTargetShareMemStateParity
 import Flapjack.Test.AsmSemMemOpsParity
+import Flapjack.Test.AsmSemStepParity
 import Flapjack.Test.ByteDecoder
 import Flapjack.Test.ByteWordSliceAlt
 
