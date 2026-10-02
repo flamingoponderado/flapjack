@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapDecode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapSentinelLength
