@@ -52604,5 +52604,21 @@
     "hol_name": "singleton_def",
     "statement_status": "pending_statement_review",
     "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Rotations.lean",
+    "lean_name": "balanceL",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanceL_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source comparison 2026-10-02, balanced-map.2: literal HOL479-540 seven outer clauses per direction; cached-size sums, strict delta and ratio guards and malformed-child fallback Tip retained. No invariant premise or primed-helper substitution. All28 original complete output trees kernel replayed, including ignored non-leaf child payloads, inconsistent cached sizes, ratio equality and delta equality. Independent source acceptance open; no insertion invariant or production carrier claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Rotations.lean",
+    "lean_name": "balanceR",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanceR_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source comparison 2026-10-02, balanced-map.2: literal HOL479-540 seven outer clauses per direction; cached-size sums, strict delta and ratio guards and malformed-child fallback Tip retained. No invariant premise or primed-helper substitution. All28 original complete output trees kernel replayed, including ignored non-leaf child payloads, inconsistent cached sizes, ratio equality and delta equality. Independent source acceptance open; no insertion invariant or production carrier claim."
   }
 ]

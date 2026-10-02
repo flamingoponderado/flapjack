@@ -4506,3 +4506,7 @@ equivalence or complete CSE correctness.
 ## Literal balanced-map core
 
 `balanced_map_core_probe.out` captures twelve original cached-size, lookup and membership observations, plus the full original lookup/member equations. `BalancedMapCore.lean` kernel checks the same malformed-tree and singleton inputs and both generic recursive lookup branches. These fixtures do not establish insertion invariants or production tree-map correspondence.
+
+## Literal balanced-map rotations
+
+`balanced_map_rotations_probe.out` captures28 complete original balanceL/balanceR trees and both full defining equations. Kernel fixtures replay all seven outer patterns, ratio and delta equality thresholds, malformed error branches and cached-size inconsistencies. This is definition regression evidence, not insertion invariant correctness or production wiring.

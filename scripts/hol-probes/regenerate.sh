@@ -4043,3 +4043,7 @@ run_probe word_cse_deletion_frames_probeScript.sml word_cse_deletion_frames_prob
 run_probe balanced_map_core_probeScript.sml balanced_map_core_probe.out \
   bm_size bm_bin_size bm_nonnull bm_empty_null bm_equal_lookup bm_left_absent bm_root bm_right_absent bm_equal_member bm_left_member bm_singleton_hit bm_singleton_miss bm_lookup_definition bm_member_definition \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"
+
+run_probe balanced_map_rotations_probeScript.sml balanced_map_rotations_probe.out \
+  bml_0 bml_1 bml_2 bml_3 bml_4 bml_5 bml_6 bml_7 bml_8 bml_9 bml_10 bml_11 bml_12 bml_13 bmr_0 bmr_1 bmr_2 bmr_3 bmr_4 bmr_5 bmr_6 bmr_7 bmr_8 bmr_9 bmr_10 bmr_11 bmr_12 bmr_13 bml_definition bmr_definition \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"
