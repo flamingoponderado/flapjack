@@ -4330,3 +4330,7 @@ run_probe ssa_cc_trans_correct_inst_load32_probeScript.sml ssa_cc_trans_correct_
 run_probe ssa_cc_trans_correct_inst_store_probeScript.sml ssa_cc_trans_correct_inst_store_probe.out \
   inst_store_full inst_store_type_st inst_store_type_cst inst_store_type_dst inst_store_type_src inst_store_type_offset inst_store_type_ssa inst_store_type_next inst_store_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_inst_store8_probeScript.sml ssa_cc_trans_correct_inst_store8_probe.out \
+  inst_store8_full inst_store8_type_st inst_store8_type_cst inst_store8_type_dst inst_store8_type_src inst_store8_type_offset inst_store8_type_ssa inst_store8_type_next inst_store8_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
