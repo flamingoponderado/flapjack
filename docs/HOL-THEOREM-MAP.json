@@ -59499,5 +59499,153 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.8.2), stack_allocProofScript.sml:1577-1713 alloc_correct_lemma_Simple: premises alloc w s = (r,t), r <> SOME Error, s.gc_fun = word_gc_fun conf, conf.gc_kind = Simple, LENGTH s.bitmaps < dimword - 1, LENGTH s.stack * (dimindex DIV 8) < dimword (as width / 8 and 2 ^ width), FLOOKUP l 0 = SOME ret, FLOOKUP l 1 = SOME (Word w), all in HOL order as one conjunction; conclusion ?ck l2. evaluate (word_gc_code conf, s with <|use_store := T; use_stack := T; use_alloc := F; clock := s.clock + ck; regs := l; gc_fun := anything; code := fromAList (compile c (toAList s.code))|>) = (r, t with <|use_store := T; use_stack := T; use_alloc := F; code := fromAList (compile c (toAList s.code)); regs := l2; gc_fun := anything|>) /\\ (r <> NONE ==> r = SOME (Halt (Word 1w))) /\\ t.regs SUBMAP l2 /\\ (r = NONE ==> FLOOKUP l2 0 = SOME ret), over the tagged StackSem alloc/evaluate. Free w s r t conf l ret c anything implicit; fromAList/toAList as sptFromAList/sptToAList, compile as the tagged stack_alloc compile, SUBMAP as HolFiniteMapExact.submap. Proved as HOL does: gc_thm unfolds the collector and the code composes word_gc_move_code_thm, word_gc_move_roots_bitmaps_code_thm and word_gc_move_loop_code_thm through the tagged evaluate_add_clock. Through gc/word_gc_fun's Simple clause the statement reaches holHd (HOL HD on the non-empty moved roots list Globals :: roots), compared against the pinned HOL HD definition. 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeAccessors.lean",
+    "lean_name": "setVarSwap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "set_var_swap",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-accessor-laws): source99-104 distinct-key premise only, complete StackSem state equality for the two update orders. Imported native owning StackSem/WordSem carrier, canonical finite-support fmap fields and positive-width BitVec word translation, arbitrary C/F Type0; same-module roundtrip witnesses, no duplicated carrier. Whole original guards/quantifiers/conclusions retained. Eleven unchanged full original proof replays and420 matching complete native observations, no totalHD/EL or policy expansion.",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeAccessors.lean",
+    "lean_name": "setVarCancel",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "set_var_cancel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-accessor-laws): source112-116 unconditional same-key StackSem state shadowing equality. Imported native owning StackSem/WordSem carrier, canonical finite-support fmap fields and positive-width BitVec word translation, arbitrary C/F Type0; same-module roundtrip witnesses, no duplicated carrier. Whole original guards/quantifiers/conclusions retained. Eleven unchanged full original proof replays and420 matching complete native observations, no totalHD/EL or policy expansion.",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeAccessors.lean",
+    "lean_name": "getVarSetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_var_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-accessor-laws): source124-129 unconditional same-key StackSem lookup after native update is SOME of actual value. Imported native owning StackSem/WordSem carrier, canonical finite-support fmap fields and positive-width BitVec word translation, arbitrary C/F Type0; same-module roundtrip witnesses, no duplicated carrier. Whole original guards/quantifiers/conclusions retained. Eleven unchanged full original proof replays and420 matching complete native observations, no totalHD/EL or policy expansion.",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeAccessors.lean",
+    "lean_name": "stateWithConst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-accessor-laws): source131-135 whole StackSem clock self-update equals state; source antiquotation t only names generic native carrier. Imported native owning StackSem/WordSem carrier, canonical finite-support fmap fields and positive-width BitVec word translation, arbitrary C/F Type0; same-module roundtrip witnesses, no duplicated carrier. Whole original guards/quantifiers/conclusions retained. Eleven unchanged full original proof replays and420 matching complete native observations, no totalHD/EL or policy expansion.",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeAccessors.lean",
+    "lean_name": "setStoreSetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "set_store_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-accessor-laws): source137-141 whole StackSem store/register update commutation, independent arbitrary keys/values, no additional guard. Imported native owning StackSem/WordSem carrier, canonical finite-support fmap fields and positive-width BitVec word translation, arbitrary C/F Type0; same-module roundtrip witnesses, no duplicated carrier. Whole original guards/quantifiers/conclusions retained. Eleven unchanged full original proof replays and420 matching complete native observations, no totalHD/EL or policy expansion.",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeAccessors.lean",
+    "lean_name": "setVarSwapWord",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "set_var_swap_word",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-accessor-laws): source106-110 distinct-key premise only, whole WordSem state equality; actual Spt insert swap retains malformed carriers. Imported native owning StackSem/WordSem carrier, canonical finite-support fmap fields and positive-width BitVec word translation, arbitrary C/F Type0; same-module roundtrip witnesses, no duplicated carrier. Whole original guards/quantifiers/conclusions retained. Eleven unchanged full original proof replays and420 matching complete native observations, no totalHD/EL or policy expansion.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeAccessors.lean",
+    "lean_name": "setVarCancelWord",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "set_var_cancel_word",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-accessor-laws): source118-122 unconditional whole WordSem same-key shadowing; native exact Spt structural equality, no wf premise. Imported native owning StackSem/WordSem carrier, canonical finite-support fmap fields and positive-width BitVec word translation, arbitrary C/F Type0; same-module roundtrip witnesses, no duplicated carrier. Whole original guards/quantifiers/conclusions retained. Eleven unchanged full original proof replays and420 matching complete native observations, no totalHD/EL or policy expansion.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeAccessors.lean",
+    "lean_name": "isSomeGetVarsEvery",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "IS_SOME_get_vars_EVERY",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-accessor-laws): source3118-3125 complete IS_SOME native get_vars iff EVERY IS_SOME native get_var, Boolean truth as Prop equality; arbitrary lists/states including empty/duplicates. Imported native owning StackSem/WordSem carrier, canonical finite-support fmap fields and positive-width BitVec word translation, arbitrary C/F Type0; same-module roundtrip witnesses, no duplicated carrier. Whole original guards/quantifiers/conclusions retained. Eleven unchanged full original proof replays and420 matching complete native observations, no totalHD/EL or policy expansion.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeAccessors.lean",
+    "lean_name": "isSomeGetVarsSetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "IS_SOME_get_vars_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-accessor-laws): source3106-3116 arbitrary name/state/update-key/value, sole successful native read premise implies updated native read succeeds; no target values or simulation relation assumed. Imported native owning StackSem/WordSem carrier, canonical finite-support fmap fields and positive-width BitVec word translation, arbitrary C/F Type0; same-module roundtrip witnesses, no duplicated carrier. Whole original guards/quantifiers/conclusions retained. Eleven unchanged full original proof replays and420 matching complete native observations, no totalHD/EL or policy expansion.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeAccessors.lean",
+    "lean_name": "getVarsEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_vars_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-accessor-laws): source3295-3305 original successful native get_vars premise, literal let lookup list, EVERY IS_SOME and complete returned list equals MAP THE. Existing reviewed holThe models HOL THE, rewritten only on actual SOME; local Nonempty proof derives standard HOL inhabitedness from native Word zero, introduces no default or premise. Imported native owning StackSem/WordSem carrier, canonical finite-support fmap fields and positive-width BitVec word translation, arbitrary C/F Type0; same-module roundtrip witnesses, no duplicated carrier. Whole original guards/quantifiers/conclusions retained. Eleven unchanged full original proof replays and420 matching complete native observations, no totalHD/EL or policy expansion.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeAccessors.lean",
+    "lean_name": "popEnvFfi",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "pop_env_ffi",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-accessor-laws): source5361-5366 native successful pop_env is the sole premise, complete original FFI field equality, all plain/handler/empty stack clauses reviewed. Imported native owning StackSem/WordSem carrier, canonical finite-support fmap fields and positive-width BitVec word translation, arbitrary C/F Type0; same-module roundtrip witnesses, no duplicated carrier. Whole original guards/quantifiers/conclusions retained. Eleven unchanged full original proof replays and420 matching complete native observations, no totalHD/EL or policy expansion.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
   }
 ]
