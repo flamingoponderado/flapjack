@@ -67564,5 +67564,77 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol original comp_correct RawCall1766-1783/full1481-1493 source comparison2026-10-02. Same four actual source run/nonError/full26stateRel/regBound premises; only original actual source successful Seq-code lookup/nonzero-clock guarded callee-body IH, retaining arbitrary body result/poststate/target/pointer/bounds/jump quantifiers. RawCall enters the Seq second program exactly as original dest_Seq. Accepted full findCodeLemma proves target compiled Seq lookup and whole program bound; native regBound Seq derives body bound. Missing/non-Seq source code and bad return excluded by source nonError; clock0 yields original timeout FFI equality. Nonzero callee simulation uses stateRelDecClock and original clock equality for actual boosted target clock subtraction. Every original result alternative and target existential/full postrelation retained; no targetrun/code success/postrelation or stronger source premise. Canonical imported owning-state codec witness reexport, qualified regs/fpRegs/store only, Spt code/List stack unchanged, positive type-indexed words and Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scoped original theorem with same source-guarded IHs, literal original RawCall proof body and recreated original local lookup/decClock helpers, no full comp_correct assumed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionOrder.lean",
+    "lean_name": "asmFetchAux_some_ltNumPcs",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_fetch_SOME_IMP_LESS_num_pcs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6629: complete pc/secs/x binders; literal successful fetch implies strict instruction-count bound without encoding or label assumptions. Original labLang sec/line constructors carry exactly native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec, fixed word8 bytes and canonical nested numeric Spt; word qualifier only, no arbitrary carrier specialization or fmap translation. Fresh original fulltypes with zero hypotheses and nine original/native closed cases plus full generic and actual arbitrary-query-position consumers. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler/initializer/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionOrder.lean",
+    "lean_name": "posVal_geStart",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_GE_pc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6721: unrestricted i/p/code and unconditional p≤pos_val i p code; invalid nonzero labels remain allowed. Original labLang sec/line constructors carry exactly native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec, fixed word8 bytes and canonical nested numeric Spt; word qualifier only, no arbitrary carrier specialization or fmap translation. Fresh original fulltypes with zero hypotheses and nine original/native closed cases plus full generic and actual arbitrary-query-position consumers. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler/initializer/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionOrder.lean",
+    "lean_name": "encOk_lengthPositive",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_ok_LENGTH_GT_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6730: complete enc_ok c implies nonempty c.encode l for arbitrary native instruction l; full original config retained. Original labLang sec/line constructors carry exactly native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec, fixed word8 bytes and canonical nested numeric Spt; word qualifier only, no arbitrary carrier specialization or fmap translation. Fresh original fulltypes with zero hypotheses and nine original/native closed cases plus full generic and actual arbitrary-query-position consumers. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler/initializer/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionOrder.lean",
+    "lean_name": "posVal_mono",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6739: exact i<j, j≤num_pcs, all_enc_ok at independent p-prime and complete enc_ok conjuncts imply strict queried-position order. No extra source fetch or output-size assumption. Original labLang sec/line constructors carry exactly native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec, fixed word8 bytes and canonical nested numeric Spt; word qualifier only, no arbitrary carrier specialization or fmap translation. Fresh original fulltypes with zero hypotheses and nine original/native closed cases plus full generic and actual arbitrary-query-position consumers. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler/initializer/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionOrder.lean",
+    "lean_name": "posVal_monoInv",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_mono_inv",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6782: strict queried-position order, only i≤num_pcs, all_enc_ok at independent p-prime and complete enc_ok imply i<j. No bound on j added. Original labLang sec/line constructors carry exactly native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec, fixed word8 bytes and canonical nested numeric Spt; word qualifier only, no arbitrary carrier specialization or fmap translation. Fresh original fulltypes with zero hypotheses and nine original/native closed cases plus full generic and actual arbitrary-query-position consumers. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler/initializer/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionOrder.lean",
+    "lean_name": "posVal_inj",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_inj",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6805: retains free i/c/labs/ffis/p-prime and all quantified p/code/j; equal queried positions and both PC bounds plus complete all_enc_ok and enc_ok imply i=j. Original labLang sec/line constructors carry exactly native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec, fixed word8 bytes and canonical nested numeric Spt; word qualifier only, no arbitrary carrier specialization or fmap translation. Fresh original fulltypes with zero hypotheses and nine original/native closed cases plus full generic and actual arbitrary-query-position consumers. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler/initializer/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionOrder.lean",
+    "lean_name": "posVal_numPcs",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_num_pcs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6829: full c/labs/ffis/p-prime/code and free p retained; sole all_enc_ok at independent p-prime guard gives pos_val(num_pcs code)pcode=p+LENGTH(prog_to_bytes code). No encoder or queried-start parity premise. Original labLang sec/line constructors carry exactly native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec, fixed word8 bytes and canonical nested numeric Spt; word qualifier only, no arbitrary carrier specialization or fmap translation. Fresh original fulltypes with zero hypotheses and nine original/native closed cases plus full generic and actual arbitrary-query-position consumers. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler/initializer/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionOrder.lean",
+    "lean_name": "posVal_geNumPcs",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_GE_num_pcs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6847: unrestricted pc/p/code with sole num_pcs≤pc guard; exact pos_val(num_pcs code)pcode=pos_valpcpcode. Invalid label annotations remain allowed. Original labLang sec/line constructors carry exactly native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec, fixed word8 bytes and canonical nested numeric Spt; word qualifier only, no arbitrary carrier specialization or fmap translation. Fresh original fulltypes with zero hypotheses and nine original/native closed cases plus full generic and actual arbitrary-query-position consumers. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler/initializer/machine correctness."
   }
 ]
