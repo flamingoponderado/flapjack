@@ -4865,3 +4865,9 @@ run_probe stack_remove_stub_names_probeScript.sml stack_remove_stub_names_probe.
 run_probe backend_runtime_stub_names_probeScript.sml backend_runtime_stub_names_probe.out \
   word_stub_names_def word_stub_names_type gc_stub_names_def gc_stub_names_type word_stub_names_values word_stub_names_bytes gc_stub_names_values gc_stub_names_bytes word_stub_names_count gc_stub_names_count \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_alloc_gen_partial_data_statement_probeScript.sml stack_alloc_gen_partial_data_statement_probe.out \
+  partial_data_free_vars partial_data_t0_type partial_data_t1_type partial_data_full_typed_statement \
+  partial_data_empty partial_data_fuel_zero partial_data_skip_zero_length partial_data_skip_one_length \
+  partial_data_pointer_zero_length partial_data_pointer_small_field partial_data_missing_domain \
+  "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

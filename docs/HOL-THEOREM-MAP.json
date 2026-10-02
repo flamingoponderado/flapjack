@@ -61721,5 +61721,20 @@
     "lean_name": "stubNames",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-b source comparison 2026-10-02 against original642-644: entire unit argument, singleton gc_stub_location/_GC pair retained; actual reviewed StackLang location evaluates4; exact native implode bytes. Full original unit->(num#mlstring)list type/equation captured; native MlString character list, no String carrier translation or additional premise. Original full values/bytes/count observations match kernel fixtures. Actual artifact-format symbol dispatch remains separately tracked parent production wiring; source table alone is not executed-route completion."
-  }
+  },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+  "hol_name": "word_gen_gc_partial_move_data_code_thm",
+  "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenPartialMoveData.lean",
+  "lean_name": "word_gen_gc_partial_move_data_code_thm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "regs",
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-b source comparison 2026-10-02, original stack_allocProofScript.sml:4124-4241: full binder order and four curried premise groups, free conf/gs/rs implicit; all shift/width/lenSize/goodDimindex, store, memory/domain and register hypotheses preserved. Exact StackSem evaluate existential clock, memory m2 and nine-register update (register8 Word pa2); store unchanged. Complete fuel induction follows original empty/data-bit/pointer-list cases using native partial-list theorem and evaluateAddClock, no supplied target evaluation. Fresh original HOL typed capture confirms unused existential t0:delta,t1:epsilon, retained as independently arbitrary D/E with Nonempty instances; main source-review policy agmsg2026-10-02T10:04:33Z confirms standard HOL inhabited-type interpretation, not additional operational premise/qualifier. Canonical actual StackSemStateFiniteExact regs/fpRegs/store codec witness; positive-width BitVec NeZero. Seven original concrete EVAL observations; no claimed concrete oracle for unspecified theWord(Loc). Inst evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts, not an independent review of all dependencies."
+}
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveData
 import Flapjack.RiscV.RuntimeSymbolPreservation
 import Flapjack.Compiler.Backend.WordToStack.StubNames
 import Flapjack.Compiler.Backend.StackAlloc.StubNames
