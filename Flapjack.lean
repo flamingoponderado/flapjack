@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.ControlLeaves
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.If
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.BasicLeaves
@@ -5,6 +6,7 @@ import Flapjack.Compiler.Backend.StackRawCall.Proofs.InstructionSimulation
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateRelation
 import Flapjack.RiscV.L3.Step.Fetch
 import Flapjack.RiscV.L3.Defs.ReadInst
+import Flapjack.Compiler.Backend.StackRemove.Proofs.BytearrayReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CodeBufferWrite
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.JumpLower
 import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
@@ -15,6 +17,7 @@ import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
 import Flapjack.Compiler.Backend.LabToTarget.EncodingValidityClosure
 import Flapjack.Compiler.Backend.LabToTarget.ProgramByteLengths
 import Flapjack.Compiler.Backend.LabToTarget.PositionExtension
+import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
@@ -390,6 +393,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.MapBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdate
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdateSlices
+import Flapjack.Compiler.Backend.WordToStack.Proofs.TopLabelSafety
 import Flapjack.Compiler.Backend.WordToStack.Proofs.WordListLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
