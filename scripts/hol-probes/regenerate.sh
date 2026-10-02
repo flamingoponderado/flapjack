@@ -4489,3 +4489,8 @@ run_probe init_memory_probeScript.sml init_memory_probe.out \
 run_probe mmio_index_probeScript.sml mmio_index_probe.out \
   mmio_full_def mmio_type mmio_empty mmio_0 mmio_1 mmio_2 mmio_00 mmio_01 mmio_02 mmio_10 mmio_11 mmio_12 mmio_20 mmio_21 mmio_22 mmio_000 mmio_001 mmio_002 mmio_010 mmio_011 mmio_012 mmio_020 mmio_021 mmio_022 mmio_100 mmio_101 mmio_102 mmio_110 mmio_111 mmio_112 mmio_120 mmio_121 mmio_122 mmio_200 mmio_201 mmio_202 mmio_210 mmio_211 mmio_212 mmio_220 mmio_221 mmio_222 \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe lab_to_target_label_validity_probeScript.sml lab_to_target_label_validity_probe.out \
+  enc_sec_list_sec_labels_ok enc_sec_list_sec_labels_ok_types enc_lines_again_sec_labels_ok enc_lines_again_sec_labels_ok_types enc_secs_again_sec_labels_ok enc_secs_again_sec_labels_ok_types lines_upd_lab_len_sec_label_ok lines_upd_lab_len_sec_label_ok_types upd_lab_len_sec_labels_ok upd_lab_len_sec_labels_ok_types add_nop_sec_label_ok add_nop_sec_label_ok_types pad_section_sec_label_ok pad_section_sec_label_ok_types pad_code_sec_labels_ok pad_code_sec_labels_ok_types \
+  source_valid acc_valid initial_encode_valid repeat_acc_valid repeat_code_valid update_odd_valid update_even_valid update_code_valid add_nop_valid empty_nop_valid padding_acc_valid padding_code_valid repeat_false_flag encoded_bad_label_rejected padded_bad_label_rejected update_label_order repeat_label_order padding_label_order \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
