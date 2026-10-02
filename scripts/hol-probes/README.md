@@ -5750,3 +5750,14 @@ the relation definition, not the unfinished pass simulation theorem.
 `ssa_alloc_case_probe.out` captures the full original `ssa_cc_trans_correct` Alloc specialization with all six premises, source permutation/Error exemption, actual target result/frame and result-sensitive locals. Native SSA Alloc derives rename/count preparation, GC transport, normal restoration and exhausted-space stopping; full SSA assembly remains open.
 
 Return CallArgs probe captures the full original call_args_def and replays three complete original helper proofs with no open hypotheses.786 direct predicate EVAL observations (627true159false) match kernel fixtures with expectations read from fresh original captures, widths1/2/8/64/80. Full program/instruction families, two five-register conventions, ignored/active handlers,330stack-move/return cases, all Boolean modes and70bit offsets are covered. Full compiler call-argument preservation remains open; this regression evidence is not cross-language equivalence. Selector: HOL_PROBE_ONLY=word_to_stack_return_call_args_probeScript.sml.
+
+### Native StackRemove relation register and clock laws
+
+`stack_remove_statelaws_probeScript.sml` independently reproves the literal
+`state_rel_get_var`, `state_rel_IMP`, `state_rel_with_clock`, and
+`state_rel_const` statements from the pinned full state relation and actual
+StackSem state operations. These source-local results are not all exported
+by the original theory, so the probe proves their complete original statements
+and records every quantified binder type. The constant-field result retains
+both compile/oracle transports, and decrement/common-clock laws quantify
+arbitrary clocks, including zero. This does not prove `comp_correct`.
