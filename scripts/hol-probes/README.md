@@ -5931,3 +5931,5 @@ Directed modes and the full eight L3 integer-to-FP case acceptance stay open on
 linked prerequisites; these regressions do not stand in for those modes.
 Regenerate using `HOL_PROBE_ONLY=binary_ieee_round_fp32_probeScript.sml` with
 the matching built original HOL and the standard probe driver.
+
+Independent stack-removal carrier probe freshly prints original stack_asm_remove type and full definition,then400 direct predicate EVALs matching kernel expectations. Original type has independent config/program word dimensions; repaired native signature retains both with independent positivity. All34constructor families,1/80,80/1,2/64,64/2,8/8 dimensions,boundary register limits and natural-subtraction underflow,duplicate70bitavoid entries,ignored conditions/instructions/metadata and active/ignored handlers are covered (255T145F). Existing22same-width original oracle rows remain unchanged. Only the predicate carrier binder restriction changed; no clause,source assumption,hold or policy change. This is regression evidence,not cross-language equivalence. Selector: HOL_PROBE_ONLY=stack_props_remove_independent_probeScript.sml.
