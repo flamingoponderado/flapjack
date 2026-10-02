@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe stack_rawcall_inst_simulation_probeScript.sml stack_rawcall_inst_simulation_probe.out \
+  inst_simulation_statement inst_simulation_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_state_rel_probeScript.sml stack_rawcall_state_rel_probe.out \
   state_rel_type state_rel_definition state_rel_self state_rel_oracle \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"

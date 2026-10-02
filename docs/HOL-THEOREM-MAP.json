@@ -66923,5 +66923,20 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-02 bead .4.9: literal source30-46 full relation. Arbitrary info Spt Nat and full imported 22-field StackSem state, positive width and independently quantified Type0 configuration/FFI. Existential Spt code has exact predicate-domain equality; target is whole source updated only at code. Therefore all other fields, including compile and compileOracle, remain equal; commented source transport clauses are inactive. Outer state_ok info source.code retained. Every successful source code lookup retains existential independent entryInfo, state_ok entryInfo source.code and exact compTop lookup. Inner source i shadows outer i; no equality between witnesses added. Native code uses actual Spt, not finite-support qualifier. Whole-state equality includes canonical regs/fpRegs/store; imported owner reused without shadowing and same-module genuine roundtrip witness reexported. Lists remain lists, widths and full word/program/FFI carriers unchanged under existing standard translation. Original HOL full type/equation capture and assumption-free generic self/oracle consequences terminal PASS, matching kernel generic proofs. No evaluation/validity/success premise or changed state field. This definition does not establish comp_correct, compile_semantics or executed compiler replacement."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/InstructionSimulation.lean",
+    "lean_name": "evaluateCompInst",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "evaluate_comp_Inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 .4.10 original121-132: arbitrary instruction, source/target/result states, result and frame info. Exactly source evaluate equality, result not Error and full literal state_rel are premises. Existential ck/t1/k1 retains post-state relation, actual evaluate of comp at ck+target.clock, original result and target stackSpace update, and nonTimeOut/nonHalt Word2 guard implies k1=t1.stackSpace. Positive native HolInst/HolProg/StackSemResult and full22field StackSemStateFiniteExact, configuration/FFI Type0; canonical regs/fpRegs/store qualifier covers full relation, code stays Spt. Same-module witness genuinely reexports actual owner broad/exact roundtrips. Native getVars/recursive wordExp/assign and all integer-memory/16FP operations derive code-only update transport; code preservation follows specializing unconditional transport to source.code. Postrelation derived using unchanged code/frame obligations, target primitive success derived from source success and transport. Actual evaluate Inst is clock-neutral; witness ck=0 and original stackSpace discharge existential without extra guard or target result premise. No callback or successful target execution assumption. Inherits SOUNDNESS item8 reals_as_rational_cuts through actual FP/evaluator constant closure; theorem introduces no real rendering itself and proves no HOL/Lean real equivalence. Full pass/production correctness remains open."
   }
 ]
