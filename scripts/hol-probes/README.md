@@ -4483,3 +4483,5 @@ native Inst clauses; LoadEvaluation support was exposed without changing its
 implementation or old theorem statements. Existing finite-map/positive-word
 translations and inherited rational-cut assumption (SOUNDNESS item 8) remain.
 These are invariant-update prerequisites, not full CSE/compiler correctness.
+
+The same `ssa_reconcile_empty_probe.out` also backs full `evaluateSSAReconcile`: `re_original_full` is the complete original result without a branch guard; its literal source proof and all six native carrier types were replayed before the assembling Lean theorem was tagged.

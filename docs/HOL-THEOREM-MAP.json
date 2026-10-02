@@ -52487,5 +52487,19 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison 2026-10-02 (58wf), original lines6524-6549: forall source list/current SSA tree/native WordSem state, original ALL_DISTINCT and per-member lookup existence imply existential get_vars of MAP(THE lookup), exact LENGTH and all in-bounds EL lookup equations. List/Nodup/MEM and sptree num_map stay literal; exact holThe and holEl retain missing/out-of-bounds unspecified values, no premise requiring SSA lookup success added. Imported canonical native WordSem carrier only fpRegs/store are finite-support maps, locals/current SSA are trees; same-module non-vacuous full toBroad/ofBroad carrier roundtrip. Standard positive BitVec width and universe-zero code/FFI host translation, no changed quantifier/premise/conclusion. Native getVars/getVar list induction kernel checked; distinctness retained though unused beyond induction."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_ssa_reconcile",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcile.lean",
+  "lean_name": "evaluateSSAReconcile",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a full source comparison flapjack-26yt: Complete original6593-6706 theorem, only original ssa_locals_rel and INJ option_lookup target map over names domain premises, full existential total-pair NONE evaluation,21-field wordStateEqRel and domain-scoped strongLocalsRel result. Arbitrary delta payload name map, native Spt maps, word_loc values and independent positive-width/native configuration/FFI carriers confirmed by fresh literal full original proof and6type capture in ssa_reconcile_empty_probe.out re_original_full. No target execution/read success/output values/branch guard/post-frame premise in final statement. Empty branch uses checked original case; nonempty derives filtered key domain/current map presence, target-map distinctness, actual native getVars existence+length+all-index facts, alist insert and both unchanged/changed-target cases. Canonical THE/EL retain opaque values; successful lookups discharge selector observations. fmap_as_finite_support_relation translates only imported owner fpRegs/store with same-module broad/exact roundtrip witness; words_as_type_indexed_bitvec only conventional positive words and native host types. Inherits reals_as_rational_cuts through evaluate, SOUNDNESS item8; Skip/Move only. Consumed checked peer58wf087ed5f ordinary merge, acceptance remains coordinator-owned. Full ssa_cc_trans_correct and final compiler composition remain unfinished."
 }
 ]
