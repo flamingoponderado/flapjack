@@ -1,0 +1,6 @@
+nti_empty=T
+nti_real_ok=T
+nti_read_bad=F
+nti_write_first=T
+nti_bad_append=F
+nti_append_ok=T
