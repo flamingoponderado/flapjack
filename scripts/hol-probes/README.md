@@ -5955,3 +5955,18 @@ by the pinned original binary_ieeeLib; six signed tie checks are explicitly
 Lean algorithm regressions. The independent certified-converter bead remains
 open for the complete144-row original int-to-FP oracle; no modes are dropped.
 `word_to_stack_asm_remove_helpers_probe` freshly replays the five complete original local proofs at word_to_stackProofScript.sml:11129-11182, then captures 95 cross-width helper predicates (five independent width pairs, direct/empty/register/spilled destinations, zero/nonzero live bitmaps, arbitrary-continuation movement equivalences, auxiliary copies and both handler modes). Lean fixtures replay all observations. Regression evidence does not prove HOL-to-Lean equivalence.
+
+## Complete binary64 directed rounding agreement
+
+BinaryIeeeDirectedFp64 proves all3 directed clauses and all4mode agreement for
+every rational input and both requested zero signs. Source comparison retains
+HOL round_def411–443 strict largest guards, exact per-mode infinity/clamp,
+finite candidate predicates, and float_round_def507–515 zero override. This
+untagged algorithm infrastructure proves rational-rendering agreement only;
+SOUNDNESS item8 remains external. Binary64 uses52/11 bits, scale2^-1074 and
+63-bit magnitude; explicit positive inverse/cancellation lemmas handle scaling.
+
+The directed64 probe freshly captures30 original toward-zero numeric rows and
+Lean kernel replays them. Six up/down signed tie checks are algorithm tests,
+not original HOL oracle evidence. Pinned original finite up/down conversion
+remains unsupported; the separate converter bead retains full144-row L3 scope.
