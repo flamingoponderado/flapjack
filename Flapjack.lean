@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStoreConsts
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsDelete
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticBufferWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMove

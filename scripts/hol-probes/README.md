@@ -5244,3 +5244,14 @@ target deletion preserves all SSA-image reads because ssa_map_ok excludes that
 register. Original proved theorem capture and manual source comparison, not
 a cross-language equivalence proof or isolated source tactic replay. Regenerate
 with `HOL_PROBE_ONLY=ssa_locals_delete_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cc_trans_correct_store_consts_probe` captures the original full theorem
+specialized to StoreConsts and nine inferred types, including the Boolean/word
+constant list. Original StoreConsts9608–9647 was manually compared with
+`SSASemanticStoreConsts.lean`: six premises and full simulation retained, actual
+scratch Move/store/fresh Move target execution derived, source/target deletions
+and physical insertions preserve provisional locals before two fresh assignments.
+Native constant flags, memory writes, domain checks and result/error branches are
+unchanged. Original proved theorem capture, not isolated tactic replay or
+equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_store_consts_probeScript.sml scripts/hol-probes/regenerate.sh`.
