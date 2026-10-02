@@ -6,7 +6,7 @@ namespace Flapjack.Compiler.Backend.WordToStack
 /-- Flapjack infrastructure: combined total Bool-list lookup with false default
 and in-range word-bit decoding. This Option/default statement has no separate
 HOL original and does not use the provisional total EL/HD operations. -/
-private theorem bitmapBitLookup {width : Nat} [NeZero width]
+theorem BitmapBitStructureSupport.bitmapBitLookup {width : Nat} [NeZero width]
     (bits : List Bool) (i : Nat) (hi : i < width) :
     (bitsToWordW (width := width) bits).getLsbD i = bits[i]?.getD false := by
   induction bits generalizing i with
@@ -29,7 +29,7 @@ and list-length guards; no list element or total-EL default is inspected. -/
 theorem bitsToWordMiss {width : Nat} [NeZero width] (bits : List Bool) (i : Nat)
     (h : i < width ∧ bits.length ≤ i) :
     (bitsToWordW bits : BitVec width).getLsbD i = false := by
-  rw [bitmapBitLookup bits i h.1]
+  rw [BitmapBitStructureSupport.bitmapBitLookup bits i h.1]
   simp [List.getElem?_eq_none h.2]
 
 /-- Full original SNOC equation, including arbitrary truncating lists. -/
@@ -40,8 +40,8 @@ theorem bitsToWordSnoc {width : Nat} [NeZero width] (bits : List Bool) (bit : Bo
       ((if bit then (1 : BitVec width) else 0) <<< bits.length) ||| bitsToWordW bits := by
   apply BitVec.eq_of_getLsbD_eq
   intro i hi
-  rw [bitmapBitLookup (bits ++ [bit]) i hi]
-  simp only [BitVec.getLsbD_or, BitVec.getLsbD_shiftLeft, bitmapBitLookup bits i hi]
+  rw [BitmapBitStructureSupport.bitmapBitLookup (bits ++ [bit]) i hi]
+  simp only [BitVec.getLsbD_or, BitVec.getLsbD_shiftLeft, BitmapBitStructureSupport.bitmapBitLookup bits i hi]
   by_cases hlt : i < bits.length
   · simp [List.getElem?_append, hlt, hi]
   · by_cases heq : i = bits.length
@@ -62,7 +62,7 @@ theorem genlistBitsToWordAlt {width : Nat} [NeZero width] (xs ys : List Bool)
   · simp
   · intro i hi1 hi2
     simp only [List.getElem_map, List.getElem_range]
-    rw [bitmapBitLookup (xs ++ ys) i (by simpa using (show i < width by simp at h; omega))]
+    rw [BitmapBitStructureSupport.bitmapBitLookup (xs ++ ys) i (by simpa using (show i < width by simp at h; omega))]
     simp [List.getElem?_append, hi2]
 
 end Flapjack.Compiler.Backend.WordToStack
