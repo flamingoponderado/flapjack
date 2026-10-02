@@ -66794,6 +66794,15 @@
     "reviewer": "flapjack-sol-c source comparison: Inclusive original0..15 FOR scan and first-match priority; global-or-ASID guard and masked virtual-address equality; complete Some/None branches, no hit premise. Original14-row TLB regression and Lean4.33.1 kernel replay. Fixed source word widths and literal carrier fields retained."
   },
   {
+    "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
+    "lean_name": "compile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.5: originalcompile_def107-112 whole original list collect_info LN computed once then MAP name/body to name/comp_top shared info body. Native HolProg positive word dimension and actual Spt collection; keys, order, duplicates, empty list and top-level Seq preserved, no success/lookup/validity hypothesis. Sole conventional word translation. Five fresh complete original output lists independently kernel replayed (forward reference, last recognized duplicate with ignored bare entry, bare-only fallback, zero entry/top Seq, empty). Executed broad replacement remains OPEN .4.3; no full simulation or production claim."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Seq.lean",
     "lean_name": "compCorrectSeq",
     "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",

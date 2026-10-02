@@ -1,0 +1,5 @@
+raw_compile_empty=[]
+raw_compile_forward=[(3,Loop (RawCall 7)); (7,Seq (StackAlloc 4) Skip)]
+raw_compile_duplicates=[(3,Loop (Seq Tick (Seq (StackAlloc 2) (RawCall 7)))); (7,Seq (StackAlloc 4) Skip); (7,StackAlloc 9); (7,Seq (StackAlloc 6) Skip)]
+raw_compile_bare=[(3,Loop (Seq (StackFree 4) (Call NONE (INL 7) NONE))); (7,StackAlloc 4)]
+raw_compile_zero_top=[(9,Seq (StackAlloc 0) Skip); (3,Seq (StackFree 0) (Call NONE (INL 9) NONE))]

@@ -110,6 +110,9 @@ run_probe() {
 run_probe stack_rawcall_state_ok_probeScript.sml stack_rawcall_state_ok_probe.out \
   state_ok_type state_ok_definition state_ok_empty state_ok_entry state_ok_zero state_ok_bare_rejected state_ok_wrong_size \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_compile_probeScript.sml stack_rawcall_compile_probe.out \
+  raw_compile_empty raw_compile_forward raw_compile_duplicates raw_compile_bare raw_compile_zero_top \
+  "$cake_dir/compiler/backend/stack_rawcallScript.sml" "$cake_dir/compiler/backend"
 run_probe stack_rawcall_collect_probeScript.sml stack_rawcall_collect_probe.out \
   collect_bare_rejected collect_seq_zero collect_nested_rejected collect_duplicates \
   "$cake_dir/compiler/backend/stack_rawcallScript.sml" "$cake_dir/compiler/backend"
@@ -5546,7 +5549,6 @@ run_probe stack_sem_clock_control_probeScript.sml stack_sem_clock_control_probe.
   cseq_statement cseq_proved cif_statement cif_proved cloop_statement cloop_proved \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
-
 run_probe stackprops_extract_labels_probeScript.sml stackprops_extract_labels_probe.out \
   sel_1_skip sel_1_inst sel_1_location sel_1_raw sel_1_return sel_1_both sel_1_ignored sel_1_loop sel_1_seq sel_1_if sel_1_nested sel_1_duplicate sel_1_zero sel_1_wide sel_8_skip sel_8_inst sel_8_location sel_8_raw sel_8_return sel_8_both sel_8_ignored sel_8_loop sel_8_seq sel_8_if sel_8_nested sel_8_duplicate sel_8_zero sel_8_wide sel_64_skip sel_64_inst sel_64_location sel_64_raw sel_64_return sel_64_both sel_64_ignored sel_64_loop sel_64_seq sel_64_if sel_64_nested sel_64_duplicate sel_64_zero sel_64_wide sel_80_skip sel_80_inst sel_80_location sel_80_raw sel_80_return sel_80_both sel_80_ignored sel_80_loop sel_80_seq sel_80_if sel_80_nested sel_80_duplicate sel_80_zero sel_80_wide \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -5566,7 +5568,6 @@ run_probe stack_sem_evaluate_clock_probeScript.sml stack_sem_evaluate_clock_prob
 run_probe stack_remove_comp_seq_probeScript.sml stack_remove_comp_seq_probe.out \
   cc_seq_statement cc_seq_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
-
 
 run_probe l3_mmu_primitives_probeScript.sml l3_mmu_primitives_probe.out \
   constant_ASID_SIZE constant_LEVEL_BITS constant_PAGESIZE_BITS constant_TLBEntries privilege_0 privilege_1 privilege_2 privilege_3 global_0 global_1 global_2 global_3 global_4 global_5 global_6 global_7 global_8 global_9 global_10 global_11 global_12 global_13 global_14 global_15 pte_0 pte_repack_0 vaddr_0 pte_1 pte_repack_1 vaddr_1 pte_2 pte_repack_2 vaddr_2 pte_3 pte_repack_3 vaddr_3 pte_4 pte_repack_4 vaddr_4 pte_5 pte_repack_5 vaddr_5 pte_6 pte_repack_6 vaddr_6 pte_7 pte_repack_7 vaddr_7 pte_8 pte_repack_8 vaddr_8 pte_9 pte_repack_9 vaddr_9 scsr_full tlb_full tlb_write_full mem_write_full mem_read_0 mem_read_1 mem_read_2 mem_read_3 \
@@ -5599,7 +5600,9 @@ run_probe lab_to_target_section_lookup_positions_probeScript.sml lab_to_target_s
   empty boundary_duplicate_acc head_success asm_prefix labasm_boundary missing distinct_guard_needed owner_guard_false length_guard_needed width1_large_pos width80_large_pos \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
-
+run_probe stack_sem_evaluate_clock_probeScript.sml stack_sem_evaluate_clock_probe.out \
+  gc_clock_statement gc_clock_proved alloc_clock_statement alloc_clock_proved store_const_sem_clock_statement store_const_sem_clock_proved inst_clock_statement inst_clock_proved sh_mem_op_clock_statement sh_mem_op_clock_proved evaluate_clock_statement evaluate_clock_proved fix_clock_evaluate_statement fix_clock_evaluate_proved \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe l3_mmu_tlb_probeScript.sml l3_mmu_tlb_probe.out \
   entry_0 entry_1 entry_5 entry_6 entry_7 entry_1000 lookup_empty lookup_first lookup_last lookup_two lookup_wrong_asid lookup_global lookup_wrong_address lookup_zero_mask \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
