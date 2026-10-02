@@ -9,8 +9,10 @@ Literal ports of `word_allocScript.sml:285-345`: `list_next_var_rename_move`,
 `WordLangProgHOL (BitVec width)` (positive width) and `Spt` maps. HOL `ZIP` is
 `List.zip`; every `ZIP` here pairs two lists of equal length (a list and its
 renaming), where HOL's `ZIP` is specified. `Move0` is `Move 0`. HOL `el = Skip`
-is a match on `.skip`. Proof-side ports: the executed list-state SSA pass is not
-routed through them.
+is a match on `.skip`. The executed allocator uses `forceRename`, `ssaReconcile` and
+`listNextVarRenameMove` through the checked codecs in `SSAStateRoute` and
+`ProductionSSAStateRoute`. The production `mkPrio` and `loopSetup` replacements
+remain part of the open full native SSA migration.
 -/
 
 namespace Flapjack.Compiler.Backend.WordAlloc

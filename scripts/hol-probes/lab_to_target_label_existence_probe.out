@@ -1,0 +1,44 @@
+line_labs_exist_def=(line_labs_exist (labs :α sptree$num_map sptree$num_map)
+   (LabAsm (a :β asm_with_lab) (v0 :β word) (v1 :word8 list) (v2 :num)) ⇔
+ ∀(n1 :num) (n2 :num).
+   (n1,n2) ∈ labs_of a ⇒ lab_lookup n1 n2 labs ≠ (NONE :α option)) ∧
+(line_labs_exist (v3 :α sptree$num_map sptree$num_map)
+   (Label (v6 :num) (v7 :num) (v8 :num) :β line) ⇔ T) ∧
+(line_labs_exist v3 (Asm (v9 :β asm_or_cbw) (v10 :word8 list) (v11 :num)) ⇔ T)
+line_labs_exist_def_types=(v11 :num)::num;(v10 :word8 list)::word8 list;(v9 :β asm_or_cbw)::β asm_or_cbw;(v8 :num)::num;(v7 :num)::num;(v6 :num)::num;(v3 :α sptree$num_map sptree$num_map)::α sptree$num_map sptree$num_map;(v2 :num)::num;(v1 :word8 list)::word8 list;(v0 :β word)::β word;(a :β asm_with_lab)::β asm_with_lab;(labs :α sptree$num_map sptree$num_map)::α sptree$num_map sptree$num_map;
+sec_labs_exist_def=∀(labs :α sptree$num_map sptree$num_map) (v0 :num) (ls :β line list).
+  sec_labs_exist labs (Section v0 ls) ⇔
+  EVERY (line_labs_exist labs :β line -> bool) ls
+sec_labs_exist_def_types=(labs :α sptree$num_map sptree$num_map)::α sptree$num_map sptree$num_map;(v0 :num)::num;(ls :β line list)::β line list;
+line_similar_line_labs_exist=∀(l1 :α line) (l2 :α line).
+  line_similar l1 l2 ⇒
+  (line_labs_exist (labs :β sptree$num_map sptree$num_map) l1 ⇔
+   line_labs_exist labs l2)
+line_similar_line_labs_exist_types=(l1 :α line)::α line;(l2 :α line)::α line;(labs :β sptree$num_map sptree$num_map)::β sptree$num_map sptree$num_map;
+code_similar_all_labs_exist=∀(c1 :α sec list) (c2 :α sec list).
+  code_similar c1 c2 ⇒
+  (all_labs_exist (labs :β sptree$num_map sptree$num_map) c1 ⇔
+   all_labs_exist labs c2)
+code_similar_all_labs_exist_types=(c1 :α sec list)::α sec list;(c2 :α sec list)::α sec list;(labs :β sptree$num_map sptree$num_map)::β sptree$num_map sptree$num_map;
+all_labs_exist_pad_code=∀(nop :word8 list) (code :α sec list).
+  all_labs_exist (labs :β sptree$num_map sptree$num_map) (pad_code nop code) ⇔
+  all_labs_exist labs code
+all_labs_exist_pad_code_types=(nop :word8 list)::word8 list;(code :α sec list)::α sec list;(labs :β sptree$num_map sptree$num_map)::β sptree$num_map sptree$num_map;
+upd_lab_len_all_labs_exist=∀(pos :num) (code :α sec list).
+  all_labs_exist (labs :β sptree$num_map sptree$num_map)
+    (upd_lab_len pos code) ⇔ all_labs_exist labs code
+upd_lab_len_all_labs_exist_types=(pos :num)::num;(code :α sec list)::α sec list;(labs :β sptree$num_map sptree$num_map)::β sptree$num_map sptree$num_map;
+all_labs_exist=(λ(labs :α sptree$num_map sptree$num_map) (code :β sec list).
+     all_labs_exist labs code) =
+(λ(labs :α sptree$num_map sptree$num_map) (code :β sec list).
+     all_labs_exist labs code)
+bool_map_jump_present=T
+missing_outer=T
+missing_inner=T
+false_value_present=T
+call_not_reference=T
+unconstrained_nonlabels=T
+similar_changed_metadata=T
+padding_preserves=T
+updater_preserves=T
+width1_empty=T

@@ -346,7 +346,7 @@ run_probe word_alloc_live_inst_probeScript.sml word_alloc_live_inst_probe.out \
   "$cake_dir/compiler/backend"
 run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
   nested duplicate empty shift constant lookup \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_alloc_colour_inst_probeScript.sml word_alloc_colour_inst_probe.out \
   load16 store16 load8 store32 carry fp_move "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
@@ -355,7 +355,7 @@ run_probe word_alloc_colour_exp_probeScript.sml word_alloc_colour_exp_probe.out 
   "$cake_dir/compiler/backend"
 run_probe word_alloc_reads_exp_probeScript.sml word_alloc_reads_exp_probe.out \
   var_single load_var op_nested shift_order const_empty lookup_empty mixed_nested \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_add_carry_probeScript.sml word_add_carry_probe.out \
   ordinary carry_overflow "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
@@ -913,7 +913,7 @@ run_probe word_stack_max_var_probeScript.sml word_stack_max_var_probe.out \
 run_probe word_alloc_cost_probeScript.sml word_alloc_cost_probe.out \
   spill_zero spill_c1 spill_lr1 spill_lm1 spill_rr1 spill_rm1 spill_all1 \
   spill_all1_tail coal_empty coal_x_in coal_y_in coal_both_in coal_pri2_both_in \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe pan_lang_free_var_ids_probeScript.sml pan_lang_free_var_ids_probe.out \
   empty global_in_handler "$cake_dir/pancake/panLangScript.sml"
 run_probe pan_lang_inlinable_probeScript.sml pan_lang_inlinable_probe.out \
@@ -2751,7 +2751,7 @@ run_probe pan_sem_eval_ind_probeScript.sml pan_sem_eval_ind_probe.out \
 
 run_probe word_alloc_key_map_probeScript.sml word_alloc_key_map_probe.out \
   key_map_mixed key_map_collision key_map_done \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 # HOL's byte decoder `word_of_bytes` (HOL/src/n-bit/byteScript.sml:197) is the
 # function installed by the exact shared-memory loads (panSemScript.sml:517/524,
@@ -2834,7 +2834,7 @@ run_probe stack_props_program_validity_probeScript.sml stack_props_program_valid
 
 run_probe word_alloc_get_live_probeScript.sml word_alloc_get_live_probe.out \
   get_live_store_consts get_live_break_outside get_live_return \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 # The word_to_stack wInst probe observes the instruction helper `wInst`
 # (word_to_stackScript.sml:88-175), including the width-64 FP move clauses and
 # the Load16/Store16 Skip catch-all.
@@ -2851,19 +2851,19 @@ run_probe parmove_fstep_probeScript.sml parmove_fstep_probe.out \
 
 run_probe word_alloc_get_writes_inst_probeScript.sml word_alloc_get_writes_inst_probe.out \
   writes_const writes_add_carry writes_long_div writes_load16_catchall writes_fp_move64 writes_fp_move32 writes_fp_from_reg_catchall \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_get_delta_inst_probeScript.sml word_alloc_get_delta_inst_probe.out \
   gdi_skip gdi_const gdi_binop_reg gdi_binop_imm gdi_shift_reg gdi_shift_imm gdi_div gdi_addcarry gdi_addoverflow gdi_suboverflow gdi_longmul gdi_longdiv gdi_load gdi_store gdi_load32 gdi_store32 gdi_load8 gdi_store8 gdi_fpless gdi_fpmovtoreg64 gdi_fpmovtoreg32 gdi_fpmovfromreg64 gdi_fpmovfromreg32 gdi_fpneg_catchall \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_get_clash_tree_probeScript.sml word_alloc_get_clash_tree_probe.out \
   gct_skip gct_move gct_inst gct_assign gct_get gct_store gct_seq gct_if_reg gct_if_imm gct_mustterminate gct_alloc gct_install gct_codebufferwrite gct_databufferwrite gct_ffi gct_raise gct_return gct_tick gct_locvalue gct_set gct_opcurrheap gct_storeconsts gct_shareinst_store gct_shareinst_other gct_loop gct_break_none gct_break_some gct_continue_none gct_continue_some gct_call_none gct_call_ret gct_call_ret_handler \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_get_writes_probeScript.sml word_alloc_get_writes_probe.out \
   writes_move writes_store_consts writes_inst_load16 writes_shared_load16 writes_shared_store16 writes_seq_catchall writes_install \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_stack_size_rel_probeScript.sml word_to_stack_stack_size_rel_probe.out \
   ss_none ss_some ss_bad_max ss_missing_loc ss_missing_frame ss_frame_guard ss_target_bool ss_target_nat \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3144,7 +3144,7 @@ run_probe lab_to_target_compile_probeScript.sml lab_to_target_compile_probe.out 
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_total_colour_probeScript.sml word_alloc_total_colour_probe.out \
   tc_absent_zero tc_absent_physical tc_absent_virtual tc_absent_large_physical tc_absent_large_virtual tc_mapped_physical tc_mapped_virtual tc_mapped_zero \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_alloc_even_locals_probeScript.sml word_alloc_even_locals_probe.out \
   wa_even_empty wa_even_zero wa_even_even_holes wa_even_odd wa_even_mixed wa_even_overwrite \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3169,29 +3169,29 @@ run_probe word_to_stack_comp_prefix_probeScript.sml word_to_stack_comp_prefix_pr
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_merge_stack_sets_probeScript.sml word_alloc_merge_stack_sets_probe.out \
   mss_empty mss_retained_right mss_new_left_bias mss_new_right mss_removed mss_fixed_left_bias mss_raw mss_generic \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_remove_temp_stack_probeScript.sml word_alloc_remove_temp_stack_probe.out \
   rts_empty rts_zero rts_duplicate rts_missing rts_fixed rts_raw rts_generic_payload rts_generic_fixed \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_merge_stack_only_probeScript.sml word_alloc_merge_stack_only_probe.out \
   mso_present_alloc mso_present_physical mso_present_stack mso_absent_stack_alloc mso_absent_stack_physical mso_absent_delete_missing mso_absent_delete_root mso_present_overwrite mso_raw \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe parmove_correct_probeScript.sml parmove_correct_probe.out \
   pc_empty pc_self pc_chain pc_cycle pc_fanout pc_order pc_bool \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe word_alloc_coalesce_cost_probeScript.sml word_alloc_coalesce_cost_probe.out \
   cc_absent cc_left cc_right cc_both cc_same cc_zero cc_large cc_raw \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe target_sem_mapped_memory_probeScript.sml target_sem_mapped_memory_probe.out \
   tm_read_0 tm_read_0_wrong_opcode tm_read_1 tm_read_1_wrong_opcode tm_read_2 tm_read_2_wrong_opcode tm_read_4 tm_read_4_wrong_opcode tm_write_0 tm_write_0_wrong_opcode tm_write_1 tm_write_1_wrong_opcode tm_write_2 tm_write_2_wrong_opcode tm_write_4 tm_write_4_wrong_opcode tm_read_invalid_3 tm_read_invalid_8 tm_read_invalid_16 tm_read_invalid_255 tm_write_invalid_3 tm_write_invalid_8 tm_write_invalid_16 tm_write_invalid_255 tm_read_register_mismatch tm_read_base_mismatch tm_read_offset_mismatch tm_write_domain_gap tm_read_wrap tm_write_wrap tm_read_empty_domain tm_write_empty_domain tm_read_invalid_empty tm_read_byte_size_wrap tm_write_byte_size_wrap \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe word_alloc_even_colour_probeScript.sml word_alloc_even_colour_probe.out \
   even_colour_empty even_colour_zero even_colour_zero_bad even_colour_physical even_colour_physical_bad even_colour_virtual even_colour_mixed even_colour_mixed_bad even_colour_virtual_large even_colour_physical_large even_colour_physical_large_bad even_colour_duplicate_first_good even_colour_duplicate_first_bad even_colour_duplicate_virtual even_colour_no_zero even_colour_last_bad even_colour_empty_internal even_colour_physical_root_bad even_colour_virtual_left even_colour_physical_right_bad \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe spt_union_algebra_probeScript.sml spt_union_algebra_probe.out \
   spt_union_insert_all spt_union_assoc_all spt_union_unit_sym_all spt_union_singleton_all spt_union_insert_empty_0 spt_union_insert_empty_1 spt_union_insert_empty_2 spt_union_insert_empty_17 spt_union_insert_leaf_0 spt_union_insert_leaf_1 spt_union_insert_leaf_2 spt_union_insert_leaf_17 spt_union_insert_empty_internal_0 spt_union_insert_empty_internal_1 spt_union_insert_empty_internal_2 spt_union_insert_empty_internal_17 spt_union_insert_branch_0 spt_union_insert_branch_1 spt_union_insert_branch_2 spt_union_insert_branch_17 spt_union_insert_root_0 spt_union_insert_root_1 spt_union_insert_root_2 spt_union_insert_root_17 spt_union_insert_malformed_nested_0 spt_union_insert_malformed_nested_1 spt_union_insert_malformed_nested_2 spt_union_insert_malformed_nested_17 spt_union_left_bias spt_union_nat_noncomm spt_union_malformed_retained spt_union_unit_malformed \
@@ -3220,16 +3220,16 @@ run_probe word_alloc_checker_call_none_probeScript.sml word_alloc_checker_call_n
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_loop_checker_probeScript.sml word_alloc_loop_checker_probe.out \
   lc_break_absent lc_continue_absent lc_break_present lc_continue_present lc_loop_skip lc_loop_continue lc_break_collision \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_alloc_stack_only_probeScript.sml word_alloc_stack_only_probe.out \
   gso_skip gso_move gso_foldr gso_seq gso_must gso_loop gso_call_none gso_call_return gso_tick gso_return gso_alloc_nondelta gso_entry gso_if_reg gso_if_imm gso_call_both \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_alloc_get_prefs_probeScript.sml word_alloc_get_prefs_probe.out \
   prefs_skip prefs_empty prefs_move prefs_duplicate prefs_self prefs_seq prefs_if_reg prefs_if_imm prefs_must prefs_loop prefs_tail prefs_tail_handler prefs_return prefs_both prefs_nested prefs_ignored prefs_large \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_alloc_sp_default_probeScript.sml word_alloc_sp_default_probe.out \
   spd_missing_phy spd_missing_virtual spd_present_phy spd_present_virtual spd_present_zero spd_raw_bs spd_raw_bn_hit spd_raw_bn_miss spd_large_phy spd_large_virtual tc_missing_phy tc_missing_virtual tc_present tc_raw tc_large \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe reg_alloc_in_clash_tree_probeScript.sml reg_alloc_in_clash_tree_probe.out \
   ict_delta_write ict_delta_read ict_delta_miss ict_set ict_set_miss ict_set_raw ict_branch_left ict_branch_right ict_branch_none_miss ict_branch_some ict_branch_some_miss ict_seq_left ict_seq_right ict_large cct_ok_f cct_ok_gf cct_collision_f cct_collision_gf \
   "$cake_dir/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "$cake_dir/compiler/backend/reg_alloc/proofs"
@@ -3247,7 +3247,7 @@ run_probe reg_alloc_colouring_probeScript.sml reg_alloc_colouring_probe.out \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe word_alloc_select_reg_alloc_probeScript.sml word_alloc_select_reg_alloc_probe.out \
   sra_type sra_simple0 sra_simple1 sra_irc2 sra_irc3_cost sra_linear4 sra_linear5_spill sra_linear_forced \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe reg_alloc_allocator_probeScript.sml reg_alloc_allocator_probe.out \
   ra_simple_delta ra_irc_move ra_simple_move ra_irc_spill_cost ra_irc_spill_deg ra_simple_branch_forced ra_irc_phys ra_irc_fs ra_irc_stack ra_irc_coalesce_chain ra_irc_pressure ra_empty \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3290,10 +3290,10 @@ run_probe stacksem_inst_probeScript.sml stacksem_inst_probe.out \
 
 run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
   gf_addcarry_riscv gf_addcarry_mips gf_addcarry_self gf_addcarry_x86 gf_addovf_riscv gf_addovf_armv8 gf_subovf_mips gf_subovf_self gf_longmul_armv7 gf_longmul_armv7_self gf_longmul_riscv gf_longmul_ag32 gf_longmul_x86 gf_fptoreg_32 gf_fptoreg_32_self gf_fptoreg_64 gf_fpfromreg_32 gf_fpfromreg_64 gf_other_inst gf_seq gf_if gf_must gf_loop gf_call_return gf_call_both gf_call_tail gf_skip gf_large \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_alloc_def_probeScript.sml word_alloc_def_probe.out \
   wa_type wa_simple wa_irc wa_linear wa_oracle_ok wa_oracle_clash wa_stack_irc wa_stack_linear wa_phys \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_unreach_def_probeScript.sml word_unreach_def_probe.out \
   wu_ru_type wu_mm_type wu_dsm_move wu_dsm_seq wu_dsm_other wu_mm_basic wu_mm_dup wu_ss_skip_r wu_ss_skip_l wu_ss_raise wu_ss_move_move wu_ss_move_rest wu_ss_move_other wu_ss_default wu_test wu_after_return wu_call_none wu_call_ret wu_if wu_loop \
   "$cake_dir/compiler/backend/word_unreachScript.sml" "$cake_dir/compiler/backend"
@@ -3333,26 +3333,26 @@ run_probe asm_props_encoder_correct_probeScript.sml asm_props_encoder_correct_pr
 
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
   sc_store sc_store8 sc_store16 sc_store32 sc_load sc_load8 sc_load16 sc_load32 \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_spillcost_probeScript.sml word_alloc_spillcost_probe.out \
   spill_zero spill_call_tail spill_call_nontail spill_left_register spill_left_memory spill_right_register spill_right_memory spill_asymmetric_tail spill_asymmetric_nontail spill_large \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe spt_mapi_probeScript.sml spt_mapi_probe.out \
   mi_empty mi_leaf mi_children mi_root mi_nested mi_raw_bn mi_raw_bs mi_raw_nested mi_index3 mi_index6 mi_bool_nat mi_nat_bool \
   "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_return_checker_probeScript.sml word_alloc_return_checker_probe.out \
   rc_empty rc_cuts rc_duplicate_args rc_return_tick rc_return_break rc_return_collision rc_args_collision \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_oracle_colour_probeScript.sml word_alloc_oracle_colour_probe.out \
   oc_none oc_empty oc_physical_bad oc_checker_collision oc_forced_collision oc_forced_distinct oc_rename oc_stack_equal oc_stack_below oc_raw_map \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_heu_counters_probeScript.sml word_alloc_heu_counters_probe.out \
   hc_lhs_const_absent hc_lhs_const_present hc_lhs_const_repeat hc_lhs_const_other hc_lhs_reg_absent hc_lhs_reg_present hc_lhs_reg_repeat hc_lhs_reg_other hc_lhs_mem_absent hc_lhs_mem_present hc_lhs_mem_repeat hc_lhs_mem_other hc_rhs_reg_absent hc_rhs_reg_present hc_rhs_reg_repeat hc_rhs_reg_other hc_rhs_mem_absent hc_rhs_mem_present hc_rhs_mem_repeat hc_rhs_mem_other \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe parmove_temp_mixed_probeScript.sml parmove_temp_mixed_probe.out \
   ntm_real ntm_read ntm_write ntm_both \
@@ -3364,7 +3364,7 @@ run_probe parmove_temp_insert_probeScript.sml parmove_temp_insert_probe.out \
 
 run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembly_probe.out \
   ca_control ca_return ca_handler ca_tail_ignored ca_collision \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe parmove_independence_probeScript.sml parmove_independence_probe.out \
   ind_head ind_middle ind_tail ind_cycle ind_fanout ind_self ind_bool ind_empty_others ind_nil_nat ind_nil_bool \
@@ -3384,11 +3384,11 @@ run_probe spt_map_probeScript.sml spt_map_probe.out \
 
 run_probe word_alloc_heu_inst_probeScript.sml word_alloc_heu_inst_probe.out \
   hi_skip hi_const hi_binreg hi_shiftreg hi_div hi_binimm hi_shiftimm hi_carry hi_addoverflow hi_suboverflow hi_longmul hi_longdiv hi_load hi_load32 hi_load8 hi_store hi_store32 hi_store8 hi_fpless hi_fplessequal hi_fpequal hi_to_1 hi_from_1 hi_to_32 hi_from_32 hi_to_64 hi_from_64 hi_to_128 hi_from_128 hi_bin_alias hi_carry_alias hi_longdiv_alias hi_to_alias hi_from_alias hi_existing hi_large hi_const_raw hi_load16_raw hi_store16_raw hi_fpabs_raw hi_fpneg_raw hi_fpsqrt_raw hi_fpadd_raw hi_fpsub_raw hi_fpmul_raw hi_fpdiv_raw hi_fpfma_raw hi_fpmov_raw hi_fptoint_raw hi_fpfromint_raw \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_heu_max_probeScript.sml word_alloc_heu_max_probe.out \
   hm_tuple hm_tuple_equal hm_tuple_zero hm_tuple_large hm_empty hm_left hm_right hm_overlap hm_disjoint hm_mixed hm_nested hm_raw_left_bn hm_raw_right_bn hm_raw_both_bn hm_raw_left_bs hm_raw_right_bs hm_raw_both_bs hm_raw_bs_leaf hm_raw_leaf_bs hm_raw_empty_leaf \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe monad_base_probeScript.sml monad_base_probe.out \
   mb_bind_ok mb_bind_fail mb_ignore_ok mb_ignore_fail mb_return mb_run_ok mb_run_fail mb_alloc_three mb_alloc_zero mb_exn_bytes \
@@ -3402,7 +3402,7 @@ run_probe find_index_append_probeScript.sml find_index_append_probe.out \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
 run_probe word_alloc_heu_call_probeScript.sml word_alloc_heu_call_probe.out \
   hc_merge_empty hc_merge_left hc_merge_right hc_merge_overlap hc_merge_disjoint hc_merge_raw_left hc_merge_raw_right hc_merge_raw_root hc_add_empty hc_add_nat hc_add_bool hc_add_tuple hc_add_nested hc_add_raw_bn hc_add_raw_bs hc_add_raw_overlap \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_abs_stack_generality_probeScript.sml word_to_stack_abs_stack_generality_probe.out \
   asg_base16 asg_base1 asg_plain16 asg_handler16 asg_plain1 asg_handler1 asg_nested16 asg_marker_bad \
@@ -3430,14 +3430,14 @@ run_probe reg_alloc_remap_probeScript.sml reg_alloc_remap_probe.out \
 
 run_probe word_to_stack_ssa_codec_probeScript.sml word_to_stack_ssa_codec_probe.out \
   sc_skip sc_assigns sc_constant sc_shift sc_multiply sc_raise sc_call sc_return \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_alloc_heu_prog_probeScript.sml word_alloc_heu_prog_probe.out \
   hp_move hp_inst hp_get hp_set_var hp_set_other hp_heap hp_heap_alias hp_loc hp_seq hp_must hp_loop hp_if_reg hp_if_alias hp_if_imm hp_tail_indirect hp_tail_other hp_tail_self hp_ret_indirect hp_ret_other hp_ret_self hp_ret_discard hp_ret_self_discard hp_ret_handler hp_if_calls hp_seq_calls hp_share_load hp_share_load8 hp_share_load16 hp_share_load32 hp_share_store hp_share_store8 hp_share_store16 hp_share_store32 hp_ignore_skip hp_ignore_assign hp_ignore_store hp_ignore_alloc hp_ignore_consts hp_ignore_raise hp_ignore_return hp_ignore_break hp_ignore_continue hp_ignore_tick hp_ignore_install hp_ignore_code hp_ignore_data hp_ignore_ffi hp_width1 hp_width128 hp_large_counter hp_raw_skip hp_raw_self \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_canonize_moves_aux_probeScript.sml word_alloc_canonize_moves_aux_probe.out \
   cma_empty cma_acc cma_same_up cma_same_down cma_same_equal cma_different cma_groups cma_unsorted cma_reversed cma_self cma_large cma_bool \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe misc_find_index_shift_zero_probeScript.sml misc_find_index_shift_zero_probe.out \
   fiz_empty fiz_head fiz_middle fiz_last fiz_absent fiz_zero fiz_large_offset fiz_large_value fiz_bool fiz_bool_absent \
@@ -3449,10 +3449,10 @@ run_probe parmove_temp_step_probeScript.sml parmove_temp_step_probe.out \
 
 run_probe word_to_stack_dead_codec_probeScript.sml word_to_stack_dead_codec_probe.out \
   dc_skip dc_move dc_const dc_load dc_load16 dc_store dc_share dc_seq dc_if dc_loop dc_must dc_tail_handler dc_return_handler \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_colour_domain_probeScript.sml word_to_stack_colour_domain_probe.out \
   cd_load16 cd_store16 cd_load8 cd_store32 cd_carry cd_collision cd_seq cd_must cd_if cd_loop cd_tail_handler cd_both cd_large \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_program_maximum_probeScript.sml word_to_stack_program_maximum_probe.out \
   pm_skip pm_tick pm_move pm_assign pm_inst pm_get pm_store pm_set pm_seq pm_if_reg pm_if_imm pm_loop pm_must pm_break pm_continue pm_raise pm_loc pm_return pm_return_initial pm_tail_handler pm_return_call pm_both_call pm_alloc pm_constants pm_heap pm_install pm_code_write pm_data_write pm_ffi pm_shared16 pm_large pm_tail_empty \
@@ -3463,7 +3463,7 @@ run_probe word_to_stack_cse_codec_probeScript.sml word_to_stack_cse_codec_probe.
   "$cake_dir/compiler/backend/word_cseScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_canonize_sort_probeScript.sml word_alloc_canonize_sort_probe.out \
   cs_empty cs_one cs_two cs_three cs_four cs_five cs_odd cs_even cs_dups cs_priority cs_x_first cs_y_second cs_reversed_coords cs_large cs_zeros cs_descending cs_ascending \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_unreach_codec_probeScript.sml word_to_stack_unreach_codec_probe.out \
   uc_skip uc_skip_seq uc_raise uc_return uc_break uc_continue uc_tail uc_merge uc_overlap uc_rest uc_assoc uc_loop uc_must uc_if uc_tail_handler uc_both \
@@ -3490,7 +3490,7 @@ run_probe monad_array_length_probeScript.sml monad_array_length_probe.out \
 
 run_probe word_alloc_canonize_moves_probeScript.sml word_alloc_canonize_moves_probe.out \
   cm_empty cm_one cm_two cm_three cm_four cm_five cm_odd cm_even cm_dups cm_priority cm_x_first cm_y_second cm_reversed_coords cm_large cm_zeros cm_descending cm_ascending cm_self_moves cm_all_flipped \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe asm_sem_mem_word_probeScript.sml asm_sem_mem_word_probe.out \
   addr rw_zero rw_le_ok rw_be_fail rw_fail_dom ww_zero ww_le ww_le_ok ww_be_fail rw_le2 rw_be2 rw_wrap_ok rw_wrap_oob rw_widen ww_widen \
@@ -3529,23 +3529,23 @@ run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
 
 run_probe word_alloc_full_ssa_probeScript.sml word_alloc_full_ssa_probe.out \
   fs_skip fs_args fs_assign fs_if fs_big \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_ssa_cc_trans_probeScript.sml word_alloc_ssa_cc_trans_probe.out \
   sc_skip sc_move sc_storeconsts sc_inst sc_assign sc_get sc_store sc_seq sc_mustterminate sc_if sc_if_skip sc_alloc sc_raise sc_opcurrheap sc_return sc_tick sc_set sc_locvalue sc_install sc_codebufferwrite sc_databufferwrite sc_ffi sc_call_tail sc_call_ret sc_call_handler sc_shareinst_load sc_shareinst_store sc_loop sc_loop_break sc_break_free sc_continue_free \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_ssa_helpers_probeScript.sml word_alloc_ssa_helpers_probe.out \
   lnvrm_basic lnvrm_empty fr_basic mp_left mp_right mp_both mp_none sr_moves sr_skip sr_payload ls_mixed ls_empty \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_ssa_trans_inst_probeScript.sml word_alloc_ssa_trans_inst_probe.out \
   sti_skip sti_const sti_binop_reg sti_binop_imm sti_shift_reg sti_shift_imm sti_div sti_addcarry sti_addoverflow sti_suboverflow sti_longmul sti_longdiv sti_load sti_store sti_load32 sti_store8 sti_load16 sti_fpless sti_fpadd sti_movto64 sti_movto32 sti_movfrom64 sti_movfrom32_distinct sti_movfrom32_same ste_var ste_missing ste_nested ste_lookup \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_fix_inconsistencies_probeScript.sml word_alloc_fix_inconsistencies_probe.out \
   ol_hit ol_miss pr_none pr_inl pr_inr fm fms_empty fms_left_only fms_right_only fms_both fi_equal fi_mixed \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe hol_sorting_probeScript.sml hol_sorting_probe.out \
   sorted_type part_type partition_type sorted_empty sorted_single sorted_asc sorted_dup sorted_le_dup sorted_gt sorted_nontrans part_basic part_empty partition_basic partition_bool \
@@ -3652,7 +3652,7 @@ run_probe parmove_preserves_moves_pmov_probeScript.sml parmove_preserves_moves_p
 
 run_probe word_alloc_get_heuristics_probeScript.sml word_alloc_get_heuristics_probe.out \
   gh_empty_even gh_empty_odd gh_move_even gh_move_odd gh_duplicates gh_self_call gh_other_call gh_get_cost gh_large_even gh_large_odd gh_move_structure gh_dup_structure gh_self_structure gh_get_structure \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_compile_lookup_probeScript.sml word_to_stack_compile_lookup_probe.out \
   lookup_duplicate_first lookup_later_threaded lookup_missing lookup_bool_first \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
@@ -3711,7 +3711,7 @@ run_probe word_alloc_max_var_max_probeScript.sml word_alloc_max_var_max_probe.ou
 
 run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
   ss_even ss_empty ss_duplicates ss_invalid ss_one ss_setup0 ss_setup1 ss_setup3 ss_setup80 even_list_def next_var_rename_def list_next_var_rename_def setup_ssa_def ss_setup_1_to_80 ss_setup_80_to_1 ss_setup_original_type \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
   sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
@@ -3726,14 +3726,14 @@ run_probe ssa_register_class_probeScript.sml ssa_register_class_probe.out \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe ssa_rename_lookup_probeScript.sml ssa_rename_lookup_probe.out \
   rename_empty rename_overwrite rename_invalid rename_order rename_large \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe ssa_merge_route_probeScript.sml ssa_merge_route_probe.out \
   route_empty route_missing route_equal route_unequal route_tail route_duplicate_names route_duplicate_maps route_big \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe ssa_merge_moves_probeScript.sml ssa_merge_moves_probe.out \
   merge_empty merge_missing_both merge_missing_left merge_missing_right merge_equal merge_unequal merge_tail_order merge_duplicate merge_invalid merge_big merge_definition merge_original_type \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe list_next_var_rename_lemma1_probeScript.sml list_next_var_rename_lemma1_probe.out \
   lnvr1_original_statement lnvr1_empty lnvr1_duplicates lnvr1_invalid lnvr1_collision lnvr1_zero_duplicates lnvr1_odd_start lnvr1_huge lnvr1_range \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -5169,6 +5169,7 @@ run_probe word_to_stack_asm_remove_helpers_probeScript.sml word_to_stack_asm_rem
 
 
 
+
 run_probe stack_remove_comp_inst_probeScript.sml stack_remove_comp_inst_probe.out \
   ci_statement ci_types ci_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -5192,6 +5193,19 @@ run_probe ssa_state_map_route_probeScript.sml ssa_state_map_route_probe.out \
   fresh_empty fresh_duplicate fresh_overwrite fresh_big force_empty force_duplicate \
   force_linear_registers keys_order \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cutset_route_probeScript.sml ssa_cutset_route_probe.out \
+  cut_empty_map cut_empty_names cut_duplicates cut_missing cut_order cut_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_reconcile_route_probeScript.sml ssa_reconcile_route_probe.out \
+  rec_empty rec_identity rec_missing_source rec_missing_target rec_duplicate rec_order rec_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_listmove_route_probeScript.sml ssa_listmove_route_probe.out \
+  lm_empty lm_missing lm_repeated lm_source_alias lm_order lm_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_asm_remove_compiler_probeScript.sml word_to_stack_asm_remove_compiler_probe.out \
   arc_full arc_1_0_skip_guard arc_1_0_skip_result arc_1_0_move_guard arc_1_0_move_result arc_1_0_inst_guard arc_1_0_inst_result arc_1_0_assign_guard arc_1_0_assign_result arc_1_0_get_guard arc_1_0_get_result arc_1_0_set_guard arc_1_0_set_result arc_1_0_store_guard arc_1_0_store_result arc_1_0_alloc_guard arc_1_0_alloc_result arc_1_0_consts_guard arc_1_0_consts_result arc_1_0_raise_guard arc_1_0_raise_result arc_1_0_return_guard arc_1_0_return_result arc_1_0_break_guard arc_1_0_break_result arc_1_0_continue_guard arc_1_0_continue_result arc_1_0_tick_guard arc_1_0_tick_result arc_1_0_heap_guard arc_1_0_heap_result arc_1_0_loc_guard arc_1_0_loc_result arc_1_0_install_guard arc_1_0_install_result arc_1_0_code_guard arc_1_0_code_result arc_1_0_data_guard arc_1_0_data_result arc_1_0_ffi_guard arc_1_0_ffi_result arc_1_0_share_guard arc_1_0_share_result arc_1_0_must_guard arc_1_0_must_result arc_1_0_loop_guard arc_1_0_loop_result arc_1_0_seq_guard arc_1_0_seq_result arc_1_0_if_guard arc_1_0_if_result arc_1_0_tail_guard arc_1_0_tail_result arc_1_0_callreturn_guard arc_1_0_callreturn_result arc_1_0_callhandler_guard arc_1_0_callhandler_result arc_1_4_skip_guard arc_1_4_skip_result arc_1_4_move_guard arc_1_4_move_result arc_1_4_inst_guard arc_1_4_inst_result arc_1_4_assign_guard arc_1_4_assign_result arc_1_4_get_guard arc_1_4_get_result arc_1_4_set_guard arc_1_4_set_result arc_1_4_store_guard arc_1_4_store_result arc_1_4_alloc_guard arc_1_4_alloc_result arc_1_4_consts_guard arc_1_4_consts_result arc_1_4_raise_guard arc_1_4_raise_result arc_1_4_return_guard arc_1_4_return_result arc_1_4_break_guard arc_1_4_break_result arc_1_4_continue_guard arc_1_4_continue_result arc_1_4_tick_guard arc_1_4_tick_result arc_1_4_heap_guard arc_1_4_heap_result arc_1_4_loc_guard arc_1_4_loc_result arc_1_4_install_guard arc_1_4_install_result arc_1_4_code_guard arc_1_4_code_result arc_1_4_data_guard arc_1_4_data_result arc_1_4_ffi_guard arc_1_4_ffi_result arc_1_4_share_guard arc_1_4_share_result arc_1_4_must_guard arc_1_4_must_result arc_1_4_loop_guard arc_1_4_loop_result arc_1_4_seq_guard arc_1_4_seq_result arc_1_4_if_guard arc_1_4_if_result arc_1_4_tail_guard arc_1_4_tail_result arc_1_4_callreturn_guard arc_1_4_callreturn_result arc_1_4_callhandler_guard arc_1_4_callhandler_result arc_2_0_skip_guard arc_2_0_skip_result arc_2_0_move_guard arc_2_0_move_result arc_2_0_inst_guard arc_2_0_inst_result arc_2_0_assign_guard arc_2_0_assign_result arc_2_0_get_guard arc_2_0_get_result arc_2_0_set_guard arc_2_0_set_result arc_2_0_store_guard arc_2_0_store_result arc_2_0_alloc_guard arc_2_0_alloc_result arc_2_0_consts_guard arc_2_0_consts_result arc_2_0_raise_guard arc_2_0_raise_result arc_2_0_return_guard arc_2_0_return_result arc_2_0_break_guard arc_2_0_break_result arc_2_0_continue_guard arc_2_0_continue_result arc_2_0_tick_guard arc_2_0_tick_result arc_2_0_heap_guard arc_2_0_heap_result arc_2_0_loc_guard arc_2_0_loc_result arc_2_0_install_guard arc_2_0_install_result arc_2_0_code_guard arc_2_0_code_result arc_2_0_data_guard arc_2_0_data_result arc_2_0_ffi_guard arc_2_0_ffi_result arc_2_0_share_guard arc_2_0_share_result arc_2_0_must_guard arc_2_0_must_result arc_2_0_loop_guard arc_2_0_loop_result arc_2_0_seq_guard arc_2_0_seq_result arc_2_0_if_guard arc_2_0_if_result arc_2_0_tail_guard arc_2_0_tail_result arc_2_0_callreturn_guard arc_2_0_callreturn_result arc_2_0_callhandler_guard arc_2_0_callhandler_result arc_2_4_skip_guard arc_2_4_skip_result arc_2_4_move_guard arc_2_4_move_result arc_2_4_inst_guard arc_2_4_inst_result arc_2_4_assign_guard arc_2_4_assign_result arc_2_4_get_guard arc_2_4_get_result arc_2_4_set_guard arc_2_4_set_result arc_2_4_store_guard arc_2_4_store_result arc_2_4_alloc_guard arc_2_4_alloc_result arc_2_4_consts_guard arc_2_4_consts_result arc_2_4_raise_guard arc_2_4_raise_result arc_2_4_return_guard arc_2_4_return_result arc_2_4_break_guard arc_2_4_break_result arc_2_4_continue_guard arc_2_4_continue_result arc_2_4_tick_guard arc_2_4_tick_result arc_2_4_heap_guard arc_2_4_heap_result arc_2_4_loc_guard arc_2_4_loc_result arc_2_4_install_guard arc_2_4_install_result arc_2_4_code_guard arc_2_4_code_result arc_2_4_data_guard arc_2_4_data_result arc_2_4_ffi_guard arc_2_4_ffi_result arc_2_4_share_guard arc_2_4_share_result arc_2_4_must_guard arc_2_4_must_result arc_2_4_loop_guard arc_2_4_loop_result arc_2_4_seq_guard arc_2_4_seq_result arc_2_4_if_guard arc_2_4_if_result arc_2_4_tail_guard arc_2_4_tail_result arc_2_4_callreturn_guard arc_2_4_callreturn_result arc_2_4_callhandler_guard arc_2_4_callhandler_result arc_8_0_skip_guard arc_8_0_skip_result arc_8_0_move_guard arc_8_0_move_result arc_8_0_inst_guard arc_8_0_inst_result arc_8_0_assign_guard arc_8_0_assign_result arc_8_0_get_guard arc_8_0_get_result arc_8_0_set_guard arc_8_0_set_result arc_8_0_store_guard arc_8_0_store_result arc_8_0_alloc_guard arc_8_0_alloc_result arc_8_0_consts_guard arc_8_0_consts_result arc_8_0_raise_guard arc_8_0_raise_result arc_8_0_return_guard arc_8_0_return_result arc_8_0_break_guard arc_8_0_break_result arc_8_0_continue_guard arc_8_0_continue_result arc_8_0_tick_guard arc_8_0_tick_result arc_8_0_heap_guard arc_8_0_heap_result arc_8_0_loc_guard arc_8_0_loc_result arc_8_0_install_guard arc_8_0_install_result arc_8_0_code_guard arc_8_0_code_result arc_8_0_data_guard arc_8_0_data_result arc_8_0_ffi_guard arc_8_0_ffi_result arc_8_0_share_guard arc_8_0_share_result arc_8_0_must_guard arc_8_0_must_result arc_8_0_loop_guard arc_8_0_loop_result arc_8_0_seq_guard arc_8_0_seq_result arc_8_0_if_guard arc_8_0_if_result arc_8_0_tail_guard arc_8_0_tail_result arc_8_0_callreturn_guard arc_8_0_callreturn_result arc_8_0_callhandler_guard arc_8_0_callhandler_result arc_8_4_skip_guard arc_8_4_skip_result arc_8_4_move_guard arc_8_4_move_result arc_8_4_inst_guard arc_8_4_inst_result arc_8_4_assign_guard arc_8_4_assign_result arc_8_4_get_guard arc_8_4_get_result arc_8_4_set_guard arc_8_4_set_result arc_8_4_store_guard arc_8_4_store_result arc_8_4_alloc_guard arc_8_4_alloc_result arc_8_4_consts_guard arc_8_4_consts_result arc_8_4_raise_guard arc_8_4_raise_result arc_8_4_return_guard arc_8_4_return_result arc_8_4_break_guard arc_8_4_break_result arc_8_4_continue_guard arc_8_4_continue_result arc_8_4_tick_guard arc_8_4_tick_result arc_8_4_heap_guard arc_8_4_heap_result arc_8_4_loc_guard arc_8_4_loc_result arc_8_4_install_guard arc_8_4_install_result arc_8_4_code_guard arc_8_4_code_result arc_8_4_data_guard arc_8_4_data_result arc_8_4_ffi_guard arc_8_4_ffi_result arc_8_4_share_guard arc_8_4_share_result arc_8_4_must_guard arc_8_4_must_result arc_8_4_loop_guard arc_8_4_loop_result arc_8_4_seq_guard arc_8_4_seq_result arc_8_4_if_guard arc_8_4_if_result arc_8_4_tail_guard arc_8_4_tail_result arc_8_4_callreturn_guard arc_8_4_callreturn_result arc_8_4_callhandler_guard arc_8_4_callhandler_result arc_64_0_skip_guard arc_64_0_skip_result arc_64_0_move_guard arc_64_0_move_result arc_64_0_inst_guard arc_64_0_inst_result arc_64_0_assign_guard arc_64_0_assign_result arc_64_0_get_guard arc_64_0_get_result arc_64_0_set_guard arc_64_0_set_result arc_64_0_store_guard arc_64_0_store_result arc_64_0_alloc_guard arc_64_0_alloc_result arc_64_0_consts_guard arc_64_0_consts_result arc_64_0_raise_guard arc_64_0_raise_result arc_64_0_return_guard arc_64_0_return_result arc_64_0_break_guard arc_64_0_break_result arc_64_0_continue_guard arc_64_0_continue_result arc_64_0_tick_guard arc_64_0_tick_result arc_64_0_heap_guard arc_64_0_heap_result arc_64_0_loc_guard arc_64_0_loc_result arc_64_0_install_guard arc_64_0_install_result arc_64_0_code_guard arc_64_0_code_result arc_64_0_data_guard arc_64_0_data_result arc_64_0_ffi_guard arc_64_0_ffi_result arc_64_0_share_guard arc_64_0_share_result arc_64_0_must_guard arc_64_0_must_result arc_64_0_loop_guard arc_64_0_loop_result arc_64_0_seq_guard arc_64_0_seq_result arc_64_0_if_guard arc_64_0_if_result arc_64_0_tail_guard arc_64_0_tail_result arc_64_0_callreturn_guard arc_64_0_callreturn_result arc_64_0_callhandler_guard arc_64_0_callhandler_result arc_64_4_skip_guard arc_64_4_skip_result arc_64_4_move_guard arc_64_4_move_result arc_64_4_inst_guard arc_64_4_inst_result arc_64_4_assign_guard arc_64_4_assign_result arc_64_4_get_guard arc_64_4_get_result arc_64_4_set_guard arc_64_4_set_result arc_64_4_store_guard arc_64_4_store_result arc_64_4_alloc_guard arc_64_4_alloc_result arc_64_4_consts_guard arc_64_4_consts_result arc_64_4_raise_guard arc_64_4_raise_result arc_64_4_return_guard arc_64_4_return_result arc_64_4_break_guard arc_64_4_break_result arc_64_4_continue_guard arc_64_4_continue_result arc_64_4_tick_guard arc_64_4_tick_result arc_64_4_heap_guard arc_64_4_heap_result arc_64_4_loc_guard arc_64_4_loc_result arc_64_4_install_guard arc_64_4_install_result arc_64_4_code_guard arc_64_4_code_result arc_64_4_data_guard arc_64_4_data_result arc_64_4_ffi_guard arc_64_4_ffi_result arc_64_4_share_guard arc_64_4_share_result arc_64_4_must_guard arc_64_4_must_result arc_64_4_loop_guard arc_64_4_loop_result arc_64_4_seq_guard arc_64_4_seq_result arc_64_4_if_guard arc_64_4_if_result arc_64_4_tail_guard arc_64_4_tail_result arc_64_4_callreturn_guard arc_64_4_callreturn_result arc_64_4_callhandler_guard arc_64_4_callhandler_result arc_80_0_skip_guard arc_80_0_skip_result arc_80_0_move_guard arc_80_0_move_result arc_80_0_inst_guard arc_80_0_inst_result arc_80_0_assign_guard arc_80_0_assign_result arc_80_0_get_guard arc_80_0_get_result arc_80_0_set_guard arc_80_0_set_result arc_80_0_store_guard arc_80_0_store_result arc_80_0_alloc_guard arc_80_0_alloc_result arc_80_0_consts_guard arc_80_0_consts_result arc_80_0_raise_guard arc_80_0_raise_result arc_80_0_return_guard arc_80_0_return_result arc_80_0_break_guard arc_80_0_break_result arc_80_0_continue_guard arc_80_0_continue_result arc_80_0_tick_guard arc_80_0_tick_result arc_80_0_heap_guard arc_80_0_heap_result arc_80_0_loc_guard arc_80_0_loc_result arc_80_0_install_guard arc_80_0_install_result arc_80_0_code_guard arc_80_0_code_result arc_80_0_data_guard arc_80_0_data_result arc_80_0_ffi_guard arc_80_0_ffi_result arc_80_0_share_guard arc_80_0_share_result arc_80_0_must_guard arc_80_0_must_result arc_80_0_loop_guard arc_80_0_loop_result arc_80_0_seq_guard arc_80_0_seq_result arc_80_0_if_guard arc_80_0_if_result arc_80_0_tail_guard arc_80_0_tail_result arc_80_0_callreturn_guard arc_80_0_callreturn_result arc_80_0_callhandler_guard arc_80_0_callhandler_result arc_80_4_skip_guard arc_80_4_skip_result arc_80_4_move_guard arc_80_4_move_result arc_80_4_inst_guard arc_80_4_inst_result arc_80_4_assign_guard arc_80_4_assign_result arc_80_4_get_guard arc_80_4_get_result arc_80_4_set_guard arc_80_4_set_result arc_80_4_store_guard arc_80_4_store_result arc_80_4_alloc_guard arc_80_4_alloc_result arc_80_4_consts_guard arc_80_4_consts_result arc_80_4_raise_guard arc_80_4_raise_result arc_80_4_return_guard arc_80_4_return_result arc_80_4_break_guard arc_80_4_break_result arc_80_4_continue_guard arc_80_4_continue_result arc_80_4_tick_guard arc_80_4_tick_result arc_80_4_heap_guard arc_80_4_heap_result arc_80_4_loc_guard arc_80_4_loc_result arc_80_4_install_guard arc_80_4_install_result arc_80_4_code_guard arc_80_4_code_result arc_80_4_data_guard arc_80_4_data_result arc_80_4_ffi_guard arc_80_4_ffi_result arc_80_4_share_guard arc_80_4_share_result arc_80_4_must_guard arc_80_4_must_result arc_80_4_loop_guard arc_80_4_loop_result arc_80_4_seq_guard arc_80_4_seq_result arc_80_4_if_guard arc_80_4_if_result arc_80_4_tail_guard arc_80_4_tail_result arc_80_4_callreturn_guard arc_80_4_callreturn_result arc_80_4_callhandler_guard arc_80_4_callhandler_result \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -5244,3 +5258,24 @@ run_probe lab_to_target_code_offset_padding_probeScript.sml lab_to_target_code_o
 run_probe word_to_stack_asm_name_helpers_probeScript.sml word_to_stack_asm_name_helpers_probe.out \
   anh_type anh_call_dest_stack_asm_name anh_wLive_stack_asm_name anh_stack_move_stack_asm_name anh_copy_ret_aux_stack_asm_name anh_copy_ret_stack_asm_name anh_1_80_dest_direct anh_1_80_dest_empty anh_1_80_dest_reg anh_1_80_dest_spill anh_1_80_move_0_0 anh_1_80_move_0_1 anh_1_80_move_1_0 anh_1_80_move_1_1 anh_1_80_move_3_0 anh_1_80_move_3_1 anh_1_80_aux_0 anh_1_80_aux_1 anh_1_80_aux_3 anh_1_80_ret_0_0 anh_1_80_ret_0_0_perf anh_1_80_ret_0_1 anh_1_80_ret_0_1_perf anh_1_80_ret_1_0 anh_1_80_ret_1_0_perf anh_1_80_ret_1_1 anh_1_80_ret_1_1_perf anh_80_1_dest_direct anh_80_1_dest_empty anh_80_1_dest_reg anh_80_1_dest_spill anh_80_1_move_0_0 anh_80_1_move_0_1 anh_80_1_move_1_0 anh_80_1_move_1_1 anh_80_1_move_3_0 anh_80_1_move_3_1 anh_80_1_aux_0 anh_80_1_aux_1 anh_80_1_aux_3 anh_80_1_ret_0_0 anh_80_1_ret_0_0_perf anh_80_1_ret_0_1 anh_80_1_ret_0_1_perf anh_80_1_ret_1_0 anh_80_1_ret_1_0_perf anh_80_1_ret_1_1 anh_80_1_ret_1_1_perf anh_2_64_dest_direct anh_2_64_dest_empty anh_2_64_dest_reg anh_2_64_dest_spill anh_2_64_move_0_0 anh_2_64_move_0_1 anh_2_64_move_1_0 anh_2_64_move_1_1 anh_2_64_move_3_0 anh_2_64_move_3_1 anh_2_64_aux_0 anh_2_64_aux_1 anh_2_64_aux_3 anh_2_64_ret_0_0 anh_2_64_ret_0_0_perf anh_2_64_ret_0_1 anh_2_64_ret_0_1_perf anh_2_64_ret_1_0 anh_2_64_ret_1_0_perf anh_2_64_ret_1_1 anh_2_64_ret_1_1_perf anh_64_2_dest_direct anh_64_2_dest_empty anh_64_2_dest_reg anh_64_2_dest_spill anh_64_2_move_0_0 anh_64_2_move_0_1 anh_64_2_move_1_0 anh_64_2_move_1_1 anh_64_2_move_3_0 anh_64_2_move_3_1 anh_64_2_aux_0 anh_64_2_aux_1 anh_64_2_aux_3 anh_64_2_ret_0_0 anh_64_2_ret_0_0_perf anh_64_2_ret_0_1 anh_64_2_ret_0_1_perf anh_64_2_ret_1_0 anh_64_2_ret_1_0_perf anh_64_2_ret_1_1 anh_64_2_ret_1_1_perf anh_8_8_dest_direct anh_8_8_dest_empty anh_8_8_dest_reg anh_8_8_dest_spill anh_8_8_move_0_0 anh_8_8_move_0_1 anh_8_8_move_1_0 anh_8_8_move_1_1 anh_8_8_move_3_0 anh_8_8_move_3_1 anh_8_8_aux_0 anh_8_8_aux_1 anh_8_8_aux_3 anh_8_8_ret_0_0 anh_8_8_ret_0_0_perf anh_8_8_ret_0_1 anh_8_8_ret_0_1_perf anh_8_8_ret_1_0 anh_8_8_ret_1_0_perf anh_8_8_ret_1_1 anh_8_8_ret_1_1_perf anh_1_80_live_0 anh_1_80_live_7 anh_80_1_live_0 anh_80_1_live_7 anh_2_64_live_0 anh_2_64_live_7 anh_64_2_live_0 anh_64_2_live_7 anh_8_8_live_0 anh_8_8_live_7 anh_1_80_dest_direct_underflow anh_1_80_dest_empty_underflow anh_1_80_dest_reg_underflow anh_1_80_dest_spill_underflow anh_1_80_move_0_0_underflow anh_1_80_move_0_1_underflow anh_1_80_move_1_0_underflow anh_1_80_move_1_1_underflow anh_1_80_move_3_0_underflow anh_1_80_move_3_1_underflow anh_1_80_aux_0_underflow anh_1_80_aux_1_underflow anh_1_80_aux_3_underflow anh_1_80_ret_0_0_underflow anh_1_80_ret_0_0_perf_underflow anh_1_80_ret_0_1_underflow anh_1_80_ret_0_1_perf_underflow anh_1_80_ret_1_0_underflow anh_1_80_ret_1_0_perf_underflow anh_1_80_ret_1_1_underflow anh_1_80_ret_1_1_perf_underflow anh_80_1_dest_direct_underflow anh_80_1_dest_empty_underflow anh_80_1_dest_reg_underflow anh_80_1_dest_spill_underflow anh_80_1_move_0_0_underflow anh_80_1_move_0_1_underflow anh_80_1_move_1_0_underflow anh_80_1_move_1_1_underflow anh_80_1_move_3_0_underflow anh_80_1_move_3_1_underflow anh_80_1_aux_0_underflow anh_80_1_aux_1_underflow anh_80_1_aux_3_underflow anh_80_1_ret_0_0_underflow anh_80_1_ret_0_0_perf_underflow anh_80_1_ret_0_1_underflow anh_80_1_ret_0_1_perf_underflow anh_80_1_ret_1_0_underflow anh_80_1_ret_1_0_perf_underflow anh_80_1_ret_1_1_underflow anh_80_1_ret_1_1_perf_underflow anh_2_64_dest_direct_underflow anh_2_64_dest_empty_underflow anh_2_64_dest_reg_underflow anh_2_64_dest_spill_underflow anh_2_64_move_0_0_underflow anh_2_64_move_0_1_underflow anh_2_64_move_1_0_underflow anh_2_64_move_1_1_underflow anh_2_64_move_3_0_underflow anh_2_64_move_3_1_underflow anh_2_64_aux_0_underflow anh_2_64_aux_1_underflow anh_2_64_aux_3_underflow anh_2_64_ret_0_0_underflow anh_2_64_ret_0_0_perf_underflow anh_2_64_ret_0_1_underflow anh_2_64_ret_0_1_perf_underflow anh_2_64_ret_1_0_underflow anh_2_64_ret_1_0_perf_underflow anh_2_64_ret_1_1_underflow anh_2_64_ret_1_1_perf_underflow anh_64_2_dest_direct_underflow anh_64_2_dest_empty_underflow anh_64_2_dest_reg_underflow anh_64_2_dest_spill_underflow anh_64_2_move_0_0_underflow anh_64_2_move_0_1_underflow anh_64_2_move_1_0_underflow anh_64_2_move_1_1_underflow anh_64_2_move_3_0_underflow anh_64_2_move_3_1_underflow anh_64_2_aux_0_underflow anh_64_2_aux_1_underflow anh_64_2_aux_3_underflow anh_64_2_ret_0_0_underflow anh_64_2_ret_0_0_perf_underflow anh_64_2_ret_0_1_underflow anh_64_2_ret_0_1_perf_underflow anh_64_2_ret_1_0_underflow anh_64_2_ret_1_0_perf_underflow anh_64_2_ret_1_1_underflow anh_64_2_ret_1_1_perf_underflow anh_8_8_dest_direct_underflow anh_8_8_dest_empty_underflow anh_8_8_dest_reg_underflow anh_8_8_dest_spill_underflow anh_8_8_move_0_0_underflow anh_8_8_move_0_1_underflow anh_8_8_move_1_0_underflow anh_8_8_move_1_1_underflow anh_8_8_move_3_0_underflow anh_8_8_move_3_1_underflow anh_8_8_aux_0_underflow anh_8_8_aux_1_underflow anh_8_8_aux_3_underflow anh_8_8_ret_0_0_underflow anh_8_8_ret_0_0_perf_underflow anh_8_8_ret_0_1_underflow anh_8_8_ret_0_1_perf_underflow anh_8_8_ret_1_0_underflow anh_8_8_ret_1_0_perf_underflow anh_8_8_ret_1_1_underflow anh_8_8_ret_1_1_perf_underflow anh_1_80_live_0_underflow anh_1_80_live_7_underflow anh_80_1_live_0_underflow anh_80_1_live_7_underflow anh_2_64_live_0_underflow anh_2_64_live_7_underflow anh_64_2_live_0_underflow anh_64_2_live_7_underflow anh_8_8_live_0_underflow anh_8_8_live_7_underflow \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_full_inst_native_probeScript.sml word_convs_full_inst_native_probe.out \
+  fin_type fin_full fin_1_0_skip fin_1_0_move fin_1_0_inst fin_1_0_assign fin_1_0_get fin_1_0_set fin_1_0_store fin_1_0_alloc fin_1_0_consts fin_1_0_raise fin_1_0_return fin_1_0_break fin_1_0_continue fin_1_0_tick fin_1_0_heap fin_1_0_loc fin_1_0_install fin_1_0_code fin_1_0_data fin_1_0_ffi fin_1_0_share fin_1_0_must fin_1_0_loop fin_1_0_seq fin_1_0_if fin_1_0_tail fin_1_0_callreturn fin_1_0_callhandler fin_1_0_imm_good fin_1_0_imm_bad fin_1_0_fpLess fin_1_0_fpLessEqual fin_1_0_fpEqual fin_1_0_fpAbs fin_1_0_fpNeg fin_1_0_fpSqrt fin_1_0_fpAdd fin_1_0_fpSub fin_1_0_fpMul fin_1_0_fpDiv fin_1_0_fpFma fin_1_0_fpMov fin_1_0_fpMovToReg fin_1_0_fpMovFromReg fin_1_0_fpToInt fin_1_0_fpFromInt fin_1_0_load_1 fin_1_0_load_4 fin_1_0_store_1 fin_1_0_store_4 fin_1_0_load32_1 fin_1_0_load32_4 fin_1_0_store32_1 fin_1_0_store32_4 fin_1_0_load16_1 fin_1_0_load16_4 fin_1_0_store16_1 fin_1_0_store16_4 fin_1_0_load8_1 fin_1_0_load8_4 fin_1_0_store8_1 fin_1_0_store8_4 fin_1_1_skip fin_1_1_move fin_1_1_inst fin_1_1_assign fin_1_1_get fin_1_1_set fin_1_1_store fin_1_1_alloc fin_1_1_consts fin_1_1_raise fin_1_1_return fin_1_1_break fin_1_1_continue fin_1_1_tick fin_1_1_heap fin_1_1_loc fin_1_1_install fin_1_1_code fin_1_1_data fin_1_1_ffi fin_1_1_share fin_1_1_must fin_1_1_loop fin_1_1_seq fin_1_1_if fin_1_1_tail fin_1_1_callreturn fin_1_1_callhandler fin_1_1_imm_good fin_1_1_imm_bad fin_1_1_fpLess fin_1_1_fpLessEqual fin_1_1_fpEqual fin_1_1_fpAbs fin_1_1_fpNeg fin_1_1_fpSqrt fin_1_1_fpAdd fin_1_1_fpSub fin_1_1_fpMul fin_1_1_fpDiv fin_1_1_fpFma fin_1_1_fpMov fin_1_1_fpMovToReg fin_1_1_fpMovFromReg fin_1_1_fpToInt fin_1_1_fpFromInt fin_1_1_load_1 fin_1_1_load_4 fin_1_1_store_1 fin_1_1_store_4 fin_1_1_load32_1 fin_1_1_load32_4 fin_1_1_store32_1 fin_1_1_store32_4 fin_1_1_load16_1 fin_1_1_load16_4 fin_1_1_store16_1 fin_1_1_store16_4 fin_1_1_load8_1 fin_1_1_load8_4 fin_1_1_store8_1 fin_1_1_store8_4 fin_2_0_skip fin_2_0_move fin_2_0_inst fin_2_0_assign fin_2_0_get fin_2_0_set fin_2_0_store fin_2_0_alloc fin_2_0_consts fin_2_0_raise fin_2_0_return fin_2_0_break fin_2_0_continue fin_2_0_tick fin_2_0_heap fin_2_0_loc fin_2_0_install fin_2_0_code fin_2_0_data fin_2_0_ffi fin_2_0_share fin_2_0_must fin_2_0_loop fin_2_0_seq fin_2_0_if fin_2_0_tail fin_2_0_callreturn fin_2_0_callhandler fin_2_0_imm_good fin_2_0_imm_bad fin_2_0_fpLess fin_2_0_fpLessEqual fin_2_0_fpEqual fin_2_0_fpAbs fin_2_0_fpNeg fin_2_0_fpSqrt fin_2_0_fpAdd fin_2_0_fpSub fin_2_0_fpMul fin_2_0_fpDiv fin_2_0_fpFma fin_2_0_fpMov fin_2_0_fpMovToReg fin_2_0_fpMovFromReg fin_2_0_fpToInt fin_2_0_fpFromInt fin_2_0_load_1 fin_2_0_load_4 fin_2_0_store_1 fin_2_0_store_4 fin_2_0_load32_1 fin_2_0_load32_4 fin_2_0_store32_1 fin_2_0_store32_4 fin_2_0_load16_1 fin_2_0_load16_4 fin_2_0_store16_1 fin_2_0_store16_4 fin_2_0_load8_1 fin_2_0_load8_4 fin_2_0_store8_1 fin_2_0_store8_4 fin_2_1_skip fin_2_1_move fin_2_1_inst fin_2_1_assign fin_2_1_get fin_2_1_set fin_2_1_store fin_2_1_alloc fin_2_1_consts fin_2_1_raise fin_2_1_return fin_2_1_break fin_2_1_continue fin_2_1_tick fin_2_1_heap fin_2_1_loc fin_2_1_install fin_2_1_code fin_2_1_data fin_2_1_ffi fin_2_1_share fin_2_1_must fin_2_1_loop fin_2_1_seq fin_2_1_if fin_2_1_tail fin_2_1_callreturn fin_2_1_callhandler fin_2_1_imm_good fin_2_1_imm_bad fin_2_1_fpLess fin_2_1_fpLessEqual fin_2_1_fpEqual fin_2_1_fpAbs fin_2_1_fpNeg fin_2_1_fpSqrt fin_2_1_fpAdd fin_2_1_fpSub fin_2_1_fpMul fin_2_1_fpDiv fin_2_1_fpFma fin_2_1_fpMov fin_2_1_fpMovToReg fin_2_1_fpMovFromReg fin_2_1_fpToInt fin_2_1_fpFromInt fin_2_1_load_1 fin_2_1_load_4 fin_2_1_store_1 fin_2_1_store_4 fin_2_1_load32_1 fin_2_1_load32_4 fin_2_1_store32_1 fin_2_1_store32_4 fin_2_1_load16_1 fin_2_1_load16_4 fin_2_1_store16_1 fin_2_1_store16_4 fin_2_1_load8_1 fin_2_1_load8_4 fin_2_1_store8_1 fin_2_1_store8_4 fin_8_0_skip fin_8_0_move fin_8_0_inst fin_8_0_assign fin_8_0_get fin_8_0_set fin_8_0_store fin_8_0_alloc fin_8_0_consts fin_8_0_raise fin_8_0_return fin_8_0_break fin_8_0_continue fin_8_0_tick fin_8_0_heap fin_8_0_loc fin_8_0_install fin_8_0_code fin_8_0_data fin_8_0_ffi fin_8_0_share fin_8_0_must fin_8_0_loop fin_8_0_seq fin_8_0_if fin_8_0_tail fin_8_0_callreturn fin_8_0_callhandler fin_8_0_imm_good fin_8_0_imm_bad fin_8_0_fpLess fin_8_0_fpLessEqual fin_8_0_fpEqual fin_8_0_fpAbs fin_8_0_fpNeg fin_8_0_fpSqrt fin_8_0_fpAdd fin_8_0_fpSub fin_8_0_fpMul fin_8_0_fpDiv fin_8_0_fpFma fin_8_0_fpMov fin_8_0_fpMovToReg fin_8_0_fpMovFromReg fin_8_0_fpToInt fin_8_0_fpFromInt fin_8_0_load_1 fin_8_0_load_4 fin_8_0_store_1 fin_8_0_store_4 fin_8_0_load32_1 fin_8_0_load32_4 fin_8_0_store32_1 fin_8_0_store32_4 fin_8_0_load16_1 fin_8_0_load16_4 fin_8_0_store16_1 fin_8_0_store16_4 fin_8_0_load8_1 fin_8_0_load8_4 fin_8_0_store8_1 fin_8_0_store8_4 fin_8_1_skip fin_8_1_move fin_8_1_inst fin_8_1_assign fin_8_1_get fin_8_1_set fin_8_1_store fin_8_1_alloc fin_8_1_consts fin_8_1_raise fin_8_1_return fin_8_1_break fin_8_1_continue fin_8_1_tick fin_8_1_heap fin_8_1_loc fin_8_1_install fin_8_1_code fin_8_1_data fin_8_1_ffi fin_8_1_share fin_8_1_must fin_8_1_loop fin_8_1_seq fin_8_1_if fin_8_1_tail fin_8_1_callreturn fin_8_1_callhandler fin_8_1_imm_good fin_8_1_imm_bad fin_8_1_fpLess fin_8_1_fpLessEqual fin_8_1_fpEqual fin_8_1_fpAbs fin_8_1_fpNeg fin_8_1_fpSqrt fin_8_1_fpAdd fin_8_1_fpSub fin_8_1_fpMul fin_8_1_fpDiv fin_8_1_fpFma fin_8_1_fpMov fin_8_1_fpMovToReg fin_8_1_fpMovFromReg fin_8_1_fpToInt fin_8_1_fpFromInt fin_8_1_load_1 fin_8_1_load_4 fin_8_1_store_1 fin_8_1_store_4 fin_8_1_load32_1 fin_8_1_load32_4 fin_8_1_store32_1 fin_8_1_store32_4 fin_8_1_load16_1 fin_8_1_load16_4 fin_8_1_store16_1 fin_8_1_store16_4 fin_8_1_load8_1 fin_8_1_load8_4 fin_8_1_store8_1 fin_8_1_store8_4 fin_32_0_skip fin_32_0_move fin_32_0_inst fin_32_0_assign fin_32_0_get fin_32_0_set fin_32_0_store fin_32_0_alloc fin_32_0_consts fin_32_0_raise fin_32_0_return fin_32_0_break fin_32_0_continue fin_32_0_tick fin_32_0_heap fin_32_0_loc fin_32_0_install fin_32_0_code fin_32_0_data fin_32_0_ffi fin_32_0_share fin_32_0_must fin_32_0_loop fin_32_0_seq fin_32_0_if fin_32_0_tail fin_32_0_callreturn fin_32_0_callhandler fin_32_0_imm_good fin_32_0_imm_bad fin_32_0_fpLess fin_32_0_fpLessEqual fin_32_0_fpEqual fin_32_0_fpAbs fin_32_0_fpNeg fin_32_0_fpSqrt fin_32_0_fpAdd fin_32_0_fpSub fin_32_0_fpMul fin_32_0_fpDiv fin_32_0_fpFma fin_32_0_fpMov fin_32_0_fpMovToReg fin_32_0_fpMovFromReg fin_32_0_fpToInt fin_32_0_fpFromInt fin_32_0_load_1 fin_32_0_load_4 fin_32_0_store_1 fin_32_0_store_4 fin_32_0_load32_1 fin_32_0_load32_4 fin_32_0_store32_1 fin_32_0_store32_4 fin_32_0_load16_1 fin_32_0_load16_4 fin_32_0_store16_1 fin_32_0_store16_4 fin_32_0_load8_1 fin_32_0_load8_4 fin_32_0_store8_1 fin_32_0_store8_4 fin_32_1_skip fin_32_1_move fin_32_1_inst fin_32_1_assign fin_32_1_get fin_32_1_set fin_32_1_store fin_32_1_alloc fin_32_1_consts fin_32_1_raise fin_32_1_return fin_32_1_break fin_32_1_continue fin_32_1_tick fin_32_1_heap fin_32_1_loc fin_32_1_install fin_32_1_code fin_32_1_data fin_32_1_ffi fin_32_1_share fin_32_1_must fin_32_1_loop fin_32_1_seq fin_32_1_if fin_32_1_tail fin_32_1_callreturn fin_32_1_callhandler fin_32_1_imm_good fin_32_1_imm_bad fin_32_1_fpLess fin_32_1_fpLessEqual fin_32_1_fpEqual fin_32_1_fpAbs fin_32_1_fpNeg fin_32_1_fpSqrt fin_32_1_fpAdd fin_32_1_fpSub fin_32_1_fpMul fin_32_1_fpDiv fin_32_1_fpFma fin_32_1_fpMov fin_32_1_fpMovToReg fin_32_1_fpMovFromReg fin_32_1_fpToInt fin_32_1_fpFromInt fin_32_1_load_1 fin_32_1_load_4 fin_32_1_store_1 fin_32_1_store_4 fin_32_1_load32_1 fin_32_1_load32_4 fin_32_1_store32_1 fin_32_1_store32_4 fin_32_1_load16_1 fin_32_1_load16_4 fin_32_1_store16_1 fin_32_1_store16_4 fin_32_1_load8_1 fin_32_1_load8_4 fin_32_1_store8_1 fin_32_1_store8_4 fin_64_0_skip fin_64_0_move fin_64_0_inst fin_64_0_assign fin_64_0_get fin_64_0_set fin_64_0_store fin_64_0_alloc fin_64_0_consts fin_64_0_raise fin_64_0_return fin_64_0_break fin_64_0_continue fin_64_0_tick fin_64_0_heap fin_64_0_loc fin_64_0_install fin_64_0_code fin_64_0_data fin_64_0_ffi fin_64_0_share fin_64_0_must fin_64_0_loop fin_64_0_seq fin_64_0_if fin_64_0_tail fin_64_0_callreturn fin_64_0_callhandler fin_64_0_imm_good fin_64_0_imm_bad fin_64_0_fpLess fin_64_0_fpLessEqual fin_64_0_fpEqual fin_64_0_fpAbs fin_64_0_fpNeg fin_64_0_fpSqrt fin_64_0_fpAdd fin_64_0_fpSub fin_64_0_fpMul fin_64_0_fpDiv fin_64_0_fpFma fin_64_0_fpMov fin_64_0_fpMovToReg fin_64_0_fpMovFromReg fin_64_0_fpToInt fin_64_0_fpFromInt fin_64_0_load_1 fin_64_0_load_4 fin_64_0_store_1 fin_64_0_store_4 fin_64_0_load32_1 fin_64_0_load32_4 fin_64_0_store32_1 fin_64_0_store32_4 fin_64_0_load16_1 fin_64_0_load16_4 fin_64_0_store16_1 fin_64_0_store16_4 fin_64_0_load8_1 fin_64_0_load8_4 fin_64_0_store8_1 fin_64_0_store8_4 fin_64_1_skip fin_64_1_move fin_64_1_inst fin_64_1_assign fin_64_1_get fin_64_1_set fin_64_1_store fin_64_1_alloc fin_64_1_consts fin_64_1_raise fin_64_1_return fin_64_1_break fin_64_1_continue fin_64_1_tick fin_64_1_heap fin_64_1_loc fin_64_1_install fin_64_1_code fin_64_1_data fin_64_1_ffi fin_64_1_share fin_64_1_must fin_64_1_loop fin_64_1_seq fin_64_1_if fin_64_1_tail fin_64_1_callreturn fin_64_1_callhandler fin_64_1_imm_good fin_64_1_imm_bad fin_64_1_fpLess fin_64_1_fpLessEqual fin_64_1_fpEqual fin_64_1_fpAbs fin_64_1_fpNeg fin_64_1_fpSqrt fin_64_1_fpAdd fin_64_1_fpSub fin_64_1_fpMul fin_64_1_fpDiv fin_64_1_fpFma fin_64_1_fpMov fin_64_1_fpMovToReg fin_64_1_fpMovFromReg fin_64_1_fpToInt fin_64_1_fpFromInt fin_64_1_load_1 fin_64_1_load_4 fin_64_1_store_1 fin_64_1_store_4 fin_64_1_load32_1 fin_64_1_load32_4 fin_64_1_store32_1 fin_64_1_store32_4 fin_64_1_load16_1 fin_64_1_load16_4 fin_64_1_store16_1 fin_64_1_store16_4 fin_64_1_load8_1 fin_64_1_load8_4 fin_64_1_store8_1 fin_64_1_store8_4 fin_80_0_skip fin_80_0_move fin_80_0_inst fin_80_0_assign fin_80_0_get fin_80_0_set fin_80_0_store fin_80_0_alloc fin_80_0_consts fin_80_0_raise fin_80_0_return fin_80_0_break fin_80_0_continue fin_80_0_tick fin_80_0_heap fin_80_0_loc fin_80_0_install fin_80_0_code fin_80_0_data fin_80_0_ffi fin_80_0_share fin_80_0_must fin_80_0_loop fin_80_0_seq fin_80_0_if fin_80_0_tail fin_80_0_callreturn fin_80_0_callhandler fin_80_0_imm_good fin_80_0_imm_bad fin_80_0_fpLess fin_80_0_fpLessEqual fin_80_0_fpEqual fin_80_0_fpAbs fin_80_0_fpNeg fin_80_0_fpSqrt fin_80_0_fpAdd fin_80_0_fpSub fin_80_0_fpMul fin_80_0_fpDiv fin_80_0_fpFma fin_80_0_fpMov fin_80_0_fpMovToReg fin_80_0_fpMovFromReg fin_80_0_fpToInt fin_80_0_fpFromInt fin_80_0_load_1 fin_80_0_load_4 fin_80_0_store_1 fin_80_0_store_4 fin_80_0_load32_1 fin_80_0_load32_4 fin_80_0_store32_1 fin_80_0_store32_4 fin_80_0_load16_1 fin_80_0_load16_4 fin_80_0_store16_1 fin_80_0_store16_4 fin_80_0_load8_1 fin_80_0_load8_4 fin_80_0_store8_1 fin_80_0_store8_4 fin_80_1_skip fin_80_1_move fin_80_1_inst fin_80_1_assign fin_80_1_get fin_80_1_set fin_80_1_store fin_80_1_alloc fin_80_1_consts fin_80_1_raise fin_80_1_return fin_80_1_break fin_80_1_continue fin_80_1_tick fin_80_1_heap fin_80_1_loc fin_80_1_install fin_80_1_code fin_80_1_data fin_80_1_ffi fin_80_1_share fin_80_1_must fin_80_1_loop fin_80_1_seq fin_80_1_if fin_80_1_tail fin_80_1_callreturn fin_80_1_callhandler fin_80_1_imm_good fin_80_1_imm_bad fin_80_1_fpLess fin_80_1_fpLessEqual fin_80_1_fpEqual fin_80_1_fpAbs fin_80_1_fpNeg fin_80_1_fpSqrt fin_80_1_fpAdd fin_80_1_fpSub fin_80_1_fpMul fin_80_1_fpDiv fin_80_1_fpFma fin_80_1_fpMov fin_80_1_fpMovToReg fin_80_1_fpMovFromReg fin_80_1_fpToInt fin_80_1_fpFromInt fin_80_1_load_1 fin_80_1_load_4 fin_80_1_store_1 fin_80_1_store_4 fin_80_1_load32_1 fin_80_1_load32_4 fin_80_1_store32_1 fin_80_1_store32_4 fin_80_1_load16_1 fin_80_1_load16_4 fin_80_1_store16_1 fin_80_1_store16_4 fin_80_1_load8_1 fin_80_1_load8_4 fin_80_1_store8_1 fin_80_1_store8_4 fin_1_0_seq_bad fin_1_0_loop_bad fin_1_0_if_bad fin_1_0_must_bad fin_1_0_ret_bad fin_1_0_handler_bad fin_1_0_none_handler_bad fin_1_1_seq_bad fin_1_1_loop_bad fin_1_1_if_bad fin_1_1_must_bad fin_1_1_ret_bad fin_1_1_handler_bad fin_1_1_none_handler_bad fin_2_0_seq_bad fin_2_0_loop_bad fin_2_0_if_bad fin_2_0_must_bad fin_2_0_ret_bad fin_2_0_handler_bad fin_2_0_none_handler_bad fin_2_1_seq_bad fin_2_1_loop_bad fin_2_1_if_bad fin_2_1_must_bad fin_2_1_ret_bad fin_2_1_handler_bad fin_2_1_none_handler_bad fin_8_0_seq_bad fin_8_0_loop_bad fin_8_0_if_bad fin_8_0_must_bad fin_8_0_ret_bad fin_8_0_handler_bad fin_8_0_none_handler_bad fin_8_1_seq_bad fin_8_1_loop_bad fin_8_1_if_bad fin_8_1_must_bad fin_8_1_ret_bad fin_8_1_handler_bad fin_8_1_none_handler_bad fin_32_0_seq_bad fin_32_0_loop_bad fin_32_0_if_bad fin_32_0_must_bad fin_32_0_ret_bad fin_32_0_handler_bad fin_32_0_none_handler_bad fin_32_1_seq_bad fin_32_1_loop_bad fin_32_1_if_bad fin_32_1_must_bad fin_32_1_ret_bad fin_32_1_handler_bad fin_32_1_none_handler_bad fin_64_0_seq_bad fin_64_0_loop_bad fin_64_0_if_bad fin_64_0_must_bad fin_64_0_ret_bad fin_64_0_handler_bad fin_64_0_none_handler_bad fin_64_1_seq_bad fin_64_1_loop_bad fin_64_1_if_bad fin_64_1_must_bad fin_64_1_ret_bad fin_64_1_handler_bad fin_64_1_none_handler_bad fin_80_0_seq_bad fin_80_0_loop_bad fin_80_0_if_bad fin_80_0_must_bad fin_80_0_ret_bad fin_80_0_handler_bad fin_80_0_none_handler_bad fin_80_1_seq_bad fin_80_1_loop_bad fin_80_1_if_bad fin_80_1_must_bad fin_80_1_ret_bad fin_80_1_handler_bad fin_80_1_none_handler_bad \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe lab_to_target_label_existence_probeScript.sml lab_to_target_label_existence_probe.out \
+  line_labs_exist_def line_labs_exist_def_types sec_labs_exist_def sec_labs_exist_def_types line_similar_line_labs_exist line_similar_line_labs_exist_types code_similar_all_labs_exist code_similar_all_labs_exist_types all_labs_exist_pad_code all_labs_exist_pad_code_types upd_lab_len_all_labs_exist upd_lab_len_all_labs_exist_types all_labs_exist bool_map_jump_present missing_outer missing_inner false_value_present call_not_reference unconstrained_nonlabels similar_changed_metadata padding_preserves updater_preserves width1_empty \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_label_existence_encoding_probeScript.sml lab_to_target_label_existence_encoding_probe.out \
+  enc_lines_again_line_labs_exist enc_lines_again_line_labs_exist_types enc_secs_again_all_labs_exist enc_secs_again_all_labs_exist_types original_acc_input_guards growth_false_full_tuple false_initial_full_tuple growth_false_output_exists nongrowth_true_tuple_exists empty_input_reverse_accumulator sections_false_tuple_exists missing_map_not_established all_seven_opcodes_false width1_empty \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_label_existence_domain_probeScript.sml lab_to_target_label_existence_domain_probe.out \
+  line_labs_exist_get_labels line_labs_exist_get_labels_types sec_labs_exist_get_labels sec_labs_exist_get_labels_types all_labs_exist_get_labels all_labs_exist_get_labels_types line_present_false_value line_missing_outer line_missing_inner call_nonreference_empty_domain section_full_extraction code_full_extraction empty_inner_map_failure zero_label_reference unconstrained_nonreferences empty_width1 \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+
+
+run_probe lab_to_target_section_label_extraction_probeScript.sml lab_to_target_section_label_extraction_probe.out \
+  section_labels_line_get_code_labels section_labels_line_get_code_labels_types mixed_full_tuple mixed_full_set_equality duplicate_zero_accumulator_retained all_label_zero_skipped_nonzero_kept both_zero_insertions_needed empty_accumulator_retained zero_accumulator_value_unconstrained nonlabel_bytes_not_annotation all_seven_opcodes_no_definitions width1_empty width80_large_position \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

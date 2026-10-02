@@ -94,7 +94,7 @@ theorem removeMustTerminateConventions {width : Nat} [NeZero width]
   · refine removeMustTerminate_induct (fun p p' => fullInstOkLess c p = true →
       fullInstOkLess c p' = true) (fun _ h => h) ?_ ?_ ?_ ?_ ?_ ?_ ?_ p
     all_goals intros
-    all_goals simp_all [fullInstOkLess]
+    all_goals simp_all [fullInstOkLess, fullInstOkLessWith]
   · intro h
     simp only [postAllocConventionsHOL, Bool.and_eq_true] at h ⊢
     refine ⟨?_, ?_, ?_⟩

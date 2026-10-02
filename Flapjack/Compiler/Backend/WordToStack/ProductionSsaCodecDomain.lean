@@ -49,7 +49,6 @@ private theorem supportsCodec_wordSsaRenameInstProgram {α : Type u} [OfNat α 0
     (source target : WordSsaState) (names : List Nat) :
     supportsCodec (wordSsaReconcileTo (α := α) source target names) = true := by
   unfold wordSsaReconcileTo
-  dsimp only
   split <;> simp [supportsCodec]
 
 /-- Flapjack-only scaffolding for the actual SSA codec domain; no HOL original. -/
