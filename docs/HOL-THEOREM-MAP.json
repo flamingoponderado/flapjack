@@ -64175,5 +64175,33 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison of entire word_to_stack_stack_convs11609-11666 and actual native compile/compile_word_to_stack/compile_prog/stubs. All original conf/source programs/bytes/config/frame-list/output-list/k binders retained. Exactly original compile ac F p tuple equality,EVERY post_alloc_conventions k source bodies,k=ac.reg_count-(5+LENGTH avoid_regs),4<=k premises; source Bool List.all translates original EVERY and conclusion membership quantifiers over outputs.map Prod.snd translate all three original EVERY alloc_arg/reg_bound(k+2)/call_args1 2 3 4 0 conjuncts. Entire actual output includes original raise/storeConsts stubs and actual compileProg StackAlloc prefix/frame formula. Internal list induction retains arbitrary independent identifier carrier and actual sequential residual bitmaps; all head/tail hypotheses discharged through full checked comp alloc/register/call laws. No assumed target conventions, evaluation, successful pass or strengthened source guards. Config/Spt/AppList/wordLang/stackLang/asm/mlstring carriers retained; positive-width BitVec is the only words_as_type_indexed_bitvec translation. Fresh full original theorem and derived compiler-output projection hyp=[],90 source-EVERY EVALs and270 original whole-compiler target-predicate theorem applications matched kernel across widths1/2/8/64/80,registercounts4/8,empty and malformed duplicate/70bit avoid lists,empty/multiple/duplicate identifiers,nested Alloc/Loop/If/Seq/returned-handler Calls,70bit source registers and argument counts,ignored invalid tail handler;30negative source guards. Regression/theorem application evidence not full original proof replay or HOL-to-Lean equivalence. This establishes the full convention declaration; pass simulation,production semantic correspondence and compiler composition remain open. No held ancestry/pin/policy changes."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCorrect.lean",
+    "lean_name": "ssaCcTransCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison2026-10-02 original7666-7702 full ssa_cc_trans_correct statement and original constructor proof7666-10136: arbitrary native program with exactly six original premises, no public IHs, source-success, targetrun, postrelation or chosen oracle premise. Complete existential source permutation, Error exemption, actual target result/full frame and original result-sensitive locals via ssaSimulation unchanged. Structural native datatype induction assembles every checked constructor case, including nested return/exception bodies, using only genuine subprogram IHs. Canonical fpRegs/store map translation with imported owner and same-module roundtrip witness; tree maps unchanged, positive type-indexed words retained. Inherits reals_as_rational_cuts SOUNDNESS8. Fresh original entire statement/type capture in ssa_cc_trans_correct_probe.out is source regression evidence only. Full SSA wrapper/end-to-end goal remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "full_ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/FullSSACorrect.lean",
+    "lean_name": "fullSsaCcTransCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison2026-10-02 original10337-10373: complete arbitrary native program/state/count with sole domain locals = set even_list count premise. Original full_ssa_cc_trans producer retained; limitVarProps and setupSSAProps derive actual successful prologue, all six full body simulation premises including numeric bound monotonicity and empty ltOK. Full ssaCcTransCorrect supplies existential source permutation; actual sequential target run derived with evaluateSeqCollapse, exact Error exemption/result/full frame and locals equality for all results except NONE/Break/Continue. No public IH, targetrun, oracle, successful guard or postfact premise. Native Spt locals/code unchanged, canonical fpRegs/store translation with same-module roundtrip and positive type-indexed words; inherits reals_as_rational_cuts SOUNDNESS8. Fresh entire original statement capture in full_ssa_cc_trans_correct_probe.out is regression/source evidence only. Executed list-state SSA migration and end-to-end correctness remain separately open."
   }
 ]
