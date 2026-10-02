@@ -5255,3 +5255,11 @@ Native constant flags, memory writes, domain checks and result/error branches ar
 unchanged. Original proved theorem capture, not isolated tactic replay or
 equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cc_trans_correct_store_consts_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cut_envs_domain_probe` captures original `cut_envs_domain_SUBSET`6451–6457
+and four inferred carrier types: two native num_sets and generic alpha locals/output
+trees. `SSACutEnvsDomain.lean` retains the sole original successful-cut equation
+and both input-domain subset conclusions, derived from actual cut_names guards.
+Original theorem capture/manual source comparison, not isolated tactic replay or
+equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cut_envs_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.

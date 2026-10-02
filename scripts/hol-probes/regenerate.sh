@@ -4684,3 +4684,7 @@ run_probe ssa_locals_delete_probeScript.sml ssa_locals_delete_probe.out \
 run_probe ssa_cc_trans_correct_store_consts_probeScript.sml ssa_cc_trans_correct_store_consts_probe.out \
   store_consts_full store_consts_type_tmp store_consts_type_address store_consts_type_offset store_consts_type_words store_consts_type_st store_consts_type_cst store_consts_type_ssa store_consts_type_next store_consts_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cut_envs_domain_probeScript.sml ssa_cut_envs_domain_probe.out \
+  cut_envs_domain_full cut_envs_type_first cut_envs_type_second cut_envs_type_locals cut_envs_type_output \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
