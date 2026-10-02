@@ -4835,3 +4835,5 @@ kernel theorem specialization at LongDiv and complete state/register/SSA/table
 carriers. Full six-premise simulation, physical input/output moves and mapped
 divisor preservation are manually compared to opcode7998–8030; no standalone
 tactic replay is claimed.
+
+`store_init_probeScript.sml` captures the original complete function-update definition/type and 32 full lookup snapshots: output widths 1/8/64/80, both gen_gc branches, and pointer values 0/1/23/2^80+9. Each snapshot covers all 17 fixed store-name constructors plus all 32 values of the fixed five-bit Temp field, for 1,568 original observations. `StackRemoveStoreInit.lean` kernel-replays the complete native sum-valued outputs, including every default zero-word case and unbounded pointer values. Full initialization/compile routing remains on the linked initializer beads.

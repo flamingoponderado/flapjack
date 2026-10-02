@@ -56642,5 +56642,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison: full native LongDiv7998-8030 opcode of ssa_cc_trans_correct, original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals. No targetrun/success/poststate/IH assumptions. Actual compiler physicalMove6/0 preserves mapped divisor via original physical locals/getVar relations, then LongDiv0/6/6/0 andfreshoutputMove. Native numerator w3.toNat*2^width+w4.toNat, divisor.toNat, Nat quotient/remainder and nonzero/quotient bound match HOL w2n/dimword/DIV/MOD. Original map extension/two fresh setVar relations plus distinct insert_swap prove outputs in source remainder/quotient order, including aliases. Missing/nonword/zero/overflow preserve Error exemption. Full positiveBitVec/Nat/sharedType0 code-FFI/native state/Spt/table carriers compared to original kernel theorem specialization. Canonical fpRegs/store finite-support and words translation only, inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Original opcode proof manually reviewed; actual kernel theorem Q.SPEC/carriers PASS, no standalone tactic replay claimed. Lean kernel PASS; fullInst remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StoreInit.lean",
+    "lean_name": "storeInit",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "store_init_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison: original stack_removeScript250-265 is the constant INL zero-word function updated at twelve DISTINCT StoreName constructor keys. Lean constructor matching is the extensional interpretation of these updates; grouping CurrHeap/GlobReal/NextFree retains INR(k+2), TriggerGC alone branches on gen_gc, EndOfHeap/OtherHeap give2, HeapLength5, BitmapBase3, BitmapBuffer4, BitmapBufferEnd6, CodeBuffer7, CodeBufferEnd1. The five other fixed constructors and every Temp payload retain default INL0. Native StoreName is the reviewed monomorphic exact stackLang store_name, including fixed BitVec5 Temp; no generic word replacement of that field. Only arbitrary positive output word translates to BitVec width with NeZero width. Source update keys are distinct, so overwrite ordering cannot change a lookup; no finite-map qualifier applies to this total function. Nat pointer/gen_gc/domain/result quantifiers and all cases retained without bounds or success premises. Full executed initialization/compile route remains dependency-linked on parent .6.6."
   }
 ]

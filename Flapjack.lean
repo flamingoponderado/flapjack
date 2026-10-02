@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchMono
 import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence
 import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
+import Flapjack.Compiler.Backend.StackRemove.StoreInit
 import Flapjack.Compiler.Backend.StackRemove.StoreListCode
 import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
 import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
