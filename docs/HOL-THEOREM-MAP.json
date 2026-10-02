@@ -54853,5 +54853,32 @@
     "lean_name": "selectRegAllocCorrect",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.9): word_allocProofScript.sml:3371-3396, ∀alg spillcosts k heu_moves tree forced fs (alg : num) with EVERY (λ(r1,r2). in_clash_tree tree r1 ∧ in_clash_tree tree r2) forced; conclusion ∃spcol livein flivein with select_reg_alloc ... = M_success spcol, check_clash_tree (sp_default spcol) tree LN LN = SOME (livein, flivein), the in_clash_tree/domain/convention clause, the domain-support clause and the forced-pair EVERY, in HOL order. select_reg_alloc is the exact tagged selectRegAlloc; proved, as in HOL, from linear_scan_reg_alloc_correct and reg_alloc_correct. Free HOL variables and binder types as in the source statement; renderings as in the accepted do_reg_alloc_correct row (sets as predicates, DIV as /, EVERY over pattern lambdas as bounded membership with pair projections, LN as Spt.ln). Kernel-checked; standard axioms; no extra premise. Through do_reg_alloc_correct (resp. reg_alloc_correct and linear_scan_reg_alloc_correct) the allocator state reads node tags and adjacency lists through HOL EL as the exact holEl."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/CodeSafety.lean",
+    "lean_name": "noInstall",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "no_install_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 bead flapjack-native-lab-code-safety: HOL1314-1319 universally excludes exactly SOME(LabAsm Install w bytes l) from asm_fetch_aux p code, for every position and word/word8-list/length payload. Native reviewed asmFetchAux/LabLang constructors, HolAsm/HolAddr/HolRegImm and positive BitVec width/NeZero preserve complete type; fixed word8 byte lists remain BitVec8 lists. words_as_type_indexed_bitvec records only standard word-dimension translation. Fresh original theory-qualified types/full equations distinguish labProps no_install from overloaded StackLang no_install; generic Lean equations and original constructor fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/CodeSafety.lean",
+    "lean_name": "noShareMemInst",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "no_share_mem_inst_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 bead flapjack-native-lab-code-safety: HOL1321-1326 universally excludes exactly SOME(Asm(ShareMem op re a) inst len), retaining every position/memop/register/address/word8-list/length payload. Native reviewed asmFetchAux/LabLang constructors, HolAsm/HolAddr/HolRegImm and positive BitVec width/NeZero preserve complete type; fixed word8 byte lists remain BitVec8 lists. words_as_type_indexed_bitvec records only standard word-dimension translation. Fresh original theory-qualified types/full equations distinguish labProps no_install from overloaded StackLang no_install; generic Lean equations and original constructor fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSafety.lean",
+    "lean_name": "noInstallOrNoShareMem",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "no_install_or_no_share_mem_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 bead flapjack-native-lab-code-safety: HOL776-781 full disjunction: no shared-memory instruction AND EVERY existential ExtCall name, OR no Install. EVERY rendered as universal list membership; exact HolFfiName/MlString, no String translation or bounded-name premise. Native reviewed asmFetchAux/LabLang constructors, HolAsm/HolAddr/HolRegImm and positive BitVec width/NeZero preserve complete type; fixed word8 byte lists remain BitVec8 lists. words_as_type_indexed_bitvec records only standard word-dimension translation. Fresh original theory-qualified types/full equations distinguish labProps no_install from overloaded StackLang no_install; generic Lean equations and original constructor fixtures."
   }
 ]

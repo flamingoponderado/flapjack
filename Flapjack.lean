@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
 import Flapjack.Compiler.Encoders.AsmProps.Encoding
 import Flapjack.Compiler.Encoders.AsmProps.Interference
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp

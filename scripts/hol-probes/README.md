@@ -4635,3 +4635,13 @@ predicate. Signed offset boundaries are checked at widths 1, 2, 8, 32, 64, and
 conditions. `Flapjack.Test.AsmPropsEncodingParity` kernel-checks the corresponding
 Lean equations and conditions. These probes provide regressions, not a
 cross-language equivalence proof.
+
+### Native Lab code-safety predicates
+
+`lab_code_safety_probeScript.sml` explicitly qualifies `labProps$no_install`
+(the unqualified name can resolve to StackLang) and captures its full type and
+equation, together with `no_share_mem_inst` and the Lab-to-Target safety
+disjunction. Empty programs, forbidden fetched Install/ShareMem constructors,
+and both alternatives of the code/FFI-name disjunction have original HOL
+fixtures and matching kernel regressions in `Flapjack.Test.LabCodeSafetyParity`.
+All positions and constructor payloads remain universally quantified.
