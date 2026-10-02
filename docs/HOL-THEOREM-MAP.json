@@ -52289,5 +52289,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.2), original104-137: full native positive-width HolProg and original Nat registers/counts, literal immediate Add/Sub word_offset and 255 chunk recursion including zero instruction; stack_store preserves nested Seq shift/Store Addr k 0w/restore, stack_load shifts destination and loads through itself without restore. No register bounds, word-fit, targetrun or extra hypotheses. Only standard BitVec width with NeZero dimension translation; word_offset byte stride and modular word conversion unchanged. Production replacement remains dependency-linked36ez.3, no whole-pass simulation claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StackAlloc.lean",
+    "lean_name": "singleStackAlloc",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "single_stack_alloc_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.1), original68-86: full native HolProg, arbitrary Boolean jump and Nat pointer/count. single builder emits immediate Sub word_offset then original JumpLower k(k+1)2 or If Lower k(Reg(k+1))(halt_inst2w)Skip. Recursive builder retains zero Skip, <=255 single, larger ordered Seq chunk255 and recursion(count-255), with check after every chunk. Native halt_inst constant/register behavior unchanged. Width1 wraps halt value2 to zero exactly as original n2w; no positivity/fit/register/stack-safety/targetrun premise added. Only positive BitVec width and NeZero dimension translation qualified. Production route remains dependency-linked36ez.3; not a compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StackAlloc.lean",
+    "lean_name": "stackAlloc",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "stack_alloc_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.1), original68-86: full native HolProg, arbitrary Boolean jump and Nat pointer/count. single builder emits immediate Sub word_offset then original JumpLower k(k+1)2 or If Lower k(Reg(k+1))(halt_inst2w)Skip. Recursive builder retains zero Skip, <=255 single, larger ordered Seq chunk255 and recursion(count-255), with check after every chunk. Native halt_inst constant/register behavior unchanged. Width1 wraps halt value2 to zero exactly as original n2w; no positivity/fit/register/stack-safety/targetrun premise added. Only positive BitVec width and NeZero dimension translation qualified. Production route remains dependency-linked36ez.3; not a compiler simulation."
   }
 ]

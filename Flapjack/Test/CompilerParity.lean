@@ -1,3 +1,4 @@
+import Flapjack.Test.StackRemoveStackAlloc
 import Flapjack.Test.StackRemoveStackAddress
 import Flapjack.Test.StackRemoveStackFree
 import Flapjack.Test.SSAReconcileGetVars
