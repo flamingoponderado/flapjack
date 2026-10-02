@@ -67735,5 +67735,23 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol3 full original source9615/9633 and exported fulltype0hyp comparison: All six original free binders retained; exact supplied output equality premise and conjunction of output prefix equalities against the empty-accumulator extraction. No encoding, byte-size, label-validity or callback guard added. Exact full native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString positive-width BitVec carriers, Nat positions and record entry/exit PCs/offsets/registers, fixed word8 nbytes/bytes, own NeZero. Structural kernel proof directly unfolds accepted getShmemInfo constructor clauses and threads arbitrary split prefixes, including nonzero labels and zero-byte shared-memory instructions. Fresh registered original two fulltypes0hyp and seven original/native observations allT, widths1/8/80, invalid labels and length annotations, empty sections, nonempty split prefixes and unsigned offsets. Full generic consumers and actual arbitrary-prefix width80 caller checked. Evidence supplements source review, not HOL-to-Lean equivalence or full initializer/compiler/machine correctness."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemMembership.lean",
+  "lean_name": "getShmemInfo_mem",
+  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+  "hol_name": "MEM_get_shmem_info",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol3 full original source9780/9852 and exported fulltypes0hyp comparison: Complete all_enc_ok, actual successful SharedMem fetch, and get_memop_info pair equality guards. Retains every c/labs/ffis/p-prime/code/pc/op/re/a/bytes/len/q/r/p binder and exact membership of (SharedMem q, source record) in ZIP of empty-accumulator extraction. Exit_pc remains pos_val pc (p+LENGTH bytes) code, justified by original position accumulator law; no desired membership assumption or extra encoding/size guard. Query and validity starts remain independent Nat. Exact native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec carriers with own NeZero, fixed word8 bytes/nbytes, Nat record PCs/registers/unsigned offsets. Genuine proof consumes checked full getShmemInfo characterization, original successful-fetch count bound and original position accumulator law, using ordered list flatten/map/unzip/zip correspondence. No targetrun/simulation callback or total HD/EL default. Fresh original two fulltypes0hyp and seven paired original/native observations allT cover load/store membership, successful actual fetch, exit expression, paired lengths/empty code and wrong name-record pairing. Full generic statements and arbitrary-query actual consumers kernel checked. Evidence supplements source review, not cross-language equivalence or full initializer/compiler/machine correctness."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemMembership.lean",
+  "lean_name": "getShmemInfo_emptyLengthEq",
+  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+  "hol_name": "get_shmem_info_EMPTY_LENGTH_EQ",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol3 full original source9780/9852 and exported fulltypes0hyp comparison: Retains all c/labs/ffis/p-prime/code/p binders, sole complete all_enc_ok guard and exact equality of FST/SND lengths for empty-accumulator extraction. Query and validity starts remain independent Nat. Exact native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec carriers with own NeZero, fixed word8 bytes/nbytes, Nat record PCs/registers/unsigned offsets. Genuine proof consumes checked full getShmemInfo characterization, original successful-fetch count bound and original position accumulator law, using ordered list flatten/map/unzip/zip correspondence. No targetrun/simulation callback or total HD/EL default. Fresh original two fulltypes0hyp and seven paired original/native observations allT cover load/store membership, successful actual fetch, exit expression, paired lengths/empty code and wrong name-record pairing. Full generic statements and arbitrary-query actual consumers kernel checked. Evidence supplements source review, not cross-language equivalence or full initializer/compiler/machine correctness."
 }
 ]

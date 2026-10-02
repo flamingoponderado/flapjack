@@ -1,0 +1,32 @@
+MEM_get_shmem_info=all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+  (ffis :ffiname list) (p' :num) (code2 :α sec list) ∧
+asm_fetch_aux (pc :num) code2 =
+SOME
+  (Asm (ShareMem (op :memop) (re :num) (a :α addr)) (inst' :word8 list)
+     (len :num)) ∧ get_memop_info op = ((q :shmem_op),(r :word8)) ⇒
+MEM
+  (SharedMem q,
+   <|entry_pc := pos_val pc (p :num) code2; nbytes := r;
+     addr_reg := case a of Addr r off => r;
+     addr_off := case a of Addr r off => w2n off; reg := re;
+     exit_pc := pos_val pc (p + LENGTH inst') code2|>)
+  (ZIP (get_shmem_info code2 p ([] :ffiname list) ([] :shmem_info_num list)))
+MEM_get_shmem_info_types=(p :num)::num;(r :word8)::word8;(q :shmem_op)::shmem_op;(len :num)::num;(inst' :word8 list)::word8 list;(a :α addr)::α addr;(re :num)::num;(op :memop)::memop;(pc :num)::num;(code2 :α sec list)::α sec list;(p' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+MEM_get_shmem_info_hypotheses=0
+get_shmem_info_EMPTY_LENGTH_EQ=all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+  (ffis :ffiname list) (p' :num) (code2 :α sec list) ⇒
+LENGTH
+  (FST
+     (get_shmem_info code2 (p :num) ([] :ffiname list)
+        ([] :shmem_info_num list))) =
+LENGTH
+  (SND (get_shmem_info code2 p ([] :ffiname list) ([] :shmem_info_num list)))
+get_shmem_info_EMPTY_LENGTH_EQ_types=(p :num)::num;(code2 :α sec list)::α sec list;(p' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+get_shmem_info_EMPTY_LENGTH_EQ_hypotheses=0
+load_membership=T
+store_membership=T
+load_fetch=T
+exit_expression=T
+paired_lengths=T
+empty_lengths=T
+wrong_pair=T

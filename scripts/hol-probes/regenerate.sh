@@ -5824,3 +5824,10 @@ run_probe lab_to_target_shmem_prefix_probeScript.sml lab_to_target_shmem_prefix_
   invalid_code_output prepend_names prepend_info append_split empty wide_offsets one_offsets \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_shmem_membership_probeScript.sml lab_to_target_shmem_membership_probe.out \
+  MEM_get_shmem_info MEM_get_shmem_info_types MEM_get_shmem_info_hypotheses \
+  get_shmem_info_EMPTY_LENGTH_EQ get_shmem_info_EMPTY_LENGTH_EQ_types get_shmem_info_EMPTY_LENGTH_EQ_hypotheses \
+  load_membership store_membership load_fetch exit_expression paired_lengths empty_lengths wrong_pair \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
