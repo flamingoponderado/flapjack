@@ -54229,5 +54229,21 @@
       "B"
     ],
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml SUBMAP_FUPDATE_both ([local]): A SUBMAP B ==> A |+ (n,v) SUBMAP B |+ (n,v), A B n v free (implicit); HOL 'a |-> 'b as the canonical HolFiniteMapExact binders A and B (bare relation entries), SUBMAP as the untagged submap rendering (FLOOKUP agreement on FDOM A), \\\\ and |+ as the HOL-equality eraseEq/updateEq with [DecidableEq] for HOL equality; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 773,
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/EvaluateDef.lean",
+    "lean_name": "evaluate_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-y19g.18), stackSemScript.sml:773-1027 Definition evaluate_def: all 34 clauses in HOL order (Skip, Halt, Alloc, StoreConsts, Inst, Get, Set, OpCurrHeap, Tick, Seq, Return, Raise, Break, Continue, If, Loop, JumpLower, RawCall, Call, Install, ShMemOp (Addr a w), CodeBufferWrite, DataBufferWrite, FFI, LocValue, StackAlloc, StackFree, StackLoad, StackLoadAny, StackStore, StackStoreAny, StackGetSize, StackSetSize, BitmapLoad), each conjunct universally quantified over its own clause variables with HOL's tupled evaluate (prog, s). Right-hand sides are the source-reviewed clause fragment bodies over the exact HolProg/StackSemStateFiniteExact carriers; Seq/Loop clamp with fix_clock, Loop re-enters on STOP (Loop c1) = Loop c1 with dec_clock, Call/JumpLower/RawCall time out on clock 0 and run the found code on dec_clock, the Call returning arm stores Loc l1 l2 in link_reg and checks result/exception locations, with every source Error arm. HOL res = NONE tests are none/some splits; Install's total configuration equality and LocValue's loc_check use classical decidability. evaluate is the assembled well-founded evaluateHOL on HOL's clock-first lexicographic measure (Measure/CallSites certificates); the theorem is proved clause by clause from evaluateHOL's equations, so no evaluator callback, success or simulation premise appears. 'a word as positive-width BitVec with [NeZero width]; regs, fpRegs and store as the canonical HolFiniteMapExact fields of StackSemStateFiniteExact (code is the sptree Spt carrier, not named). The Inst clause uses the reviewed instHOL whose FP renderings carry reals_as_rational_cuts: inherited docs/SOUNDNESS.md item 8 assumption; this marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
