@@ -5198,3 +5198,7 @@ run_probe set_sep_heap_write_probeScript.sml set_sep_heap_write_probe.out \
 run_probe stack_remove_store_heap_assoc_probeScript.sml stack_remove_store_heap_assoc_probe.out \
   sa_statement sa_types sa_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_store_heap_write_probeScript.sml stack_remove_store_heap_write_probe.out \
+  st_statement st_types st_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

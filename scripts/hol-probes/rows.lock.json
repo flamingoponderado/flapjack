@@ -891,6 +891,7 @@
     {"bytes": 135, "out": "stack_remove_store_heap_assoc_probe.out", "rows": 3, "sha256": "1bcff1f3df103efed0b3e5a5eaf9803c506282f3b6e0f62728a9246b202ac50c"},
     {"bytes": 595, "out": "stack_remove_store_heap_domain_probe.out", "rows": 3, "sha256": "0db5d7d98081242adc1df8af1f4faf76a62c3a357f64d704589caec13c626a7a"},
     {"bytes": 651, "out": "stack_remove_store_heap_read_probe.out", "rows": 3, "sha256": "669fd41ae55bc286fe9566114aa04e44411b991ce3c8b1f2b0efd1f63fa7b7ea"},
+    {"bytes": 1027, "out": "stack_remove_store_heap_write_probe.out", "rows": 3, "sha256": "9f564c734d08a248f472daafbbff9b3ea9ba0114fe7a32dcc9deecfa0432dda3"},
     {"bytes": 817, "out": "stack_remove_stub_names_probe.out", "rows": 10, "sha256": "cf236e429f5b19071e16dc855889eab67d501ceed4f47dd1b714a78ddb503a69"},
     {"bytes": 508, "out": "stack_remove_word_selector_probe.out", "rows": 13, "sha256": "987d06669158969ca82fbff586dd826daf0820f9302edf7c0ee59d0f804b2e5d"},
     {"bytes": 174, "out": "stack_remove_word_store_curr_heap_probe.out", "rows": 3, "sha256": "be26132e1a8ec147dc5430493590cce4d6a869f03924978efd121aa2206742e4"},

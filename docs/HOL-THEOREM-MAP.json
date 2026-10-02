@@ -64445,5 +64445,17 @@
     "hol_name": "assoc_lem",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.13.2: literal original local assoc_lem1170-1175 full generic predicate equality (A*B)*C=(B*C)*A. Arbitrary HOL heap-element type translated to Type0 and set predicates; no finite heap, concrete state, separation validity, original targetheap or other premise. Genuine complete equality follows from full canonical STAR_ASSOC and STAR_COMM, both actual kernel checked original-shaped predicate laws. Fresh original exact quantified equality/types/kernel proof3rows and native kernel proof pass. Supplies only original store_write_lemma regrouping dependency; full store update/Get/Set/compiler proof remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StoreHeapWrites.lean",
+    "lean_name": "storeWriteLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "store_write_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.13: complete original local store_write_lemma1177-1244. Original membership AND full five-factor heap premise imply same complete heap factors with only reverse word_store canonical source-store update and exact target-memory equality point update at base+store_offset. Original arbitrary source state/native WordLoc value/base/memory/domain retained, independent C/F Type0 and positive wordwidth NeZero/BitVec. Source memory/domain, shifted original BitmapBase/bitmaps/buffer/spaceLeft and stack factors are unchanged even for BitmapBase name; no nonBitmapBase premise added (that belongs to later Set case original reg_bound). MAP Word over concatenation equivalent by List.map_append; source buffer.length+bitmaps.length offset unchanged. Actual imported canonicalstate.store owns qualified field and same-module genuine codec roundtrip witness; raw target-memory function/domain are original ordinary function/set carriers, not finite maps. No supplied output heap/frame preservation/domain/targetsuccess/heap finiteness/goodDimindex assumption. Untagged factoring proves all48store-list keys distinct, codec equality and exact one-slot map update; reverse-list surgery exposes same frame for all replacementvalues at modular addresses; generic original write_fun2set derives the complete updated graph; concrete/generic equality decision updates are proved extensionally equal. Native full kernelproof and fresh literal original local proof/types replay checked. This completes only the local store write lemma, not Set/Get/full compiler theorem."
   }
 ]
