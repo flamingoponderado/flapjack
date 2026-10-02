@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundFlat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundInstructions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallArgsCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnCallArgs
