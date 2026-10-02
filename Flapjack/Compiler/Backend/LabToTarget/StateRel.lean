@@ -152,7 +152,8 @@ theorem stateRel_memory {width : Nat} [NeZero width] {S Q F : Type}
   exact h.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1 a ha
 
 /-- Complete relation ignores the Lab clock field, as in the literal source.
-Flapjack infrastructure; there is no independently named HOL theorem here. -/
+Flapjack iff strengthening; the literal original forward implication is
+tagged separately as stateRelClock in the StateTransport submodule. -/
 theorem stateRel_clock {width : Nat} [NeZero width] {S Q F : Type}
     (bundle : MachineConfig width S Q × LabProgHOL width × Spt (Spt Nat) × BitVec width)
     (s : LabSem.State width Config F) (t : AsmState width) (ms : S) (clock : Nat) :

@@ -1,0 +1,19 @@
+lines_upd_lab_len_pos_ok=∀(pos :num) (lines :α line list).
+  lab_len_pos_ok pos (FST (lines_upd_lab_len pos lines ([] :α line list)))
+lines_upd_lab_len_pos_ok_types=(pos :num)::num;(lines :α line list)::α line list;
+upd_lab_len_pos_ok=∀(pos :num) (code :α sec list). all_lab_len_pos_ok pos (upd_lab_len pos code)
+upd_lab_len_pos_ok_types=(pos :num)::num;(code :α sec list)::α sec list;
+mixed_odd_full_tuple=T
+mixed_odd_pos_ok=T
+mixed_even_full_tuple=T
+mixed_even_pos_ok=T
+odd_label_chain=T
+nonlabels_unchanged=T
+empty_list_width1=T
+section_full_tuple=T
+section_all_pos_ok=T
+bad_input_repaired=T
+empty_code=T
+empty_sections=T
+large_width80_tuple=T
+large_width80_pos_ok=T

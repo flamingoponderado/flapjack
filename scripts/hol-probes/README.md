@@ -5873,5 +5873,23 @@ nested-list induction for every Op operand, exact native domain-checked Loads
 and both Shift children. No successful target expression or callback is a
 premise. Instruction simulation and full pass assembly remain separate work.
 `ssa_call_returning_none_probe.out` captures the full original no-handler returning Call specialization of `ssa_cc_trans_correct`, retaining all six premises and its complete existential source-permutation/Error-exempt result, frame and result-sensitive locals. The native case adds only the genuine smaller continuation induction hypothesis and derives guards, argument prefix, callee stack transport, return restoration and oracle suffix internally. Handler SOME and full SSA assembly remain open. This capture supports source review, not cross-language equivalence.
+## Complete native LabToTarget clock and state shift group
+
+`lab_to_target_state_transport_probeScript.sml` captures all five original
+clock/shift laws1098–1153 and their complete inferred HOL types. Independent
+Lab/machine word dimensions and unused outer shared-memory carrier types are
+retained. Lean `StateTransport` derives the actual shifted interference
+condition at index i+l and preserves every conjunct of the full state relation.
+These proof-side laws do not change the executed compiler.
+
+### Generational GC move-loop simulation
+
+`stack_alloc_gen_loop_statement_probeScript.sml` elaborates the full original local
+`word_gen_gc_move_loop_code_thm` statement (including free `c1` and `conf`) and
+captures five determinate original `word_gen_gc_move_loop` evaluations: immediate
+stop, data branch with zero/one fuel, and reference branch with zero/one fuel.
+`Flapjack/Test/GenGcMoveLoopParity.lean` replays these collector observations in
+the kernel. This capture does not replay the original simulation proof or claim
+coverage of unspecified nonword headers.
 
 `ssa_call_returning_some_probe.out` captures the full arbitrary handler-present specialization of original `ssa_cc_trans_correct`, all six premises and complete existential source-permutation/Error-exempt result, frame and result-sensitive locals. The native case adds only the two genuine smaller continuation IHs, derives exception-frame/root restoration and both native reconciliation paths, and retains the exception binder counter after compiling the return continuation. This is source-review regression evidence, not cross-language equivalence; full returning Call/SSA assembly remains open.
