@@ -17,6 +17,17 @@ def nativeInputs? {width : Nat} [NeZero width]
   ExecutedCodec.mapCodec? (fun entry =>
     (Production.toNative? entry.2).map (fun body => (entry.1, body))) programs
 
+/-- Complete native post-allocation composition used after production input
+normalization. No independent initializer or section lowering is substituted. -/
+def compileNative? {width : Nat} [NeZero width] (jump : Bool)
+    (bounds : BitVec width × BitVec width) (generateGc : Bool)
+    (maximumHeap pointer start : Nat) (names : Spt Nat)
+    (programs : List (Nat × HolProg width)) : Option (List (LabSection (BitVec width))) :=
+  ExecutedCodec.mapCodec? ExecutedInput.sectionToExecuted?
+    (Flapjack.Compiler.Backend.StackNames.compileHOL names
+      (Flapjack.Compiler.Backend.StackRemove.compileHOL
+        jump bounds generateGc maximumHeap pointer start programs))
+
 /-- Original post-allocation composition with all initializer/configuration
 arguments retained. Codec failures are explicit, including initializer outputs. -/
 def compile? {width : Nat} [NeZero width] (jump : Bool)
@@ -24,10 +35,7 @@ def compile? {width : Nat} [NeZero width] (jump : Bool)
     (maximumHeap pointer start : Nat) (names : Spt Nat)
     (programs : List (Nat × StackProg Nat)) : Option (List (LabSection (BitVec width))) := do
   let native ← nativeInputs? programs
-  let initialized := Flapjack.Compiler.Backend.StackRemove.compileHOL
-    jump bounds generateGc maximumHeap pointer start native
-  let renamed := Flapjack.Compiler.Backend.StackNames.compileHOL names initialized
-  ExecutedCodec.mapCodec? ExecutedInput.sectionToExecuted? renamed
+  compileNative? jump bounds generateGc maximumHeap pointer start names native
 
 /-- Recover the literal native sections of every accepted whole-list lowering.
 The premise is codec success, not a target evaluation; this is not pass correctness. -/
@@ -48,7 +56,7 @@ theorem compile_recover {width : Nat} [NeZero width] (jump : Bool)
         (Flapjack.Compiler.Backend.StackNames.compileHOL names
           (Flapjack.Compiler.Backend.StackRemove.compileHOL jump bounds generateGc
             maximumHeap pointer start native)) = some outputs := by
-      simpa [compile?, converted] using accepted
+      simpa [compile?, compileNative?, converted] using accepted
     clear accepted
     refine ⟨native, rfl, ?_⟩
     generalize hrenamed : Flapjack.Compiler.Backend.StackNames.compileHOL names

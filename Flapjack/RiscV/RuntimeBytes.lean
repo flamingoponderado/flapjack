@@ -1,13 +1,15 @@
 import Flapjack.RiscV.Encoding
 
 /-!
-# CakeML RISC-V runtime bytes
+# Captured CakeML RISC-V runtime oracle
 
 The RV64 Pancake exporter uses a fixed runtime prefix for the supported
 non-generational target. These words are transcribed from the authoritative
 CakeML riscv export (the runtime prefix is stable across the checked corpus).
-Keeping the values as 32-bit words makes the little-endian byte order explicit
-at the artifact boundary.
+Keeping the values as 32-bit words makes the little-endian byte order explicit.
+These values are test observations only: the executed compiler generates the
+whole native initialized program and its relocations, and the artifact formatter
+serializes those sections without inserting this captured prefix.
 -/
 
 namespace Flapjack.RiscV

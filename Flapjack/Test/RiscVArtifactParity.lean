@@ -1,6 +1,7 @@
 import Flapjack.RiscV.PipelineDiagnostics
 import Flapjack.RiscV.ArtifactFormat
 import Flapjack.Test.OriginalPancakeProbes
+import Flapjack.RiscV.RuntimeBytes
 
 /-!
 # Exact RISC-V artifact parity for the `dec_clock` fixture
@@ -132,20 +133,28 @@ def compileRuntimeImage (source : String) :
   | .ok image => some image
   | .error _ => none
 
-/-- The emitted sections (labels `≥ 3`) with the `makesym` base offsets that
-`RiscV.pancakeRuntimeAssembly` assigns cumulatively from `1000`.  The lower
-labels are the internal port runtime and are not emitted. -/
+-- This independently captured original prefix is an oracle only. The executed
+-- formatter and linker generate these bytes from the native initialized list.
+def initializedPrefixExact : Bool :=
+  match compileRuntimeImage decClockSource with
+  | none => false
+  | some image =>
+      let runtimeSections := image.sections.take 6
+      runtimeSections.map (fun entry => entry.label) == [0, 1, 2, 4, 5, 6] &&
+      runtimeSections.map (fun entry => (entry.address.toNat, entry.bytes.length)) ==
+        [(0, 756), (756, 8), (764, 8), (772, 40), (812, 36), (848, 152)] &&
+      runtimeSections.flatMap (fun entry => entry.bytes) == cakeRuntimeBytes
+
+#guard initializedPrefixExact
+
+/-- Actual source sections with their generated addresses and bytes. The legacy
+fixture tuple uses source labels3 onward; translate only that observation back
+from the original firstLoopName namespace. No emitted byte/address is synthesized. -/
 def emittedSections (image : SourceRiscVRuntimeImage 64) :
     List (Nat × Nat × List (BitVec 8)) :=
-  let rec go (offset : Nat) (sections : List (EncodedRiscVSection 64)) :
-      List (Nat × Nat × List (BitVec 8)) :=
-    match sections with
-    | [] => []
-    | sec :: rest =>
-        if sec.label < 3 then go offset rest
-        else (sec.label, offset, sec.bytes) ::
-          go (offset + sec.bytes.length) rest
-  go 1000 image.sections
+  (image.sections.filter (fun sec => sec.label >= firstLoopName)).map
+    (fun sec => (Flapjack.Compiler.Backend.StackToLab.RuntimeLabels.legacySection sec.label,
+      sec.address.toNat, sec.bytes))
 
 /-- Exact emitted `(label, base, bytes)` artifact for the fixture. -/
 def decClockEmittedSections : List (Nat × Nat × List (BitVec 8)) :=
@@ -154,11 +163,11 @@ def decClockEmittedSections : List (Nat × Nat × List (BitVec 8)) :=
   | none => []
 
 /-- The runtime-image entry point accepts the fixture and exposes the two
-source sections (the fixed Cake runtime is supplied separately by the
-Pancake-compatible formatter) and no static warnings. -/
+source sections alongside its generated native initializer/runtime prefix,
+and no static warnings. -/
 def artifactAccepted : Bool :=
   match compileRuntimeImage decClockSource with
-  | some image => image.sections.length == 2 && image.warnings.isEmpty
+  | some image => (image.sections.filter (fun sec => sec.label >= firstLoopName)).length == 2 && image.warnings.isEmpty
   | none => false
 
 /-- The generated initializer section is byte-identical to Cake (see
@@ -369,7 +378,7 @@ Word-to-Stack lowering failed with `artifactFailure`; the original compiler
 flattens the expression through `crep_to_loop` and always accepted it. -/
 def nestedExpressionAccepted : Bool :=
   match compileRuntimeImage nestedExpressionSource with
-  | some image => image.sections.length == 2 && image.warnings.isEmpty
+  | some image => (image.sections.filter (fun sec => sec.label >= firstLoopName)).length == 2 && image.warnings.isEmpty
   | none => false
 
 /-! The runtime-image guard above exercises the public source path.  Keep a
@@ -704,7 +713,7 @@ def ffiMinCallStubStructural : Bool :=
   let ecall := [0x73, 0x00, 0x00, 0x00].map (BitVec.ofNat 8)
   match compileRuntimeImage ffiMinSource with
   | some image =>
-      match image.sections.find? (fun sec => sec.label == 4) with
+      match image.sections.find? (fun sec => sec.label == firstLoopName + 1) with
       | some sec => bytesContain jalOpcode sec.bytes &&
           !bytesContain ecall sec.bytes
       | none => false
@@ -713,7 +722,7 @@ def ffiMinCallStubStructural : Bool :=
 def ffiMinFramePrefix : Bool :=
   match compileRuntimeImage ffiMinSource with
   | some image =>
-      match image.sections.find? (fun sec => sec.label == 4) with
+      match image.sections.find? (fun sec => sec.label == firstLoopName + 1) with
       | some sec =>
           sec.bytes.take 4 == [0x13, 0x0c, 0x0c, 0xff].map (BitVec.ofNat 8)
       | none => false
@@ -1467,6 +1476,9 @@ def sharedMemOffsetCarrierEncoding : Bool :=
 #guard allocatorColourOracleShape
 
 def runChecks : IO Bool := do
+  unless initializedPrefixExact do
+    IO.eprintln "FAIL: generated native initialized prefix differs from original"
+    return false
   let checks : List (String × Bool) :=
     [ ("dec_clock fixture accepted by the runtime-image entry point",
         artifactAccepted),
