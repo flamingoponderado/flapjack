@@ -62757,5 +62757,32 @@
     "lean_name": "returningPrepareArguments",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific returning Call preparation factoring of original8298-8410, no standalone HOL declaration. Actual source getVars/paired-cut guards and original SSA/map/frame derive first native rename NONE/new SSA/frame plus argument reads through original SSA map (the actual compiler uses original map), then convention Move2*(i+1), rereads, preserved new stack SSA/frame and mapped paired-cut image domains/scoped relations/injections. No target-run or desired post-relation premise. Existing original-lookup preservation, physical ignore updates, get/set and cut lemmas discharge obligations. Full returning Call/callee/stack/return/exception-handler and fullSSA remain open on flapjack-sola-callreturn."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnCallArgs.lean",
+    "lean_name": "stackMoveCallArgs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_call_args",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison: stack_move_call_args retains all native HolProg constructors and original quantifiers/premises/conclusion. Predicate arbitrary five natural convention arguments, exact FFI equalities, Install ignores two data-buffer fields, Call traverses handler only inside SOME return. Three helpers specialize exactly original1 2 3 4 0, arbitrary counts/offsets/Boolean modes/continuations and independent return-list/frame-tail types; final wrapper is iff with no continuation premise. Positive-width BitVec translation only; no default or held dependency. Fresh entire predicate capture and three literal complete original proofs hyp=[] plus786 same-input direct original EVAL/kernel predicate observations (627true159false), full constructor/instruction families and330helper observations, widths1/2/8/64/80 and70bit offsets. Expected values read from fresh original capture. Regression evidence, not cross-language equivalence. Full compiler call/register convention assembly remains open; no held imports/policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnCallArgs.lean",
+    "lean_name": "copyRetAuxCallArgs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_aux_call_args",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison: copy_ret_aux_call_args retains all native HolProg constructors and original quantifiers/premises/conclusion. Predicate arbitrary five natural convention arguments, exact FFI equalities, Install ignores two data-buffer fields, Call traverses handler only inside SOME return. Three helpers specialize exactly original1 2 3 4 0, arbitrary counts/offsets/Boolean modes/continuations and independent return-list/frame-tail types; final wrapper is iff with no continuation premise. Positive-width BitVec translation only; no default or held dependency. Fresh entire predicate capture and three literal complete original proofs hyp=[] plus786 same-input direct original EVAL/kernel predicate observations (627true159false), full constructor/instruction families and330helper observations, widths1/2/8/64/80 and70bit offsets. Expected values read from fresh original capture. Regression evidence, not cross-language equivalence. Full compiler call/register convention assembly remains open; no held imports/policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnCallArgs.lean",
+    "lean_name": "copyRetCallArgs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_call_args",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison: copy_ret_call_args retains all native HolProg constructors and original quantifiers/premises/conclusion. Predicate arbitrary five natural convention arguments, exact FFI equalities, Install ignores two data-buffer fields, Call traverses handler only inside SOME return. Three helpers specialize exactly original1 2 3 4 0, arbitrary counts/offsets/Boolean modes/continuations and independent return-list/frame-tail types; final wrapper is iff with no continuation premise. Positive-width BitVec translation only; no default or held dependency. Fresh entire predicate capture and three literal complete original proofs hyp=[] plus786 same-input direct original EVAL/kernel predicate observations (627true159false), full constructor/instruction families and330helper observations, widths1/2/8/64/80 and70bit offsets. Expected values read from fresh original capture. Regression evidence, not cross-language equivalence. Full compiler call/register convention assembly remains open; no held imports/policy change."
   }
 ]

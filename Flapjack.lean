@@ -226,6 +226,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnCallArgs
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundMono
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnRegisterBounds
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Compiler
