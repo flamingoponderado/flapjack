@@ -5417,3 +5417,11 @@ run_probe stack_remove_stack_write_probeScript.sml stack_remove_stack_write_prob
 run_probe stack_remove_comp_store_probeScript.sml stack_remove_comp_store_probe.out \
   cs_statement cs_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_load_any_probeScript.sml stack_remove_comp_load_any_probe.out \
+  cla_statement cla_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_store_any_probeScript.sml stack_remove_comp_store_any_probe.out \
+  csa_statement csa_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
