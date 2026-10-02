@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.LabToTarget.NopInvariant
 import Flapjack.Compiler.Backend.LabToTarget.LengthCorrectness
 import Flapjack.Compiler.Backend.LabToTarget.PaddingLengthProps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAlloc
 import Flapjack.Compiler.Backend.LabToTarget.AddNopProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstall
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail

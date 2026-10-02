@@ -62429,5 +62429,29 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.3: original122-126 full type alpha word->beta list->(alpha word#beta->bool)->bool retains independent generic payload beta. Empty list is exact emp; cons is one(address-bytes_in_word,value) STAR word_list_rev(address-bytes_in_word,tail), with modular subtraction before both singleton and recursive address. Native bytesInWord is BitVec.ofNat width(width/8); the only qualifier is positive BitVec width/[NeZero width] for original address-word dimension. Canonical one/emp/STAR used directly. No fixed word_loc payload, width>=8, nonwrapping address, distinct-address, functional-heap or finiteness premise. Zero stride at widths1/7 means equal pair cells overlap and fail but distinct payloads at one address remain allowed by literal HOL set separation. Full original type/equation and generic/wrap/product/overlap probes, plus generic Lean one/two-cell kernel regressions, verify this precise behavior. Compiler state_rel later imposes its separate full-memory obligations; none are silently added to this predicate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean",
+    "lean_name": "allocRefreshCutNames",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific factoring of original Alloc9333-9410 preparation, no standalone HOL declaration. Successful source count/paired-cut inputs are actual evaluator branch guards. Native initial rename/count Move runs, preserved SSA/frame, successful mapped paired cuts with full image domains, restricted strong relations and inherited injections are conclusions; no targetrun or collector result assumed. Original tagged cutEnvsLemma/renameMovePreserve/Distinct discharge the obligations. Internal prerequisite only, not full Alloc correctness; GC/permutation/restoration/full six-premise Alloc case remain open on flapjack-sola-alloc."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean",
+    "lean_name": "allocPrepareArguments",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific factoring of original Alloc9333-9410 preparation, no standalone HOL declaration. Successful source count/paired-cut inputs are actual evaluator branch guards. Native initial rename/count Move runs, preserved SSA/frame, successful mapped paired cuts with full image domains, restricted strong relations and inherited injections are conclusions; no targetrun or collector result assumed. Original tagged cutEnvsLemma/renameMovePreserve/Distinct discharge the obligations. Internal prerequisite only, not full Alloc correctness; GC/permutation/restoration/full six-premise Alloc case remain open on flapjack-sola-alloc."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean",
+    "lean_name": "allocNormalLocalsDomain",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal factoring of original Alloc9460-9480, no standalone HOL declaration. Actual alloc NONE return derives collector/pop success and post-locals domain equal union of original paired-cut names through native gcSKeyEq and pushEnvPopEnvSKeyEq. No target-run or desired-domain premise. Full six-premise SSA Alloc case remains open on flapjack-sola-alloc."
   }
 ]
