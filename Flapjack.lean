@@ -1,4 +1,7 @@
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+import Flapjack.Compiler.Backend.StackRemove.Comp
+import Flapjack.Compiler.Backend.StackRemove.CopyLoop
+import Flapjack.Compiler.Backend.StackLang.InstBuilders
 import Flapjack.Compiler.Backend.StackProps.StackLengths
 import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
 import Flapjack.FpSemHOL.RealSqrtAgreement

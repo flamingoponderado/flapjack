@@ -1,4 +1,7 @@
 import Flapjack.Test.StackPropsOrderedLabelsParity
+import Flapjack.Test.StackRemoveComp
+import Flapjack.Test.StackRemoveCopyLoop
+import Flapjack.Test.StackLangInstBuilders
 import Flapjack.Test.StackSemGenericCodeLookupParity
 import Flapjack.Test.StackPropsStackLengthsParity
 import Flapjack.Test.TargetPropsIoEventsParity
