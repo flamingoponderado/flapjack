@@ -592,6 +592,7 @@ import Flapjack.Compiler.Encoders.AsmSem.State
 import Flapjack.Compiler.Encoders.AsmProps.Memory
 import Flapjack.Compiler.Encoders.AsmSem.MemOps
 import Flapjack.Compiler.Encoders.AsmSem.Step
+import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
 import Flapjack.Misc.AsmWriteBytearray
 import Flapjack.Misc.BytesInMemory

@@ -59345,5 +59345,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:934-938: full enc_ok c AND asm_ok w c implies c.encode w !=[] retained over exact AsmConfigExact/HolAsm carriers. Positive type-indexed words translated to BitVec width under NeZero; asm_ok truth and original lists retained, no extra premise. Proof uses original enc_ok nonempty conjunct. Original local HOL theorem is not exported, so capture replays its literal original goal and METIS_TAC[LENGTH_NIL,enc_ok_def] kernel proof in original compiled theories; complete conclusion captured."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "encoder_correct_def",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/EncoderCorrect.lean",
+    "lean_name": "encoderCorrect",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-native-encoder-correct): asmPropsScript.sml:117-133 compared against the HOL kernel typing (t : ('a,'b,'c) target, s1 s2 : 'a asm_state, i : 'a asm, ms : 'b, n : num, env : num -> 'b -> 'b). Literal: target_ok t ∧ ∀s1 i s2 ms. asm_step t.config s1 i s2 ∧ target_state_rel t s1 ms ⇒ ∃n. ∀env. interference_ok env (t.proj s1.mem_domain) ⇒ let pcs = all_pcs (LENGTH (t.config.encode i)) s1.pc in asserts n (λk s. env (n - k) (t.next s)) ms (λms'. t.state_ok ms' ∧ (∀pc. pc ∈ pcs 0 ⇒ t.get_byte ms' pc = t.get_byte ms pc) ∧ t.get_pc ms' ∈ pcs t.config.code_alignment) (λms'. target_state_rel t s2 ms') ∧ asserts2 (n + 1) (λk. env (n + 1 - k)) t.next ms (λms1 ms2. ∀x. x ∉ s1.mem_domain ⇒ t.get_byte ms1 x = t.get_byte ms2 x). It uses the reviewed targetOk, asmStep, targetStateRel, interferenceOk, allPcs (Set), asserts and asserts2. HOL bool t.state_ok ms' is = true and x ∉ s1.mem_domain is ¬ s1.memDomain x. Original HOL probe asm_props_encoder_correct_probe captures the typed definition and the HOL-proved target_ok projection and identity-environment specialization; Flapjack/Test/AsmPropsEncoderCorrectParity.lean replays both through the untagged encoderCorrect_targetOk and encoderCorrect_noInterference. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
