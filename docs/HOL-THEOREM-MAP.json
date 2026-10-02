@@ -63276,5 +63276,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 full source comparison of word_to_stack_call_args11522-11583: arbitrary config/perf/source program/bitmap/frame, complete original post_alloc_conventions(FST frame) andperf=F premises, actual native compiler first-projection call_args1 2 3 4 0. All26constructors/three Call branches; every recursive hypothesis discharged internally at actual threaded bitmap outputs. Internal untagged calculation uses only the original call-convention conjunct, documented as stronger Flapjack infrastructure without a separate HOL declaration; final tagged theorem retains entire original guard. Native carriers reviewed; positive-width BitVec only translation. Fresh complete generic original theorem application plus140direct source-guard EVALs and140same-input full original compiler theorem applications matched in kernel, all constructors/nested allocations/ignored malformed tail handler/returns/activehandlers/widths1 2 8 64 80. No direct target EVAL, entire source proof replay or cross-language equivalence claim. Full register bounds/compiled conventions/fullcompiler remain unfinished; no held imports or policy changes."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+    "lean_name": "returningCalleeTransport",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific inline factoring of original returning Call8422-8477, no standalone HOL declaration. Actual mapped paired-cut domains/injections, second-cut value relation and matching handler labels derive a source root permutation, complete callee-entry state equality after stack replacement and value-equal stacks; existing total evaluateStackSwap supplies result-sensitive body transport. No target evaluation or desired callee equality premise. Full returning Call return/exception restoration and full SSA remain open on flapjack-sola-callreturn."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+    "lean_name": "returningRestoreRegisters",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific inline returning Call continuation factoring of original8550-8575, no standalone HOL declaration. Internal restored cut SSA, source cut domain, original map validity/frame and return-value length derive preservation under actual physical registers2*(i+1) insertion and actual retMov NONE/newSSA/frame via original rename preservation. No target evaluation or desired output SSA premise. Pop-environment cut SSA derivation, continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn."
   }
 ]
