@@ -1,0 +1,19 @@
+line_ok_line_enc_with_nop=∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (line :α line).
+  line_ok c labs ffis pos line ⇒
+  line_enc_with_nop c.encode labs ffis pos line
+line_ok_line_enc_with_nop_types=(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(line :α line)::α line;
+lines_ok_lines_enc_with_nop=∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (lines :α line list).
+  lines_ok c labs ffis pos lines ⇒
+  lines_enc_with_nop c.encode labs ffis pos lines
+lines_ok_lines_enc_with_nop_types=(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(lines :α line list)::α line list;
+label_full=T
+asm_padding_full=T
+halt_full=T
+install_full=T
+ffi_full=T
+jump_full=T
+jumpcmp_full=T
+loc_full=T
+list_actual_full=T

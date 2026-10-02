@@ -1,4 +1,4 @@
-import Flapjack.RiscV.Lab
+import Flapjack.RiscV.InitializedRuntime
 
 namespace Flapjack.Test.LabInitialLabelSlots
 open Flapjack Flapjack.RiscV
@@ -26,5 +26,28 @@ example (sectionId label : Nat) :
        { name := sectionId + 1, lines := [.label (sectionId + 1) 0 0] }]).map
         (fun s => s.lines.map labStoredLineLength) = [[4], [4]] := by
   rfl
+
+/-! Relocation budget regression: a changing stored length must not be emitted
+when no subsequent sweep can confirm convergence. Empty programs converge in
+one sweep; an undersized plain instruction needs a second sweep. -/
+example (context : WordFfiContext) (haltPc : Nat)
+    (program : LabProgram (Word 64)) :
+    initializedRuntimeEncodeStable 0 context haltPc program = none := by
+  rfl
+
+private def relocationContext : WordFfiContext := { services := [] }
+private def undersizedProgram : LabProgram (Word 64) :=
+  [{ name := 3, lines := [.asm (.word (.const 0 0)) [] 0] }]
+
+#guard (initializedRuntimeEncodeStable 0 relocationContext 0
+  ([] : LabProgram (Word 64))).isNone
+#guard (initializedRuntimeEncodeStable 1 relocationContext 0
+  ([] : LabProgram (Word 64))).isSome
+#guard (initializedRuntimeEncodeStable 1 relocationContext 0 undersizedProgram).isNone
+#guard (initializedRuntimeEncodeStable 2 relocationContext 0 undersizedProgram).isSome
+#guard (initializedRuntimeEncodeStable 2 relocationContext 0 undersizedProgram).map
+  labStoredLineLengths == some [4]
+#guard (compileLabProgramLinkedWithNativeInitialization relocationContext
+  ([] : LabProgram (Word 64))).isSome
 
 end Flapjack.Test.LabInitialLabelSlots

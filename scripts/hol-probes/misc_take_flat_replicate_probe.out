@@ -1,0 +1,11 @@
+TAKE_FLAT_REPLICATE_LEQ=∀(j :num) (k :num) (ls :α list) (len :num).
+  len = LENGTH ls ∧ k ≤ j ⇒
+  TAKE (k * len) (FLAT (REPLICATE j ls)) = FLAT (REPLICATE k ls)
+TAKE_FLAT_REPLICATE_LEQ_types=(j :num)::num;(k :num)::num;(ls :α list)::α list;(len :num)::num;
+prefix_two_chunks=T
+equal_counts=T
+zero_count=T
+empty_chunks=T
+zero_source=T
+count_guard_required=T
+length_guard_required=T

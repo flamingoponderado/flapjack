@@ -2415,8 +2415,7 @@ class FmapEqualityStatusTest(unittest.TestCase):
         )
 
 
-if __name__ == "__main__":
-    unittest.main()
+
 
 
 class FmapResultObservationInventoryTest(unittest.TestCase):
@@ -2453,3 +2452,7 @@ class FmapResultObservationCombinationTest(unittest.TestCase):
         record["names_as_string"] = ["identifier"]
         self.assertTrue(any("cannot combine" in error for error in
             MAP["validate_inventory"]([record], set(), tags, set())))
+
+
+if __name__ == "__main__":
+    unittest.main()

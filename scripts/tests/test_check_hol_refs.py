@@ -647,6 +647,69 @@ noncomputable def cmp : FpCmp -> Bool
 """
         self.assertEqual(check(datatype, False, names), [])
 
+    def test_rounding_enum_is_source_bound_and_real_free(self):
+        root = CHECKER["ROOT"]
+        self.assertTrue(CHECKER["source_bound_rounding_enum"](root))
+        names = CHECKER["reals_rendering_names"](root)
+        self.assertNotIn("HolRounding", names)
+        check = CHECKER["reals_as_rational_cuts_errors"]
+        enum = "def modes : Option HolRounding := some HolRounding.roundTiesToEven"
+        self.assertEqual(check(enum, False, names), [])
+        for source in [
+            "def mixed (m : HolRounding) := holRound m 0",
+            "def mixed (m : HolRounding) : HolFloat 52 11 := holRound m 0",
+            "def mixed (m : HolRounding) := holFloatToReal (holRound m 0)",
+        ]:
+            self.assertTrue(any("must carry" in e for e in check(source, False, names)))
+
+    def test_rounding_enum_exemption_fails_closed_on_carrier_or_owner_changes(self):
+        enum = """namespace Flapjack
+inductive HolRounding where
+  | roundTiesToEven
+  | roundTowardPositive
+  | roundTowardNegative
+  | roundTowardZero
+  deriving DecidableEq, Repr
+"""
+        hol = """Datatype:
+  rounding = roundTiesToEven | roundTowardPositive
+           | roundTowardNegative | roundTowardZero
+End
+"""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            owner = root / "Flapjack/Misc/BinaryIeeeRound.lean"
+            original = root / "HOL/src/floating-point/binary_ieeeScript.sml"
+            owner.parent.mkdir(parents=True)
+            original.parent.mkdir(parents=True)
+            owner.write_text(enum)
+            original.write_text(hol)
+            check = CHECKER["source_bound_rounding_enum"]
+            self.assertTrue(check(root))
+            for changed in [enum.replace("roundTowardZero", "extraConstructor"),
+                            enum.replace("| roundTiesToEven", "| roundTiesToEven (r : Rat)"),
+                            enum.replace("namespace Flapjack", "namespace Shadow"),
+                            "abbrev HolRounding := Rat\n"]:
+                owner.write_text(changed)
+                self.assertFalse(check(root))
+            owner.write_text(enum)
+            original.write_text(hol.replace("roundTowardZero", "extraConstructor"))
+            self.assertFalse(check(root))
+            original.write_text("(* outer (* nested *) " + hol + " *)\n" +
+                                hol.replace("roundTowardZero", "extraConstructor"))
+            self.assertFalse(check(root))
+            original.write_text(hol)
+            shadow = root / "Flapjack/Shadow.lean"
+            for declaration in ["inductive HolRounding where | fake\n",
+                                "abbrev HolRounding := Rat\n",
+                                "abbrev Local.HolRounding := Rat\n"]:
+                shadow.write_text(declaration)
+                self.assertFalse(check(root))
+                self.assertIn("HolRounding", CHECKER["reals_rendering_names"](root))
+            shadow.unlink()
+            original.unlink()
+            self.assertFalse(check(root))
+
     def test_reals_rendering_names_cover_machine_ieee(self):
         names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
         self.assertIn("holFp64Sqrt", names)
@@ -3476,8 +3539,7 @@ class MachineIeeeGeneratedDeclarationsTest(unittest.TestCase):
                 self.assertIn("52/11/64", fn(root))
 
 
-if __name__ == "__main__":
-    unittest.main()
+
 
 
 
@@ -3577,3 +3639,7 @@ class FmapResultObservationAmbiguityTest(unittest.TestCase):
                 "Fixture", "theorem observer : (toFmap cmp tree).lookup keys ≠ none → True",
                 ("toFmap",), records, temporary)
             self.assertTrue(any("ambiguous" in error for error in errors))
+
+
+if __name__ == "__main__":
+    unittest.main()

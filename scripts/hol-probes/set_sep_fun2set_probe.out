@@ -1,0 +1,14 @@
+fg_full_def=∀f d. fun2set (f,d) = {(a,f a) | a ∈ d}
+fg_full_type=:(α -> β) # (α -> bool) -> α # β -> bool
+fg_member_full=∀f d a x. fun2set (f,d) (a,x) ⇔ f a = x ∧ a ∈ d
+memory_full_def=∀m dm. memory m dm = (λs. s = fun2set (m,dm))
+memory_full_type=:(α -> β) -> (α -> bool) -> (α # β -> bool) -> bool
+fg_nat_bool_member=T
+fg_nat_bool_false_value=T
+fg_wrong_value=T
+fg_outside_domain=T
+fg_empty_domain=T
+fg_bool_nat_member=T
+fg_bool_nat_other=T
+fg_bool_product_value=T
+fg_noninjective=T

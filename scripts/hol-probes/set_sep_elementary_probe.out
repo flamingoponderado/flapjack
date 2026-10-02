@@ -1,0 +1,26 @@
+se_one_def=∀x. one x = (λs. s = {x})
+se_one_type=:α -> (α -> bool) -> bool
+se_emp_def=emp = (λs. s = ∅)
+se_emp_type=:(α -> bool) -> bool
+se_cond_def=∀c. cond c = (λs. s = ∅ ∧ c)
+se_cond_type=:bool -> (α -> bool) -> bool
+se_split_def=∀s u v. SPLIT s (u,v) ⇔ u ∪ v = s ∧ DISJOINT u v
+se_split_type=:(α -> bool) -> (α -> bool) # (α -> bool) -> bool
+se_star_def=∀p q. p * q = (λs. ∃u v. SPLIT s (u,v) ∧ p u ∧ q v)
+se_star_type=:((α -> bool) -> bool) -> ((α -> bool) -> bool) -> (α -> bool) -> bool
+se_exists_def=$SEP_EXISTS = (λf s. ∃y. f y s)
+se_exists_type=:(α -> (β -> bool) -> bool) -> (β -> bool) -> bool
+se_one_fixture=T
+se_emp_fixture=T
+se_cond_fixture=T
+se_false_fixture=T
+se_nonempty_fixture=T
+se_split_empty_fixture=T
+se_overlap_fixture=T
+se_extra_fixture=T
+se_star_empty_fixture=T
+se_star_distinct_fixture=T
+se_star_overlap_fixture=T
+se_witness_fixture=T
+se_no_witness_fixture=T
+se_infinite_fixture=T

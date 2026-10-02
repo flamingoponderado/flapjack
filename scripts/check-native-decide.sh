@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fail if `native_decide` is used beyond the documented allowlist.
+# Fail if native proof/trust mechanisms exceed their documented allowances.
 #
 # A ratchet, not a ban: counts may fall freely, but any increase -- or any use
 # in a file that is not listed -- fails. See scripts/native-decide-allowlist.txt
@@ -94,4 +94,5 @@ MSG
   exit 1
 fi
 
+python3 scripts/check-native-trust.py || exit 1
 echo "native_decide: $total use(s), all within the allowlist"
