@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.OffsetEstablishment
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcGenerational
 import Flapjack.Compiler.Backend.LabToTarget.OffsetInvariant
 import Flapjack.Compiler.Backend.LabToTarget.CodeLabelPositionPadding
@@ -97,6 +98,8 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Binary
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Arithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Memory
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.FloatingPoint
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
@@ -870,6 +873,7 @@ import Flapjack.Misc.MachineIeee
 import Flapjack.Misc.BinaryIeeeRound
 import Flapjack.Misc.BinaryIeeeArith
 import Flapjack.Misc.BinaryIeeeRoundFp64
+import Flapjack.Misc.BinaryIeeeRoundFp32
 import Flapjack.Misc.BinaryIeeeArithFp64
 import Flapjack.Misc.BinaryIeeeConvert
 import Flapjack.Misc.BinaryIeeeSqrt
