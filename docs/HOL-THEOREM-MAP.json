@@ -62030,5 +62030,44 @@
     "lean_name": "installCallbacksAligned",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific factoring of original Install9710-9858 callback transport, no standalone HOL declaration. Source/target argument and cut success are internal alignment facts derived by preparation; original shared frame yields identical actual compile callback, buffer flush, oracle/config check and code union branches. Total evaluator result/frame and successful source-pointer versus target-pointer Loc local shapes are conclusions, no targetrun/result or post-frame premise. Failure cases retained. Infrastructure prerequisite only; full six-premise Install simulation remains open on flapjack-sola-install."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "FCARD_FUPDATE",
+    "lean_path": "Flapjack/FiniteMap/CardinalityExact.lean",
+    "lean_name": "fcardFupdate",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "map"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full FCARD_FUPDATE445-450: arbitrary original key/payload/map carriers, no hypotheses and both conditional branches retained. FDOM membership is defined lookup not NONE; FCARD counts the actual finite lookup domain, independent of redundant support witnesses. Existing-key update preserves that domain; fresh-key update inserts exactly one key. HOL equality uses classical equality internally with no extra DecidableEq premise. Same-module canonical lookup/finiteSupport codec roundtrip checked. Only named canonical finite-map parameter representation translation; no executable compiler change."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "insert_thm",
+    "lean_path": "Flapjack/Misc/BalancedMap/InsertCorrect.lean",
+    "lean_name": "insertThm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full insert_thm1525-1578: arbitrary generic key/payload/tree and comparator, sole good_cmp AND invariant premises, BOTH actual recursive insert invariant and comparator-equivalence-key semantic update conclusions. Tip/Less/Equal/Greater structural induction retains recursive BOTH-conclusion IH only; full cardinality hit/fresh law derives unchanged-or-increment balancing obligation, root ordering derives domain exclusion for left-biased union. Equal comparison replaces stored key/value even for distinct equivalent keys. No target map equality, balance, finite carrier or extra successful execution premise. Literal complete original proof replay closed hyp=[]; canonical producer observation is the only representation translation. Coordinator acceptance and full delivery gates remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StubNames.lean",
+    "hol_name": "stub_names_def",
+    "lean_name": "stubNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 at335-340: entire unit argument and ordered three Nat/mlstring pairs retained, indices0/1/2, exact native implode character bytes for _Init/_Halt0/_Halt2. Full original unit->(num#mlstring)list type and definition captured; native MlString constructor is List(BitVec8), no Lean String representation qualifier, extra premise or word specialization. Fresh original names/bytes/count and matching kernel fixtures. Executed ArtifactFormat wiring remains separate open production parent; this definition alone does not claim route completion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StubNames.lean",
+    "hol_name": "check_init_stubs_length",
+    "lean_name": "checkInitStubsLength",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 at342-348: entire unconditional LENGTH(actual init_stubs gen_gc max_heap k start)+2=stack_num_stubs statement retained, arbitrary Bool and three Nat parameters and positive-width native HolProg carrier. Uses actual reviewed initStubs including initialization/tailcall and two word-valued halts, count5 from reviewed backend_common. Only standard type-indexed word carrier translation with NeZero width, no success/evaluation/invariant premise. Literal original EVAL_TAC replay hyp=[] and complete inferred generic types captured; widths1/8/64 count5 plus universal kernel consumer. No production wiring claim."
   }
 ]

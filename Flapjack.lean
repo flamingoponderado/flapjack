@@ -3,6 +3,11 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstall
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticLoop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopIteration
+import Flapjack.Compiler.Backend.StackRemove.StubNames
+import Flapjack.Misc.BalancedMap.InsertCorrect
+import Flapjack.Misc.BalancedMap.CardinalityCorrect
+import Flapjack.Misc.BalancedMap.AlmostBalanceCorrect
+import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceRCorrect
 import Flapjack.Compiler.Backend.LabToTarget.PrefixPreservation
 import Flapjack.Compiler.Backend.LabToTarget.PrefixZero
 import Flapjack.Compiler.Backend.LabToTarget.Alignment
@@ -14,9 +19,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
-import Flapjack.Misc.BalancedMap.CardinalityCorrect
-import Flapjack.Misc.BalancedMap.AlmostBalanceCorrect
-import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceRCorrect
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceR
 import Flapjack.Misc.BalancedMap.RotationCorrect.RotateL
 import Flapjack.Misc.BalancedMap.RotationCorrect.DoubleL

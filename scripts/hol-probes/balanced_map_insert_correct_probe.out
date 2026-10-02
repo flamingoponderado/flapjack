@@ -1,0 +1,22 @@
+insert_thm=⊢ ∀(t :(α, β) balanced_map). good_cmp (cmp :α -> α -> ordering) ∧ invariant cmp t ⇒ invariant cmp (insert cmp (k :α) (v :β) t) ∧ to_fmap cmp (insert cmp k v t) = (to_fmap cmp t)⟨key_set cmp k ↦ v⟩
+bminsert_tip_tree=Bin (1 :num) (3 :num) (31 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)
+bminsert_tip_invariant=T
+bminsert_tip_lookup=SOME (31 :num)
+bminsert_less_tree=Bin (2 :num) (3 :num) (30 :num) (Bin (1 :num) (1 :num) (11 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Tip :(num, num) balanced_map)
+bminsert_less_invariant=T
+bminsert_less_lookup=SOME (11 :num)
+bminsert_equal_tree=Bin (1 :num) (3 :num) (31 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)
+bminsert_equal_invariant=T
+bminsert_equal_lookup=SOME (31 :num)
+bminsert_greater_tree=Bin (2 :num) (3 :num) (30 :num) (Tip :(num, num) balanced_map) (Bin (1 :num) (5 :num) (51 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map))
+bminsert_greater_invariant=T
+bminsert_greater_lookup=SOME (51 :num)
+bminsert_rotate_right_tree=Bin (3 :num) (1 :num) (10 :num) (Bin (1 :num) (0 :num) (1 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Bin (1 :num) (3 :num) (30 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map))
+bminsert_rotate_right_invariant=T
+bminsert_rotate_right_lookup=SOME (1 :num)
+bminsert_rotate_left_tree=Bin (3 :num) (5 :num) (50 :num) (Bin (1 :num) (3 :num) (30 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Bin (1 :num) (6 :num) (61 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map))
+bminsert_rotate_left_invariant=T
+bminsert_rotate_left_lookup=SOME (61 :num)
+bminsert_equivalent_tree=Bin (1 :num) (2 :num) (99 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)
+bminsert_equivalent_invariant=T
+bminsert_equivalent_lookup=SOME (99 :num)
