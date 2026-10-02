@@ -165,7 +165,8 @@ theorem doSpillSuccess (scost : Option (Spt Nat)) (k : Nat) :
         | some sc =>
             obtain ⟨y, ys, hc, hy, hys⟩ :=
               stExListMinCostSuccess sc xs s x
-                (safeDiv (lookupAny x sc 0) (holEl x s.degrees)) [] ⟨hg, (fun _ h => by cases h), hx⟩
+                (safeDiv (lookupAny x sc 0) (holEl x s.degrees)) []
+                ⟨hg, (fun _ h => by cases h), hx⟩
             obtain ⟨s', hr, hrest⟩ := H y ys hy hys
             refine ⟨s', true, ?_, hrest⟩
             simp only [doSpill, Translator.Monadic.MonadBase.bind, getSpillWl, getDim, hf,

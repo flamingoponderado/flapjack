@@ -51,12 +51,8 @@ def getBits {width : Nat} [NeZero width] (w : BitVec width) : List Bool :=
   (List.range (bitLength w - 1)).map w.getLsbD
 
 theorem bitLength_eq {width : Nat} [NeZero width] (w : BitVec width) :
-    bitLength w = if w = 0 then 0 else bitLength (w >>> 1) + 1 := by
-  have hw : 0 < width := Nat.pos_of_ne_zero (NeZero.ne width)
-  have h1 : w >>> (1 : BitVec width) = w >>> (1 : Nat) := by
-    apply BitVec.eq_of_toNat_eq
-    simp [BitVec.toNat_ushiftRight, Nat.one_mod_two_pow hw]
-  rw [bitLength, h1]
+    bitLength w = if w = 0 then 0 else bitLength (w >>> (1 : Nat)) + 1 := by
+  rw [bitLength]
 
 theorem ushiftRight_eq_zero_iff {width : Nat} (w : BitVec width) (n : Nat) :
     w >>> n = 0 ↔ w.toNat < 2 ^ n := by
@@ -84,11 +80,10 @@ theorem bitLength_spec {width : Nat} [NeZero width] :
     · simp only [hw, if_false]
       have hpos : 0 < w.toNat := by
         apply Nat.pos_of_ne_zero; intro hz; exact hw (BitVec.eq_of_toNat_eq (by simpa using hz))
-      have hwid : 0 < width := Nat.pos_of_ne_zero (NeZero.ne width)
-      have hsh : (w >>> 1).toNat = w.toNat / 2 := by
-        simp [BitVec.toNat_ushiftRight, Nat.shiftRight_eq_div_pow, Nat.one_mod_two_pow hwid]
-      have hlt : (w >>> 1).toNat < k := by rw [hsh, ← h]; omega
-      obtain ⟨h1, h2⟩ := ih _ hlt (w >>> 1) rfl
+      have hsh : (w >>> (1 : Nat)).toNat = w.toNat / 2 := by
+        simp [BitVec.toNat_ushiftRight, Nat.shiftRight_eq_div_pow]
+      have hlt : (w >>> (1 : Nat)).toNat < k := by rw [hsh, ← h]; omega
+      obtain ⟨h1, h2⟩ := ih _ hlt (w >>> (1 : Nat)) rfl
       rw [hsh] at h1 h2
       refine ⟨?_, ?_⟩
       · rw [Nat.pow_succ]; omega
@@ -172,7 +167,7 @@ theorem getBits_intro {width : Nat} [NeZero width] {h : BitVec width} :
 @[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "bit_length_minus_1"
   (words_as_type_indexed_bitvec)]
 theorem bitLength_minus_1 {width : Nat} [NeZero width] {w : BitVec width} :
-    w ≠ 0 → bitLength w - 1 = bitLength (w >>> 1) := by
+    w ≠ 0 → bitLength w - 1 = bitLength (w >>> (1 : Nat)) := by
   intro h
   rw [bitLength_eq w, if_neg h]
   omega
