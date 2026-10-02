@@ -36,7 +36,8 @@ example {width : Nat} [NeZero width]
     (operation : WordArith (BitVec width)) (native : Compiler.Encoders.Asm.HolArith width)
     (converted : Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted? operation = some native) :
     wordCseInstToNumList (.arith operation) = Compiler.Backend.WordCse.instToNumList (.arith native) := by
-  exact congrArg (List.cons 3) (wordCseArithToNumList_native operation native converted)
+  apply wordCseInstToNumList_native
+  simp [wordCseNativeInst?, Compiler.Backend.StackToLab.ExecutedCodec.instFromExecuted?, converted]
 
 -- The unsupported five-register primitive never receives an invented native key.
 example {width : Nat} [NeZero width] (a b c d e : Nat) :

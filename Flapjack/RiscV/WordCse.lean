@@ -46,6 +46,7 @@ open Flapjack
 class WordCseHash (α : Type u) where
   hash : α → Nat
   nativeArithKey : WordArith α → Option (List Nat) := fun _ => none
+  nativeInstKey : WordInst α → Option (List Nat) := fun _ => none
   loadKey : WordMemOp → Nat → α → List Nat := fun operator address offset =>
     [Compiler.Backend.WordCse.memOpToNum operator, address + 100, hash offset]
   regImmKey : WordRegImm α → List Nat := fun
@@ -62,11 +63,22 @@ def wordCseNativeRegImm {width : Nat} [NeZero width] :
   | .reg register => .reg register
   | .imm value => .imm value
 
+/-- Production instruction embedding for keys. Offset-free memory explicitly
+means native Addr base zero; other shared constructors use the existing codec.
+The separate five-register AddCarry is rejected. Flapjack routing infrastructure,
+not a HOL datatype port or an instruction simulation theorem. -/
+def wordCseNativeInst? {width : Nat} [NeZero width] :
+    WordInst (BitVec width) → Option (Compiler.Encoders.Asm.HolInst width)
+  | .mem operator destination base => some (.mem operator destination (.addr base 0))
+  | instruction => Compiler.Backend.StackToLab.ExecutedCodec.instFromExecuted? (.word instruction)
+
 /-- Machine-word CSE executes the reviewed native encoders. The lower-priority
 zero-width/generic diagnostic instance remains outside the HOL word claim. -/
 instance {width : Nat} [NeZero width] : WordCseHash (BitVec width) where
   hash := Flapjack.Compiler.Backend.WordCse.wordToNum
   loadKey := Compiler.Backend.WordCse.loadToNumList
+  nativeInstKey instruction := (wordCseNativeInst? instruction).map
+    Compiler.Backend.WordCse.instToNumList
   nativeArithKey operation :=
     (Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted? operation).map
       Compiler.Backend.WordCse.arithToNumList
@@ -321,12 +333,27 @@ def wordCseHeapToNumList (operator : BinOp) (source : Nat) : List Nat :=
 
 /-- Cake's `instToNumList`.  The `Const` hash deliberately omits the
     destination so that two constants with the same value share a key. -/
-def wordCseInstToNumList [WordCseHash α] : WordInst α → List Nat
+private def wordCseInstDiagnosticKey [WordCseHash α] : WordInst α → List Nat
   | .const _ value => [2, WordCseHash.hash value]
   | .arith operation => 3 :: wordCseArithToNumList operation
   | .mem _ _ _ => [1]
-  | .memOffset operator _ address offset =>
-      wordCseLoadOffsetToNumList operator address offset
+  | .memOffset _ _ _ _ => [1]
+
+/-- Representable machine-word instructions execute native instToNumList.
+Memory uses the original [1] catch-all; actual load facts use the separate load
+key helper. Generic diagnostics and the five-register extension stay explicit. -/
+def wordCseInstToNumList [WordCseHash α] (instruction : WordInst α) : List Nat :=
+  match WordCseHash.nativeInstKey instruction with
+  | some key => key
+  | none => wordCseInstDiagnosticKey instruction
+
+/-- Exact key correspondence for successful production carrier conversion.
+Flapjack infrastructure with no HOL original; no run or simulation is assumed. -/
+theorem wordCseInstToNumList_native {width : Nat} [NeZero width]
+    (instruction : WordInst (BitVec width)) (native : Compiler.Encoders.Asm.HolInst width)
+    (converted : wordCseNativeInst? instruction = some native) :
+    wordCseInstToNumList instruction = Compiler.Backend.WordCse.instToNumList native := by
+  simp [wordCseInstToNumList, WordCseHash.nativeInstKey, converted]
 
 def wordCseIsStore : WordMemOp → Bool
   | .store => true

@@ -1,3 +1,4 @@
+import Flapjack.Test.WordCseProductionInstructionKeys
 import Flapjack.Test.WordCseProductionLoadHeapKeys
 import Flapjack.Test.WordCseProductionArithmeticKeys
 import Flapjack.Test.NativeWordMemoryAddress
