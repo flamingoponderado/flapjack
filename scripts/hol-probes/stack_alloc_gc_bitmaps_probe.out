@@ -1,0 +1,5 @@
+gcb_bitmap=SOME ([Word 1793w; Word 4w; Word 64007w],[Word 9w],9w,2016w,Word 28w,T)
+gcb_bitmap_short=NONE
+gcb_bitmaps=SOME ([Word 1793w; Word 4w; Word 64007w],[Word 9w],9w,2016w,T)
+gcb_bitmaps_zero=NONE
+gcb_roots_bitmaps=([Word 1w; Word 1793w; Word 4w; Word 64007w; Word 0w],9w,2016w,T)

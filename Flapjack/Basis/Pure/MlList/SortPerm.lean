@@ -1,12 +1,15 @@
 import Flapjack.HolRef
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Misc.Sorting
+import Flapjack.Misc.Mergesort
 
 /-!
-# `mllist$sort` is a permutation
+# `mllist$sort` sorts and is a permutation
 
-Ports of `cakeml/basis/pure/mllistScript.sml:303-323`: `sort` permutes its
-input, so membership and length are preserved. HOL `PERM` is the exact
+Ports of `cakeml/basis/pure/mllistScript.sml:297-323`: for a transitive total relation
+`sort` returns a sorted list, and it permutes its input, so membership and length are
+preserved. A HOL relation `R : 'a -> 'a -> bool` used as a proposition is
+`fun x y => R x y = true`, as in `Flapjack.Mergesort`. HOL `PERM` is the exact
 `holPerm`. The permutation facts about the untagged mergesort helpers below are
 Flapjack infrastructure (HOL proves them as `merge_tail_PERM`,
 `sort2_tail_PERM`, `sort3_tail_PERM` and `mergesortN_tail_PERM` over the same
@@ -71,6 +74,17 @@ theorem sortPerm {α : Type} : ∀ (R : α → α → Bool) (L : List α), holPe
   have := mergesortNTail_perm false R L.length L
   rw [List.take_length] at this
   exact this.symm
+
+/-- Exact HOL `sort_SORTED` (`mllistScript.sml:297-301`). -/
+@[hol "cakeml/basis/pure/mllistScript.sml" "sort_SORTED"]
+theorem sortSorted {α : Type} :
+    ∀ (R : α → α → Bool) (L : List α),
+      holTransitive (fun a b => R a b = true) ∧ holTotal (fun a b => R a b = true) →
+      holSorted (fun a b => R a b = true) (sort R L) := by
+  intro R L ⟨htr, hto⟩
+  unfold sort mergesortTail
+  rw [Mergesort.mergesortNCorrect false R L.length L ⟨hto, htr⟩]
+  exact Mergesort.mergesortNSorted R L.length L ⟨hto, htr⟩
 
 /-- Exact HOL `sort_MEM` (`mllistScript.sml:303-307`); `x` is free in HOL. -/
 @[hol "cakeml/basis/pure/mllistScript.sml" "sort_MEM"]

@@ -1,5 +1,13 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
+import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
+import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
+import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+import Flapjack.Compiler.Backend.StackRemove.ProgComp
+import Flapjack.Compiler.Backend.StackRemove.Comp
+import Flapjack.Compiler.Backend.StackRemove.CopyLoop
+import Flapjack.Compiler.Backend.StackLang.InstBuilders
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStateWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRegisterWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileListProps
@@ -12,9 +20,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileGetVars
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClock
 import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
-import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
-import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
-import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackProps.StackLengths
 import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
 import Flapjack.FpSemHOL.RealSqrtAgreement
@@ -1240,6 +1245,7 @@ import Flapjack.Misc.ListEl
 import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
 import Flapjack.Misc.Sorting
+import Flapjack.Misc.Mergesort
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
 import Flapjack.Compiler.Backend.LinearScan.Proofs
 import Flapjack.Misc.Sptree.ToAList
@@ -1274,6 +1280,9 @@ import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.StackAlloc.GcCode
 import Flapjack.Compiler.Backend.StackAlloc.Compile
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
@@ -1323,8 +1332,12 @@ import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.PhaseSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.EdgeInsertion
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.CliqueSuccess
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.AtempAssignment
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.StempAssignment
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.CoalesceSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.FreezeSpillSuccess
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoAlloc1Success
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
 import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
