@@ -18,8 +18,12 @@ conjuncts are retained over the full native evaluator state. Original GENLIST
 is List.range followed by map; union order is left accumulator. Every failure
 leaves these fields unchanged (count zero), successful installation advances
 exactly once (count one). This is one case, not the assembled theorem. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+/- Source acceptance HOLD: this is currently an untagged Flapjack theorem
+about the native evaluator, not an accepted exact HOL port. That evaluator
+closure reaches byte primitives using riscvByteAlignHOL rather than the
+reviewed total holByteAlign selector at low positive widths. Restore the tag
+only after canonical routing repair, dependency source review and full gates.
+The kernel-checked proof remains useful and its hypotheses are unchanged. -/
 theorem evaluateCodeBitmapsInstall {width : Nat} [NeZero width] {C F : Type}
     (codeBuffer codeLength dataBuffer dataLength returnAddress : Nat)
     (source post : StackSemStateFiniteExact width C F)

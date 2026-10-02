@@ -46,8 +46,12 @@ end SeqCase
 /-- Genuine original Seq case: actual source execution plus only genuine
 subprogram induction hypotheses. CodeBitmaps unfolds to the three literal
 original existential conjuncts; no successful-result or clock premise. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+/- Source acceptance HOLD: this is currently an untagged Flapjack theorem
+about the native evaluator, not an accepted exact HOL port. That evaluator
+closure reaches byte primitives using riscvByteAlignHOL rather than the
+reviewed total holByteAlign selector at low positive widths. Restore the tag
+only after canonical routing repair, dependency source review and full gates.
+The kernel-checked proof remains useful and its hypotheses are unchanged. -/
 theorem evaluateCodeBitmapsSeq {width : Nat} [NeZero width] {C F : Type}
     (first second : HolProg width)
     (source post : StackSemStateFiniteExact width C F)

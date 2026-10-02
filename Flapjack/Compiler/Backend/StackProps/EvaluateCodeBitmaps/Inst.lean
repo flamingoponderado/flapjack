@@ -17,8 +17,12 @@ end InstCase
 /-- Genuine Inst case: actual evaluator equality only. The successful
 primitive preserves all three fields by the full original inst_const theorem;
 failure retains source state. No successful instruction premise is exposed. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+/- Source acceptance HOLD: this is currently an untagged Flapjack theorem
+about the native evaluator, not an accepted exact HOL port. That evaluator
+closure reaches byte primitives using riscvByteAlignHOL rather than the
+reviewed total holByteAlign selector at low positive widths. Restore the tag
+only after canonical routing repair, dependency source review and full gates.
+The kernel-checked proof remains useful and its hypotheses are unchanged. -/
 theorem evaluateCodeBitmapsInst {width : Nat} [NeZero width] {C F : Type}
     (instruction : HolInst width) (source post : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width))
