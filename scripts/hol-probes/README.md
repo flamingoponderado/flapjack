@@ -5014,3 +5014,12 @@ manually reviewed; no standalone tactic replay is claimed.
 Inst specialization and native instruction/state/SSA/table carriers. Original
 Inst7860–8222 and all34 constructor cases are compared with the exhaustive
 Lean assembly; no standalone tactic replay is claimed.
+
+`ssa_locals_force_rename_probe` captures the original proved generic
+`ssa_locals_rel_force_rename` (word_allocProof:6383–6403) and five inferred
+carriers: source/target alpha Spt, Nat SSA Spt, Nat pair list, and Nat bound.
+The original three premises and conclusion were manually compared with
+`SSALocalsForceRename.lean`; the Lean proof uses induction over the same
+force-rename updates. This is an original theorem capture, not a replay of
+the isolated source tactic or a cross-language equivalence proof. Regenerate
+with `HOL_PROBE_ONLY=ssa_locals_force_rename_probeScript.sml scripts/hol-probes/regenerate.sh`.

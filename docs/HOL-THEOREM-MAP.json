@@ -58328,5 +58328,13 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Source comparison: full arbitrary Inst case original resumed Inst7860-8222, same six original premises and complete Error-exempt source-permutation/result/fullframe/result-sensitive locals, no targetrun/success/poststate/IH premise. Exhaustive native WordLangInst fixed word carrier: Skip/Const, eightArith, eightMem, sixteenFP, all34 source-reviewed case proofs give the same simulation. Native Nat registers, positivewidth BitVec and fixed64FP/native state/Spt/table/sharedType0 code-FFI match original genericInst Q.SPEC capture. Canonical fpRegs/store finite-support and indexedword qualifiers explicit. Inherits reals_as_rational_cuts evaluator/FP proofs including directqualified ToInt, SOUNDNESS8 rational/choice/quietNaN boundary; no stronger numerical agreement claimed. Original source case structure manually compared; kernel/capture PASS, no isolated tactic replay claim. FullSSA program theorem remainsopen."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_locals_rel_force_rename",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsForceRename.lean",
+  "lean_name": "ssaLocalsRelForceRename",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02: full generic theorem6383-6403, exactly original locals relation, EVERY pair lookup equality, mapped target register domain subset, and unchanged forceRename locals conclusion. EVERY rendered universally over list membership and set subset as universally quantified membership implication. Native alpha Spt source/target, Nat Spt SSA, Nat pair list/bound confirmed by original HOL theorem/carrier capture; no word/fmap representation qualifier, distinctness, wellformedness, or extra success premise. Existing guarded THE selector independence retained. Lean induction proves single insertion preservation and recursive original forceRename, no executed behavior change. Original proved theorem captured, isolated source tactic replay not claimed. FullMove/fullSSA remain open."
 }
 ]
