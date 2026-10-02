@@ -60246,5 +60246,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:1259-1277 and full original compiled theorem capture. All original encoder_correct, initial state relation and RTC of existential literal asm_step hypotheses preserved; existential FUNPOW final target relation constructed by RTC induction and addition of exact single-step witnesses. Relation.ReflTransGen is the same least reflexive-transitive closure; Function.iterate is HOL FUNPOW. No final execution/post-state premise. BitVec width/NeZero and native HolAsmTarget/AsmState retain positive word dimensions and Type carriers; lists and predicate sets unchanged. Inherited total holEl/holHd retains shared opaque holHdNil/holArb without bounds/fallback. Transitively inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through exact encoder/assembly FP semantics. No executable behavior change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenGcMove.lean",
+    "lean_name": "word_gen_gc_move_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.6), stack_allocProofScript.sml:2526-2678 word_gen_gc_move_code_thm: all premises in HOL order as one conjunction (word_gen_gc_move conf (w,i,pa,ib,pb,old,m,dm) = (w1,i1,pa1,ib1,pb1,m1,T); the shift/dimindex/len_size bounds; !w. w << word_shift = w * bytes_in_word; FLOOKUP CurrHeap = Word old; use_store; memory/mdomain; 0,1,2 IN FDOM s.regs; get_var 3/4/5; Temp 0w/Temp 1w IN FDOM s.store; FLOOKUP Temp 2w = Word pb, Temp 3w = Word ib; HOL's duplicated 1,2 IN FDOM and 6 IN FDOM), free variables implicit, conclusion ?ck r0 r1 r2 r6 t0 t1 with memory m1, the four-slot Temp store |++ and the seven-register |++, over the exact StackSem evaluate. Covers Loc, untagged word, forwarding pointer, reference objects (copied below Temp 2w with Temp 3w decremented, via memcpy_code_thm) and other objects (copied as in word_gc_move_code_thm). Temp nw as WordStore.temp over its fixed five-bit address, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
