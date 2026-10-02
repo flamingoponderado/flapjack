@@ -524,10 +524,10 @@ routes. Reject them recursively at entry, before each liveness-based dead pass,
 and before graph construction/colouring. Checks preserve every accepted tree;
 failure returns `none`, with no deletion or opcode substitution. This checked
 safety boundary does not prove universal source-to-boundary closure. -/
-/- Shared executed allocation implementation with an explicit full-program
-SSA limit. This factors the initial counter only; cleanup, checked memory
-boundaries, IRC and retained colouring are the actual production operations.
-Flapjack infrastructure, not a HOL theorem port or native-routing claim. -/
+/- Shared executed allocation consumer with an explicit SSA producer. The
+input memory guard precedes the producer; cleanup, subsequent memory guards,
+IRC and retained colouring are the actual production operations.
+Flapjack infrastructure, not a HOL theorem port. -/
 def cakeAllocateWordFunctionAfterDeadWithColourWithSsa [OfNat α 0] [WordCseHash α]
     (dead : WordProg α → WordProg α)
     (ssaProducer : Nat → WordProg α → Option (WordSsaState × List Nat × WordProg α))
