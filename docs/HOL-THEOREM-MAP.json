@@ -49472,7 +49472,7 @@
     "lean_name": "removeDeadConventions",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1545-1561 remove_dead_conventions: quantifiers p live nlive lt c with free instruction predicate P leading; HOL's binder k does not occur in the statement and is omitted (documented beside the theorem); the let comp and the six conjuncts in HOL order: flat_exp_conventions, full_inst_ok_less c, pre_alloc_conventions (preAllocConventionsHOL), every_inst P, wf_cutsets as implications and extract_labels equality. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+    "reviewer": "flapjack-main source comparison2026-10-02, review1199 repair: original wordConvsProof1545-1565 and2929-2949. Full original conjunctions, quantified program/live/nlive/loop-table/configuration and leading instruction predicate retained; unused HOL k binder of remove_dead_conventions omitted. Configuration now AsmConfigExact width and instruction convention fullInstOkLessExact, not the untagged broader configuration/policy wrapper. Positive type-indexed words retain original word carriers. No added success, target evaluation, simulation or post-state premise; recursive structural induction preserves exact policy. Executed compiler unchanged. Verification pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
@@ -49481,7 +49481,7 @@
     "lean_name": "removeDeadProgConventions",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1563-1565 remove_dead_prog_conventions: the HOL derived theorem remove_dead_conventions SPEC p LN [] [] with LET_THM/FORALL_AND_THM and GSYM remove_dead_prog_def: free p, c, P and the six conjuncts on remove_dead_prog p. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+    "reviewer": "flapjack-main source comparison2026-10-02, review1199 repair: original wordConvsProof1545-1565 and2929-2949. Full original conjunctions, quantified program/live/nlive/loop-table/configuration and leading instruction predicate retained; unused HOL k binder of remove_dead_conventions omitted. Configuration now AsmConfigExact width and instruction convention fullInstOkLessExact, not the untagged broader configuration/policy wrapper. Positive type-indexed words retain original word carriers. No added success, target evaluation, simulation or post-state premise; recursive structural induction preserves exact policy. Executed compiler unchanged. Verification pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
@@ -51785,7 +51785,7 @@
     "lean_name": "removeMustTerminateConventions",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.11): HOL wordConvsProofScript.sml:2929-2949 remove_must_terminate_conventions: quantifiers p c k with free instruction predicate P leading; the let comp and the five conjuncts in HOL order: flat_exp_conventions, full_inst_ok_less c, post_alloc_conventions k (postAllocConventionsHOL), every_inst P as implications and extract_labels equality. Statement over the exact WordLangProgHOL carrier and the reviewed removeMustTerminate (remove_must_terminate_def); positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeMustTerminate_induct mirroring HOL remove_must_terminate_ind; no extra premise."
+    "reviewer": "flapjack-main source comparison2026-10-02, review1199 repair: original wordConvsProof1545-1565 and2929-2949. Full original conjunctions, quantified program/live/nlive/loop-table/configuration and leading instruction predicate retained; unused HOL k binder of remove_dead_conventions omitted. Configuration now AsmConfigExact width and instruction convention fullInstOkLessExact, not the untagged broader configuration/policy wrapper. Positive type-indexed words retain original word carriers. No added success, target evaluation, simulation or post-state premise; recursive structural induction preserves exact policy. Executed compiler unchanged. Verification pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
