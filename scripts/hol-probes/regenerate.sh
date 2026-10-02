@@ -5051,3 +5051,7 @@ run_probe stack_remove_comp_control_probeScript.sml stack_remove_comp_control_pr
 run_probe lab_to_target_section_prefix_nop_probeScript.sml lab_to_target_section_prefix_nop_probe.out \
   lines_enc_with_nop_pad_section lines_enc_with_nop_pad_section_types mixed_full_guards mixed_padded_encoding mixed_full_tuple prefix_guard_required empty_accumulator only_zero_labels empty_code call_first \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_stateupdates_probeScript.sml stack_remove_stateupdates_probe.out \
+  su_setvar su_setvar_types su_setvar_proved su_getfp su_getfp_types su_getfp_proved su_setfp su_setfp_types su_setfp_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

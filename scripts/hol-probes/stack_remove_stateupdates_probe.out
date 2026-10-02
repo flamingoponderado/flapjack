@@ -1,0 +1,9 @@
+su_setvar=∀jump off k s t v x. state_rel jump off k s t ∧ v < k ⇒ state_rel jump off k (set_var v x s) (set_var v x t)
+su_setvar_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;v:num;x:α word_loc
+su_setvar_proved=T
+su_getfp=∀jump off k s t n. state_rel jump off k s t ⇒ get_fp_var n s = get_fp_var n t
+su_getfp_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;n:num
+su_getfp_proved=T
+su_setfp=∀jump off k s t n v. state_rel jump off k s t ⇒ state_rel jump off k (set_fp_var n v s) (set_fp_var n v t)
+su_setfp_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;n:num;v:word64
+su_setfp_proved=T

@@ -63436,5 +63436,47 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.3: genuine constructor case of full comp_correct1481-1493. Keeps full original source evaluate=(result,postSource), result not SOME Error, full native stateRel and regBound hypotheses, and existential extraNatclock/targetpoststate with compiled evaluate equal same result plus original Halt/TimeOut/FinalFFI ffi equality and full stateRel for every other result. No target-run, postrelation, successful lookup or clock assumption supplied. Actual StackSemEvaluate.evaluate with reviewed34equations, native comp/regBound, StackSemStateFiniteExact canonical regs/fpRegs/store and Spt code. Width has NeZero; independent configuration C/FFI F Type0. Same-module nested Control canonical witness reexports genuine carrier roundtrips; no duplicate owner. Fresh original complete statement/binder-type/kernel proof replay compares identical cases. Conservative inherits_reals_as_rational_cuts marker propagates full evaluator closure assumption from existing FP implementation/docsSOUNDNESS; these specialized constructors perform no FP, and no direct real carrier difference or theorem premise is added. Remaining constructor cases/assembly remain open. Original1683-1684: faithful evaluate_continue returns SOME(Continue label), unchangedsource; compiler leaves constructor unchanged. Supplies0/unchangedtarget, same Continue label and fullstateRel; no weakened result condition or successful-run premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StateUpdates.lean",
+    "lean_name": "stateRelSetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.1: full original register law on imported actual StackSemStateFiniteExact, fullstateRel, and StackSemStateOps native operations. Canonical regs/fpRegs/store maps qualify exact finite support owner; Spt code is not named. Same-module StateUpdates witness reexports genuine actualcarrier broad/exact roundtrips. Width with NeZero and independently quantified configuration/FFI C/F Type0 retained; generic WordLocW width and fixed BitVec64 match source carriers. No duplicate state, targetrun, preservation predicate, successful lookup/update, dimension restriction or extra hypothesis is supplied. Fresh original fullstatement/bindertypes/kernel proof and native generic kernel proof cover the complete source law. Original257-264 state_rel AND register<k imply fullstateRel after same arbitrary Word or Loc update on both native integer maps. Explicit proof register<k ensures no alias with reserved k/k+1/k+2; actual canonical updateEq lookup equation preserves lower-register equality and all reserved heap/base/top lookups. Full26relationconjuncts reconstructed, including unchanged compile/oracle/code/separated memory, not a simplified projection. Original user equality FUPDATE is equality-based, not arbitrary BEq."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StateUpdates.lean",
+    "lean_name": "stateRelGetFpVar",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_get_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.1: full original register law on imported actual StackSemStateFiniteExact, fullstateRel, and StackSemStateOps native operations. Canonical regs/fpRegs/store maps qualify exact finite support owner; Spt code is not named. Same-module StateUpdates witness reexports genuine actualcarrier broad/exact roundtrips. Width with NeZero and independently quantified configuration/FFI C/F Type0 retained; generic WordLocW width and fixed BitVec64 match source carriers. No duplicate state, targetrun, preservation predicate, successful lookup/update, dimension restriction or extra hypothesis is supplied. Fresh original fullstatement/bindertypes/kernel proof and native generic kernel proof cover the complete source law. Original752-757 fullstateRel implies get_fp_var source=get_fp_var target at any Natregister, without integer-register bound. Congruence of the original whole fpRegs equality proves exact lookup equality on canonical fixed64word map; none/present entries preserved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StateUpdates.lean",
+    "lean_name": "stateRelSetFpVar",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_set_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.1: full original register law on imported actual StackSemStateFiniteExact, fullstateRel, and StackSemStateOps native operations. Canonical regs/fpRegs/store maps qualify exact finite support owner; Spt code is not named. Same-module StateUpdates witness reexports genuine actualcarrier broad/exact roundtrips. Width with NeZero and independently quantified configuration/FFI C/F Type0 retained; generic WordLocW width and fixed BitVec64 match source carriers. No duplicate state, targetrun, preservation predicate, successful lookup/update, dimension restriction or extra hypothesis is supplied. Fresh original fullstatement/bindertypes/kernel proof and native generic kernel proof cover the complete source law. Original759-765 fullstateRel implies fullstateRel after assigning any same fixed64word at any Nat FPregister. CanonicalupdateEq congruence preserves wholefpRegs equality; remaining25conjuncts unchanged, including actualheap/register/runtime configuration. No FPexecution/rounding/evaluator definition is changed."
   }
 ]
