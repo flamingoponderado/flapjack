@@ -168,7 +168,7 @@ noncomputable def wordGcMove {width : Nat} [NeZero width] (conf : Config) :
         let c := dm (ptrToAddr conf old w)
         let v := m (ptrToAddr conf old w)
         if wordSemIsFwdPtr v then
-          (.word (updateAddr conf (wordSemTheWord v >>> 2) w), i, pa, m, c)
+          (.word (updateAddr conf (wordSemTheWord v >>> (2 : Nat)) w), i, pa, m, c)
         else
           let headerAddr := ptrToAddr conf old w
           let c := c && (dm headerAddr && wordSemIsWordLoc (m headerAddr))
@@ -176,7 +176,7 @@ noncomputable def wordGcMove {width : Nat} [NeZero width] (conf : Config) :
           let v := i + len + 1
           let (pa1, m1, c1) := memcpy (len + 1) headerAddr pa m dm
           let c := c && (dm headerAddr && c1)
-          let m1 := gcUpdate headerAddr (.word (i <<< 2)) m1
+          let m1 := gcUpdate headerAddr (.word (i <<< (2 : Nat))) m1
           (.word (updateAddr conf i w), v, pa1, m1, c)
 
 /-- Exact HOL `word_gen_gc_partial_move_def` (`word_gcFunctionsScript.sml:84-105`). -/
@@ -197,14 +197,14 @@ noncomputable def wordGenGcPartialMove {width : Nat} [NeZero width] (conf : Conf
           let c := dm (ptrToAddr conf old w)
           let v := m (ptrToAddr conf old w)
           if wordSemIsFwdPtr v then
-            (.word (updateAddr conf (wordSemTheWord v >>> 2) w), i, pa, m, c)
+            (.word (updateAddr conf (wordSemTheWord v >>> (2 : Nat)) w), i, pa, m, c)
           else
             let c := c && (dm headerAddr && wordSemIsWordLoc (m headerAddr))
             let len := decodeLength conf (wordSemTheWord (m headerAddr))
             let v := i + len + 1
             let (pa1, m1, c1) := memcpy (len + 1) headerAddr pa m dm
             let c := c && (dm headerAddr && c1)
-            let m1 := gcUpdate headerAddr (.word (i <<< 2)) m1
+            let m1 := gcUpdate headerAddr (.word (i <<< (2 : Nat))) m1
             (.word (updateAddr conf i w), v, pa1, m1, c)
 
 /-- Exact HOL `word_gc_move_roots_def` (`word_gcFunctionsScript.sml:107-113`). -/
@@ -552,7 +552,7 @@ noncomputable def wordGenGcMove {width : Nat} [NeZero width] (conf : Config) :
         let v := m (ptrToAddr conf old w)
         let c := c && wordSemIsWordLoc v
         if wordSemIsFwdPtr v then
-          (.word (updateAddr conf (wordSemTheWord v >>> 2) w), i, pa, ib, pb, m, c)
+          (.word (updateAddr conf (wordSemTheWord v >>> (2 : Nat)) w), i, pa, ib, pb, m, c)
         else
           let headerAddr := ptrToAddr conf old w
           let c := c && (dm headerAddr && wordSemIsWordLoc (m headerAddr))
@@ -562,13 +562,13 @@ noncomputable def wordGenGcMove {width : Nat} [NeZero width] (conf : Config) :
             let pb1 := pb - (len + 1) * wordSemBytesInWord
             let (_, m1, c1) := memcpy (len + 1) headerAddr pb1 m dm
             let c := c && (dm headerAddr && c1)
-            let m1 := gcUpdate headerAddr (.word (v <<< 2)) m1
+            let m1 := gcUpdate headerAddr (.word (v <<< (2 : Nat))) m1
             (.word (updateAddr conf v w), i, pa, v, pb1, m1, c)
           else
             let v := i + len + 1
             let (pa1, m1, c1) := memcpy (len + 1) headerAddr pa m dm
             let c := c && (dm headerAddr && c1)
-            let m1 := gcUpdate headerAddr (.word (i <<< 2)) m1
+            let m1 := gcUpdate headerAddr (.word (i <<< (2 : Nat))) m1
             (.word (updateAddr conf i w), v, pa1, ib, pb, m1, c)
 
 /-- Exact HOL `word_gen_gc_move_roots_def` (`word_gcFunctionsScript.sml:342-348`). -/
