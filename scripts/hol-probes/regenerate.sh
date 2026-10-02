@@ -3271,6 +3271,10 @@ run_probe word_copy_def_probeScript.sml word_copy_def_probe.out \
   wc_cp_type wc_cpp_type wc_binop wc_binop_self wc_chain wc_chain_state wc_overlap wc_multi wc_nonalloc wc_const wc_shift wc_div wc_carry wc_carry_self wc_overflow wc_longmul wc_longdiv wc_mem wc_mem_kill wc_fp wc_fp_kill wc_skip_inst wc_set_get wc_get_same wc_get_none wc_set_class wc_set_nonalloc wc_set_exp wc_if wc_if_imm wc_loop wc_mt wc_share wc_heap wc_buffers wc_consts wc_consts_kill wc_locvalue_kill wc_call wc_alloc wc_assign wc_store wc_install \
   "$cake_dir/compiler/backend/word_copyScript.sml" "$cake_dir/compiler/backend"
 
+run_probe logroot_log_spec_probeScript.sml logroot_log_spec_probe.out \
+  lg_log_exists lg_log_spec lg_log_unique lg_log2_def lg_log2_8 lg_log2_1 lg_log2_9 lg_log2_64 \
+  "$hol_dir/src/num/extra_theories/logrootScript.sml" "$cake_dir/compiler/backend"
+
 
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
   sc_store sc_store8 sc_store16 sc_store32 sc_load sc_load8 sc_load16 sc_load32 \

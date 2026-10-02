@@ -57132,5 +57132,45 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1396-1404 evaluate_copy_prop: FST (evaluate (e,s)) ≠ SOME Error ⇒ evaluate (copy_prop e, s) = evaluate (e, s), FST as .1, free e s. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "HOL/src/num/extra_theories/logrootScript.sml",
+    "hol_name": "LOG_exists",
+    "lean_path": "Flapjack/Misc/Logroot.lean",
+    "lean_name": "holLOGExists",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:286-287, kernel form ∃f. ∀a n. 1 < a ∧ 0 < n ⇒ a ** f a n ≤ n ∧ n < a ** SUC (f a n); same existential over num -> num -> num, same premise and conclusion with ** as ^ and SUC x as x + 1. The Lean witness is the untagged repeated-division holLogWitness. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
+  },
+  {
+    "hol_path": "HOL/src/num/extra_theories/logrootScript.sml",
+    "hol_name": "LOG",
+    "lean_path": "Flapjack/Misc/Logroot.lean",
+    "lean_name": "holLOG",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:289 new_specification(\"LOG\", [\"LOG\"], LOG_exists) introduces the constant LOG : num -> num -> num about which only the specification theorem holds. Lean renders the constant as Classical.choose of the LOG_exists rendering, the same Hilbert-choice translation already used for float_some_qnan (holFloatSomeQnan). No Lean theorem determines its value outside 1 < a ∧ 0 < n, in particular LOG 2 0 / LOG2 0, exactly as in HOL. No extra axiom (Classical.choice is already in the base), premise or width restriction. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
+  },
+  {
+    "hol_path": "HOL/src/num/extra_theories/logrootScript.sml",
+    "hol_name": "LOG",
+    "lean_path": "Flapjack/Misc/Logroot.lean",
+    "lean_name": "holLOG_spec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:289, the theorem returned by new_specification: ∀a n. 1 < a ∧ 0 < n ⇒ a ** LOG a n ≤ n ∧ n < a ** SUC (LOG a n) (kernel form), same binders, premise and conclusion; proved by Classical.choose_spec. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
+  },
+  {
+    "hol_path": "HOL/src/num/extra_theories/logrootScript.sml",
+    "hol_name": "LOG_UNIQUE",
+    "lean_path": "Flapjack/Misc/Logroot.lean",
+    "lean_name": "holLOG_UNIQUE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:291-306, ∀a n p. a ** p ≤ n ∧ n < a ** SUC p ⇒ LOG a n = p, same binders and no 1 < a / 0 < n premise (as in HOL, they follow from the hypothesis); proved from the specification only. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
+  },
+  {
+    "hol_path": "HOL/src/num/extra_theories/bitScript.sml",
+    "hol_name": "LOG2_def",
+    "lean_path": "Flapjack/Misc/Bit.lean",
+    "lean_name": "holLOG2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): bitScript.sml:54-55 LOG2_def[nocompute]: LOG2 = LOG 2, literal over the tagged holLOG. The untagged holLOG2_eq_log2 identifies it with Nat.log2 exactly on positive arguments via LOG_UNIQUE; LOG2 0 stays unconstrained. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
   }
 ]

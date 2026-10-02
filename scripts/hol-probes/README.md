@@ -4679,6 +4679,14 @@ through a structural program observation and lookups of the `num_map`s on keys `
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_copy_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`logroot_log_spec_probe` captures the original HOL kernel statements of `LOG_exists`, the
+`new_specification` theorem `LOG`, `LOG_UNIQUE` and `LOG2_def`, and four `LOG2` values on
+positive arguments proved in HOL from `LOG_UNIQUE` (`LOG2` is `[nocompute]`). No value of
+`LOG2 0` is derivable from the specification. `LogrootParity` checks the Lean statements
+against the captured ones and proves the same values. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=logroot_log_spec_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 
 `word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
 original missing-bit, SNOC and prefix-reconstruction proofs plus their local

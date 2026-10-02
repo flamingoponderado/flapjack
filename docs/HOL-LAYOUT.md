@@ -149,6 +149,11 @@ declarations remain in `Flapjack/Misc/LprefixLub.lean`.
 The pinned external `HOL/src/n-bit/byteScript.sml` counterpart is
 `Flapjack/Byte.lean` (byte extraction and arbitrary-count word serialization).
 
+The pinned external `HOL/src/num/extra_theories/logrootScript.sml` counterpart is
+`Flapjack/Misc/Logroot.lean` (the specified `LOG`, rendered by Hilbert choice like HOL's
+`new_specification`), and `HOL/src/num/extra_theories/bitScript.sml`'s is `Flapjack/Misc/Bit.lean`
+(`LOG2`).
+
 The pinned external `hol4/src/finite_maps/sptreeScript.sml` counterpart is
 `Flapjack/Misc/Sptree.lean` with submodules under `Flapjack/Misc/Sptree/` (for example
 `Map.lean` for `map_def`/`lookup_map` and `InterEq.lean` for `inter_eq_def`).
