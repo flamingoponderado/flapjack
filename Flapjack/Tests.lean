@@ -1,7 +1,14 @@
+import Flapjack.Test.StackRemoveStubNamesParity
+import Flapjack.Test.BalancedMapInsertCorrectParity
+import Flapjack.Test.FiniteMapCardUpdateParity
+import Flapjack.Test.BalancedMapCardinalityCorrectParity
+import Flapjack.Test.BalancedMapAlmostBalanceCorrectParity
+import Flapjack.Test.BalancedMapBalanceRCorrectParity
 import Flapjack.Test.BalancedMapBalanceREqParity
 import Flapjack.Test.BalancedMapRotateLParity
 import Flapjack.Test.BalancedMapDoubleLParity
 import Flapjack.Test.BalancedMapSingleLParity
+import Flapjack.Test.RegAllocGenericCarrierRepair
 import Flapjack.Test.BalancedMapBalanceLCorrectParity
 import Flapjack.Test.BalancedMapBalanceLEqParity
 import Flapjack.Test.BalancedMapRotateRParity
@@ -26,6 +33,9 @@ import Flapjack.Test.StackToLabNonrecursiveValidityParity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Test.WordToStackReturnAllocArgsParity
+import Flapjack.Test.WordToStackReturnLabelsParity
+import Flapjack.Test.WordToStackLoadContinuationsParity
 import Flapjack.Test.WordToStackMoveReconstructionParity
 import Flapjack.Test.WordToStackALookupMapParity
 import Flapjack.Test.WordToStackNativeInsertWfParity

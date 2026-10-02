@@ -6,7 +6,9 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 
 /-- Original generic reconciliation move-list rewrite. HOL payloads are
 arbitrary inhabited types; THE NONE remains the opaque library value. No
-lookup-success/domain/distinctness premise is added. -/
+lookup-success/domain/distinctness premise is added. Nonempty alpha renders
+HOL type inhabitance; DecidableEq alpha supplies lawful classical equality
+for filtering, available for any type, not an added BEq law. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_reconcile_moves_eq"]
 theorem ssaReconcileMovesEq {α : Type} [Nonempty α] [DecidableEq α]
     (m : Spt α) (f : Nat → α) :

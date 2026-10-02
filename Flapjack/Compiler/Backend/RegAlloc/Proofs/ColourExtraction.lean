@@ -32,8 +32,8 @@ private theorem stExMap_pure {β γ : Type} {f : β → M State γ StateExceptio
 /-- Exact HOL `extract_color_st_ex_MAP_lem` (`reg_allocProofScript.sml:2038-2046`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml"
   "extract_color_st_ex_MAP_lem"]
-theorem extractColorStExMapLem :
-    ∀ (ls : List (Nat × Nat)) (s : State),
+theorem extractColorStExMapLem {α : Type} :
+    ∀ (ls : List (α × Nat)) (s : State),
       (∀ p ∈ ls, p.2 < s.node_tag.length) →
       stExMap (fun (k, v) => bind (nodeTagSub v) fun t => ret (k, extractTag t)) ls s =
         (.success (ls.map fun (k, v) => (k, extractTag (holEl v s.node_tag))), s) := by

@@ -1,0 +1,46 @@
+load "preamble";
+load "lab_to_targetProofTheory";
+open HolKernel Parse preamble lab_to_targetProofTheory;
+val _ = Globals.max_print_depth := 1000;
+val _ = Parse.temp_remove_user_printer ("num.numeral_computations", mk_var("n", numSyntax.num));
+fun emit label th = if null(hyp th) then
+ (print(label ^ "="); print_term(concl th); print "\n")
+ else raise Fail(label ^ " has hypotheses");
+val _ = emit "oracle_tie_def_full" oracle_tie_def;
+val _ = show_types := true;
+val _ = emit "oracle_tie_def_types" oracle_tie_def;
+val _ = show_types := false;
+val _ = emit "oracle_tie_shift_interfer_full" oracle_tie_shift_interfer;
+val _ = show_types := true;
+val _ = emit "oracle_tie_shift_interfer_types" oracle_tie_shift_interfer;
+val _ = show_types := false;
+val _ = emit "oracle_tie_step_full" oracle_tie_step;
+val _ = show_types := true;
+val _ = emit "oracle_tie_step_types" oracle_tie_step;
+val _ = show_types := false;
+val _ = emit "oracle_tie_ffi_step_full" oracle_tie_ffi_step;
+val _ = show_types := true;
+val _ = emit "oracle_tie_ffi_step_types" oracle_tie_ffi_step;
+val _ = show_types := false;
+val _ = emit "oracle_tie_ccache_step_full" oracle_tie_ccache_step;
+val _ = show_types := true;
+val _ = emit "oracle_tie_ccache_step_types" oracle_tie_ccache_step;
+val _ = show_types := false;
+val _ = emit "oracle_tie_ffi_next_full" oracle_tie_ffi_next;
+val _ = show_types := true;
+val _ = emit "oracle_tie_ffi_next_types" oracle_tie_ffi_next;
+val _ = show_types := false;
+val _ = emit "oracle_tie_ccache_next_full" oracle_tie_ccache_next;
+val _ = show_types := true;
+val _ = emit "oracle_tie_ccache_next_types" oracle_tie_ccache_next;
+val _ = show_types := false;
+val _ = emit "oracle_tie_ExtCall_residues_full" oracle_tie_ExtCall_residues;
+val _ = show_types := true;
+val _ = emit "oracle_tie_ExtCall_residues_types" oracle_tie_ExtCall_residues;
+val _ = show_types := false;
+val _ = emit "oracle_tie_install" (Q.prove
+ (`oracle_tie mc ms (s with <| io_regs := target_io_regs mc s.ffi ms;
+    io_fp_regs := target_io_fp_regs mc s.ffi ms;
+    cc_regs := target_cc_regs mc s.ffi ms;
+    cc_fp_regs := target_cc_fp_regs mc s.ffi ms |>)`, simp [oracle_tie_def]));
+val _ = OS.Process.exit OS.Process.success;

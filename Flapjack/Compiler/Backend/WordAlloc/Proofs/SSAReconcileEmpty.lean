@@ -16,15 +16,13 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
 
 end ReconcileEmptyWitnesses
 
-/-- Original empty-moves case of evaluate_ssa_reconcile. Retains both original
-premises and only the actual source branch guard; derives the native total
-pair evaluation and both output relations. The injection premise is unused in
-this branch but is retained for full-theorem assembly. Name-set payloads and
-native configuration/FFI carriers remain independently generic. The evaluator
-inherits reals_as_rational_cuts (SOUNDNESS item 8), although only Skip runs here. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_ssa_reconcile"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+/-- Flapjack-specific proof factoring of the empty-moves branch inside the
+original reconciliation proof. There is no independent HOL declaration: the
+extra empty-moves guard is derived by the full evaluateSSAReconcile theorem's
+case analysis, so this helper carries no HOL theorem tag. It retains the full
+relation and injection inputs for that assembly and proves the total Skip run
+and both output relations. The imported evaluator inherits the
+reals_as_rational_cuts assumption (SOUNDNESS item 8). -/
 theorem evaluateSSAReconcileEmpty {width : Nat} [NeZero width] {C F β : Type}
     (next : Nat) (curSSA tgtSSA : Spt Nat) (names : Spt β)
     (sourceLocals : Spt (WordLocW width))

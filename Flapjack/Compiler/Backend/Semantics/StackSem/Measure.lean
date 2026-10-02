@@ -1,9 +1,8 @@
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 
-/-! Untagged recursion/clock certificate for the forthcoming total StackSem
-`evaluate_def` dispatcher, tracked by `flapjack-y19g` (assembly bead
-`flapjack-y19g.18`).
+/-! Untagged recursion/clock certificate for the total StackSem
+`evaluate_def` dispatcher assembled in Evaluate.lean.
 
 HOL defines `evaluate` with the termination measure
 `inv_image (measure I LEX measure (prog_size (K 0)))

@@ -1,0 +1,21 @@
+load "preamble";
+load "set_sepTheory";
+load "stack_removeProofTheory";
+open bossLib HolKernel Parse preamble set_sepTheory;
+val _ = Globals.linewidth := 20000;
+val _ = print ("fg_full_def=" ^ term_to_string (concl fun2set_def) ^ "\n");
+val _ = print ("fg_full_type=" ^ type_to_string (type_of ``fun2set``) ^ "\n");
+val _ = print ("fg_member_full=" ^ term_to_string (concl fun2set_thm) ^ "\n");
+val _ = print ("memory_full_def=" ^ term_to_string (concl stack_removeProofTheory.memory_def) ^ "\n");
+val _ = print ("memory_full_type=" ^ type_to_string (type_of ``stack_removeProof$memory``) ^ "\n");
+fun check label q = let val th = prove(q, simp [fun2set_thm])
+  in print(label ^ "=" ^ term_to_string(rhs(concl(EQT_INTRO th))) ^ "\n") end;
+val _ = check "fg_nat_bool_member" ``fun2set ((\n:num. n=0), {0;1}) (0,T)``;
+val _ = check "fg_nat_bool_false_value" ``fun2set ((\n:num. n=0), {0;1}) (1,F)``;
+val _ = check "fg_wrong_value" ``~fun2set ((\n:num. n=0), {0;1}) (1,T)``;
+val _ = check "fg_outside_domain" ``~fun2set ((\n:num. n=0), {0;1}) (2,F)``;
+val _ = check "fg_empty_domain" ``~fun2set ((\n:num. n+1), {}) (0,1)``;
+val _ = check "fg_bool_nat_member" ``fun2set ((\b:bool. if b then 7 else 11), {T;F}) (T,7)``;
+val _ = check "fg_bool_nat_other" ``fun2set ((\b:bool. if b then 7 else 11), {T;F}) (F,11)``;
+val _ = check "fg_bool_product_value" ``fun2set ((\b:bool. (3,b)), {T;F}) (F,(3,F))``;
+val _ = check "fg_noninjective" ``fun2set ((\n:num. 0), {1;2}) (2,0)``;

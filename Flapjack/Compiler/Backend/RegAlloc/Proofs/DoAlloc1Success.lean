@@ -130,10 +130,10 @@ theorem fullConsistencyOkSuccess (k : Nat) :
 is free in HOL. -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml"
   "st_ex_FILTER_full_consistency_ok"]
-theorem stExFilterFullConsistencyOk (k : Nat) :
-    ∀ (ls acc : List (Nat × (Nat × Nat))) (s : State),
+theorem stExFilterFullConsistencyOk {α : Type} (k : Nat) :
+    ∀ (ls acc : List (α × (Nat × Nat))) (s : State),
       goodRaState s →
-      ∃ ts, stExFilter (fun (m : Nat × (Nat × Nat)) => fullConsistencyOk k m.2.1 m.2.2) ls acc s =
+      ∃ ts, stExFilter (fun (m : α × (Nat × Nat)) => fullConsistencyOk k m.2.1 m.2.2) ls acc s =
           (.success ts, s) ∧
         ∀ m ∈ ts, (m.2.1 < s.dim ∧ m.2.2 < s.dim) ∨ m ∈ acc := by
   intro ls

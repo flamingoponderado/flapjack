@@ -1,8 +1,14 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAlloc
+import Flapjack.Compiler.Backend.LabToTarget.AddNopProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstall
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticLoop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopIteration
+import Flapjack.Compiler.Backend.StackRemove.StubNames
+import Flapjack.Misc.BalancedMap.InsertCorrect
+import Flapjack.Misc.BalancedMap.CardinalityCorrect
+import Flapjack.Misc.BalancedMap.AlmostBalanceCorrect
+import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceRCorrect
 import Flapjack.Compiler.Backend.LabToTarget.PrefixPreservation
 import Flapjack.Compiler.Backend.LabToTarget.PrefixZero
 import Flapjack.Compiler.Backend.LabToTarget.Alignment
@@ -44,6 +50,9 @@ import Flapjack.Test.LabToTargetLabelValidityParity
 import Flapjack.Test.LabToTargetSimilarLabelsParity
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateEq
 import Flapjack.Test.LabToTargetGoodCodeParity
+import Flapjack.Misc.SetSep
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
 import Flapjack.Compiler.Backend.StackToLab.InitializedProduction
 import Flapjack.Compiler.Backend.StackRemove.InitCode
@@ -58,6 +67,7 @@ import Flapjack.Test.LabPropsLabelSetsParity
 import Flapjack.Test.LabToTargetWordLocationParity
 import Flapjack.Compiler.Backend.LabToTarget.WordLocValByte
 import Flapjack.Compiler.Backend.LabToTarget.StateRel
+import Flapjack.Compiler.Backend.LabToTarget.OracleTie
 import Flapjack.Test.LabToTargetWordLocValByteParity
 import Flapjack.Test.LabToTargetFetchValidityParity
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SequenceLaws
@@ -198,6 +208,9 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnAllocArgs
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveReconstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ALookupMap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
