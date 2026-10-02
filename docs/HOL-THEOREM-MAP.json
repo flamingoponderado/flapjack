@@ -30524,7 +30524,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-deepseek-v41 source comparison (2026-09-30; bead flapjack-y19g.11.2.3) against stackSemScript.sml:729-741 store_const_sem_def (plus unset_var_def at :725-727): if ~ ALL_DISTINCT [0;1;2;3;t1;t2] then (SOME Error, s) else case (get_var 1 s, get_var 2 s, get_var 3 s) of (SOME (Word i), SOME (Word a), SOME (Word off)) => case copy_words (w2n i) a off s.bitmaps s.mdomain s.memory of NONE => (SOME Error, s) | SOME (a,m) => (NONE, (if s.use_alloc then unset_var 0 else I) (set_var t1 (Word 1w) (set_var t2 (Word 1w) (set_var 1 (Word 1w) (set_var 2 (Word a) (s with memory := m)))))) | _ => (SOME Error, s). Lean storeConstSem keeps the guard order, the three Word-operand reads, the w2n i as BitVec.toNat, unset_var 0 as eraseEq 0 on regs, set_var as updateEq, and the exact tagged copyWordsExact; the only translation is the reviewed regs/fpRegs/store HolFiniteMapExact codomain and the positive-width BitVec width words. Direct HOL EVAL rows guard_duplicate, non_word_operand, copy_words_none, success_use_alloc_true, success_use_alloc_false in stacksem_store_const_sem_probe.out are replayed by Flapjack.Test.StackSemStoreConstSemParity. This is the proof-side exact definition; the evaluator production route remains tracked on flapjack-y19g."
+    "reviewer": "flapjack-deepseek-v41 source comparison (2026-09-30; bead flapjack-y19g.11.2.3) against stackSemScript.sml:729-741 store_const_sem_def (plus unset_var_def at :725-727): if ~ ALL_DISTINCT [0;1;2;3;t1;t2] then (SOME Error, s) else case (get_var 1 s, get_var 2 s, get_var 3 s) of (SOME (Word i), SOME (Word a), SOME (Word off)) => case copy_words (w2n i) a off s.bitmaps s.mdomain s.memory of NONE => (SOME Error, s) | SOME (a,m) => (NONE, (if s.use_alloc then unset_var 0 else I) (set_var t1 (Word 1w) (set_var t2 (Word 1w) (set_var 1 (Word 1w) (set_var 2 (Word a) (s with memory := m)))))) | _ => (SOME Error, s). Lean storeConstSem keeps the guard order, the three Word-operand reads, the w2n i as BitVec.toNat, unset_var 0 as eraseEq 0 on regs, set_var as updateEq, and the exact tagged copyWordsExact; the only translation is the reviewed regs/fpRegs/store HolFiniteMapExact codomain and the positive-width BitVec width words. Direct HOL EVAL rows guard_duplicate, non_word_operand, copy_words_none, success_use_alloc_true, success_use_alloc_false in stacksem_store_const_sem_probe.out are replayed by Flapjack.Test.StackSemStoreConstSemParity. This is the proof-side exact definition; the evaluator production route remains tracked on flapjack-y19g. Full original type audit/repair (w1pn): fresh stackSem store_const_sem_def full type is num -> num -> (alpha,gamma,ffi)state -> beta result option # (alpha,gamma,ffi)state, with independent result beta and state alpha words. Lean now retains separate positive width/resultWidth and NeZero instances without new hypotheses. NONE/Error-only clauses and all exact register/copy/update behavior unchanged; actual same-width StoreConstsCase and old parity callers retain original inferred specialization. Qualifiers record canonical state maps and both word dimensions only; they do not license the prior result-carrier specialization. Fresh full original definition/type and all five literal support proofs are captured in stackprops_allocation_constants_probe."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -52990,5 +52990,75 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (qipb): full original StackProps790-798 theorem and literal original proof replayed with captured full inferred type: target:num+beta, regs:beta |-> gamma word_loc, code/e:alpha stackLang$prog. Lean retains arbitrary key kappa, independent positive registerWidth/programWidth, exact HolProg and Spt tree code, original successful input lookup equality, and complete predicate-set subset. fmap_as_finite_support_relation records only canonical standalone regs binder; words_as_type_indexed_bitvec records both independent positive word dimensions. No key equality/BEq, target evaluation, domain, offset-zero, output-state or label premise is added. Proof derives original successful Spt lookup in direct and all indirect branches then uses loc_check original existential disjunct. Full original/native theorem applications use Bool keys with register1/program80 and List Nat keys with register80/program1; missing/word/nonzero-offset source lookup observations retained. Dependent native findCode generic carrier repaired and coordinator accepted62gq before this port. No full compiler pass or source-to-RISC-V composition claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/AllocationConstants.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "lean_name": "allocConst",
+    "hol_name": "alloc_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (xs7j): complete original StackProps170-231 alloc_const literal proof replayed and full quantified types captured. Exact native gc/alloc/storeConstSem and actual imported StackSemStateFiniteExact preserve all source error/success/GC/Halt/copy branches. alloc_const keeps all15 original field equality conjuncts; store_const_sem_const all16 including store, each with sole original returned-pair equality. Clock results are full unconditional Option.map/Prod.map equalities, not a projected or success-only result. Arbitrary state configuration/FFI/domain/GC/compiler functions retained. Store-constant results retain independent resultWidth from state width, confirmed by fresh original definition and theorem types and repaired w1pn; both NeZero instances retained. Canonical regs/fpRegs/store fields have same-module roundtrip witness; qualifiers cover only finite-support and positive word translation. Six allocation and five constant-store original/native full-frame/clock applications and outcomes plus four GC clock cases; no target evaluation, callback law, bounds or domain assumptions added. These are actual evaluate_consts/evaluate_add_clock support results, not a full evaluator/compiler/composition theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/AllocationConstants.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "lean_name": "storeConstSemConst",
+    "hol_name": "store_const_sem_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (xs7j): complete original StackProps170-231 store_const_sem_const literal proof replayed and full quantified types captured. Exact native gc/alloc/storeConstSem and actual imported StackSemStateFiniteExact preserve all source error/success/GC/Halt/copy branches. alloc_const keeps all15 original field equality conjuncts; store_const_sem_const all16 including store, each with sole original returned-pair equality. Clock results are full unconditional Option.map/Prod.map equalities, not a projected or success-only result. Arbitrary state configuration/FFI/domain/GC/compiler functions retained. Store-constant results retain independent resultWidth from state width, confirmed by fresh original definition and theorem types and repaired w1pn; both NeZero instances retained. Canonical regs/fpRegs/store fields have same-module roundtrip witness; qualifiers cover only finite-support and positive word translation. Six allocation and five constant-store original/native full-frame/clock applications and outcomes plus four GC clock cases; no target evaluation, callback law, bounds or domain assumptions added. These are actual evaluate_consts/evaluate_add_clock support results, not a full evaluator/compiler/composition theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/AllocationConstants.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "lean_name": "gcWithClock",
+    "hol_name": "gc_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (xs7j): complete original StackProps170-231 gc_with_const literal proof replayed and full quantified types captured. Exact native gc/alloc/storeConstSem and actual imported StackSemStateFiniteExact preserve all source error/success/GC/Halt/copy branches. alloc_const keeps all15 original field equality conjuncts; store_const_sem_const all16 including store, each with sole original returned-pair equality. Clock results are full unconditional Option.map/Prod.map equalities, not a projected or success-only result. Arbitrary state configuration/FFI/domain/GC/compiler functions retained. Store-constant results retain independent resultWidth from state width, confirmed by fresh original definition and theorem types and repaired w1pn; both NeZero instances retained. Canonical regs/fpRegs/store fields have same-module roundtrip witness; qualifiers cover only finite-support and positive word translation. Six allocation and five constant-store original/native full-frame/clock applications and outcomes plus four GC clock cases; no target evaluation, callback law, bounds or domain assumptions added. These are actual evaluate_consts/evaluate_add_clock support results, not a full evaluator/compiler/composition theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/AllocationConstants.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "lean_name": "allocWithClock",
+    "hol_name": "alloc_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (xs7j): complete original StackProps170-231 alloc_with_const literal proof replayed and full quantified types captured. Exact native gc/alloc/storeConstSem and actual imported StackSemStateFiniteExact preserve all source error/success/GC/Halt/copy branches. alloc_const keeps all15 original field equality conjuncts; store_const_sem_const all16 including store, each with sole original returned-pair equality. Clock results are full unconditional Option.map/Prod.map equalities, not a projected or success-only result. Arbitrary state configuration/FFI/domain/GC/compiler functions retained. Store-constant results retain independent resultWidth from state width, confirmed by fresh original definition and theorem types and repaired w1pn; both NeZero instances retained. Canonical regs/fpRegs/store fields have same-module roundtrip witness; qualifiers cover only finite-support and positive word translation. Six allocation and five constant-store original/native full-frame/clock applications and outcomes plus four GC clock cases; no target evaluation, callback law, bounds or domain assumptions added. These are actual evaluate_consts/evaluate_add_clock support results, not a full evaluator/compiler/composition theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/AllocationConstants.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "lean_name": "storeConstSemWithClock",
+    "hol_name": "store_const_sem_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (xs7j): complete original StackProps170-231 store_const_sem_with_const literal proof replayed and full quantified types captured. Exact native gc/alloc/storeConstSem and actual imported StackSemStateFiniteExact preserve all source error/success/GC/Halt/copy branches. alloc_const keeps all15 original field equality conjuncts; store_const_sem_const all16 including store, each with sole original returned-pair equality. Clock results are full unconditional Option.map/Prod.map equalities, not a projected or success-only result. Arbitrary state configuration/FFI/domain/GC/compiler functions retained. Store-constant results retain independent resultWidth from state width, confirmed by fresh original definition and theorem types and repaired w1pn; both NeZero instances retained. Canonical regs/fpRegs/store fields have same-module roundtrip witness; qualifiers cover only finite-support and positive word translation. Six allocation and five constant-store original/native full-frame/clock applications and outcomes plus four GC clock cases; no target evaluation, callback law, bounds or domain assumptions added. These are actual evaluate_consts/evaluate_add_clock support results, not a full evaluator/compiler/composition theorem."
   }
 ]
