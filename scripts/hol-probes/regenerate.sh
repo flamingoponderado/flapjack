@@ -4288,3 +4288,7 @@ run_probe word_to_stack_filter_bitmap_probeScript.sml word_to_stack_filter_bitma
 run_probe target_interference_sequence_probeScript.sml target_interference_sequence_probe.out \
   next_interference_type interference_app_seq_type interference_count_type interference_pos_type sequence_zero count_zero sequence_absent sequence_present count_absent count_present_true count_present_false \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_register_oracles_probeScript.sml target_register_oracles_probe.out \
+  target_io_regs_type target_io_regs_definition target_io_fp_regs_type target_io_fp_regs_definition target_cc_regs_type target_cc_regs_definition target_cc_fp_regs_type target_cc_fp_regs_definition target_io_absent target_io_fp_absent target_io_fp_present target_io_callee target_io_allowed target_cc_absent target_cc_fp_absent target_cc_fp_present target_cc_callee target_cc_allowed \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
