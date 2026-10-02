@@ -1484,6 +1484,12 @@
       "sha256": "95504f40249189b9e583ccef958d4bba570b1cae1a408fc1a27ff9c4997749a7"
     },
     {
+      "bytes": 1589,
+      "out": "l3_mmu_primitives_probe.out",
+      "rows": 62,
+      "sha256": "3e5ebeb4e54b5c4d40d27df7caf21bf269d243c37fc1eaffadfe0b3e5b5b5d8b"
+    },
+    {
       "bytes": 187,
       "out": "l3_raise_exception_probe.out",
       "rows": 2,
@@ -1686,6 +1692,12 @@
       "out": "lab_to_target_ignore_clocks_probe.out",
       "rows": 2,
       "sha256": "6d344ead7d6941097d29101ecfe53f265f4165d32749a366811123c88999f188"
+    },
+    {
+      "bytes": 470,
+      "out": "lab_to_target_initial_encoding_navigation_probe.out",
+      "rows": 12,
+      "sha256": "478dd25b59916c697fd60a7ecbe73d6de812e03387dd778f2d35b5941100a510"
     },
     {
       "bytes": 1110,
@@ -1964,6 +1976,18 @@
       "sha256": "9cfcf8f7a228d224d8b9936acc4ca91b467a69b700b1819069d760ede3666a66"
     },
     {
+      "bytes": 529,
+      "out": "lab_to_target_section_lookup_ignore_probe.out",
+      "rows": 10,
+      "sha256": "cb7aad71b0e47685222f415990e71d84d6692fda47b9188d542963097c859146"
+    },
+    {
+      "bytes": 1082,
+      "out": "lab_to_target_section_lookup_positions_probe.out",
+      "rows": 14,
+      "sha256": "13abe1463672313cf7b22eacfeae2bfc2ea4e4f9961d6444313689490d75279e"
+    },
+    {
       "bytes": 145,
       "out": "lab_to_target_section_lookup_probe.out",
       "rows": 8,
@@ -2100,6 +2124,12 @@
       "out": "lab_validity_native_probe.out",
       "rows": 19,
       "sha256": "167e997a47efd3a23257f16167854374737ed1e386c949567b3877869a51b4b6"
+    },
+    {
+      "bytes": 408,
+      "out": "labprops_extraction_validity_probe.out",
+      "rows": 9,
+      "sha256": "b5be25472fde0ef8662a5cb6df46c2f48aba6c061e7b069327f75a5f2398cb92"
     },
     {
       "bytes": 4369,
@@ -5426,6 +5456,18 @@
       "sha256": "6a12b22c110cb82870cdb808f94ca89e433e533ad08042cd17d5af1fd083991e"
     },
     {
+      "bytes": 130,
+      "out": "stack_rawcall_collect_probe.out",
+      "rows": 4,
+      "sha256": "384b24b7b0f86f82f70e70838471dda0d76e7dff9e0a653992ce302da28014dc"
+    },
+    {
+      "bytes": 453,
+      "out": "stack_rawcall_native_probe.out",
+      "rows": 7,
+      "sha256": "e98d7b2e8288f69f4c895cd09a8fdd4bc0b6ec36a32aaa209b25df19d677394f"
+    },
+    {
       "bytes": 558,
       "out": "stack_remove_alloc_guard_probe.out",
       "rows": 12,
@@ -5808,6 +5850,12 @@
       "out": "stack_sem_atomic_clocks_probe.out",
       "rows": 10,
       "sha256": "12ff9d1858e8a107f19a8f6013cf0897bcb5fd2c16395dc4287b7573afc013b4"
+    },
+    {
+      "bytes": 1056,
+      "out": "stack_sem_clock_control_probe.out",
+      "rows": 6,
+      "sha256": "4c4749100cac0d1411fac34188cba459adbe880acc7594d18184891021d11b72"
     },
     {
       "bytes": 718,
@@ -7554,6 +7602,12 @@
       "out": "word_to_stack_load_continuations_probe.out",
       "rows": 412,
       "sha256": "5d98aaf9cf54bd2f91a2a3c4acda0754b54cfc7a15ebdfede7942b15ccfc422f"
+    },
+    {
+      "bytes": 11249,
+      "out": "word_to_stack_make_init_probe.out",
+      "rows": 125,
+      "sha256": "e9ca1108e45bb0ce60ee2ebfa8d6f8dce093587911c0f0e8bd63e5f1215518f7"
     },
     {
       "bytes": 20014,
