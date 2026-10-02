@@ -4680,3 +4680,7 @@ run_probe ssa_cc_trans_correct_move_probeScript.sml ssa_cc_trans_correct_move_pr
 run_probe balanced_map_doubleR_probeScript.sml balanced_map_doubleR_probe.out \
   bmdr_full bmdr_tree bmdr_invariant bmdr_lookup0 bmdr_lookup1 bmdr_lookup2 bmdr_badsize \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_rotateR_probeScript.sml balanced_map_rotateR_probe.out \
+  bmrr_full bmrr_single_tree bmrr_single_invariant bmrr_single_lookup0 bmrr_single_lookup1 bmrr_single_lookup2 bmrr_double_tree bmrr_double_invariant bmrr_double_lookup0 bmrr_double_lookup1 bmrr_double_lookup2 \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

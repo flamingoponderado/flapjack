@@ -5263,3 +5263,13 @@ Defined double rotation, invariant, three key lookups and invalid cached-size
 rejection are original observations. `BalancedMapDoubleRParity` kernel-checks
 both full native conclusions and derives the three semantic lookups. The
 inner Bin is proved from original premises, with no missing-output assumption.
+
+### Full right-rotation correctness assembly
+
+`balanced_map_rotateR_probeScript.sml` replays the complete original local
+`rotateR_thm` proof with the entire original singleR/doubleR proofs and local
+prerequisites. Its typed closed statement retains all eight premise conjuncts
+and both invariant/map conclusions. Original actual single/double branch
+outputs, invariants and all three key values are captured.
+`BalancedMapRotateRParity` consumes both complete native conclusions and
+derives six semantic finite-map lookups through the native full lookup theorem.
