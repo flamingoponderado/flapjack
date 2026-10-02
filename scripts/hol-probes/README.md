@@ -4782,3 +4782,9 @@ kernel theorem specialization and complete native state/register/SSA/table
 carriers at AddCarry. Opcode8031–8068, input/output moves and original physical
 and fresh locals relations are manually compared. No standalone tactic replay
 is claimed.
+
+`ssa_cc_trans_correct_inst_addoverflow_probeScript.sml` captures the original
+kernel theorem specialization at AddOverflow, its full simulation and native
+state/register/SSA/table carriers. Opcode8069–8090, signed overflow test and
+actual physical/fresh-flag output path are manually compared. No standalone
+tactic replay is claimed.
