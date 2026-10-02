@@ -581,6 +581,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionFreeze
 import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveReset
 import Flapjack.Compiler.Backend.RegAlloc.ProductionPrefreeze
 import Flapjack.Compiler.Backend.RegAlloc.ProductionSpillChoice
+import Flapjack.Compiler.Backend.RegAlloc.ProductionSpill
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
