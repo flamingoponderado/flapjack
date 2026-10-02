@@ -1734,6 +1734,8 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installRefreshCutNames'): ('Flapjack-specific factoring of original Install9710-9800 preparation, no standalone HOL declaration. Successful source argument/cut guards are evaluator branch facts; actual native rename/scratch execution, preserved data arguments and mapped-cut relation are conclusions, never final correctness premises. Useful dependency of full Install case, not an additional completed HOL theorem port; full six-premise Install simulation and callback/post-rename assembly remain open on flapjack-sola-install.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installPrepareArguments'): ('Flapjack-specific factoring of original Install9710-9800 preparation, no standalone HOL declaration. Successful source argument/cut guards are evaluator branch facts; actual native rename/scratch execution, preserved data arguments and mapped-cut relation are conclusions, never final correctness premises. Useful dependency of full Install case, not an additional completed HOL theorem port; full six-premise Install simulation and callback/post-rename assembly remain open on flapjack-sola-install.'),
     ("Flapjack/Pancake/Semantics/CrepSem/EvaluateIndWhile.lean", "evalCrepSemHOLProgExact_inductWhile"): (
         "Flapjack-specific well-founded clock/sizeOf induction interface, no standalone "
         "HOL declaration. Derives guarded While body and plain-state NONE/Continue0 "
