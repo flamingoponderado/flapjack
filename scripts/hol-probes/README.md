@@ -4553,3 +4553,20 @@ all 208 values/applications. This group does not establish external
 `TotOrd`/`good_cmp`, the balanced-map carrier or full CSE correctness.
 The production list-key comparator route is tracked separately.
 `target_props_io_events_probeScript.sml` replays the full original `evaluate_io_events_mono` quantified theorem with no open hypotheses. `TargetPropsIoEventsParity.lean` checks the same unrestricted statement over the full literal evaluator. Clock induction composes exact returning FFI append with recursive prefix preservation; all failed/final paths retain the original trace.
+
+`stack_props_register_bounds_probeScript.sml` captures all three original
+register-bound definitions and evaluates 504 constructor/boundary cases across
+widths 1/64/80, including all expression/asm/program constructors, ignored FP
+fields, missing-return Call handlers, Set BitmapBase, StoreConsts minimum bound,
+and first-slot StackLoad/StackStore bounds. `StackPropsRegisterBoundsParity.lean`
+checks matching cases and additional arbitrary-width equations. These predicates
+are prerequisites of StackRemove correctness, not its semantic simulation.
+
+`word_to_stack_bitmap_word_lemmas_probeScript.sml` replays five complete
+original WordToStack proof bodies (two even-register maxima and three bitmap
+OR/shift primitives), requiring no open hypotheses, plus three original inferred
+types. Its 267 further cases
+cover empty/singleton register sequences, widths 1/2/32/64/80, zero/all-ones,
+MSB values and discarded top bits. `WordToStackBitmapWordParity.lean` checks
+matching observations/full applications plus arbitrary width/count instances.
+These are full original helper theorems, not a bitmap decoder simulation.
