@@ -139,6 +139,8 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SourceFrameSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList
 import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
 import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape

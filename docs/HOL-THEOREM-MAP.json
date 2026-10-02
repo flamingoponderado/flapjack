@@ -58707,5 +58707,81 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 author source comparison2026-10-02 original full label validity3511-3599 group .10.85 and eight declaration children. Eight literal original statements and proof bodies replayed unchanged in HOL, capturing complete binder types including local theorems. Actual native line/sec/assembly positive-width word dimension, fixed word8 encoding/nop bytes, natural nested Spt labels, original HolFfiName retained; sole word representation qualifier. Initial/repeated encoding, lines/section label-length updates, add_nop, pad_section and pad_code conclusions retain full original EVERY validity, with precisely original source/accumulator EVERY and actual result equality premises where present. Full arbitrary accumulators, position/Bool flags and returned Nat/Bool pair retained; no output validity assumed. enc_secs_again original unused k:beta is vacuous and documented omitted; source binder ffis actually has nested label map carrier, labs FFI list, argument positions correctly preserved without name-based carrier substitution. Proofs reuse reviewed actual CodeSimilar operation laws and validity transport, or actual linesUpdLabLen induction; no target callback, narrower index/position guard, totalHD/EL import or LOG2 completion. Eighteen fresh original observations and26 matching native kernel cases/consumers cover nonempty reverse accumulators, both update parities, false encoding flag, empty nop, original invalid labels and exact extracted-label order. Missing original loop/full remove_labels simulation remains tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SourceFrameSize.lean",
+    "lean_name": "pushEnvSetStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "push_env_set_store",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-source-frame-size): source231-236: arbitrary environment/state/allocation word, actual native pushEnv NONE and setStore AllocSize Word update, full state equality with no premise. Original typed nn is NONE of the actual native handler tuple/prog type. Both functions use the imported reviewed WordSemStateFiniteExact; same canonical fpRegs/store field translation and genuine toBroad/ofBroad roundtrip witness, no duplicate carrier. Source word dimension is positive BitVec width with NeZero, FFI host type is arbitrary universe-zero Type; all source guard/conclusion clauses compared. Fresh literal complete original proof and native fixtures.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SourceFrameSize.lean",
+    "lean_name": "sourceKeyEqStackSize",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "s_key_eq_stack_size",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-source-frame-size): source2107-2117: arbitrary positive-width source stack pair, sole exact sKeyEq premise and complete optional stack_size equality, identical full statement to reviewed native WordProps s_key_eq_stack_size. Reuses that kernel proof, including absent size predictions and handlers. Source word dimension is positive BitVec width with NeZero, FFI host type is arbitrary universe-zero Type; all source guard/conclusion clauses compared. Fresh literal complete original proof and native fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SourceFrameSize.lean",
+    "lean_name": "decStackStackSize",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "dec_stack_stack_size",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-source-frame-size): source2033-2043: arbitrary roots/source/output stacks, only actual successful native wordSemDecStack premise, complete optional stack-size equality. Derives actual decoder key preservation and applies full native size theorem; no desired size/evaluation/relation assumption. Source word dimension is positive BitVec width with NeZero, FFI host type is arbitrary universe-zero Type; all source guard/conclusion clauses compared. Fresh literal complete original proof and native fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SourceFrameSize.lean",
+    "lean_name": "sourceKeyEqPushEnvLocalsSize",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "s_key_eq_push_env_locals_size",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-source-frame-size): source2119-2131: arbitrary native environment/handler option/state/head predicted size/nonGC/GC lists/handler/tail, sole exact key relation on actual native push output. Both original conclusions n=s.locals_size and stack_size s.stack=stack_size tail retained and derived; no size definedness or post-state premise. SOME handler retains full Nat/prog/Nat/Nat tuple even ignored values, and opt2 is arbitrary Nat/Nat/Nat. Existing canonical imported state fpRegs/store translation with native roundtrip witness, no duplicate carrier. Source word dimension is positive BitVec width with NeZero, FFI host type is arbitrary universe-zero Type; all source guard/conclusion clauses compared. Fresh literal complete original proof and native fixtures.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexReconstruction.lean",
+    "lean_name": "indexListEqZip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "index_list_eq_ZIP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-index-reconstruction): source379-383: arbitrary list/base, full native reverse/map/range zip reconstruction with exact key sequence and original values; existing full projection laws establish full tuple-list equality. HOL lists/products/natural arithmetic retained; generic arbitrary payloads need no equality or word qualifier. Fresh literal full original statements/proofs and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexReconstruction.lean",
+    "lean_name": "memIndexListLim",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MEM_index_list_LIM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-index-reconstruction): source386-396: arbitrary list/key/value/base with exact sole membership premise; complete n-k<length result derived from original indexed entry, no lower-key or nonempty assumption added. HOL lists/products/natural arithmetic retained; generic arbitrary payloads need no equality or word qualifier. Fresh literal full original statements/proofs and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexReconstruction.lean",
+    "lean_name": "memIndexListEl",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MEM_index_list_EL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-index-reconstruction): source399-411: arbitrary list/key/value/base with exact sole membership premise and original length-(n-k+1) element recovery result. Bound for native getElem is derived solely from original membership via full MEM_index_list_LIM, not an extra hypothesis/default/Inhabited instance; actual position identity derived from original indexed entry. HOL lists/products/natural arithmetic retained; generic arbitrary payloads need no equality or word qualifier. Fresh literal full original statements/proofs and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexReconstruction.lean",
+    "lean_name": "aLookupIndexList",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "ALOOKUP_index_list",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-index-reconstruction): source414-422: arbitrary list/key/base, exactly original upper guard n<length+k retained with no lower-key guard; native first-match numeric sptAListLookup equals native optional getElem? at (length+k)-(n+1). Includes below-base keys yielding NONE; no lookup success or desired correspondence premise. HOL lists/products/natural arithmetic retained; generic arbitrary payloads need no equality or word qualifier. Fresh literal full original statements/proofs and native boundary fixtures."
   }
 ]
