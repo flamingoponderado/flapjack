@@ -52,7 +52,12 @@ def sptIsEmpty {α : Type} : Spt α → Bool
   | .ln => true
   | _ => false
 
-/-- HOL `sptree$wf`: well-formedness (no internal node whose both children are empty). -/
+/-- HOL `sptree$wf`: all four original clauses over the literal Spt carrier.
+Both branch constructors require recursively well-formed children and reject
+two LN children, including BS nodes with a payload. The payload is never
+compared, so arbitrary types need no equality instance. The existing pinned
+hol4 snapshot supplies the source; no external-source policy changes apply. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "wf_def"]
 def sptWf {α : Type} : Spt α → Bool
   | .ln => true
   | .ls _ => true

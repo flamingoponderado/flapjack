@@ -2,6 +2,36 @@ import Flapjack.Misc.Sptree
 
 namespace Flapjack
 
+/-- Flapjack rewrite interface for the tagged recursive predicate's leaf
+equation; this is not a separate HOL declaration. -/
+theorem sptWf_ls {α : Type} (a : α) : sptWf (.ls a) = true := rfl
+
+/-- Flapjack rewrite interface for the tagged predicate's empty branch
+equation, with no well-formedness assumptions on either child. -/
+theorem sptWf_bn {α : Type} (l r : Spt α) :
+    sptWf (.bn l r) = (sptWf l && sptWf r && !(sptIsEmpty l && sptIsEmpty r)) := rfl
+
+/-- Flapjack rewrite interface for the tagged predicate's valued branch
+equation. A payload does not excuse two empty children. -/
+theorem sptWf_bs {α : Type} (l : Spt α) (a : α) (r : Spt α) :
+    sptWf (.bs l a r) = (sptWf l && sptWf r && !(sptIsEmpty l && sptIsEmpty r)) := rfl
+
+/-- Flapjack logical interface connecting the executed Boolean clauses to
+their complete proposition form. This checks all clauses of the existing
+predicate without introducing a second predicate or assuming validity. -/
+theorem sptWfClauses {α : Type} :
+    sptWf (.ln : Spt α) = true ∧
+    (∀ a : α, sptWf (.ls a) = true) ∧
+    (∀ l r : Spt α, sptWf (.bn l r) = true ↔
+      sptWf l = true ∧ sptWf r = true ∧ ¬ (l = .ln ∧ r = .ln)) ∧
+    (∀ (l : Spt α) (a : α) (r : Spt α), sptWf (.bs l a r) = true ↔
+      sptWf l = true ∧ sptWf r = true ∧ ¬ (l = .ln ∧ r = .ln)) := by
+  refine ⟨rfl, fun _ => rfl, ?_, ?_⟩
+  · intro l r
+    cases l <;> cases r <;> simp [sptWf, sptIsEmpty, and_assoc]
+  · intro l a r
+    cases l <;> cases r <;> simp [sptWf, sptIsEmpty, and_assoc]
+
 /-- Literal source nonempty result for insertion, without a well-formedness premise. -/
 @[hol "hol4/src/finite_maps/sptreeScript.sml" "insert_notEmpty"]
 theorem sptInsertNotEmpty {α : Type} (key : Nat) (value : α) (tree : Spt α) :
