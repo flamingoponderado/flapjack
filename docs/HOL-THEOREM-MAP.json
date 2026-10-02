@@ -53926,5 +53926,22 @@
   "hol_name": "invariant_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL869: six conjuncts retained in order: cached n=1+structural left+right, keyOrdered left Greater, right Less, balanced cached child sizes, left invariant, right invariant; no good_cmp premise. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
+},
+{
+  "lean_path": "Flapjack/Misc/BalancedMap/Semantics.lean",
+  "lean_name": "keySet",
+  "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+  "hol_name": "key_set_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL188 arbitrary cmp key query=Equal forms Set; Ordering constructor translation only; no good_cmp premise. Six original full lookup outputs and both source equations captured; kernel correspondence is representation evidence, not cross-language proof."
+},
+{
+  "lean_path": "Flapjack/Misc/BalancedMap/Semantics.lean",
+  "lean_name": "toFmap",
+  "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+  "hol_name": "to_fmap_def",
+  "statement_status": "reviewed_fmap_as_finite_support_result",
+  "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL825 Tip FEMPTY; Bin cached size ignored, left-biased FUNION followed by equality update at key_set cmp key. Set keys compare by actual set equality through classical DecidableEq, no Boolean comparator shortcut or new premise. Canonical finite support uses actual child supports plus root key; same-module unconditional lookup witness relates declaration on exactly one side to independent raw semanticLookup recursion. Proof-side noncomputability is no runtime replacement; production map wiring remains open. Six original full lookup outputs and both source equations captured; kernel correspondence is representation evidence, not cross-language proof.",
+  "fmap_as_finite_support_result": true
 }
 ]

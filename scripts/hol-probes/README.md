@@ -4595,3 +4595,7 @@ These are full original helper theorems, not a bitmap decoder simulation.
 ## Canonical finite-support union prerequisite
 
 `finite_map_union_probe.out` records seven original lookup observations and the complete `FLOOKUP_FUNION` equation. The overlapping key selects the left value; absent left keys use the right map. Kernel fixtures replay these observations over the canonical finite-support carrier. The carrier extension is untagged infrastructure; this does not complete balanced-map `to_fmap` or production wiring.
+
+## Literal balanced-map semantic finite map
+
+`balanced_map_semantics_probe.out` contains six original set-key lookup outputs and both complete definitions. Kernel fixtures preserve root override, left precedence for child collisions, absent classes, malformed cached sizes and always-Equal/always-Less comparators. Semantic keys are sets compared by equality, not individual keys or Boolean comparator tests. This proof-side map does not replace the production carrier.

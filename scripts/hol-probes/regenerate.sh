@@ -4123,3 +4123,7 @@ run_probe balanced_map_invariants_probeScript.sml balanced_map_invariants_probe.
 run_probe finite_map_union_probeScript.sml finite_map_union_probe.out \
   fmu_0 fmu_1 fmu_2 fmu_3 fmu_4 fmu_empty_left fmu_empty_right fmu_lookup_theorem \
   "$repo_dir/HOL/src/finite_maps/finite_mapScript.sml" "$cake_dir/compiler/backend"
+
+run_probe balanced_map_semantics_probeScript.sml balanced_map_semantics_probe.out \
+  bmf_normal_10 bmf_normal_20 bmf_normal_30 bmf_always_equal bmf_always_less bmf_empty bmf_key_set_definition bmf_map_definition \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"
