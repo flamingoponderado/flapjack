@@ -1,3 +1,4 @@
+import Flapjack.Test.WordReplicateParity
 import Flapjack.Test.L3RiscvMaddParity
 import Flapjack.Test.BackendRestrictZeroParity
 import Flapjack.Test.L3RiscvSqrtParity

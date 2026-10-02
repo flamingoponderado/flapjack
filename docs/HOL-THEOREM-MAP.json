@@ -66015,5 +66015,14 @@
     "hol_name": "restrict_zero_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison: complete backendPropsScript.sml354-357, unconditional arbitrary Nat-pair set comprehension retains original membership and SND equal to zero. No word dimension, map-value specialization, finiteness, extra premise or representation qualifier. Fresh original observations and native kernel replays cover empty/mixed/absent entries, first-component zero versus second-component zero, >64-bit naturals and infinite UNIV. Generic kernel consumer retains arbitrary input sets. Proof-side set definition has no executable compiler caller; prerequisite of lab_to_targetProof5006-5066, not compiler correctness or a cross-language equivalence proof."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Words/Replicate.lean",
+    "lean_name": "holWordReplicate",
+    "hol_path": "HOL/src/n-bit/wordsScript.sml",
+    "hol_name": "word_replicate_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison: pinned HOL wordsScript587-590 FCP i. i<n*dimindex(:a) AND w raw-index(i MOD dimindex(:a)). Lean uses the reviewed holFcpWord and same guard/modulo/index; positive input width implies modulo index in range so getLsbD matches raw FCP access. Independent HOL input/output word dimensions translate to inputWidth/outputWidth with separate NeZero obligations under words_as_type_indexed_bitvec. No count/bound premise or fixed-width restriction; output truncation and bits beyond requested repeats match. Sixteen fresh original full word numeric observations and kernel fixtures cover distinct widths, zero/large counts, truncation and zero filling."
   }
 ]

@@ -5461,3 +5461,6 @@ run_probe backend_restrict_zero_probeScript.sml backend_restrict_zero_probe.out 
   restrict_zero_def empty zero_entry nonzero_entry first_zero absent_entry large_nat infinite \
   "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+run_probe word_replicate_probeScript.sml word_replicate_probe.out \
+  replicate_0 replicate_1 replicate_2 replicate_3 replicate_4 replicate_5 replicate_6 replicate_7 replicate_8 replicate_9 replicate_10 replicate_11 replicate_12 replicate_13 replicate_14 replicate_15 \
+  "$hol_dir/src/n-bit/wordsScript.sml" "$hol_dir/src/n-bit"
