@@ -1,0 +1,4 @@
+su_statement=∀r n st w. FLOOKUP st.regs r = SOME (Word w) ⇒ evaluate (upshift r n,st) = (NONE,st with regs := st.regs⟨r ↦ Word (w + word_offset n)⟩)
+su_proved=T
+sd_statement=∀r n st w. FLOOKUP st.regs r = SOME (Word w) ⇒ evaluate (downshift r n,st) = (NONE,st with regs := st.regs⟨r ↦ Word (w − word_offset n)⟩)
+sd_proved=T

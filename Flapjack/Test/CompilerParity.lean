@@ -1,3 +1,5 @@
+import Flapjack.Test.L3RiscvSqrtParity
+import Flapjack.Test.L3RiscvArithmeticParity
 import Flapjack.Test.SetNewTriggerParity
 import Flapjack.Test.LabToTargetLabelLookupEvennessParity
 import Flapjack.Test.LabToTargetStrongEvenLabelsParity
@@ -171,6 +173,7 @@ import Flapjack.Test.FiniteMapUnionExact
 import Flapjack.Test.ComparisonGoodCmp
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordToStackAsmNameFlatParity
 import Flapjack.Test.WordToStackAsmNameInstructionsParity
 import Flapjack.Test.WordToStackAsmNameShareParity
 import Flapjack.Test.WordToStackSortedRelationsParity

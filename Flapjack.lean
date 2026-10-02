@@ -109,7 +109,10 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapWrites
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackPointer
+import Flapjack.Compiler.Backend.StackRemove.Proofs.AllocationArithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StackAllocSimulation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.ShiftSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
@@ -292,6 +295,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameFlat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameInstructions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameShare
 import Flapjack.Pancake.WordConvs.FullInstOkLess
@@ -551,6 +555,11 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
 import Flapjack.Compiler.Backend.WordToStack.ProductionConfiguration
 import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoves
+import Flapjack.Compiler.Backend.RegAlloc.ProductionStateRelation
+import Flapjack.Compiler.Backend.RegAlloc.ProductionInitialSeed
+import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTransition
+import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTraversal
+import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
