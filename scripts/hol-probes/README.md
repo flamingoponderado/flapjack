@@ -5434,3 +5434,12 @@ ALookupMap probes replay three complete original lookup mapping proofs and
 and payload carriers, repeated/absent/large keys and noninjective sentinels
 retain the original injection boundary. Regression evidence does not establish
 cross-language equivalence.
+
+### Full native LabToTarget state relation
+
+`lab_to_target_state_rel_probeScript.sml` captures the full original relation
+and all inferred carriers, generic target/compiler/memory consequences, whole
+clock-update equivalence, and rejection at the one-element word index. Native
+kernel consumers in `LabToTarget/StateRel.lean` use the complete relation. Lab
+Boolean memory domains are read by equality to true; both Boolean values have
+a checked truth roundtrip. Every FFI/cache/oracle/code-buffer condition remains.
