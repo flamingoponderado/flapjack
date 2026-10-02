@@ -1,0 +1,8 @@
+ia_ffi_type=:num -> word8 list -> α -> α -> (β, α) interference_app
+ia_cc_type=:α word -> α word -> β -> β -> (α, β) interference_app
+ia_isffi_type=:(α, β) interference_app -> bool
+ia_post_type=:(α, β) interference_app -> β
+ia_ffi_classifier=T
+ia_cc_classifier=T
+ia_ffi_post=T
+ia_cc_post=T
