@@ -5761,3 +5761,17 @@ by the original theory, so the probe proves their complete original statements
 and records every quantified binder type. The constant-field result retains
 both compile/oracle transports, and decrement/common-clock laws quantify
 arbitrary clocks, including zero. This does not prove `comp_correct`.
+
+## Isolated native L3 floating-point section
+
+The selected roots are complete original FP comparison and float-to-integer
+state equations at both precisions, with their entire source dependency closure.
+The isolated module includes50 model declarations; full Run/NextRISCV and other
+instructions remain tracked elsewhere. The original comparison probe captures
+83 rows with80 transition kernel replays; the conversion probe captures96
+fully numeric tuples, all kernel replayed; the rounding probe covers22 inputs.
+The real rendering assumption is explicit as SOUNDNESS item8 and qualified
+at the18 declarations that directly use those operations. Remaining state
+access/update/rounding equations have individual complete source comparisons.
+The source-derived root selection validates dependencies; it does not prove
+HOL-to-Lean equivalence, and the broader pending model is not integrated here.

@@ -1,4 +1,8 @@
 import Flapjack.Test.LabToTargetSectionNopEncodingParity
+import Flapjack.Test.L3RiscvFpStateUpdatesParity
+import Flapjack.Test.L3RiscvFpCompareParity
+import Flapjack.Test.L3RiscvFpToIntParity
+import Flapjack.Test.L3RiscvRoundingParity
 import Flapjack.Test.LabToTargetNopInsertEncodingParity
 import Flapjack.Test.LabToTargetNopPaddingParity
 import Flapjack.Test.MiscTakeFlatReplicateParity

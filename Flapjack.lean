@@ -54,6 +54,7 @@ import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
 import Flapjack.Test.LabToTargetSimpleEncoderParity
 import Flapjack.Misc.BalancedMap.RotationCorrect.SingleR
 import Flapjack.Test.LabToTargetEncd0Parity
+import Flapjack.RiscV.L3.Defs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStoreConsts
