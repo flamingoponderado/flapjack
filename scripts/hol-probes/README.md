@@ -4771,6 +4771,12 @@ HOL-proved projection of `asm_step` onto its transition and non-failure conjunct
 Kernel-replayed in `AsmSemStepParity`. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=asm_sem_step_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`asm_props_encoder_correct_probe` captures the original typed `encoder_correct` definition and
+two HOL-proved consumers: its `target_ok` projection and the specialization to the identity
+interference environment. `AsmPropsEncoderCorrectParity` replays both. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=asm_props_encoder_correct_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 
 
 `word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
