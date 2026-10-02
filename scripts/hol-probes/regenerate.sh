@@ -4190,6 +4190,10 @@ run_probe lab_code_safety_probeScript.sml lab_code_safety_probe.out \
   no_install_empty no_share_mem_empty install_excluded shared_excluded \
   safety_empty_any_names safety_install_extcall safety_install_shared_rejected safety_shared_any_names \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_encoding_validity_probeScript.sml lab_to_target_encoding_validity_probe.out \
+  lab_lookup_def lab_lookup_def_types lab_lookup_IMP lab_lookup_IMP_types line_ok_def line_ok_def_types lines_ok_def lines_ok_def_types all_enc_ok_def all_enc_ok_def_types all_enc_ok_cons all_enc_ok_cons_types all_enc_ok_imp_sec_label_zero all_enc_ok_imp_sec_label_zero_types pos_val_0 pos_val_0_types pos_val_bound pos_val_bound_types lookup_generic_bool lookup_outer_missing lookup_inner_missing label_even label_odd label_nonzero asm_skip asm_padding asm_bad_length asm_bad_bytes asm_bad_reg asm_cbw lab_halt lab_install lab_ffi_index lab_ffi_missing_default lab_call_unsupported lab_jump lab_jump_cmp lab_loc lab_missing_label all_empty all_empty_section_even all_empty_section_odd all_code_valid all_code_bytes all_zero_position independent_bound_position \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_navigation_bounds_probeScript.sml lab_to_target_navigation_bounds_probe.out \
   sec_loc_to_pc_bound sec_loc_to_pc_bound_types loc_to_pc_bound loc_to_pc_bound_types zero_empty local_last_bound local_last_count code_empty_tail_bound code_total_count wide_zero_empty \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

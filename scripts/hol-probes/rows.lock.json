@@ -214,6 +214,7 @@
     {"bytes": 1060, "out": "lab_to_target_compile_probe.out", "rows": 21, "sha256": "d64f9df1e4562474b66a9e685fa401d450b0a4468cf3eb246195356647f904c0"},
     {"bytes": 575, "out": "lab_to_target_encoding_probe.out", "rows": 17, "sha256": "bb5bdf41e4844312a76651543cedff3faac7b3fa34994ddd8667a647c70a6b4c"},
     {"bytes": 2675, "out": "lab_to_target_encoding_similarity_probe.out", "rows": 14, "sha256": "8a4bdfbb78128773faf01f725caf09d44fe51293992320fb08bd0e5682f2ab45"},
+    {"bytes": 7942, "out": "lab_to_target_encoding_validity_probe.out", "rows": 46, "sha256": "6ed040c01a7deeed9dcae7bf88e9cef2c06c2f27750f97982ba8eb8583f6dc97"},
     {"bytes": 48, "out": "lab_to_target_ignore_clocks_probe.out", "rows": 2, "sha256": "6d344ead7d6941097d29101ecfe53f265f4165d32749a366811123c88999f188"},
     {"bytes": 568, "out": "lab_to_target_labels_probe.out", "rows": 13, "sha256": "b6ee1f2bd5c736ec442f9025fb3d0376e59fc2f0ddd16cc8e7521c7d3355ef11"},
     {"bytes": 89, "out": "lab_to_target_line_len_probe.out", "rows": 5, "sha256": "767ce000d5991bf953db9bba278281a09f3e5e5758595dac05c509246ea7e143"},
