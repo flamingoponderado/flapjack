@@ -5757,3 +5757,14 @@ by the original theory, so the probe proves their complete original statements
 and records every quantified binder type. The constant-field result retains
 both compile/oracle transports, and decrement/common-clock laws quantify
 arbitrary clocks, including zero. This does not prove `comp_correct`.
+
+### Full StackRemove simulation Skip/Halt/Alloc cases
+
+`stack_remove_comp_atoms_probeScript.sml` reproves the first three genuine
+`comp_correct` cases from the pinned original compiler, evaluator and full
+state relation. Every case keeps all four original premises and the
+existential extra clock/target poststate, same-result evaluation and complete
+result-dependent FFI/state-relation conclusion. Full binder types are captured.
+Halt permits either Word or Loc payloads; Alloc is excluded by the original
+relation's allocation flag and original non-Error premise. No target run is
+assumed. The remaining constructor cases and assembly are still required.

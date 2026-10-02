@@ -5005,3 +5005,7 @@ run_probe stack_remove_staterel_probeScript.sml stack_remove_staterel_probe.out 
 run_probe stack_remove_statelaws_probeScript.sml stack_remove_statelaws_probe.out \
   sl_getvar sl_getvar_types sl_getvar_proved sl_decclock sl_decclock_types sl_decclock_proved sl_withclock sl_withclock_types sl_withclock_proved sl_const sl_const_types sl_const_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_atoms_probeScript.sml stack_remove_comp_atoms_probe.out \
+  cc_skip cc_skip_types cc_skip_proved cc_halt cc_halt_types cc_halt_proved cc_alloc cc_alloc_types cc_alloc_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
