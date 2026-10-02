@@ -66592,5 +66592,74 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10398-10427 all23 fields, original positive word width/ffi host and Nat-counter paired target configuration retained. Imported canonical owners have local non-vacuous codec roundtrips; only traversed fp/store finite maps qualified, source locals/code/stack_size remain exact Spt trees. Handler deletion, empty stack and its stack_size, identity permutation, indexed frame mapping via full native compile_prog false (Nil,0), complete native list compiler false threads original counter and flattened bitmap with target callback NONE/SOME and returned configuration. Original complete definition printed and124 fresh ground observations at widths1/8/64/80 include malformed trees, inherited fields, callback failure and full success outputs; Lean kernel replays independent outputs. No init_state_ok/state_rel/GC correctness or cross-language equivalence claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "alloc_correct_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/AllocCorrect.lean",
+    "lean_name": "alloc_correct_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02, bead .5.8.6: original stack_allocProofScript.sml5078-5105. Retains allocation equality, nonerror, word_gc_fun equality, bitmap length and stack byte bound, register0 return and register1 word premises. Exhausts original None/Simple/Generational gc_kind internally using their reviewed full statements; no kind-selection or successful target evaluation premise. Retains existential clock/register map, actual wordGcCode evaluate equation and complete compiled-code/state overrides, non-none Halt Word1, SUBMAP and normal-return register0 conclusions. Canonical regs/fpRegs/store use same imported owning StackSemStateFiniteExact and local genuine broad/canonical roundtrip witness; positive BitVec width with NeZero and universe0 host types only. Inherits the reals_as_rational_cuts assumption through evaluate Inst closure (SOUNDNESS item8), not a claim to review arbitrary untagged dependencies. Overall allocation/pass correctness remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
+    "hol_name": "dest_case_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
+    "lean_name": "destCase",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 .15.4.2: original dest_case43-47/comp_seq61-71/comp76-89/comp_top112-115, full actual HolProg carrier and Spt Nat info map. Exact INL tail recognition and NONE optional guards, missing lookup/default, equal/smaller/larger natural subtraction trees, recursive Seq/If/Loop and SOME-return continuations, NONE-return handler untouched, comp_top first Seq retained. Positive BitVec width/NeZero is sole representation translation; source tree map uses native Spt without finite-map qualifier. Seven fresh original complete trees and matching kernel replay. Production replacement and pass proof remain separate obligations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
+    "hol_name": "comp_seq_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
+    "lean_name": "compSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 .15.4.2: original dest_case43-47/comp_seq61-71/comp76-89/comp_top112-115, full actual HolProg carrier and Spt Nat info map. Exact INL tail recognition and NONE optional guards, missing lookup/default, equal/smaller/larger natural subtraction trees, recursive Seq/If/Loop and SOME-return continuations, NONE-return handler untouched, comp_top first Seq retained. Positive BitVec width/NeZero is sole representation translation; source tree map uses native Spt without finite-map qualifier. Seven fresh original complete trees and matching kernel replay. Production replacement and pass proof remain separate obligations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
+    "hol_name": "comp_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
+    "lean_name": "comp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 .15.4.2: original dest_case43-47/comp_seq61-71/comp76-89/comp_top112-115, full actual HolProg carrier and Spt Nat info map. Exact INL tail recognition and NONE optional guards, missing lookup/default, equal/smaller/larger natural subtraction trees, recursive Seq/If/Loop and SOME-return continuations, NONE-return handler untouched, comp_top first Seq retained. Positive BitVec width/NeZero is sole representation translation; source tree map uses native Spt without finite-map qualifier. Seven fresh original complete trees and matching kernel replay. Production replacement and pass proof remain separate obligations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
+    "hol_name": "comp_top_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
+    "lean_name": "compTop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 .15.4.2: original dest_case43-47/comp_seq61-71/comp76-89/comp_top112-115, full actual HolProg carrier and Spt Nat info map. Exact INL tail recognition and NONE optional guards, missing lookup/default, equal/smaller/larger natural subtraction trees, recursive Seq/If/Loop and SOME-return continuations, NONE-return handler untouched, comp_top first Seq retained. Positive BitVec width/NeZero is sole representation translation; source tree map uses native Spt without finite-map qualifier. Seven fresh original complete trees and matching kernel replay. Production replacement and pass proof remain separate obligations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
+    "hol_name": "seq_stack_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
+    "lean_name": "seqStackAlloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 .15.4.4: original stack_rawcallScript18-38, seq_stack_alloc matches only Seq(StackAlloc k) body; bare and nested nonleading allocations return NONE, zero frame accepted. collect_info [] preserves supplied map; each list head updates actual Spt Nat only for SOME allocation then recursively processes rest, retaining last recognized duplicate key and existing untouched keys. Exact native HolProg carrier/positive BitVec NeZero word dimension is sole translation; HOL num_map is native Spt not finite-map carrier. Four fresh original full observations and kernel replay cover source clauses and duplicate/existing/missing map results. Production routing remains separately OPEN .4.3."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
+    "hol_name": "collect_info_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
+    "lean_name": "collectInfo",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 .15.4.4: original stack_rawcallScript18-38, seq_stack_alloc matches only Seq(StackAlloc k) body; bare and nested nonleading allocations return NONE, zero frame accepted. collect_info [] preserves supplied map; each list head updates actual Spt Nat only for SOME allocation then recursively processes rest, retaining last recognized duplicate key and existing untouched keys. Exact native HolProg carrier/positive BitVec NeZero word dimension is sole translation; HOL num_map is native Spt not finite-map carrier. Four fresh original full observations and kernel replay cover source clauses and duplicate/existing/missing map results. Production routing remains separately OPEN .4.3."
   }
 ]

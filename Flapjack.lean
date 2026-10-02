@@ -1,4 +1,5 @@
 import Flapjack.RiscV.L3.Defs.MMU.Primitives
+import Flapjack.Compiler.Backend.StackRawCall
 import Flapjack.RiscV.L3.Defs.MMU.Exception
 import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
 import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
@@ -1655,6 +1656,7 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Partial
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Full
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocNone
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocCorrect
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMove
