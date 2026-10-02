@@ -4776,3 +4776,9 @@ kernel theorem specialization at LongDiv and complete state/register/SSA/table
 carriers. Full six-premise simulation, physical input/output moves and mapped
 divisor preservation are manually compared to opcode7998–8030; no standalone
 tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_addcarry_probeScript.sml` captures the original
+kernel theorem specialization and complete native state/register/SSA/table
+carriers at AddCarry. Opcode8031–8068, input/output moves and original physical
+and fresh locals relations are manually compared. No standalone tactic replay
+is claimed.

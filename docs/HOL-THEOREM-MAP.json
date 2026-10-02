@@ -56231,5 +56231,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Source comparison: full native LongDiv7998-8030 opcode of ssa_cc_trans_correct, original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals. No targetrun/success/poststate/IH assumptions. Actual compiler physicalMove6/0 preserves mapped divisor via original physical locals/getVar relations, then LongDiv0/6/6/0 andfreshoutputMove. Native numerator w3.toNat*2^width+w4.toNat, divisor.toNat, Nat quotient/remainder and nonzero/quotient bound match HOL w2n/dimword/DIV/MOD. Original map extension/two fresh setVar relations plus distinct insert_swap prove outputs in source remainder/quotient order, including aliases. Missing/nonword/zero/overflow preserve Error exemption. Full positiveBitVec/Nat/sharedType0 code-FFI/native state/Spt/table carriers compared to original kernel theorem specialization. Canonical fpRegs/store finite-support and words translation only, inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Original opcode proof manually reviewed; actual kernel theorem Q.SPEC/carriers PASS, no standalone tactic replay claimed. Lean kernel PASS; fullInst remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstAddCarry.lean",
+  "lean_name": "ssaCcTransCorrectInstAddCarry",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: full original AddCarry8031-8068 opcode of ssa_cc_trans_correct, same six premises/full Error-exempt source permutation/result/frame/result-sensitive locals; no targetrun/success/poststate/IH assumptions. Actual compiler inputMove physical0, AddCarry freshresult/mappedoperands/0, thenoutputMove freshcarry. Original physical locals/getVar relations preserve operands through input write; original map extension, fresh result relation, physical carry preservation and secondfresh relation prove outputs including source aliases. Actual wordAddCarryHOL uses any nonzero incomingcarry as1, sum/wordoverflow flag same original word_add_carry. Missing/nonwordreads retain Error exemption. Full positiveBitVec/Nat/sharedType0 code-FFI/native state/Spt/table carriers compared to original kernel theorem specialization. Canonical fpRegs/store finite-support and words translation only; inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Original opcode proof manually reviewed, original kernel theoremQ.SPEC/carriers PASS, no standalone tactic replay claimed. Lean kernel PASS; fullInst remains open."
 }
 ]
