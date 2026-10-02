@@ -59187,5 +59187,39 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 author source comparison2026-10-02 full original byte-length invariant3615-3699, coherent .86 with eight declaration children. Original two definitions, complete all_encd0 overloaded lambda and all five literal original theorem statements/proofs/types freshly captured. The overload printing name was temporarily hidden then restored inside the isolated probe to expose its actual EVERY sec_encd0 body; original source unchanged. Native arbitrary positive-width HolAsm/Line/Section and natural nested Spt labels, original HolFfiName and fixed word8 byte lists retained, sole word representation qualifier. Label annotations unrestricted; Asm requires actual encoder bytes and exact recorded physical length; LabAsm requires actual encoder bytes at its stored word, length lower bound and an existential word realizing annotated length. Complete original source+accumulator EVERY and actual result equality guards retained; all encoder/position/flags/output binders and original free encoder parameter remain quantified. Initial encoding constructs zero-word witness; repeated max update derives the old encoder-word witness when old length dominates or actual newly resolved word when new bytes dominate. No assumed output invariant, witness or desired compilation result. Full label update law preserves arbitrary annotation witnesses by unchanged nonlabel clauses. Fourteen original observations T and19 matching kernel fixtures/generic consumers include complete shrinking/growing/equal-word output tuples, false flag, reversed nonempty accumulator, unrestricted label annotation, invalid Asm cache and empty encoder. No held totalHD/EL or LOG2 dependency, no production evaluator change, no full loop/remove_labels/compile_correct closure claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallLocalRecovery.lean",
+    "lean_name": "getVarsFromList2Eq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_vars_fromList2_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-call-local-recovery): source5149-5165 full successful GENLIST even-key caller read plus fromList2 lookup implies original caller locals lookup. Native arbitrary argument element type is retained despite only its length being used; width/C/F state quantifiers retained. No bound or desired source lookup premise. Actual tagged native sptFromList2 even-key fold, private optional observation kernel proof covers every key/index, no totalHD/EL or default. Four literal whole original proof replays (get_vars_eq prerequisite plus three ports) and 538 matching natural/Boolean/native state fixtures.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallLocalRecovery.lean",
+    "lean_name": "getVarsFromList2EqCons",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_vars_fromList2_eq_cons",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-call-local-recovery): source5168-5187 full shifted GENLIST caller read, Loc reserved at key zero and original nonzero lookup guard; complete source locals lookup. Native Loc carries both original Nat fields, no extra positive-index/read-length premise. Actual tagged native sptFromList2 even-key fold, private optional observation kernel proof covers every key/index, no totalHD/EL or default. Four literal whole original proof replays (get_vars_eq prerequisite plus three ports) and 538 matching natural/Boolean/native state fixtures.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallLocalRecovery.lean",
+    "lean_name": "lookupFromList2Prefix",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "lookup_fromList2_prefix",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-call-local-recovery): source5190-5199 full arbitrary generic lists/payload/key, original prefix and lookup-success premises, whole lookup equality. HOL uppercase IS_PREFIX z x reverses lowercase isPREFIX per original rich_listScript304; native x.IsPrefix z retains direction from shorter x to extended z. No list-distinctness, wf or lower/upper key guard. Actual tagged native sptFromList2 even-key fold, private optional observation kernel proof covers every key/index, no totalHD/EL or default. Four literal whole original proof replays (get_vars_eq prerequisite plus three ports) and 538 matching natural/Boolean/native state fixtures."
   }
 ]
