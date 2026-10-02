@@ -5181,3 +5181,6 @@ run_probe stack_remove_comp_inst_probeScript.sml stack_remove_comp_inst_probe.ou
 run_probe word_to_stack_reg_output_probeScript.sml word_to_stack_reg_output_probe.out \
   rbo_must_alloc rbo_loop_if_reg rbo_seq_loops rbo_tail_indirect rbo_return_direct rbo_handler_indirect \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_offset_padding_probeScript.sml lab_to_target_offset_padding_probe.out \
+  lines_offset_ok_pad_section lines_offset_ok_pad_section_types mixed_original_five_guards mixed_full_tuple mixed_output_offsets empty_nop_offsets multibyte_nop_offsets zero_label_head_accumulator empty_accumulator_mask head_guard_necessary input_parity_necessary all_seven_opcodes empty_width1 large_width80 \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
