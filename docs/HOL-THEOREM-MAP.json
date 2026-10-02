@@ -56365,5 +56365,41 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 original source comparison 2026-10-02, original line516 and bead .10.58. Fresh full original equations/types captured in lab_to_target_word_location_probe.out. Both original clauses retain arbitrary positive word dimension, base p, nested natural Spt labels and original word_loc Word/Loc constructors. Word w returns SOME w unchanged; Loc performs actual lab_lookup, NONE remains NONE, successful natural q is converted by n2w and added to p using modular word arithmetic. words_as_type_indexed_bitvec is the sole representation translation; no word specialization, callback, fallback offset, success premise, HD/EL or byte-alignment dependency. Six actual original and matching kernel observations cover Word, location hit, modular wrap, outer/inner miss and one-bit width; three full generic kernel consumers retain arbitrary base, labels, keys and natural offset. Proof-side relation helper directly used by original full state_rel, not a production compiler route or completed simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstractionLength.lean",
+    "lean_name": "absStackEmpty",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_stack_empty",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Complete original empty1802/CONS_NIL6592/LENGTH6606/empty-prime6616. Actual reviewed absStack/handlerVal and faithful WordSemStackFrame/WordLocW carriers. Retains independent ignored frame-word dimension as in standalone source abstraction (existing generality probe also checks it), bitmap and concrete-stack words share source dimension; standard positive BitVec translation only. Full successful abstraction handlerVal equals concrete stack length with only original successful abstraction premise, no state/stack-rel or validity/bounds assumptions. Induction covers empty terminal Word0 sentinel, normal bitmap header+payload and handler marker/loc/hv/bitmap header+payload, invalid bitmap/length/short-stack branches; frame-size and saved locals are ignored as in original definition. Empty laws retain complete original conclusions and success guards. Fresh four literal whole original statements/proof bodies hyp=[] plus252 matching original/kernel successful/failing handlerVal Option projections across1/2/8/32/64/80bitmap widths and independent1/80saved-frame dimensions, arbitrary savedsize/cutsets/handler payload, empty/normal/handler/mixed/nested/zero-length/malformed header/short payload/unused bitmap tails. Standard Lean axioms only; no totalHD/EL/provenance expansion. Full stack_rel_aux/state/pass/compiler remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstractionLength.lean",
+    "lean_name": "absStackConsNil",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_stack_CONS_NIL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Complete original empty1802/CONS_NIL6592/LENGTH6606/empty-prime6616. Actual reviewed absStack/handlerVal and faithful WordSemStackFrame/WordLocW carriers. Retains independent ignored frame-word dimension as in standalone source abstraction (existing generality probe also checks it), bitmap and concrete-stack words share source dimension; standard positive BitVec translation only. Full successful abstraction handlerVal equals concrete stack length with only original successful abstraction premise, no state/stack-rel or validity/bounds assumptions. Induction covers empty terminal Word0 sentinel, normal bitmap header+payload and handler marker/loc/hv/bitmap header+payload, invalid bitmap/length/short-stack branches; frame-size and saved locals are ignored as in original definition. Empty laws retain complete original conclusions and success guards. Fresh four literal whole original statements/proof bodies hyp=[] plus252 matching original/kernel successful/failing handlerVal Option projections across1/2/8/32/64/80bitmap widths and independent1/80saved-frame dimensions, arbitrary savedsize/cutsets/handler payload, empty/normal/handler/mixed/nested/zero-length/malformed header/short payload/unused bitmap tails. Standard Lean axioms only; no totalHD/EL/provenance expansion. Full stack_rel_aux/state/pass/compiler remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstractionLength.lean",
+    "lean_name": "absStackLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_stack_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Complete original empty1802/CONS_NIL6592/LENGTH6606/empty-prime6616. Actual reviewed absStack/handlerVal and faithful WordSemStackFrame/WordLocW carriers. Retains independent ignored frame-word dimension as in standalone source abstraction (existing generality probe also checks it), bitmap and concrete-stack words share source dimension; standard positive BitVec translation only. Full successful abstraction handlerVal equals concrete stack length with only original successful abstraction premise, no state/stack-rel or validity/bounds assumptions. Induction covers empty terminal Word0 sentinel, normal bitmap header+payload and handler marker/loc/hv/bitmap header+payload, invalid bitmap/length/short-stack branches; frame-size and saved locals are ignored as in original definition. Empty laws retain complete original conclusions and success guards. Fresh four literal whole original statements/proof bodies hyp=[] plus252 matching original/kernel successful/failing handlerVal Option projections across1/2/8/32/64/80bitmap widths and independent1/80saved-frame dimensions, arbitrary savedsize/cutsets/handler payload, empty/normal/handler/mixed/nested/zero-length/malformed header/short payload/unused bitmap tails. Standard Lean axioms only; no totalHD/EL/provenance expansion. Full stack_rel_aux/state/pass/compiler remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstractionLength.lean",
+    "lean_name": "absStackEmptyTarget",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_stack_empty'",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-02: Complete original empty1802/CONS_NIL6592/LENGTH6606/empty-prime6616. Actual reviewed absStack/handlerVal and faithful WordSemStackFrame/WordLocW carriers. Retains independent ignored frame-word dimension as in standalone source abstraction (existing generality probe also checks it), bitmap and concrete-stack words share source dimension; standard positive BitVec translation only. Full successful abstraction handlerVal equals concrete stack length with only original successful abstraction premise, no state/stack-rel or validity/bounds assumptions. Induction covers empty terminal Word0 sentinel, normal bitmap header+payload and handler marker/loc/hv/bitmap header+payload, invalid bitmap/length/short-stack branches; frame-size and saved locals are ignored as in original definition. Empty laws retain complete original conclusions and success guards. Fresh four literal whole original statements/proof bodies hyp=[] plus252 matching original/kernel successful/failing handlerVal Option projections across1/2/8/32/64/80bitmap widths and independent1/80saved-frame dimensions, arbitrary savedsize/cutsets/handler payload, empty/normal/handler/mixed/nested/zero-length/malformed header/short payload/unused bitmap tails. Standard Lean axioms only; no totalHD/EL/provenance expansion. Full stack_rel_aux/state/pass/compiler remains unfinished."
   }
 ]
