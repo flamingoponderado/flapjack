@@ -5614,6 +5614,8 @@ run_probe l3_mmu_insert_probeScript.sml l3_mmu_insert_probe.out \
 
 run_probe l3_mmu_walk_probeScript.sml l3_mmu_walk_probe.out \
   walk_invalid walk_pointer_zero walk_pointer_type_one walk_leaf_read walk_leaf_write walk_leaf_already_rd walk_permission_denied walk_leaf_global walk_superpage_unaligned_ppn walk_pointer_leaf walk_leaf_level4 walk_leaf_level1000 walk_recursive_ppn_truncated walk_pointer_type_one_leaf walk_pte_address_wrap \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
 run_probe stack_sem_evaluate_clock_probeScript.sml stack_sem_evaluate_clock_probe.out \
   gc_clock_statement gc_clock_proved alloc_clock_statement alloc_clock_proved store_const_sem_clock_statement store_const_sem_clock_proved inst_clock_statement inst_clock_proved sh_mem_op_clock_statement sh_mem_op_clock_proved evaluate_clock_statement evaluate_clock_proved fix_clock_evaluate_statement fix_clock_evaluate_proved \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
