@@ -60872,5 +60872,18 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 original534-539: full arbitrary positive word dimension, base, nested native Spt labels, actual arbitrary memory function, address and endian. Literal word_loc_val on memory(byte_align address); NONE preserved, SOME word passed to original get_byte fixed word8. Uses accepted native holByteAlign/holLOG2 and HolByte.getByte. All widths1-7 retain symbolic global LOG2(0); no zero completion, width restriction or production panByteAlignHOL equality. Production correspondence bead .18.5.4.3.9 stays open. words_as_type_indexed_bitvec is the only representation translation. Generic kernel word/hit/miss cases and one-bit symbolic actual memory plus eleven fresh original rows cover full equation/types, endian, aligned nonconstant memory, actual label hit/misses and narrow widths. Native relation helper, not completed state relation or executable compiler replacement."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MoveReconstruction.lean",
+    "lean_name": "alistInsertGetVars",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "alist_insert_get_vars",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-alist-move-reconstruction): full original3612-3701 all six original premises retained: distinct destination keys, actual successful native getVars, distinct IS_SOME-filtered option list, wf locals, selected destination subset, nonself destination coverage. Whole native Spt equality with exact MAP THE/FILTER/ALOOKUP/get_var updates and actual successful value-list insertion, no desired lookup/output/extra bound premise. Both distinctness premises retained even though the observation proof works without using them. Original omitted-self case uses coverage to derive destination=source and read success to derive unchanged lookup. Imported canonical WordSem state actual fpRegs/store |-> fields, locals original Spt not fmap, local roundtrip witness; arbitrary positive type-indexed WordLoc/BitVec width and C/F Type0, no word width restriction. Existing approved option THE only, no NONE default specified or list HD/EL hold bypass. Five literal whole original proof replays hyp=[] and560 matching kernel/original full read/whole-tree/six-guard packets across1/2/8/64/80 widths, parallel swaps/duplicate guards/omitted self/missing reads/malformed trees/70bit keys. Fifteen additional isolated subset-failure packets observe successful reads plus absent selected-key lookup and exactly the false subset guard, without attempting THE NONE. No production/whole compiler equivalence claim."
   }
 ]
