@@ -4824,6 +4824,23 @@ observation in `WordUnreachDefParity`. Regenerate with
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 
+`target_position_unique_probeScript.sml` captures the complete original
+`interference_count_lt` and `interference_pos_unique` theorem statements,
+checking that both compiled original theorems have no undischarged hypotheses.
+The native Lean counterparts are in `TargetProps/PositionUnique.lean`.
+
+`target_position_laws_probeScript.sml` prints the full original
+`interference_count_tail` and `interference_pos_head` statements and checks
+that the original compiled theorems have no undischarged hypotheses.
+Native counterparts are in `TargetProps/PositionLaws.lean`.
+
+`target_position_tail_probeScript.sml` captures complete original
+`interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
+checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
+
+`target_constructed_oracles_probeScript.sml` captures full six-conjunct original
+`constructed_oracles_ffi_step` and `constructed_oracles_cc_step` statements,
+checking no undischarged hypotheses. Native ports are in `TargetProps/ConstructedOracles.lean`.
 ### Balanced-map ordering/domain equivalence
 
 `balanced_map_domain_probe.out` captures the complete original `to_fmap_key_set`
@@ -4995,6 +5012,17 @@ manually reviewed; no standalone tactic replay is claimed.
 FPSqrt/FPAdd/FPSub/FPMul/FPDiv/FPFma specializations and native carriers. Original
 FP proof8174–8222, unchanged-SSA FP writes and inherited rational/choice arithmetic
 operations are manually compared; no standalone tactic replay is claimed.
+`target_oracle_equality_probeScript.sml` captures the complete original
+`interference_count_EQ` and `constructed_oracles_EQ` statements with no
+undischarged hypotheses. Native counterparts are in `TargetProps/OracleEquality.lean`.
+
+`target_callee_saved_probeScript.sml` captures complete original
+`target_io_regs_callee_saved` and `target_cc_regs_callee_saved` statements
+with no open hypotheses. Native ports are in `TargetProps/CalleeSaved.lean`.
+
+`target_next_cases_probeScript.sml` captures complete original
+`next_interference_ExtCall` and `next_interference_ccache` statements and
+checks no undischarged hypotheses. Native ports are in `TargetProps/NextCases.lean`.
 `target_position_unique_probeScript.sml` captures the complete original
 `interference_count_lt` and `interference_pos_unique` theorem statements,
 checking that both compiled original theorems have no undischarged hypotheses.
@@ -5018,3 +5046,6 @@ manually reviewed; no standalone tactic replay is claimed.
 FPMovToReg specialization and native carriers. Original FP proof8174–8222,
 width64 one-write and otherwidth two-write low/high extraction and destination
 aliases are manually reviewed; no standalone tactic replay is claimed.
+`target_next_mapped_probeScript.sml` captures the complete original
+`next_interference_MappedRead` and `next_interference_MappedWrite` statements
+with no open hypotheses. Native ports are in `TargetProps/NextMapped.lean`.

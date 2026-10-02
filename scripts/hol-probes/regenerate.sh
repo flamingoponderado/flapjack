@@ -4388,6 +4388,29 @@ run_probe target_next_interference_probeScript.sml target_next_interference_prob
   next_intro_full_statement next_shift_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe target_search_const_probeScript.sml target_search_const_probe.out \
+  search_const_full_statement next_const_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_sequence_laws_probeScript.sml target_sequence_laws_probe.out \
+  sequence_eq_full_statement sequence_tail_full_statement count_mono_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_position_unique_probeScript.sml target_position_unique_probe.out \
+  count_lt_full_statement pos_unique_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_position_laws_probeScript.sml target_position_laws_probe.out \
+  count_tail_full_statement pos_head_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_position_tail_probeScript.sml target_position_tail_probe.out \
+  pos_tail_hit_full_statement pos_tail_miss_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_constructed_oracles_probeScript.sml target_constructed_oracles_probe.out \
+  oracles_ffi_step_full_statement oracles_cc_step_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe ssa_cc_trans_correct_inst_longdiv_probeScript.sml ssa_cc_trans_correct_inst_longdiv_probe.out \
   inst_longdiv_full inst_longdiv_type_st inst_longdiv_type_cst inst_longdiv_type_dst inst_longdiv_type_src inst_longdiv_type_left inst_longdiv_type_right inst_longdiv_type_divisor inst_longdiv_type_ssa inst_longdiv_type_next inst_longdiv_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4443,6 +4466,18 @@ run_probe balanced_map_core_types_probeScript.sml balanced_map_core_types_probe.
 run_probe balanced_map_key_ordered_types_probeScript.sml balanced_map_key_ordered_types_probe.out \
   bmkt_ordered bmkt_invariant \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe target_oracle_equality_probeScript.sml target_oracle_equality_probe.out \
+  count_eq_full_statement oracles_eq_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_callee_saved_probeScript.sml target_callee_saved_probe.out \
+  io_callee_saved_full_statement cc_callee_saved_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_next_cases_probeScript.sml target_next_cases_probe.out \
+  next_extcall_full_statement next_cache_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe target_search_const_probeScript.sml target_search_const_probe.out \
   search_const_full_statement next_const_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -4525,3 +4560,6 @@ run_probe ssa_cc_trans_correct_inst_fpint_probeScript.sml ssa_cc_trans_correct_i
 run_probe ssa_cc_trans_correct_inst_fpmovtoreg_probeScript.sml ssa_cc_trans_correct_inst_fpmovtoreg_probe.out \
   fp_mov_to_reg_full fp_mov_to_reg_type_st fp_mov_to_reg_type_cst fp_mov_to_reg_type_first fp_mov_to_reg_type_second fp_mov_to_reg_type_fp fp_mov_to_reg_type_ssa fp_mov_to_reg_type_next fp_mov_to_reg_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe target_next_mapped_probeScript.sml target_next_mapped_probe.out \
+  next_mapped_read_full_statement next_mapped_write_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
