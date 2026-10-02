@@ -53066,5 +53066,61 @@
     "lean_name": "sortSorted",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10.2), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: mllistScript.sml:297-301, ∀R L. transitive R ∧ total R ⇒ sorting$SORTED R (sort R L) over the exact tagged sort. HOL R : 'a -> 'a -> bool is the Lean r : α → α → Bool of the tagged mllist sort; where HOL uses R propositionally (SORTED R, transitive R, total R, R x y) Lean uses fun a b => r a b = true, with SORTED/transitive/total the exact tagged holSorted/holTransitive/holTotal. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "SORTED_HEAD_LT",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/StempAssignment.lean",
+    "lean_name": "sortedHeadLt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10): reg_allocProofScript.sml:537-548 [local], col h free in HOL (explicit parameters, both num per the kernel term), ∀ls. col < h ∧ SORTED (λx y. x ≤ y) (h::ls) ⇒ ¬MEM col ls. Statement compared clause by clause with the source text; free variables and binder types re-elaborated in HOL (reg_allocProofTheory, show_types; scratch wip/st_types.sml), since [local] theorems are not exported by DB.fetch. EVERY is ∀ x ∈ l, MEM list membership, LUPDATE List.set, M_success/M_failure Exc.success/Exc.failure, record update `s with f := v` the Lean structure update, SORTED/no_clash/good_neg_pref the exact tagged holSorted/noClash/goodNegPref. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and node_tag/adj_ls subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "unbound_colour_correct",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/StempAssignment.lean",
+    "lean_name": "unboundColourCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10): reg_allocProofScript.sml:551-569. Kernel binder audit: ∀(ls:num list) (k:num) (k':α) with k' vacuous; kept as {α : Type} (_k' : α) in binder order. unbound_colour the exact tagged unboundColour. Statement compared clause by clause with the source text; free variables and binder types re-elaborated in HOL (reg_allocProofTheory, show_types; scratch wip/st_types.sml), since [local] theorems are not exported by DB.fetch. EVERY is ∀ x ∈ l, MEM list membership, LUPDATE List.set, M_success/M_failure Exc.success/Exc.failure, record update `s with f := v` the Lean structure update, SORTED/no_clash/good_neg_pref the exact tagged holSorted/noClash/goodNegPref. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and node_tag/adj_ls subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "assign_Stemp_tag_correct",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/StempAssignment.lean",
+    "lean_name": "assignStempTagCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10): reg_allocProofScript.sml:586-645, s n k prefs free in HOL (explicit parameters; prefs at kernel type num -> num list -> ra_state -> (num option, state_exn) exc # ra_state); the per-node if-then-else with the ∃k'. EL n s'.node_tag = Fixed k' ∧ k ≤ k' branch as a Lean if; assign_Stemp_tag the exact tagged assignStempTag (bads via the mllist sort, sorted by sort_SORTED). Statement compared clause by clause with the source text; free variables and binder types re-elaborated in HOL (reg_allocProofTheory, show_types; scratch wip/st_types.sml), since [local] theorems are not exported by DB.fetch. EVERY is ∀ x ∈ l, MEM list membership, LUPDATE List.set, M_success/M_failure Exc.success/Exc.failure, record update `s with f := v` the Lean structure update, SORTED/no_clash/good_neg_pref the exact tagged holSorted/noClash/goodNegPref. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and node_tag/adj_ls subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "assign_Stemps_FOREACH_lem",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/StempAssignment.lean",
+    "lean_name": "assignStempsForeachLem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10): reg_allocProofScript.sml:648-685 [local], prefs free in HOL (explicit parameter), ∀ls s k with the four premises; conclusion conjuncts in HOL order (no_clash, good_ra_state, the per-node clause, then the state equation). Statement compared clause by clause with the source text; free variables and binder types re-elaborated in HOL (reg_allocProofTheory, show_types; scratch wip/st_types.sml), since [local] theorems are not exported by DB.fetch. EVERY is ∀ x ∈ l, MEM list membership, LUPDATE List.set, M_success/M_failure Exc.success/Exc.failure, record update `s with f := v` the Lean structure update, SORTED/no_clash/good_neg_pref the exact tagged holSorted/noClash/goodNegPref. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and node_tag/adj_ls subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "assign_Stemps_correct",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/StempAssignment.lean",
+    "lean_name": "assignStempsCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10): reg_allocProofScript.sml:687-716, s k prefs free in HOL (explicit parameters); assign_Stemps the exact tagged assignStemps (COUNT_LIST/GENLIST as List.range). Statement compared clause by clause with the source text; free variables and binder types re-elaborated in HOL (reg_allocProofTheory, show_types; scratch wip/st_types.sml), since [local] theorems are not exported by DB.fetch. EVERY is ∀ x ∈ l, MEM list membership, LUPDATE List.set, M_success/M_failure Exc.success/Exc.failure, record update `s with f := v` the Lean structure update, SORTED/no_clash/good_neg_pref the exact tagged holSorted/noClash/goodNegPref. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and node_tag/adj_ls subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "neg_first_match_col_correct",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/StempAssignment.lean",
+    "lean_name": "negFirstMatchColCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10): reg_allocProofScript.sml:3207-3219 [local], k free in HOL (explicit parameter), ∀x ks s; the `case res of M_failure v => v = Subscript | M_success (SOME c) => ¬MEM c ks ∧ k ≤ c | _ => T` as a Lean match with a wildcard True arm; neg_first_match_col the exact tagged negFirstMatchCol. Statement compared clause by clause with the source text; free variables and binder types re-elaborated in HOL (reg_allocProofTheory, show_types; scratch wip/st_types.sml), since [local] theorems are not exported by DB.fetch. EVERY is ∀ x ∈ l, MEM list membership, LUPDATE List.set, M_success/M_failure Exc.success/Exc.failure, record update `s with f := v` the Lean structure update, SORTED/no_clash/good_neg_pref the exact tagged holSorted/noClash/goodNegPref. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and node_tag/adj_ls subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "good_neg_pref_neg_biased_pref",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/StempAssignment.lean",
+    "lean_name": "goodNegPrefNegBiasedPref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10): reg_allocProofScript.sml:3221-3232, k t free in HOL (explicit parameters, t : num list num_map as Spt (List Nat)); neg_biased_pref and handle_Subscript the exact tagged negBiasedPref/handleSubscript. Statement compared clause by clause with the source text; free variables and binder types re-elaborated in HOL (reg_allocProofTheory, show_types; scratch wip/st_types.sml), since [local] theorems are not exported by DB.fetch. EVERY is ∀ x ∈ l, MEM list membership, LUPDATE List.set, M_success/M_failure Exc.success/Exc.failure, record update `s with f := v` the Lean structure update, SORTED/no_clash/good_neg_pref the exact tagged holSorted/noClash/goodNegPref. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and node_tag/adj_ls subscripts read through HOL EL as the exact holEl."
   }
 ]

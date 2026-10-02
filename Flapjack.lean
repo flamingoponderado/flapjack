@@ -1297,6 +1297,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.PhaseSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.EdgeInsertion
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.CliqueSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.AtempAssignment
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.StempAssignment
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.CoalesceSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.FreezeSpillSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoAlloc1Success
