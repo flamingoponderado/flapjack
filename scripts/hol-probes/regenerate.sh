@@ -5040,3 +5040,7 @@ run_probe word_to_stack_call_args_compiler_probeScript.sml word_to_stack_call_ar
 run_probe stack_remove_comp_atoms_probeScript.sml stack_remove_comp_atoms_probe.out \
   cc_skip cc_skip_types cc_skip_proved cc_halt cc_halt_types cc_halt_proved cc_alloc cc_alloc_types cc_alloc_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_section_prefix_nop_probeScript.sml lab_to_target_section_prefix_nop_probe.out \
+  lines_enc_with_nop_pad_section lines_enc_with_nop_pad_section_types mixed_full_guards mixed_padded_encoding mixed_full_tuple prefix_guard_required empty_accumulator only_zero_labels empty_code call_first \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

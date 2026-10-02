@@ -1,0 +1,19 @@
+lines_enc_with_nop_pad_section=∀(nop :word8 list) (code :α line list) (aux :α line list) (pos :num).
+  nop = (enc :α asm -> word8 list) (Inst (Skip :α inst) :α asm) ∧
+  LENGTH nop = (1 :num) ∧
+  lines_encd enc (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list)
+    (pos + (SUM (MAP (line_len :α line -> num) aux) :num)) code ∧
+  lines_enc_with_nop enc labs ffis pos (REVERSE aux) ∧
+  EVERY (is_Label :α line -> bool) aux ∧
+  EVERY (label_one :α line -> bool) code ∧ label_prefix_zero code ⇒
+  lines_enc_with_nop enc labs ffis pos (pad_section nop code aux)
+lines_enc_with_nop_pad_section_types=(nop :word8 list)::word8 list;(code :α line list)::α line list;(aux :α line list)::α line list;(pos :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(enc :α asm -> word8 list)::α asm -> word8 list;
+mixed_full_guards=T
+mixed_padded_encoding=T
+mixed_full_tuple=T
+prefix_guard_required=T
+empty_accumulator=T
+only_zero_labels=T
+empty_code=T
+call_first=T
