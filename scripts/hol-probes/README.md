@@ -6173,3 +6173,18 @@ The `l3_fetch_primitives_probeScript.sml` family also captures the complete orig
 type and unconditional generic equation. It preserves THE NONE and does not
 claim to cover the separate model Fetch declaration. Its Lean replay is a generic
 kernel equality over the full native state.
+
+`l3_model_fetch_probe.out` captures the full original riscv model Fetch
+definition/type, an arbitrary-state odd-PC equation, and eighteen fully reduced
+route observations. L3ModelFetchParity kernel-checks an unconditional complete
+state equation and matching numeric cases: odd PC including unknown VM and word
+wrap, five unsupported VM modes, Bare half/word decoding and wrapped byte reads,
+Sv39/Sv48 TLB hits, denied permission, successful superpage walks and invalid
+PTE. Observations include all nine Delta fields on current/other cores, Skip,
+all nine fields of all sixteen TLB slots, PTE memory, exception and core metadata.
+PTE byte fixtures use equivalent explicit eight-byte maps in Lean, avoiding
+unreachable huge exponent reduction; every unrelated state field is arbitrary.
+The original walk clears the low PPN bits at a superpage level and sets PTE_R
+(bit 5), yielding PTE3111 and physical offset1656 in these two walk cases.
+This is the full model Fetch, distinct from riscv_step Fetch; probes are
+regression evidence, not cross-assistant equivalence or full modelRun coverage.

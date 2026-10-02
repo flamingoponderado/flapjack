@@ -67084,5 +67084,13 @@
     "hol_name": "Fetch_def",
     "statement_status": "reviewed_exact",
     "reviewer": "Source compared riscv_stepScript.sml:28-32: full native state; translateAddr (PC s, Instruction, Read); THE optional returned address; rawReadInst on returned state. No successful-translation premise and canonical unspecified THE NONE preserved. Separate step namespace does not claim the different model Fetch definition."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Fetch.lean",
+    "lean_name": "Fetch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Fetch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared model riscvScript.sml:11947-12156, not step Fetch: Unit argument/full native riscv_state and FetchResult carriers. PC bit0 error preserves original state before translation. NONE translation fault preserves returned state. SOME rawReadInst on returned state followed by all nine literal sequential Delta writes (exc_taken/fetch_exc false, virtual pc/raw rinstr, addr/data1/data2/fp_data/st_width NONE), preserving other cores and all other state fields/MMU effects. Existing Delta/writeDelta are reviewed exact Defs.lean declarations; no extra success/alignment/core-bound premise and no substituted evaluator."
   }
 ]

@@ -5692,3 +5692,7 @@ run_probe l3_fetch_primitives_probeScript.sml l3_fetch_primitives_probe.out \
 run_probe l3_step_fetch_probeScript.sml l3_step_fetch_probe.out \
   step_fetch_full_definition step_fetch_full_type step_fetch_generic_equation \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+
+run_probe l3_model_fetch_probeScript.sml l3_model_fetch_probe.out \
+  model_fetch_full_definition model_fetch_full_type model_fetch_odd_generic_equation odd_unknown_vm odd_wrap none_vm_1 none_vm_2 none_vm_8 none_vm_11 none_vm_12 bare_0_0 bare_0_3 bare_2_3 bare_18446744073709551614_0 bare_18446744073709551614_3 hit_sv39 hit_sv48_half hit_denied walk_sv39 walk_sv48 walk_invalid \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
