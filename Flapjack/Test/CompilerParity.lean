@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackBitmapDecodeParity
 import Flapjack.Test.WordToStackKeyValueOrderParity
 import Flapjack.Test.WordToStackBitmapSentinelLengthParity
 import Flapjack.Test.WordToStackBitmapBitStructureParity
