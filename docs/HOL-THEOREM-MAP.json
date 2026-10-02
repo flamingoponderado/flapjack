@@ -65106,5 +65106,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 original2118-2126 full StackFree constructor: exactly original4premises/native total source evaluate,nonError,fullstateRel,originalregBound; existential native compiled targetevaluation and original resultbranch. Complete original recursive theorem supplies target execution/postrelation, no weakened evaluator or additional successful-target premise. Exceptional result FFI equality derived from fullpostrelation. Other compiler cases/fulltheorem remainopen. Native positive width NeZero/HolProg/BitVec, Type0 C/F and actual canonical regs/fpRegs/store state with same-module genuine roundtrip witness; code remains Spt. Full evaluator inherits reals_as_rational_cuts assumption explicitly, no new trusted decision."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackAllocSimulation.lean",
+    "lean_name": "evaluateSingleStackAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "evaluate_single_stack_alloc",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 original420-548: exactly original fullstateRel, result/postsource pair equality to available-space conditional (HaltWord2/emptyEnv or NONE/stackSpace-count), countnonzero and maxStackAlloc bound. Existential native singleStackAlloc targetevaluation with target.clock+clock and original ifspace<count FFI equality else fullpostrelation. Both jumptrue and conditionalfalse native paths retained, actual Sub/Add/SeqfixClock/operandcodec/evaluation; original bounds derive unsigned guard via kernel allocationGuard, no guardresult premise. Overflow actual StackErrLab stub lookup from fullstateRel, findCode/decClock/const/halt executed; clock1 witness supplies jumpclock. Conditional overflow also clock1 witness allowed by original existential/FFIonly branch. Successful clock0 and full26postrelation derived by untagged source-local stateRelAllocStep, no supplied postrelation. Positive width nativeBitVec/HolProg, Type0 C/F and actual canonical imported regs/fpRegs/store with same-module genuine witness; Sptcode excluded. Entire evaluator inherits reals_as_rational_cuts assumption explicitly retained. Fresh literal original full theorem proof already replayed in allocation-guard probe ag_statement/ag_proved; no executablechange or newtrust."
   }
 ]

@@ -104,6 +104,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackPointer
 import Flapjack.Compiler.Backend.StackRemove.Proofs.AllocationArithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StackAllocSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
