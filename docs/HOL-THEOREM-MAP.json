@@ -61719,5 +61719,77 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b source comparison 2026-10-02: full original generic comparator/tree statement with good_cmp and invariant premises only. HOL FCARD is CARD of FDOM; canonical card counts precisely the finite defined lookup domain, not support-list length. Comparator-equivalence Set keys and actual toFmap producer retained. Original invariant_eq derives disjoint domains and root absence; finite union and fresh-update cardinality reproduce original induction. Structural size and cached size retain original equations; no finite key carrier or cardinality hypothesis. Literal original complete proofs and local disjoint-union prerequisite replay closed hyp=[]. Only reviewed canonical producer observation representation differs; no executable change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OracleTie.lean",
+    "lean_name": "oracleTie",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c full original source/type comparison2026-10-02 original788-956, native oracle group. Actual four entire native oracle-function equalities and independent generic compiler configuration C, FFI host F, machine S/projection Q. Full arbitrary positive word dimension, actual native LabSem.State and MachineConfig, independent Type0 C/F/S/Q and fixed word64/word8 preserved. words_as_type_indexed_bitvec is the sole representation translation. Fresh unchanged original whole theorem and inferred types captured; complete generic kernel proof and actual four-field tied-state construction, no extra target-run/oracle equality/success/residue premise. holEl/holHd review: imported actual interference search keeps literal total EL/HD nil opaque holArb at the original guards, no added bound or fallback; ExtCall direct holEl retains original name equality guard. Compiler execution unchanged; full pass and end-to-end goal remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OracleTie.lean",
+    "lean_name": "oracleTie_shiftInterfer",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_shift_interfer",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c full original source/type comparison2026-10-02 original788-956, native oracle group. Original shifted-search premise only; nextInterferenceShift plus constructedOraclesEq prove all four unchanged oracles, target/saved/pointer equalities follow from actual shiftInterfer record fields. Full arbitrary positive word dimension, actual native LabSem.State and MachineConfig, independent Type0 C/F/S/Q and fixed word64/word8 preserved. words_as_type_indexed_bitvec is the sole representation translation. Fresh unchanged original whole theorem and inferred types captured; complete generic kernel proof and actual four-field tied-state construction, no extra target-run/oracle equality/success/residue premise. holEl/holHd review: imported actual interference search keeps literal total EL/HD nil opaque holArb at the original guards, no added bound or fallback; ExtCall direct holEl retains original name equality guard. Compiler execution unchanged; full pass and end-to-end goal remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OracleTie.lean",
+    "lean_name": "oracleTie_step",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_step",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c full original source/type comparison2026-10-02 original788-956, native oracle group. Original unchanged four function fields and FFI plus shifted searches only; derives next whole tie, no assumed post-tie. Full arbitrary positive word dimension, actual native LabSem.State and MachineConfig, independent Type0 C/F/S/Q and fixed word64/word8 preserved. words_as_type_indexed_bitvec is the sole representation translation. Fresh unchanged original whole theorem and inferred types captured; complete generic kernel proof and actual four-field tied-state construction, no extra target-run/oracle equality/success/residue premise. holEl/holHd review: imported actual interference search keeps literal total EL/HD nil opaque holArb at the original guards, no added bound or fallback; ExtCall direct holEl retains original name equality guard. Compiler execution unchanged; full pass and end-to-end goal remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OracleTie.lean",
+    "lean_name": "oracleTie_ffiStep",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_ffi_step",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c full original source/type comparison2026-10-02 original788-956, native oracle group. All six conclusions retained: universal first IO register/FP residues, whole shifted IO/FP function tails, whole unchanged cache/FP functions. Actual constructedOraclesFfiStep proves residues. Full arbitrary positive word dimension, actual native LabSem.State and MachineConfig, independent Type0 C/F/S/Q and fixed word64/word8 preserved. words_as_type_indexed_bitvec is the sole representation translation. Fresh unchanged original whole theorem and inferred types captured; complete generic kernel proof and actual four-field tied-state construction, no extra target-run/oracle equality/success/residue premise. holEl/holHd review: imported actual interference search keeps literal total EL/HD nil opaque holArb at the original guards, no added bound or fallback; ExtCall direct holEl retains original name equality guard. Compiler execution unchanged; full pass and end-to-end goal remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OracleTie.lean",
+    "lean_name": "oracleTie_cacheStep",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_ccache_step",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c full original source/type comparison2026-10-02 original788-956, native oracle group. All six cache conclusions retained, including pointer-register preservation, complete cache/FP tails and unchanged IO/FP functions. Actual constructedOraclesCcStep proves residues. Full arbitrary positive word dimension, actual native LabSem.State and MachineConfig, independent Type0 C/F/S/Q and fixed word64/word8 preserved. words_as_type_indexed_bitvec is the sole representation translation. Fresh unchanged original whole theorem and inferred types captured; complete generic kernel proof and actual four-field tied-state construction, no extra target-run/oracle equality/success/residue premise. holEl/holHd review: imported actual interference search keeps literal total EL/HD nil opaque holArb at the original guards, no added bound or fallback; ExtCall direct holEl retains original name equality guard. Compiler execution unchanged; full pass and end-to-end goal remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OracleTie.lean",
+    "lean_name": "oracleTie_ffiNext",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_ffi_next",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c full original source/type comparison2026-10-02 original788-956, native oracle group. All original updated IO/FP, unchanged cache/FP and returned FFI equalities only; full next tie derived from FFI step. Full arbitrary positive word dimension, actual native LabSem.State and MachineConfig, independent Type0 C/F/S/Q and fixed word64/word8 preserved. words_as_type_indexed_bitvec is the sole representation translation. Fresh unchanged original whole theorem and inferred types captured; complete generic kernel proof and actual four-field tied-state construction, no extra target-run/oracle equality/success/residue premise. holEl/holHd review: imported actual interference search keeps literal total EL/HD nil opaque holArb at the original guards, no added bound or fallback; ExtCall direct holEl retains original name equality guard. Compiler execution unchanged; full pass and end-to-end goal remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OracleTie.lean",
+    "lean_name": "oracleTie_cacheNext",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_ccache_next",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c full original source/type comparison2026-10-02 original788-956, native oracle group. All original updated cache/FP, unchanged IO/FP and returned FFI equalities only; full next tie derived from cache step. Full arbitrary positive word dimension, actual native LabSem.State and MachineConfig, independent Type0 C/F/S/Q and fixed word64/word8 preserved. words_as_type_indexed_bitvec is the sole representation translation. Fresh unchanged original whole theorem and inferred types captured; complete generic kernel proof and actual four-field tied-state construction, no extra target-run/oracle equality/success/residue premise. holEl/holHd review: imported actual interference search keeps literal total EL/HD nil opaque holArb at the original guards, no added bound or fallback; ExtCall direct holEl retains original name equality guard. Compiler execution unchanged; full pass and end-to-end goal remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OracleTie.lean",
+    "lean_name": "oracleTie_extCallResidues",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_ExtCall_residues",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c full original source/type comparison2026-10-02 original788-956, native oracle group. All original shifted searches, program-domain difference, halt/cache exclusions, entry index/name, ALOOKUP NONE, byte reads and FFI return guards retained. Whole register and FP function equalities derived from actual nextInterferenceExtCall and FFI oracle step. Original get_reg_value with I is native getRegValue with id. First-hit natural ALOOKUP compatibility to List.lookup is kernel-proved for arbitrary lists including duplicates, no altered key equality or uniqueness assumption. Full arbitrary positive word dimension, actual native LabSem.State and MachineConfig, independent Type0 C/F/S/Q and fixed word64/word8 preserved. words_as_type_indexed_bitvec is the sole representation translation. Fresh unchanged original whole theorem and inferred types captured; complete generic kernel proof and actual four-field tied-state construction, no extra target-run/oracle equality/success/residue premise. holEl/holHd review: imported actual interference search keeps literal total EL/HD nil opaque holArb at the original guards, no added bound or fallback; ExtCall direct holEl retains original name equality guard. Compiler execution unchanged; full pass and end-to-end goal remain open."
   }
 ]

@@ -5453,6 +5453,24 @@ ALookupMap probes replay three complete original lookup mapping proofs and
 and payload carriers, repeated/absent/large keys and noninjective sentinels
 retain the original injection boundary. Regression evidence does not establish
 cross-language equivalence.
+
+### Full native LabToTarget state relation
+
+`lab_to_target_state_rel_probeScript.sml` captures the full original relation
+and all inferred carriers, generic target/compiler/memory consequences, whole
+clock-update equivalence, and rejection at the one-element word index. Native
+kernel consumers in `LabToTarget/StateRel.lean` use the complete relation. Lab
+Boolean memory domains are read by equality to true; both Boolean values have
+a checked truth roundtrip. Every FFI/cache/oracle/code-buffer condition remains.
+
+### Full native LabToTarget positional oracle tie
+
+`lab_to_target_oracle_tie_probeScript.sml` captures the full original definition
+and seven whole shift/state/FFI/cache/residue theorem statements with inferred
+carrier types. An original proved four-field record installation satisfies the
+full relation. Kernel proofs in `LabToTarget/OracleTie.lean` derive every whole
+function equality from the actual native interference search/step; external
+residues keep all original guards and total EL behavior.
 `ssa_loop_semantic_helpers_probe` replays the two original local HOL statements
 and literal source proof scripts at word_allocProof7018–7034: successful-first
 sequence collapse and empty-list cut identity. Six inferred carrier types are
