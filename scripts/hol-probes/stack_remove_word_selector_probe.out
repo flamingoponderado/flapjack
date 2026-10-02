@@ -1,0 +1,13 @@
+sw_type=:α word_loc option -> α word
+sw_def=the_SOME_Word (SOME (Word w)) = w
+sw_primitive=the_SOME_Word = WFREC (@R. WF R) (λthe_SOME_Word a. case a of NONE => ARB | SOME (Word w) => I w | SOME (Loc v2 v3) => ARB)
+sw_full=∀x. the_SOME_Word x = (λthe_SOME_Word a. case a of NONE => ARB | SOME (Word w) => I w | SOME (Loc v2 v3) => ARB) (RESTRICT the_SOME_Word (@R. WF R) x) x
+sw_word_generic=T
+sw_none_generic=T
+sw_loc_generic=T
+sw_none_loc=T
+sw_all_loc=T
+sw_word1=T
+sw_word8=T
+sw_word64=T
+sw_word80=T

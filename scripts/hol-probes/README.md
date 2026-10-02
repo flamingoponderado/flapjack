@@ -5647,3 +5647,24 @@ They retain the descending load/store sequence and zero-count continuation.
 These observations provide regression evidence, not cross-language equivalence.
 
 Return allocation-argument probes replay all three complete original stack-move, recursive return-copy and wrapper proofs, with no open hypotheses. The210 predicate pairs cover widths1/2/8/64/80, zero/nonzero/saturated return counts, all four Boolean modes,70-bit slot/register/frame numbers, valid and invalid allocations, and independent optional Call return/handler checks. WordToStackReturnAllocArgsParity kernel-checks identical predicates and arbitrary-carrier theorem applications. These are original regression observations, not cross-language equivalence or full compiler correctness. Regenerate with HOL_PROBE_ONLY=word_to_stack_return_alloc_args_probeScript.sml.
+
+`stack_remove_word_selector_probe.out` records the complete selector type,
+exported Word equation, and original primitive WFREC definition. The probe
+derives well-foundedness of the selected relation from `WF_EMPTY_REL`, then
+applies `WFREC_COROLLARY` to kernel-prove the full totalization. Nine fixtures
+cover generic Word/NONE/Loc cases, NONE-to-Loc equality, location-field
+independence, and widths 1/8/64/80. Invalid inputs remain the same symbolic
+`bool$ARB`; no numeric value is asserted. `Flapjack.Test.StackRemoveWordSelector`
+replays nine kernel fixtures using the existing shared opaque `holArb`.
+Pinned `boolScript.sml:245` declares ARB as an uninterpreted constant; it is not
+a HOL definition by Hilbert choice. The full state relation remains open.
+
+`stack_remove_memory_probe.out` records full `memory_def` and its independently
+generic address/value/heap type, plus eleven freshly kernel-proved original
+fixtures. These exercise full equality and uniqueness, empty and infinite
+domains, Bool-to-Nat and product-valued memories, missing/extra/wrong-value/
+wrong-address heap failures, and noninjective memory. Eleven corresponding
+Lean kernel fixtures live in `Flapjack.Test.StackRemoveMemory`. The assertion
+uses the reviewed full `fun2Set` graph, without finite heaps or word-specific
+carriers. This is a prerequisite of full StackRemove `state_rel`, which remains
+open separately.

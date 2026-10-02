@@ -16,6 +16,8 @@ import Flapjack.Test.LabToTargetSimilarLabelsParity
 import Flapjack.Test.LabToTargetGoodCodeParity
 import Flapjack.Test.SetSepFun2Set
 import Flapjack.Test.SetSepElementary
+import Flapjack.Test.StackRemoveWordSelector
+import Flapjack.Test.StackRemoveMemory
 import Flapjack.Test.StackRemoveCodeRelation
 import Flapjack.Test.DataMaxHeapLimit
 import Flapjack.Test.InitializedProduction
