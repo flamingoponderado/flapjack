@@ -21,6 +21,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore32
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPCompare
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPUnary
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPArith
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPInt
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp

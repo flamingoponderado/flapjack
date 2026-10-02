@@ -4989,3 +4989,8 @@ Native counterparts are in `TargetProps/PositionLaws.lean`.
 `target_position_tail_probeScript.sml` captures complete original
 `interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
 checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
+
+`ssa_cc_trans_correct_inst_fpint_probeScript.sml` captures original kernel
+FPToInt/FPFromInt specializations and native carriers. Original FP proof8174–8222,
+width branches, signed range/rounding failures and half-register writes are
+manually reviewed; no standalone tactic replay is claimed.
