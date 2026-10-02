@@ -64924,5 +64924,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-02: original local get_labels_downshift at917-948. Unconditional whole label-set equality to empty predicate, arbitrary registers/counts and positive type-indexed word dimension. Native HolProg constructor carrier, original zero/small/255-word chunk recursion; allocation preserves both jump/conditional overflow branches. No extra register bound, evaluator success, fixed-width or target-label premise. HOL sets represented as predicates; NeZero discharges inherent word dimension positivity. Kernel strong induction follows original decreasing count recursion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelPreservation.lean",
+    "lean_name": "labelsComp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_labels_comp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 original950-967: full unconditional all-constructor comp label predicate equality and full code_rel/source loc_check conjunction implies target loc_check. Exact native HolProg width with NeZero, original Spt code including malformed trees; no finite-map qualifier. All recursive Seq/If/Loop and both optional Call continuations retained, including Call NONE ignores handler. Generated stack/copy builders introduce no labels. Both domain-zero and existential stored-program location branches derived from literal codeRelHOL lookup/domain conjuncts. No register-bound, target-location, evaluator-success, fixed-width or simulation premise added. Original literal HOL proofs replayed using fresh local builder proofs; native kernels checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelPreservation.lean",
+    "lean_name": "codeRelLocCheck",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "code_rel_loc_check",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 original950-967: full unconditional all-constructor comp label predicate equality and full code_rel/source loc_check conjunction implies target loc_check. Exact native HolProg width with NeZero, original Spt code including malformed trees; no finite-map qualifier. All recursive Seq/If/Loop and both optional Call continuations retained, including Call NONE ignores handler. Generated stack/copy builders introduce no labels. Both domain-zero and existential stored-program location branches derived from literal codeRelHOL lookup/domain conjuncts. No register-bound, target-location, evaluator-success, fixed-width or simulation premise added. Original literal HOL proofs replayed using fresh local builder proofs; native kernels checked."
   }
 ]
