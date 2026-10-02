@@ -5413,3 +5413,7 @@ run_probe stack_remove_comp_load_probeScript.sml stack_remove_comp_load_probe.ou
 run_probe stack_remove_stack_write_probeScript.sml stack_remove_stack_write_probe.out \
   sw_statement sw_proved srw_statement srw_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_store_probeScript.sml stack_remove_comp_store_probe.out \
+  cs_statement cs_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

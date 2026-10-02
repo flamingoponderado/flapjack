@@ -65750,5 +65750,20 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-stack-write): original stack_write871-883 and state_rel_stack_store885-906. Stack write retains arbitrary payload list/base/frame/memory/domain/index/value and original full-heap plus index-bound premise, deriving complete functional-graph update with the same frame. State relation theorem retains all five conjuncts: full relation, explicit stack equality, original pointer lookup, stack-space/index bound and original address equality. Same source list update at count+stackSpace and target memory point update; complete26 postrelation derived, no postheap/domain/unique-address or target-execution premise. Canonical finite-support state regs/fpRegs/store and positive-width word translations only where declared; code remains Spt, list remains List. Default and classical equality-decision memory functions identified pointwise; no behavioral difference. Fresh literal original proofs recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StackMemory.lean",
+    "lean_name": "compCorrectStackStore",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-store): genuine original comp_correct StackStore2200-2255, exact four source evaluation/nonError/full state relation/regBound hypotheses and existential clock/native target/usual result-branch conclusion. Direct immediate store and native upshift/store/downshift fallback both proved, including original register value for arbitrary Word/Loc, derived target memory-domain, complete memory point update, exact original pointer restoration and full26 postrelation. Clock0. No supplied target evaluation/domain/postheap/postrelation/pointer-restoration premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains Spt and stack remains List. Inherited reals_as_rational_cuts assumption from faithful total evaluator; pure store has no local real operation. Fresh literal original case plus local upshift/downshift proof replay recorded."
   }
 ]
