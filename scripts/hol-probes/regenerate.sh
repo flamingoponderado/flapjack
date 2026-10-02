@@ -5150,3 +5150,7 @@ run_probe ssa_call_returning_probeScript.sml ssa_call_returning_probe.out \
 run_probe ssa_cc_trans_correct_probeScript.sml ssa_cc_trans_correct_probe.out \
   ssa_cc_trans_correct_full ssa_cc_trans_correct_type \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe full_ssa_cc_trans_correct_probeScript.sml full_ssa_cc_trans_correct_probe.out \
+  full_ssa_cc_trans_correct_full full_ssa_cc_trans_correct_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

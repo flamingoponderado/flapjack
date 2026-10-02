@@ -64180,5 +64180,19 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-a source comparison2026-10-02 original7666-7702 full ssa_cc_trans_correct statement and original constructor proof7666-10136: arbitrary native program with exactly six original premises, no public IHs, source-success, targetrun, postrelation or chosen oracle premise. Complete existential source permutation, Error exemption, actual target result/full frame and original result-sensitive locals via ssaSimulation unchanged. Structural native datatype induction assembles every checked constructor case, including nested return/exception bodies, using only genuine subprogram IHs. Canonical fpRegs/store map translation with imported owner and same-module roundtrip witness; tree maps unchanged, positive type-indexed words retained. Inherits reals_as_rational_cuts SOUNDNESS8. Fresh original entire statement/type capture in ssa_cc_trans_correct_probe.out is source regression evidence only. Full SSA wrapper/end-to-end goal remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "full_ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/FullSSACorrect.lean",
+    "lean_name": "fullSsaCcTransCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison2026-10-02 original10337-10373: complete arbitrary native program/state/count with sole domain locals = set even_list count premise. Original full_ssa_cc_trans producer retained; limitVarProps and setupSSAProps derive actual successful prologue, all six full body simulation premises including numeric bound monotonicity and empty ltOK. Full ssaCcTransCorrect supplies existential source permutation; actual sequential target run derived with evaluateSeqCollapse, exact Error exemption/result/full frame and locals equality for all results except NONE/Break/Continue. No public IH, targetrun, oracle, successful guard or postfact premise. Native Spt locals/code unchanged, canonical fpRegs/store translation with same-module roundtrip and positive type-indexed words; inherits reals_as_rational_cuts SOUNDNESS8. Fresh entire original statement capture in full_ssa_cc_trans_correct_probe.out is regression/source evidence only. Executed list-state SSA migration and end-to-end correctness remain separately open."
   }
 ]

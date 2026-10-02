@@ -5900,3 +5900,5 @@ Full native register-bound compiler probe captures the entire original generic t
 `ssa_call_returning_probe.out` captures the original arbitrary optional-handler returning Call specialization with all six premises and full simulation conclusion. The native assembly adds only genuine smaller continuation IHs and splits the handler Option. Full all-program SSA correctness remains open; this capture is source regression evidence, not cross-language equivalence.
 
 `ssa_cc_trans_correct_probe.out` captures the complete original all-program theorem and its conclusion term. Native structural induction assembles every constructor case with no public IHs and exactly the six original premises. This is source regression evidence; full SSA wrapper and end-to-end correctness remain open.
+
+`full_ssa_cc_trans_correct_probe.out` captures the entire original full SSA wrapper theorem and conclusion term. The native proof retains only the original initial locals-domain premise and derives the successful setup, full body simulation and actual sequential target run. Executed SSA migration and end-to-end correctness remain open; this is source regression evidence only.
