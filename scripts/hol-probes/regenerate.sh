@@ -5184,3 +5184,8 @@ run_probe ssa_cc_trans_correct_probeScript.sml ssa_cc_trans_correct_probe.out \
 run_probe full_ssa_cc_trans_correct_probeScript.sml full_ssa_cc_trans_correct_probe.out \
   full_ssa_cc_trans_correct_full full_ssa_cc_trans_correct_type \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_state_map_route_probeScript.sml ssa_state_map_route_probe.out \
+  fresh_empty fresh_duplicate fresh_overwrite fresh_big force_empty force_duplicate \
+  force_linear_registers keys_order \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
