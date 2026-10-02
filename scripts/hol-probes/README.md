@@ -6081,6 +6081,17 @@ use the generic rational-cut square-root specification; existing all-mode
 Mathlib real agreement covers both carriers. The external HOL correspondence
 assumption in docs/SOUNDNESS.md item 8 and full-model obligations remain.
 
+### Generational allocator full-case statement comparison
+
+The full case in `AllocGenerational/Full.lean` uses the same literal, typed
+original theorem capture in `stack_alloc_generational_alloc_statement_probe.out`.
+It covers the original full proof branch at `stack_allocProofScript.sml:4833-5016`
+and the exact instruction list at `stack_allocScript.sml:568-634`. Its sole added
+case premise negates the original partial selector; source allocation derives
+collector success and both normal and insufficient-space Halt outcomes. This
+capture supplies statement elaboration evidence for both cases, not executable
+oracle coverage or proof replay. The full generational assembly and coordinator
+acceptance remain separate open work.
 ### Native L3 separately rounded multiply/add/subtract instructions
 
 `l3_riscv_madd_probeScript.sml` captures 240 complete original FMADD/FMSUB/
