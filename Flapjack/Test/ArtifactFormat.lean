@@ -25,10 +25,10 @@ def sampleBytes : List (BitVec 8) :=
 
 #guard sectionSymbolName [] 0 == "cml__Raise_4"
 #guard sectionSymbolName [] 1 == "cml_generated_main_6"
-#guard runtimeSectionSymbolName [] 0 == "cml__Raise_4"
-#guard runtimeSectionSymbolName [] 1 == "cml__StoreConsts_5"
-#guard runtimeSectionSymbolName [] 2 == "cml__GC_3"
-#guard runtimeSectionSymbolName [] 3 == "cml_generated_main_6"
+#guard initializedRuntimeSymbolName [] 4 5 == "cml__Raise_4"
+#guard initializedRuntimeSymbolName [] 5 6 == "cml__StoreConsts_5"
+#guard initializedRuntimeSymbolName [] 3 4 == "cml__GC_3"
+#guard initializedRuntimeSymbolName [] 6 64 == "cml_generated_main_6"
 
 def bitmapCall : CrepProg Nat :=
   .call (some ([], none)) "f" []

@@ -5452,3 +5452,45 @@ carrier types. An original proved four-field record installation satisfies the
 full relation. Kernel proofs in `LabToTarget/OracleTie.lean` derive every whole
 function equality from the actual native interference search/step; external
 residues keep all original guards and total EL behavior.
+`ssa_loop_semantic_helpers_probe` replays the two original local HOL statements
+and literal source proof scripts at word_allocProof7018–7034: successful-first
+sequence collapse and empty-list cut identity. Six inferred carrier types are
+captured; `SSALoopSemanticHelpers.lean` keeps the sole original run premise and
+unconditional generic cut identity respectively. This original local-proof
+replay and source comparison is not a cross-language equivalence proof.
+Regenerate with `HOL_PROBE_ONLY=ssa_loop_semantic_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_fake_const_chain_probe` replays the three original local statements and
+literal source proof scripts at word_allocProof6715–6761. Five inferred types
+confirm native register lists, word_loc trees and full WordSem states.
+`SSAFakeConstChain.lean` retains unconditional constant-insertion commutation,
+actual fake-Move chain evaluation, and all four original locals/frame conclusions.
+Duplicate registers remain allowed. Original local HOL proof replay and manual
+source comparison are not a cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_fake_const_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Original production/proof left-balancing equality
+
+`balanced_map_balanceL_eq_probeScript.sml` replays the complete original
+local `balanceL_balL` proof and prints its typed closed generic equality.
+Ten actual original executable equalities cover empty/singleton, both one-sided
+children, nonempty single/double rotations, left Tip, nonempty-right fallback,
+and both heavy branches. Kernel fixtures check their input invariants and
+consume the full equality. Small-child constructors and impossible malformed
+heavy branches are derived from invariants; no stronger premises are added.
+### Native SSA Loop setup
+
+`ssa_loop_setup_correct_probeScript.sml` replays the literal original local
+`loop_setup_correct` proof, with its local prerequisites, and captures the full
+five-premise/ten-conclusion statement and nine native carriers. The pinned
+original HOL kernel replay and Lean kernel check are regression/source-review
+evidence, not a cross-language equivalence proof. Full Loop simulation remains open.
+
+### Full original left-balancing correctness
+
+`balanced_map_balanceL_correct_probeScript.sml` replays the entire original
+local `balanceL_thm` proof and full prerequisite proof chain, checking its
+typed theorem is closed. Six actual branches capture output trees, invariants
+and inserted-key lookups. `BalancedMapBalanceLCorrectParity` checks all original
+input premises, consumes both native invariant/map conclusions, and derives
+the actual canonical inserted-key observations. No compiler caller changes.
