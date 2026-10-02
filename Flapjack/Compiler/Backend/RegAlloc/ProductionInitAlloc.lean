@@ -325,4 +325,29 @@ theorem initAllocFused_degrees (initial : CakeRaState) (limit : Nat)
     rw [List.foldl_cons, ih, List.foldl_cons]
     rfl
 
+/-- The proved fused step is the body actually executed by the initializer,
+not an independent proof-side algorithm. This equation preserves every actual
+clause, including endpoint marking and both reversed partitions. Its source
+counterpart uses separate native traversals, so this implementation equation
+has no HOL tag. -/
+theorem initAllocFused_equation (moves : List (Nat × (Nat × Nat))) (limit : Nat)
+    (production : CakeRaState) :
+    cakeInitAlloc1Heu moves limit production =
+      let (allocs, initialized) := (List.range production.dim).foldl
+        (initAllocFusedStep production limit) ([], production)
+      let withMoves := {initialized with availMovesWl := cakeSortMoves moves}
+      let withRelated := moves.foldl (fun state move =>
+        let x := move.2.1
+        let y := move.2.2
+        let fixedX := cakeIsFixed state x
+        let fixedY := cakeIsFixed state y
+        let state := {state with moveRelated := state.moveRelated.set x (!fixedX)}
+        {state with moveRelated := state.moveRelated.set y (!fixedY)}) withMoves
+      let (low, high) := partitionReversed
+        (fun node => cakeSplitDegree withRelated production.dim limit node) allocs
+      let (freeze, simplify) := partitionReversed
+        (fun node => cakeMoveRelatedSub withRelated node) low
+      (allocs.length, {withRelated with spillWl := high, simpWl := simplify, freezeWl := freeze}) := by
+  rfl
+
 end Flapjack.RegAlloc
