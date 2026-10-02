@@ -4914,3 +4914,12 @@ proofs with their original statements and tactic bodies. It recreates local
 The fourteen predicate observations cover left/right zero, one, two and strict
 boundary cases, matched by kernel fixtures in `BalancedMapBalanceArithmeticParity`.
 Lemma7 retains the original unused, independently typed first binder.
+
+### Balanced-map recursive membership law
+
+`balanced_map_membership_probeScript.sml` replays the full original local
+`member_eq_lookup` proof and prints its complete inferred types with no hypotheses.
+The original `gen_tac` script alias is spelled `Tactic.GEN_TAC` in standalone batch mode.
+Six actual member observations use Bool queries, Nat stored keys/payloads, arbitrary
+comparators and malformed cached sizes. Kernel fixtures cover nil, root equality,
+absent left/right branches and successful left/right recursive searches.
