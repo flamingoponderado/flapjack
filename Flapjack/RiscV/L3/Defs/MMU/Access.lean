@@ -35,4 +35,14 @@ def rawWriteData (arg0 : ((BitVec 64) × ((BitVec 64) × Nat))) : (riscv_state �
 def rawReadData (pAddr : (BitVec 64)) : (riscv_state → (BitVec 64)) :=
   (fun (state : riscv_state) => (let pAddrIdx : (BitVec 61) := (holWordExtract 61 63 3 pAddr); (let align : Nat := (holWordExtract 3 2 0 pAddr).toNat; (if (align == 0) then (MEM pAddrIdx state) else ((holWordExtract 64 63 0 ((BitVec.sshiftRight ((BitVec.setWidth 128 (((MEM ((pAddrIdx + (BitVec.ofNat 61 1))) state)) ++ (MEM pAddrIdx state)))) (align * 8)))))))))
 
+/-- Flapjack-specific frame consequence of the literal rawWriteData equation.
+There is no separately named HOL theorem; the original generic proof is captured
+in l3_mmu_write_frame_probe.out. Every non-memory field is preserved, without
+address/alignment/byte-count premises. -/
+theorem rawWriteDataPreservesNonMemory (a d : BitVec 64) (n : Nat) (s : riscv_state) :
+ rawWriteData (a,d,n) s = { s with MEM8 := (rawWriteData (a,d,n) s).MEM8 } := by
+ simp only [rawWriteData]
+ dsimp
+ split <;> (try split) <;> simp_all [«write'MEM»]
+
 end Flapjack.RiscV.L3

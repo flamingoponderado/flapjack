@@ -536,4 +536,8 @@ example : (let s := rawWriteData ((18446744073709551615:BitVec 64),(123460561643
 example : (let s := rawWriteData ((18446744073709551615:BitVec 64),(1234605616436508552:BitVec 64),16) { (default:riscv_state) with MEM8:=fun adr=>BitVec.ofNat 8 adr.toNat }; [(s.MEM8 ((18446744073709551615:BitVec 64) - 1)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+0)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+1)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+2)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+3)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+4)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+5)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+6)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+7)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+8)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+9)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+10)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+11)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+12)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+13)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+14)).toNat, (s.MEM8 ((18446744073709551615:BitVec 64)+15)).toNat]) = [254, 136, 119, 102, 85, 68, 51, 34, 17, 7, 8, 9, 10, 11, 12, 13, 14] := by decide
 
 example (s:riscv_state) : curASID () s = holWordExtract 6 5 0 (s.c_SCSR s.procID).sasid := by rfl
+example (a d : BitVec 64) (n : Nat) (s : riscv_state) :
+ rawWriteData (a,d,n) s = { s with MEM8 := (rawWriteData (a,d,n) s).MEM8 } :=
+ rawWriteDataPreservesNonMemory a d n s
+
 end Flapjack.Test

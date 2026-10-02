@@ -5547,3 +5547,7 @@ run_probe word_to_stack_extract_labels_compiler_probeScript.sml word_to_stack_ex
 run_probe l3_mmu_tlb_probeScript.sml l3_mmu_tlb_probe.out \
   entry_0 entry_1 entry_5 entry_6 entry_7 entry_1000 lookup_empty lookup_first lookup_last lookup_two lookup_wrong_asid lookup_global lookup_wrong_address lookup_zero_mask \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_mmu_write_frame_probeScript.sml l3_mmu_write_frame_probe.out \
+  raw_write_frame \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
