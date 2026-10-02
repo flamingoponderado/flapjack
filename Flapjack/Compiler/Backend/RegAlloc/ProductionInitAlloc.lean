@@ -350,4 +350,83 @@ theorem initAllocFused_equation (moves : List (Nat × (Nat × Nat))) (limit : Na
       (allocs.length, {withRelated with spillWl := high, simpWl := simplify, freezeWl := freeze}) := by
   rfl
 
+private theorem nodeMap_unique {α : Type} {left right : CakeNodeMap α} {values : List α}
+    (leftRep : CakeNodeMap.RepresentsHOLNodeList left values)
+    (rightRep : CakeNodeMap.RepresentsHOLNodeList right values) : left = right := by
+  have outside : left.outside = right.outside := leftRep.1.trans rightRep.1.symm
+  have slots : left.slots = right.slots := by
+    apply Array.ext
+    · exact leftRep.2.1.trans rightRep.2.1.symm
+    · intro index leftBound rightBound
+      have bound : index < values.length := by rwa [← leftRep.2.1]
+      have reads := (leftRep.2.2 index bound).trans (rightRep.2.2 index bound).symm
+      simpa only [CakeNodeMap.get, dif_pos leftBound, dif_pos rightBound] using reads
+  cases left
+  cases right
+  cases slots
+  cases outside
+  rfl
+
+/-- Full-range actual flag writes are exactly the canonical dense false map.
+The original dimension and representation supply every bound; no desired map
+is assumed. This is an implementation codec, not a HOL declaration. -/
+theorem initAllocFlags_filled {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native production) (good : goodRaState native) :
+    (List.range native.dim).foldl (fun flags node => flags.set node false) production.moveRelated =
+      CakeNodeMap.filled production.dim false := by
+  have represented := (initAllocFlags_range_production related good).2.moveRelated
+  have canonical := filled_representsHOLNodeList native.dim false
+  rw [related.dimension]
+  exact nodeMap_unique represented canonical
+
+/-- The separate production degree traversal reads the original graph/tags
+throughout. This unconditional field equation is Flapjack infrastructure. -/
+theorem initAllocDegrees_projection (limit : Nat) (nodes : List Nat) (production : CakeRaState) :
+    (nodes.foldl (fun state node =>
+      {state with
+        degrees := state.degrees.set node
+          (((state.adjLists.get node).getD []).filter (cakeConsideredVar state limit)).length}) production).degrees =
+    nodes.foldl (fun degrees node => degrees.set node
+      (((production.adjLists.get node).getD []).filter (cakeConsideredVar production limit)).length)
+      production.degrees := by
+  induction nodes generalizing production with
+  | nil => rfl
+  | cons node rest ih =>
+    rw [List.foldl_cons, ih, List.foldl_cons]
+    rfl
+
+/-- The separate parent traversal has exactly its node-map fold as payload.
+This unconditional projection has no independent HOL original. -/
+theorem initAllocParents_projection (nodes : List Nat) (production : CakeRaState) :
+    (nodes.foldl (fun state node => {state with coalesced := state.coalesced.set node node}) production).coalesced =
+      nodes.foldl (fun parents node => parents.set node node) production.coalesced := by
+  induction nodes generalizing production with
+  | nil => rfl
+  | cons node rest ih => rw [List.foldl_cons, ih, List.foldl_cons]
+
+/-- Complete state equality separating the executed fused initializer into
+its independently checked degree and parent traversals and canonical clearing.
+The equality retains graph/tag/cache/worklist/failure fields and derives flag
+canonicality from the native invariant. This is implementation correspondence,
+not a port of a separately fused HOL operation. -/
+theorem initAllocFused_separate (limit : Nat) {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native production) (good : goodRaState native) :
+    ((List.range production.dim).foldl (initAllocFusedStep production limit) ([], production)).2 =
+      let degrees := (List.range production.dim).foldl (fun state node =>
+        {state with
+          degrees := state.degrees.set node
+            (((state.adjLists.get node).getD []).filter (cakeConsideredVar state limit)).length}) production
+      let parents := (List.range production.dim).foldl
+        (fun state node => {state with coalesced := state.coalesced.set node node}) degrees
+      {parents with moveRelated := CakeNodeMap.filled production.dim false} := by
+  rw [initAllocFused_frame, initAllocFused_degrees, initAllocFused_parents, initAllocFused_flags]
+  have clearing := initAllocFlags_filled related good
+  rw [related.dimension] at ⊢
+  dsimp only
+  rw [clearing]
+  rw [initAllocParents_frame, initAllocParents_projection, initAllocDegrees_frame]
+  simp only
+  rw [initAllocDegrees_projection]
+  simp only [related.dimension]
+
 end Flapjack.RegAlloc
