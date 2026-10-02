@@ -3170,6 +3170,20 @@ run_probe word_to_stack_native_top_probeScript.sml word_to_stack_native_top_prob
   wts_top_empty_plain wts_top_empty_perf wts_top_empty_zero wts_top_empty_narrow wts_top_width_one_plain wts_top_width_one_perf wts_top_zero_registers wts_top_reg_underflow wts_top_avoid_duplicate wts_top_avoid_single wts_top_reg_only wts_top_stack_args wts_top_perf_args wts_top_break wts_top_duplicates wts_top_duplicates_reverse wts_top_order wts_top_large_identifier wts_top_bitmap_plain wts_top_bitmap_perf wts_top_bitmap_order wts_top_bitmap_reverse wts_top_bitmap_multiword wts_top_bitmap_zero_frame \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
+# `word_remove$remove_must_terminate`: nested and sequenced `MustTerminate`,
+# `If`, `Loop`, both `Call` bodies and the catchall.
+run_probe word_remove_must_terminate_probeScript.sml word_remove_must_terminate_probe.out \
+  rmt_mt_seq rmt_tick \
+  "$cake_dir/compiler/backend/word_removeScript.sml" \
+  "$cake_dir/compiler/backend"
+
+# `data_to_word` pointer-layout helpers: `shift_length`, `small_shift_length`
+# and `get_gen_size` (empty, in range, overflowing) at 64 and 32 bits.
+run_probe data_to_word_config_probeScript.sml data_to_word_config_probe.out \
+  shift_length gen_size_three_32 \
+  "$cake_dir/compiler/backend/data_to_wordScript.sml" \
+  "$cake_dir/compiler/backend"
+
 run_probe word_alloc_checker_call_none_probeScript.sml word_alloc_checker_call_none_probe.out \
   ccn_empty ccn_one ccn_duplicate ccn_args ccn_collision ccn_handler_ignored \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend"
@@ -3218,6 +3232,11 @@ run_probe word_alloc_remove_dead_probeScript.sml word_alloc_remove_dead_probe.ou
 run_probe word_alloc_nlive_store_probeScript.sml word_alloc_nlive_store_probe.out \
   ns_lookup_dead ns_lookup_live ns_var ns_const ns_op_dead ns_op_live ns_op_empty ns_load ns_load_dead ns_shift_left_dead ns_shift_right_dead ns_shift_live \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_gc_functions_probeScript.sml word_gc_functions_probe.out \
+  gc_ptr_to_addr gc_new_trig_unaligned \
+  "$cake_dir/compiler/backend/proofs/word_gcFunctionsScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
   gf_addcarry_riscv gf_addcarry_mips gf_addcarry_self gf_addcarry_x86 gf_addovf_riscv gf_addovf_armv8 gf_subovf_mips gf_subovf_self gf_longmul_armv7 gf_longmul_armv7_self gf_longmul_riscv gf_longmul_ag32 gf_longmul_x86 gf_fptoreg_32 gf_fptoreg_32_self gf_fptoreg_64 gf_fpfromreg_32 gf_fpfromreg_64 gf_other_inst gf_seq gf_if gf_must gf_loop gf_call_return gf_call_both gf_call_tail gf_skip gf_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

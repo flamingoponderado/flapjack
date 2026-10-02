@@ -400,6 +400,11 @@ import Flapjack.Compiler.Backend.StackProps.RemoveNames
 import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
 import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
+import Flapjack.Compiler.Backend.WordRemove
+import Flapjack.Compiler.Backend.DataToWord.Config
+import Flapjack.Compiler.Backend.WordGcFunctions
+import Flapjack.Misc.FiniteMapApply
+import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
 import Flapjack.Pancake.WordLang.OccurrencesExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
