@@ -4517,3 +4517,9 @@ values. `WordCseDeletionFramesParity.lean` kernel-checks matching applications.
 The statements retain the original input guards and both evaluation directions.
 These regressions supplement source review; they do not prove cross-language
 equivalence or complete CSE correctness.
+
+The `stackprops_ordered_code_labels_probe.out` capture additionally records ten
+original ordered `extract_labels` observations: tail-call ignored handler,
+return and handler labels, nested outer-before-inner order, duplicates,
+sequence, loop, If and non-continuation label leaves. Native kernel fixtures
+live in `Flapjack/Test/StackPropsOrderedLabelsParity.lean`.

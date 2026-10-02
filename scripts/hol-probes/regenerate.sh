@@ -4034,7 +4034,7 @@ run_probe ssa_reconcile_get_vars_probeScript.sml ssa_reconcile_get_vars_probe.ou
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stackprops_ordered_code_labels_probeScript.sml stackprops_ordered_code_labels_probe.out \
-  extract_labels extract_labels_types find_code_labels find_code_labels_types find_code find_code_types get_labels get_labels_types loc_check loc_check_types key_bool_direct key_bool_indirect key_bool_missing key_bool_nonzero key_bool_word key_list_indirect key_list_missing_code key_nat_legacy \
+  extract_labels extract_labels_types find_code_labels find_code_labels_types find_code find_code_types get_labels get_labels_types loc_check loc_check_types key_bool_direct key_bool_indirect key_bool_missing key_bool_nonzero key_bool_word key_list_indirect key_list_missing_code key_nat_legacy ordered_skip ordered_ignore_handler ordered_return ordered_both ordered_nested ordered_duplicate ordered_sequence ordered_loop ordered_if ordered_leaf_labels containment_bool_direct containment_list_indirect \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe target_props_clock_probeScript.sml target_props_clock_probe.out \
   tp_clock_theorem_closed tp_clock_type tp_clock_statement tp_halt_stable tp_error_stable \
