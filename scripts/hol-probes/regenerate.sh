@@ -4083,3 +4083,7 @@ run_probe ssa_locals_get_var_probeScript.sml ssa_locals_get_var_probe.out \
 run_probe ssa_cc_trans_correct_register_writes_probeScript.sml ssa_cc_trans_correct_register_writes_probe.out \
   sw_assign_full sw_get_full sw_loc_full sw_type_st sw_type_cst sw_type_expr sw_type_store sw_type_label sw_type_lt \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_state_writes_probeScript.sml ssa_cc_trans_correct_state_writes_probe.out \
+  ss_set_full ss_store_full ss_type_st ss_type_cst ss_type_expr ss_type_store ss_type_n ss_type_lt \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

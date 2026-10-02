@@ -53011,5 +53011,33 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a source comparison flapjack-wqr8: original resumed Assign case, six original premises and complete Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion via transparent ssaSimulation. Native destination nextVarRename/setVar and source error/success branches; no added success, target eval or post-frame premise. Literal original exp_tac2 replay removes only discarded recursive-induction bookkeeping, no recursive IH in these primitive cases. Captured full specialized statements and six carrier types match native positive width/shared C F hosts, WordStoreHOL, WordLangExpHOL, Nat labels and Spt name sets. Only canonical imported fpRegs/store map translation, same-module roundtrip witness; standard words translation; inherited reals_as_rational_cuts boundary SOUNDNESS8. Other SSA correctness cases remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticStateWrites.lean",
+  "lean_name": "ssaCcTransCorrectSet",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a source review flapjack-brhb: genuine original resumed Set case8232/8236, original six premises/full Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion via transparent ssaSimulation. Actual native expression/getVar failures, forbidden Set store names, nonword Store address and memory-domain failure/success preserved. Accepted expression/getVar transport derives target execution; no extra success/target-eval/output-frame premise. Literal original case proofs and local prerequisites replayed, omitting only discarded recursive IH bookkeeping for primitive Set, Store proof retained with expr binder substitution. Captured full2statements/6types match original shared positive-width/native hosts, expression/store-name/Nat/Spt carriers. Only imported fpRegs/store map translation and standard words translation; same-module canonical roundtrip witness; inherits reals_as_rational_cuts SOUNDNESS8. Full semantic SSA assembly remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticStateWrites.lean",
+  "lean_name": "ssaCcTransCorrectStore",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a source review flapjack-brhb: genuine original resumed Store case8232/8236, original six premises/full Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion via transparent ssaSimulation. Actual native expression/getVar failures, forbidden Set store names, nonword Store address and memory-domain failure/success preserved. Accepted expression/getVar transport derives target execution; no extra success/target-eval/output-frame premise. Literal original case proofs and local prerequisites replayed, omitting only discarded recursive IH bookkeeping for primitive Set, Store proof retained with expr binder substitution. Captured full2statements/6types match original shared positive-width/native hosts, expression/store-name/Nat/Spt carriers. Only imported fpRegs/store map translation and standard words translation; same-module canonical roundtrip witness; inherits reals_as_rational_cuts SOUNDNESS8. Full semantic SSA assembly remains open."
 }
 ]

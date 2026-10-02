@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStateWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRegisterWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileListProps
