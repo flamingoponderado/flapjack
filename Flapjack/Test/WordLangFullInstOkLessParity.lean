@@ -1,11 +1,11 @@
 import Flapjack.Pancake.WordConvs
 
 /-!
-Kernel-checked regression for the broad untagged fullInstOkLess predicate and its
+Kernel-checked regression for the broad untagged fullInstOkLess wrapper and its
 `wordLang$exp_to_addr` helper, against the direct HOL oracle
 `scripts/hol-probes/word_convs_full_inst_ok_less_probe.out`.
-The broad encoder/width carriers differ from HOL; faithful exact-carrier
-program lifting is tracked by flapjack-word-convs-full-inst-native.
+Its broad config encoder/width carriers differ from HOL; the exact source port
+is fullInstOkLessExact in Flapjack.Pancake.WordConvs.FullInstOkLess.
 -/
 
 namespace Flapjack.Test.WordLangFullInstOkLessParity

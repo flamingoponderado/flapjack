@@ -1,3 +1,4 @@
+import Flapjack.Test.WordConvsFullInstNativeParity
 import Flapjack.Test.WordToStackAsmNameHelpersParity
 import Flapjack.Test.WordToStackAsmRemoveCompilerParity
 import Flapjack.Test.WordToStackAsmRemoveHelpersParity

@@ -11559,7 +11559,7 @@
     "lean_path": "Flapjack/Pancake/WordConvs.lean",
     "lean_name": "fullInstOkLess",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack broad program-validity predicate, not a faithful HOL port: AsmConfig.encode consumes AsmData and returns UInt8 lists, unlike original positive-width asm_config HolAsm/word8 encoder; width zero is admitted and instOkLess is deliberately width-general/untagged. False reviewed_exact tag withdrawn after comparing original wordConvsScript.sml318-345 and exact config carrier. All semantic clauses/body and broad callers remain unchanged in this focused repair. Faithful positive-width exact program lifting tracked by flapjack-word-convs-full-inst-native and blocks full WordToStack assembler naming; production carrier disposition remains tracked separately. No blanket config encoding equality or cross-language equivalence is claimed."
+    "reviewer": "Flapjack broad executed validity wrapper, no faithful HOL reference: AsmConfig encoder consumes AsmData and returns UInt8 lists, unlike original positive-width asm_config HolAsm/word8 encoder; width zero also admitted and instOkLess is deliberately width-general/untagged. Original full_inst_ok_less318-345 port now lives at fullInstOkLessExact in WordConvs/FullInstOkLess with reviewed exact AsmConfigExact/HolInst validators and positive-word qualifier. Shared literal recursive traversal preserves broad behavior without duplicate semantics. Native compiler proof guards must use the exact counterpart. Remaining production carrier routing belongs to existing4ac.6.1.1; no blanket config encoding equivalence or executed full compiler completion is claimed."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
@@ -50621,5 +50621,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 11001-11005: unconditional complete wrapper iff, both performance/handler flags and independent original list/frame-tail types. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/WordConvs/FullInstOkLess.lean",
+    "lean_name": "fullInstOkLessExact",
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "full_inst_ok_less_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 entire source comparison2026-10-02, bead flapjack-word-convs-full-inst-native: original318-345 all8 conjunct clauses retained. Exact positive-width AsmConfigExact whose encode field is HolAsm->BitVec8 list, actual faithful WordLangProgHOL and WordLangExpHOL; Inst converts constructor-for-constructor to reviewed HolInst and instOkLessExact. Seq/Loop/If/MustTerminate recurse literally; Call NONE ignores handler, SOME checks return and optional handler. ShareInst exact expToAddrHOL, NONE false, Load/Store/Load32/Store32 address offset, Load16/Store16 halfword offset, remaining byte offset. Other constructors true. Core traversal is shared with broad wrapper through Flapjack-only policies, no blanket config encoding equality. words_as_type_indexed_bitvec permits only standard positive word dimension translation. Fresh original type/full definition and comprehensive opcode/constructor/policy/word-width observations; old broad original fixtures remain unchanged. Regression evidence does not prove HOL-to-Lean equivalence."
   }
 ]
