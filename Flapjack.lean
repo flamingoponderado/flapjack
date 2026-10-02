@@ -1,3 +1,4 @@
+import Flapjack.Misc.BalancedMap.Domain
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.Memcpy
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Submap

@@ -4663,3 +4663,12 @@ OpCurrHeap case and its original local variable/expression/fresh-update helpers.
 Only the discarded primitive induction bookkeeping is omitted. The capture
 records the complete original statement and native state/binop/register/table
 carriers; it is source evidence, not a cross-assistant equivalence proof.
+
+### Full balanced-map semantic domain theorem
+
+`balanced_map_domain_probe.out` captures the complete original `to_fmap_key_set`
+with no open hypotheses. The Lean theorem retains arbitrary comparators and
+malformed cached sizes, requires only a defined semantic lookup, and constructs
+a key whose comparator class equals the queried set. The observation qualifier
+records the already reviewed canonical result-map translation of `toFmap`; it
+does not add a map parameter, comparator law, or invariant assumption.

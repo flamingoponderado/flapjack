@@ -4227,3 +4227,7 @@ run_probe ssa_cc_trans_correct_heap_probeScript.sml ssa_cc_trans_correct_heap_pr
 run_probe lab_to_target_position_append_probeScript.sml lab_to_target_position_append_probe.out \
   label_zero_def label_zero_def_types sec_label_zero_def sec_label_zero_def_types sec_label_zero_pos_val_0 sec_label_zero_pos_val_0_types pos_val_append pos_val_append_types zero_label nonzero_label asm_annotation_ignored labasm_annotation_ignored suffix_valid prefix_invalid zero_suffix_position before_boundary at_boundary prefix_at_boundary suffix_at_boundary past_boundary far_past_boundary empty_prefix_zero empty_suffix_past label_only_prefix_boundary label_only_prefix_past \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe balanced_map_domain_probeScript.sml balanced_map_domain_probe.out \
+  bmd_full_theorem \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"
