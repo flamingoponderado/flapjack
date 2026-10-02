@@ -60595,5 +60595,13 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full original rotateL_thm: all eight original premises and BOTH invariant/canonical to_fmap union-update conclusions preserved; generic original comparator,key,payload,tree carriers. Heavy premise excludes outer Tip; literal strict ratio guard selects full singleL_thm or doubleL_thm with original size-addition commutation only. Canonical toFmap observer translation only. Literal full original constructor and assembly proofs replay hyp=[]; two complete-premise native dispatch fixtures consume invariant/map and six lookup observations. No executed definition change."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanceR_balR",
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/BalanceR.lean",
+    "lean_name": "balanceRBalR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full original balanceR_balR: same generic key/payload/tree/comparator quantifiers, ONLY good_cmp and both input invariants, full actual balanceR=balR conclusion. Constructor-for-constructor list-free/tree carrier; invariant structural sizes derive all small/singleton child constraints; literal heavy and ratio guards retained and impossible malformed rotation branches excluded from original invariants. Literal full original induction proof replay hyp=[] and ten valid constructor/guard/ratio equality observations; native consumers prove both invariants for all ten cases. No executable behavior change."
   }
 ]

@@ -5474,3 +5474,12 @@ hypotheses. Eleven rows capture its full type and both actual dispatch trees,
 invariants and six lookups. Native fixtures establish every original premise
 and consume both invariant/map conclusions. Observations are regression
 evidence, not a cross-language equivalence theorem.
+
+## Full right balancing equality
+
+`balanced_map_balanceR_eq_probeScript.sml` literally replays the full original
+`balanceR_balR` induction proof with no open hypotheses. Eleven rows capture
+its full type and ten invariant-valid constructor/guard/ratio equality cases.
+Native consumers prove both input invariants. The generic theorem retains only
+original comparator validity and those invariants; observations are regression
+evidence, not a cross-language equivalence theorem.
