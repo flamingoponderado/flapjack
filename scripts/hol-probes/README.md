@@ -5712,3 +5712,5 @@ proofs compare complete lists before heap separation is expanded.
 ### WordToStack and StackAlloc runtime symbol tables
 
 `backend_runtime_stub_names_probeScript.sml` captures both full original `stub_names_def` equations and generic types. Original ordered label/name pairs, exact character bytes and table lengths match six native kernel fixtures. Reviewed label constants are used directly, rather than handwritten numeric labels. Artifact dispatch remains a separately tracked executed route; these source tables do not establish compiler simulation.
+
+Recursive allocation-argument probe captures seven full generic original source theorem case applications: MustTerminate, Loop, Seq, If, tail Call, returning Call, and handler Call. All retain arbitrary source inputs and perf=F, with no open hypotheses. Lean recursive case ports use only the genuine proper-subprogram induction hypotheses at actual threaded bitmap outputs. Final induction assembly remains open. These source theorem applications are regression evidence, not a replay of the whole original proof or cross-language equivalence. Selector: HOL_PROBE_ONLY=word_to_stack_alloc_recursive_probeScript.sml.

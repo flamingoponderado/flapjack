@@ -4952,3 +4952,7 @@ run_probe stack_remove_wordstore_probeScript.sml stack_remove_wordstore_probe.ou
 run_probe backend_runtime_stub_names_probeScript.sml backend_runtime_stub_names_probe.out \
   word_stub_names_def word_stub_names_type gc_stub_names_def gc_stub_names_type word_stub_names_values word_stub_names_bytes gc_stub_names_values gc_stub_names_bytes word_stub_names_count gc_stub_names_count \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_alloc_recursive_probeScript.sml word_to_stack_alloc_recursive_probe.out \
+  aar_full_MustTerminate aar_full_Loop aar_full_Seq aar_full_If aar_full_CallTail aar_full_CallReturn aar_full_CallHandler \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

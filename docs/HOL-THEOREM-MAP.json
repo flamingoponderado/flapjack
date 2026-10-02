@@ -62505,5 +62505,68 @@
     "lean_name": "allocNonErrorShape",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific exhaustive actual alloc branch factoring from original Alloc9558-9606, no standalone HOL declaration. Excluding actual Error derives NONE or actual NotEnoughSpace with flush-empty locals; no target outcome or desired locals premise. Used to discharge full SSA result-sensitive failure branch. Full six-premise Alloc assembly remains open on flapjack-sola-alloc."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/RecursiveCalls.lean",
+    "lean_name": "wordToStackAllocArgMustTerminate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of word_to_stack_alloc_arg11316-11382 and actual comp clauses: full wordToStackAllocArgMustTerminate case, all original inputs and perf=F retained. Recursive cases add only genuine induction hypotheses for proper subprograms, quantified over arbitrary threaded bitmaps and frames; CallTail retains its arbitrary ignored handler. Returning calls use original stack movement and copy-return helpers and actual successive bitmap outputs. Native HOL carriers retained; positive-width BitVec translation is the only representation qualifier. Seven fresh complete generic original source case applications have no open hypotheses; regression evidence does not establish cross-language equivalence. Final induction assembly remains open; no HD/EL/GC hold release."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/RecursiveCalls.lean",
+    "lean_name": "wordToStackAllocArgLoop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of word_to_stack_alloc_arg11316-11382 and actual comp clauses: full wordToStackAllocArgLoop case, all original inputs and perf=F retained. Recursive cases add only genuine induction hypotheses for proper subprograms, quantified over arbitrary threaded bitmaps and frames; CallTail retains its arbitrary ignored handler. Returning calls use original stack movement and copy-return helpers and actual successive bitmap outputs. Native HOL carriers retained; positive-width BitVec translation is the only representation qualifier. Seven fresh complete generic original source case applications have no open hypotheses; regression evidence does not establish cross-language equivalence. Final induction assembly remains open; no HD/EL/GC hold release."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/RecursiveCalls.lean",
+    "lean_name": "wordToStackAllocArgSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of word_to_stack_alloc_arg11316-11382 and actual comp clauses: full wordToStackAllocArgSeq case, all original inputs and perf=F retained. Recursive cases add only genuine induction hypotheses for proper subprograms, quantified over arbitrary threaded bitmaps and frames; CallTail retains its arbitrary ignored handler. Returning calls use original stack movement and copy-return helpers and actual successive bitmap outputs. Native HOL carriers retained; positive-width BitVec translation is the only representation qualifier. Seven fresh complete generic original source case applications have no open hypotheses; regression evidence does not establish cross-language equivalence. Final induction assembly remains open; no HD/EL/GC hold release."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/RecursiveCalls.lean",
+    "lean_name": "wordToStackAllocArgIf",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of word_to_stack_alloc_arg11316-11382 and actual comp clauses: full wordToStackAllocArgIf case, all original inputs and perf=F retained. Recursive cases add only genuine induction hypotheses for proper subprograms, quantified over arbitrary threaded bitmaps and frames; CallTail retains its arbitrary ignored handler. Returning calls use original stack movement and copy-return helpers and actual successive bitmap outputs. Native HOL carriers retained; positive-width BitVec translation is the only representation qualifier. Seven fresh complete generic original source case applications have no open hypotheses; regression evidence does not establish cross-language equivalence. Final induction assembly remains open; no HD/EL/GC hold release."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/RecursiveCalls.lean",
+    "lean_name": "wordToStackAllocArgCallTail",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of word_to_stack_alloc_arg11316-11382 and actual comp clauses: full wordToStackAllocArgCallTail case, all original inputs and perf=F retained. Recursive cases add only genuine induction hypotheses for proper subprograms, quantified over arbitrary threaded bitmaps and frames; CallTail retains its arbitrary ignored handler. Returning calls use original stack movement and copy-return helpers and actual successive bitmap outputs. Native HOL carriers retained; positive-width BitVec translation is the only representation qualifier. Seven fresh complete generic original source case applications have no open hypotheses; regression evidence does not establish cross-language equivalence. Final induction assembly remains open; no HD/EL/GC hold release."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/RecursiveCalls.lean",
+    "lean_name": "wordToStackAllocArgCallReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of word_to_stack_alloc_arg11316-11382 and actual comp clauses: full wordToStackAllocArgCallReturn case, all original inputs and perf=F retained. Recursive cases add only genuine induction hypotheses for proper subprograms, quantified over arbitrary threaded bitmaps and frames; CallTail retains its arbitrary ignored handler. Returning calls use original stack movement and copy-return helpers and actual successive bitmap outputs. Native HOL carriers retained; positive-width BitVec translation is the only representation qualifier. Seven fresh complete generic original source case applications have no open hypotheses; regression evidence does not establish cross-language equivalence. Final induction assembly remains open; no HD/EL/GC hold release."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/RecursiveCalls.lean",
+    "lean_name": "wordToStackAllocArgCallHandler",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of word_to_stack_alloc_arg11316-11382 and actual comp clauses: full wordToStackAllocArgCallHandler case, all original inputs and perf=F retained. Recursive cases add only genuine induction hypotheses for proper subprograms, quantified over arbitrary threaded bitmaps and frames; CallTail retains its arbitrary ignored handler. Returning calls use original stack movement and copy-return helpers and actual successive bitmap outputs. Native HOL carriers retained; positive-width BitVec translation is the only representation qualifier. Seven fresh complete generic original source case applications have no open hypotheses; regression evidence does not establish cross-language equivalence. Final induction assembly remains open; no HD/EL/GC hold release."
   }
 ]
