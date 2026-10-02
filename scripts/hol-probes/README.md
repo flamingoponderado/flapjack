@@ -4654,3 +4654,11 @@ IRC and linear scan, and a physical register. HOL's free `asm_config` is only re
 `ISA`. Kernel-replayed through a structural observation in `WordAllocDefParity`.
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Native SSA Raise semantic case
+
+`ssa_cc_trans_correct_raise_probeScript.sml` replays the literal resumed Raise
+proof and its original non-exported getVar transport helper. No recursive IH
+or additional success/target-evaluation premise is introduced. The capture
+records the complete original statement and native state/register/map/table
+carriers; it is source evidence, not a cross-assistant equivalence proof.

@@ -4181,3 +4181,7 @@ run_probe ssa_cc_trans_correct_if_probeScript.sml ssa_cc_trans_correct_if_probe.
 run_probe ssa_cc_trans_correct_heap_probeScript.sml ssa_cc_trans_correct_heap_probe.out \
   heap_full heap_type_st heap_type_cst heap_type_operator heap_type_dst heap_type_src heap_type_lt \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_raise_probeScript.sml ssa_cc_trans_correct_raise_probe.out \
+  raise_full raise_type_st raise_type_cst raise_type_reg raise_type_ssa raise_type_na raise_type_lt \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
