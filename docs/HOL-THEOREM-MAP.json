@@ -54694,5 +54694,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2144-2197 word_gen_gc_partial_move_roots_bitmaps ([local] in HOL): as word_gc_move_roots_bitmaps with gs/rs threaded. HOL 'a word as positive-width BitVec with [NeZero]; the independently inferred descriptor/stack/bitmap word dimensions are kept independent; HOL ARB as holArb; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/ProgComp.lean",
+    "lean_name": "progComp",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "prog_comp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source/fulltype comparison 2026-10-02 (36ez.3.4), original224-226: bool -> alpha word pair -> num -> beta # alpha prog -> beta # alpha prog. Independent beta remains generic Name:Type, not specialized to Nat sectionlabels. Literal pair output preserves name and calls full reviewed native comp on program with unchanged jump/bounds/pointer; no source safety/success/targetrun/result premises. Only positive BitVec width/NeZero dimension translation qualified; faithful HolProg and MlString/asm payloads unchanged. Generic kernel pair/name-preservation fixtures plus fresh original Bool/ListBool/Nat names at five word widths. Actual production route remains dependency-linked36ez.3, no pass simulation or end-to-end correctness asserted."
   }
 ]

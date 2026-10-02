@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsM
 import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
 import Flapjack.Compiler.Backend.StackProps.AllocationConstants
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp
 import Flapjack.Compiler.Backend.StackRemove.CopyLoop
 import Flapjack.Compiler.Backend.StackLang.InstBuilders

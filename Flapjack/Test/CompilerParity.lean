@@ -2,6 +2,9 @@ import Flapjack.Test.TargetPropsClockIoEventsParity
 import Flapjack.Test.LabToTargetIgnoreClocksParity
 import Flapjack.Test.StackPropsAllocationConstantsParity
 import Flapjack.Test.StackPropsOrderedLabelsParity
+import Flapjack.Test.NativeWordMemoryAddress
+import Flapjack.Test.NativeStackRuntimeBoundary
+import Flapjack.Test.StackRemoveProgComp
 import Flapjack.Test.StackRemoveComp
 import Flapjack.Test.StackRemoveCopyLoop
 import Flapjack.Test.StackLangInstBuilders
