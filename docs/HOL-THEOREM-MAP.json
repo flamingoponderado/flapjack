@@ -59327,5 +59327,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-02: original full resumed Move7740-7858, same six premises and complete source permutation/Error exemption/result/full frame/result-sensitive locals conclusion. Native Move duplicate destinations/missing source reads exempt only actual Error; successful source values transported by ssaLocalsRelGetVars to actual renamed target Move. Fresh outputs/listNextVarRename/native parallel setVars preserve provisional relation via original generic locals theorem, filtered force pairs original source keys outside destination list and generated output registers. Pair agreement and target domain derived from bounded source reads and distinct generated-output zip lookup; original ssa_locals_rel_force_rename then proves final map relation. No targetrun/postlocals/success premise or IH. Nat priority/pair list, native Spt SSA/table/state, positive indexed word and Type0 code/FFI confirmed by original kernel specialization/carrier capture. fpRegs/store canonical finite-support and word qualifiers explicit; inherits reals_as_rational_cuts evaluator SOUNDNESS8. Indexed holEl calls are all bounded by actual zip membership; holEl_eq_getElem converts same bounds, no total out-of-range observation. Original proof manually compared; HOL theorem capture and Lean kernel PASS, no isolated tactic replay claimed. Overall fullSSA remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "evaluate_EQ_evaluate_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/EvaluateEq.lean",
+    "lean_name": "evaluateEqEvaluate_all",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:781-813, proof through933: full forall n/ms1/c with arbitrary dm/i/initPc/s2/io, every original normal-PC/state/domain/interference/valid-state/projection-observer/universal-environment asserts/asserts2/encoded-region hypothesis retained. Full exists ms2 forall k conjunction of evaluate/search shifted-clock equalities and target_state_rel retained, with no extra premise or assumed evaluation/post-state. Natural-number induction derives the shifted configuration hypotheses, byte-memory preservation and literal guards. Positive type-indexed words translate to BitVec width under NeZero, host sigma Type, lists/predicate sets retained. Inherited total holEl/holHd keeps holHdNil/shared opaque holArb past end, no bounds guard, concrete fallback or length premise. Full original theorem conclusion captured; Lean kernel checks the complete proof."
   }
 ]

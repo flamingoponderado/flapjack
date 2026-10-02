@@ -102,7 +102,7 @@ run_probe() {
 }
 
 run_probe target_evaluate_eq_probeScript.sml target_evaluate_eq_probe.out \
-  evaluate_eq_base_statement \
+  evaluate_eq_base_statement evaluate_eq_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe misc_memory_regions_probeScript.sml misc_memory_regions_probe.out \
