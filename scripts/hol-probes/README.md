@@ -4788,3 +4788,9 @@ kernel theorem specialization at AddOverflow, its full simulation and native
 state/register/SSA/table carriers. Opcode8069–8090, signed overflow test and
 actual physical/fresh-flag output path are manually compared. No standalone
 tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_suboverflow_probeScript.sml` captures the original
+kernel theorem specialization at SubOverflow, full six-premise simulation and
+complete native state/register/SSA/table carriers. Opcode8092–8113, signed
+wrapped difference test and physical/fresh-flag output path are manually
+compared. No standalone tactic replay is claimed.

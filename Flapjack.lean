@@ -17,6 +17,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLongMul
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLongDiv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstAddCarry
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstAddOverflow
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstSubOverflow
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
 import Flapjack.Compiler.Encoders.AsmProps.Encoding
