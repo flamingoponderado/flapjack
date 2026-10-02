@@ -1,4 +1,5 @@
 import Flapjack.HolRef
+import Flapjack.Misc.Alignment
 import Flapjack.Misc.ListEl
 import Flapjack.Misc.GoodDimindex
 import Flapjack.Misc.FiniteMapApply
@@ -47,19 +48,6 @@ def gcUpdate {width : Nat} [NeZero width] (a : BitVec width) (b : WordLocW width
 of `w`.  Flapjack infrastructure (HOL source outside `cakeml/`). -/
 def gcWordBitsLow {width : Nat} (h : Nat) (w : BitVec width) : BitVec width :=
   BitVec.ofNat width (w.toNat % 2 ^ (h + 1))
-
-/-- HOL's unspecified `LOG2 0`, the alignment exponent of `byte_aligned` below
-word width 8 (see `Log2ZeroParametric.lean`). -/
-noncomputable opaque gcLog2Zero : Nat
-
-/-- HOL `byte_aligned w = aligned (LOG2 (dimindex DIV 8)) w`
-(`HOL/src/n-bit/alignmentScript.sml:27-29`), i.e. clearing the low
-`LOG2 (dimindex DIV 8)` bits leaves `w` unchanged; HOL's unspecified `LOG2 0`
-is `gcLog2Zero`.  Flapjack infrastructure (HOL source outside `cakeml/`). -/
-noncomputable def gcByteAligned {width : Nat} (w : BitVec width) : Bool :=
-  let bytes := width / 8
-  let exponent := if bytes = 0 then gcLog2Zero else Nat.log2 bytes
-  decide (BitVec.ofNat width ((w.toNat / 2 ^ exponent) * 2 ^ exponent) = w)
 
 theorem bitVec_toNat_sub_one_lt {width : Nat} {w : BitVec width} (h : w ≠ 0) :
     (w - 1).toNat < w.toNat := by
@@ -439,7 +427,7 @@ noncomputable def wordGenGcCanDoPartial {width : Nat} [NeZero width] (genSizes :
     allo ≤ endh - trig
 
 /-- Exact HOL `new_trig_def` (`word_gcFunctionsScript.sml:234-243`); HOL
-`byte_aligned` is `gcByteAligned`. -/
+`byte_aligned` is the canonical `holByteAligned`. -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "new_trig_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def newTrig {width : Nat} [NeZero width] (heapSpace allocPref : BitVec width)
@@ -449,7 +437,7 @@ noncomputable def newTrig {width : Nat} [NeZero width] (heapSpace allocPref : Bi
   let h := heapSpace.toNat
   if a ≤ g then BitVec.ofNat width (min h g) else
   if h < a then BitVec.ofNat width h else
-  if gcByteAligned allocPref then allocPref else BitVec.ofNat width h
+  if holByteAligned allocPref then allocPref else BitVec.ofNat width h
 
 /-- Exact HOL `word_gen_gc_partial_move_ref_list_def` (`word_gcFunctionsScript.sml:252-262`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"

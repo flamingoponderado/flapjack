@@ -5453,6 +5453,24 @@ ALookupMap probes replay three complete original lookup mapping proofs and
 and payload carriers, repeated/absent/large keys and noninjective sentinels
 retain the original injection boundary. Regression evidence does not establish
 cross-language equivalence.
+
+### Full native LabToTarget state relation
+
+`lab_to_target_state_rel_probeScript.sml` captures the full original relation
+and all inferred carriers, generic target/compiler/memory consequences, whole
+clock-update equivalence, and rejection at the one-element word index. Native
+kernel consumers in `LabToTarget/StateRel.lean` use the complete relation. Lab
+Boolean memory domains are read by equality to true; both Boolean values have
+a checked truth roundtrip. Every FFI/cache/oracle/code-buffer condition remains.
+
+### Full native LabToTarget positional oracle tie
+
+`lab_to_target_oracle_tie_probeScript.sml` captures the full original definition
+and seven whole shift/state/FFI/cache/residue theorem statements with inferred
+carrier types. An original proved four-field record installation satisfies the
+full relation. Kernel proofs in `LabToTarget/OracleTie.lean` derive every whole
+function equality from the actual native interference search/step; external
+residues keep all original guards and total EL behavior.
 `ssa_loop_semantic_helpers_probe` replays the two original local HOL statements
 and literal source proof scripts at word_allocProof7018–7034: successful-first
 sequence collapse and empty-list cut identity. Six inferred carrier types are
@@ -5583,6 +5601,27 @@ independent address/value carriers; kernel counterparts include wrong value,
 outside/empty domain, Bool/Nat and Bool/product values, noninjective functions
 and an infinite-domain application. No finite-heap premise is introduced.
 
+## Full right balancing correctness
+
+`balanced_map_balanceR_correct_probeScript.sml` replays the literal original
+full correctness theorem and its balancing/rotation/arithmetic prerequisites,
+checking no open hypotheses. Nineteen rows capture the full type and six actual
+small/fallback/rotation trees, invariants and inserted-key lookups. Native
+consumers prove all original premises and use both conclusions. Observations
+are regression evidence, not a cross-language equivalence theorem.
+
+## Full almost-balance growth/decrement laws
+
+`balanced_map_almost_balance_correct_probeScript.sml` literally replays both
+full original arithmetic proofs with no open hypotheses. Twenty-six rows
+capture both complete types and twelve zero/singleton/delta-boundary pairs
+in both directions. Native consumers use all three conclusions, retaining
+truncated subtraction at zero. Observations are regression evidence, not
+a cross-language equivalence theorem.
+
+### Balanced map full cardinality laws
+
+`balanced_map_cardinality_correct_probeScript.sml` replays the literal original local disjoint-union and three size/cardinality proofs, checking empty hypotheses. Typed statements retain generic comparator/tree carriers and original premises. Five valid numeric tree shapes capture size and invariant observations; the equivalent-key singleton checks a constant Equal comparator. Native consumers apply both full generic theorems. These rows support source review; they do not prove cross-assistant equivalence.
 `set_sep_elementary_probe.out` freshly records the six canonical `set_sep`
 heap predicates (`one`, `emp`, `cond`, `SPLIT`, `STAR`, `SEP_EXISTS`), their full
 independently generic types, and fourteen original kernel-proved fixtures. The
@@ -5591,6 +5630,23 @@ conditions, distinct/overlapping singleton assertions, independent witness
 types, and an infinite domain. `Flapjack.Test.SetSepElementary` supplies sixteen
 Lean kernel fixtures. The port adds no finite-heap, word-width or validity
 restriction.
+Load-continuation probes replay the complete original `wStackLoad_append` and
+`get_labels_wStackLoad` proofs. 410 matching packets retain whole native ASTs
+and label observations across all 34 continuation constructors, widths
+1/2/8/64/80, repeated and 70-bit load indices, and nested return/handler cases.
+The handler-without-return case preserves its AST while contributing no labels,
+as in the original semantics. These checks are regression evidence, not a
+HOL-to-Lean equivalence proof.
+
+Return-copy label probes replay the complete original `copy_ret_aux_thm` and
+`get_labels_copy_ret` proofs. 460 matching native/original packets compare whole
+recursive return-copy ASTs and continuation labels, including saturated natural
+subtraction, independent Nat/Bool value and frame metadata carriers, all four
+performance/handler modes, 70-bit indices, and widths 1/2/8/64/80.
+They retain the descending load/store sequence and zero-count continuation.
+These observations provide regression evidence, not cross-language equivalence.
+
+Return allocation-argument probes replay all three complete original stack-move, recursive return-copy and wrapper proofs, with no open hypotheses. The210 predicate pairs cover widths1/2/8/64/80, zero/nonzero/saturated return counts, all four Boolean modes,70-bit slot/register/frame numbers, valid and invalid allocations, and independent optional Call return/handler checks. WordToStackReturnAllocArgsParity kernel-checks identical predicates and arbitrary-carrier theorem applications. These are original regression observations, not cross-language equivalence or full compiler correctness. Regenerate with HOL_PROBE_ONLY=word_to_stack_return_alloc_args_probeScript.sml.
 
 `stack_remove_word_selector_probe.out` records the complete selector type,
 exported Word equation, and original primitive WFREC definition. The probe
@@ -5613,6 +5669,22 @@ uses the reviewed full `fun2Set` graph, without finite heaps or word-specific
 carriers. This is a prerequisite of full StackRemove `state_rel`, which remains
 open separately.
 
+`ssa_call_tail_probe.out` captures the complete original `ssa_cc_trans_correct` tail Call specialization, with all six premises and the full source-permutation/Error-exempt evaluator conclusion. The native case derives argument moves and identical callee environments; full SSA assembly remains open.
+
+### Full finite-map update cardinality
+
+`finite_map_card_update_probeScript.sml` replays the literal original `FCARD_FUPDATE` proof with empty hypotheses. Four original cardinality observations cover empty insertion, existing-key replacement, fresh insertion and repeated replacement. Native consumers apply the full conditional theorem to the same update patterns; actual lookup domains determine cardinality, never support-list length.
+
+### Full insertion correctness
+
+`balanced_map_insert_correct_probeScript.sml` replays the complete original `insert_thm` proof, including local balancing prerequisites, with empty hypotheses. Its generic comparator/key/value/tree statement retains the original good comparator and invariant premises and both conclusions. Seven actual insertion fixtures observe the resulting tree, invariant and inserted-key lookup: Tip, Less, Equal, Greater, both rotation directions, and distinct comparator-equivalent key replacement. Native fixture consumers apply the complete theorem. Captured observations support source review; they do not establish cross-assistant equivalence.
+
+### StackRemove initializer symbol/count group
+
+`stack_remove_stub_names_probeScript.sml` captures the entire original `stub_names_def`, both generic inferred types, and a closed literal `EVAL_TAC` replay of `check_init_stubs_length`. Exact ordered symbol pairs, character bytes and table length match native ML string fixtures; initializer lengths at widths 1/8/64 and arbitrary-parameter kernel consumption retain the actual initializer. Artifact symbol formatting remains a separately tracked executed route; these observations establish no compiler simulation.
+Allocation-argument instruction probes capture two entire generic Inst/ShareInst cases of original word_to_stack_alloc_arg and660 direct actual compiler predicate observations. Matching kernel fixtures cover all asm constructors, ordinary16bit fallback, width64FP splitting, all eight shared operations, address extraction success/failure, zero/spilled frames and70bit registers at widths1/2/8/64/80. The two case theorem statements retain every original input and only perf=F; full compiler assembly remains open. These are regression observations and original theorem applications, not a replay of the full compiler proof or cross-language equivalence. Selector: HOL_PROBE_ONLY=word_to_stack_alloc_instructions_probeScript.sml.
+
+Flat allocation-argument probes capture all nineteen entire generic original nonrecursive cases apart from Inst/ShareInst and Call, plus360 direct compiler EVAL predicates and30 Alloc-case theorem applications at the same concrete inputs. The Alloc rows use the captured full original theorem to avoid eager construction of an irrelevant70bit bitmap; no input or conclusion is changed. All390 matching kernel fixtures cover widths1/2/8/64/80, all flat constructors, arbitrary generic source theorem inputs, malformed cutsets, move cycles/self/repeated sources, rejected Set expressions, and zero/70bit frame fields. Original theorem applications have no open hypotheses. These are regression evidence, not a replay of the entire original compiler proof or cross-language equivalence. Recursive/Call cases and full assembly remain open. Selector: HOL_PROBE_ONLY=word_to_stack_alloc_flat_probeScript.sml.
 `stack_remove_wordlistrev_probe.out` records the full independently generic
 address-word/payload type and both recursive equations, plus eleven fresh
 original kernel-proved fixtures. They cover generic empty/singleton heaps,

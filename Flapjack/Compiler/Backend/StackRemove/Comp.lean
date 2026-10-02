@@ -6,7 +6,9 @@ import Flapjack.Compiler.Backend.StackRemove.CopyLoop
 import Flapjack.Compiler.Backend.BackendCommon
 
 /-! Full native stack_removeScript.sml:161–222 compiler definition.
-Actual runtime replacement remains dependency-linked on 36ez.3.
+The default Pancake and assembly modes initializedRuntimeLab? executes these native
+definitions through StackRemove.compileHOL. hex and sections modes retain the legacy
+route; upstream StackAlloc replacement is a separate obligation.
 -/
 namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm

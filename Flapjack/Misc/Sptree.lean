@@ -52,7 +52,11 @@ def sptIsEmpty {α : Type} : Spt α → Bool
   | .ln => true
   | _ => false
 
-/-- HOL `sptree$wf`: well-formedness (no internal node whose both children are empty). -/
+/-- Retained Flapjack well-formedness check: no internal node has two empty
+children. The former wf_def tag/manifest row was withdrawn with the stack
+relation references in c662f3b64; external-source acceptance remains open on
+flapjack-pxn.18.5.15.3.29.2. The source counterpart is the pinned
+HOL/src/finite_maps/sptreeScript.sml:39-44, not a currently claimed tagged port. -/
 def sptWf {α : Type} : Spt α → Bool
   | .ln => true
   | .ls _ => true

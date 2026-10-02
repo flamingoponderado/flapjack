@@ -1,0 +1,20 @@
+load "preamble";
+load "stack_removeTheory";
+open HolKernel Parse preamble bossLib stack_removeTheory backend_commonTheory mlstringTheory;
+val _ = Globals.linewidth := 10000;
+val _ = Globals.show_types := true;
+fun print_th label th = (print(label ^ "="); print_thm th; print "\n");
+fun print_eval label q = (print(label ^ "="); print_term(rand(concl(EVAL q))); print "\n");
+val _ = print_th "stub_names_def" stub_names_def;
+val _ = (print "stub_names_type="; print_type(type_of ``stack_remove$stub_names``); print "\n");
+val check_init_stubs_length_replay = prove
+  (``LENGTH (init_stubs gen_gc max_heap k start) + 2 = stack_num_stubs``, EVAL_TAC);
+val _ = if null(hyp check_init_stubs_length_replay) then () else raise Fail "open count proof";
+val _ = print_th "check_init_stubs_length" check_init_stubs_length_replay;
+val _ = (print "init_stubs_type="; print_type(type_of ``stack_remove$init_stubs``); print "\n");
+val _ = print_eval "stub_names_values" ``stack_remove$stub_names ()``;
+val _ = print_eval "stub_names_bytes" ``MAP (\(n,s). (n, MAP ORD (explode s))) (stack_remove$stub_names ())``;
+val _ = print_eval "stub_names_count" ``LENGTH (stack_remove$stub_names ())``;
+val _ = print_eval "init_count_8_false" ``LENGTH (init_stubs F 0 0 0 : (num # (8 word) stackLang$prog) list) + 2``;
+val _ = print_eval "init_count_64_true" ``LENGTH (init_stubs T 1024 7 99 : (num # (64 word) stackLang$prog) list) + 2``;
+val _ = print_eval "init_count_1_true" ``LENGTH (init_stubs T 1 2 3 : (num # (1 word) stackLang$prog) list) + 2``;

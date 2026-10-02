@@ -4,7 +4,7 @@ import Flapjack.Misc.PredSet
 /-!
 # stack_namesProof: `make_init_def` and `make_init_semantics`
 
-Ports of `cakeml/compiler/backend/proofs/stack_namesProofScript.sml` lines 555-585: the initial
+Ports of `cakeml/compiler/backend/proofs/stack_namesProofScript.sml` lines 557-587: the initial
 state of the stack_names target, built with the left inverse `LINV (find_name f) UNIV`
 (`holLinv`), has the semantics of the renamed program's state.
 -/
@@ -25,7 +25,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 
 end MakeInit
 
-/-- Exact HOL `make_init_def` (`stack_namesProofScript.sml:555-566`). `LINV (find_name f) UNIV`
+/-- Exact HOL `make_init_def` (`stack_namesProofScript.sml:557-569`). `LINV (find_name f) UNIV`
 is `holLinv (findNameSpt f) (fun _ => True)`, `MAP_KEYS` the choice rendering
 `HolFiniteMapExact.mapKeys`, and `IMAGE` over the Boolean `ffi_save_regs` set the decided
 existential, as in `rename_state_def`. The commented-out buffer resets of the HOL source are
@@ -61,7 +61,7 @@ theorem mapKeys_mapKeys_linv {β : Type} {g : Nat → Nat} (hg : Function.Biject
 
 end MakeInit
 
-/-- Exact HOL `make_init_semantics` (`stack_namesProofScript.sml:568-585`). HOL's free `s`,
+/-- Exact HOL `make_init_semantics` (`stack_namesProofScript.sml:571-587`). HOL's free `s`,
 `f`, `code`, `oracle` and `start` are the implicit binders; `ALL_DISTINCT` is `List.Nodup`,
 `I ## compile f ## I` is `Prod.map id (Prod.map (compileHOL f) id)`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "make_init_semantics"

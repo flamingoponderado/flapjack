@@ -1,0 +1,48 @@
+line_length_pad_section1=∀(nop :word8 list) (ls :α line list) (acc :α line list).
+  LENGTH nop = (1 :num) ∧ EVERY (label_one :α line -> bool) ls ∧
+  EVERY (line_length_leq :α line -> bool) ls ∧
+  ¬EVERY (is_Label :α line -> bool) acc ∧
+  (SUM (MAP (line_length :α line -> num) acc) :num) =
+  (SUM (MAP (line_len :α line -> num) acc) :num) ⇒
+  (SUM (MAP (line_length :α line -> num) (pad_section nop ls acc)) :num) =
+  (SUM (MAP (line_len :α line -> num) ls) :num) +
+  (SUM (MAP (line_len :α line -> num) acc) :num)
+line_length_pad_section1_types=(nop :word8 list)::word8 list;(ls :α line list)::α line list;(acc :α line list)::α line list;
+line_len_pad_section1=∀(nop :word8 list) (xs :α line list) (aux :α line list).
+  LENGTH nop = (1 :num) ∧ EVERY (label_one :α line -> bool) xs ∧
+  ¬EVERY (is_Label :α line -> bool) aux ⇒
+  (SUM (MAP (line_len :α line -> num) (pad_section nop xs aux)) :num) =
+  (SUM (MAP (line_len :α line -> num) xs) :num) +
+  (SUM (MAP (line_len :α line -> num) aux) :num)
+line_len_pad_section1_types=(nop :word8 list)::word8 list;(xs :α line list)::α line list;(aux :α line list)::α line list;
+line_len_pad_section0=∀(nop :word8 list) (ls :α line list) (aux :α line list).
+  EVERY (label_zero :α line -> bool) ls ⇒
+  (SUM (MAP (line_len :α line -> num) (pad_section nop ls aux)) :num) =
+  (SUM (MAP (line_len :α line -> num) ls) :num) +
+  (SUM (MAP (line_len :α line -> num) aux) :num)
+line_len_pad_section0_types=(nop :word8 list)::word8 list;(ls :α line list)::α line list;(aux :α line list)::α line list;
+line_length_pad_section=∀(nop :word8 list) (ls :α line list) (acc :α line list).
+  LENGTH nop = (1 :num) ∧ EVERY (label_one :α line -> bool) ls ∧
+  EVERY (line_length_leq :α line -> bool) ls ∧
+  (SUM (MAP (line_length :α line -> num) acc) :num) =
+  (SUM (MAP (line_len :α line -> num) acc) :num) ∧
+  EVERY (is_Label :α line -> bool) acc ∧ label_prefix_zero ls ⇒
+  (SUM (MAP (line_length :α line -> num) (pad_section nop ls acc)) :num) =
+  (SUM (MAP (line_len :α line -> num) ls) :num) +
+  (SUM (MAP (line_len :α line -> num) acc) :num)
+line_length_pad_section_types=(nop :word8 list)::word8 list;(ls :α line list)::α line list;(acc :α line list)::α line list;
+label_zero_line_length_pad_section=∀(nop :word8 list) (ls :α line list) (acc :α line list).
+  (0 :num) < LENGTH nop ∧ EVERY (label_zero :α line -> bool) ls ∧
+  MAP (line_length :α line -> num) acc = MAP (line_len :α line -> num) acc ∧
+  EVERY (line_length_leq :α line -> bool) ls ⇒
+  MAP (line_length :α line -> num) (pad_section nop ls acc) =
+  MAP (line_len :α line -> num) (REVERSE acc ++ ls)
+label_zero_line_length_pad_section_types=(nop :word8 list)::word8 list;(ls :α line list)::α line list;(acc :α line list)::α line list;
+nonlabel_physical=T
+nonlabel_annotated=T
+zero_empty_nop=T
+zero_multibyte_map=T
+labels_prefix_physical=T
+prefix_guard_required=T
+one_byte_guard_required=T
+bounds_guard_required=T

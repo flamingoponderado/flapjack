@@ -1,9 +1,9 @@
 import Flapjack.Compiler.Backend.StackRemove
 
 /-! Literal stack_removeScript.sml:89–102 stack-free instruction builders.
-Both use the faithful native StackLang/Asm carriers. The executed runtime
-still uses its existing StackRemove macros; actual replacement is tracked
-on dependency-linked 36ez.3, so these definitions do not complete that route.
+Both use the faithful native StackLang/Asm carriers. The default Pancake and assembly modes initializedRuntimeLab? executes these native
+definitions through StackRemove.compileHOL. hex and sections modes retain the legacy
+route; upstream StackAlloc replacement is a separate obligation.
 -/
 namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Compiler.Backend.StackLang
