@@ -1,0 +1,11 @@
+load "preamble"; load "word_allocTheory";
+open HolKernel Parse bossLib preamble word_allocTheory sptreeTheory;
+val _ = Globals.linewidth := 1000;
+fun out label term = (print(label ^ "="); print_term(rconc(EVAL term)); print "\n");
+val _ = out "rec_empty" ``ssa_reconcile (LN:num num_map) (LN:num num_map) (LN:unit num_map) : 64 wordLang$prog``;
+val _ = out "rec_identity" ``ssa_reconcile (fromAList [(2,7)]) (fromAList [(2,7)]) (fromAList [(2,())]) : 64 wordLang$prog``;
+val _ = out "rec_missing_source" ``ssa_reconcile (LN:num num_map) (fromAList [(2,7)]) (fromAList [(2,())]) : 64 wordLang$prog``;
+val _ = out "rec_missing_target" ``ssa_reconcile (fromAList [(2,7)]) (LN:num num_map) (fromAList [(2,())]) : 64 wordLang$prog``;
+val _ = out "rec_duplicate" ``ssa_reconcile (fromAList [(2,7);(2,9);(5,11)]) (fromAList [(2,13);(2,17);(5,19)]) (fromAList [(2,());(2,());(5,())]) : 64 wordLang$prog``;
+val _ = out "rec_order" ``ssa_reconcile (fromAList [(0,21);(4,41);(6,33);(12,37)]) (LN:num num_map) (fromAList [(0,());(4,());(6,());(12,())]) : 64 wordLang$prog``;
+val _ = out "rec_big" ``ssa_reconcile (fromAList [(18446744073709551616,18446744073709551620)]) (LN:num num_map) (fromAList [(18446744073709551616,())]) : 64 wordLang$prog``;

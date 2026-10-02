@@ -1,6 +1,7 @@
 import Flapjack.Misc.Sptree.Enumeration
 import Flapjack.Compiler.Backend.WordAlloc.SSASetup
 import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+import Flapjack.Compiler.Backend.WordAlloc.KeyMapRoute
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 
@@ -86,5 +87,30 @@ theorem ssaRestrictExecutableLookup (entries : List (Nat × Nat))
     cases sptAListLookup key entries <;> rfl
   · simp only [if_neg member]
     cases sptAListLookup key entries <;> rfl
+
+/-- Execute the reviewed reconciliation producer and decode its parallel moves.
+The producer has only Skip/Move1 outputs, carrying no words. Width one supplies
+its positive word index at this generic production API boundary; the theorem
+below proves full result reconstruction at every positive width. This codec is
+Flapjack infrastructure, not a separately tagged HOL declaration. -/
+def ssaReconcileMovesExecutable (source target : List (Nat × Nat)) (names : List Nat) :
+    List (Nat × Nat) :=
+  match ssaReconcile (width := 1) (sptFromAList source) (sptFromAList target)
+      (WordAlloc.numSetToExact names) with
+  | .move _ moves => moves
+  | _ => []
+
+/-- Complete native reconciliation result is recovered from the executed codec
+uniformly at every positive word width. No successful-result premise or assumed
+output relation is needed. The native producer returns only Skip/Move1. -/
+theorem ssaReconcileMovesExecutableCorresponds {width : Nat} [NeZero width]
+    (source target : List (Nat × Nat)) (names : List Nat) :
+    ssaReconcile (width := width) (sptFromAList source) (sptFromAList target)
+        (WordAlloc.numSetToExact names) =
+      let moves := ssaReconcileMovesExecutable source target names
+      if moves = [] then .skip else .move 1 moves := by
+  unfold ssaReconcileMovesExecutable ssaReconcile
+  dsimp only
+  split <;> simp_all
 
 end Flapjack.Compiler.Backend.WordAlloc

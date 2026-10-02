@@ -195,7 +195,10 @@ example :
     wordSsaLoopSetup, wordSsaFakeMoves,
     NumSet.fromList, NumSet.toAList, NumSet.toSet, NumSet.insert, NumSet.insertFuel, NumSet.lrnext, NumSet.lrnextFuel, NumSet.insertList, wordSsaListNextVarRenameMove,
     wordSsaFreshList, wordSsaRestrict, wordSsaFresh,
-    wordSsaFindLoopFrame, wordSsaReconcileTo, wordSsaRead,
+    wordSsaFindLoopFrame, wordSsaReconcileTo,
+    Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable,
+    Compiler.Backend.WordAlloc.ssaReconcile, Compiler.Backend.WordAlloc.optionLookup,
+    WordAlloc.numSetToExact, sptToAList, sptFromAList, sptFoldi, sptLookup, sptInsert, lrNext, wordSsaRead,
     wordSsaSeq, lookupNatInfo, List.eraseDups, List.eraseDupsBy,
     List.eraseDupsBy.loop]
 
@@ -255,7 +258,10 @@ example :
     wordSsaLoopSetup, wordSsaFakeMoves,
     NumSet.fromList, NumSet.toAList, NumSet.toSet, NumSet.insert, NumSet.insertFuel, NumSet.lrnext, NumSet.lrnextFuel, NumSet.insertList, wordSsaListNextVarRenameMove,
     wordSsaFreshList, wordSsaRestrict, wordSsaFresh,
-    wordSsaFindLoopFrame, wordSsaReconcileTo, wordSsaRead,
+    wordSsaFindLoopFrame, wordSsaReconcileTo,
+    Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable,
+    Compiler.Backend.WordAlloc.ssaReconcile, Compiler.Backend.WordAlloc.optionLookup,
+    WordAlloc.numSetToExact, sptToAList, sptFromAList, sptFoldi, sptLookup, sptInsert, lrNext, wordSsaRead,
     wordSsaSeq, lookupNatInfo, List.eraseDups, List.eraseDupsBy,
     List.eraseDupsBy.loop]
 
@@ -331,7 +337,10 @@ example :
         ({ current := [(1, 10)], next := 14 } : WordSsaState)
         ({ current := [(1, 14)], next := 18 } : WordSsaState) [1, 2] =
       (.move 1 [(14, 10)] : WordProg Nat) := by
-  simp [wordSsaReconcileTo, NumSet.fromList, NumSet.toAList, NumSet.toSet, NumSet.insert, NumSet.insertFuel, NumSet.lrnext, NumSet.lrnextFuel, NumSet.insertList,
+  simp [wordSsaReconcileTo,
+    Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable,
+    Compiler.Backend.WordAlloc.ssaReconcile, Compiler.Backend.WordAlloc.optionLookup,
+    WordAlloc.numSetToExact, sptToAList, sptFromAList, sptFoldi, sptLookup, sptInsert, lrNext, NumSet.fromList, NumSet.toAList, NumSet.toSet, NumSet.insert, NumSet.insertFuel, NumSet.lrnext, NumSet.lrnextFuel, NumSet.insertList,
     List.filterMap, List.eraseDups, List.eraseDupsBy, List.eraseDupsBy.loop,
     lookupNatInfo]
 

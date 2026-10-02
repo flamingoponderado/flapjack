@@ -738,16 +738,9 @@ def wordSsaRestrict (state : WordSsaState) (names : List Nat) : WordSsaState :=
     to register `0` (CakeML's `option_lookup`). -/
 def wordSsaReconcileTo (source target : WordSsaState) (names : List Nat) :
     WordProg α :=
-  let moves := (NumSet.fromList names.eraseDups).filterMap (fun name =>
-    match lookupNatInfo name source.current with
-      | none => none
-      | some sourceName =>
-          let targetName := (lookupNatInfo name target.current).getD 0
-          if targetName = sourceName then none
-          else some (targetName, sourceName))
-  match moves with
+  match Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable source.current target.current names with
   | [] => .skip
-  | _ => .move 1 moves
+  | moves => .move 1 moves
 
 def wordSsaRefreshList (state : WordSsaState) : List Nat →
     WordSsaState × WordProg α

@@ -52,4 +52,54 @@ example : (wordSsaRestrict
     [18446744073709551616]).current =
     [(18446744073709551616,18446744073709551620)] := by decide +kernel
 
+-- Complete actual reconciliation outputs captured from original HOL.
+example : wordSsaReconcileTo (α := Nat)
+    { current := [], next := 17 } { current := [], next := 23 }
+    [] = .skip := by
+  have moves : Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable
+      [] [] [] = [] := by decide +kernel
+  simp [wordSsaReconcileTo, moves]
+
+example : wordSsaReconcileTo (α := Nat)
+    { current := [(2,7)], next := 17 } { current := [(2,7)], next := 23 }
+    [2] = .skip := by
+  have moves : Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable
+      [(2,7)] [(2,7)] [2] = [] := by decide +kernel
+  simp [wordSsaReconcileTo, moves]
+
+example : wordSsaReconcileTo (α := Nat)
+    { current := [], next := 17 } { current := [(2,7)], next := 23 }
+    [2] = .skip := by
+  have moves : Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable
+      [] [(2,7)] [2] = [] := by decide +kernel
+  simp [wordSsaReconcileTo, moves]
+
+example : wordSsaReconcileTo (α := Nat)
+    { current := [(2,7)], next := 17 } { current := [], next := 23 }
+    [2] = .move 1 [(0,7)] := by
+  have moves : Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable
+      [(2,7)] [] [2] = [(0,7)] := by decide +kernel
+  simp [wordSsaReconcileTo, moves]
+
+example : wordSsaReconcileTo (α := Nat)
+    { current := [(2,7),(2,9),(5,11)], next := 17 } { current := [(2,13),(2,17),(5,19)], next := 23 }
+    [2,2,5] = .move 1 [(19,11),(13,7)] := by
+  have moves : Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable
+      [(2,7),(2,9),(5,11)] [(2,13),(2,17),(5,19)] [2,2,5] = [(19,11),(13,7)] := by decide +kernel
+  simp [wordSsaReconcileTo, moves]
+
+example : wordSsaReconcileTo (α := Nat)
+    { current := [(0,21),(4,41),(6,33),(12,37)], next := 17 } { current := [], next := 23 }
+    [0,4,6,12] = .move 1 [(0,21),(0,41),(0,37),(0,33)] := by
+  have moves : Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable
+      [(0,21),(4,41),(6,33),(12,37)] [] [0,4,6,12] = [(0,21),(0,41),(0,37),(0,33)] := by decide +kernel
+  simp [wordSsaReconcileTo, moves]
+
+example : wordSsaReconcileTo (α := Nat)
+    { current := [(18446744073709551616,18446744073709551620)], next := 17 } { current := [], next := 23 }
+    [18446744073709551616] = .move 1 [(0,18446744073709551620)] := by
+  have moves : Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable
+      [(18446744073709551616,18446744073709551620)] [] [18446744073709551616] = [(0,18446744073709551620)] := by decide +kernel
+  simp [wordSsaReconcileTo, moves]
+
 end Flapjack.Test.SSAStateMapRouteParity

@@ -51,4 +51,23 @@ theorem wordSsaRestrictCorresponds (state : WordSsaState) (names : List Nat) :
   simp only [wordSsaRestrict, productionMergeMapLookup]
   exact ssaRestrictExecutableLookup state.current names key
 
+/-- Complete actual reconciliation output has precisely the native constructor,
+priority and move payload at every positive word width. The generic production
+word carrier does not occur in these two output constructors. Other outputs
+are excluded by the conclusion, without any input/result success premise.
+This is Flapjack production boundary correspondence, not a HOL theorem port. -/
+theorem wordSsaReconcileToCorresponds {width : Nat} [NeZero width] {α : Type}
+    (source target : WordSsaState) (names : List Nat) :
+    let native := ssaReconcile (width := width) (sptFromAList source.current)
+      (sptFromAList target.current) (WordAlloc.numSetToExact names)
+    match wordSsaReconcileTo (α := α) source target names with
+    | .skip => native = .skip
+    | .move priority moves => native = .move priority moves
+    | _ => False := by
+  have native := ssaReconcileMovesExecutableCorresponds (width := width)
+    source.current target.current names
+  cases moves : ssaReconcileMovesExecutable source.current target.current names with
+  | nil => simpa [wordSsaReconcileTo, moves] using native
+  | cons move rest => simpa [wordSsaReconcileTo, moves] using native
+
 end Flapjack.Compiler.Backend.WordAlloc
