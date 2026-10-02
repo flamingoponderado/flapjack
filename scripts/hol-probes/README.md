@@ -4718,3 +4718,11 @@ get_vars theorem and its get_var prerequisite without changing premises.
 It captures the full statement and native list/value/map/bound carriers;
 source and target state captures establish their independent code/FFI hosts.
 The capture is source evidence, not a cross-assistant equivalence proof.
+
+### Native SSA Return semantic case
+
+`ssa_cc_trans_correct_return_probeScript.sml` replays the literal resumed Return
+proof and its original getVar/getVars, physical list-write, and set/read local
+helpers, without added target-run or success premises. The capture records the
+complete original statement and native state/register/list/map/table carriers.
+It is source evidence, not a cross-assistant equivalence proof.
