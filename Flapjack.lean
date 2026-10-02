@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
 import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
 import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
 import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
