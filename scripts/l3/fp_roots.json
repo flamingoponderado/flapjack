@@ -18,5 +18,7 @@
   "riscv$dfn'FCVT_L_D",
   "riscv$dfn'FCVT_LU_D",
   "riscv$GPR",
-  "riscv$NextFetch"
+  "riscv$NextFetch",
+  "riscv$dfn'FCLASS_S",
+  "riscv$dfn'FCLASS_D"
 ]
