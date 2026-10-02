@@ -67763,5 +67763,61 @@
     "hol_name": "matchLoadReservation_def",
     "statement_status": "reviewed_exact",
     "reviewer": "Source comparison riscvScript1381-1398/5691-5702: complete matchLoadReservation_def, fixed word8 current-core index, Option word64 virtual address and arbitrary full native riscv_state. ReserveLoad reads c_ReserveLoad(procID); write ReserveLoad updates precisely that ATy function with source UPDATE and preserves all other state fields; matchLoadReservation is IsSome AND THE reservation equals supplied vAddr. Canonical HOL THE NONE remains unspecified; no default, successful reservation/core-bound/alignment premise, or narrowed state. Constructors/types match original native Types. LR/SC/full Run/Next assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoad.lean",
+    "lean_name": "\u00abdfn'LW\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Full source/body comparison pinned riscvScript7084-7115: Source7084-7115: complete LW; low 32 bits with sign extension. No architecture/alignment guard is introduced. HOL right-nested tuple word5 x word5 x word12 and full riscv_state -> riscv_state match native carriers. GPR rs1 plus signed12 offset wraps at64; translateAddr Data Read receives original/current-mode returned state. NONE calls signalAddressException(Load_Fault, original virtual address) on returned translation state; SOME reads rawReadData at physical address on that same state and writes original rd. Extraction high31/low0 within64 and original sign/zero/raw extension compared. Original GPR0 suppression and total core functions retained; no alignment/success/core bound or evaluator replacement. Full Run/Next/runtime routing remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoad.lean",
+    "lean_name": "\u00abdfn'LWU\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LWU_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Full source/body comparison pinned riscvScript7116-7157: Source7116-7157: complete LWU; low 32 bits with zero extension. Original mode guard precedes address computation; its returned state is retained, including unspecified-mode behavior. HOL right-nested tuple word5 x word5 x word12 and full riscv_state -> riscv_state match native carriers. GPR rs1 plus signed12 offset wraps at64; translateAddr Data Read receives original/current-mode returned state. NONE calls signalAddressException(Load_Fault, original virtual address) on returned translation state; SOME reads rawReadData at physical address on that same state and writes original rd. Extraction high31/low0 within64 and original sign/zero/raw extension compared. Original GPR0 suppression and total core functions retained; no alignment/success/core bound or evaluator replacement. Full Run/Next/runtime routing remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoad.lean",
+    "lean_name": "\u00abdfn'LH\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LH_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Full source/body comparison pinned riscvScript7158-7189: Source7158-7189: complete LH; low 16 bits with sign extension. No architecture/alignment guard is introduced. HOL right-nested tuple word5 x word5 x word12 and full riscv_state -> riscv_state match native carriers. GPR rs1 plus signed12 offset wraps at64; translateAddr Data Read receives original/current-mode returned state. NONE calls signalAddressException(Load_Fault, original virtual address) on returned translation state; SOME reads rawReadData at physical address on that same state and writes original rd. Extraction high15/low0 within64 and original sign/zero/raw extension compared. Original GPR0 suppression and total core functions retained; no alignment/success/core bound or evaluator replacement. Full Run/Next/runtime routing remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoad.lean",
+    "lean_name": "\u00abdfn'LHU\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LHU_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Full source/body comparison pinned riscvScript7190-7221: Source7190-7221: complete LHU; low 16 bits with zero extension. No architecture/alignment guard is introduced. HOL right-nested tuple word5 x word5 x word12 and full riscv_state -> riscv_state match native carriers. GPR rs1 plus signed12 offset wraps at64; translateAddr Data Read receives original/current-mode returned state. NONE calls signalAddressException(Load_Fault, original virtual address) on returned translation state; SOME reads rawReadData at physical address on that same state and writes original rd. Extraction high15/low0 within64 and original sign/zero/raw extension compared. Original GPR0 suppression and total core functions retained; no alignment/success/core bound or evaluator replacement. Full Run/Next/runtime routing remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoad.lean",
+    "lean_name": "\u00abdfn'LB\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LB_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Full source/body comparison pinned riscvScript7222-7253: Source7222-7253: complete LB; low 8 bits with sign extension. No architecture/alignment guard is introduced. HOL right-nested tuple word5 x word5 x word12 and full riscv_state -> riscv_state match native carriers. GPR rs1 plus signed12 offset wraps at64; translateAddr Data Read receives original/current-mode returned state. NONE calls signalAddressException(Load_Fault, original virtual address) on returned translation state; SOME reads rawReadData at physical address on that same state and writes original rd. Extraction high7/low0 within64 and original sign/zero/raw extension compared. Original GPR0 suppression and total core functions retained; no alignment/success/core bound or evaluator replacement. Full Run/Next/runtime routing remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoad.lean",
+    "lean_name": "\u00abdfn'LBU\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LBU_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Full source/body comparison pinned riscvScript7254-7285: Source7254-7285: complete LBU; low 8 bits with zero extension. No architecture/alignment guard is introduced. HOL right-nested tuple word5 x word5 x word12 and full riscv_state -> riscv_state match native carriers. GPR rs1 plus signed12 offset wraps at64; translateAddr Data Read receives original/current-mode returned state. NONE calls signalAddressException(Load_Fault, original virtual address) on returned translation state; SOME reads rawReadData at physical address on that same state and writes original rd. Extraction high7/low0 within64 and original sign/zero/raw extension compared. Original GPR0 suppression and total core functions retained; no alignment/success/core bound or evaluator replacement. Full Run/Next/runtime routing remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoad.lean",
+    "lean_name": "\u00abdfn'LD\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LD_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Full source/body comparison pinned riscvScript7286-7324: Source7286-7324: complete LD; low 64 bits with raw word64. Original mode guard precedes address computation; its returned state is retained, including unspecified-mode behavior. HOL right-nested tuple word5 x word5 x word12 and full riscv_state -> riscv_state match native carriers. GPR rs1 plus signed12 offset wraps at64; translateAddr Data Read receives original/current-mode returned state. NONE calls signalAddressException(Load_Fault, original virtual address) on returned translation state; SOME reads rawReadData at physical address on that same state and writes original rd. Extraction high63/low0 within64 and original sign/zero/raw extension compared. Original GPR0 suppression and total core functions retained; no alignment/success/core bound or evaluator replacement. Full Run/Next/runtime routing remains open."
   }
 ]

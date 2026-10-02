@@ -6237,3 +6237,16 @@ Each observes equality of the entire returned state to the literal single-field
 update. Lean guards retain arbitrary unrelated state; unconditional full-state,
 indexed-frame, read-after-write and match-shape lemmas preserve original THE
 NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
+
+`l3_integer_load_probe.out` captures the complete original definitions/types for
+all seven integer loads LW/LWU/LH/LHU/LB/LBU/LD and 70 fully reduced route tuples.
+Each family covers positive/negative extension, register-zero suppression,
+unaligned negative offsets, wrapping address addition, core255 with totalCore1,
+Sv32 faults, RV32/RV128 mode behavior, and a successful Sv39 walk. The walk
+writes PTE3079 ->3111 before rawReadData; the expected loaded value is derived
+from3111, exercising the returned translation state. All TLB/PTE fields and an
+entire-state frame outside MEM8/GPR/TLB/NextFetch/exception are observed.
+Lean guards retain arbitrary unrelated native fields, and unconditional normal
+forms retain every branch/complete returned state without success/alignment/core
+premises. This is the complete seven-definition load section, not full Run/Next
+or compiler/runtime correctness. No unspecified architecture/VM is defaulted.
