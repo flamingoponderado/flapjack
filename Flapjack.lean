@@ -1501,6 +1501,7 @@ import Flapjack.Misc.Bit
 import Flapjack.Misc.Alignment
 import Flapjack.Misc.Alignment.Production
 import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
+import Flapjack.Compiler.Backend.LabToTarget.ShareMemState
 import Flapjack.Byte.WordOfBytes
 import Flapjack.Byte.WordSliceAlt
 

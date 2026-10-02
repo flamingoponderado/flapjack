@@ -3283,6 +3283,10 @@ run_probe lab_to_target_share_mem_domain_probeScript.sml lab_to_target_share_mem
   smd_def smd_nil smd_univ smd_singleton \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_share_mem_state_probeScript.sml lab_to_target_share_mem_state_probe.out \
+  smsr_def smsr_nil smsr_halt \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe asm_sem_mem_ops_probeScript.sml asm_sem_mem_ops_probe.out \
   mo_ld2_le_reg mo_ld2_le_ok mo_ld2_be_reg mo_ld2_misaligned mo_ld2_dom mo_ld0_reg mo_ld0_failed mo_st1_mem mo_st1_ok mo_st2_misaligned mo_op_load mo_op_load32_failed mo_op_store8_mem mo_op_load16_reg \
   "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
