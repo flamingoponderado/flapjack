@@ -5595,3 +5595,7 @@ run_probe lab_to_target_section_lookup_positions_probeScript.sml lab_to_target_s
 run_probe l3_mmu_insert_probeScript.sml l3_mmu_insert_probe.out \
   insert_empty insert_holes insert_last_hole insert_full_ascending insert_full_tie insert_full_max insert_last_oldest insert_early_oldest \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_mmu_walk_probeScript.sml l3_mmu_walk_probe.out \
+  walk_invalid walk_pointer_zero walk_pointer_type_one walk_leaf_read walk_leaf_write walk_leaf_already_rd walk_permission_denied walk_leaf_global walk_superpage_unaligned_ppn walk_pointer_leaf walk_leaf_level4 walk_leaf_level1000 walk_recursive_ppn_truncated walk_pointer_type_one_leaf walk_pte_address_wrap \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"

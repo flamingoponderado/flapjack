@@ -252,6 +252,7 @@
     {"bytes": 1891, "out": "l3_mmu_insert_probe.out", "rows": 8, "sha256": "078c6b157fa025265b7500c96c9eb9f6af3a6df79dbce0b6c9b64cca75f1c231"},
     {"bytes": 1589, "out": "l3_mmu_primitives_probe.out", "rows": 62, "sha256": "3e5ebeb4e54b5c4d40d27df7caf21bf269d243c37fc1eaffadfe0b3e5b5b5d8b"},
     {"bytes": 760, "out": "l3_mmu_tlb_probe.out", "rows": 14, "sha256": "7b68c20e24e3ce354410c6511bbbeaa1fa7a10b2dc2504adf346fd91ea945b83"},
+    {"bytes": 717, "out": "l3_mmu_walk_probe.out", "rows": 15, "sha256": "00246a3e84cd8b269ff3e8c008c6446f2ef33c52b5779a9b45cb6b7b654eb701"},
     {"bytes": 90, "out": "l3_mmu_write_frame_probe.out", "rows": 1, "sha256": "5c64e715db775806650a419e26b6fbde06563b179b08f488933b8e400ead79df"},
     {"bytes": 187, "out": "l3_raise_exception_probe.out", "rows": 2, "sha256": "6181faf5e9a5922047c91178514f4638d35b95d29ffccb387afe875cc1b00c3c"},
     {"bytes": 25912, "out": "l3_riscv_arithmetic_probe.out", "rows": 140, "sha256": "ed51fdd81b270272d4dab4eff3a5ac17dbb2f4005f388e32ab856d0f1bec5d82"},
