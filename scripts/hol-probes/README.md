@@ -5970,3 +5970,21 @@ The directed64 probe freshly captures30 original toward-zero numeric rows and
 Lean kernel replays them. Six up/down signed tie checks are algorithm tests,
 not original HOL oracle evidence. Pinned original finite up/down conversion
 remains unsupported; the separate converter bead retains full144-row L3 scope.
+
+### Full L3 integer-to-floating conversion
+
+`l3_riscv_int_to_fp_probeScript.sml` captures all eight original integer-to-FP
+clauses over 18 state scenarios (144 rows), including every supported rounding
+mode, dynamic rounding, signed zero, and illegal-mode traps. Mode 2 is toward
+negative and mode 3 toward positive. The observations retain destination/source
+registers, status and flag updates, delta, other-core state, and trap behavior.
+
+`binary_ieee_directed_certificates.sml` supplies closed original HOL proofs for
+finite directed integer rounding where the upstream converter is unimplemented.
+It discovers a candidate using original toward-zero conversion and an adjacent
+pattern, then independently proves finite/value/ULP/boundary obligations and the
+literal closest-choice result, including the original zero-sign override. It
+uses no host floating-point oracle and does not modify either reference tree.
+The standard driver sets `FLAPJACK_HOL_PROBE_DIR` and refreshes the capture when
+the certificate library changes. This is original-HOL regression evidence,
+not a cross-language equivalence proof.

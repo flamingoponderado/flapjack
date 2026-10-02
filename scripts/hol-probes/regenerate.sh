@@ -23,6 +23,7 @@ if [[ ! -f "$cake_dir/pancake/semantics/loopSemScript.sml" ]]; then
 fi
 
 probe_dir="$repo_dir/scripts/hol-probes"
+export FLAPJACK_HOL_PROBE_DIR="$probe_dir"
 if [[ -z "${HOL_PROBE_ONLY:-}" || "$HOL_PROBE_ONLY" == export_riscv_defs.sml ]]; then
   bash "$repo_dir/scripts/l3/regenerate-export.sh" --update
 fi
@@ -38,7 +39,9 @@ probe_needs_refresh() {
   local output="$1"
   local probe="$2"
   local source="$3"
-  [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]]
+  [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == l3_riscv_int_to_fp_probeScript.sml &&
+       "$probe_dir/binary_ieee_directed_certificates.sml" -nt "$output" ]]
 }
 
 run_probe() {
@@ -5220,3 +5223,42 @@ run_probe word_to_stack_asm_remove_helpers_probeScript.sml word_to_stack_asm_rem
 run_probe binary_ieee_directed_fp64_probeScript.sml binary_ieee_directed_fp64_probe.out \
   rtz64_zero_positive_zero rtz64_zero_negative_zero rtz64_one_positive_zero rtz64_one_negative_zero rtz64_negative_one_positive_zero rtz64_negative_one_negative_zero rtz64_third_positive_zero rtz64_third_negative_zero rtz64_negative_third_positive_zero rtz64_negative_third_negative_zero rtz64_tie_even_positive_zero rtz64_tie_even_negative_zero rtz64_tie_odd_positive_zero rtz64_tie_odd_negative_zero rtz64_negative_tie_positive_zero rtz64_negative_tie_negative_zero rtz64_half_subnormal_positive_zero rtz64_half_subnormal_negative_zero rtz64_negative_half_subnormal_positive_zero rtz64_negative_half_subnormal_negative_zero rtz64_min_subnormal_positive_zero rtz64_min_subnormal_negative_zero rtz64_u64max_positive_zero rtz64_u64max_negative_zero rtz64_max_finite_positive_zero rtz64_max_finite_negative_zero rtz64_overflow_positive_zero rtz64_overflow_negative_zero rtz64_negative_overflow_positive_zero rtz64_negative_overflow_negative_zero \
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" "$hol_dir/src/floating-point"
+
+run_probe l3_riscv_int_to_fp_probeScript.sml l3_riscv_int_to_fp_probe.out \
+  fcvt_s_w_zero fcvt_s_wu_zero fcvt_s_l_zero fcvt_s_lu_zero \
+  fcvt_d_w_zero fcvt_d_wu_zero fcvt_d_l_zero fcvt_d_lu_zero \
+  fcvt_s_w_one fcvt_s_wu_one fcvt_s_l_one fcvt_s_lu_one \
+  fcvt_d_w_one fcvt_d_wu_one fcvt_d_l_one fcvt_d_lu_one \
+  fcvt_s_w_negative_one fcvt_s_wu_negative_one fcvt_s_l_negative_one fcvt_s_lu_negative_one \
+  fcvt_d_w_negative_one fcvt_d_wu_negative_one fcvt_d_l_negative_one fcvt_d_lu_negative_one \
+  fcvt_s_w_tie_even fcvt_s_wu_tie_even fcvt_s_l_tie_even fcvt_s_lu_tie_even \
+  fcvt_d_w_tie_even fcvt_d_wu_tie_even fcvt_d_l_tie_even fcvt_d_lu_tie_even \
+  fcvt_s_w_tie_zero fcvt_s_wu_tie_zero fcvt_s_l_tie_zero fcvt_s_lu_tie_zero \
+  fcvt_d_w_tie_zero fcvt_d_wu_tie_zero fcvt_d_l_tie_zero fcvt_d_lu_tie_zero \
+  fcvt_s_w_tie_down fcvt_s_wu_tie_down fcvt_s_l_tie_down fcvt_s_lu_tie_down \
+  fcvt_d_w_tie_down fcvt_d_wu_tie_down fcvt_d_l_tie_down fcvt_d_lu_tie_down \
+  fcvt_s_w_tie_up fcvt_s_wu_tie_up fcvt_s_l_tie_up fcvt_s_lu_tie_up \
+  fcvt_d_w_tie_up fcvt_d_wu_tie_up fcvt_d_l_tie_up fcvt_d_lu_tie_up \
+  fcvt_s_w_negative_tie fcvt_s_wu_negative_tie fcvt_s_l_negative_tie fcvt_s_lu_negative_tie \
+  fcvt_d_w_negative_tie fcvt_d_wu_negative_tie fcvt_d_l_negative_tie fcvt_d_lu_negative_tie \
+  fcvt_s_w_negative_down fcvt_s_wu_negative_down fcvt_s_l_negative_down fcvt_s_lu_negative_down \
+  fcvt_d_w_negative_down fcvt_d_wu_negative_down fcvt_d_l_negative_down fcvt_d_lu_negative_down \
+  fcvt_s_w_negative_up fcvt_s_wu_negative_up fcvt_s_l_negative_up fcvt_s_lu_negative_up \
+  fcvt_d_w_negative_up fcvt_d_wu_negative_up fcvt_d_l_negative_up fcvt_d_lu_negative_up \
+  fcvt_s_w_large_even fcvt_s_wu_large_even fcvt_s_l_large_even fcvt_s_lu_large_even \
+  fcvt_d_w_large_even fcvt_d_wu_large_even fcvt_d_l_large_even fcvt_d_lu_large_even \
+  fcvt_s_w_large_zero fcvt_s_wu_large_zero fcvt_s_l_large_zero fcvt_s_lu_large_zero \
+  fcvt_d_w_large_zero fcvt_d_wu_large_zero fcvt_d_l_large_zero fcvt_d_lu_large_zero \
+  fcvt_s_w_large_down fcvt_s_wu_large_down fcvt_s_l_large_down fcvt_s_lu_large_down \
+  fcvt_d_w_large_down fcvt_d_wu_large_down fcvt_d_l_large_down fcvt_d_lu_large_down \
+  fcvt_s_w_large_up fcvt_s_wu_large_up fcvt_s_l_large_up fcvt_s_lu_large_up \
+  fcvt_d_w_large_up fcvt_d_wu_large_up fcvt_d_l_large_up fcvt_d_lu_large_up \
+  fcvt_s_w_zero_up fcvt_s_wu_zero_up fcvt_s_l_zero_up fcvt_s_lu_zero_up \
+  fcvt_d_w_zero_up fcvt_d_wu_zero_up fcvt_d_l_zero_up fcvt_d_lu_zero_up \
+  fcvt_s_w_dynamic_up fcvt_s_wu_dynamic_up fcvt_s_l_dynamic_up fcvt_s_lu_dynamic_up \
+  fcvt_d_w_dynamic_up fcvt_d_wu_dynamic_up fcvt_d_l_dynamic_up fcvt_d_lu_dynamic_up \
+  fcvt_s_w_illegal fcvt_s_wu_illegal fcvt_s_l_illegal fcvt_s_lu_illegal \
+  fcvt_d_w_illegal fcvt_d_wu_illegal fcvt_d_l_illegal fcvt_d_lu_illegal \
+  fcvt_s_w_dynamic_illegal fcvt_s_wu_dynamic_illegal fcvt_s_l_dynamic_illegal fcvt_s_lu_dynamic_illegal \
+  fcvt_d_w_dynamic_illegal fcvt_d_wu_dynamic_illegal fcvt_d_l_dynamic_illegal fcvt_d_lu_dynamic_illegal \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
