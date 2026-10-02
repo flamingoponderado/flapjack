@@ -3,6 +3,7 @@ import Flapjack.Test.TargetInterferenceSequenceParity
 import Flapjack.Test.TargetFindNextInterferenceParity
 import Flapjack.Test.StackRemoveStoreListCode
 import Flapjack.Test.RiscVOverflowTargetParity
+import Flapjack.Test.LabToTargetWordLocationParity
 import Flapjack.Test.WordCseProductionRegisterClassifiers
 import Flapjack.Test.WordCseProductionInstructionKeys
 import Flapjack.Test.WordCseProductionLoadHeapKeys
@@ -1778,6 +1779,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordGcFunctionsParity.runChecks,
     Flapjack.Test.StackAllocGcCodeParity.runChecks,
     Flapjack.Test.StackAllocGetBitsParity.runChecks,
+    Flapjack.Test.LabToTargetWordLocationParity.runChecks,
     Flapjack.Test.LabToTargetFetchValidityParity.runChecks,
     Flapjack.Test.LabToTargetEncodingValidityParity.runChecks,
     Flapjack.Test.LabToTargetPositionAppendParity.runChecks,

@@ -56356,5 +56356,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison: full native Div opcode7919-7944 of original ssa_cc_trans_correct, same six premises/full Error-exempt source permutation/result/frame/result-sensitive locals. No extra targetrun/success/poststate/IH. Actual source getVars divisor then dividend, nonword/missing/zero Error branches and signed quotient match native inst; original HOL word slash is signed word_quot, native BitVec.sdiv. Native compiler reads original SSA operands before fresh destination rename. Accepted original getVars/setVar helpers prove target reads and fresh locals internally. Native Nat registers/positive BitVec/shared Type0 code-FFI/state/SSA/table carriers compared with captured original proven theorem specialization. Canonical fpRegs/store finite-support and words translation only, inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Original opcode proof manually reviewed; captured Q.SPEC of actual kernel theorem PASS, no standalone tactic replay claimed. Lean kernel PASS, full Inst remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/WordLocation.lean",
+    "lean_name": "wordLocVal",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "word_loc_val_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original source comparison 2026-10-02, original line516 and bead .10.58. Fresh full original equations/types captured in lab_to_target_word_location_probe.out. Both original clauses retain arbitrary positive word dimension, base p, nested natural Spt labels and original word_loc Word/Loc constructors. Word w returns SOME w unchanged; Loc performs actual lab_lookup, NONE remains NONE, successful natural q is converted by n2w and added to p using modular word arithmetic. words_as_type_indexed_bitvec is the sole representation translation; no word specialization, callback, fallback offset, success premise, HD/EL or byte-alignment dependency. Six actual original and matching kernel observations cover Word, location hit, modular wrap, outer/inner miss and one-bit width; three full generic kernel consumers retain arbitrary base, labels, keys and natural offset. Proof-side relation helper directly used by original full state_rel, not a production compiler route or completed simulation."
   }
 ]

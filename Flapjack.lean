@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetWordLocationParity
 import Flapjack.Test.LabToTargetFetchValidityParity
 import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence

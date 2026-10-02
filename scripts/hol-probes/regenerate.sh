@@ -4331,3 +4331,7 @@ run_probe ssa_cc_trans_correct_inst_shift_probeScript.sml ssa_cc_trans_correct_i
 run_probe ssa_cc_trans_correct_inst_div_probeScript.sml ssa_cc_trans_correct_inst_div_probe.out \
   inst_div_full inst_div_type_st inst_div_type_cst inst_div_type_dst inst_div_type_src inst_div_type_divisor inst_div_type_ssa inst_div_type_next inst_div_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_word_location_probeScript.sml lab_to_target_word_location_probe.out \
+  word_loc_val_def word_loc_val_def_types word_unchanged location_hit location_wrap outer_missing inner_missing one_bit \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
