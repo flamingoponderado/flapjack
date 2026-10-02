@@ -52932,5 +52932,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.3), original68-87: full native HolProg with faithful same-word payloads/MlString; arbitrary registers/cmp/reg_imm/body/list preserved. While is Loop(If cmp r ri body(Break0)); move Or has source in left and right positions, add/sub destination repeated, add_bytes uses n2w(dimindex DIV8); list_Seq empty Skip/singleton identity/right-associated Seq uses reviewed generic recursion at native single-word specialization. Only positive BitVec width/NeZero dimension translation; no register ranges, successful evaluation, safety, targetrun or extra hypotheses. Production route remains dependency-linked36ez.3; no semantic compiler correctness claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/CopyLoop.lean",
+    "lean_name": "copyEach",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "copy_each_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.4), original139-159: arbitrary Nat temporary/bitmap and full faithful native HolProg, no register separation/range/valid-memory/run/output premises. copy_each While NotEqual1Imm1 body exact six-item list: Load t1 t2, byte increment t2, If Test1Imm1 Skip Add t1 3, rightshift1 1, Store t1 2, byte increment2. copy_loop exact four-item list Load1t2/incrementt2/While signedLess1Imm0 with copy_each then load/increment/copy_each. Native While Loop/If/Break0 and original singleton/right-associated list_Seq, shifts and word byte stride reused; aliased registers retained. Only positive BitVec width/NeZero dimension translation qualified. Production36ez.3/fullcomp remains open; this is not a compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/CopyLoop.lean",
+    "lean_name": "copyLoop",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "copy_loop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.4), original139-159: arbitrary Nat temporary/bitmap and full faithful native HolProg, no register separation/range/valid-memory/run/output premises. copy_each While NotEqual1Imm1 body exact six-item list: Load t1 t2, byte increment t2, If Test1Imm1 Skip Add t1 3, rightshift1 1, Store t1 2, byte increment2. copy_loop exact four-item list Load1t2/incrementt2/While signedLess1Imm0 with copy_each then load/increment/copy_each. Native While Loop/If/Break0 and original singleton/right-associated list_Seq, shifts and word byte stride reused; aliased registers retained. Only positive BitVec width/NeZero dimension translation qualified. Production36ez.3/fullcomp remains open; this is not a compiler simulation."
   }
 ]

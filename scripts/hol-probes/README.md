@@ -1,3 +1,5 @@
+`stack_remove_copy_loop_probe.out` captures complete copy_each/copy_loop definitions/types and30 fully expanded native constructor trees at widths1/8/32/64/80, zero/ordinary/aliased arbitrary registers. Kernel trees preserve exact Loop/If/Break0, signed Less vs zero, Test branch, all address operands and right-associated sequences.
+
 `stacklang_inst_builders_probe.out` captures native While/move/add/sub/add-bytes overload terms and full types, list_Seq full definition/type and45 native constructors at widths1/8/32/64/80. Kernel fixtures retain Or-source duplication, Loop/If/Break0, byte strides, empty/singleton/right-associated Seq.
 
 `stack_remove_store_address_probe.out` captures both complete storage-address definitions/types, all48storedname positions, absentCurrHeap and30 modular offsets at widths1/8/32/64/80. Identical kernel fixtures check exact search equality, one-based positions and modular subtraction.

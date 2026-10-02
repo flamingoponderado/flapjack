@@ -1,3 +1,4 @@
+import Flapjack.Test.StackRemoveCopyLoop
 import Flapjack.Test.StackLangInstBuilders
 import Flapjack.Test.StackSemGenericCodeLookupParity
 import Flapjack.Test.StackPropsStackLengthsParity
