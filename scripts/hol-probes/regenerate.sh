@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe stack_rawcall_loop_case_probeScript.sml stack_rawcall_loop_case_probe.out \
+  loop_full_statement loop_full_hypotheses loop_case_statement \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_control_cases_probeScript.sml stack_rawcall_control_cases_probe.out \
   control_full_statement control_full_hypotheses control_return control_raise control_break control_continue \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
