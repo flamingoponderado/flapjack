@@ -66825,5 +66825,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.7: original74-83 full comp_seq_neq_IMP. Arbitrary native first/second/default programs and actual Spt Nat info; sole original comp_seq inequality implies exists natural k,dest with first StackFree k and second Call NONE(INL dest)NONE. No successful lookup, frame bound, target evaluation or extra shape premise. Direct matcher proof uses literal compSeq/destCase. Sole positive type-indexed word carrier translation, native tree maps unchanged. Fresh original full statement hypcount0 and five independent branch observations matched kernel fixtures; generic theorem application separates proof from observations. Axiom audit only propext/Quot.sound. Full label/simulation parents remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_LN",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompLn.lean",
+    "lean_name": "compLn",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.1: original55-71 full forall (i:num num_map) b, comp_top LN b=b and comp LN b=b. Retains unused arbitrary i at actual Spt Nat and arbitrary native HolProg b, full conjunction/order, no hypothesis. Actual comp functional induction includes Seq/If/Loop/returning continuation/optional handler and remaining constructors; NONE-return handlers unchanged. Empty info makes every compSeq lookup fallback, explicit matcher split retains source behavior. Sole positive type-indexed word translation. Fresh original full statement hypcount0 and four complete paired output trees matched kernel fixtures separately from generic theorem application; axiomsonlypropext/Quot.sound. Full simulation/production obligations remainOPEN."
   }
 ]
