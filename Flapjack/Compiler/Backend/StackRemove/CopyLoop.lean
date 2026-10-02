@@ -2,7 +2,9 @@ import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackLang.InstBuilders
 
 /-! Literal stack_removeScript.sml:139–159 StoreConsts copy builders.
-Actual production routing and full comp remain dependency-linked on 36ez.3.
+The default Pancake and assembly modes initializedRuntimeLab? executes these native
+definitions through StackRemove.compileHOL. hex and sections modes retain the legacy
+route; upstream StackAlloc replacement is a separate obligation.
 -/
 namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Compiler.Backend.StackLang

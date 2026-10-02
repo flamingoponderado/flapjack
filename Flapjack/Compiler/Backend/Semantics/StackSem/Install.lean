@@ -4,12 +4,10 @@ import Flapjack.Misc.ShiftSeq
 
 /-! Source-matched `evaluate_def` Install clause fragment over the exact
 StackSem state/result carriers. It is deliberately untagged: this partial
-dispatch helper is not the total HOL `evaluate_def` definition, and because no
-total recursive `evaluate` exists yet the outer `NONE` means this module does not
+dispatch helper is not the total HOL `evaluate_def` definition, and the outer `NONE` means this module does not
 handle the constructor, so it never substitutes `Error` for an unported clause.
 The Install clause does not recurse, so no recursive-evaluation parameter is
-needed. The assembled evaluator route is tracked by `flapjack-y19g`
-(bead `flapjack-y19g.14.5`).
+needed. The total evaluator is assembled in Evaluate.lean.
 
 Counterpart of `cakeml/compiler/backend/semantics/stackSemScript.sml:893-921`.
 The four word registers are read in HOL order (`ptr`, `len`, `dptr`, `dlen`;
@@ -90,7 +88,7 @@ def evaluateInstallWithDecidableEq {width : Nat} [NeZero width] {C F : Type} [De
 /-- Source-shaped Install interface on arbitrary configuration carrier `C`.
     HOL's configuration equality is total propositional equality; the interface
     adds no decidable-equality parameter. This remains an untagged partial
-    dispatch fragment, pending the total evaluator assembly. -/
+    dispatch fragment used by the total evaluator in Evaluate.lean. -/
 noncomputable def evaluateInstall {width : Nat} [NeZero width] {C F : Type}
     (program : HolProg width) (s : StackSemStateFiniteExact width C F) :
     Option (Option (StackSemResult width) × StackSemStateFiniteExact width C F) := by

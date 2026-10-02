@@ -1734,6 +1734,9 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileEmpty.lean", "evaluateSSAReconcileEmpty"): (
+        'Flapjack-specific empty-moves branch factoring; the extra compiler-filter guard is derived inside evaluateSSAReconcile, not an independent HOL theorem. Full original evaluate_ssa_reconcile is separately tagged and assembled in SSAReconcile.lean. Useful helper retained without a HOL tag; this classification is not an additional completed port.'
+    ),
     ("Flapjack/Pancake/Semantics/CrepSem/EvaluateIndWhile.lean", "evalCrepSemHOLProgExact_inductWhile"): (
         "Flapjack-specific well-founded clock/sizeOf induction interface, no standalone "
         "HOL declaration. Derives guarded While body and plain-state NONE/Continue0 "

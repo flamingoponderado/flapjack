@@ -7,7 +7,7 @@ This is a partial dispatch helper, not a second evaluator: the outer `none` mean
 this module does not handle the constructor, so it never substitutes `Error` for
 an unported clause. The clause calls the reviewed exact `instHOL` (`inst_def`)
 over the owning `StackSemStateFiniteExact` carrier. No HOL tag applies to this
-Option-shaped fragment; full assembly is tracked by flapjack-y19g.18. -/
+Option-shaped fragment; the total evaluator is assembled in Evaluate.lean. -/
 
 namespace Flapjack.StackSemInstCase
 open Compiler.Backend.StackLang Compiler.Encoders.Asm StackSemInst
