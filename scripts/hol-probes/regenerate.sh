@@ -5365,3 +5365,7 @@ run_probe stack_remove_recursive_alloc_probeScript.sml stack_remove_recursive_al
 run_probe stack_remove_comp_alloc_probeScript.sml stack_remove_comp_alloc_probe.out \
   ca_statement ca_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_shifts_probeScript.sml stack_remove_shifts_probe.out \
+  su_statement su_proved sd_statement sd_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

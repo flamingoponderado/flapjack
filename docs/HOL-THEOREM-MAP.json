@@ -65151,5 +65151,35 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-alloc): original stack_removeProofScript.sml550-618 recursive evaluate_stack_alloc and2107-2117 genuine StackAlloc compiler case. Same original source evaluation/nonError/full state relation hypotheses, constructor regBound retained, existential clock/native target execution and full postrelation or FFI conclusion. Original recursive forall non-Halt conditional retained. Both native jump modes, arbitrary counts including overflow, actual Seq clock clamps, reserved pointer guard derived from source reserve/upper bounds; no supplied target evaluation or postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains exact Spt. Inherited reals_as_rational_cuts assumption from the faithful total evaluator; this allocation case has no local real operation. Fresh literal original recursive and constructor proofs replayed successfully."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/ShiftSimulation.lean",
+    "lean_name": "evaluateUpshift",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "evaluate_upshift",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-shifts): original stack_removeProofScript.sml1037-1074 evaluate_upshift/evaluate_downshift. Identical sole word-register lookup premise, arbitrary count including zero, actual recursive native Add/Sub evaluation, NONE result and whole state unchanged except canonical register update. Positive-width word and canonical finite-support regs/fpRegs/store translations only. Seq clock clamp is proved unchanged. No dimension/safety/state-relation restriction or supplied target evaluation. Same-module imported-carrier roundtrip witness. Inherited reals_as_rational_cuts assumption from faithful total evaluator, no local real operation. Fresh original literal proof replays recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/ShiftSimulation.lean",
+    "lean_name": "evaluateDownshift",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "evaluate_downshift",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-shifts): original stack_removeProofScript.sml1037-1074 evaluate_upshift/evaluate_downshift. Identical sole word-register lookup premise, arbitrary count including zero, actual recursive native Add/Sub evaluation, NONE result and whole state unchanged except canonical register update. Positive-width word and canonical finite-support regs/fpRegs/store translations only. Seq clock clamp is proved unchanged. No dimension/safety/state-relation restriction or supplied target evaluation. Same-module imported-carrier roundtrip witness. Inherited reals_as_rational_cuts assumption from faithful total evaluator, no local real operation. Fresh original literal proof replays recorded."
   }
 ]
