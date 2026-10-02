@@ -1,11 +1,12 @@
-import Flapjack.Pancake.WordConvs
+import Flapjack.Pancake.WordConvs.FullInstOkLess
 
 /-!
-Kernel-checked regression for the broad untagged fullInstOkLess wrapper and its
-`wordLang$exp_to_addr` helper, against the direct HOL oracle
+Kernel-checked and executed regression for fullInstOkLessExact and its
+`wordLang$exp_to_addr` helper, against the direct original HOL oracle
 `scripts/hol-probes/word_convs_full_inst_ok_less_probe.out`.
-Its broad config encoder/width carriers differ from HOL; the exact source port
-is fullInstOkLessExact in Flapjack.Pancake.WordConvs.FullInstOkLess.
+The runner uses the positive-width exact assembler configuration. Closed
+broad-carrier compatibility checks remain separate; no encoder/carrier
+correspondence or production compiler validation pass is claimed.
 -/
 
 namespace Flapjack.Test.WordLangFullInstOkLessParity
@@ -21,7 +22,25 @@ private def emptySet : WordLangNumSetHOL := .ln
 
 private def cutsets : WordLangCutsetsHOL := (emptySet, emptySet)
 
-private def cfg : AsmConfig 8 :=
+private def cfgBroad : AsmConfig 8 :=
+  { isa := .riscv
+    encode := fun _ => []
+    bigEndian := false
+    codeAlignment := 2
+    linkReg := none
+    avoidRegs := [3]
+    regCount := 8
+    fpRegCount := 4
+    twoRegArith := true
+    validImm := fun _ value => value == w8 1
+    addrOffset := (w8 0, w8 100)
+    hwOffset := (w8 0, w8 100)
+    byteOffset := (w8 0, w8 100)
+    jumpOffset := (w8 0, w8 100)
+    cjumpOffset := (w8 0, w8 100)
+    locOffset := (w8 0, w8 100) }
+
+private def cfg : AsmConfigExact 8 :=
   { isa := .riscv
     encode := fun _ => []
     bigEndian := false
@@ -94,44 +113,64 @@ example : expToAddrHOL ((.op .add [.const (5 : W), .var 3] : WordLangExpHOL W)) 
 example : expToAddrHOL ((.const (5 : W) : WordLangExpHOL W)) = none := rfl
 
 -- `full_inst_ok_less` rows.
-example : fullInstOkLess cfg goodInstProg = true := by decide
-example : fullInstOkLess cfg immOkProg = true := by decide
-example : fullInstOkLess cfg badProg = false := by decide
-example : fullInstOkLess cfg seqBadProg = false := by decide
-example : fullInstOkLess cfg loopProg = true := by decide
-example : fullInstOkLess cfg ifProg = true := by decide
-example : fullInstOkLess cfg mustTerminateProg = true := by decide
-example : fullInstOkLess cfg callRetBadProg = false := by decide
-example : fullInstOkLess cfg callHandlerBadProg = false := by decide
-example : fullInstOkLess cfg callNoneHandlerBadProg = true := by decide
-example : fullInstOkLess cfg callOkProg = true := by decide
-example : fullInstOkLess cfg shareLoadProg = true := by decide
-example : fullInstOkLess cfg shareLoadBigProg = false := by decide
-example : fullInstOkLess cfg shareLoad16Prog = true := by decide
-example : fullInstOkLess cfg shareStore8Prog = true := by decide
-example : fullInstOkLess cfg shareConstProg = false := by decide
-example : fullInstOkLess cfg assignProg = true := by decide
-example : fullInstOkLess cfg allocProg = true := by decide
+example : fullInstOkLessExact cfg goodInstProg = true := by decide
+example : fullInstOkLessExact cfg immOkProg = true := by decide
+example : fullInstOkLessExact cfg badProg = false := by decide
+example : fullInstOkLessExact cfg seqBadProg = false := by decide
+example : fullInstOkLessExact cfg loopProg = true := by decide
+example : fullInstOkLessExact cfg ifProg = true := by decide
+example : fullInstOkLessExact cfg mustTerminateProg = true := by decide
+example : fullInstOkLessExact cfg callRetBadProg = false := by decide
+example : fullInstOkLessExact cfg callHandlerBadProg = false := by decide
+example : fullInstOkLessExact cfg callNoneHandlerBadProg = true := by decide
+example : fullInstOkLessExact cfg callOkProg = true := by decide
+example : fullInstOkLessExact cfg shareLoadProg = true := by decide
+example : fullInstOkLessExact cfg shareLoadBigProg = false := by decide
+example : fullInstOkLessExact cfg shareLoad16Prog = true := by decide
+example : fullInstOkLessExact cfg shareStore8Prog = true := by decide
+example : fullInstOkLessExact cfg shareConstProg = false := by decide
+example : fullInstOkLessExact cfg assignProg = true := by decide
+example : fullInstOkLessExact cfg allocProg = true := by decide
+
+-- Untagged broad-carrier compatibility rows, independently retaining old behavior.
+example : fullInstOkLess cfgBroad goodInstProg = true := by decide
+example : fullInstOkLess cfgBroad immOkProg = true := by decide
+example : fullInstOkLess cfgBroad badProg = false := by decide
+example : fullInstOkLess cfgBroad seqBadProg = false := by decide
+example : fullInstOkLess cfgBroad loopProg = true := by decide
+example : fullInstOkLess cfgBroad ifProg = true := by decide
+example : fullInstOkLess cfgBroad mustTerminateProg = true := by decide
+example : fullInstOkLess cfgBroad callRetBadProg = false := by decide
+example : fullInstOkLess cfgBroad callHandlerBadProg = false := by decide
+example : fullInstOkLess cfgBroad callNoneHandlerBadProg = true := by decide
+example : fullInstOkLess cfgBroad callOkProg = true := by decide
+example : fullInstOkLess cfgBroad shareLoadProg = true := by decide
+example : fullInstOkLess cfgBroad shareLoadBigProg = false := by decide
+example : fullInstOkLess cfgBroad shareLoad16Prog = true := by decide
+example : fullInstOkLess cfgBroad shareStore8Prog = true := by decide
+example : fullInstOkLess cfgBroad shareConstProg = false := by decide
+example : fullInstOkLess cfgBroad assignProg = true := by decide
+example : fullInstOkLess cfgBroad allocProg = true := by decide
 
 private def guards : List Bool :=
-  [ fullInstOkLess cfg goodInstProg
-  , fullInstOkLess cfg immOkProg
-  , fullInstOkLess cfg badProg
-  , fullInstOkLess cfg seqBadProg
-  , fullInstOkLess cfg loopProg
-  , fullInstOkLess cfg ifProg
-  , fullInstOkLess cfg mustTerminateProg
-  , fullInstOkLess cfg callRetBadProg
-  , fullInstOkLess cfg callHandlerBadProg
-  , fullInstOkLess cfg callNoneHandlerBadProg
-  , fullInstOkLess cfg callOkProg
-  , fullInstOkLess cfg shareLoadProg
-  , fullInstOkLess cfg shareLoadBigProg
-  , fullInstOkLess cfg shareLoad16Prog
-  , fullInstOkLess cfg shareStore8Prog
-  , fullInstOkLess cfg shareConstProg
-  , fullInstOkLess cfg assignProg
-  , fullInstOkLess cfg allocProg ]
+  [ fullInstOkLessExact cfg goodInstProg
+  , fullInstOkLessExact cfg immOkProg
+  , fullInstOkLessExact cfg badProg
+  , fullInstOkLessExact cfg seqBadProg
+  , fullInstOkLessExact cfg loopProg
+  , fullInstOkLessExact cfg ifProg
+  , fullInstOkLessExact cfg mustTerminateProg
+  , fullInstOkLessExact cfg callRetBadProg
+  , fullInstOkLessExact cfg callHandlerBadProg
+  , fullInstOkLessExact cfg callNoneHandlerBadProg
+  , fullInstOkLessExact cfg callOkProg
+  , fullInstOkLessExact cfg shareLoadProg
+  , fullInstOkLessExact cfg shareLoadBigProg
+  , fullInstOkLessExact cfg shareLoad16Prog
+  , fullInstOkLessExact cfg shareStore8Prog
+  , fullInstOkLessExact cfg shareConstProg
+  , fullInstOkLessExact cfg assignProg
+  , fullInstOkLessExact cfg allocProg ]
 
 private def expected : List Bool :=
   [true, true, false, false, true, true, true, false, false, true, true,
@@ -140,9 +179,9 @@ private def expected : List Bool :=
 def runChecks : IO Bool := do
   let ok := guards == expected
   if ok then
-    IO.println "PASS wordConvs full_inst_ok_less matches all 22 oracle rows"
+    IO.println "PASS original native full_inst_ok_less predicate (18 kernel rows)"
   else
-    IO.println "FAIL wordConvs full_inst_ok_less rows"
+    IO.println "FAIL original native full_inst_ok_less predicate"
   pure ok
 
 end Flapjack.Test.WordLangFullInstOkLessParity

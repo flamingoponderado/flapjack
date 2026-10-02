@@ -1,4 +1,7 @@
+import Flapjack.Misc.Words.Formatting
 import Flapjack.Misc.Words.Replicate
+import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
+import Flapjack.Compiler.Backend.LabToTarget.ZeroLabelExistence
 import Flapjack.Misc.StateTransformer
 import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness
 import Flapjack.Compiler.Backend.LabToTarget.StrongEvenLabels
@@ -578,6 +581,11 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveRevival
 import Flapjack.Compiler.Backend.RegAlloc.ProductionUnspill
 import Flapjack.Compiler.Backend.RegAlloc.ProductionSimplify
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFreeze
+import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveReset
+import Flapjack.Compiler.Backend.RegAlloc.ProductionPrefreeze
+import Flapjack.Compiler.Backend.RegAlloc.ProductionSpillChoice
+import Flapjack.Compiler.Backend.RegAlloc.ProductionSpill
+import Flapjack.Compiler.Backend.RegAlloc.ProductionEdgeUpdate
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
@@ -1630,6 +1638,8 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcSimple
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocSimple
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Partial
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Full
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocNone
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove

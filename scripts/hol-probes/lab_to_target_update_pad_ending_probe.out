@@ -1,0 +1,16 @@
+upd_lab_len_ends_with_label=∀(pos :num) (ss :α sec list).
+  EVERY (sec_ends_with_label :α sec -> bool) ss ⇒
+  EVERY (sec_ends_with_label :α sec -> bool) (upd_lab_len pos ss)
+upd_lab_len_ends_with_label_types=(pos :num)::num;(ss :α sec list)::α sec list;
+pad_code_ends_with_label=∀(nop :word8 list) (ls :α sec list).
+  EVERY (sec_ends_with_label :α sec -> bool) ls ⇒
+  EVERY (sec_ends_with_label :α sec -> bool) (pad_code nop ls)
+pad_code_ends_with_label_types=(nop :word8 list)::word8 list;(ls :α sec list)::α sec list;
+empty_update=T
+empty_padding=T
+updated_ending=T
+padded_one=T
+padded_empty_nop=T
+missing_ending_guard=T
+width1=T
+width80_large_pos=T
