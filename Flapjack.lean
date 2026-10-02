@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackRemove.StubNames
 import Flapjack.Misc.BalancedMap.InsertCorrect
 import Flapjack.Misc.BalancedMap.CardinalityCorrect
 import Flapjack.Misc.BalancedMap.AlmostBalanceCorrect

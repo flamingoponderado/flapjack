@@ -61688,5 +61688,22 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full insert_thm1525-1578: arbitrary generic key/payload/tree and comparator, sole good_cmp AND invariant premises, BOTH actual recursive insert invariant and comparator-equivalence-key semantic update conclusions. Tip/Less/Equal/Greater structural induction retains recursive BOTH-conclusion IH only; full cardinality hit/fresh law derives unchanged-or-increment balancing obligation, root ordering derives domain exclusion for left-biased union. Equal comparison replaces stored key/value even for distinct equivalent keys. No target map equality, balance, finite carrier or extra successful execution premise. Literal complete original proof replay closed hyp=[]; canonical producer observation is the only representation translation. Coordinator acceptance and full delivery gates remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StubNames.lean",
+    "hol_name": "stub_names_def",
+    "lean_name": "stubNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 at335-340: entire unit argument and ordered three Nat/mlstring pairs retained, indices0/1/2, exact native implode character bytes for _Init/_Halt0/_Halt2. Full original unit->(num#mlstring)list type and definition captured; native MlString constructor is List(BitVec8), no Lean String representation qualifier, extra premise or word specialization. Fresh original names/bytes/count and matching kernel fixtures. Executed ArtifactFormat wiring remains separate open production parent; this definition alone does not claim route completion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StubNames.lean",
+    "hol_name": "check_init_stubs_length",
+    "lean_name": "checkInitStubsLength",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 at342-348: entire unconditional LENGTH(actual init_stubs gen_gc max_heap k start)+2=stack_num_stubs statement retained, arbitrary Bool and three Nat parameters and positive-width native HolProg carrier. Uses actual reviewed initStubs including initialization/tailcall and two word-valued halts, count5 from reviewed backend_common. Only standard type-indexed word carrier translation with NeZero width, no success/evaluation/invariant premise. Literal original EVAL_TAC replay hyp=[] and complete inferred generic types captured; widths1/8/64 count5 plus universal kernel consumer. No production wiring claim."
   }
 ]
