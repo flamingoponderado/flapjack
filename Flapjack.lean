@@ -1,4 +1,7 @@
+import Flapjack.RiscV.L3.Defs.MMU.TLB
+import Flapjack.RiscV.L3.Defs.MMU.Access
 import Flapjack.RiscV.L3.Defs.MMU.Primitives
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateOk
 import Flapjack.Compiler.Backend.StackRawCall
 import Flapjack.RiscV.L3.Defs.MMU.Exception
 import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
@@ -151,6 +154,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSize
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.Clock
 import Flapjack.Compiler.Backend.Semantics.StackSem.ClockControl
+import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers

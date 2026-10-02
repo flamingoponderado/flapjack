@@ -1484,10 +1484,28 @@
       "sha256": "95504f40249189b9e583ccef958d4bba570b1cae1a408fc1a27ff9c4997749a7"
     },
     {
+      "bytes": 11729,
+      "out": "l3_mmu_access_probe.out",
+      "rows": 288,
+      "sha256": "cc697a59f4477ab0e85f83e32e6a51cb4a5d00b02f7538f4469e28cb9b41aa79"
+    },
+    {
       "bytes": 1589,
       "out": "l3_mmu_primitives_probe.out",
       "rows": 62,
       "sha256": "3e5ebeb4e54b5c4d40d27df7caf21bf269d243c37fc1eaffadfe0b3e5b5b5d8b"
+    },
+    {
+      "bytes": 760,
+      "out": "l3_mmu_tlb_probe.out",
+      "rows": 14,
+      "sha256": "7b68c20e24e3ce354410c6511bbbeaa1fa7a10b2dc2504adf346fd91ea945b83"
+    },
+    {
+      "bytes": 90,
+      "out": "l3_mmu_write_frame_probe.out",
+      "rows": 1,
+      "sha256": "5c64e715db775806650a419e26b6fbde06563b179b08f488933b8e400ead79df"
     },
     {
       "bytes": 187,
@@ -5462,10 +5480,22 @@
       "sha256": "384b24b7b0f86f82f70e70838471dda0d76e7dff9e0a653992ce302da28014dc"
     },
     {
+      "bytes": 437,
+      "out": "stack_rawcall_compile_probe.out",
+      "rows": 5,
+      "sha256": "7afee26f184c7a08650dd63b938cf4450e0defcebbdde4dc4468b2694a762cf2"
+    },
+    {
       "bytes": 453,
       "out": "stack_rawcall_native_probe.out",
       "rows": 7,
       "sha256": "e98d7b2e8288f69f4c895cd09a8fdd4bc0b6ec36a32aaa209b25df19d677394f"
+    },
+    {
+      "bytes": 558,
+      "out": "stack_rawcall_state_ok_probe.out",
+      "rows": 7,
+      "sha256": "d3ef1f8f9aab079091592d9457f09df02c8d32f9290a61f0bf723e81283d8ecb"
     },
     {
       "bytes": 558,
@@ -5856,6 +5886,12 @@
       "out": "stack_sem_clock_control_probe.out",
       "rows": 6,
       "sha256": "4c4749100cac0d1411fac34188cba459adbe880acc7594d18184891021d11b72"
+    },
+    {
+      "bytes": 792,
+      "out": "stack_sem_evaluate_clock_probe.out",
+      "rows": 14,
+      "sha256": "51fa7fbe66ca10a6a2ed3b1489ee6d290546c1bde997de6b68eb02883df26847"
     },
     {
       "bytes": 718,
