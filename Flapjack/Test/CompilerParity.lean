@@ -1,3 +1,4 @@
+import Flapjack.Test.TargetSemEvaluateParity
 import Flapjack.Test.LabToTargetLineLenParity
 import Flapjack.Test.LabToTargetSectionLengthParity
 import Flapjack.Test.ByteWordToBytesAuxParity

@@ -3076,7 +3076,8 @@ run_probe lab_to_target_section_length_probeScript.sml lab_to_target_section_len
   SectionLengthEmpty SectionLengthMixed SectionLengthMixedPosition SectionLengthMixedLabels \
   SectionLengthZeroLabel SectionLengthZeroLenLabel SectionLengthDuplicateLabels \
   SectionLengthArbitraryAccumulator SecLengthAddEmpty SecLengthAddMixed SecLengthAddMixedValue \
-  SecLengthAddZeroAnnotation SecLengthAddEmptyBytesAnnotation \
+  SecLengthAddZeroAnnotation SecLengthAddEmptyBytesAnnotation SecLengthSumEmpty SecLengthSumMixed \
+  SectionAppendEmptyLeft SectionAppendMixedTail SectionAppendConcretePair SectionAppendZeroLabel \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe byte_word_to_bytes_aux_probeScript.sml byte_word_to_bytes_aux_probe.out \
   ByteAuxLE16Cycle ByteAuxBE16Cycle ByteAuxLE32Cycle ByteAuxBE32Cycle \
@@ -3972,3 +3973,6 @@ run_probe ssa_cc_trans_props_control_probeScript.sml ssa_cc_trans_props_control_
 run_probe ssa_cc_trans_props_probeScript.sml ssa_cc_trans_props_probe.out \
   ssa_props_full ssa_props_type_prog ssa_props_type_ssa ssa_props_type_na ssa_props_type_lt ssa_props_type_progOut ssa_props_type_ssaOut ssa_props_type_naOut \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe target_sem_evaluate_probeScript.sml target_sem_evaluate_probe.out \
+  te_zero te_unknown te_halt_success te_halt_resource te_cache te_shared_missing te_external_mmio te_cache_shift te_empty_external te_empty_external_shift te_normal_priority_encoding_fail te_normal_success te_normal_shift te_normal_guard_rollback te_mm_read_return te_mm_write_return te_mm_write_narrow te_mm_read_final te_mm_unshared te_mm_invalid_size \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"

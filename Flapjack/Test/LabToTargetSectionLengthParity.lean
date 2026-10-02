@@ -22,7 +22,20 @@ example : secLength mixed (17+9) = 40 := by decide +kernel
 example : secLength ([.label 1 2 0,.asm (.asmi (.inst .skip)) [] 0] : List Line8) (3+4) = 7 := by decide +kernel
 example : secLength ([.asm (.asmi (.inst .skip)) [] 100] : List Line8) (2+6) = 108 := by decide +kernel
 
+private def appendTail : List Line8 := [.label 1 4 3, .asm (.asmi (.inst .skip)) [] 10]
+example : secLength ([] : List Line8) 9 = (([] : List Line8).map lineLen).sum + 9 := by decide +kernel
+example : secLength mixed 11 = (mixed.map lineLen).sum + 11 := by decide +kernel
+example : sectionLabels 17 (([] : List Line8) ++ mixed) acc =
+    sectionLabels (17 + (([] : List Line8).map lineLen).sum) mixed
+      (sectionLabels 17 ([] : List Line8) acc).2 := by decide +kernel
+example : sectionLabels 17 (mixed ++ appendTail) acc =
+    sectionLabels (17 + (mixed.map lineLen).sum) appendTail
+      (sectionLabels 17 mixed acc).2 := by decide +kernel
+example : sectionLabels 17 (mixed ++ appendTail) acc = (44,[(4,34),(4,22),(99,7)]) := by decide +kernel
+example : sectionLabels 5 (([.label 1 0 3] : List Line8) ++ mixed) acc =
+    (22,[(4,13),(99,7)]) := by decide +kernel
+
 def runChecks : IO Bool := do
-  IO.println "PASS original section_labels_sec_length/sec_length_add (13 kernel replays)"
+  IO.println "PASS original section lengths and whole-pair append equations (19 kernel replays)"
   pure true
 end Flapjack.Test.LabToTargetSectionLengthParity
