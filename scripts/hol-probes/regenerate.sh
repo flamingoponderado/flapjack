@@ -4139,3 +4139,7 @@ run_probe balanced_map_keysets_probeScript.sml balanced_map_keysets_probe.out \
 run_probe balanced_map_keycmp_probeScript.sml balanced_map_keycmp_probe.out \
   ksc_definition ksc_full_theorem ksc_pair_definition \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"
+
+run_probe balanced_map_structural_size_probeScript.sml balanced_map_structural_size_probe.out \
+  bmss_full_theorem \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"

@@ -54007,5 +54007,13 @@
   "hol_name": "key_set_cmp2_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL245-248 universal pair of members from arbitrary left/right Sets, conjunctive membership hypothesis, same cmp left-key right-key=result. No nonempty/class/ordering condition added. Standard predicate-set and Ordering constructor translations only; full original declarations captured without open hypotheses and unrestricted Lean theorem kernel-checks. No cross-language or full lookup/production correctness claim."
+},
+{
+  "lean_path": "Flapjack/Misc/BalancedMap/StructuralSize.lean",
+  "lean_name": "structureSizeThm",
+  "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+  "hol_name": "structure_size_thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance2026-10-02 HOL918-923: arbitrary comparator and tree, invariant only premise, stored size equals recursive structure_size. Tip reflexivity and Bin invariant first conjunct correspond to original Cases_on/rw proof. No good_cmp, finite-map cardinality, balance conclusion or extra success assumption. Literal Map/Nat/Ordering carriers, no qualifier difference. Full original local proof replay captured with no open hypotheses and unrestricted Lean theorem kernel-checks; full size/cardinality/insertion and production correctness remain open."
 }
 ]

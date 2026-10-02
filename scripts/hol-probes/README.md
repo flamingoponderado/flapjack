@@ -4611,3 +4611,7 @@ These are full original helper theorems, not a bitmap decoder simulation.
 ## Full balanced-map comparator-class law
 
 `balanced_map_keycmp_probe.out` captures both complete predicates and the full original comparator-class theorem without open hypotheses. The Lean proof covers arbitrary result Ordering and all keys under only good_cmp; Greater follows reversed Less with the original equality interaction. This does not assume class congruence or complete lookup correctness.
+
+## Full balanced-map structural-size theorem
+
+`balanced_map_structural_size_probe.out` replays the original local theorem and proof, rejecting open hypotheses. Lean keeps arbitrary cmp/tree and the sole invariant hypothesis; no good_cmp or finite-map premise is added. It is a prerequisite for size/insertion correctness, not those complete results.

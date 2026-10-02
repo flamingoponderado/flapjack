@@ -1240,6 +1240,7 @@ import Flapjack.Misc.BalancedMap.Core
 import Flapjack.Misc.BalancedMap.Rotations
 import Flapjack.Misc.BalancedMap.Insert
 import Flapjack.Misc.BalancedMap.Invariants
+import Flapjack.Misc.BalancedMap.StructuralSize
 import Flapjack.Misc.BalancedMap.Semantics
 import Flapjack.Misc.BalancedMap.KeySets
 import Flapjack.Misc.BalancedMap.KeySetComparison
