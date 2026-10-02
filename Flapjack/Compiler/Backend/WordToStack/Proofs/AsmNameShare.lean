@@ -38,7 +38,10 @@ private theorem shareName {width : Nat} [NeZero width] (conf : AsmConfigExact wi
 guards and the actual compiler output are retained. The source no-share guard
 forces a non-Ag32 ISA here; failed address extraction is ruled out by validity.
 Physical-register conventions, the two-register guard, and the strict frame
-minimum are retained even though this case needs only offset validity and room. -/
+minimum are retained even though this case needs only offset validity and room.
+This declaration ports the ShareInst piece of `word_to_stack_stack_asm_name_lem`.
+The full naming assembly, `stack_asm_convs`, and `compile_word_to_stack_convs`
+remain open. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
 theorem wordToStackStackAsmNameShareInst {width : Nat} [NeZero width]

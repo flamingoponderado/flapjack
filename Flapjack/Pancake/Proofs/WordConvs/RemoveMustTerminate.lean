@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Pancake.WordConvs
+import Flapjack.Pancake.WordConvs.FullInstOkLess
 import Flapjack.Pancake.WordConvs.CodeLabels
 
 /-!
@@ -78,10 +79,10 @@ instruction predicate `P` is the leading binder. -/
   (words_as_type_indexed_bitvec)]
 theorem removeMustTerminateConventions {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) :
-    ∀ (p : WordLangProgHOL (BitVec width)) (c : AsmConfig width) (k : Nat),
+    ∀ (p : WordLangProgHOL (BitVec width)) (c : AsmConfigExact width) (k : Nat),
       let comp := removeMustTerminate p
       (flatExpConventions p = true → flatExpConventions comp = true) ∧
-      (fullInstOkLess c p = true → fullInstOkLess c comp = true) ∧
+      (fullInstOkLessExact c p = true → fullInstOkLessExact c comp = true) ∧
       (postAllocConventionsHOL k p = true → postAllocConventionsHOL k comp = true) ∧
       (everyInst P p = true → everyInst P comp = true) ∧
       extractLabels p = extractLabels comp := by
@@ -91,10 +92,10 @@ theorem removeMustTerminateConventions {width : Nat} [NeZero width]
       flatExpConventions p' = true) (fun _ h => h) ?_ ?_ ?_ ?_ ?_ ?_ ?_ p
     all_goals intros
     all_goals simp_all [flatExpConventions]
-  · refine removeMustTerminate_induct (fun p p' => fullInstOkLess c p = true →
-      fullInstOkLess c p' = true) (fun _ h => h) ?_ ?_ ?_ ?_ ?_ ?_ ?_ p
+  · refine removeMustTerminate_induct (fun p p' => fullInstOkLessExact c p = true →
+      fullInstOkLessExact c p' = true) (fun _ h => h) ?_ ?_ ?_ ?_ ?_ ?_ ?_ p
     all_goals intros
-    all_goals simp_all [fullInstOkLess, fullInstOkLessWith]
+    all_goals simp_all [fullInstOkLessExact, fullInstOkLessWith]
   · intro h
     simp only [postAllocConventionsHOL, Bool.and_eq_true] at h ⊢
     refine ⟨?_, ?_, ?_⟩

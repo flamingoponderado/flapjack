@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.RemoveDead
 import Flapjack.Pancake.WordConvs
+import Flapjack.Pancake.WordConvs.FullInstOkLess
 import Flapjack.Pancake.WordConvs.NotCreated
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Pancake.WordConvs.WfCutsets
@@ -173,10 +174,10 @@ in the statement and is omitted. -/
 theorem removeDeadConventions {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) :
     ∀ (p : WordLangProgHOL (BitVec width)) (live : NumSet) (nlive : List WordStoreHOL)
-      (lt : List (NumSet × NumSet)) (c : AsmConfig width),
+      (lt : List (NumSet × NumSet)) (c : AsmConfigExact width),
       let comp := (removeDead p live nlive lt).1
       (flatExpConventions p = true → flatExpConventions comp = true) ∧
-      (fullInstOkLess c p = true → fullInstOkLess c comp = true) ∧
+      (fullInstOkLessExact c p = true → fullInstOkLessExact c comp = true) ∧
       (preAllocConventionsHOL p = true → preAllocConventionsHOL comp = true) ∧
       (everyInst P p = true → everyInst P comp = true) ∧
       (wfCutsets p → wfCutsets comp) ∧
@@ -190,12 +191,12 @@ theorem removeDeadConventions {width : Nat} [NeZero width]
     all_goals (try unfold rdIte)
     all_goals (repeat' split)
     all_goals simp_all [flatExpConventions]
-  · refine removeDead_induct (fun p p' => fullInstOkLess c p = true → fullInstOkLess c p' = true) (fun _ h => h) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ p live nlive lt
+  · refine removeDead_induct (fun p p' => fullInstOkLessExact c p = true → fullInstOkLessExact c p' = true) (fun _ h => h) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ p live nlive lt
     all_goals intros
     all_goals (try unfold rdSeq)
     all_goals (try unfold rdIte)
     all_goals (repeat' split)
-    all_goals simp_all [fullInstOkLess, fullInstOkLessWith]
+    all_goals simp_all [fullInstOkLessExact, fullInstOkLessWith]
   · intro h
     simp only [preAllocConventionsHOL, Bool.and_eq_true] at h ⊢
     refine ⟨?_, ?_⟩
@@ -240,9 +241,9 @@ theorem removeDeadConventions {width : Nat} [NeZero width]
   (words_as_type_indexed_bitvec)]
 theorem removeDeadProgConventions {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) (p : WordLangProgHOL (BitVec width))
-    (c : AsmConfig width) :
+    (c : AsmConfigExact width) :
     (flatExpConventions p = true → flatExpConventions (removeDeadProg p) = true) ∧
-    (fullInstOkLess c p = true → fullInstOkLess c (removeDeadProg p) = true) ∧
+    (fullInstOkLessExact c p = true → fullInstOkLessExact c (removeDeadProg p) = true) ∧
     (preAllocConventionsHOL p = true → preAllocConventionsHOL (removeDeadProg p) = true) ∧
     (everyInst P p = true → everyInst P (removeDeadProg p) = true) ∧
     (wfCutsets p → wfCutsets (removeDeadProg p)) ∧

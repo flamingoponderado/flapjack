@@ -25,7 +25,6 @@ theorem supportsCodec_wordPushOutIfAux {α : Type u} (program : WordProg α)
     supportsCodec (wordPushOutIfAux program).1 = true := by
   fun_induction wordPushOutIfAux program
   all_goals try dsimp +zetaDelta only at *
-  all_goals repeat' split at *
   all_goals simp_all [supportsCodec]
 
 /-- Acceptance of the public production hoisting wrapper, including unchanged
@@ -47,7 +46,6 @@ private theorem assocAccDomain {α : Type u} (before program : WordProg α)
     (accepted : supportsCodec program = true) :
     supportsCodec (wordSimpSeqAssocAcc before program) = true := by
   fun_induction wordApplyColour (fun name => name) program generalizing before
-  all_goals try dsimp +zetaDelta only at *
   all_goals simp_all [wordSimpSeqAssocAcc, supportsCodec, smartSeqDomain]
 
 private theorem assocDomain {α : Type u} (program : WordProg α)
@@ -90,7 +88,6 @@ private theorem tryHoistDomain (fuel : Nat)
     (equation : wordTryIfHoist2 fuel program intermediate dummy continuation = some result) :
     supportsCodec result = true := by
   fun_induction wordTryIfHoist2 fuel program intermediate dummy continuation generalizing result
-  all_goals try dsimp +zetaDelta only at *
   all_goals simp_all [supportsCodec]
   case case2 =>
     apply candidateDomain (equation := equation)
@@ -128,7 +125,6 @@ theorem supportsCodec_wordSimpDuplicateIf (program : WordProg α)
     (accepted : supportsCodec program = true) :
     supportsCodec (wordSimpDuplicateIf program) = true := by
   fun_induction wordApplyColour (fun name => name) program
-  all_goals try dsimp +zetaDelta only at *
   all_goals simp_all [supportsCodec, wordSimpDuplicateIf]
   all_goals split <;> try simp_all [supportsCodec]
   all_goals apply assocDomain
@@ -187,6 +183,19 @@ theorem sourceAllocatorInput_usesNativeLimit
       CakeRegAlloc.cakeAllocateWordFunctionAfterDeadNativeLimit name wordParameters
         (wordBeforeSsaAllocatorBody (loopToWordCompFuncRouted name parameters body)) :=
   CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedLimit_native _ _ _
+    (wordLangProgToHOL_sourceAllocatorInput_isSome name parameters body)
+
+/-- Every actual routed source input uses native full SSA, with its input
+condition discharged by source compiler closure. This is routing infrastructure,
+not allocation/evaluation correctness. -/
+theorem sourceAllocatorInput_usesNativeSSA
+    {width : Nat} [NeZero width] (name : Nat) (parameters : List Nat)
+    (body : LoopProg (BitVec width)) (wordParameters : List Nat) :
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA name wordParameters
+        (wordBeforeSsaAllocatorBody (loopToWordCompFuncRouted name parameters body)) =
+      CakeRegAlloc.cakeAllocateWordFunctionAfterDeadNativeSSA name wordParameters
+        (wordBeforeSsaAllocatorBody (loopToWordCompFuncRouted name parameters body)) :=
+  CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA_native _ _ _
     (wordLangProgToHOL_sourceAllocatorInput_isSome name parameters body)
 
 end Flapjack
