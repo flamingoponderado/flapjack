@@ -64368,5 +64368,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.9: complete genuine Mem outerconstructor of state_rel_inst767-870, all8native opcodes and full HolAddr carrier. Original3premises fullstateRel/regBoundInst/actualnative sourceinstsuccess, originalEXISTS targetnativeinstsuccess/fullpostrelation. Effectiveaddress derives from accepted fullwordexp and originalbasebound; lowerregister value equality derived, accepts Word/Loc scalar values. Loads preserve full WordLoc result or original8/32 widening. Unsupported16sourcefailure excluded internally by source success. Scalar targetdomain/store success derived from fullread; byte/32targetmemory/store/relation derived from original existential store laws, no targetoutput premise. Actual native states/operators unchanged, allheap/frame assertions preserved, no finite/domain/frame/arithmetic assumption added. Canonical imported StackSemStateFiniteExact regs/fpRegs/store with genuine local broad/exact roundtrip witness; Spt code not named. NeZero/BitVec width, independent C/F Type0 retained. Wholeinst closure conservatively inherits reals_as_rational_cuts assumption despite nonFP memory execution; flag retained. Fresh full original Memcase/type/kernel replay and complete generic native proof checked. Fullparent FP/assembly stillrequired."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "evaluate_SetNewTrigger",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/SetNewTrigger.lean",
+    "lean_name": "evaluate_SetNewTrigger",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 literal full local theorem4553-4590 freshly typed in stack_alloc_trigger_statement_probe.out: original evaluation equality first, forall ib/endh/w, good_dimindex/use_store/ALL_DISTINCT [1;4;7;ib_reg;endh_reg] and original ib/endh/AllocSize lookups retained. r7/r1/r4 existential order, res NONE and full source state with original regs1/7/4 and TriggerGC Word(ib+new_trig(endh-ib)w gen_sizes) updates; all other fields preserved. Actual native Const/Get/Move/Sub prefix and every lower/Test/Add/Set branch proved, actual new_trig min/allocation/byte-alignment tree matched using original good_dimindex_byte_aligned_eq32/64 mask. No desired output or weakened guards; native canonical StackSemStateFiniteExact maps, codec witness and positive-width BitVec/FFI translation only. Seven original puretrigger and seven actual StackSem runs include both widths/alignment paths and observed untouched registers/store/clock, kernel replay. Exact Inst closure inherits SOUNDNESS item8 reals_as_rational_cuts; source comparison does not certify arbitrary dependencies."
   }
 ]

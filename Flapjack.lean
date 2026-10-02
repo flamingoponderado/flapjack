@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionPadding
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.SetNewTrigger
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionPrefix
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionUpdates

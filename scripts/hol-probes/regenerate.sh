@@ -5173,3 +5173,7 @@ run_probe stack_remove_inst_arithmetic_probeScript.sml stack_remove_inst_arithme
 run_probe stack_remove_inst_memory_probeScript.sml stack_remove_inst_memory_probe.out \
   im_statement im_types im_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_alloc_trigger_statement_probeScript.sml stack_alloc_trigger_statement_probe.out \
+  trigger_full_typed_statement trigger_free_vars trigger_generation_cap trigger_heap_cap trigger_alloc_exceeds_heap trigger_aligned_alloc trigger_unaligned_alloc trigger_32_aligned_alloc trigger_32_unaligned_alloc trigger_run_generation_cap trigger_run_heap_cap trigger_run_alloc_exceeds_heap trigger_run_aligned_alloc trigger_run_unaligned_alloc trigger_run_32_aligned_alloc trigger_run_32_unaligned_alloc \
+  "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
