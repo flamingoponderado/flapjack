@@ -1,0 +1,2 @@
+read_bytearray_IMP_read_bytearray_statement=∀n a k s t x. state_rel jump off k s t ∧ read_bytearray a n (mem_load_byte_aux s.memory s.mdomain s.be) = SOME x ⇒ read_bytearray a n (mem_load_byte_aux t.memory t.mdomain t.be) = SOME x
+read_bytearray_IMP_read_bytearray_proved=T

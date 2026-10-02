@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe stack_rawcall_loop_case_probeScript.sml stack_rawcall_loop_case_probe.out \
+  loop_full_statement loop_full_hypotheses loop_case_statement \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_control_cases_probeScript.sml stack_rawcall_control_cases_probe.out \
   control_full_statement control_full_hypotheses control_return control_raise control_break control_continue \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -5750,6 +5753,13 @@ run_probe stack_remove_comp_jump_lower_probeScript.sml stack_remove_comp_jump_lo
 
 run_probe stack_remove_comp_code_buffer_probeScript.sml stack_remove_comp_code_buffer_probe.out \
   cc_code_buffer_statement cc_code_buffer_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_top_label_safety_probeScript.sml word_to_stack_top_label_safety_probe.out \
+  top_full_word_to_stack_good_code_labels top_full_word_to_stack_good_handler_labels top_empty top_self top_missing top_external top_duplicates top_owned top_wrong_owner top_tail_missing top_threaded top_width_one top_raise_owned top_store_owned \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_bytearray_read_probeScript.sml stack_remove_bytearray_read_probe.out \
+  read_bytearray_IMP_read_bytearray_statement read_bytearray_IMP_read_bytearray_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe lab_to_target_position_order_probeScript.sml lab_to_target_position_order_probe.out \
