@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessSsa
 import Flapjack.RiscV.CorrectnessColour
 
 /-!
@@ -42,12 +43,11 @@ theorem ssaAssignmentColour_eq_wordSsaRead_fresh
       wordSsaRead (wordSsaFresh ssa name).1 current := by
   by_cases hcurrent : current = name
   · subst current
-    simp [ssaAssignmentColour, wordSsaRead, wordSsaFresh, lookupNatInfo]
-  · simp only [ssaAssignmentColour, if_neg hcurrent]
-    have hnameCurrent : name ≠ current := Ne.symm hcurrent
-    simp only [wordSsaRead, wordSsaFresh]
-    simp [lookupNatInfo, hnameCurrent,
-      lookupNatInfo_filter_ne ssa.current current name hcurrent]
+    simp only [ssaAssignmentColour]
+    rw [wordSsaRead_fresh_name]
+    rfl
+  · simp only [ssaAssignmentColour,if_neg hcurrent]
+    exact (wordSsaRead_fresh_of_ne ssa name current hcurrent).symm
 
 theorem wordSsaRenameProgram_assign_state
     (ssa : WordSsaState) (name : Nat) (value : WordExp (Word width))
