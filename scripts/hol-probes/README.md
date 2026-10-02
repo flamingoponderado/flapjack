@@ -5019,3 +5019,27 @@ with typed closed output, and evaluates left/root/right hits, whole-tree and
 child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
 consume the full generic theorem and derive actual semantic finite-map results
 for nonempty children and a distinct equivalent key with an independent payload.
+
+### Rotation auxiliary completion audit
+
+`balanced_map_rotation_aux_probeScript.sml` captures the complete typed
+specified equations for `singleL/R`, `doubleL/R`, `rotateL/R`, `bal`, `balL`,
+and `balR`, and actual single-rotation outputs with malformed cached sizes.
+The `bmra_unspecified_unreduced` row is an **unreduced expression**, not a true
+shared-ARB equality. `bmra_completed_singleR` is a **conditional theorem**;
+`bmra_completion_hyp` records its constructor-existence hypothesis explicitly.
+Do not use this capture to claim unconditional missing-case equivalence.
+
+Source audit: HOL `src/tfl/src/Defn.sml:1156-1171` sends constructor-pattern
+nonrecursive definitions to `Prim_rec.new_recursive_definition`.
+`src/1/Prim_rec.sml:259-266` proves function existence from the supplied
+equations, then calls `new_specification`. The existence construction at
+lines127-164 selects the requested constructor equations from the recursion
+axiom; it does not supply a Tip equation absent from the source specification.
+Thus the exported single-rotation equations constrain Bin cases, while the
+choice of the total function leaves the missing outputs unspecified. A shared
+map-valued ARB fallback is one possible realization, not established original
+behavior. A faithful port must retain that unspecified function specification
+(or prove a justified defining-body correspondence), and its missing-case
+outputs must not be treated as concrete parity fixtures. Full rotation proofs
+still need their original constructor premises and specified equations.
