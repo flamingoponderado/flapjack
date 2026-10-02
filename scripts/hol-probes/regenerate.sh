@@ -5322,3 +5322,6 @@ run_probe word_to_stack_asm_name_share_probeScript.sml word_to_stack_asm_name_sh
 run_probe stack_remove_comp_set_probeScript.sml stack_remove_comp_set_probe.out \
   cs_statement cs_types cs_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_computed_label_domain_probeScript.sml lab_to_target_computed_label_domain_probe.out \
+  labs_domain_compute_labels_alt labs_domain_compute_labels_alt_types mixed_full_nested_map old_values_duplicate_priority_empty_entry distinctness_counterexample freshness_counterexample width1_empty_initial_retained width80_large_position \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
