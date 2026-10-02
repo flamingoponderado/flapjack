@@ -5231,3 +5231,11 @@ and missing-read errors retain the original exemption. Bounded list observations
 use the existing guarded holEl translation. This is a theorem specialization
 capture, not an isolated tactic replay or equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cc_trans_correct_move_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Target encoding nonemptiness
+
+`target_encoding_nonempty_probeScript.sml` replays the literal original local
+`enc_ok_not_empty` statement and proof in HOL; local declarations are not
+exported from `targetPropsTheory`. Its output captures the full kernel-checked
+conclusion, retaining `asm_ok`. This is regression/source-review evidence.
+Regenerate with `HOL_PROBE_ONLY=target_encoding_nonempty_probeScript.sml bash scripts/hol-probes/regenerate.sh`.

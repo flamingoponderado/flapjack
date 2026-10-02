@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe target_encoding_nonempty_probeScript.sml target_encoding_nonempty_probe.out \
+  encoding_nonempty_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe target_evaluate_eq_probeScript.sml target_evaluate_eq_probe.out \
   evaluate_eq_base_statement evaluate_eq_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
