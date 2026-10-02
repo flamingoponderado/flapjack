@@ -58161,5 +58161,16 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL904-917: entire original conjunction under precisely goodCmp and Bin invariant. Generic homogeneous key/comparator and independent payload, arbitrary cached size/children; all original binders. Actual semantic domain disjointness and both universal keySet lookup-to-Greater/Less clauses retained. FDOM membership is defined canonical lookup of reviewed toFmap producer; no assumed target domain facts. Full invariantEq supplies disjointness, reviewed keyOrderedToFmap/keySetCmpThm supply ordering. Complete unchanged original local statement and literal proof replay hyp=[] with typed capture. Nonempty two-child invariant observed in HOL and kernel; finite-three-key fixtures instantiate all three theorem conclusions using actual nonempty canonical child lookup. Proof-only executable unchanged."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/LookupSemantics.lean",
+    "lean_name": "lookupThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "lookup_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL947-965: full arbitrary homogeneous comparator/key, independent payload and tree. Exactly goodCmp and invariant premises imply recursive lookup equals canonical FLOOKUP at keySet query. No target result/domain, successful lookup, key antisymmetry, inhabited carrier or extra law premise. Constructor induction and all Less/Equal/Greater branches; original invProps universal domain consequences derive impossible other-child membership, reviewed keySetEq controls root update. Option/Ordering constructors and left-biased finite-map union literal. Only reviewed toFmap producer observation representation qualified. Entire original unchanged statement and literal proof replay hyp=[] freshly typed; original hits in each branch, both misses and equivalent-distinct-key observation, kernel full generic consumer and semantic lookup fixtures. Proof-side only; no production compiler body changes."
   }
 ]

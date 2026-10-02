@@ -5014,3 +5014,8 @@ literal original proof, prints its fully typed closed theorem, and evaluates
 a valid tree with two nonempty children. The Lean fixtures also instantiate
 all three `invProps` conclusions for a checked three-key comparator, using
 actual nonempty canonical child lookups rather than assumed domain facts.
+The capture also replays the entire original `lookup_thm` statement and proof,
+with typed closed output, and evaluates left/root/right hits, whole-tree and
+child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
+consume the full generic theorem and derive actual semantic finite-map results
+for nonempty children and a distinct equivalent key with an independent payload.

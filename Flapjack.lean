@@ -1493,6 +1493,7 @@ import Flapjack.Compiler.Backend.WordCopy.Proofs.Inst
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
 import Flapjack.Misc.BalancedMap.NullSemantics
 import Flapjack.Misc.BalancedMap.InvariantSemantics
+import Flapjack.Misc.BalancedMap.LookupSemantics
 import Flapjack.Misc.BalancedMap.Membership
 import Flapjack.Misc.BalancedMap.BalanceArithmetic
 
