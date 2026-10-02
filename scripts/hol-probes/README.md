@@ -5151,3 +5151,14 @@ with typed closed output, and evaluates left/root/right hits, whole-tree and
 child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
 consume the full generic theorem and derive actual semantic finite-map results
 for nonempty children and a distinct equivalent key with an independent payload.
+
+`ssa_cc_trans_correct_move_probe` captures the original proved theorem
+`ssa_cc_trans_correct` specialized to arbitrary `Move pri ls`, with seven
+original inferred carriers. Original resumed Move proof7740–7858 and all six
+premises/full simulation were manually compared with `SSASemanticMove.lean`.
+The port derives the provisional parallel-write locals relation and filtered
+force-rename premises from actual successful source reads; duplicate destination
+and missing-read errors retain the original exemption. Bounded list observations
+use the existing guarded holEl translation. This is a theorem specialization
+capture, not an isolated tactic replay or equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_move_probeScript.sml scripts/hol-probes/regenerate.sh`.
