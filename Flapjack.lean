@@ -21,6 +21,9 @@ import Flapjack.Compiler.Backend.LabToTarget.ProgramByteLengths
 import Flapjack.Compiler.Backend.LabToTarget.PositionExtension
 import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
 import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
+import Flapjack.Compiler.Backend.LabToTarget.MemoryTransport
+import Flapjack.Compiler.Backend.LabToTarget.LineInfo
+import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
@@ -1871,6 +1874,3 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
-import Flapjack.Compiler.Backend.LabToTarget.MemoryTransport
-import Flapjack.Compiler.Backend.LabToTarget.LineInfo
-import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
