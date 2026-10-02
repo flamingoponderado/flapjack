@@ -1,0 +1,24 @@
+enc_lines_again_simp_pos_ok=∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+    (enc :α asm -> word8 list) (lines :α line list) (res :α line list).
+  enc_lines_again_simp labs ffis pos enc lines = (res,T) ∧
+  lab_len_pos_ok pos lines ⇒
+  lab_len_pos_ok pos res
+enc_lines_again_simp_pos_ok_types=(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(enc :α asm -> word8 list)::α asm -> word8 list;(lines :α line list)::α line list;(res :α line list)::α line list;
+enc_secs_again_pos_ok=∀(pos :num) (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+    (enc :α asm -> word8 list) (code :α sec list) (res :α sec list).
+  enc_secs_again pos labs ffis enc code = (res,T) ∧
+  all_lab_len_pos_ok pos code ⇒
+  all_lab_len_pos_ok pos res
+enc_secs_again_pos_ok_types=(pos :num)::num;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(enc :α asm -> word8 list)::α asm -> word8 list;(code :α sec list)::α sec list;(res :α sec list)::α sec list;
+changed_full_tuple=T
+changed_parity=T
+growth_flag_false=T
+growth_breaks_parity=T
+unchanged_full_tuple=T
+invalid_input_not_repaired=T
+sections_full_tuple=T
+sections_parity=T
+empty_list_width1=T
+empty_sections=T
+large_width80=T
+large_width80_parity=T

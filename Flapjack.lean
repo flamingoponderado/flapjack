@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionUpdates
 import Flapjack.Compiler.Backend.LabToTarget.LabelPosition
 import Flapjack.Compiler.Backend.LabToTarget.CodeNopEncoding
