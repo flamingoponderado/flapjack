@@ -4324,6 +4324,7 @@ The seven original exact-square observations remain in
 `machine_ieee_fp64_sqrt_exact_probe.out`; these source/type captures and examples
 provide review/regression evidence, not cross-assistant equivalence.
 ### SSA Call allocation/map invariant
+### SSA primitive program invariants
 
 `ssa_cc_trans_props_primitives_probe.out` captures the original 15 nonrecursive primitive invariant statements and actual constructor types. It replays the literal StoreConsts, instruction, expression tactic, CBW/DBW and ShareInst proofs after the original compiler simplification, including original instruction/extension/allocation prerequisites. The Lean cases derive all three invariants from only the original compiler equality and map/allocation premise.
 `ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
@@ -4380,6 +4381,21 @@ clocked WordSem evaluator, its reviewed finite-support state and its inherited
 IEEE rational-cut assumption (SOUNDNESS item 8). This is a CSE simulation
 prerequisite, not the entire CSE invariant/pass or compiler theorem.
 
+`stackprops_shared_memory_clock_probeScript.sml` replays all nine original
+StackProps shared-memory clock-commutation proofs verbatim and captures their
+full statements/types (18 rows), then checks fifteen native returned/final/error
+observations at clock 37. `StackPropsSharedMemoryClockParity.lean` kernel-replays
+those observations and applies the full arbitrary-state dispatch theorem.
+### Complete SSA program invariant
+
+`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
+
+### SSA reconciliation list prerequisites
+
+`ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
 ### SSA recursive control invariants
 
 `ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
@@ -4400,6 +4416,12 @@ bounded `EVAL`; they do not simplify with the recursive evaluator as an unbounde
 rewrite. Every captured row has a kernel example in
 `Flapjack.Test.TargetSemEvaluateParity`. These are regression checks, not a
 cross-assistant equivalence proof. The compiler executable is not rerouted.
+
+The same shared-memory source probe now replays original `sh_mem_op_const`,
+records its full twelve-field statement and types, and proves fifteen actual
+success/final/failure applications with no undischarged hypotheses. The Lean
+fixture applies the full twelve-conjunct theorem to the same native cases,
+preserving arbitrary GC/compiler/domain functions as equalities.
 ## Full Word CSE load evaluation transports
 
 `word_cse_load_evaluation_probeScript.sml` literally replays all three original
@@ -4433,3 +4455,22 @@ local definition shape and are not a cross-language equivalence theorem.
 ### SSA reconciliation list prerequisites
 
 `ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
+`ssa_reconcile_alookup_zip_probe.out` replays both original generic indexed-SOME and absent-key-NONE ALOOKUP ZIP proofs6551–6590, recording full statements and nine original argument types. Canonical opaque EL and all original domain/injection/index/length premises are retained.
+## Full Word CSE evaluation frames and state agreement
+
+`word_cse_evaluation_frames_probeScript.sml` literally replays all four original
+proofs: arithmetic register writes, arbitrary memory replacement, arithmetic
+locals agreement, and load locals/memory/domain/endianness agreement. It captures
+complete conclusions with no open hypotheses, four inferred types and 256 full
+theorem applications at widths 1/32/64/80. The applications cover all eligible
+arithmetic forms, both binop operand forms, every immediate shift, signed division,
+all four load variants, and writes to the destination or another unread register.
+The original `firstRegOfArith` expression is retained for HOL theorem matching.
+`WordCseEvaluationFramesParity.lean` applies the full kernel theorems on arbitrary
+values, states and memory functions. Eligibility/read guards and each exact set
+of input field equalities are preserved; target evaluation or global invariants
+are not assumed. The shared proof-only value factoring is checked against actual
+native Inst clauses; LoadEvaluation support was exposed without changing its
+implementation or old theorem statements. Existing finite-map/positive-word
+translations and inherited rational-cut assumption (SOUNDNESS item 8) remain.
+These are invariant-update prerequisites, not full CSE/compiler correctness.
