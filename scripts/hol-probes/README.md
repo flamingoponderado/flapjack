@@ -4819,3 +4819,9 @@ EVAL observations of its literal defining `lab_lookup ≠ NONE` condition cover
 empty/hit/two-level misses and fresh insertion preserving old and adding new
 keys; Lean checks the corresponding actual domain memberships. Finite fixtures
 are not a cross-assistant proof.
+
+`ssa_cc_trans_correct_inst_longmul_probeScript.sml` captures the original
+kernel theorem specialization at LongMul, its full six-premise simulation and
+complete native state/register/SSA/table types. Source opcode7943–8004 and
+actual physical input/output moves are manually compared; no standalone tactic
+replay of the fragment is claimed.

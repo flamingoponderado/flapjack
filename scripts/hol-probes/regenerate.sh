@@ -4356,3 +4356,6 @@ run_probe labprops_label_sets_probeScript.sml labprops_label_sets_probe.out \
 run_probe lab_to_target_labs_domain_probeScript.sml lab_to_target_labs_domain_probe.out \
   ld_definition ld_empty_theorem ld_insert_theorem ld_type ld_empty ld_hit ld_inner_miss ld_outer_miss ld_insert_preserves ld_insert_new \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe ssa_cc_trans_correct_inst_longmul_probeScript.sml ssa_cc_trans_correct_inst_longmul_probe.out \
+  inst_longmul_full inst_longmul_type_st inst_longmul_type_cst inst_longmul_type_dst inst_longmul_type_src inst_longmul_type_left inst_longmul_type_right inst_longmul_type_ssa inst_longmul_type_next inst_longmul_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -56533,5 +56533,19 @@
     "hol_name": "labs_domain_insert",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL364-381: arbitrary alpha nested Spt values and native generic labLookup; labs_domain is set of pairs whose two-level lookup is not NONE, LN domain empty, fresh outer key insertion is image of inner domain union original domain. Full outside-domain guard retained; no Nat specialization, callback, representation qualifier, success or post-state premise. Spt/Nat pair/Set/Option carriers correspond literally; inner isSome membership is equivalent to lookup not NONE. Both directions of set image and union preserved."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstLongMul.lean",
+    "lean_name": "ssaCcTransCorrectInstLongMul",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: full native LongMul7943-8004 opcode of ssa_cc_trans_correct, same six premises/full Error-exempt source permutation/result/frame/result-sensitive locals. No targeteval/success/poststate/IH assumptions. Actual compiler physical Move0/4, native LongMul6/0/0/4, then output Move freshlow/freshhigh evaluated. Native unsigned word product toNat multiply, high quotient 2^width and low ofNat match HOL w2n/n2w/dimword arithmetic. Original physical list/setVar relations preserve source locals, map extension and two fresh setVar relations prove final locals including source destination aliasing. Full native positive BitVec/Nat/sharedType0 code-FFI/state/Spt/table carriers compared against original proven theorem specialization. Canonical fpRegs/store finite-support and words translations only, inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Source opcode manually reviewed; original kernel theorem Q.SPEC capture/types PASS, no standalone tactic replay claimed. Lean kernel PASS; fullInst remains open."
   }
 ]
