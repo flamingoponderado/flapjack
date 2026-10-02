@@ -52232,5 +52232,21 @@
     "statement_status": "reviewed_reals_as_rational_cuts",
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (dshl): pinned machine_ieeeScript.sml factory line 16, machine_ieeeLib lift1 and mk_fp_encoding instantiate binary_ieee float_sqrt at significand 52/exponent 11 and pack its SND as word64. holFp64SqrtR preserves every rounding mode, flags projection, negative-zero, infinity and unspecified NaN branch. The literal Mathlib Real.sqrt carrier preserves binary_ieee float_to_real, float_value, is_closest/closest_such/closest, largest/threshold, all-mode round, signed-zero float_round and flags clauses. holFp64Sqrt_eq_holFp64SqrtR proves unconditional kernel equality for every mode and word64; no external cut-criterion premise. Generic t/w helpers remain untagged because their zero-width domain exceeds HOL's positive type dimensions. Fixed BitVec 64 matches HOL word64 directly; no generic word-dimension qualifier applies. reals_as_rational_cuts is conservatively retained for reviewed legacy IEEE helper dependencies, as required by the current checker; SOUNDNESS item 8 still records external HOL-to-Lean real correspondence, distinct from the kernel-proven cut-to-Mathlib-real equality. No whole-inst qualifier removal or formal cross-assistant equivalence is claimed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_reconcile_moves_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",
+    "lean_name": "ssaReconcileMovesEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison flapjack-li4v: Original6485∀L, free m:α num_map and f:num→α; both payload/function fully generic with lawful DecidableEq equality, HOL universal type inhabitedness as Nonempty α. SourceTHE becomes imported exact holThe, opaque NONE remains unobservable through the actual filtered successful lookups, no invented fallback. No lookup-success/domain/distinctness premise. Fresh literal original proof kernel replay and full original types captured; native List/Nat/Spt and ordinary constructors unchanged. Actual original evaluator-reconcile proof6609/6612 consumes these statements; proof-only behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_reconcile_filtered_all_distinct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",
+    "lean_name": "ssaReconcileFilteredAllDistinct",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison flapjack-li4v: Original6500 unconditional filtered native toAList key ALL_DISTINCT; current/target maps Spt Nat as forced by option_lookup, names Spt α with arbitrary payload. ALL_DISTINCT as List.Nodup, actual Boolean lookup/inequality filter. No injection/map/tree-validity/Nodup input premise. Fresh literal original proof kernel replay and full original types captured; native List/Nat/Spt and ordinary constructors unchanged. Actual original evaluator-reconcile proof6609/6612 consumes these statements; proof-only behavior unchanged."
   }
 ]
