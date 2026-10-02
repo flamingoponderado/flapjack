@@ -53705,135 +53705,135 @@
   "lean_name": "Map",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "balanced_map",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL368: two constructors Tip/Bin; Bin fields num, polymorphic key/value, two recursive trees correspond exactly to Nat/key/value/Map/Map. No array/map/word carrier translation. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
   "lean_name": "ratio",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "ratio_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL372: constant 2:num equals Nat 2. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
   "lean_name": "delta",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "delta_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL375: constant 3:num equals Nat 3. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
   "lean_name": "size",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "size_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL378: Tip0; Bin returns stored size, including invalid cached metadata. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
   "lean_name": "bin",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "bin_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL384: Bin size(left)+size(right)+1 with unchanged key/value/children and same addition grouping. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
   "lean_name": "null",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "null_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL388: Tip T/Bin F corresponds Bool true/false. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
   "lean_name": "lookup",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "lookup_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL393: cmp queried key against stored key; Less left recursion, Greater right recursion, Equal SOME stored value, Tip NONE. Arbitrary comparator, no good_cmp premise. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
   "lean_name": "member",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "member_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL403: same comparator direction/three branches as HOL, Tip F, Equal T; no ordering premise. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
   "lean_name": "empty",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "empty_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL413: polymorphic Tip exactly. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
   "lean_name": "singleton",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "singleton_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL415: Bin1 key value Tip Tip exactly. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Rotations.lean",
   "lean_name": "balanceL",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "balanceL_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source comparison 2026-10-02, balanced-map.2: literal HOL479-540 seven outer clauses per direction; cached-size sums, strict delta and ratio guards and malformed-child fallback Tip retained. No invariant premise or primed-helper substitution. All28 original complete output trees kernel replayed, including ignored non-leaf child payloads, inconsistent cached sizes, ratio equality and delta equality. Independent source acceptance open; no insertion invariant or production carrier claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL479-509: all seven outer clauses compared individually; nested strict lrs<2*lls and ls>3*rs guards, all cached-size sums and original subtree/payload reuse agree; unmatched child pair returns Tip. No invariant hypothesis or primed variant. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Rotations.lean",
   "lean_name": "balanceR",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "balanceR_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source comparison 2026-10-02, balanced-map.2: literal HOL479-540 seven outer clauses per direction; cached-size sums, strict delta and ratio guards and malformed-child fallback Tip retained. No invariant premise or primed-helper substitution. All28 original complete output trees kernel replayed, including ignored non-leaf child payloads, inconsistent cached sizes, ratio equality and delta equality. Independent source acceptance open; no insertion invariant or production carrier claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL511-540: all seven mirrored outer clauses compared individually; strict rls<2*rrs and rs>3*ls, both rotation cached-size sums and subtree/payload positions agree; malformed child pair returns Tip. No invariant hypothesis. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Insert.lean",
   "lean_name": "insert",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "insert_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source comparison2026-10-02 balanced-map.3 HOL542-549: Tip singleton, Less recursive left then literal balanceL, Greater recursive right then literal balanceR, Equal replaces stored key/value with inserted key/value while retaining original cached size and children. Arbitrary comparator and malformed trees, no invariant/success premise.16 original complete outputs kernel checked plus universal Equal clause. Independent coordinator source acceptance pending, no insertion invariant or executed carrier claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL542-549: Tip singleton; Less left insertion then balanceL; Greater right insertion then balanceR; Equal replaces key AND value while retaining cached size and both children. No comparator law. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
   "lean_name": "balanced",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "balanced_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source comparison2026-10-02 balanced-map.4.1 HOL838-879: balanced uses original sum<=1 OR MAX<=3*MIN; structureSize ignores cachedsizes; keyOrdered recursively compares parent key against every subtree key at supplied ordering; invariant preserves six conjuncts cachedsize/leftGreater/rightLess/balanced/leftInvariant/rightInvariant. Arbitrary comparator, no good_cmp or result premise.37 original size/order/invariant/balance predicates kernel replayed, incl malformed metadata/equal/reversed/descendant keys and thresholds. Independent source acceptance pending; no insertion correctness or runtime carrier claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL838: l+r<=1 OR MAX(l,r)<=delta*MIN(l,r), same inclusive bounds and Nat operations. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
   "lean_name": "structureSize",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "structure_size_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source comparison2026-10-02 balanced-map.4.1 HOL838-879: balanced uses original sum<=1 OR MAX<=3*MIN; structureSize ignores cachedsizes; keyOrdered recursively compares parent key against every subtree key at supplied ordering; invariant preserves six conjuncts cachedsize/leftGreater/rightLess/balanced/leftInvariant/rightInvariant. Arbitrary comparator, no good_cmp or result premise.37 original size/order/invariant/balance predicates kernel replayed, incl malformed metadata/equal/reversed/descendant keys and thresholds. Independent source acceptance pending; no insertion correctness or runtime carrier claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL842: Tip0; Bin1+recursive left+recursive right, cached field ignored, same addition grouping. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
   "lean_name": "keyOrdered",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "key_ordered_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source comparison2026-10-02 balanced-map.4.1 HOL838-879: balanced uses original sum<=1 OR MAX<=3*MIN; structureSize ignores cachedsizes; keyOrdered recursively compares parent key against every subtree key at supplied ordering; invariant preserves six conjuncts cachedsize/leftGreater/rightLess/balanced/leftInvariant/rightInvariant. Arbitrary comparator, no good_cmp or result premise.37 original size/order/invariant/balance predicates kernel replayed, incl malformed metadata/equal/reversed/descendant keys and thresholds. Independent source acceptance pending; no insertion correctness or runtime carrier claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL847: Tip true; Bin cmp parent-key stored-key=res AND recursive left AND recursive right, same conjunction order and arbitrary result/comparator. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 },
 {
   "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
   "lean_name": "invariant",
   "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
   "hol_name": "invariant_def",
-  "statement_status": "pending_statement_review",
-  "reviewer": "flapjack-sol-b local source comparison2026-10-02 balanced-map.4.1 HOL838-879: balanced uses original sum<=1 OR MAX<=3*MIN; structureSize ignores cachedsizes; keyOrdered recursively compares parent key against every subtree key at supplied ordering; invariant preserves six conjuncts cachedsize/leftGreater/rightLess/balanced/leftInvariant/rightInvariant. Arbitrary comparator, no good_cmp or result premise.37 original size/order/invariant/balance predicates kernel replayed, incl malformed metadata/equal/reversed/descendant keys and thresholds. Independent source acceptance pending; no insertion correctness or runtime carrier claim."
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance 2026-10-02 under coordinator01:18:50 policy. HOL869: six conjuncts retained in order: cached n=1+structural left+right, keyOrdered left Greater, right Less, balanced cached child sizes, left invariant, right invariant; no good_cmp premise. Ordering lt/eq/gt is constructor-for-constructor Less/Equal/Greater; no representation qualifier needed. Full source equations and original malformed-tree/comparator observations preserved in balanced_map probes, kernel fixtures passed. This is declaration-level source comparison, not cross-language proof or full production/CSE correctness."
 }
 ]
