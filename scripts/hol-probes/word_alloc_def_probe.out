@@ -1,0 +1,9 @@
+wa_type=:num -> α asm_config -> num -> num -> α prog -> num sptree$num_map option -> α prog
+wa_simple=Seq (Move0 [(0,2)]) (Inst (Arith (Binop Add 0 0 (Reg 2))))
+wa_irc=Seq (Move0 [(0,2)]) (Inst (Arith (Binop Add 0 0 (Reg 2))))
+wa_linear=Seq (Move0 [(2,0)]) (Inst (Arith (Binop Add 0 2 (Reg 0))))
+wa_oracle_ok=Seq (Move0 [(2,4)]) (Inst (Arith (Binop Add 6 2 (Reg 4))))
+wa_oracle_clash=Seq (Move0 [(0,2)]) (Inst (Arith (Binop Add 0 0 (Reg 2))))
+wa_stack_irc=Seq (Inst (Const 2 3w)) (Seq (Inst (Const 0 4w)) (Inst (Arith (Binop Sub 0 0 (Reg 2)))))
+wa_stack_linear=Seq (Inst (Const 2 3w)) (Seq (Inst (Const 0 4w)) (Inst (Arith (Binop Sub 0 0 (Reg 2)))))
+wa_phys=Seq (Move1 [(2,2)]) (Seq (Inst (Arith (Binop Add 2 2 (Imm 1w)))) (Return 0 [2]))

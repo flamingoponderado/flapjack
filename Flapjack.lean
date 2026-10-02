@@ -148,6 +148,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
 import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.WordAlloc.SelectRegAlloc
+import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstall
@@ -1343,6 +1344,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColouringTransport
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkGraphCheckClashTree
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.CoalesceSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.FreezeSpillSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoAlloc1Success
