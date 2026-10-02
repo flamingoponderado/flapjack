@@ -166,6 +166,14 @@ MACHINE_IEEE_FP64_NAMES = frozenset({
 })
 
 
+# Only the three generated binary32 prerequisites source-reviewed for the
+# cross-format family. Other generated FP32 operations remain unsupported.
+MACHINE_IEEE_FP32_LINE = 15
+MACHINE_IEEE_FP32_NAMES = frozenset({
+    "fp32_to_float_def", "float_to_fp32_def", "real_to_fp32_with_flags_def",
+})
+
+
 def machine_ieee_fp64_source_error(root: Path) -> str | None:
     for path in (MACHINE_IEEE_SCRIPT, MACHINE_IEEE_GENERATOR):
         error = hol_submodule_source_error(root, path)
@@ -178,6 +186,18 @@ def machine_ieee_fp64_source_error(root: Path) -> str | None:
         return "machine_ieee fp64 generator call is not the reviewed 52/11/64 format"
     if "machine_ieeeLib.mk_fp_encoding" not in lines[12]:
         return "machine_ieee fp64 factory call is not the reviewed generator"
+    return None
+
+
+def machine_ieee_fp32_source_error(root: Path) -> str | None:
+    error = machine_ieee_fp64_source_error(root)
+    if error:
+        return error
+    lines = (root / MACHINE_IEEE_SCRIPT).read_text().splitlines()
+    if (len(lines) < MACHINE_IEEE_FP32_LINE or
+            lines[MACHINE_IEEE_FP32_LINE - 1].strip() !=
+            '("fp32", 23, 8, SOME "single"),'):
+        return "machine_ieee fp32 generator call is not the reviewed 23/8/32 format"
     return None
 
 
@@ -262,11 +282,12 @@ REALS_AS_RATIONAL_CUTS_RE = re.compile(
 # (docs/SOUNDNESS.md item 8).  A tagged declaration whose own source uses a
 # declaration of these modules must carry `(reals_as_rational_cuts)`.
 REALS_RENDERING_GLOBS = (
-    "Flapjack/Misc/MachineIeee.lean", "Flapjack/Misc/BinaryIeee*.lean",
+    "Flapjack/Misc/MachineIeee.lean", "Flapjack/Misc/MachineIeee/**/*.lean",
+    "Flapjack/Misc/BinaryIeee*.lean",
     "Flapjack/Misc/BinaryIeee*/**/*.lean",
 )
 REALS_RENDERING_DECL_RE = re.compile(
-    r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial)\s+)*"
+    r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
     r"(?:def|abbrev|structure|inductive|opaque)\s+([A-Za-z_][A-Za-z0-9_'.]*)",
     re.M,
 )
@@ -3359,13 +3380,23 @@ def source_bound_rounding_enum(root: Path) -> bool:
     return owners == [owner]
 
 
-# The nine real-free source forms below were compared with binary_ieee's
+# The eleven real-free source forms below were compared with binary_ieee's
 # float carrier/classification/sign clauses (30-32, 107-115, 153-159) and the pinned machine_ieee
-# codec/sign generator (49-78, 147-171, 431-432). They manipulate bits only.
+# codec/sign generator (49-78, 147-171, 431-432), at fixed 32/64 formats.
+# They manipulate bits only.
 # Match every form together: if a dependency changes, conservatively classify
 # the complete group as renderings again. This is a source-shape rule, not a
 # blanket exception for every declaration in either module.
 REAL_FREE_IEEE_FORMS = {
+    ("Flapjack/Misc/MachineIeee/Convert.lean", "holFp32ToFloat"): """
+def holFp32ToFloat (a : BitVec 32) : HolFloat 23 8 :=
+  { sign := a.extractLsb' 31 1, exponent := a.extractLsb' 23 8,
+    significand := a.extractLsb' 0 23 }
+""",
+    ("Flapjack/Misc/MachineIeee/Convert.lean", "holFloatToFp32"): """
+def holFloatToFp32 (a : HolFloat 23 8) : BitVec 32 :=
+  (a.sign ++ a.exponent ++ a.significand).cast (by decide)
+""",
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatIsNormal"): """
 def holFloatIsNormal {t w : Nat} (x : HolFloat t w) : Bool :=
   decide (x.exponent ≠ 0) && decide (x.exponent ≠ BitVec.allOnes w)
@@ -3417,7 +3448,13 @@ def real_free_ieee_names(root: Path) -> set[str]:
         if not path.is_file():
             return set()
         source = strip_lean_comments(path.read_text(encoding="utf-8"))
-        # Attributes do not change the bit operation's signature or body.
+        # A logical-body whitelist must not silently admit compiled-body
+        # overrides. Check before stripping attributes: implemented_by/extern
+        # can leave the logical body unchanged while replacing execution.
+        # This remains a source-shape guard, not an execution-equivalence proof.
+        # Be conservative across each owning module, including unsafe helpers.
+        if re.search(r"\b(?:implemented_by|extern|unsafe)\b", source):
+            return set()
         source = re.sub(r"@\[[^\]]*\]\s*", "", source)
         matches = list(REALS_RENDERING_DECL_RE.finditer(source))
         for index, match in enumerate(matches):
@@ -3439,11 +3476,18 @@ def real_free_ieee_names(root: Path) -> set[str]:
     owners: dict[str, list[str]] = {}
     reviewed_names = {n for _, n in REAL_FREE_IEEE_FORMS}
     owner_re = re.compile(
-        r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial)\s+)*"
+        r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
         r"(?:def|abbrev|structure|inductive|opaque|theorem|lemma|axiom|constant)\s+"
         r"([A-Za-z_][A-Za-z0-9_'.]*)", re.M)
     for path in root.glob("Flapjack/**/*.lean"):
         source = strip_lean_comments(path.read_text(encoding="utf-8"))
+        # A later module can attach an implementation attribute to an imported
+        # codec. Fail closed when an override command and a reviewed short name
+        # occur together; this intentionally rejects ambiguous command layouts.
+        if (re.search(r"\battribute\s*\[[^\]]*\b(?:implemented_by|extern)\b", source)
+                and any(re.search(r"(?<![\w'])" + re.escape(name) + r"(?![\w'])", source)
+                        for name in reviewed_names)):
+            return set()
         for match in owner_re.finditer(source):
             name = match.group(1).rsplit(".", 1)[-1]
             if name in reviewed_names:
@@ -4014,6 +4058,9 @@ def hol_declaration_lines(
             if machine_ieee_fp64_source_error(path.parents[3]) is None:
                 for name in MACHINE_IEEE_FP64_NAMES:
                     names.setdefault(name, []).append(MACHINE_IEEE_FP64_LINE)
+            if machine_ieee_fp32_source_error(path.parents[3]) is None:
+                for name in MACHINE_IEEE_FP32_NAMES:
+                    names.setdefault(name, []).append(MACHINE_IEEE_FP32_LINE)
         for locations in names.values():
             locations.sort()
         cache[path] = names
@@ -4032,6 +4079,14 @@ def hol_ref_error(
         if line != MACHINE_IEEE_FP64_LINE:
             return (f"generated `{name}` requires the literal fp64 factory call "
                     f"source line {MACHINE_IEEE_FP64_LINE} in @[hol]")
+    if (path.parts[-4:] == tuple(MACHINE_IEEE_SCRIPT.split("/"))
+            and name in MACHINE_IEEE_FP32_NAMES):
+        error = machine_ieee_fp32_source_error(path.parents[3])
+        if error:
+            return error
+        if line != MACHINE_IEEE_FP32_LINE:
+            return (f"generated `{name}` requires the literal fp32 factory call "
+                    f"source line {MACHINE_IEEE_FP32_LINE} in @[hol]")
     declared = hol_declaration_lines(path, cache).get(name, [])
     if not declared:
         return f"declares no `{name}`"

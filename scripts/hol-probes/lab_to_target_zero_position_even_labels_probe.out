@@ -1,0 +1,15 @@
+label_zero_pos_ok_lines_even_labels=∀(pos :num) (ls :α line list).
+  EVERY (label_zero :α line -> bool) ls ∧ lab_len_pos_ok pos ls ⇒
+  lines_even_labels pos ls
+label_zero_pos_ok_lines_even_labels_types=(pos :num)::num;(ls :α line list)::α line list;
+label_zero_pos_ok_even_labels=∀(pos :num) (code :α sec list).
+  EVERY (sec_label_zero :α sec -> bool) code ∧ all_lab_len_pos_ok pos code ⇒
+  even_labels pos code
+label_zero_pos_ok_even_labels_types=(pos :num)::num;(code :α sec list)::α sec list;
+mixed_both_guards=T
+zero_guard_needed=T
+position_guard_needed=T
+odd_empty_section_valid=T
+multiple_sections_annotation=T
+width1_empty=T
+width80_large_position=T

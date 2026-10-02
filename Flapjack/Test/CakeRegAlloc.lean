@@ -2103,4 +2103,16 @@ def runChecks : IO Bool := do
     all := all && result
   pure all
 
+-- Native adjacency Subscript is preserved, rather than replaced by an empty row.
+example : (cakeDecDegree 0 { CakeRaState.empty 1 with
+    adjLists := CakeNodeMap.ofList ([] : List (List Nat)) }).failure =
+      some .subscript := by
+  simp [cakeDecDegree, CakeRaState.empty, CakeNodeMap.ofList,
+    CakeNodeMap.get, cakeMapLookup, lookupNatInfo]
+
+-- A previously latched error prevents every subsequent neighbour transition.
+example (state : CakeRaState) (node : Nat) (error : CakeRaFailure)
+    (failed : state.failure = some error) : cakeDecDegree node state = state := by
+  simp [cakeDecDegree, failed]
+
 end Flapjack.Test.CakeRegAlloc
