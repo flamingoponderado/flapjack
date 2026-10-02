@@ -3200,6 +3200,9 @@ run_probe reg_alloc_accessors_probeScript.sml reg_alloc_accessors_probe.out \
 run_probe reg_alloc_colouring_probeScript.sml reg_alloc_colouring_probe.out \
   rc_empty_ks rc_no_nodes rc_fixed rc_dup_colours rc_oob rc_oob_after_empty aat_none aat_pref aat_stemp aat_non_atemp aat_oob aa_all aa_pref aa_one_colour fmc_hit fmc_not_in_ks fmc_empty fmc_oob \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe word_alloc_select_reg_alloc_probeScript.sml word_alloc_select_reg_alloc_probe.out \
+  sra_type sra_simple0 sra_simple1 sra_irc2 sra_irc3_cost sra_linear4 sra_linear5_spill sra_linear_forced \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe reg_alloc_allocator_probeScript.sml reg_alloc_allocator_probe.out \
   ra_simple_delta ra_irc_move ra_simple_move ra_irc_spill_cost ra_irc_spill_deg ra_simple_branch_forced ra_irc_phys ra_irc_fs ra_irc_stack ra_irc_coalesce_chain ra_irc_pressure ra_empty \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"

@@ -51758,5 +51758,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.5): Compared the entire original targetSemScript.sml:118-219. Retains machine_config and universe-0 FFI host, arbitrary positive word width, clock-only recursion, program-domain minus FFI-entry priority before halt/cache, encoded-memory existential, all three state_ok guards and frame only on ms1, failure rollback to original machine/FFI, separate shifted next/cache/FFI oracles, first-match find_index and ALOOKUP, total EL using shared HOL ARB without a length premise, both mapped templates and full-word alignment, canonical little-endian arbitrary-count bytes, external MMIO rejection and two optional reads, original FFI_final event and old FFI state, and FFI_return new host/events. words_as_type_indexed_bitvec records only the standard positive word/FFI carrier translation. No callback, successful-run premise, concrete unspecified FFI name, or executable compiler routing change. Original target_sem_evaluate probes and matching kernel examples provide regressions, not cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "select_reg_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SelectRegAlloc.lean",
+    "lean_name": "selectRegAlloc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.3.5): word_allocScript.sml:1697-1703 select_reg_alloc alg spillcosts k heu_moves tree forced fs = if 4 <= alg then linear_scan$linear_scan_reg_alloc k heu_moves tree forced else reg_alloc (if alg <= 1n then Simple else IRC) spillcosts k heu_moves tree forced fs, over the exact tagged linearScanRegAlloc and regAlloc (RegAlloc/Allocator.lean); type num -> num num_map option -> num -> (num # num # num) list -> clash_tree -> (num # num) list -> num_set -> (num num_map, state_exn) exc confirmed by the sra_type probe row and a Lean signature check. Seven original HOL EVAL rows (algorithms 0-5) kernel-replayed in Flapjack.Test.WordAllocSelectRegAllocParity. Proof-side; the executed compiler's allocator routing remains separate."
   }
 ]
