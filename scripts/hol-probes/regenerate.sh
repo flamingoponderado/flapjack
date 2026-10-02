@@ -5109,3 +5109,8 @@ run_probe lab_to_target_label_position_updates_probeScript.sml lab_to_target_lab
 run_probe lab_to_target_state_transport_probeScript.sml lab_to_target_state_transport_probe.out \
   oracle_tie_clock_full oracle_tie_clock_types state_rel_clock_full state_rel_clock_types share_mem_state_rel_shift_interfer_full share_mem_state_rel_shift_interfer_types share_mem_domain_code_rel_shift_interfer_full share_mem_domain_code_rel_shift_interfer_types state_rel_shift_interfer_full state_rel_shift_interfer_types \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_alloc_gen_loop_statement_probeScript.sml stack_alloc_gen_loop_statement_probe.out \
+  gen_loop_full_typed_statement gen_loop_free_vars gen_loop_stop gen_loop_data_fuel_zero \
+  gen_loop_data_one gen_loop_refs_fuel_zero gen_loop_refs_one \
+  "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

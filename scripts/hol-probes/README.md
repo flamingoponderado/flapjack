@@ -5881,3 +5881,13 @@ Lab/machine word dimensions and unused outer shared-memory carrier types are
 retained. Lean `StateTransport` derives the actual shifted interference
 condition at index i+l and preserves every conjunct of the full state relation.
 These proof-side laws do not change the executed compiler.
+
+### Generational GC move-loop simulation
+
+`stack_alloc_gen_loop_statement_probeScript.sml` elaborates the full original local
+`word_gen_gc_move_loop_code_thm` statement (including free `c1` and `conf`) and
+captures five determinate original `word_gen_gc_move_loop` evaluations: immediate
+stop, data branch with zero/one fuel, and reference branch with zero/one fuel.
+`Flapjack/Test/GenGcMoveLoopParity.lean` replays these collector observations in
+the kernel. This capture does not replay the original simulation proof or claim
+coverage of unspecified nonword headers.
