@@ -4445,3 +4445,11 @@ local definition shape and are not a cross-language equivalence theorem.
 ### SSA reconciliation list prerequisites
 
 `ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
+
+`stackprops_stack_lengths_probeScript.sml` literally replays the complete
+original `map_bitmap_length` and `dec_stack_length` proofs, capturing full
+statements and quantified types (four rows), plus eighteen generic payload and
+independent bitmap/stack-width decoder observations.
+`StackPropsStackLengthsParity.lean` kernel-replays the observations and applies
+both full theorems, including an 80-bit multi-frame decoded-stack result.
+A one-bit bitmap continuation with no following word correctly returns NONE.
