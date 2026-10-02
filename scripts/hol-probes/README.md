@@ -5239,3 +5239,11 @@ and missing-read errors retain the original exemption. Bounded list observations
 use the existing guarded holEl translation. This is a theorem specialization
 capture, not an isolated tactic replay or equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cc_trans_correct_move_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Full ASM-step target evaluation theorem
+
+`target_asm_step_evaluate_probeScript.sml` captures the complete original
+`asm_step_IMP_evaluate_step_find_next` statement, including all six hypotheses
+and both equalities, the assembly post-state relation, and nonzero step count.
+This is source-review regression evidence, not cross-language equivalence.
+Regenerate with `HOL_PROBE_ONLY=target_asm_step_evaluate_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
