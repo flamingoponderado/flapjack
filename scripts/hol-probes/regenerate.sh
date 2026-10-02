@@ -5460,3 +5460,9 @@ run_probe lab_to_target_zero_label_existence_probeScript.sml lab_to_target_zero_
   zero_reference nonzero_reference call_ignored loc_reference empty_code generic_value missing_outer wrong_inner_key width1 width80_large_label \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_update_pad_ending_probeScript.sml lab_to_target_update_pad_ending_probe.out \
+  upd_lab_len_ends_with_label upd_lab_len_ends_with_label_types pad_code_ends_with_label pad_code_ends_with_label_types \
+  empty_update empty_padding updated_ending padded_one padded_empty_nop missing_ending_guard width1 width80_large_pos \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
 import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
 import Flapjack.Compiler.Backend.LabProps.SectionEnd
@@ -114,5 +116,26 @@ theorem encSecList_endsWithLabel {width : Nat} [NeZero width]
   intro hs
   have hr := (codeSimilar_encSecList code code enc).mpr (codeSimilar_refl code)
   exact similarEnds code (encSecList enc code) (codeSimilar_sym _ _ hr) hs
+
+
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "upd_lab_len_ends_with_label"
+  (words_as_type_indexed_bitvec)]
+theorem updLabLen_endsWithLabel {width : Nat} [NeZero width]
+    (pos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
+    (∀ sec ∈ code, secEndsWithLabelNative sec) →
+    ∀ sec ∈ updLabLen pos code, secEndsWithLabelNative sec := by
+  intro hs
+  have hr := (codeSimilar_updLabLen code pos code).mpr (codeSimilar_refl code)
+  exact similarEnds code (updLabLen pos code) (codeSimilar_sym _ _ hr) hs
+
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "pad_code_ends_with_label"
+  (words_as_type_indexed_bitvec)]
+theorem padCode_endsWithLabel {width : Nat} [NeZero width]
+    (nop : List (BitVec 8)) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
+    (∀ sec ∈ code, secEndsWithLabelNative sec) →
+    ∀ sec ∈ padCode nop code, secEndsWithLabelNative sec := by
+  intro hs
+  exact similarEnds code (padCode nop code)
+    (codeSimilar_padCode code code nop (codeSimilar_refl code)) hs
 
 end Flapjack.Compiler.Backend.LabToTarget
