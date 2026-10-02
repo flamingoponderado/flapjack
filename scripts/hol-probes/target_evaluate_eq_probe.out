@@ -1,0 +1,36 @@
+evaluate_eq_base_statement=∀ms1 c.
+  c.target.get_pc ms1 ∈ c.prog_addresses DIFF set c.ffi_entry_pcs ∧
+  c.target.state_ok ms1 ∧ c.prog_addresses = dm ∧
+  interference_ok c.next_interfer (c.target.proj dm) ∧
+  (∀s ms. target_state_rel c.target s ms ⇒ c.target.state_ok ms) ∧
+  (∀ms1 ms2.
+     c.target.proj dm ms1 = c.target.proj dm ms2 ⇒
+     (c.target.state_ok ms1 ⇔ c.target.state_ok ms2) ∧
+     c.target.get_pc ms1 = c.target.get_pc ms2 ∧
+     ∀a. a ∈ dm ⇒ c.target.get_byte ms1 a = c.target.get_byte ms2 a) ∧
+  (∀env.
+     interference_ok env (c.target.proj dm) ⇒
+     asserts 0 (λk s. env k (c.target.next s)) ms1
+       (λms'.
+            c.target.state_ok ms' ∧
+            (∀pc.
+               pc ∈ all_pcs (LENGTH (c.target.config.encode i)) init_pc 0 ⇒
+               c.target.get_byte ms' pc = c.target.get_byte ms1 pc) ∧
+            c.target.get_pc ms' ∈
+            all_pcs (LENGTH (c.target.config.encode i)) init_pc
+              c.target.config.code_alignment)
+       (λms'. target_state_rel c.target s2 ms')) ∧
+  asserts2 (0 + 1) (λk. c.next_interfer (0 + 1 − k)) c.target.next ms1
+    (λms1 ms2. ∀x. x ∉ dm ⇒ c.target.get_byte ms1 x = c.target.get_byte ms2 x) ∧
+  (∃k. c.target.get_pc ms1 =
+       init_pc + n2w (k * 2 ** c.target.config.code_alignment) ∧
+       k * 2 ** c.target.config.code_alignment <
+       LENGTH (c.target.config.encode i) ∧
+       bytes_in_memory init_pc (c.target.config.encode i)
+         (c.target.get_byte ms1) (c.prog_addresses DIFF set c.ffi_entry_pcs)) ⇒
+  ∃ms2. ∀k.
+    evaluate c io (k + (0 + 1)) ms1 =
+    evaluate (shift_interfer (0 + 1) c) io k ms2 ∧
+    find_next_interference c io (k + (0 + 1)) ms1 =
+    find_next_interference (shift_interfer (0 + 1) c) io k ms2 ∧
+    target_state_rel c.target s2 ms2

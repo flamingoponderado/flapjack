@@ -1,0 +1,9 @@
+count_eq_full_statement=next_interference mc1 ffi1 ms1 = next_interference mc2 ffi2 ms2 ⇒
+∀n. interference_count P mc1 ffi1 ms1 n = interference_count P mc2 ffi2 ms2 n
+oracles_eq_full_statement=next_interference mc1 ffi1 ms1 = next_interference mc2 ffi2 ms2 ∧
+mc1.target = mc2.target ∧ mc1.callee_saved_regs = mc2.callee_saved_regs ∧
+mc1.ptr_reg = mc2.ptr_reg ⇒
+target_io_regs mc1 ffi1 ms1 = target_io_regs mc2 ffi2 ms2 ∧
+target_io_fp_regs mc1 ffi1 ms1 = target_io_fp_regs mc2 ffi2 ms2 ∧
+target_cc_regs mc1 ffi1 ms1 = target_cc_regs mc2 ffi2 ms2 ∧
+target_cc_fp_regs mc1 ffi1 ms1 = target_cc_fp_regs mc2 ffi2 ms2

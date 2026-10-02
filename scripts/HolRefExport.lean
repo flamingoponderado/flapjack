@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsForceRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
@@ -18,6 +19,14 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad32
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore8
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore32
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPCompare
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPUnary
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPArith
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPInt
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovToReg
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovFromReg
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstCommon
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp
@@ -50,6 +59,10 @@ import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSuffix
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SourceFrameSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList
 import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
 import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape

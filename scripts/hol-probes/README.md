@@ -4877,6 +4877,23 @@ observation in `WordUnreachDefParity`. Regenerate with
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 
+`target_position_unique_probeScript.sml` captures the complete original
+`interference_count_lt` and `interference_pos_unique` theorem statements,
+checking that both compiled original theorems have no undischarged hypotheses.
+The native Lean counterparts are in `TargetProps/PositionUnique.lean`.
+
+`target_position_laws_probeScript.sml` prints the full original
+`interference_count_tail` and `interference_pos_head` statements and checks
+that the original compiled theorems have no undischarged hypotheses.
+Native counterparts are in `TargetProps/PositionLaws.lean`.
+
+`target_position_tail_probeScript.sml` captures complete original
+`interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
+checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
+
+`target_constructed_oracles_probeScript.sml` captures full six-conjunct original
+`constructed_oracles_ffi_step` and `constructed_oracles_cc_step` statements,
+checking no undischarged hypotheses. Native ports are in `TargetProps/ConstructedOracles.lean`.
 ### Balanced-map ordering/domain equivalence
 
 `balanced_map_domain_probe.out` captures the complete original `to_fmap_key_set`
@@ -5033,6 +5050,57 @@ payload String; existing homogeneous observations remain unchanged.
 independent query/key/result/payload types; the latter forces a homogeneous
 Ordering comparator. `BalancedMapKeyOrderedTypes` checks generic constructors
 and Bool-query/Nat-key/String-result/Bool-payload examples, including malformed sizes.
+
+`ssa_cc_trans_correct_inst_fpcompare_probeScript.sml` captures original kernel
+FPLess/FPLessEqual/FPEqual specializations and full native state/register/SSA/table
+carriers. Original FP proof8174–8222 and fixed binary64 comparison/fresh word
+result cases are manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fpunary_probeScript.sml` captures original kernel
+FPMov/FPAbs/FPNeg specializations and native carriers. Original FP proof8174–8222
+and unchanged-SSA finite-map FP writes, bit copying and sign-only updates are
+manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fparith_probeScript.sml` captures original kernel
+FPSqrt/FPAdd/FPSub/FPMul/FPDiv/FPFma specializations and native carriers. Original
+FP proof8174–8222, unchanged-SSA FP writes and inherited rational/choice arithmetic
+operations are manually compared; no standalone tactic replay is claimed.
+`target_oracle_equality_probeScript.sml` captures the complete original
+`interference_count_EQ` and `constructed_oracles_EQ` statements with no
+undischarged hypotheses. Native counterparts are in `TargetProps/OracleEquality.lean`.
+
+`target_callee_saved_probeScript.sml` captures complete original
+`target_io_regs_callee_saved` and `target_cc_regs_callee_saved` statements
+with no open hypotheses. Native ports are in `TargetProps/CalleeSaved.lean`.
+
+`target_next_cases_probeScript.sml` captures complete original
+`next_interference_ExtCall` and `next_interference_ccache` statements and
+checks no undischarged hypotheses. Native ports are in `TargetProps/NextCases.lean`.
+### Full balanced-map rotation arithmetic
+
+`balanced_map_balance_arithmetic_probeScript.sml` captures both typed
+`almost_balancedL/R_def` equations and replays all seven local `balanced_lem`
+proofs with their original statements and tactic bodies. It recreates local
+`TIMES_MIN` using the original proof. Every replay has no open hypotheses.
+The fourteen predicate observations cover left/right zero, one, two and strict
+boundary cases, matched by kernel fixtures in `BalancedMapBalanceArithmeticParity`.
+Lemma7 retains the original unused, independently typed first binder.
+
+### Balanced-map recursive membership law
+
+`balanced_map_membership_probeScript.sml` replays the full original local
+`member_eq_lookup` proof and prints its complete inferred types with no hypotheses.
+The original `gen_tac` script alias is spelled `Tactic.GEN_TAC` in standalone batch mode.
+Six actual member observations use Bool queries, Nat stored keys/payloads, arbitrary
+comparators and malformed cached sizes. Kernel fixtures cover nil, root equality,
+absent left/right branches and successful left/right recursive searches.
+
+### Balanced-map null characterization
+
+`balanced_map_null_probeScript.sml` captures the complete exported `null_thm`
+with and without full types, checks no open hypotheses and observes Tip and
+malformed cached-size Bin. `BalancedMapNullParity` checks the full independent
+key/query theorem and a Bool/Nat/String nonempty root, without comparator laws.
 `target_position_unique_probeScript.sml` captures the complete original
 `interference_count_lt` and `interference_pos_unique` theorem statements,
 checking that both compiled original theorems have no undischarged hypotheses.
@@ -5046,3 +5114,101 @@ Native counterparts are in `TargetProps/PositionLaws.lean`.
 `target_position_tail_probeScript.sml` captures complete original
 `interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
 checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
+
+`ssa_cc_trans_correct_inst_fpint_probeScript.sml` captures original kernel
+FPToInt/FPFromInt specializations and native carriers. Original FP proof8174–8222,
+width branches, signed range/rounding failures and half-register writes are
+manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fpmovtoreg_probeScript.sml` captures original kernel
+FPMovToReg specialization and native carriers. Original FP proof8174–8222,
+width64 one-write and otherwidth two-write low/high extraction and destination
+aliases are manually reviewed; no standalone tactic replay is claimed.
+`target_next_mapped_probeScript.sml` captures the complete original
+`next_interference_MappedRead` and `next_interference_MappedWrite` statements
+with no open hypotheses. Native ports are in `TargetProps/NextMapped.lean`.
+`balanced_map_invariant_eq_probeScript.sml` captures the entire exported
+`invariant_eq`, including its typed independent Tip payload and all three
+comparator-guarded semantic clauses, with no open HOL hypotheses. It also
+captures a valid singleton, an invalid cached size, and an equal-key child.
+`BalancedMapInvariantEqParity` kernel-checks the corresponding observations.
+The capture also replays the original private `key_ordered_to_fmap` proof
+and the complete original `invariant_eq` proof body, checking the replay has
+no open hypotheses. Batch tactics use their equivalent qualified HOL names.
+The same probe now replays the complete private `inv_props` statement and
+literal original proof, prints its fully typed closed theorem, and evaluates
+a valid tree with two nonempty children. The Lean fixtures also instantiate
+all three `invProps` conclusions for a checked three-key comparator, using
+actual nonempty canonical child lookups rather than assumed domain facts.
+
+`ssa_cc_trans_correct_inst_fpmovfromreg_probeScript.sml` captures original kernel
+FPMovFromReg specialization and carriers (first=n FP destination, second=n0 left
+source, fp=n1 right source). Original FP proof8174–8209, width branches and real
+alias-input Move/fresh SSA locals are manually reviewed; no tactic replay claimed.
+
+`ssa_cc_trans_correct_inst_common_probeScript.sml` captures original kernel
+Skip/Load16/Store16 specializations and carriers. Original initial Inst split
+7860–7865, unchanged Skip and original unsupported16 Error exemptions are
+manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_probeScript.sml` captures original kernel arbitrary
+Inst specialization and native instruction/state/SSA/table carriers. Original
+Inst7860–8222 and all34 constructor cases are compared with the exhaustive
+Lean assembly; no standalone tactic replay is claimed.
+
+`target_next_shared_mem_probeScript.sml` captures the complete original
+`next_interference_SharedMem` statement with no open hypotheses; native
+assembly is in `TargetProps/NextSharedMem.lean`.
+The capture also replays the entire original `lookup_thm` statement and proof,
+with typed closed output, and evaluates left/root/right hits, whole-tree and
+child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
+consume the full generic theorem and derive actual semantic finite-map results
+for nonempty children and a distinct equivalent key with an independent payload.
+
+### Misc byte-region prerequisites
+
+`misc_memory_regions_probeScript.sml` captures the complete original
+`bytes_in_memory_APPEND` and `bytes_in_memory_change_mem` theorem conclusions
+from compiled `miscTheory`; `misc_memory_regions_probe.out` is statement review
+and regression evidence, not a cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=misc_memory_regions_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`init_code_probeScript.sml` captures the full original definition/type and120 complete native-tree equalities across positive widths1/8/32/64/80, heap-limit multiplication below/at/above overflow, GC modes, and zero/large/aliased register indices. The original word_shift is2 for32-bit words and3 otherwise; narrow immediate truncation is preserved. `stack_remove_compile_native_probeScript.sml` adds full init_stubs/compile definitions/types and50 outputs with50 equality checks for all three initializer labels, tail-call start, both jump modes, empty/nonempty section lists, repeated section labels, and huge natural labels. Matching Lean fixtures use kernel-checked literal trees/equations. These are proof-side definitions; production routing and compile_semantics remain separate obligations.
+`ssa_locals_force_rename_probe` captures the original proved generic
+`ssa_locals_rel_force_rename` (word_allocProof:6383–6403) and five inferred
+carriers: source/target alpha Spt, Nat SSA Spt, Nat pair list, and Nat bound.
+The original three premises and conclusion were manually compared with
+`SSALocalsForceRename.lean`; the Lean proof uses induction over the same
+force-rename updates. This is an original theorem capture, not a replay of
+the isolated source tactic or a cross-language equivalence proof. Regenerate
+with `HOL_PROBE_ONLY=ssa_locals_force_rename_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Target evaluation induction base
+
+`target_evaluate_eq_probeScript.sml` specializes original
+`evaluate_EQ_evaluate_lemma` at zero and captures its full statement in
+`target_evaluate_eq_probe.out`. This is source-review regression evidence,
+not proof of cross-language equivalence or of the pending successor case.
+Regenerate with `HOL_PROBE_ONLY=target_evaluate_eq_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+### Rotation auxiliary completion audit
+
+`balanced_map_rotation_aux_probeScript.sml` captures the complete typed
+specified equations for `singleL/R`, `doubleL/R`, `rotateL/R`, `bal`, `balL`,
+and `balR`, and actual single-rotation outputs with malformed cached sizes.
+The `bmra_unspecified_unreduced` row is an **unreduced expression**, not a true
+shared-ARB equality. `bmra_completed_singleR` is a **conditional theorem**;
+`bmra_completion_hyp` records its constructor-existence hypothesis explicitly.
+Do not use this capture to claim unconditional missing-case equivalence.
+
+Source audit: HOL `src/tfl/src/Defn.sml:1156-1171` sends constructor-pattern
+nonrecursive definitions to `Prim_rec.new_recursive_definition`.
+`src/1/Prim_rec.sml:259-266` proves function existence from the supplied
+equations, then calls `new_specification`. The existence construction at
+lines127-164 selects the requested constructor equations from the recursion
+axiom; it does not supply a Tip equation absent from the source specification.
+Thus the exported single-rotation equations constrain Bin cases, while the
+choice of the total function leaves the missing outputs unspecified. A shared
+map-valued ARB fallback is one possible realization, not established original
+behavior. A faithful port must retain that unspecified function specification
+(or prove a justified defining-body correspondence), and its missing-case
+outputs must not be treated as concrete parity fixtures. Full rotation proofs
+still need their original constructor premises and specified equations.
