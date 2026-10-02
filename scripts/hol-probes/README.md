@@ -4949,3 +4949,8 @@ result cases are manually reviewed; no standalone tactic replay is claimed.
 FPMov/FPAbs/FPNeg specializations and native carriers. Original FP proof8174–8222
 and unchanged-SSA finite-map FP writes, bit copying and sign-only updates are
 manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fparith_probeScript.sml` captures original kernel
+FPSqrt/FPAdd/FPSub/FPMul/FPDiv/FPFma specializations and native carriers. Original
+FP proof8174–8222, unchanged-SSA FP writes and inherited rational/choice arithmetic
+operations are manually compared; no standalone tactic replay is claimed.

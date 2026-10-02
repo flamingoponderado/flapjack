@@ -57917,5 +57917,89 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Source comparison: genuine FPNeg case of original Inst FP branch8174-8222, original six premises/full Error-exempt permutation/result/frame/result-sensitive locals and no extra targetrun/success/poststate/IH. Compiler default retains instruction/SSA/next. Actual native getFpVar and setFpVar match HOL FLOOKUP/update; original frame derives identical fixed BitVec64 read and canonical fpRegs update; general locals unchanged. Missing read retains source Error. Mov copies all bits; Abs/Neg use reviewed fixed64 codecs and sign-zero/complement operations matching machine_ieeeLib/binary_ieee, including NaN payloads, signed zeros and infinity, no rounding operation. Nat FP register indices/native positive word state/shared Type0 code-FFI/Spt/table carriers compared with original kernel Q.SPEC specialization. Canonical fpRegs/store finite-support and positive word translation, inherited Inst/evaluator reals_as_rational_cuts SOUNDNESS8 explicit. Original source case manually reviewed and theorem specialization captured, no isolated tactic replay claim. Lean kernel PASS; full Inst remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstFPArith.lean",
+  "lean_name": "ssaCcTransCorrectInstFPSqrt",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: genuine FPSqrt constructor in original Inst FP branch8174-8222. Original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targetrun/success/poststate/IH assumption. Compiler default retains opcode/SSA/next; original fpRegs frame derives all identical fixed64 reads, including Fma destination accumulator. Same native operation result and canonical setFpVar update yield complete postframe and unchanged general locals. Missing reads preserve source Error. Nat FP indices, fixed BitVec64 payload and positive width state/Spt/table/shared Type0 code-FFI carriers compared to original Q.SPEC theorem capture. Sqrt/Add/Sub/Mul/Div retain roundTiesToEven lifted fp64 operation with flags dropped; Fma uses fpSemFpfma(v1,v2,v3)=fp64_mul_add roundTiesToEven v2 v3 v1, retaining accumulator ordering. Inherited reals_as_rational_cuts Inst/evaluator/arithmetic boundary SOUNDNESS8 includes rational finite values and choice-based rounding/quietNaNs; no stronger numeric agreement is claimed. Canonical fpRegs/store finite-support and word translation explicit. Original opcode proof manually compared; kernel specialization captured, no isolated tactic replay claim. Lean kernel PASS; full Inst remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstFPArith.lean",
+  "lean_name": "ssaCcTransCorrectInstFPAdd",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: genuine FPAdd constructor in original Inst FP branch8174-8222. Original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targetrun/success/poststate/IH assumption. Compiler default retains opcode/SSA/next; original fpRegs frame derives all identical fixed64 reads, including Fma destination accumulator. Same native operation result and canonical setFpVar update yield complete postframe and unchanged general locals. Missing reads preserve source Error. Nat FP indices, fixed BitVec64 payload and positive width state/Spt/table/shared Type0 code-FFI carriers compared to original Q.SPEC theorem capture. Sqrt/Add/Sub/Mul/Div retain roundTiesToEven lifted fp64 operation with flags dropped; Fma uses fpSemFpfma(v1,v2,v3)=fp64_mul_add roundTiesToEven v2 v3 v1, retaining accumulator ordering. Inherited reals_as_rational_cuts Inst/evaluator/arithmetic boundary SOUNDNESS8 includes rational finite values and choice-based rounding/quietNaNs; no stronger numeric agreement is claimed. Canonical fpRegs/store finite-support and word translation explicit. Original opcode proof manually compared; kernel specialization captured, no isolated tactic replay claim. Lean kernel PASS; full Inst remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstFPArith.lean",
+  "lean_name": "ssaCcTransCorrectInstFPSub",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: genuine FPSub constructor in original Inst FP branch8174-8222. Original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targetrun/success/poststate/IH assumption. Compiler default retains opcode/SSA/next; original fpRegs frame derives all identical fixed64 reads, including Fma destination accumulator. Same native operation result and canonical setFpVar update yield complete postframe and unchanged general locals. Missing reads preserve source Error. Nat FP indices, fixed BitVec64 payload and positive width state/Spt/table/shared Type0 code-FFI carriers compared to original Q.SPEC theorem capture. Sqrt/Add/Sub/Mul/Div retain roundTiesToEven lifted fp64 operation with flags dropped; Fma uses fpSemFpfma(v1,v2,v3)=fp64_mul_add roundTiesToEven v2 v3 v1, retaining accumulator ordering. Inherited reals_as_rational_cuts Inst/evaluator/arithmetic boundary SOUNDNESS8 includes rational finite values and choice-based rounding/quietNaNs; no stronger numeric agreement is claimed. Canonical fpRegs/store finite-support and word translation explicit. Original opcode proof manually compared; kernel specialization captured, no isolated tactic replay claim. Lean kernel PASS; full Inst remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstFPArith.lean",
+  "lean_name": "ssaCcTransCorrectInstFPMul",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: genuine FPMul constructor in original Inst FP branch8174-8222. Original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targetrun/success/poststate/IH assumption. Compiler default retains opcode/SSA/next; original fpRegs frame derives all identical fixed64 reads, including Fma destination accumulator. Same native operation result and canonical setFpVar update yield complete postframe and unchanged general locals. Missing reads preserve source Error. Nat FP indices, fixed BitVec64 payload and positive width state/Spt/table/shared Type0 code-FFI carriers compared to original Q.SPEC theorem capture. Sqrt/Add/Sub/Mul/Div retain roundTiesToEven lifted fp64 operation with flags dropped; Fma uses fpSemFpfma(v1,v2,v3)=fp64_mul_add roundTiesToEven v2 v3 v1, retaining accumulator ordering. Inherited reals_as_rational_cuts Inst/evaluator/arithmetic boundary SOUNDNESS8 includes rational finite values and choice-based rounding/quietNaNs; no stronger numeric agreement is claimed. Canonical fpRegs/store finite-support and word translation explicit. Original opcode proof manually compared; kernel specialization captured, no isolated tactic replay claim. Lean kernel PASS; full Inst remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstFPArith.lean",
+  "lean_name": "ssaCcTransCorrectInstFPDiv",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: genuine FPDiv constructor in original Inst FP branch8174-8222. Original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targetrun/success/poststate/IH assumption. Compiler default retains opcode/SSA/next; original fpRegs frame derives all identical fixed64 reads, including Fma destination accumulator. Same native operation result and canonical setFpVar update yield complete postframe and unchanged general locals. Missing reads preserve source Error. Nat FP indices, fixed BitVec64 payload and positive width state/Spt/table/shared Type0 code-FFI carriers compared to original Q.SPEC theorem capture. Sqrt/Add/Sub/Mul/Div retain roundTiesToEven lifted fp64 operation with flags dropped; Fma uses fpSemFpfma(v1,v2,v3)=fp64_mul_add roundTiesToEven v2 v3 v1, retaining accumulator ordering. Inherited reals_as_rational_cuts Inst/evaluator/arithmetic boundary SOUNDNESS8 includes rational finite values and choice-based rounding/quietNaNs; no stronger numeric agreement is claimed. Canonical fpRegs/store finite-support and word translation explicit. Original opcode proof manually compared; kernel specialization captured, no isolated tactic replay claim. Lean kernel PASS; full Inst remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstFPArith.lean",
+  "lean_name": "ssaCcTransCorrectInstFPFma",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: genuine FPFma constructor in original Inst FP branch8174-8222. Original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targetrun/success/poststate/IH assumption. Compiler default retains opcode/SSA/next; original fpRegs frame derives all identical fixed64 reads, including Fma destination accumulator. Same native operation result and canonical setFpVar update yield complete postframe and unchanged general locals. Missing reads preserve source Error. Nat FP indices, fixed BitVec64 payload and positive width state/Spt/table/shared Type0 code-FFI carriers compared to original Q.SPEC theorem capture. Sqrt/Add/Sub/Mul/Div retain roundTiesToEven lifted fp64 operation with flags dropped; Fma uses fpSemFpfma(v1,v2,v3)=fp64_mul_add roundTiesToEven v2 v3 v1, retaining accumulator ordering. Inherited reals_as_rational_cuts Inst/evaluator/arithmetic boundary SOUNDNESS8 includes rational finite values and choice-based rounding/quietNaNs; no stronger numeric agreement is claimed. Canonical fpRegs/store finite-support and word translation explicit. Original opcode proof manually compared; kernel specialization captured, no isolated tactic replay claim. Lean kernel PASS; full Inst remains open."
 }
 ]
