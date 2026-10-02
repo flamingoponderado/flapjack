@@ -9,6 +9,9 @@ import Flapjack.Test.StackToLabNonrecursiveValidityParity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Test.WordToStackFilterBitmapParity
+import Flapjack.Test.WordToStackListUpdateParity
+import Flapjack.Test.WordToStackWordListLengthParity
 import Flapjack.Test.WordToStackLiveListParity
 import Flapjack.Test.LabValidityNativeParity
 import Flapjack.Test.StackToLabNativeParity
