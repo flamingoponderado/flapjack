@@ -49388,5 +49388,47 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original1755-1800 three source-frame decoder laws. Actual reviewed wordSemDecStack/WordSemStackFrame/WordLocW/Frames predicates, positive-width BitVec standard translation only. Handler conclusion retains original Boolean flag equivalence at original n<source-frame-length, represents EL by guarded native accessor with decoded bound derived from existing reviewed decStackStackKeyEq/sKeyEqLength, not an additional premise. Zip theorem retains arbitrary original size/handler/nonGC keys and values, GC pairs and exactly sorted_env+equal value/GC-length guards; no unique-key/all-pairs sortedness replacement. Full decoder theorem retains original successful decode and EVERY sorted_env for all frames. Proofs reuse native preserved actual frame keys and source-compatible adjacent zip/tail sortedness, private normalization/transport helpers untagged Flapjack infrastructure. Fresh three literal whole original proofs hyp=[] with unchanged statements/bodies and445 matching kernel/oracle full decoded handler/sorted predicate projections and guarded zipped-value laws across1/2/8/64/80 widths, zero/nested/mixed handler frames, sorted/duplicate/unsorted keys, short/exact/excess replacement roots. No totalHD/EL/sourceallowlist expansion or target success/simulation premise. Full decoded stack/state/pass/compiler remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FrameOffsets.lean",
+    "lean_name": "absFrameEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_frame_eq_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-frame-offsets): source1809-1813: all three literal conjuncts, shared first/middle types and independent final list element types, HOL products to Lean products and lengths unchanged; no datatype representation difference. Fresh literal original replays and complete output-projection fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FrameOffsets.lean",
+    "lean_name": "listRelAbsFrameEqHandlerVal",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LIST_REL_abs_frame_eq_handler_val",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-frame-offsets): source1816-1824: full arbitrary two lists with native inductive List.Forall₂ of literal absFrameEq, same sole premise and full handlerVal equality, independent final element carriers preserved; normal/handler cases kernel proved. Fresh literal original replays and complete output-projection fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FrameOffsets.lean",
+    "lean_name": "absStackToStackLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_stack_to_stack_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-frame-offsets): source2464-2483: complete native successful absStack premise implies full handlerVal concrete-stack length equality, identical statement to reviewed abs_stack_LENGTH; proof reuses that full kernel theorem. Bitmap/target word dimension shared, ignored source-frame dimension independent as original. Fresh literal original replays and complete output-projection fixtures.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FrameOffsets.lean",
+    "lean_name": "absStackLen",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_stack_len",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-frame-offsets): source2575-2598: complete successful native absStack premise and arbitrary handler index, handlerVal of exact LASTN suffix bounded by concrete stack length. No index bound or stack relation assumed. LASTN is reverse/take/reverse including zero and excess indices. Independent saved-frame dimension retained. Kernel proof derives suffix monotonicity and full successful-abstraction length. Only positive-width words translation differs. Fresh literal original replays and complete output-projection fixtures.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FrameOffsets.lean",
+    "lean_name": "lastNMore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LASTN_MORE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-frame-offsets), source249-254: arbitrary list/element carrier and index with exact sole not-less-than-length premise, total LASTN identity including empty and excess indices. Native reverse/take/reverse exactly matches LASTN_def, no default or bound strengthening. Literal unchanged original proof freshly replayed as prerequisite for abs_stack_len."
   }
 ]

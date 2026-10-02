@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackFrameOffsetsParity
 import Flapjack.Test.WordToStackDecodedFrameShapeParity
 import Flapjack.Test.WordToStackAbsStackWordLengthParity
 import Flapjack.Test.WordToStackMapBitmapParity
