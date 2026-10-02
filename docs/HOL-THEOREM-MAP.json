@@ -66697,5 +66697,35 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: complete original ALOOKUP_section_labels5443-5486 and fresh original full typed/zero-open-hypothesis capture. All six original guards retained: EVERY sec_label_ok owner, EVERY line_length_ok, EVERY label_zero, ALL_DISTINCT extract_labels, actual sec_loc_to_pc=SOME pc, queried label nonzero. Full existential i and actual section_labels association lookup=SOME i, plus entire disjunction: sec_pos_val=NONE with i=initial position+SUM physical line_length and pc=LENGTH nonlabel FILTER; or sec_pos_val=SOME i. Arbitrary Nat position/PC/identifiers and fixed List(Nat times Nat) accumulator retained, including duplicate arbitrary accumulator entries. words_as_type_indexed_bitvec only translates native word-index and constructor carriers. Literal constructor induction: matching label freshness derived from original sec_label_ok extraction and distinctness; lookup_ignore supplies actual lookup, actual source label-zero/physical length exhausts the all-label tail, sec_pos_val_0 supplies nonempty instruction-tail case. Both Asm/LabAsm use only original recorded-vs-physical line_length_ok. No supplied lookup witness, target success/evaluation, desired result, extra freshness or induction premise. Consumes checked141 aa00fd660 and full140helpers534c57482; acceptance statuses remain coordinator-owned. Fresh original11 allT/native11 cover exhausted and successful position cases, both instruction constructors, arbitrary duplicate accumulator, needed distinctness and physical-length guards, invalid ownership/missing labels, widths1/8/80 and >64-bit Nat positions. Full generic consumer and actual arbitrary-position/accumulator consumers discharge original source premises for both boundary and successful cases. Proper original proof counterpart, private zero-physical-length helper is Flapjack infrastructure. No total HD/EL/opaque default or provenance hold change; no full remove_labels_loop/machine/end-to-end closure or HOL-to-Lean equivalence proof claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/EvaluateClock.lean",
+    "lean_name": "evaluateClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "evaluate_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-stack-evaluate-clock: full original stackSemScript1079-1106. Same arbitrary program/source/result/poststate actual evaluation equality implies post clock <= source clock; all native constructors, original clock-first well-founded induction and only original recursive hypotheses; Call retains actual fixClock outputs, return location comparisons, ignored-handler/error branches and guarded return/exception continuations. No callback, global clock law, restricted family or target-result assumption. Reviewed canonical finite-support regs/fpRegs/store and positive type-indexed words/Type0 host, Spt code and List stack unchanged. Same-module imported canonical state codec roundtrip; inherits reals_as_rational_cuts from faithful total evaluator. Original proof replay recreates unexported local atomic/fix_clock_IMP helpers; uses exported HOL evaluate_def/evaluate_ind after original allow_rebind and explicit DB.fetch stackSem state_component_equality in lieu of current-theory lookup. This replay is not an independent reconstruction of pre-rebind definitions; Lean proof independently uses actual pre-rebind evaluator clauses."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/EvaluateClock.lean",
+    "lean_name": "fixClockEvaluate",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "fix_clock_evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-stack-evaluate-clock: full original stackSemScript1079-1106. Same unconditional fix_clock input(evaluate program,input)=evaluate program,input identity, derived from full native evaluateClock with no added premise. Reviewed canonical finite-support regs/fpRegs/store and positive type-indexed words/Type0 host, Spt code and List stack unchanged. Same-module imported canonical state codec roundtrip; inherits reals_as_rational_cuts from faithful total evaluator. Original proof replay recreates unexported local atomic/fix_clock_IMP helpers; uses exported HOL evaluate_def/evaluate_ind after original allow_rebind and explicit DB.fetch stackSem state_component_equality in lieu of current-theory lookup. This replay is not an independent reconstruction of pre-rebind definitions; Lean proof independently uses actual pre-rebind evaluator clauses."
   }
 ]

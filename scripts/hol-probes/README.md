@@ -6137,3 +6137,9 @@ WordToStack make_init probe captures the complete original definition and124 gro
 `stack_rawcall_native_probe.out` captures seven complete original trees: three frame comparison branches, missing lookup, preserved top Seq, untouched NONE-return handler, and both compiled SOME-return continuations. Matching native kernel fixtures compare full trees. This is definition evidence, not production-path replacement or compiler correctness.
 
 `stack_rawcall_collect_probe.out` captures bare and nested allocation rejection, zero-sized entry acceptance, and all four queried map results for duplicate entries with an existing map. Native replay retains last-wins insertion; broad production frame collection remains a separate obligation.
+`stack_sem_evaluate_clock_probeScript.sml` replays the full original
+`evaluate_clock` and `fix_clock_evaluate` proof bodies, recreating their local
+atomic clock and `fix_clock_IMP` helpers. It uses the exported HOL evaluator
+rules after `allow_rebind`, and resolves `state_component_equality` with
+`DB.fetch` rather than a current-theory lookup. The Lean proof independently
+uses the faithful evaluator clauses before the clock-identity rewrite.

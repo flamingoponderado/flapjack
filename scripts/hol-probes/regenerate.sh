@@ -5531,6 +5531,10 @@ run_probe lab_to_target_sec_pos_zero_probeScript.sml lab_to_target_sec_pos_zero_
 run_probe stack_sem_atomic_clocks_probeScript.sml stack_sem_atomic_clocks_probe.out \
   gc_clock_statement gc_clock_proved alloc_clock_statement alloc_clock_proved store_const_sem_clock_statement store_const_sem_clock_proved inst_clock_statement inst_clock_proved sh_mem_op_clock_statement sh_mem_op_clock_proved \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_sem_clock_control_probeScript.sml stack_sem_clock_control_probe.out \
+  cseq_statement cseq_proved cif_statement cif_proved cloop_statement cloop_proved \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stackprops_extract_labels_probeScript.sml stackprops_extract_labels_probe.out \
   sel_1_skip sel_1_inst sel_1_location sel_1_raw sel_1_return sel_1_both sel_1_ignored sel_1_loop sel_1_seq sel_1_if sel_1_nested sel_1_duplicate sel_1_zero sel_1_wide sel_8_skip sel_8_inst sel_8_location sel_8_raw sel_8_return sel_8_both sel_8_ignored sel_8_loop sel_8_seq sel_8_if sel_8_nested sel_8_duplicate sel_8_zero sel_8_wide sel_64_skip sel_64_inst sel_64_location sel_64_raw sel_64_return sel_64_both sel_64_ignored sel_64_loop sel_64_seq sel_64_if sel_64_nested sel_64_duplicate sel_64_zero sel_64_wide sel_80_skip sel_80_inst sel_80_location sel_80_raw sel_80_return sel_80_both sel_80_ignored sel_80_loop sel_80_seq sel_80_if sel_80_nested sel_80_duplicate sel_80_zero sel_80_wide \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -5577,3 +5581,6 @@ run_probe lab_to_target_section_lookup_positions_probeScript.sml lab_to_target_s
   empty boundary_duplicate_acc head_success asm_prefix labasm_boundary missing distinct_guard_needed owner_guard_false length_guard_needed width1_large_pos width80_large_pos \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe stack_sem_evaluate_clock_probeScript.sml stack_sem_evaluate_clock_probe.out \
+  gc_clock_statement gc_clock_proved alloc_clock_statement alloc_clock_proved store_const_sem_clock_statement store_const_sem_clock_proved inst_clock_statement inst_clock_proved sh_mem_op_clock_statement sh_mem_op_clock_proved evaluate_clock_statement evaluate_clock_proved fix_clock_evaluate_statement fix_clock_evaluate_proved \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
