@@ -159,7 +159,10 @@ not close its beads or certify its ports: coordinator acceptance and the usual
 source-comparison requirements still apply.
 
 Before reporting a port complete, build affected Lean modules, run `lake test`,
-`scripts/check-hol-refs.py`, and `scripts/check-warnings.sh`. For executable
+`scripts/check-hol-refs.py`, and `scripts/check-warnings.sh`. The warning gate
+excludes diagnostics from `Flapjack/Test/`, as requested by the maintainer;
+warnings from other modules and all build errors still fail the gate. Tests
+remain default build targets and must pass `lake test`. For executable
 compiler changes, compare the executed output with original Pancake where an
 oracle exists; see `docs/PARITY-TESTING.md`. State which checks actually ran and
 which remain pending (including CI).
@@ -432,6 +435,20 @@ correspondence. The qualifier is a representation statement only: it does not
 authorize changed quantifiers, hypotheses, conclusions, `BEq` side conditions,
 or word-model differences, and the manifest must use status
 `reviewed_fmap_as_finite_support_result` after source comparison.
+
+**Qualify standalone finite-map input parameters.** Use
+`(fmap_as_finite_support_parameters := [binder, ...])` for explicitly named
+HOL `|->` inputs represented directly by `HolFiniteMapExact`, when the result
+is not a finite map. Each binder must have that explicit carrier and a
+same-module kernel-checked
+`holFmapAsFiniteSupportParamWitness_<declaration>_<binder>` establishing its
+lookup/finite-support codec roundtrip. This is distinct from qualifiers for
+structure fields and map-valued results. Source review must preserve binder
+order, hypotheses, and conclusions; the representation witness and checker
+do not prove HOL-to-Lean correspondence or permit other statement differences.
+Record the named parameters in the reviewed manifest, with the matching
+`reviewed_fmap_as_finite_support_parameters` status (or its supported combined
+status).
 
 **Qualify observations of computed finite-map results.** Use
 `(fmap_as_finite_support_result_observations := [Producer, ...])` only

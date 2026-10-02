@@ -2,7 +2,7 @@
 """Render exported HOL definition theorems (S-expressions) as Lean definitions.
 
 Input: a file of `(def THY NAME DEFNAME TERM)` records written by
-`scripts/hol-probes/l3_riscv_export_defs.sml`, where TERM is the HOL conclusion with
+`scripts/l3/export_riscv_defs.sml`, where TERM is the HOL conclusion with
 `(v NAME TY)`, `(c THY NAME TY)`, `(a F X)` and `(l VAR BODY)` nodes and types
 `(tv NAME)` / `(ty THY OP ARGS...)`.
 
@@ -655,8 +655,9 @@ def special_word_len(r, c, args, env):
 
 
 def special_arb(r, c, args, env):
+    r.noncomputable = True
     t = fun_parts(c.ty)[1] if args else c.ty
-    base = f'(holArb {ty_lean(c.ty)})'
+    base = f'(Flapjack.holArb {ty_lean(c.ty)})'
     return base if not args else '(' + base + ''.join(' ' + r.atom(a, env) for a in args) + ')'
 
 
@@ -785,6 +786,16 @@ CONSTANTS = {
 
 
 for _width, _t, _w in ((32, 23, 8), (64, 52, 11)):
+    # machine_ieeeLib.lift1b applies the fixed codec to literal field predicates.
+    for _classification in ('Normal', 'Subnormal'):
+        CONSTANTS['machine_ieee', f'fp{_width}_is{_classification}'] = (
+            1, lambda r, c, xs, raw, t=_t, w=_w, classification=_classification:
+            f'(holFloatIs{classification} {ieee_codec(xs[0], t, w)})')
+    CONSTANTS['machine_ieee', f'fp{_width}_posZero'] = (
+        0, lambda r, c, xs, raw, width=_width: f'(BitVec.ofNat {width} 0)')
+    CONSTANTS['machine_ieee', f'fp{_width}_negZero'] = (
+        0, lambda r, c, xs, raw, width=_width:
+        f'(BitVec.ofNat {width} {1 << (width - 1)})')
     CONSTANTS['machine_ieee', f'fp{_width}_to_int'] = (
         2, lambda r, c, xs, raw, t=_t, w=_w:
         f'(holFloatToInt {xs[0]} {ieee_codec(xs[1], t, w)})')

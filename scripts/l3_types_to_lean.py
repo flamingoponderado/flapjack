@@ -4,7 +4,7 @@ Usage: scripts/l3_types_to_lean.py MODEL_SCRIPT HOL_PATH
 
 Prints, in source order, one tagged Lean `inductive` per `Construct` type and one tagged
 `structure` per `Record`, with the type renderings documented in
-`Flapjack/RiscV/L3/Types.lean`. `scripts/tests/test_l3_types_to_lean.py` checks that the
+`Flapjack/RiscV/L3/Types.lean`. `scripts/tests/test_hol_l3_types_to_lean.py` checks that the
 committed RISC-V carriers are exactly this output. This is a mechanical transcription aid;
 it does not establish HOL-to-Lean equivalence.
 """
