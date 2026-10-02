@@ -4697,6 +4697,8 @@ The normal-to-cache row checks pre/post states and both shifted oracles.
 `Flapjack.Test.TargetFindNextInterferenceParity` checks native counterparts
 including complete continuation configurations and returned FFI events.
 The full definition retains total EL without an added bounds premise.
+`riscv_overflow_target_probeScript.sml` captures both original RV64 six-instruction overflow expansions and their encoded bytes for eight register tuples, including zero, scratch-register and alias cases. These source observations support a staged target-helper prerequisite; the production overflow carrier and codec remain separate work.
+
 `word_alloc_def_probe` captures the original HOL `word_alloc` type and eight EVAL results on
 small 64-bit programs: each allocator branch (Simple, IRC, linear scan), an accepted and a
 clashing oracle colouring (the latter falls back to the allocator), stack variables under
@@ -4775,3 +4777,4 @@ evidence, not a cross-assistant equivalence proof; whole Inst assembly remains o
 `key_ordered_to_fmap` proof with its full statement and no open hypotheses.
 It retains arbitrary trees and only the original good comparator premise.
 This source capture does not assert cross-assistant equivalence or production wiring.
+`store_list_code_probeScript.sml` records the full original definition/type and 24 complete initializer trees at widths 1/8/64/80, with empty, constant, register and mixed lists, aliasing, arbitrary large registers, and word truncation. Native kernel fixtures retain the terminal Skip and literal right-nesting. Full init/compiler routing is tracked separately.

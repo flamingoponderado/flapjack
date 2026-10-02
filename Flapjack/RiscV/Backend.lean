@@ -331,6 +331,24 @@ def wordArithToInstruction [NeZero width] :
           | .asr => pure (.srai destination sourceLeft value)
           | .ror => none
 
+/-- Literal RV64 AddOverflow target expansion over already validated registers.
+Flapjack lowering infrastructure, not a full riscv_ast port: the executed
+Instruction carrier differs from HOL's ISA AST, and this is one source clause.
+The missing production overflow carrier/codec is tracked on key-production.7;
+this prerequisite helper is not yet called by the executed arithmetic route. -/
+def wordAddOverflowToInstructions (destination left right flag : Fin 32) :
+    List (Instruction 64) :=
+  [.xor 31 left right, .xori 31 31 (-1), .add destination left right,
+    .xor flag right destination, .and flag 31 flag, .srli flag flag 63]
+
+/-- Literal RV64 SubOverflow target expansion with the original operand order.
+Same staged production boundary as wordAddOverflowToInstructions; no separate
+HOL declaration or instruction-simulation theorem is claimed for this helper. -/
+def wordSubOverflowToInstructions (destination left right flag : Fin 32) :
+    List (Instruction 64) :=
+  [.xor 31 left right, .sub destination left right, .xor flag right destination,
+    .xori flag flag (-1), .and flag 31 flag, .srli flag flag 63]
+
 def wordArithToInstructions [NeZero width] :
     WordArith (Word width) → Option (List (Instruction width))
   | .longMul destinationLeft destinationRight sourceLeft sourceRight => do

@@ -56215,5 +56215,14 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL855-867: full arbitrary comparator/key/tree/result quantifiers, good_cmp only premise; ordering iff all semantic domain key-sets satisfy key_set_cmp. FDOM membership is canonical defined lookup of already reviewed toFmap result; imported unconditional semanticLookup witness establishes its independent lookup codec. Tip empty domain; Bin root update and left-biased union domain preserve all child keys even on root overwrite. keySetCmpThm discharges root equivalence using original seven comparator laws. No invariant, cached-size, disjointness, extra map binder or target relation premise. Observation qualifier records only producer finite-support representation; all observer hypotheses and conclusion separately compared. No production tree-map replacement claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StoreListCode.lean",
+    "lean_name": "storeListCode",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "store_list_code_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison: original231-241 preserves both Sum constructors, arbitrary natural address/temporary/register identifiers, word values and full list recursion. Empty gives Skip; INL emits list_Seq(const temporary value; store temporary address; add bytes address) then recursive tail; INR omits constant and stores named register. Original const/store overloads stackLang82/84 inline one for one; canonical listSeqHOL/addBytesInWordInst used, terminal Seq-to-Skip retained. Only type-indexed positive word dimension translates to BitVec width with NeZero; no bounds/success/alias restrictions or omitted cases. Full initialization and executed compile route remain separate on parent .6.6."
   }
 ]

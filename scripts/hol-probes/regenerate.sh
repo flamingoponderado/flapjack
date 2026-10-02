@@ -4265,6 +4265,10 @@ run_probe lab_to_target_position_append_probeScript.sml lab_to_target_position_a
 run_probe lab_to_target_fetch_validity_probeScript.sml lab_to_target_fetch_validity_probe.out \
   fetch_validity fetch_validity_types valid_code fetch_zero fetch_one fetch_end fetched_valid \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe riscv_overflow_target_probeScript.sml riscv_overflow_target_probe.out \
+  overflow_add_ast_0 overflow_add_enc_0 overflow_sub_ast_0 overflow_sub_enc_0 overflow_add_ast_1 overflow_add_enc_1 overflow_sub_ast_1 overflow_sub_enc_1 overflow_add_ast_2 overflow_add_enc_2 overflow_sub_ast_2 overflow_sub_enc_2 overflow_add_ast_3 overflow_add_enc_3 overflow_sub_ast_3 overflow_sub_enc_3 overflow_add_ast_4 overflow_add_enc_4 overflow_sub_ast_4 overflow_sub_enc_4 overflow_add_ast_5 overflow_add_enc_5 overflow_sub_ast_5 overflow_sub_enc_5 overflow_add_ast_6 overflow_add_enc_6 overflow_sub_ast_6 overflow_sub_enc_6 overflow_add_ast_7 overflow_add_enc_7 overflow_sub_ast_7 overflow_sub_enc_7 \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
+
 run_probe ssa_cc_trans_correct_raise_probeScript.sml ssa_cc_trans_correct_raise_probe.out \
   raise_full raise_type_st raise_type_cst raise_type_reg raise_type_ssa raise_type_na raise_type_lt \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4301,3 +4305,6 @@ run_probe ssa_cc_trans_correct_inst_binop_probeScript.sml ssa_cc_trans_correct_i
 run_probe balanced_map_keyordered_probeScript.sml balanced_map_keyordered_probe.out \
   bmko_full_theorem \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+run_probe store_list_code_probeScript.sml store_list_code_probe.out \
+  store_list_code_full_def store_list_code_type store_list_code_1_0 store_list_code_1_1 store_list_code_1_2 store_list_code_1_3 store_list_code_1_4 store_list_code_1_5 store_list_code_8_0 store_list_code_8_1 store_list_code_8_2 store_list_code_8_3 store_list_code_8_4 store_list_code_8_5 store_list_code_64_0 store_list_code_64_1 store_list_code_64_2 store_list_code_64_3 store_list_code_64_4 store_list_code_64_5 store_list_code_80_0 store_list_code_80_1 store_list_code_80_2 store_list_code_80_3 store_list_code_80_4 store_list_code_80_5 \
+  "$cake_dir/compiler/backend/stack_removeScript.sml" "$cake_dir/compiler/backend"
