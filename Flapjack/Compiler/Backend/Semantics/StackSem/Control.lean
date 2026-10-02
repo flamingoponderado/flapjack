@@ -14,11 +14,14 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
 /-- Direct code label lookup or indirect lookup through a zero-offset Loc.
+    The register-key carrier is arbitrary, independently of the positive
+    register-word dimension and code payload. This is the full original
+    `num + β` / `β |-> γ word_loc` signature, not a Nat-key specialization.
     The code tree is sptree, not a finite-support fmap translation. -/
 @[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "find_code_def"
   (fmap_as_finite_support_relation := [regs]) (words_as_type_indexed_bitvec)]
-def findCode {width : Nat} [NeZero width] {α : Type}
-    (target : Sum Nat Nat) (regs : HolFiniteMapExact Nat (WordLocW width))
+def findCode {width : Nat} [NeZero width] {κ : Type} {α : Type}
+    (target : Sum Nat κ) (regs : HolFiniteMapExact κ (WordLocW width))
     (code : Spt α) : Option α :=
   match target with
   | .inl label => sptLookup label code
