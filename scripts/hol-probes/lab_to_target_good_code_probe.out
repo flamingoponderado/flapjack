@@ -1,0 +1,30 @@
+good_code_def=∀(c :α asm_config) (labs :β sptree$num_map sptree$num_map)
+    (code :α sec list).
+  good_code c labs code ⇔
+  EVERY (sec_ends_with_label :α sec -> bool) code ∧
+  EVERY (sec_labels_ok :α sec -> bool) code ∧
+  ALL_DISTINCT (MAP (Section_num :α sec -> num) code) ∧
+  EVERY
+    ((ALL_DISTINCT :(num # num) list -> bool) ∘
+     (extract_labels :α line list -> (num # num) list) ∘
+     (Section_lines :α sec -> α line list)) code ∧
+  DISJOINT (domain labs :num -> bool)
+    (set (MAP (Section_num :α sec -> num) code)) ∧
+  restrict_nonzero (get_labels code) ⊆
+  get_code_labels code ∪ labs_domain labs ∧ all_enc_ok_pre c code
+good_code_def_types=(c :α asm_config)::α asm_config;(labs :β sptree$num_map sptree$num_map)::β sptree$num_map sptree$num_map;(code :α sec list)::α sec list;
+empty_code=T
+empty_section_rejected=T
+generic_value_code=T
+wrong_section_label=T
+zero_label_rejected=T
+duplicate_sections=T
+duplicate_labels=T
+nonlabel_end=T
+missing_nonzero_reference=T
+boolean_value_label_hit=T
+outer_domain_clash=T
+zero_reference_unrestricted=T
+call_reference_ignored=T
+encoding_cache_unchecked=T
+bad_register_precondition=T

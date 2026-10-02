@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetGoodCodeParity
 import Flapjack.Test.LabToTargetByteLengthsParity
 import Flapjack.Test.LabPropsLabelSetsParity
 import Flapjack.Test.LabToTargetWordLocationParity
@@ -1776,6 +1777,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordGcFunctionsParity.runChecks,
     Flapjack.Test.StackAllocGcCodeParity.runChecks,
     Flapjack.Test.StackAllocGetBitsParity.runChecks,
+    Flapjack.Test.LabToTargetGoodCodeParity.runChecks,
     Flapjack.Test.LabToTargetByteLengthsParity.runChecks,
     Flapjack.Test.LabPropsLabelSetsParity.runChecks,
     Flapjack.Test.LabToTargetWordLocationParity.runChecks,
