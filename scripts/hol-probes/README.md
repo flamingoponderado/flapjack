@@ -5816,3 +5816,12 @@ the original fixed 64-bit payload and have no integer-register bound. The
 Lean proofs use the actual evaluator state's canonical maps; no FP execution
 equation or rounding mode changes. These are instruction-simulation
 prerequisites, not the full `state_rel_inst` theorem.
+
+## Complete native LabToTarget clock and state shift group
+
+`lab_to_target_state_transport_probeScript.sml` captures all five original
+clock/shift laws1098–1153 and their complete inferred HOL types. Independent
+Lab/machine word dimensions and unused outer shared-memory carrier types are
+retained. Lean `StateTransport` derives the actual shifted interference
+condition at index i+l and preserves every conjunct of the full state relation.
+These proof-side laws do not change the executed compiler.
