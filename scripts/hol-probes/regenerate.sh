@@ -5139,3 +5139,7 @@ run_probe word_to_stack_reg_compiler_probeScript.sml word_to_stack_reg_compiler_
 run_probe ssa_call_returning_probeScript.sml ssa_call_returning_probe.out \
   returning_case_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_probeScript.sml ssa_cc_trans_correct_probe.out \
+  ssa_cc_trans_correct_full ssa_cc_trans_correct_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
