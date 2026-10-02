@@ -34,6 +34,7 @@
     {"bytes": 969, "out": "balanced_map_doubleL_probe.out", "rows": 7, "sha256": "7191c97557aff6257a09324a9c2ee3bc59ba7e8767faf9fca8e0d6c8299a6e18"},
     {"bytes": 969, "out": "balanced_map_doubleR_probe.out", "rows": 7, "sha256": "0ca95a8ab1ba330866ba8b2972fceaa116261a7d514a193533af34e413e4061d"},
     {"bytes": 1049, "out": "balanced_map_heterogeneous_probe.out", "rows": 7, "sha256": "b22dfaf39086dcb631ba25370baed35552f7e7a9cc24725bd9f571bd0cb52c5c"},
+    {"bytes": 1915, "out": "balanced_map_insert_correct_probe.out", "rows": 22, "sha256": "f05a4bff206aee12bba366770d1baa5fc8e840b9bbb2983c9d14e4e35c11922f"},
     {"bytes": 1319, "out": "balanced_map_insert_probe.out", "rows": 17, "sha256": "c89c4aeddfc721f2bfa934cbc0343788444238cda056610468bf6bf8c366fbe9"},
     {"bytes": 2289, "out": "balanced_map_invariant_eq_probe.out", "rows": 15, "sha256": "27a8418e057edbbeb739fe721764014622e0b9a092f5f11b0253ba933e57b7f7"},
     {"bytes": 1048, "out": "balanced_map_invariants_probe.out", "rows": 38, "sha256": "288a599836a0816e3ca0ac032050cfce4c68cd9db92095015fd82e823e24414a"},

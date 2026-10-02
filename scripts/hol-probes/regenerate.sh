@@ -4803,3 +4803,7 @@ run_probe balanced_map_cardinality_correct_probeScript.sml balanced_map_cardinal
 run_probe finite_map_card_update_probeScript.sml finite_map_card_update_probe.out \
   FCARD_FUPDATE fmcard_empty fmcard_replace fmcard_fresh fmcard_repeat \
   "$repo_dir/HOL/src/finite_maps/finite_mapScript.sml" "$hol_dir/src/finite_maps"
+
+run_probe balanced_map_insert_correct_probeScript.sml balanced_map_insert_correct_probe.out \
+  insert_thm bminsert_tip_tree bminsert_tip_invariant bminsert_tip_lookup bminsert_less_tree bminsert_less_invariant bminsert_less_lookup bminsert_equal_tree bminsert_equal_invariant bminsert_equal_lookup bminsert_greater_tree bminsert_greater_invariant bminsert_greater_lookup bminsert_rotate_right_tree bminsert_rotate_right_invariant bminsert_rotate_right_lookup bminsert_rotate_left_tree bminsert_rotate_left_invariant bminsert_rotate_left_lookup bminsert_equivalent_tree bminsert_equivalent_invariant bminsert_equivalent_lookup \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

@@ -5509,3 +5509,7 @@ a cross-language equivalence theorem.
 ### Full finite-map update cardinality
 
 `finite_map_card_update_probeScript.sml` replays the literal original `FCARD_FUPDATE` proof with empty hypotheses. Four original cardinality observations cover empty insertion, existing-key replacement, fresh insertion and repeated replacement. Native consumers apply the full conditional theorem to the same update patterns; actual lookup domains determine cardinality, never support-list length.
+
+### Full insertion correctness
+
+`balanced_map_insert_correct_probeScript.sml` replays the complete original `insert_thm` proof, including local balancing prerequisites, with empty hypotheses. Its generic comparator/key/value/tree statement retains the original good comparator and invariant premises and both conclusions. Seven actual insertion fixtures observe the resulting tree, invariant and inserted-key lookup: Tip, Less, Equal, Greater, both rotation directions, and distinct comparator-equivalent key replacement. Native fixture consumers apply the complete theorem. Captured observations support source review; they do not establish cross-assistant equivalence.
