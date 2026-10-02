@@ -3320,10 +3320,6 @@ run_probe asm_sem_step_probeScript.sml asm_sem_step_probe.out \
   as_skip_pc as_const as_arith as_mem as_jump as_jcmp_t as_jcmp_f as_call as_jumpreg_ok as_jumpreg_bad as_loc as_step_proj \
   "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
 
-run_probe l3_riscv_decode_probeScript.sml l3_riscv_decode_probe.out \
-  enc0 dec0 enc1 dec1 enc2 dec2 enc3 dec3 enc4 dec4 enc5 dec5 enc6 dec6 enc7 dec7 enc8 dec8 enc9 dec9 enc10 dec10 enc11 dec11 enc12 dec12 enc13 dec13 enc14 dec14 enc15 dec15 enc16 dec16 enc17 dec17 enc18 dec18 enc19 dec19 enc20 dec20 enc21 dec21 enc22 dec22 enc23 dec23 enc24 dec24 enc25 dec25 enc26 dec26 enc27 dec27 enc28 dec28 enc29 dec29 enc30 dec30 enc31 dec31 enc32 dec32 enc33 dec33 enc34 dec34 enc35 dec35 enc36 dec36 enc37 dec37 enc38 dec38 enc39 dec39 enc40 dec40 enc41 dec41 enc42 dec42 enc43 dec43 enc44 dec44 enc45 dec45 enc46 dec46 enc47 dec47 enc48 dec48 enc49 dec49 enc50 dec50 enc51 dec51 enc52 dec52 enc53 dec53 enc54 dec54 enc55 dec55 enc56 dec56 enc57 dec57 enc58 dec58 enc59 dec59 enc60 dec60 enc61 dec61 dec_zero dec_ones \
-  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
-
 run_probe asm_props_encoder_correct_probeScript.sml asm_props_encoder_correct_probe.out \
   ec_def ec_target_ok ec_no_interference \
   "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
@@ -4826,6 +4822,25 @@ run_probe balanced_map_rotateL_probeScript.sml balanced_map_rotateL_probe.out \
 run_probe balanced_map_balanceR_eq_probeScript.sml balanced_map_balanceR_eq_probe.out \
   bmbr_full bmbr_empty bmbr_singleton bmbr_lr_only bmbr_ll_only bmbr_single_tip bmbr_double_tip bmbr_left_tip bmbr_fallback bmbr_heavy_single bmbr_heavy_double \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+run_probe lab_to_target_update_zero_probeScript.sml lab_to_target_update_zero_probe.out \
+  lines_upd_lab_len_encd0_label_zero lines_upd_lab_len_encd0_label_zero_types upd_lab_len_encd0_label_zero upd_lab_len_encd0_label_zero_types full_even_update mixed_source_encd0 all_updated_labels_zero zero_accumulator_preserved full_two_sections odd_position_guard_required nonzero_alignment_guard_required bad_accumulator_guard_required \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_alignment_probeScript.sml lab_to_target_alignment_probe.out \
+  line_aligned_def line_aligned_def_types sec_aligned_def sec_aligned_def_types all_encd0_aligned all_encd0_aligned_types enc_lines_again_simp_aligned enc_lines_again_simp_aligned_types enc_secs_again_aligned enc_secs_again_aligned_types MOD_0_source MOD_0_source_types zero_label_aligned nonzero_label_not_aligned both_lengths_required annotation_required empty_section_aligned modulus_zero_empty_line modulus_zero_nonempty_rejected false_flag_full false_flag_both_aligned full_sections_false modulus_zero_actual_update \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_prefix_zero_probeScript.sml lab_to_target_prefix_zero_probe.out \
+  label_prefix_zero_def label_prefix_zero_def_types sec_label_prefix_zero_def sec_label_prefix_zero_def_types label_prefix_zero_cons label_prefix_zero_cons_types label_prefix_zero_append_suff label_prefix_zero_append_suff_types label_prefix_zero_append_suff2 label_prefix_zero_append_suff2_types empty_prefix initial_zero_labels initial_bad_label_rejected nonlabel_masks_later_label zero_prefix_then_nonlabel labasm_masks_later_label append_positive append_bad_right_guard_required append_nonlabel_allows_bad_right append_nonlabel_guard_required \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_prefix_preservation_probeScript.sml lab_to_target_prefix_preservation_probe.out \
+  lines_upd_lab_len_label_prefix_zero lines_upd_lab_len_label_prefix_zero_types upd_lab_len_label_prefix_zero upd_lab_len_label_prefix_zero_types enc_lines_again_simp_label_prefix_zero enc_lines_again_simp_label_prefix_zero_types enc_secs_again_label_prefix_zero enc_secs_again_label_prefix_zero_types even_update_full later_odd_label_allowed odd_position_nonlabel_acc_full odd_position_nonlabel_acc_valid all_label_odd_guard_required reverse_acc_guard_required full_sections_update ending_guard_required false_flag_full false_flag_prefix_preserved false_flag_sections_full \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe l3_riscv_decode_probeScript.sml l3_riscv_decode_probe.out \
+  enc0 dec0 enc1 dec1 enc2 dec2 enc3 dec3 enc4 dec4 enc5 dec5 enc6 dec6 enc7 dec7 enc8 dec8 enc9 dec9 enc10 dec10 enc11 dec11 enc12 dec12 enc13 dec13 enc14 dec14 enc15 dec15 enc16 dec16 enc17 dec17 enc18 dec18 enc19 dec19 enc20 dec20 enc21 dec21 enc22 dec22 enc23 dec23 enc24 dec24 enc25 dec25 enc26 dec26 enc27 dec27 enc28 dec28 enc29 dec29 enc30 dec30 enc31 dec31 enc32 dec32 enc33 dec33 enc34 dec34 enc35 dec35 enc36 dec36 enc37 dec37 enc38 dec38 enc39 dec39 enc40 dec40 enc41 dec41 enc42 dec42 enc43 dec43 enc44 dec44 enc45 dec45 enc46 dec46 enc47 dec47 enc48 dec48 enc49 dec49 enc50 dec50 enc51 dec51 enc52 dec52 enc53 dec53 enc54 dec54 enc55 dec55 enc56 dec56 enc57 dec57 enc58 dec58 enc59 dec59 enc60 dec60 enc61 dec61 dec_zero dec_ones \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
 
 run_probe lab_to_target_oracle_tie_probeScript.sml lab_to_target_oracle_tie_probe.out \
   oracle_tie_def_full oracle_tie_def_types oracle_tie_shift_interfer_full oracle_tie_shift_interfer_types oracle_tie_step_full oracle_tie_step_types oracle_tie_ffi_step_full oracle_tie_ffi_step_types oracle_tie_ccache_step_full oracle_tie_ccache_step_types oracle_tie_ffi_next_full oracle_tie_ffi_next_types oracle_tie_ccache_next_full oracle_tie_ccache_next_types oracle_tie_ExtCall_residues_full oracle_tie_ExtCall_residues_types oracle_tie_install \
