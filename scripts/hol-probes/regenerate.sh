@@ -5196,3 +5196,7 @@ run_probe lab_to_target_offset_establishment_probeScript.sml lab_to_target_offse
 run_probe lab_to_target_offset_padding_probeScript.sml lab_to_target_offset_padding_probe.out \
   lines_offset_ok_pad_section lines_offset_ok_pad_section_types mixed_original_five_guards mixed_full_tuple mixed_output_offsets empty_nop_offsets multibyte_nop_offsets zero_label_head_accumulator empty_accumulator_mask head_guard_necessary input_parity_necessary all_seven_opcodes empty_width1 large_width80 \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_code_offset_padding_probeScript.sml lab_to_target_code_offset_padding_probe.out \
+  offset_ok_pad_code offset_ok_pad_code_types original_five_guards mixed_full_tuple mixed_output_offsets zero_original_guards empty_nop_offsets multibyte_nop_offsets prefix_guard_necessary input_offset_necessary empty_width1 \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
