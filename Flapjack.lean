@@ -1,17 +1,19 @@
+import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
+import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+import Flapjack.Compiler.Backend.LabToTarget.PositionValues
+import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
+import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
+import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRaise
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticReturn
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
 import Flapjack.Compiler.Encoders.AsmProps.Encoding
 import Flapjack.Compiler.Encoders.AsmProps.Interference
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp
-import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
-import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
-import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
-import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
-import Flapjack.Compiler.Backend.LabToTarget.PositionValues
 import Flapjack.Compiler.Backend.StackProps.AllocationConstants
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
@@ -64,6 +66,9 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdate
+import Flapjack.Compiler.Backend.WordToStack.Proofs.WordListLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
@@ -219,7 +224,6 @@ import Flapjack.Compiler.Backend.WordAlloc.HeuMax
 import Flapjack.Compiler.Backend.RegAlloc.Carriers
 import Flapjack.Compiler.Backend.WordAlloc.HeuInst
 import Flapjack.Misc.Sptree.Map
-import Flapjack.Misc.Sptree.InterEq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
 import Flapjack.Compiler.Backend.Parmove.Independence
@@ -458,6 +462,7 @@ import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
 import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
 import Flapjack.Compiler.Backend.WordRemove
+import Flapjack.Compiler.Backend.WordUnreach
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
@@ -1269,6 +1274,21 @@ import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
 import Flapjack.Misc.Sorting
 import Flapjack.Misc.Mergesort
+import Flapjack.Misc.Anub
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
+import Flapjack.Compiler.Backend.LinearScan.Proofs
+import Flapjack.Misc.Sptree.ToAList
+import Flapjack.Translator.Monadic.MonadBase.Arrays
+import Flapjack.Misc.AppList
+import Flapjack.Misc.Sptree
+import Flapjack.Misc.LList
+import Flapjack.Misc.LprefixLub
+import Flapjack.Misc.FlatReplicate
+import Flapjack.Misc.FoldrMaxList
+import Flapjack.Misc.Uncurry
+import Flapjack.Misc.OptMmapCong
+import Flapjack.Misc.ListSubset
+import Flapjack.Compiler.Backend.LabLang
 import Flapjack.Compiler.Backend.LabFilter
 import Flapjack.Compiler.Backend.LabToTarget.Compile
 import Flapjack.Compiler.Backend.LabToTarget.PaddingLength
@@ -1364,6 +1384,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkGraphCheckClashTree
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
+import Flapjack.Compiler.Backend.WordUnreach.Proofs
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
 import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
 import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
@@ -1403,20 +1424,6 @@ import Flapjack.Misc.BalancedMap.KeySets
 import Flapjack.Misc.BalancedMap.Rotations
 import Flapjack.Misc.BalancedMap.Semantics
 import Flapjack.Misc.BalancedMap.StructuralSize
-import Flapjack.Misc.FlatReplicate
-import Flapjack.Misc.FoldrMaxList
-import Flapjack.Misc.ListSubset
-import Flapjack.Misc.Uncurry
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
-import Flapjack.Compiler.Backend.LinearScan.Proofs
-import Flapjack.Misc.Sptree.ToAList
-import Flapjack.Translator.Monadic.MonadBase.Arrays
-import Flapjack.Misc.AppList
-import Flapjack.Misc.Sptree
-import Flapjack.Misc.LList
-import Flapjack.Misc.LprefixLub
-import Flapjack.Misc.OptMmapCong
-import Flapjack.Compiler.Backend.LabLang
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
@@ -1429,7 +1436,7 @@ import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
-import Flapjack.Compiler.Backend.WordUnreach
+import Flapjack.Misc.Sptree.InterEq
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Models
@@ -1437,8 +1444,6 @@ import Flapjack.Compiler.Backend.WordCopy.Proofs.Move
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Store
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Inst
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
-import Flapjack.Misc.Anub
-import Flapjack.Compiler.Backend.WordUnreach.Proofs
 
 
 

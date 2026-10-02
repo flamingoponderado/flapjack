@@ -1,0 +1,210 @@
+lu_ctx_DROP_DROP_EQ=⊢ ∀n m xs. DROP m (DROP n xs) = DROP (m + n) xs
+lu_ctx_TAKE_TAKE_MIN=⊢ ∀xs m n. TAKE n (TAKE m xs) = TAKE (MIN m n) xs
+lu_ctx_TAKE_DROP_EQ=⊢ ∀xs n m. TAKE m (DROP n xs) = DROP n (TAKE (m + n) xs)
+lu_ctx_TAKE_LUPDATE=⊢ ∀xs n x i. TAKE n xs❲i ↦ x❳ = (TAKE n xs)❲i ↦ x❳
+lu_ctx_DROP_LUPDATE_lemma1=⊢ ∀xs n m h. n ≤ m ⇒ DROP n xs❲m ↦ h❳ = (DROP n xs)❲m − n ↦ h❳
+lu_ctx_DROP_LUPDATE_lemma2=⊢ ∀xs n m h. m < n ⇒ DROP n xs❲m ↦ h❳ = DROP n xs
+lu_ctx_DROP_LUPDATE=⊢ ∀n h m xs. DROP n xs❲m ↦ h❳ = if m < n then DROP n xs else (DROP n xs)❲m − n ↦ h❳
+lu_full_definition=⊢ (∀n ys. list_LUPDATE [] n ys = ys) ∧ ∀x xs n ys. list_LUPDATE (x::xs) n ys = list_LUPDATE xs (n + 1) ys❲n ↦ x❳
+lu_full_LENGTH_list_LUPDATE=⊢ ∀xs n ys. LENGTH (list_LUPDATE xs n ys) = LENGTH ys
+lu_full_TAKE_list_LUPDATE=⊢ ∀ys xs n i. TAKE n (list_LUPDATE ys i xs) = list_LUPDATE ys i (TAKE n xs)
+lu_full_LLOOKUP_list_LUPDATE_IGNORE=⊢ ∀xs i n ys. i + LENGTH xs ≤ n ⇒ LLOOKUP (list_LUPDATE xs i ys) n = LLOOKUP ys n
+lu_full_DROP_list_LUPDATE=⊢ ∀ys n m xs. n ≤ m ⇒ DROP n (list_LUPDATE ys m xs) = list_LUPDATE ys (m − n) (DROP n xs)
+lu_full_DROP_list_LUPDATE_IGNORE=⊢ ∀xs i ys n. LENGTH xs + i ≤ n ⇒ DROP n (list_LUPDATE xs i ys) = DROP n ys
+lu_full_list_LUPDATE_NIL=⊢ ∀xs i. list_LUPDATE xs i [] = []
+lu_full_LUPDATE_TAKE_LEMMA=⊢ ∀xs n w. xs❲n ↦ w❳ = TAKE n xs ++ (DROP n xs)❲0 ↦ w❳
+lu_full_list_LUPDATE_TAKE_DROP=⊢ ∀xs ys n. list_LUPDATE xs n ys = TAKE n ys ++ list_LUPDATE xs 0 (DROP n ys)
+lu_full_list_LUPDATE_0_CONS=⊢ ∀xs x ys y. list_LUPDATE (x::xs) 0 (y::ys) = x::list_LUPDATE xs 0 ys
+lu_full_list_LUPDATE_APPEND=⊢ ∀xs ys zs. LENGTH xs = LENGTH ys ⇒ list_LUPDATE xs 0 (ys ++ zs) = xs ++ zs
+lu_output_0_0_0=⊢ list_LUPDATE [] 0 [] = [] ⇔ T
+lu_laws_0_0_0=⊢ LENGTH (list_LUPDATE [] 0 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [] 0 []) = list_LUPDATE [] 0 (TAKE 2 []) ∧ (LENGTH [] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 0 []) = DROP 2 []) ∧ (0 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 0 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [] 0 []) = list_LUPDATE [] (0 − 2) (DROP 2 [])) ∧ list_LUPDATE [] 0 [] = TAKE 0 [] ++ list_LUPDATE [] 0 (DROP 0 []) ⇔ T
+lu_output_0_0_1=⊢ list_LUPDATE [] 1 [] = [] ⇔ T
+lu_laws_0_0_1=⊢ LENGTH (list_LUPDATE [] 1 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [] 1 []) = list_LUPDATE [] 1 (TAKE 2 []) ∧ (LENGTH [] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 1 []) = DROP 2 []) ∧ (1 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 1 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [] 1 []) = list_LUPDATE [] (1 − 2) (DROP 2 [])) ∧ list_LUPDATE [] 1 [] = TAKE 1 [] ++ list_LUPDATE [] 0 (DROP 1 []) ⇔ T
+lu_output_0_0_3=⊢ list_LUPDATE [] 3 [] = [] ⇔ T
+lu_laws_0_0_3=⊢ LENGTH (list_LUPDATE [] 3 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [] 3 []) = list_LUPDATE [] 3 (TAKE 2 []) ∧ (LENGTH [] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 3 []) = DROP 2 []) ∧ (3 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 3 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [] 3 []) = list_LUPDATE [] (3 − 2) (DROP 2 [])) ∧ list_LUPDATE [] 3 [] = TAKE 3 [] ++ list_LUPDATE [] 0 (DROP 3 []) ⇔ T
+lu_output_0_0_8=⊢ list_LUPDATE [] 8 [] = [] ⇔ T
+lu_laws_0_0_8=⊢ LENGTH (list_LUPDATE [] 8 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [] 8 []) = list_LUPDATE [] 8 (TAKE 2 []) ∧ (LENGTH [] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 8 []) = DROP 2 []) ∧ (8 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 8 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [] 8 []) = list_LUPDATE [] (8 − 2) (DROP 2 [])) ∧ list_LUPDATE [] 8 [] = TAKE 8 [] ++ list_LUPDATE [] 0 (DROP 8 []) ⇔ T
+lu_output_0_1_0=⊢ list_LUPDATE [] 0 [1] = [1] ⇔ T
+lu_laws_0_1_0=⊢ LENGTH (list_LUPDATE [] 0 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [] 0 [1]) = list_LUPDATE [] 0 (TAKE 2 [1]) ∧ (LENGTH [] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 0 [1]) = DROP 2 [1]) ∧ (0 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 0 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [] 0 [1]) = list_LUPDATE [] (0 − 2) (DROP 2 [1])) ∧ list_LUPDATE [] 0 [1] = TAKE 0 [1] ++ list_LUPDATE [] 0 (DROP 0 [1]) ⇔ T
+lu_output_0_1_1=⊢ list_LUPDATE [] 1 [1] = [1] ⇔ T
+lu_laws_0_1_1=⊢ LENGTH (list_LUPDATE [] 1 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [] 1 [1]) = list_LUPDATE [] 1 (TAKE 2 [1]) ∧ (LENGTH [] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 1 [1]) = DROP 2 [1]) ∧ (1 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 1 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [] 1 [1]) = list_LUPDATE [] (1 − 2) (DROP 2 [1])) ∧ list_LUPDATE [] 1 [1] = TAKE 1 [1] ++ list_LUPDATE [] 0 (DROP 1 [1]) ⇔ T
+lu_output_0_1_3=⊢ list_LUPDATE [] 3 [1] = [1] ⇔ T
+lu_laws_0_1_3=⊢ LENGTH (list_LUPDATE [] 3 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [] 3 [1]) = list_LUPDATE [] 3 (TAKE 2 [1]) ∧ (LENGTH [] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 3 [1]) = DROP 2 [1]) ∧ (3 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 3 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [] 3 [1]) = list_LUPDATE [] (3 − 2) (DROP 2 [1])) ∧ list_LUPDATE [] 3 [1] = TAKE 3 [1] ++ list_LUPDATE [] 0 (DROP 3 [1]) ⇔ T
+lu_output_0_1_8=⊢ list_LUPDATE [] 8 [1] = [1] ⇔ T
+lu_laws_0_1_8=⊢ LENGTH (list_LUPDATE [] 8 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [] 8 [1]) = list_LUPDATE [] 8 (TAKE 2 [1]) ∧ (LENGTH [] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 8 [1]) = DROP 2 [1]) ∧ (8 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 8 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [] 8 [1]) = list_LUPDATE [] (8 − 2) (DROP 2 [1])) ∧ list_LUPDATE [] 8 [1] = TAKE 8 [1] ++ list_LUPDATE [] 0 (DROP 8 [1]) ⇔ T
+lu_output_0_2_0=⊢ list_LUPDATE [] 0 [2; 4] = [2; 4] ⇔ T
+lu_laws_0_2_0=⊢ LENGTH (list_LUPDATE [] 0 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [] 0 [2; 4]) = list_LUPDATE [] 0 (TAKE 2 [2; 4]) ∧ (LENGTH [] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 0 [2; 4]) = DROP 2 [2; 4]) ∧ (0 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 0 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [] 0 [2; 4]) = list_LUPDATE [] (0 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [] 0 [2; 4] = TAKE 0 [2; 4] ++ list_LUPDATE [] 0 (DROP 0 [2; 4]) ⇔ T
+lu_output_0_2_1=⊢ list_LUPDATE [] 1 [2; 4] = [2; 4] ⇔ T
+lu_laws_0_2_1=⊢ LENGTH (list_LUPDATE [] 1 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [] 1 [2; 4]) = list_LUPDATE [] 1 (TAKE 2 [2; 4]) ∧ (LENGTH [] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 1 [2; 4]) = DROP 2 [2; 4]) ∧ (1 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 1 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [] 1 [2; 4]) = list_LUPDATE [] (1 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [] 1 [2; 4] = TAKE 1 [2; 4] ++ list_LUPDATE [] 0 (DROP 1 [2; 4]) ⇔ T
+lu_output_0_2_3=⊢ list_LUPDATE [] 3 [2; 4] = [2; 4] ⇔ T
+lu_laws_0_2_3=⊢ LENGTH (list_LUPDATE [] 3 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [] 3 [2; 4]) = list_LUPDATE [] 3 (TAKE 2 [2; 4]) ∧ (LENGTH [] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 3 [2; 4]) = DROP 2 [2; 4]) ∧ (3 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 3 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [] 3 [2; 4]) = list_LUPDATE [] (3 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [] 3 [2; 4] = TAKE 3 [2; 4] ++ list_LUPDATE [] 0 (DROP 3 [2; 4]) ⇔ T
+lu_output_0_2_8=⊢ list_LUPDATE [] 8 [2; 4] = [2; 4] ⇔ T
+lu_laws_0_2_8=⊢ LENGTH (list_LUPDATE [] 8 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [] 8 [2; 4]) = list_LUPDATE [] 8 (TAKE 2 [2; 4]) ∧ (LENGTH [] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 8 [2; 4]) = DROP 2 [2; 4]) ∧ (8 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 8 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [] 8 [2; 4]) = list_LUPDATE [] (8 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [] 8 [2; 4] = TAKE 8 [2; 4] ++ list_LUPDATE [] 0 (DROP 8 [2; 4]) ⇔ T
+lu_output_0_3_0=⊢ list_LUPDATE [] 0 [8; 6; 4] = [8; 6; 4] ⇔ T
+lu_laws_0_3_0=⊢ LENGTH (list_LUPDATE [] 0 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [] 0 [8; 6; 4]) = list_LUPDATE [] 0 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 0 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (0 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 0 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [] 0 [8; 6; 4]) = list_LUPDATE [] (0 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [] 0 [8; 6; 4] = TAKE 0 [8; 6; 4] ++ list_LUPDATE [] 0 (DROP 0 [8; 6; 4]) ⇔ T
+lu_output_0_3_1=⊢ list_LUPDATE [] 1 [8; 6; 4] = [8; 6; 4] ⇔ T
+lu_laws_0_3_1=⊢ LENGTH (list_LUPDATE [] 1 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [] 1 [8; 6; 4]) = list_LUPDATE [] 1 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 1 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (1 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 1 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [] 1 [8; 6; 4]) = list_LUPDATE [] (1 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [] 1 [8; 6; 4] = TAKE 1 [8; 6; 4] ++ list_LUPDATE [] 0 (DROP 1 [8; 6; 4]) ⇔ T
+lu_output_0_3_3=⊢ list_LUPDATE [] 3 [8; 6; 4] = [8; 6; 4] ⇔ T
+lu_laws_0_3_3=⊢ LENGTH (list_LUPDATE [] 3 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [] 3 [8; 6; 4]) = list_LUPDATE [] 3 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 3 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (3 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 3 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [] 3 [8; 6; 4]) = list_LUPDATE [] (3 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [] 3 [8; 6; 4] = TAKE 3 [8; 6; 4] ++ list_LUPDATE [] 0 (DROP 3 [8; 6; 4]) ⇔ T
+lu_output_0_3_8=⊢ list_LUPDATE [] 8 [8; 6; 4] = [8; 6; 4] ⇔ T
+lu_laws_0_3_8=⊢ LENGTH (list_LUPDATE [] 8 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [] 8 [8; 6; 4]) = list_LUPDATE [] 8 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [] 8 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (8 + LENGTH [] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [] 8 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [] 8 [8; 6; 4]) = list_LUPDATE [] (8 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [] 8 [8; 6; 4] = TAKE 8 [8; 6; 4] ++ list_LUPDATE [] 0 (DROP 8 [8; 6; 4]) ⇔ T
+lu_output_1_0_0=⊢ list_LUPDATE [1] 0 [] = [] ⇔ T
+lu_laws_1_0_0=⊢ LENGTH (list_LUPDATE [1] 0 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [1] 0 []) = list_LUPDATE [1] 0 (TAKE 2 []) ∧ (LENGTH [1] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 0 []) = DROP 2 []) ∧ (0 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 0 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [1] 0 []) = list_LUPDATE [1] (0 − 2) (DROP 2 [])) ∧ list_LUPDATE [1] 0 [] = TAKE 0 [] ++ list_LUPDATE [1] 0 (DROP 0 []) ⇔ T
+lu_output_1_0_1=⊢ list_LUPDATE [1] 1 [] = [] ⇔ T
+lu_laws_1_0_1=⊢ LENGTH (list_LUPDATE [1] 1 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [1] 1 []) = list_LUPDATE [1] 1 (TAKE 2 []) ∧ (LENGTH [1] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 1 []) = DROP 2 []) ∧ (1 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 1 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [1] 1 []) = list_LUPDATE [1] (1 − 2) (DROP 2 [])) ∧ list_LUPDATE [1] 1 [] = TAKE 1 [] ++ list_LUPDATE [1] 0 (DROP 1 []) ⇔ T
+lu_output_1_0_3=⊢ list_LUPDATE [1] 3 [] = [] ⇔ T
+lu_laws_1_0_3=⊢ LENGTH (list_LUPDATE [1] 3 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [1] 3 []) = list_LUPDATE [1] 3 (TAKE 2 []) ∧ (LENGTH [1] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 3 []) = DROP 2 []) ∧ (3 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 3 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [1] 3 []) = list_LUPDATE [1] (3 − 2) (DROP 2 [])) ∧ list_LUPDATE [1] 3 [] = TAKE 3 [] ++ list_LUPDATE [1] 0 (DROP 3 []) ⇔ T
+lu_output_1_0_8=⊢ list_LUPDATE [1] 8 [] = [] ⇔ T
+lu_laws_1_0_8=⊢ LENGTH (list_LUPDATE [1] 8 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [1] 8 []) = list_LUPDATE [1] 8 (TAKE 2 []) ∧ (LENGTH [1] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 8 []) = DROP 2 []) ∧ (8 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 8 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [1] 8 []) = list_LUPDATE [1] (8 − 2) (DROP 2 [])) ∧ list_LUPDATE [1] 8 [] = TAKE 8 [] ++ list_LUPDATE [1] 0 (DROP 8 []) ⇔ T
+lu_output_1_1_0=⊢ list_LUPDATE [1] 0 [1] = [1] ⇔ T
+lu_laws_1_1_0=⊢ LENGTH (list_LUPDATE [1] 0 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [1] 0 [1]) = list_LUPDATE [1] 0 (TAKE 2 [1]) ∧ (LENGTH [1] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 0 [1]) = DROP 2 [1]) ∧ (0 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 0 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [1] 0 [1]) = list_LUPDATE [1] (0 − 2) (DROP 2 [1])) ∧ list_LUPDATE [1] 0 [1] = TAKE 0 [1] ++ list_LUPDATE [1] 0 (DROP 0 [1]) ⇔ T
+lu_output_1_1_1=⊢ list_LUPDATE [1] 1 [1] = [1] ⇔ T
+lu_laws_1_1_1=⊢ LENGTH (list_LUPDATE [1] 1 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [1] 1 [1]) = list_LUPDATE [1] 1 (TAKE 2 [1]) ∧ (LENGTH [1] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 1 [1]) = DROP 2 [1]) ∧ (1 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 1 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [1] 1 [1]) = list_LUPDATE [1] (1 − 2) (DROP 2 [1])) ∧ list_LUPDATE [1] 1 [1] = TAKE 1 [1] ++ list_LUPDATE [1] 0 (DROP 1 [1]) ⇔ T
+lu_output_1_1_3=⊢ list_LUPDATE [1] 3 [1] = [1] ⇔ T
+lu_laws_1_1_3=⊢ LENGTH (list_LUPDATE [1] 3 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [1] 3 [1]) = list_LUPDATE [1] 3 (TAKE 2 [1]) ∧ (LENGTH [1] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 3 [1]) = DROP 2 [1]) ∧ (3 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 3 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [1] 3 [1]) = list_LUPDATE [1] (3 − 2) (DROP 2 [1])) ∧ list_LUPDATE [1] 3 [1] = TAKE 3 [1] ++ list_LUPDATE [1] 0 (DROP 3 [1]) ⇔ T
+lu_output_1_1_8=⊢ list_LUPDATE [1] 8 [1] = [1] ⇔ T
+lu_laws_1_1_8=⊢ LENGTH (list_LUPDATE [1] 8 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [1] 8 [1]) = list_LUPDATE [1] 8 (TAKE 2 [1]) ∧ (LENGTH [1] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 8 [1]) = DROP 2 [1]) ∧ (8 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 8 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [1] 8 [1]) = list_LUPDATE [1] (8 − 2) (DROP 2 [1])) ∧ list_LUPDATE [1] 8 [1] = TAKE 8 [1] ++ list_LUPDATE [1] 0 (DROP 8 [1]) ⇔ T
+lu_output_1_2_0=⊢ list_LUPDATE [1] 0 [2; 4] = [1; 4] ⇔ T
+lu_laws_1_2_0=⊢ LENGTH (list_LUPDATE [1] 0 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [1] 0 [2; 4]) = list_LUPDATE [1] 0 (TAKE 2 [2; 4]) ∧ (LENGTH [1] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 0 [2; 4]) = DROP 2 [2; 4]) ∧ (0 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 0 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [1] 0 [2; 4]) = list_LUPDATE [1] (0 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [1] 0 [2; 4] = TAKE 0 [2; 4] ++ list_LUPDATE [1] 0 (DROP 0 [2; 4]) ⇔ T
+lu_output_1_2_1=⊢ list_LUPDATE [1] 1 [2; 4] = [2; 1] ⇔ T
+lu_laws_1_2_1=⊢ LENGTH (list_LUPDATE [1] 1 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [1] 1 [2; 4]) = list_LUPDATE [1] 1 (TAKE 2 [2; 4]) ∧ (LENGTH [1] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 1 [2; 4]) = DROP 2 [2; 4]) ∧ (1 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 1 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [1] 1 [2; 4]) = list_LUPDATE [1] (1 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [1] 1 [2; 4] = TAKE 1 [2; 4] ++ list_LUPDATE [1] 0 (DROP 1 [2; 4]) ⇔ T
+lu_output_1_2_3=⊢ list_LUPDATE [1] 3 [2; 4] = [2; 4] ⇔ T
+lu_laws_1_2_3=⊢ LENGTH (list_LUPDATE [1] 3 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [1] 3 [2; 4]) = list_LUPDATE [1] 3 (TAKE 2 [2; 4]) ∧ (LENGTH [1] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 3 [2; 4]) = DROP 2 [2; 4]) ∧ (3 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 3 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [1] 3 [2; 4]) = list_LUPDATE [1] (3 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [1] 3 [2; 4] = TAKE 3 [2; 4] ++ list_LUPDATE [1] 0 (DROP 3 [2; 4]) ⇔ T
+lu_output_1_2_8=⊢ list_LUPDATE [1] 8 [2; 4] = [2; 4] ⇔ T
+lu_laws_1_2_8=⊢ LENGTH (list_LUPDATE [1] 8 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [1] 8 [2; 4]) = list_LUPDATE [1] 8 (TAKE 2 [2; 4]) ∧ (LENGTH [1] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 8 [2; 4]) = DROP 2 [2; 4]) ∧ (8 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 8 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [1] 8 [2; 4]) = list_LUPDATE [1] (8 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [1] 8 [2; 4] = TAKE 8 [2; 4] ++ list_LUPDATE [1] 0 (DROP 8 [2; 4]) ⇔ T
+lu_output_1_3_0=⊢ list_LUPDATE [1] 0 [8; 6; 4] = [1; 6; 4] ⇔ T
+lu_laws_1_3_0=⊢ LENGTH (list_LUPDATE [1] 0 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [1] 0 [8; 6; 4]) = list_LUPDATE [1] 0 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [1] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 0 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (0 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 0 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [1] 0 [8; 6; 4]) = list_LUPDATE [1] (0 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [1] 0 [8; 6; 4] = TAKE 0 [8; 6; 4] ++ list_LUPDATE [1] 0 (DROP 0 [8; 6; 4]) ⇔ T
+lu_output_1_3_1=⊢ list_LUPDATE [1] 1 [8; 6; 4] = [8; 1; 4] ⇔ T
+lu_laws_1_3_1=⊢ LENGTH (list_LUPDATE [1] 1 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [1] 1 [8; 6; 4]) = list_LUPDATE [1] 1 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [1] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 1 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (1 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 1 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [1] 1 [8; 6; 4]) = list_LUPDATE [1] (1 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [1] 1 [8; 6; 4] = TAKE 1 [8; 6; 4] ++ list_LUPDATE [1] 0 (DROP 1 [8; 6; 4]) ⇔ T
+lu_output_1_3_3=⊢ list_LUPDATE [1] 3 [8; 6; 4] = [8; 6; 4] ⇔ T
+lu_laws_1_3_3=⊢ LENGTH (list_LUPDATE [1] 3 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [1] 3 [8; 6; 4]) = list_LUPDATE [1] 3 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [1] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 3 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (3 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 3 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [1] 3 [8; 6; 4]) = list_LUPDATE [1] (3 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [1] 3 [8; 6; 4] = TAKE 3 [8; 6; 4] ++ list_LUPDATE [1] 0 (DROP 3 [8; 6; 4]) ⇔ T
+lu_output_1_3_8=⊢ list_LUPDATE [1] 8 [8; 6; 4] = [8; 6; 4] ⇔ T
+lu_laws_1_3_8=⊢ LENGTH (list_LUPDATE [1] 8 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [1] 8 [8; 6; 4]) = list_LUPDATE [1] 8 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [1] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [1] 8 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (8 + LENGTH [1] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [1] 8 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [1] 8 [8; 6; 4]) = list_LUPDATE [1] (8 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [1] 8 [8; 6; 4] = TAKE 8 [8; 6; 4] ++ list_LUPDATE [1] 0 (DROP 8 [8; 6; 4]) ⇔ T
+lu_output_2_0_0=⊢ list_LUPDATE [2; 4] 0 [] = [] ⇔ T
+lu_laws_2_0_0=⊢ LENGTH (list_LUPDATE [2; 4] 0 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [2; 4] 0 []) = list_LUPDATE [2; 4] 0 (TAKE 2 []) ∧ (LENGTH [2; 4] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 0 []) = DROP 2 []) ∧ (0 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 0 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [2; 4] 0 []) = list_LUPDATE [2; 4] (0 − 2) (DROP 2 [])) ∧ list_LUPDATE [2; 4] 0 [] = TAKE 0 [] ++ list_LUPDATE [2; 4] 0 (DROP 0 []) ⇔ T
+lu_output_2_0_1=⊢ list_LUPDATE [2; 4] 1 [] = [] ⇔ T
+lu_laws_2_0_1=⊢ LENGTH (list_LUPDATE [2; 4] 1 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [2; 4] 1 []) = list_LUPDATE [2; 4] 1 (TAKE 2 []) ∧ (LENGTH [2; 4] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 1 []) = DROP 2 []) ∧ (1 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 1 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [2; 4] 1 []) = list_LUPDATE [2; 4] (1 − 2) (DROP 2 [])) ∧ list_LUPDATE [2; 4] 1 [] = TAKE 1 [] ++ list_LUPDATE [2; 4] 0 (DROP 1 []) ⇔ T
+lu_output_2_0_3=⊢ list_LUPDATE [2; 4] 3 [] = [] ⇔ T
+lu_laws_2_0_3=⊢ LENGTH (list_LUPDATE [2; 4] 3 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [2; 4] 3 []) = list_LUPDATE [2; 4] 3 (TAKE 2 []) ∧ (LENGTH [2; 4] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 3 []) = DROP 2 []) ∧ (3 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 3 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [2; 4] 3 []) = list_LUPDATE [2; 4] (3 − 2) (DROP 2 [])) ∧ list_LUPDATE [2; 4] 3 [] = TAKE 3 [] ++ list_LUPDATE [2; 4] 0 (DROP 3 []) ⇔ T
+lu_output_2_0_8=⊢ list_LUPDATE [2; 4] 8 [] = [] ⇔ T
+lu_laws_2_0_8=⊢ LENGTH (list_LUPDATE [2; 4] 8 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [2; 4] 8 []) = list_LUPDATE [2; 4] 8 (TAKE 2 []) ∧ (LENGTH [2; 4] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 8 []) = DROP 2 []) ∧ (8 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 8 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [2; 4] 8 []) = list_LUPDATE [2; 4] (8 − 2) (DROP 2 [])) ∧ list_LUPDATE [2; 4] 8 [] = TAKE 8 [] ++ list_LUPDATE [2; 4] 0 (DROP 8 []) ⇔ T
+lu_output_2_1_0=⊢ list_LUPDATE [2; 4] 0 [1] = [2] ⇔ T
+lu_laws_2_1_0=⊢ LENGTH (list_LUPDATE [2; 4] 0 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [2; 4] 0 [1]) = list_LUPDATE [2; 4] 0 (TAKE 2 [1]) ∧ (LENGTH [2; 4] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 0 [1]) = DROP 2 [1]) ∧ (0 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 0 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [2; 4] 0 [1]) = list_LUPDATE [2; 4] (0 − 2) (DROP 2 [1])) ∧ list_LUPDATE [2; 4] 0 [1] = TAKE 0 [1] ++ list_LUPDATE [2; 4] 0 (DROP 0 [1]) ⇔ T
+lu_output_2_1_1=⊢ list_LUPDATE [2; 4] 1 [1] = [1] ⇔ T
+lu_laws_2_1_1=⊢ LENGTH (list_LUPDATE [2; 4] 1 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [2; 4] 1 [1]) = list_LUPDATE [2; 4] 1 (TAKE 2 [1]) ∧ (LENGTH [2; 4] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 1 [1]) = DROP 2 [1]) ∧ (1 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 1 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [2; 4] 1 [1]) = list_LUPDATE [2; 4] (1 − 2) (DROP 2 [1])) ∧ list_LUPDATE [2; 4] 1 [1] = TAKE 1 [1] ++ list_LUPDATE [2; 4] 0 (DROP 1 [1]) ⇔ T
+lu_output_2_1_3=⊢ list_LUPDATE [2; 4] 3 [1] = [1] ⇔ T
+lu_laws_2_1_3=⊢ LENGTH (list_LUPDATE [2; 4] 3 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [2; 4] 3 [1]) = list_LUPDATE [2; 4] 3 (TAKE 2 [1]) ∧ (LENGTH [2; 4] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 3 [1]) = DROP 2 [1]) ∧ (3 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 3 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [2; 4] 3 [1]) = list_LUPDATE [2; 4] (3 − 2) (DROP 2 [1])) ∧ list_LUPDATE [2; 4] 3 [1] = TAKE 3 [1] ++ list_LUPDATE [2; 4] 0 (DROP 3 [1]) ⇔ T
+lu_output_2_1_8=⊢ list_LUPDATE [2; 4] 8 [1] = [1] ⇔ T
+lu_laws_2_1_8=⊢ LENGTH (list_LUPDATE [2; 4] 8 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [2; 4] 8 [1]) = list_LUPDATE [2; 4] 8 (TAKE 2 [1]) ∧ (LENGTH [2; 4] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 8 [1]) = DROP 2 [1]) ∧ (8 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 8 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [2; 4] 8 [1]) = list_LUPDATE [2; 4] (8 − 2) (DROP 2 [1])) ∧ list_LUPDATE [2; 4] 8 [1] = TAKE 8 [1] ++ list_LUPDATE [2; 4] 0 (DROP 8 [1]) ⇔ T
+lu_output_2_2_0=⊢ list_LUPDATE [2; 4] 0 [2; 4] = [2; 4] ⇔ T
+lu_laws_2_2_0=⊢ LENGTH (list_LUPDATE [2; 4] 0 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [2; 4] 0 [2; 4]) = list_LUPDATE [2; 4] 0 (TAKE 2 [2; 4]) ∧ (LENGTH [2; 4] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 0 [2; 4]) = DROP 2 [2; 4]) ∧ (0 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 0 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [2; 4] 0 [2; 4]) = list_LUPDATE [2; 4] (0 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [2; 4] 0 [2; 4] = TAKE 0 [2; 4] ++ list_LUPDATE [2; 4] 0 (DROP 0 [2; 4]) ⇔ T
+lu_output_2_2_1=⊢ list_LUPDATE [2; 4] 1 [2; 4] = [2; 2] ⇔ T
+lu_laws_2_2_1=⊢ LENGTH (list_LUPDATE [2; 4] 1 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [2; 4] 1 [2; 4]) = list_LUPDATE [2; 4] 1 (TAKE 2 [2; 4]) ∧ (LENGTH [2; 4] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 1 [2; 4]) = DROP 2 [2; 4]) ∧ (1 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 1 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [2; 4] 1 [2; 4]) = list_LUPDATE [2; 4] (1 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [2; 4] 1 [2; 4] = TAKE 1 [2; 4] ++ list_LUPDATE [2; 4] 0 (DROP 1 [2; 4]) ⇔ T
+lu_output_2_2_3=⊢ list_LUPDATE [2; 4] 3 [2; 4] = [2; 4] ⇔ T
+lu_laws_2_2_3=⊢ LENGTH (list_LUPDATE [2; 4] 3 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [2; 4] 3 [2; 4]) = list_LUPDATE [2; 4] 3 (TAKE 2 [2; 4]) ∧ (LENGTH [2; 4] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 3 [2; 4]) = DROP 2 [2; 4]) ∧ (3 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 3 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [2; 4] 3 [2; 4]) = list_LUPDATE [2; 4] (3 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [2; 4] 3 [2; 4] = TAKE 3 [2; 4] ++ list_LUPDATE [2; 4] 0 (DROP 3 [2; 4]) ⇔ T
+lu_output_2_2_8=⊢ list_LUPDATE [2; 4] 8 [2; 4] = [2; 4] ⇔ T
+lu_laws_2_2_8=⊢ LENGTH (list_LUPDATE [2; 4] 8 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [2; 4] 8 [2; 4]) = list_LUPDATE [2; 4] 8 (TAKE 2 [2; 4]) ∧ (LENGTH [2; 4] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 8 [2; 4]) = DROP 2 [2; 4]) ∧ (8 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 8 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [2; 4] 8 [2; 4]) = list_LUPDATE [2; 4] (8 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [2; 4] 8 [2; 4] = TAKE 8 [2; 4] ++ list_LUPDATE [2; 4] 0 (DROP 8 [2; 4]) ⇔ T
+lu_output_2_3_0=⊢ list_LUPDATE [2; 4] 0 [8; 6; 4] = [2; 4; 4] ⇔ T
+lu_laws_2_3_0=⊢ LENGTH (list_LUPDATE [2; 4] 0 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [2; 4] 0 [8; 6; 4]) = list_LUPDATE [2; 4] 0 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [2; 4] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 0 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (0 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 0 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [2; 4] 0 [8; 6; 4]) = list_LUPDATE [2; 4] (0 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [2; 4] 0 [8; 6; 4] = TAKE 0 [8; 6; 4] ++ list_LUPDATE [2; 4] 0 (DROP 0 [8; 6; 4]) ⇔ T
+lu_output_2_3_1=⊢ list_LUPDATE [2; 4] 1 [8; 6; 4] = [8; 2; 4] ⇔ T
+lu_laws_2_3_1=⊢ LENGTH (list_LUPDATE [2; 4] 1 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [2; 4] 1 [8; 6; 4]) = list_LUPDATE [2; 4] 1 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [2; 4] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 1 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (1 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 1 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [2; 4] 1 [8; 6; 4]) = list_LUPDATE [2; 4] (1 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [2; 4] 1 [8; 6; 4] = TAKE 1 [8; 6; 4] ++ list_LUPDATE [2; 4] 0 (DROP 1 [8; 6; 4]) ⇔ T
+lu_output_2_3_3=⊢ list_LUPDATE [2; 4] 3 [8; 6; 4] = [8; 6; 4] ⇔ T
+lu_laws_2_3_3=⊢ LENGTH (list_LUPDATE [2; 4] 3 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [2; 4] 3 [8; 6; 4]) = list_LUPDATE [2; 4] 3 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [2; 4] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 3 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (3 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 3 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [2; 4] 3 [8; 6; 4]) = list_LUPDATE [2; 4] (3 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [2; 4] 3 [8; 6; 4] = TAKE 3 [8; 6; 4] ++ list_LUPDATE [2; 4] 0 (DROP 3 [8; 6; 4]) ⇔ T
+lu_output_2_3_8=⊢ list_LUPDATE [2; 4] 8 [8; 6; 4] = [8; 6; 4] ⇔ T
+lu_laws_2_3_8=⊢ LENGTH (list_LUPDATE [2; 4] 8 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [2; 4] 8 [8; 6; 4]) = list_LUPDATE [2; 4] 8 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [2; 4] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [2; 4] 8 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (8 + LENGTH [2; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [2; 4] 8 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [2; 4] 8 [8; 6; 4]) = list_LUPDATE [2; 4] (8 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [2; 4] 8 [8; 6; 4] = TAKE 8 [8; 6; 4] ++ list_LUPDATE [2; 4] 0 (DROP 8 [8; 6; 4]) ⇔ T
+lu_output_3_0_0=⊢ list_LUPDATE [8; 6; 4] 0 [] = [] ⇔ T
+lu_laws_3_0_0=⊢ LENGTH (list_LUPDATE [8; 6; 4] 0 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 0 []) = list_LUPDATE [8; 6; 4] 0 (TAKE 2 []) ∧ (LENGTH [8; 6; 4] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 0 []) = DROP 2 []) ∧ (0 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 0 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 0 []) = list_LUPDATE [8; 6; 4] (0 − 2) (DROP 2 [])) ∧ list_LUPDATE [8; 6; 4] 0 [] = TAKE 0 [] ++ list_LUPDATE [8; 6; 4] 0 (DROP 0 []) ⇔ T
+lu_output_3_0_1=⊢ list_LUPDATE [8; 6; 4] 1 [] = [] ⇔ T
+lu_laws_3_0_1=⊢ LENGTH (list_LUPDATE [8; 6; 4] 1 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 1 []) = list_LUPDATE [8; 6; 4] 1 (TAKE 2 []) ∧ (LENGTH [8; 6; 4] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 1 []) = DROP 2 []) ∧ (1 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 1 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 1 []) = list_LUPDATE [8; 6; 4] (1 − 2) (DROP 2 [])) ∧ list_LUPDATE [8; 6; 4] 1 [] = TAKE 1 [] ++ list_LUPDATE [8; 6; 4] 0 (DROP 1 []) ⇔ T
+lu_output_3_0_3=⊢ list_LUPDATE [8; 6; 4] 3 [] = [] ⇔ T
+lu_laws_3_0_3=⊢ LENGTH (list_LUPDATE [8; 6; 4] 3 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 3 []) = list_LUPDATE [8; 6; 4] 3 (TAKE 2 []) ∧ (LENGTH [8; 6; 4] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 3 []) = DROP 2 []) ∧ (3 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 3 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 3 []) = list_LUPDATE [8; 6; 4] (3 − 2) (DROP 2 [])) ∧ list_LUPDATE [8; 6; 4] 3 [] = TAKE 3 [] ++ list_LUPDATE [8; 6; 4] 0 (DROP 3 []) ⇔ T
+lu_output_3_0_8=⊢ list_LUPDATE [8; 6; 4] 8 [] = [] ⇔ T
+lu_laws_3_0_8=⊢ LENGTH (list_LUPDATE [8; 6; 4] 8 []) = LENGTH [] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 8 []) = list_LUPDATE [8; 6; 4] 8 (TAKE 2 []) ∧ (LENGTH [8; 6; 4] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 8 []) = DROP 2 []) ∧ (8 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 8 []) 2 = LLOOKUP [] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 8 []) = list_LUPDATE [8; 6; 4] (8 − 2) (DROP 2 [])) ∧ list_LUPDATE [8; 6; 4] 8 [] = TAKE 8 [] ++ list_LUPDATE [8; 6; 4] 0 (DROP 8 []) ⇔ T
+lu_output_3_1_0=⊢ list_LUPDATE [8; 6; 4] 0 [1] = [8] ⇔ T
+lu_laws_3_1_0=⊢ LENGTH (list_LUPDATE [8; 6; 4] 0 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 0 [1]) = list_LUPDATE [8; 6; 4] 0 (TAKE 2 [1]) ∧ (LENGTH [8; 6; 4] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 0 [1]) = DROP 2 [1]) ∧ (0 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 0 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 0 [1]) = list_LUPDATE [8; 6; 4] (0 − 2) (DROP 2 [1])) ∧ list_LUPDATE [8; 6; 4] 0 [1] = TAKE 0 [1] ++ list_LUPDATE [8; 6; 4] 0 (DROP 0 [1]) ⇔ T
+lu_output_3_1_1=⊢ list_LUPDATE [8; 6; 4] 1 [1] = [1] ⇔ T
+lu_laws_3_1_1=⊢ LENGTH (list_LUPDATE [8; 6; 4] 1 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 1 [1]) = list_LUPDATE [8; 6; 4] 1 (TAKE 2 [1]) ∧ (LENGTH [8; 6; 4] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 1 [1]) = DROP 2 [1]) ∧ (1 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 1 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 1 [1]) = list_LUPDATE [8; 6; 4] (1 − 2) (DROP 2 [1])) ∧ list_LUPDATE [8; 6; 4] 1 [1] = TAKE 1 [1] ++ list_LUPDATE [8; 6; 4] 0 (DROP 1 [1]) ⇔ T
+lu_output_3_1_3=⊢ list_LUPDATE [8; 6; 4] 3 [1] = [1] ⇔ T
+lu_laws_3_1_3=⊢ LENGTH (list_LUPDATE [8; 6; 4] 3 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 3 [1]) = list_LUPDATE [8; 6; 4] 3 (TAKE 2 [1]) ∧ (LENGTH [8; 6; 4] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 3 [1]) = DROP 2 [1]) ∧ (3 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 3 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 3 [1]) = list_LUPDATE [8; 6; 4] (3 − 2) (DROP 2 [1])) ∧ list_LUPDATE [8; 6; 4] 3 [1] = TAKE 3 [1] ++ list_LUPDATE [8; 6; 4] 0 (DROP 3 [1]) ⇔ T
+lu_output_3_1_8=⊢ list_LUPDATE [8; 6; 4] 8 [1] = [1] ⇔ T
+lu_laws_3_1_8=⊢ LENGTH (list_LUPDATE [8; 6; 4] 8 [1]) = LENGTH [1] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 8 [1]) = list_LUPDATE [8; 6; 4] 8 (TAKE 2 [1]) ∧ (LENGTH [8; 6; 4] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 8 [1]) = DROP 2 [1]) ∧ (8 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 8 [1]) 2 = LLOOKUP [1] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 8 [1]) = list_LUPDATE [8; 6; 4] (8 − 2) (DROP 2 [1])) ∧ list_LUPDATE [8; 6; 4] 8 [1] = TAKE 8 [1] ++ list_LUPDATE [8; 6; 4] 0 (DROP 8 [1]) ⇔ T
+lu_output_3_2_0=⊢ list_LUPDATE [8; 6; 4] 0 [2; 4] = [8; 6] ⇔ T
+lu_laws_3_2_0=⊢ LENGTH (list_LUPDATE [8; 6; 4] 0 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 0 [2; 4]) = list_LUPDATE [8; 6; 4] 0 (TAKE 2 [2; 4]) ∧ (LENGTH [8; 6; 4] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 0 [2; 4]) = DROP 2 [2; 4]) ∧ (0 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 0 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 0 [2; 4]) = list_LUPDATE [8; 6; 4] (0 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [8; 6; 4] 0 [2; 4] = TAKE 0 [2; 4] ++ list_LUPDATE [8; 6; 4] 0 (DROP 0 [2; 4]) ⇔ T
+lu_output_3_2_1=⊢ list_LUPDATE [8; 6; 4] 1 [2; 4] = [2; 8] ⇔ T
+lu_laws_3_2_1=⊢ LENGTH (list_LUPDATE [8; 6; 4] 1 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 1 [2; 4]) = list_LUPDATE [8; 6; 4] 1 (TAKE 2 [2; 4]) ∧ (LENGTH [8; 6; 4] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 1 [2; 4]) = DROP 2 [2; 4]) ∧ (1 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 1 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 1 [2; 4]) = list_LUPDATE [8; 6; 4] (1 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [8; 6; 4] 1 [2; 4] = TAKE 1 [2; 4] ++ list_LUPDATE [8; 6; 4] 0 (DROP 1 [2; 4]) ⇔ T
+lu_output_3_2_3=⊢ list_LUPDATE [8; 6; 4] 3 [2; 4] = [2; 4] ⇔ T
+lu_laws_3_2_3=⊢ LENGTH (list_LUPDATE [8; 6; 4] 3 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 3 [2; 4]) = list_LUPDATE [8; 6; 4] 3 (TAKE 2 [2; 4]) ∧ (LENGTH [8; 6; 4] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 3 [2; 4]) = DROP 2 [2; 4]) ∧ (3 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 3 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 3 [2; 4]) = list_LUPDATE [8; 6; 4] (3 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [8; 6; 4] 3 [2; 4] = TAKE 3 [2; 4] ++ list_LUPDATE [8; 6; 4] 0 (DROP 3 [2; 4]) ⇔ T
+lu_output_3_2_8=⊢ list_LUPDATE [8; 6; 4] 8 [2; 4] = [2; 4] ⇔ T
+lu_laws_3_2_8=⊢ LENGTH (list_LUPDATE [8; 6; 4] 8 [2; 4]) = LENGTH [2; 4] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 8 [2; 4]) = list_LUPDATE [8; 6; 4] 8 (TAKE 2 [2; 4]) ∧ (LENGTH [8; 6; 4] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 8 [2; 4]) = DROP 2 [2; 4]) ∧ (8 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 8 [2; 4]) 2 = LLOOKUP [2; 4] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 8 [2; 4]) = list_LUPDATE [8; 6; 4] (8 − 2) (DROP 2 [2; 4])) ∧ list_LUPDATE [8; 6; 4] 8 [2; 4] = TAKE 8 [2; 4] ++ list_LUPDATE [8; 6; 4] 0 (DROP 8 [2; 4]) ⇔ T
+lu_output_3_3_0=⊢ list_LUPDATE [8; 6; 4] 0 [8; 6; 4] = [8; 6; 4] ⇔ T
+lu_laws_3_3_0=⊢ LENGTH (list_LUPDATE [8; 6; 4] 0 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 0 [8; 6; 4]) = list_LUPDATE [8; 6; 4] 0 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [8; 6; 4] + 0 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 0 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (0 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 0 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 0 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 0 [8; 6; 4]) = list_LUPDATE [8; 6; 4] (0 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [8; 6; 4] 0 [8; 6; 4] = TAKE 0 [8; 6; 4] ++ list_LUPDATE [8; 6; 4] 0 (DROP 0 [8; 6; 4]) ⇔ T
+lu_output_3_3_1=⊢ list_LUPDATE [8; 6; 4] 1 [8; 6; 4] = [8; 8; 6] ⇔ T
+lu_laws_3_3_1=⊢ LENGTH (list_LUPDATE [8; 6; 4] 1 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 1 [8; 6; 4]) = list_LUPDATE [8; 6; 4] 1 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [8; 6; 4] + 1 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 1 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (1 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 1 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 1 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 1 [8; 6; 4]) = list_LUPDATE [8; 6; 4] (1 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [8; 6; 4] 1 [8; 6; 4] = TAKE 1 [8; 6; 4] ++ list_LUPDATE [8; 6; 4] 0 (DROP 1 [8; 6; 4]) ⇔ T
+lu_output_3_3_3=⊢ list_LUPDATE [8; 6; 4] 3 [8; 6; 4] = [8; 6; 4] ⇔ T
+lu_laws_3_3_3=⊢ LENGTH (list_LUPDATE [8; 6; 4] 3 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 3 [8; 6; 4]) = list_LUPDATE [8; 6; 4] 3 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [8; 6; 4] + 3 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 3 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (3 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 3 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 3 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 3 [8; 6; 4]) = list_LUPDATE [8; 6; 4] (3 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [8; 6; 4] 3 [8; 6; 4] = TAKE 3 [8; 6; 4] ++ list_LUPDATE [8; 6; 4] 0 (DROP 3 [8; 6; 4]) ⇔ T
+lu_output_3_3_8=⊢ list_LUPDATE [8; 6; 4] 8 [8; 6; 4] = [8; 6; 4] ⇔ T
+lu_laws_3_3_8=⊢ LENGTH (list_LUPDATE [8; 6; 4] 8 [8; 6; 4]) = LENGTH [8; 6; 4] ∧ TAKE 2 (list_LUPDATE [8; 6; 4] 8 [8; 6; 4]) = list_LUPDATE [8; 6; 4] 8 (TAKE 2 [8; 6; 4]) ∧ (LENGTH [8; 6; 4] + 8 ≤ 2 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 8 [8; 6; 4]) = DROP 2 [8; 6; 4]) ∧ (8 + LENGTH [8; 6; 4] ≤ 2 ⇒ LLOOKUP (list_LUPDATE [8; 6; 4] 8 [8; 6; 4]) 2 = LLOOKUP [8; 6; 4] 2) ∧ (2 ≤ 8 ⇒ DROP 2 (list_LUPDATE [8; 6; 4] 8 [8; 6; 4]) = list_LUPDATE [8; 6; 4] (8 − 2) (DROP 2 [8; 6; 4])) ∧ list_LUPDATE [8; 6; 4] 8 [8; 6; 4] = TAKE 8 [8; 6; 4] ++ list_LUPDATE [8; 6; 4] 0 (DROP 8 [8; 6; 4]) ⇔ T
+lu_cons_0_0=⊢ list_LUPDATE [9] 0 [7] = 9::list_LUPDATE [] 0 [] ⇔ T
+lu_append_0_0=⊢ list_LUPDATE [] 0 ([] ++ []) = [] ++ [] ⇔ T
+lu_cons_0_1=⊢ list_LUPDATE [9] 0 [7; 1] = 9::list_LUPDATE [] 0 [1] ⇔ T
+lu_append_0_1=⊢ list_LUPDATE [] 0 ([] ++ [1]) = [] ++ [1] ⇔ T
+lu_cons_0_2=⊢ list_LUPDATE [9] 0 [7; 2; 4] = 9::list_LUPDATE [] 0 [2; 4] ⇔ T
+lu_append_0_2=⊢ list_LUPDATE [] 0 ([] ++ [2; 4]) = [] ++ [2; 4] ⇔ T
+lu_cons_0_3=⊢ list_LUPDATE [9] 0 [7; 8; 6; 4] = 9::list_LUPDATE [] 0 [8; 6; 4] ⇔ T
+lu_append_0_3=⊢ list_LUPDATE [] 0 ([] ++ [8; 6; 4]) = [] ++ [8; 6; 4] ⇔ T
+lu_nil_0_0=⊢ list_LUPDATE [] 0 [] = [] ⇔ T
+lu_single_0_0=⊢ []❲0 ↦ 9❳ = TAKE 0 [] ++ (DROP 0 [])❲0 ↦ 9❳ ⇔ T
+lu_nil_0_1=⊢ list_LUPDATE [] 1 [] = [] ⇔ T
+lu_single_0_1=⊢ []❲1 ↦ 9❳ = TAKE 1 [] ++ (DROP 1 [])❲0 ↦ 9❳ ⇔ T
+lu_nil_0_3=⊢ list_LUPDATE [] 3 [] = [] ⇔ T
+lu_single_0_3=⊢ []❲3 ↦ 9❳ = TAKE 3 [] ++ (DROP 3 [])❲0 ↦ 9❳ ⇔ T
+lu_nil_0_8=⊢ list_LUPDATE [] 8 [] = [] ⇔ T
+lu_single_0_8=⊢ []❲8 ↦ 9❳ = TAKE 8 [] ++ (DROP 8 [])❲0 ↦ 9❳ ⇔ T
+lu_cons_1_0=⊢ list_LUPDATE [9; 1] 0 [7] = 9::list_LUPDATE [1] 0 [] ⇔ T
+lu_append_1_0=⊢ list_LUPDATE [1] 0 ([1] ++ []) = [1] ++ [] ⇔ T
+lu_cons_1_1=⊢ list_LUPDATE [9; 1] 0 [7; 1] = 9::list_LUPDATE [1] 0 [1] ⇔ T
+lu_append_1_1=⊢ list_LUPDATE [1] 0 ([1] ++ [1]) = [1] ++ [1] ⇔ T
+lu_cons_1_2=⊢ list_LUPDATE [9; 1] 0 [7; 2; 4] = 9::list_LUPDATE [1] 0 [2; 4] ⇔ T
+lu_append_1_2=⊢ list_LUPDATE [1] 0 ([1] ++ [2; 4]) = [1] ++ [2; 4] ⇔ T
+lu_cons_1_3=⊢ list_LUPDATE [9; 1] 0 [7; 8; 6; 4] = 9::list_LUPDATE [1] 0 [8; 6; 4] ⇔ T
+lu_append_1_3=⊢ list_LUPDATE [1] 0 ([1] ++ [8; 6; 4]) = [1] ++ [8; 6; 4] ⇔ T
+lu_nil_1_0=⊢ list_LUPDATE [1] 0 [] = [] ⇔ T
+lu_single_1_0=⊢ [1]❲0 ↦ 9❳ = TAKE 0 [1] ++ (DROP 0 [1])❲0 ↦ 9❳ ⇔ T
+lu_nil_1_1=⊢ list_LUPDATE [1] 1 [] = [] ⇔ T
+lu_single_1_1=⊢ [1]❲1 ↦ 9❳ = TAKE 1 [1] ++ (DROP 1 [1])❲0 ↦ 9❳ ⇔ T
+lu_nil_1_3=⊢ list_LUPDATE [1] 3 [] = [] ⇔ T
+lu_single_1_3=⊢ [1]❲3 ↦ 9❳ = TAKE 3 [1] ++ (DROP 3 [1])❲0 ↦ 9❳ ⇔ T
+lu_nil_1_8=⊢ list_LUPDATE [1] 8 [] = [] ⇔ T
+lu_single_1_8=⊢ [1]❲8 ↦ 9❳ = TAKE 8 [1] ++ (DROP 8 [1])❲0 ↦ 9❳ ⇔ T
+lu_cons_2_0=⊢ list_LUPDATE [9; 2; 4] 0 [7] = 9::list_LUPDATE [2; 4] 0 [] ⇔ T
+lu_append_2_0=⊢ list_LUPDATE [2; 4] 0 ([4; 2] ++ []) = [2; 4] ++ [] ⇔ T
+lu_cons_2_1=⊢ list_LUPDATE [9; 2; 4] 0 [7; 1] = 9::list_LUPDATE [2; 4] 0 [1] ⇔ T
+lu_append_2_1=⊢ list_LUPDATE [2; 4] 0 ([4; 2] ++ [1]) = [2; 4] ++ [1] ⇔ T
+lu_cons_2_2=⊢ list_LUPDATE [9; 2; 4] 0 [7; 2; 4] = 9::list_LUPDATE [2; 4] 0 [2; 4] ⇔ T
+lu_append_2_2=⊢ list_LUPDATE [2; 4] 0 ([4; 2] ++ [2; 4]) = [2; 4] ++ [2; 4] ⇔ T
+lu_cons_2_3=⊢ list_LUPDATE [9; 2; 4] 0 [7; 8; 6; 4] = 9::list_LUPDATE [2; 4] 0 [8; 6; 4] ⇔ T
+lu_append_2_3=⊢ list_LUPDATE [2; 4] 0 ([4; 2] ++ [8; 6; 4]) = [2; 4] ++ [8; 6; 4] ⇔ T
+lu_nil_2_0=⊢ list_LUPDATE [2; 4] 0 [] = [] ⇔ T
+lu_single_2_0=⊢ [2; 4]❲0 ↦ 9❳ = TAKE 0 [2; 4] ++ (DROP 0 [2; 4])❲0 ↦ 9❳ ⇔ T
+lu_nil_2_1=⊢ list_LUPDATE [2; 4] 1 [] = [] ⇔ T
+lu_single_2_1=⊢ [2; 4]❲1 ↦ 9❳ = TAKE 1 [2; 4] ++ (DROP 1 [2; 4])❲0 ↦ 9❳ ⇔ T
+lu_nil_2_3=⊢ list_LUPDATE [2; 4] 3 [] = [] ⇔ T
+lu_single_2_3=⊢ [2; 4]❲3 ↦ 9❳ = TAKE 3 [2; 4] ++ (DROP 3 [2; 4])❲0 ↦ 9❳ ⇔ T
+lu_nil_2_8=⊢ list_LUPDATE [2; 4] 8 [] = [] ⇔ T
+lu_single_2_8=⊢ [2; 4]❲8 ↦ 9❳ = TAKE 8 [2; 4] ++ (DROP 8 [2; 4])❲0 ↦ 9❳ ⇔ T
+lu_cons_3_0=⊢ list_LUPDATE [9; 8; 6; 4] 0 [7] = 9::list_LUPDATE [8; 6; 4] 0 [] ⇔ T
+lu_append_3_0=⊢ list_LUPDATE [8; 6; 4] 0 ([4; 6; 8] ++ []) = [8; 6; 4] ++ [] ⇔ T
+lu_cons_3_1=⊢ list_LUPDATE [9; 8; 6; 4] 0 [7; 1] = 9::list_LUPDATE [8; 6; 4] 0 [1] ⇔ T
+lu_append_3_1=⊢ list_LUPDATE [8; 6; 4] 0 ([4; 6; 8] ++ [1]) = [8; 6; 4] ++ [1] ⇔ T
+lu_cons_3_2=⊢ list_LUPDATE [9; 8; 6; 4] 0 [7; 2; 4] = 9::list_LUPDATE [8; 6; 4] 0 [2; 4] ⇔ T
+lu_append_3_2=⊢ list_LUPDATE [8; 6; 4] 0 ([4; 6; 8] ++ [2; 4]) = [8; 6; 4] ++ [2; 4] ⇔ T
+lu_cons_3_3=⊢ list_LUPDATE [9; 8; 6; 4] 0 [7; 8; 6; 4] = 9::list_LUPDATE [8; 6; 4] 0 [8; 6; 4] ⇔ T
+lu_append_3_3=⊢ list_LUPDATE [8; 6; 4] 0 ([4; 6; 8] ++ [8; 6; 4]) = [8; 6; 4] ++ [8; 6; 4] ⇔ T
+lu_nil_3_0=⊢ list_LUPDATE [8; 6; 4] 0 [] = [] ⇔ T
+lu_single_3_0=⊢ [8; 6; 4]❲0 ↦ 9❳ = TAKE 0 [8; 6; 4] ++ (DROP 0 [8; 6; 4])❲0 ↦ 9❳ ⇔ T
+lu_nil_3_1=⊢ list_LUPDATE [8; 6; 4] 1 [] = [] ⇔ T
+lu_single_3_1=⊢ [8; 6; 4]❲1 ↦ 9❳ = TAKE 1 [8; 6; 4] ++ (DROP 1 [8; 6; 4])❲0 ↦ 9❳ ⇔ T
+lu_nil_3_3=⊢ list_LUPDATE [8; 6; 4] 3 [] = [] ⇔ T
+lu_single_3_3=⊢ [8; 6; 4]❲3 ↦ 9❳ = TAKE 3 [8; 6; 4] ++ (DROP 3 [8; 6; 4])❲0 ↦ 9❳ ⇔ T
+lu_nil_3_8=⊢ list_LUPDATE [8; 6; 4] 8 [] = [] ⇔ T
+lu_single_3_8=⊢ [8; 6; 4]❲8 ↦ 9❳ = TAKE 8 [8; 6; 4] ++ (DROP 8 [8; 6; 4])❲0 ↦ 9❳ ⇔ T
