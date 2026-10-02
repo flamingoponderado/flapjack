@@ -1,0 +1,17 @@
+load "bossLib";
+load "preamble";
+load "lab_to_targetProofTheory";
+open bossLib HolKernel Parse preamble lab_to_targetProofTheory lab_to_targetTheory labLangTheory labPropsTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "="); print_term(concl th); print "\n");
+fun types label th = (print(label ^ "="); app (fn v => print(term_to_string v ^ ":" ^ type_to_string(type_of v) ^ ";")) (fst(strip_forall(concl th)) @ free_vars(concl th)); print "\n");
+val _=capture "even_labels_ends_imp_strong" even_labels_ends_imp_strong;
+val _=types "even_labels_ends_imp_strong_types" even_labels_ends_imp_strong;
+val _=show_types:=false;
+fun observe label q=(print(label ^ "=");print_term(rconc(EVAL q));print "\n");
+val _=observe "mixed_three_guards" ``let code=[Section 7 [Asm(Asmi(Inst Skip)) [1w;2w;3w] 1;Label 999 4 0;LabAsm Halt 99w [] 2;Label 9 0 0];Section 7 [Label 888 5 0]]:8 labLang$sec list in even_labels 3 code /\ EVERY sec_ends_with_label code /\ EVERY sec_label_zero code /\ even_labels_strong 3 code``;
+val _=observe "weak_guard_needed" ``let sec=Section 7 [Label 99 4 0]:8 labLang$sec in ~even_labels 3 [sec] /\ sec_ends_with_label sec /\ sec_label_zero sec /\ ~even_labels_strong 3 [sec]``;
+val _=observe "ending_guard_needed" ``let sec=Section 7 []:8 labLang$sec in even_labels 3 [sec] /\ ~sec_ends_with_label sec /\ sec_label_zero sec /\ ~even_labels_strong 3 [sec]``;
+val _=observe "zero_guard_needed" ``let sec=Section 7 [Label 99 4 1]:8 labLang$sec in even_labels 4 [sec] /\ sec_ends_with_label sec /\ ~sec_label_zero sec /\ ~even_labels_strong 4 [sec]``;
+val _=observe "width1_empty" ``even_labels_strong 17 ([]:1 labLang$sec list)``;
+val _=observe "width80_large_position" ``even_labels_strong (2**80) ([Section 9 [Label 999 5 0]]:80 labLang$sec list)``;
