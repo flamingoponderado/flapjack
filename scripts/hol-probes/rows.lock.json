@@ -697,6 +697,7 @@
     {"bytes": 852, "out": "stackprops_forbidden_operations_probe.out", "rows": 46, "sha256": "718e64268abb7c05d330507ff019f684e9f6d44c5c0f53f2ca65ac3cf8ca78e7"},
     {"bytes": 1964, "out": "stackprops_instruction_constants_probe.out", "rows": 18, "sha256": "912482b65492d8f8c8786a5e09f1979b8cf57822f0df3a8372d295e35d808c8c"},
     {"bytes": 250, "out": "stackprops_label_safety_probe.out", "rows": 10, "sha256": "fc85cce61b21a596486ae2cb9283bdc70df9c55a6440d3f463cb67ff4e405c97"},
+    {"bytes": 10289, "out": "stackprops_ordered_code_labels_probe.out", "rows": 18, "sha256": "2d88225b2980b29b4d545c4b9f709a931d224b9165fb53390daae746651db8a7"},
     {"bytes": 5308, "out": "stackprops_shared_memory_clock_probe.out", "rows": 50, "sha256": "140ea9fd654d79f7f008004a9ec00a1bc77ef1b734b0c22e11daadcf073688eb"},
     {"bytes": 1365, "out": "stackprops_stack_lengths_probe.out", "rows": 22, "sha256": "2be890fd8729ed132c1881e18ea827b312f3d83df982ceed7420cbf81937df92"},
     {"bytes": 6175, "out": "stackprops_state_constants_probe.out", "rows": 26, "sha256": "581cc095a335a4ff510a2d79fb318ee4b3e49fef550433830b2ded457ff9218b"},

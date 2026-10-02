@@ -4488,3 +4488,11 @@ native Inst clauses; LoadEvaluation support was exposed without changing its
 implementation or old theorem statements. Existing finite-map/positive-word
 translations and inherited rational-cut assumption (SOUNDNESS item 8) remain.
 These are invariant-update prerequisites, not full CSE/compiler correctness.
+
+`stackprops_ordered_code_labels_probeScript.sml` captures full original
+ordered label/lookup/set declarations and replays the complete original
+lookup-containment proof (ten source/type rows), then checks eight generic
+Bool/list/Nat register-key observations. It discovered and guards the
+register-key polymorphism of StackSem `find_code_def`;
+`StackSemGenericCodeLookupParity.lean` kernel-replays those observations.
+The full ordered extractor/containment ports remain separate work on qipb.

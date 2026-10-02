@@ -4032,3 +4032,7 @@ run_probe word_cse_evaluation_frames_probeScript.sml word_cse_evaluation_frames_
 run_probe ssa_reconcile_get_vars_probeScript.sml ssa_reconcile_get_vars_probe.out \
   ssa_reconcile_get_vars_original_proof ssa_reconcile_get_vars_original_type \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stackprops_ordered_code_labels_probeScript.sml stackprops_ordered_code_labels_probe.out \
+  extract_labels extract_labels_types find_code_labels find_code_labels_types find_code find_code_types get_labels get_labels_types loc_check loc_check_types key_bool_direct key_bool_indirect key_bool_missing key_bool_nonzero key_bool_word key_list_indirect key_list_missing_code key_nat_legacy \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
