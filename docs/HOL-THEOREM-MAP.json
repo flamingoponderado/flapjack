@@ -11554,14 +11554,6 @@
     "reviewer": "Codex source review against wordLangScript.sml:323-326: exact Var and Op Add [Var,Const] clauses over WordLangExpHOL, whose Lookup field uses the fixed store_name carrier; all other expressions return none. Direct ShareInst address rows in word_convs_full_inst_ok_less_probe.out exercise this exact function."
   },
   {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/WordConvs.lean",
-    "lean_name": "fullInstOkLess",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack broad program-validity predicate, not a faithful HOL port: AsmConfig.encode consumes AsmData and returns UInt8 lists, unlike original positive-width asm_config HolAsm/word8 encoder; width zero is admitted and instOkLess is deliberately width-general/untagged. False reviewed_exact tag withdrawn after comparing original wordConvsScript.sml318-345 and exact config carrier. All semantic clauses/body and broad callers remain unchanged in this focused repair. Faithful positive-width exact program lifting tracked by flapjack-word-convs-full-inst-native and blocks full WordToStack assembler naming; production carrier disposition remains tracked separately. No blanket config encoding equality or cross-language equivalence is claimed."
-  },
-  {
     "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
     "hol_name": "inst_arg_convention_def",
     "lean_path": "Flapjack/Pancake/WordConvs.lean",
