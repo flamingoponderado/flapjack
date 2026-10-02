@@ -1,0 +1,29 @@
+has_odd_inst_def=(has_odd_inst ([] :α sec list) ⇔ F) ∧
+(∀(xs :α sec list) (k :num).
+   has_odd_inst (Section k ([] :α line list)::xs) ⇔ has_odd_inst xs) ∧
+∀(ys :α line list) (y :α line) (xs :α sec list) (k :num).
+  has_odd_inst (Section k (y::ys)::xs) ⇔
+  ¬EVEN (line_length y) ∨ has_odd_inst (Section k ys::xs)
+has_odd_inst_def_types=
+line_ok_alignment=∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (line :α line).
+  enc_ok c ∧ line_ok c labs ffis pos line ∧ ODD (line_length line) ⇒
+  c.code_alignment = (0 :num)
+line_ok_alignment_types=(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(line :α line)::α line;
+has_odd_inst_alignment=∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (code :α sec list).
+  enc_ok c ∧ all_enc_ok c labs ffis pos code ∧ has_odd_inst code ⇒
+  c.code_alignment = (0 :num)
+has_odd_inst_alignment_types=(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(code :α sec list)::α sec list;
+contract_one_byte=T
+contract_two_byte=T
+contract_bad_alignment=T
+odd_padded_line=T
+odd_valid_code=T
+even_padded_line=T
+validity_guard_needed=T
+encoder_guard_needed=T
+physical_not_annotation=T
+empty_zero_label=T
+width1_odd_line=T
+width80_odd_code=T
