@@ -1,0 +1,12 @@
+as_skip_pc=9w
+as_const=(5w,9w)
+as_arith=172w
+as_mem=(34w,F)
+as_jump=6w
+as_jcmp_t=6w
+as_jcmp_f=9w
+as_call=(9w,6w)
+as_jumpreg_ok=(171w,F)
+as_jumpreg_bad=T
+as_loc=(5w,9w)
+as_step_proj=asm_step c s1 i s2 ⇒ asm i (s1.pc + n2w (LENGTH (c.encode i))) s1 = s2 ∧ ¬s2.failed

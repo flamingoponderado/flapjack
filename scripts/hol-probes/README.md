@@ -4748,6 +4748,14 @@ definition and three HOL-proved consumers: its reduction on code with no lines t
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=lab_to_target_share_mem_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`lab_to_target_share_mem_state_probe` captures the original typed `share_mem_state_rel`
+definition (independent labSem and machine word widths, vacuous outer `t1`/`ms1`) and two
+HOL-proved consumers: the instance with no FFI names and the counterexample with one shared-memory
+name whose entry PC is the halt PC (via `mmio_pcs_min_index [SharedMem MappedRead] = SOME 0`).
+`LabToTargetShareMemStateParity` replays both. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=lab_to_target_share_mem_state_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `asm_sem_mem_ops_probe` captures 14 original HOL results of `mem_load`, `mem_store` and
 `mem_op` on an 8-bit state: little/big-endian two-byte loads, misaligned and out-of-domain
 failures, one-byte stores, four `mem_op` opcodes, and the zero-count load, whose failure flag is
@@ -4755,6 +4763,13 @@ proved equal to `¬aligned (LOG2 0) 1w` with `LOG2 0` left unconstrained. Positi
 are proved from `LOG_UNIQUE` (`LOG2` is `[nocompute]`). Kernel-replayed in `AsmSemMemOpsParity`.
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=asm_sem_mem_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`asm_sem_step_probe` captures 12 original HOL results of `asm` (with `inst`/`jump_to_offset`)
+on an 8-bit state: every assembly clause, `Const`/`Arith`/`Mem`/`Skip` instructions, both
+`JumpCmp` branches, `JumpReg` with a satisfied and a violated `aligned s.align` guard, and the
+HOL-proved projection of `asm_step` onto its transition and non-failure conjuncts.
+Kernel-replayed in `AsmSemStepParity`. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=asm_sem_step_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 
 
