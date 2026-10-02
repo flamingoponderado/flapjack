@@ -555,6 +555,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionStackTransition
 import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTransition
 import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTraversal
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
+import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyQuery
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
