@@ -5409,3 +5409,7 @@ run_probe stack_remove_word_address_probeScript.sml stack_remove_word_address_pr
 run_probe stack_remove_comp_load_probeScript.sml stack_remove_comp_load_probe.out \
   cl_statement cl_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_stack_write_probeScript.sml stack_remove_stack_write_probe.out \
+  sw_statement sw_proved srw_statement srw_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

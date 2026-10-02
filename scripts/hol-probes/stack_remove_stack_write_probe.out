@@ -1,0 +1,4 @@
+sw_statement=∀stack base p m d a v. (word_list base stack * p) (fun2set (m,d)) ∧ a < LENGTH stack ⇒ (word_list base stack❲a ↦ v❳ * p) (fun2set (m⦇base + bytes_in_word * n2w a ↦ v⦈,d))
+sw_proved=T
+srw_statement=∀x t st s off n k jump b a. state_rel jump off k s t ∧ st = s.stack ∧ FLOOKUP t.regs k = SOME (Word b) ∧ s.stack_space + n < LENGTH st ∧ b + bytes_in_word * n2w n = a ⇒ state_rel jump off k (s with stack := st❲n + s.stack_space ↦ x❳) (t with memory := t.memory⦇a ↦ x⦈)
+srw_proved=T
