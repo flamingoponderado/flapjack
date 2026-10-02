@@ -1,3 +1,27 @@
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMove
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.Memcpy
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.Submap
+import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
+import Flapjack.FiniteMap.Comparison
+import Flapjack.Misc.BalancedMap.Core
+import Flapjack.Misc.BalancedMap.Insert
+import Flapjack.Misc.BalancedMap.Invariants
+import Flapjack.Misc.BalancedMap.KeySetComparison
+import Flapjack.Misc.BalancedMap.KeySets
+import Flapjack.Misc.BalancedMap.Rotations
+import Flapjack.Misc.BalancedMap.Semantics
+import Flapjack.Misc.BalancedMap.StructuralSize
+import Flapjack.Misc.FlatReplicate
+import Flapjack.Misc.FoldrMaxList
+import Flapjack.Misc.Uncurry
+
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
