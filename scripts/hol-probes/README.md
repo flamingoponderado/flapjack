@@ -4599,3 +4599,7 @@ These are full original helper theorems, not a bitmap decoder simulation.
 ## Literal balanced-map semantic finite map
 
 `balanced_map_semantics_probe.out` contains six original set-key lookup outputs and both complete definitions. Kernel fixtures preserve root override, left precedence for child collisions, absent classes, malformed cached sizes and always-Equal/always-Less comparators. Semantic keys are sets compared by equality, not individual keys or Boolean comparator tests. This proof-side map does not replace the production carrier.
+
+## Literal HOL comparator predicate
+
+`comparison_good_cmp_probe.out` captures five original finite Bool comparator outcomes and the complete seven-clause predicate. Kernel fixtures accept the comparator equating every key and both Bool orders, and reject constant Less/Greater. This is exact predicate evidence, not a proof of lookup or insertion correctness.

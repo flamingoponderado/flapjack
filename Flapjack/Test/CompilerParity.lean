@@ -59,6 +59,7 @@ import Flapjack.Test.BalancedMapInsert
 import Flapjack.Test.BalancedMapInvariants
 import Flapjack.Test.BalancedMapSemantics
 import Flapjack.Test.FiniteMapUnionExact
+import Flapjack.Test.ComparisonGoodCmp
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
 import Flapjack.Test.WordToStackBitmapWordParity
@@ -1725,6 +1726,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.BalancedMapInvariants.runChecks,
     Flapjack.Test.BalancedMapSemantics.runChecks,
     Flapjack.Test.FiniteMapUnionExact.runChecks,
+    Flapjack.Test.ComparisonGoodCmp.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.WordConvsPreAllocExactParity.runChecks,
     Flapjack.Test.WordRemoveMustTerminateParity.runChecks,

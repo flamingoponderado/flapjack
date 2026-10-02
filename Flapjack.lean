@@ -1234,6 +1234,7 @@ import Flapjack.Misc.ListEl
 import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
 import Flapjack.Misc.Sorting
+import Flapjack.FiniteMap.Comparison
 import Flapjack.FiniteMap.UnionExact
 import Flapjack.Misc.BalancedMap.Core
 import Flapjack.Misc.BalancedMap.Rotations

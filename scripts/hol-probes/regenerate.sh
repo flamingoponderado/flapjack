@@ -4127,3 +4127,7 @@ run_probe finite_map_union_probeScript.sml finite_map_union_probe.out \
 run_probe balanced_map_semantics_probeScript.sml balanced_map_semantics_probe.out \
   bmf_normal_10 bmf_normal_20 bmf_normal_30 bmf_always_equal bmf_always_less bmf_empty bmf_key_set_definition bmf_map_definition \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"
+
+run_probe comparison_good_cmp_probeScript.sml comparison_good_cmp_probe.out \
+  gcmp_equal gcmp_less gcmp_greater gcmp_bool_order gcmp_bool_reverse gcmp_definition \
+  "$repo_dir/HOL/src/finite_maps/comparisonScript.sml" "$cake_dir/compiler/backend"

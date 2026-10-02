@@ -53943,5 +53943,13 @@
   "statement_status": "reviewed_fmap_as_finite_support_result",
   "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL825 Tip FEMPTY; Bin cached size ignored, left-biased FUNION followed by equality update at key_set cmp key. Set keys compare by actual set equality through classical DecidableEq, no Boolean comparator shortcut or new premise. Canonical finite support uses actual child supports plus root key; same-module unconditional lookup witness relates declaration on exactly one side to independent raw semanticLookup recursion. Proof-side noncomputability is no runtime replacement; production map wiring remains open. Six original full lookup outputs and both source equations captured; kernel correspondence is representation evidence, not cross-language proof.",
   "fmap_as_finite_support_result": true
+},
+{
+  "lean_path": "Flapjack/FiniteMap/Comparison.lean",
+  "lean_name": "goodCmp",
+  "hol_path": "HOL/src/finite_maps/comparisonScript.sml",
+  "hol_name": "good_cmp_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance2026-10-02 HOL17-26: all seven universally quantified conjuncts preserved in order: Equal reflexivity, Equal symmetry, Greater iff reversed Less, Equal/Less and Less/Equal interactions, Equal transitivity and Less transitivity. Arbitrary key type and comparator; constructor-for-constructor Ordering translation only, no order/equality typeclass, no extra premise or antisymmetry identifying equivalent keys. Five original finite Bool outcomes plus full source predicate preserved; kernel fixture acceptance of all-Equal comparator demonstrates distinct keys may be equivalent. No lookup/insertion or production correctness claim."
 }
 ]
