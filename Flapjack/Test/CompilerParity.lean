@@ -2,6 +2,8 @@ import Flapjack.Test.StackPropsSharedMemoryClockParity
 import Flapjack.Test.LabToTargetEncodingSimilarityParity
 import Flapjack.Test.LabToTargetPaddingSimilarityParity
 import Flapjack.Test.AsmPropsArithmeticPreservationParity
+import Flapjack.Test.TargetPropsClockParity
+import Flapjack.Test.TargetSemMachineSemParity
 import Flapjack.Test.TargetSemEvaluateParity
 import Flapjack.Test.WordAllocLiveExpressionParity
 import Flapjack.Test.WordCompileExpExactParity
@@ -11,7 +13,6 @@ import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.WordAllocGetDeltaInstParity
 import Flapjack.Test.WordAllocGetClashTreeParity
-import Flapjack.Test.TargetSemMachineSemParity
 import Flapjack.Test.RiscVBranchPolarity
 import Flapjack.Test.LabImplicitSectionZero
 import Flapjack.Test.SSAReconcileGetVars

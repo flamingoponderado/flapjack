@@ -17,7 +17,12 @@ private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 /-- Literal clocked target evaluator. Program addresses excluding FFI entries
 have priority over halt/cache addresses. Failed guards retain the original
 machine and FFI states; successful calls advance only their own oracle.
-Total EL retains HOL's shared unspecified value on arbitrary configurations. -/
+Total `holEl` calls `holHd` at index zero and recursively drops a head at
+successor indices, matching original EL/TL/HD. In-range names are their list
+elements; past the end, `holHdNil` is the shared opaque `holArb HolFfiName`.
+The private Nonempty instance proves inhabitation only and selects no concrete
+missing name. There is no names/entry-PC length premise, bounds guard, Option
+fallback, or assumption that a selected name exists. -/
 @[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "evaluate_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def evaluateTargetHOL {width : Nat} [NeZero width]

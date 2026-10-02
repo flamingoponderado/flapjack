@@ -734,6 +734,7 @@
     {"bytes": 220, "out": "stacksem_store_consts_guard_probe.out", "rows": 10, "sha256": "11329f189d284b3ea3f5e78daba9b18b3c12d33435b9fb6aeca78f3b497967d9"},
     {"bytes": 870, "out": "stacksem_store_consts_probe.out", "rows": 6, "sha256": "9d5c5896b077f2080b4de6418e406fc4b488fc4becdcd0fe203b50cf98fe4221"},
     {"bytes": 268, "out": "stacksem_word_bitmap_probe.out", "rows": 11, "sha256": "2bccd8807cc28a4cc17ec6a92d04822083c8949ea97ec1cf5bdab9b2476addaf"},
+    {"bytes": 102, "out": "target_props_clock_probe.out", "rows": 5, "sha256": "57491eec60399661caa580b0bd8d16889e3bb0820f60bd30b9621750b8d07c44"},
     {"bytes": 160, "out": "target_props_interference_probe.out", "rows": 8, "sha256": "9b8902ef84d7de51b5b581223be164199171fc8083931242ffca07152f870db1"},
     {"bytes": 213, "out": "target_sem_encoded_bytes_probe.out", "rows": 11, "sha256": "04449305adc1d0cca0217c1cdb372ca01f0dec4745825adffd0adb81cea04e77"},
     {"bytes": 392, "out": "target_sem_evaluate_probe.out", "rows": 20, "sha256": "afccdac7bd7f49b02fb88e5b9f138b4c4bbea369cf490790089ff42e2e08e49d"},

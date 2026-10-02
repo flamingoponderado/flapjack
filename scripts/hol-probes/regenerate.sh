@@ -4028,3 +4028,6 @@ run_probe word_cse_evaluation_frames_probeScript.sml word_cse_evaluation_frames_
 run_probe ssa_reconcile_get_vars_probeScript.sml ssa_reconcile_get_vars_probe.out \
   ssa_reconcile_get_vars_original_proof ssa_reconcile_get_vars_original_type \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe target_props_clock_probeScript.sml target_props_clock_probe.out \
+  tp_clock_theorem_closed tp_clock_type tp_clock_statement tp_halt_stable tp_error_stable \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

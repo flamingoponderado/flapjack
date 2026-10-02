@@ -4480,3 +4480,12 @@ native Inst clauses; LoadEvaluation support was exposed without changing its
 implementation or old theorem statements. Existing finite-map/positive-word
 translations and inherited rational-cut assumption (SOUNDNESS item 8) remain.
 These are invariant-update prerequisites, not full CSE/compiler correctness.
+
+`target_props_clock_probeScript.sml` checks the original closed
+`evaluate_add_clock` theorem against its entire quantified statement and captures
+halt/error equality at clocks one and five. The Lean theorem and generic replay
+are in `TargetProps/EvaluateAddClock.lean` and `TargetPropsClockParity.lean`.
+The proof uses clock induction on the literal evaluator, with a local heartbeat
+budget for the complete constructor case analysis. No default target or gate is
+shortened. Source-reviewed total `holEl`/`holHd` behavior is retained at both
+clocks and explicitly recorded for the evaluator and machine semantics.
