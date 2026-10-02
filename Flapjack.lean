@@ -1379,6 +1379,7 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveList
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveLoop
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveBitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveBitmaps
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveRootsBitmaps
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
