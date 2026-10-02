@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackListUpdateParity
 import Flapjack.Test.WordToStackWordListLengthParity
 import Flapjack.Test.WordToStackLiveListParity
 import Flapjack.Test.LabValidityNativeParity
