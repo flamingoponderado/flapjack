@@ -59322,5 +59322,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:781-813, proof through933: full forall n/ms1/c with arbitrary dm/i/initPc/s2/io, every original normal-PC/state/domain/interference/valid-state/projection-observer/universal-environment asserts/asserts2/encoded-region hypothesis retained. Full exists ms2 forall k conjunction of evaluate/search shifted-clock equalities and target_state_rel retained, with no extra premise or assumed evaluation/post-state. Natural-number induction derives the shifted configuration hypotheses, byte-memory preservation and literal guards. Positive type-indexed words translate to BitVec width under NeZero, host sigma Type, lists/predicate sets retained. Inherited total holEl/holHd keeps holHdNil/shared opaque holArb past end, no bounds guard, concrete fallback or length premise. Full original theorem conclusion captured; Lean kernel checks the complete proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "enc_ok_not_empty",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/EncodingNonempty.lean",
+    "lean_name": "encOkNotEmpty",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:934-938: full enc_ok c AND asm_ok w c implies c.encode w !=[] retained over exact AsmConfigExact/HolAsm carriers. Positive type-indexed words translated to BitVec width under NeZero; asm_ok truth and original lists retained, no extra premise. Proof uses original enc_ok nonempty conjunct. Original local HOL theorem is not exported, so capture replays its literal original goal and METIS_TAC[LENGTH_NIL,enc_ok_def] kernel proof in original compiled theories; complete conclusion captured."
   }
 ]

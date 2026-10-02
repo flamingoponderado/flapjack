@@ -5206,3 +5206,11 @@ behavior. A faithful port must retain that unspecified function specification
 (or prove a justified defining-body correspondence), and its missing-case
 outputs must not be treated as concrete parity fixtures. Full rotation proofs
 still need their original constructor premises and specified equations.
+
+### Target encoding nonemptiness
+
+`target_encoding_nonempty_probeScript.sml` replays the literal original local
+`enc_ok_not_empty` statement and proof in HOL; local declarations are not
+exported from `targetPropsTheory`. Its output captures the full kernel-checked
+conclusion, retaining `asm_ok`. This is regression/source-review evidence.
+Regenerate with `HOL_PROBE_ONLY=target_encoding_nonempty_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
