@@ -784,6 +784,7 @@
     {"bytes": 220, "out": "stacksem_store_consts_guard_probe.out", "rows": 10, "sha256": "11329f189d284b3ea3f5e78daba9b18b3c12d33435b9fb6aeca78f3b497967d9"},
     {"bytes": 870, "out": "stacksem_store_consts_probe.out", "rows": 6, "sha256": "9d5c5896b077f2080b4de6418e406fc4b488fc4becdcd0fe203b50cf98fe4221"},
     {"bytes": 268, "out": "stacksem_word_bitmap_probe.out", "rows": 11, "sha256": "2bccd8807cc28a4cc17ec6a92d04822083c8949ea97ec1cf5bdab9b2476addaf"},
+    {"bytes": 13870, "out": "store_init_probe.out", "rows": 34, "sha256": "35ed1c605a56ff0cd259b440614e170994b13fca30642fb64236837824bbf0a4"},
     {"bytes": 6035, "out": "store_list_code_probe.out", "rows": 26, "sha256": "34da3bfe4d7c8fe09e8bd8c812547038778c983a096cf560a2b1c2ecdf5f3949"},
     {"bytes": 52, "out": "target_props_clock_io_events_probe.out", "rows": 2, "sha256": "7cbc2f69d624b70e0a27dcaa335210031c9e594b6547c9bb2ea51b292c0473cd"},
     {"bytes": 102, "out": "target_props_clock_probe.out", "rows": 5, "sha256": "57491eec60399661caa580b0bd8d16889e3bb0820f60bd30b9621750b8d07c44"},

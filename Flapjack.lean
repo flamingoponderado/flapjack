@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackRemove.StoreInit
 import Flapjack.Compiler.Backend.StackRemove.StoreListCode
 import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
 import Flapjack.Compiler.Backend.LabToTarget.PositionAppend

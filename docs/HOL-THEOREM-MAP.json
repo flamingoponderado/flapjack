@@ -56156,5 +56156,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison: original231-241 preserves both Sum constructors, arbitrary natural address/temporary/register identifiers, word values and full list recursion. Empty gives Skip; INL emits list_Seq(const temporary value; store temporary address; add bytes address) then recursive tail; INR omits constant and stores named register. Original const/store overloads stackLang82/84 inline one for one; canonical listSeqHOL/addBytesInWordInst used, terminal Seq-to-Skip retained. Only type-indexed positive word dimension translates to BitVec width with NeZero; no bounds/success/alias restrictions or omitted cases. Full initialization and executed compile route remain separate on parent .6.6."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StoreInit.lean",
+    "lean_name": "storeInit",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "store_init_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison: original stack_removeScript250-265 is the constant INL zero-word function updated at twelve DISTINCT StoreName constructor keys. Lean constructor matching is the extensional interpretation of these updates; grouping CurrHeap/GlobReal/NextFree retains INR(k+2), TriggerGC alone branches on gen_gc, EndOfHeap/OtherHeap give2, HeapLength5, BitmapBase3, BitmapBuffer4, BitmapBufferEnd6, CodeBuffer7, CodeBufferEnd1. The five other fixed constructors and every Temp payload retain default INL0. Native StoreName is the reviewed monomorphic exact stackLang store_name, including fixed BitVec5 Temp; no generic word replacement of that field. Only arbitrary positive output word translates to BitVec width with NeZero width. Source update keys are distinct, so overwrite ordering cannot change a lookup; no finite-map qualifier applies to this total function. Nat pointer/gen_gc/domain/result quantifiers and all cases retained without bounds or success premises. Full executed initialization/compile route remains dependency-linked on parent .6.6."
   }
 ]
