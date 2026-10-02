@@ -4721,3 +4721,5 @@ get_vars theorem and its get_var prerequisite without changing premises.
 It captures the full statement and native list/value/map/bound carriers;
 source and target state captures establish their independent code/FFI hosts.
 The capture is source evidence, not a cross-assistant equivalence proof.
+
+`store_list_code_probeScript.sml` records the full original definition/type and 24 complete initializer trees at widths 1/8/64/80, with empty, constant, register and mixed lists, aliasing, arbitrary large registers, and word truncation. Native kernel fixtures retain the terminal Skip and literal right-nesting. Full init/compiler routing is tracked separately.
