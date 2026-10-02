@@ -129,7 +129,6 @@ import Flapjack.Compiler.Backend.WordAlloc.LimitVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
-
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
 import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
 import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
@@ -158,7 +157,6 @@ import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
 import Flapjack.Compiler.Backend.Parmove.InjOnState
 import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
 import Flapjack.Compiler.Backend.BackendProps
-
 import Flapjack.Compiler.Backend.LabToTarget.Interference
 import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
@@ -1270,8 +1268,6 @@ import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
 import Flapjack.Misc.Sorting
 import Flapjack.Misc.Mergesort
-
--- Tagged modules required by the HOL reference coverage gate.
 import Flapjack.Compiler.Backend.LabFilter
 import Flapjack.Compiler.Backend.LabToTarget.Compile
 import Flapjack.Compiler.Backend.LabToTarget.PaddingLength
@@ -1394,19 +1390,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsLoopControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
-
-
-/- The context-aware Crep-to-Loop correctness file is being updated alongside
-   the faithful `findLoopVar` lowering and is intentionally not in this
-   umbrella until its old identity-map assumptions are repaired. -/
-
-/-!
-# Flapjack in Lean
-
-The library currently contains the first Lean representation of Flapjack's
-front-end language. The source of truth used while porting is the CakeML HOL
-development in `cakeml/pancake`.
--/
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
@@ -1445,3 +1428,20 @@ import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
+
+
+
+-- Tagged modules required by the HOL reference coverage gate.
+
+
+/- The context-aware Crep-to-Loop correctness file is being updated alongside
+   the faithful `findLoopVar` lowering and is intentionally not in this
+   umbrella until its old identity-map assumptions are repaired. -/
+
+/-!
+# Flapjack in Lean
+
+The library currently contains the first Lean representation of Flapjack's
+front-end language. The source of truth used while porting is the CakeML HOL
+development in `cakeml/pancake`.
+-/
