@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.Fetch
 import Flapjack.Misc.Sptree.Subspt
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.RawCall
@@ -1871,4 +1872,3 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
-import Flapjack.RiscV.L3.Defs.Fetch

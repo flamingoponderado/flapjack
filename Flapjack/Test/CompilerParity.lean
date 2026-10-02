@@ -1,3 +1,4 @@
+import Flapjack.Test.L3ModelFetchParity
 import Flapjack.Test.LabToTargetEncodingValidityClosureParity
 import Flapjack.Test.LabToTargetProgramByteLengthsParity
 import Flapjack.Test.LabToTargetPositionExtensionParity
@@ -2026,4 +2027,3 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
 end Flapjack.Test.CompilerParity
 
 def main : IO Unit := Flapjack.Test.CompilerParity.main
-import Flapjack.Test.L3ModelFetchParity
