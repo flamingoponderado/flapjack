@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
 
@@ -376,5 +377,95 @@ theorem returningCutSSA {α : Type} (next : Nat) (ssa : Spt Nat)
     refine ⟨(sptMem_iff_lookup key _).mpr ⟨register,interLookup⟩,?_,fun _ => below key inNames⟩
     simpa only [interLookup,Option.getD_some,optionLookup,original] using
       matching key value ⟨inNames,read⟩
+
+
+/-- Flapjack-specific original8575-8590 physical return reread factoring.
+The actual rename's physical lookup preservation and duplicate-free convention
+writes derive the getVars result after retMov; no successful target read is
+assumed. No standalone HOL declaration exists. -/
+theorem returningRestoreRegistersRead {width : Nat} [NeZero width] {C F : Type}
+    (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat)
+    (names : Spt Unit) (counter count : Nat) (values : List (WordLocW width))
+    (related : ssaLocalsRel counter (sptInter ssa names) source.locals target.locals)
+    (valid : ssaMapOK counter ssa)
+    (sourceDomain : sptDomain source.locals = sptDomain names)
+    (length : values.length = count) (nonphysical : ¬ isPhyVar (counter+2))
+    (frame : Flapjack.WordAlloc.wordStateEqRel source target) :
+    let registers := (List.range count).map (fun index => 2*(index+1))
+    let prepared := WordSemStateFiniteExact.setVars registers values target
+    let (move,mapOut,nextOut) := listNextVarRenameMove (width := width)
+      (sptInter ssa names) (counter+2) ((sptToAList names).map Prod.fst)
+    let (result,targetOut) := WordSemStateFiniteExact.evaluate move prepared
+    result = none ∧ ssaLocalsRel nextOut mapOut source.locals targetOut.locals ∧
+      Flapjack.WordAlloc.wordStateEqRel source targetOut ∧
+      WordSemStateFiniteExact.getVars registers targetOut = some values := by
+  let registers := (List.range count).map (fun index => 2*(index+1))
+  have physical : ∀ register ∈ registers, isPhyVar register := by
+    intro register member
+    obtain ⟨index,_,rfl⟩ := List.mem_map.mp member
+    simp [isPhyVar]
+  have distinct : registers.Nodup := by
+    apply List.Nodup.map _ List.nodup_range
+    intro x y equal
+    change 2*(x+1) = 2*(y+1) at equal
+    omega
+  have lengths : registers.length = values.length := by simp [registers,length]
+  have inserted := ssaLocalsRelIgnoreListInsert counter (sptInter ssa names)
+    source target registers values
+    ⟨ssaMapOKInter counter ssa names valid,related,physical,lengths⟩
+  have present : ∀ key ∈ (sptToAList names).map Prod.fst, sptDomain source.locals key := by
+    intro key member
+    rw [sourceDomain]
+    exact (sptMemMapFstToAList names key).mp member
+  have restored := listNextVarRenameMovePreserve source (sptInter ssa names) (counter+2)
+    ((sptToAList names).map Prod.fst) (WordSemStateFiniteExact.setVars registers values target)
+    ⟨ssaLocalsRelMore counter _ _ _ (counter+2) ⟨inserted,by omega⟩,
+      present,sptAllDistinctMapFstToAList _,
+      ssaMapOKMore counter _ (counter+2) ⟨ssaMapOKInter counter ssa names valid,by omega⟩,frame⟩
+  dsimp only at restored ⊢
+  refine ⟨restored.1,restored.2.1,restored.2.2.1,?_⟩
+  apply ssaGetVarsOfZip registers values _ lengths
+  intro register value member
+  rw [restored.2.2.2.1 nonphysical register (physical register (List.of_mem_zip member).1)]
+  exact ssaAlistInsertLookupMember registers values target.locals distinct lengths register value member
+
+/-- Flapjack-specific original8590-8610 actual continuation result binding.
+The internal return-register read and renamed cut SSA derive the generated
+copy Move and the source/target result-variable SSA relation. No target run or
+post-relation premise; the continuation IH is applied by the full case. -/
+theorem returningBindResults {width : Nat} [NeZero width] {C F : Type}
+    (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat) (next : Nat)
+    (names : List Nat) (values : List (WordLocW width))
+    (related : ssaLocalsRel next ssa source.locals target.locals)
+    (valid : ssaMapOK next ssa) (nonphysical : ¬ isPhyVar next)
+    (below : ∀ name ∈ names, name < next) (distinct : names.Nodup)
+    (lengths : names.length = values.length)
+    (read : WordSemStateFiniteExact.getVars
+      ((List.range names.length).map (fun index => 2*(index+1))) target = some values)
+    (frame : Flapjack.WordAlloc.wordStateEqRel source target) :
+    let (outputs,mapOut,nextOut) := listNextVarRename names ssa next
+    let registers := (List.range names.length).map (fun index => 2*(index+1))
+    WordSemStateFiniteExact.evaluate (.move 1 (outputs.zip registers)) target =
+      (none,WordSemStateFiniteExact.setVars outputs values target) ∧
+    ssaLocalsRel nextOut mapOut
+      (WordSemStateFiniteExact.setVars names values source).locals
+      (WordSemStateFiniteExact.setVars outputs values target).locals ∧
+    Flapjack.WordAlloc.wordStateEqRel (WordSemStateFiniteExact.setVars names values source)
+      (WordSemStateFiniteExact.setVars outputs values target) := by
+  generalize produced : listNextVarRename names ssa next = output
+  rcases output with ⟨outputs,mapOut,nextOut⟩
+  have arithmetic := listNextVarRenameLemma1 names ssa next outputs mapOut nextOut produced
+  have outputLength : outputs.length = names.length := by rw [arithmetic.2.1]; simp
+  have matching := ssaLocalsRelListNextVarRename names ssa next source.locals target.locals
+    outputs mapOut nextOut values ⟨produced,related,valid,lengths,below,distinct,nonphysical⟩
+  dsimp only
+  refine ⟨?_,matching,frame⟩
+  have zipLengths : outputs.length =
+      ((List.range names.length).map (fun index => 2*(index+1))).length := by
+    simpa using outputLength
+  simp only [WordSemStateFiniteExact.evaluate,
+    List.map_fst_zip (Nat.le_of_eq zipLengths),
+    List.map_snd_zip (Nat.le_of_eq zipLengths.symm),
+    arithmetic.1,if_true,read]
 
 end Flapjack.Compiler.Backend.WordAlloc

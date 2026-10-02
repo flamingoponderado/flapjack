@@ -63299,5 +63299,21 @@
   "lean_name": "returningCutSSA",
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific inline returning Call8477-8550 factoring, no standalone HOL declaration. Actual callee key/value stack facts and pushed root-map correspondence derive successful source/target pops, complete wordStateEqRel, popped cut domain and all value lookup transport using native pushEnvPopEnvSKeyEq/popEnvFrame/keyMapImplies/allocLocalsRel. Internal actual cut domain/scoped lookup relation plus map-domain and source-bound facts reconstruct all restricted SSA conjuncts. No desired popped-local relation/output SSA or target evaluation premise. Continuation/exception full returning Call and fullSSA assembly remain open on flapjack-sola-callreturn."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+  "lean_name": "returningRestoreRegistersRead",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific inline returning Call8575-8610 factoring, no standalone HOL declaration. Existing actual retMov preservation plus duplicate-free physical convention writes derive successful return-register rereads; actual listNextVarRename producer and Move copy derive NONE/source-setVars versus target-setVars SSA/frame from internal cut SSA/map/nonphysical/bounds and native Call return Nodup/length guards. No target continuation run or desired output relation premise. Counter class/bounds are internal original producer facts to be discharged in full case. Full continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+  "lean_name": "returningBindResults",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific inline returning Call8575-8610 factoring, no standalone HOL declaration. Existing actual retMov preservation plus duplicate-free physical convention writes derive successful return-register rereads; actual listNextVarRename producer and Move copy derive NONE/source-setVars versus target-setVars SSA/frame from internal cut SSA/map/nonphysical/bounds and native Call return Nodup/length guards. No target continuation run or desired output relation premise. Counter class/bounds are internal original producer facts to be discharged in full case. Full continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn."
 }
 ]
