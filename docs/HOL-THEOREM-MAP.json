@@ -51072,5 +51072,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead flapjack-sol2-top-label-safety: 11903-11933: EVERY source good_handlers followed by the full four-component compile asm_conf F prog equation; exact stack_good_handler_labels conclusion, no source code-label safety premise. Source false flag retained literally; actual compileNative, reviewed exact AsmConfigExact/WordLangProgHOL/HolProg and native Config, lists, Nat indices and sets retained. Only original word dimension translated to positive-width BitVec width/NeZero. Proof derives target safety from accepted full compiled-label bound and key preservation; no target predicate, target run, stronger source assumption or supplied simulation. Full literal original HOL proof replay plus independent actual compiler boundary propositions and Lean kernel replay. Regression evidence is not a cross-language equivalence proof; full compiler correctness remains unfinished."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "the_words_EVERY_IS_SOME_Word",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/WordExtraction.lean",
+    "lean_name": "theWordsEveryIsSomeWord",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead flapjack-word-stack-word-extraction: 4068-4072: full successful extraction implies a SOME Word witness for every original member. Actual executed native theWords/WordLocW reused; only original word dimension becomes positive BitVec width with NeZero. Lists/options/Nat metadata and all quantified variables/guards retained; no extra bounds/equality/default-validity/target-run assumptions. Full literal original proofs and 136 independent original complete outputs replayed; Lean kernel/runtime fixture evidence does not prove cross-language equivalence. This is genuine complete-inventory work, not a claimed active comp_correct prerequisite: subsequent legacy consumers occur in a commented source block. Coordinator acceptance and full compiler goal remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "the_words_SOME_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/WordExtraction.lean",
+    "lean_name": "theWordsSomeEq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead flapjack-word-stack-word-extraction: 4074-4078: whole extracted list equals MAP of the anonymous SOME Word projection. Every input is proved SOME Word under exactly the source success premise; elided case branches are unreachable. Untagged successfulWordProjection uses existing approved Option.holThe, introduces no default/policy and makes no cross-language default-value claim. Actual executed native theWords/WordLocW reused; only original word dimension becomes positive BitVec width with NeZero. Lists/options/Nat metadata and all quantified variables/guards retained; no extra bounds/equality/default-validity/target-run assumptions. Full literal original proofs and 136 independent original complete outputs replayed; Lean kernel/runtime fixture evidence does not prove cross-language equivalence. This is genuine complete-inventory work, not a claimed active comp_correct prerequisite: subsequent legacy consumers occur in a commented source block. Coordinator acceptance and full compiler goal remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "the_words_MAP_exists",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/WordExtraction.lean",
+    "lean_name": "theWordsMapExists",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead flapjack-word-stack-word-extraction: 4080-4087: independent arbitrary mapped-source carrier/function, conjunction of successful mapped extraction and member premise, existential exact SOME Word payload witness. Actual executed native theWords/WordLocW reused; only original word dimension becomes positive BitVec width with NeZero. Lists/options/Nat metadata and all quantified variables/guards retained; no extra bounds/equality/default-validity/target-run assumptions. Full literal original proofs and 136 independent original complete outputs replayed; Lean kernel/runtime fixture evidence does not prove cross-language equivalence. This is genuine complete-inventory work, not a claimed active comp_correct prerequisite: subsequent legacy consumers occur in a commented source block. Coordinator acceptance and full compiler goal remain open."
   }
 ]
