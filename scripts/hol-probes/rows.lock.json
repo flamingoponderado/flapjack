@@ -187,6 +187,7 @@
     {"bytes": 88, "out": "globals_lookup_probe.out", "rows": 3, "sha256": "c446a12949f8e3acf58fee8139991a07cd8d7559f6eb5a367123f21021b4c978"},
     {"bytes": 729, "out": "hol_fcp_index_n2w_probe.out", "rows": 14, "sha256": "cbfcab37c2a20141de3fde298902170ea01db94109cfe82029568dd26e51e19d"},
     {"bytes": 140, "out": "hol_list_el_probe.out", "rows": 8, "sha256": "cfcdfbf3a4af89501d6bef22fba8e243d7a0872f2a5b2a4432ebe568177291ca"},
+    {"bytes": 630, "out": "hol_mergesort_probe.out", "rows": 18, "sha256": "f21073d6c3ba873a7301c709deeb95fc47d830992e0af715607c1f76f26ae840"},
     {"bytes": 412, "out": "hol_sorting_probe.out", "rows": 14, "sha256": "ac959c6f311fbb14bb9cdea997f6151952925df527e4c4f5a709b66b2f1805ee"},
     {"bytes": 583, "out": "hol_word_arithmetic_probe.out", "rows": 13, "sha256": "de8ecd5dd96ff87ed4f8aae184a500d303c337c564ab04275870567a195e9caf"},
     {"bytes": 1008, "out": "keep_annot_probe.out", "rows": 1, "sha256": "0e8bf163c41d6e8ca23c0abab93c800b6bd8776efabdd96291e35366f1036038"},

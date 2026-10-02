@@ -1240,6 +1240,7 @@ import Flapjack.Misc.ListEl
 import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
 import Flapjack.Misc.Sorting
+import Flapjack.Misc.Mergesort
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
 import Flapjack.Compiler.Backend.LinearScan.Proofs
 import Flapjack.Misc.Sptree.ToAList
@@ -1323,8 +1324,12 @@ import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.PhaseSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.EdgeInsertion
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.CliqueSuccess
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.AtempAssignment
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.StempAssignment
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.CoalesceSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.FreezeSpillSuccess
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoAlloc1Success
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
 import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter

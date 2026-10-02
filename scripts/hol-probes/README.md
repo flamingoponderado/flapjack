@@ -3086,6 +3086,13 @@ non-transitive relation for `SORTED`), kernel-replayed in `HolSortingParity`.
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=hol_sorting_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`hol_mergesort_probe` captures the original HOL `mergesort$sort2`, `sort3`, `merge` and
+`mergesortN` types and 14 EVAL results at the pinned HOL revision (a non-strict, a strict
+and a non-total relation, unsorted `merge` inputs, and `mergesortN` counts below, above and
+equal to the list length), kernel-replayed in `HolMergesortParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=hol_mergesort_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `hol_list_el_probe` captures the original HOL `HD`/`EL` types and six in-range
 values at the pinned HOL revision (`HD []` and out-of-range `EL` are
 unspecified and not probed), kernel-replayed in `HolListElParity`. Regenerate
