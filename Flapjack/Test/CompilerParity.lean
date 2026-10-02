@@ -1,3 +1,5 @@
+import Flapjack.Test.L3IntegerLoadModeParity
+import Flapjack.Test.L3AddressExceptionParity
 import Flapjack.Test.L3ModelFetchParity
 import Flapjack.Test.LabToTargetEncodingValidityClosureParity
 import Flapjack.Test.LabToTargetProgramByteLengthsParity

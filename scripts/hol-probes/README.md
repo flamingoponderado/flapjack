@@ -6216,3 +6216,15 @@ The original walk clears the low PPN bits at a superpage level and sets PTE_R
 (bit 5), yielding PTE3111 and physical offset1656 in these two walk cases.
 This is the full model Fetch, distinct from riscv_step Fetch; probes are
 regression evidence, not cross-assistant equivalence or full modelRun coverage.
+
+`l3_address_exception_probe.out` captures the complete original native
+`signalAddressException` definition/type and four fault-kind/address/current-core
+observations. The corresponding Lean guard proves an unconditional full-state
+update for arbitrary native states, with no core bound or address-validity premise.
+
+`l3_integer_load_mode_probe.out` captures complete `architecture`, `curArch` and
+`in32BitMode` equations/types and all four two-bit selectors on core255 with
+`totalCore=1`. Selector1 keeps the canonical unspecified Architecture/Boolean
+and the original UNDEFINED message. Lean regressions preserve arbitrary unrelated
+state and the first-exception rule; no default selector result is inferred.
+These are integer-load prerequisites, not full instruction/Run/Next assembly.

@@ -67707,5 +67707,37 @@
     "hol_name": "Fetch_def",
     "statement_status": "reviewed_exact",
     "reviewer": "Source compared model riscvScript.sml:11947-12156, not step Fetch: Unit argument/full native riscv_state and FetchResult carriers. PC bit0 error preserves original state before translation. NONE translation fault preserves returned state. SOME rawReadInst on returned state followed by all nine literal sequential Delta writes (exc_taken/fetch_exc false, virtual pc/raw rinstr, addr/data1/data2/fp_data/st_width NONE), preserving other cores and all other state fields/MMU effects. Existing Delta/writeDelta are reviewed exact Defs.lean declarations; no extra success/alignment/core-bound premise and no substituted evaluator."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AddressException.lean",
+    "lean_name": "signalAddressException",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "signalAddressException_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison riscvScript3460-3472: exact ExceptionType x word64 argument, full riscv_state -> riscv_state, setTrap(e,SOME vAddr) with original returned state. Dependencies setTrap3433-3459 and write NextFetch preserve all other state/core fields. Native fixed-width carriers match reviewed Types, canonical arbitrary intermediate SynchronousTrap overwritten at both fields. No premise or branch narrowing; full integer instruction assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoadMode.lean",
+    "lean_name": "architecture",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "architecture_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison pinned riscvScript397-415/1417-1440: complete architecture_def literal equation, all2-bit selector routes. Source0 RV32I/2 RV64I/3 RV128I retain original state; invalid1 raises original UNDEFINED Unknown architecture: decimal-selector message and canonical ARB Architecture. curArch reads original current-core MCSR.mcpuid.ArchBase; in32BitMode compares result with RV32I and forwards returned state. Fixed positive native widths and full state function carriers match Types; no mode/core-bound premise or forced unspecified result. Full integer instruction assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoadMode.lean",
+    "lean_name": "curArch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "curArch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison pinned riscvScript397-415/1417-1440: complete curArch_def literal equation, all2-bit selector routes. Source0 RV32I/2 RV64I/3 RV128I retain original state; invalid1 raises original UNDEFINED Unknown architecture: decimal-selector message and canonical ARB Architecture. curArch reads original current-core MCSR.mcpuid.ArchBase; in32BitMode compares result with RV32I and forwards returned state. Fixed positive native widths and full state function carriers match Types; no mode/core-bound premise or forced unspecified result. Full integer instruction assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoadMode.lean",
+    "lean_name": "in32BitMode",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "in32BitMode_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison pinned riscvScript397-415/1417-1440: complete in32BitMode_def literal equation, all2-bit selector routes. Source0 RV32I/2 RV64I/3 RV128I retain original state; invalid1 raises original UNDEFINED Unknown architecture: decimal-selector message and canonical ARB Architecture. curArch reads original current-core MCSR.mcpuid.ArchBase; in32BitMode compares result with RV32I and forwards returned state. Fixed positive native widths and full state function carriers match Types; no mode/core-bound premise or forced unspecified result. Full integer instruction assembly remains open."
   }
 ]

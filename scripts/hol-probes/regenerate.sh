@@ -5809,3 +5809,11 @@ run_probe lab_to_target_byte_interval_distinct_probeScript.sml lab_to_target_byt
   interval0 interval1 interval2 interval3 interval4 interval5 same_pc_guard byte_bound_guard dimensional_bound_guard \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe l3_address_exception_probeScript.sml l3_address_exception_probe.out \
+  address_exception_definition address_exception_type load_zero store_max misaligned arbitrary_exception \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_integer_load_mode_probeScript.sml l3_integer_load_mode_probe.out \
+  architecture_definition architecture_type curArch_definition curArch_type in32BitMode_definition in32BitMode_type selector_0 selector_1 selector_2 selector_3 \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
