@@ -324,4 +324,46 @@ theorem installRestoreResult {width : Nat} [NeZero width] {C F : Type}
   rw [seqRun]
   exact ⟨restored.1,restored.2.1,restored.2.2.1⟩
 
+
+/-- Flapjack-specific aligned Install callback transport. Both sides' successful
+argument/cut guards are internal facts derived by preparation, not public pass
+correctness premises. The actual total evaluator's compile/buffer/oracle/code
+branches determine the result and post-state frame; no target run is assumed.
+The successful local shapes are proved for subsequent native restoration.
+No standalone HOL declaration exists for this factoring. -/
+theorem installCallbacksAligned {width : Nat} [NeZero width] {C F : Type}
+    (source target : WordSemStateFiniteExact width C F)
+    (ptr len dptr dlen targetPtr targetLen targetDptr targetDlen : Nat)
+    (names targetNames : WordLangCutsetsHOL)
+    (sourceEnv targetEnv : Spt (WordLocW width))
+    (pointer length dataPointer dataLength : BitVec width)
+    (frame : Flapjack.WordAlloc.wordStateEqRel source target)
+    (sourceCut : wordSemCutEnv names source.locals = some sourceEnv)
+    (targetCut : wordSemCutEnv targetNames target.locals = some targetEnv)
+    (sourcePtr : WordSemStateFiniteExact.getVar ptr source = some (.word pointer))
+    (sourceLen : WordSemStateFiniteExact.getVar len source = some (.word length))
+    (sourceDptr : WordSemStateFiniteExact.getVar dptr source = some (.word dataPointer))
+    (sourceDlen : WordSemStateFiniteExact.getVar dlen source = some (.word dataLength))
+    (targetPtrRead : WordSemStateFiniteExact.getVar targetPtr target = some (.word pointer))
+    (targetLenRead : WordSemStateFiniteExact.getVar targetLen target = some (.word length))
+    (targetDptrRead : WordSemStateFiniteExact.getVar targetDptr target = some (.word dataPointer))
+    (targetDlenRead : WordSemStateFiniteExact.getVar targetDlen target = some (.word dataLength)) :
+    let sourceRun := WordSemStateFiniteExact.evaluate (.install ptr len dptr dlen names) source
+    let targetRun := WordSemStateFiniteExact.evaluate
+      (.install targetPtr targetLen targetDptr targetDlen targetNames) target
+    sourceRun.1 = targetRun.1 ∧
+      Flapjack.WordAlloc.wordStateEqRel sourceRun.2 targetRun.2 ∧
+      (sourceRun.1 = none → ∃ label,
+        sourceRun.2.locals = sptInsert ptr (.loc label 0) sourceEnv ∧
+        targetRun.2.locals = sptInsert targetPtr (.loc label 0) targetEnv) := by
+  rcases frame with ⟨h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21⟩
+  simp only [WordSemStateFiniteExact.evaluate,sourceCut,targetCut,sourcePtr,sourceLen,
+    sourceDptr,sourceDlen,targetPtrRead,targetLenRead,targetDptrRead,targetDlenRead,
+    h14,h18,h19,h20,h21]
+  repeat' first
+    | split
+    | (solve | simp_all [Flapjack.WordAlloc.wordStateEqRel])
+  all_goals simp_all [Flapjack.WordAlloc.wordStateEqRel]
+  all_goals first | exact ⟨_,rfl,rfl⟩ | grind
+
 end Flapjack.Compiler.Backend.WordAlloc
