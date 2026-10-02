@@ -57930,5 +57930,89 @@
     "hol_name": "ALL_DISTINCT_MEM_toAList_fromAList",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-sorted-alist), source2633-2680/5576-5584: same arbitrary list and entry, original distinct key map guard and native Spt roundtrip membership equivalence; no wf, sortedness, payload equality, observer, output lookup or reconstruction premise. Spt native tree carrier, Nat keys, arbitrary payloads, HOL lists/products and adjacent strict sorting retained; no word or representation qualifier needed. Literal complete original theorem replay and native boundary fixtures."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstLoad.lean",
+    "lean_name": "ssaCcTransCorrectInstLoad",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: full native Mem Load8115-8123 case of ssa_cc_trans_correct, original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targeteval/success/poststate/IH assumptions. Actual compiler maps address base before fresh destination rename; native wordExp Add Var/Const and memLoad domain/memory clauses match HOL. Original expression relation derives target address; original frame equates memory/domain and proves sameLoad; original fresh setVar relation establishes final locals. Expression NONE/Loc address/memory-domain miss preserve source Error exemption. Native Nat registers/positiveBitVec offset and sharedType0 code-FFI/state/Spt/table carriers compared with original kernel theorem specialization. Canonical fpRegs/store finite-support and words translation only; inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Original opcode proof manually reviewed; original kernel theoremQ.SPEC/carriers PASS, no standalone tactic replay claimed. Lean kernel PASS; fullInst remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstLoad8.lean",
+    "lean_name": "ssaCcTransCorrectInstLoad8",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: full native Mem Load8 8124-8132 of ssa_cc_trans_correct, original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targeteval/success/poststate/IH assumptions. Compiler maps original addressbase before fresh destination; original expression relation derives target address. Original frame equates native memory/domain/be, deriving same memLoadByteAuxExact result; actual byte alignment/endianness/domain/Loc memory failures match original byte-loader. Loaded BitVec8 setWidth width matches HOL w2w byte-to-word; original fresh setVar relation proves updatedlocals. Expression NONE/Loc address/byte-loader NONE retain Error exemption. Native Nat registers/positiveBitVec offset/sharedType0 code-FFI/state/Spt/table carriers compared to original kernel theorem specialization. Canonical fpRegs/store finite-support and words translation only, inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Source opcode manually reviewed; original kernel theoremQ.SPEC/carriersPASS, no standalone tacticreplayclaimed. Lean kernelPASS; fullInst remainsopen."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstLoad32.lean",
+    "lean_name": "ssaCcTransCorrectInstLoad32",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: full native Mem Load32 8133-8142 of ssa_cc_trans_correct, original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targeteval/success/poststate/IH assumptions. Compiler maps original addressbase before fresh destination. Original expression relation derives target address; original frame equates memory/domain/be, deriving same native memLoad32Exact result including original alignment/domain/nonword errors and endianness. Loaded BitVec32 setWidth width matches HOL w2w32-bit-to-word; originalfresh setVar relation proves updatedlocals. Expression NONE/Loc address/load32 NONE retain Error exemption. Native Nat registers/positiveBitVec offset/sharedType0 code-FFI/state/Spt/table carriers compared to original kernel theorem specialization. Canonical fpRegs/store finite-support and words translation only, inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Source opcode manually reviewed; original kernel theoremQ.SPEC/carriersPASS, no standalone tacticreplayclaimed. Lean kernelPASS; fullInst remainsopen."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstStore.lean",
+    "lean_name": "ssaCcTransCorrectInstStore",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: full native Mem Store8143-8154 case of ssa_cc_trans_correct, original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targeteval/success/poststate/IH assumptions. Actual compiler maps original addressbase/data and leavesSSA/next unchanged. Original expression/getVar relations derive target word address and arbitraryWordLoc data, includingLoc. Actual memStore domain condition and address-update function match HOL domain/(address=+value) memory. Original frame proves targetdomain/memory andupdatedmemory frame; locals unchanged. Expression NONE/Loc address/dataread NONE/domainmiss preserve sourceError exemption. Native Nat registers/positiveBitVec offset/sharedType0 code-FFI/state/Spt/table carriers compared to originalkernel theorem specialization. CanonicalfpRegs/store finite-support andwords translation only, inheritsreals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Originalopcode proof manuallyreviewed; originalkernel theoremQ.SPEC/carriersPASS, no standalonetacticreplayclaimed. Lean kernelPASS; fullInst remainsopen."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstStore8.lean",
+    "lean_name": "ssaCcTransCorrectInstStore8",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: full native Mem Store8 8155-8163 case of ssa_cc_trans_correct, original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targeteval/success/poststate/IH assumptions. Compiler maps originaladdress/data andleavesSSA/next unchanged. Original expression/getVar relations derive targetwordaddress andworddata; NONE/Loc address/missing/nonworddata retain Error exemption. Native valueWord.setWidth8 matches HOL w2w word-to-byte. Original frame equatesmemory/domain/be and derives identical memStoreByteAuxExact result, includingaligneddomain/nonwordmemory failures andbyteendianness update. Successfulmemoryrecordupdate proves sameframe andunchangedlocals. Native Nat registers/positiveBitVecoffset/sharedType0 code-FFI/state/Spt/tablecarriers comparedto originalkernel theorem specialization. CanonicalfpRegs/store finite-support andwords translationonly, inheritsreals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Originalopcode proofmanuallyreviewed; originalkernel theoremQ.SPEC/carriersPASS no standalonetacticreplayclaimed. Lean kernelPASS; fullInst remainsopen."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstStore32.lean",
+    "lean_name": "ssaCcTransCorrectInstStore32",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: full native Mem Store32 8164-8173 case of ssa_cc_trans_correct, original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targeteval/success/poststate/IH assumptions. Compiler maps originaladdress/data andleavesSSA/next unchanged. Original expression/getVar relations derive targetwordaddress andworddata; NONE/Loc address/missing/nonworddata retain Error exemption. Native valueWord.setWidth32 matches HOL w2w word-to-32-bit. Original frame equatesmemory/domain/be and derives identical memStore32Exact result, includingalignment/aligneddomain/nonwordmemory failures andfour-byte endianness update. Successfulmemoryrecordupdate proves sameframe andunchangedlocals. Native Nat registers/positiveBitVecoffset/sharedType0 code-FFI/state/Spt/tablecarriers comparedto originalkernel theorem specialization. CanonicalfpRegs/store finite-support andwords translationonly, inheritsreals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Originalopcode proofmanuallyreviewed; originalkernel theoremQ.SPEC/carriersPASS no standalonetacticreplayclaimed. Lean kernelPASS; fullInst remainsopen."
   }
 ]

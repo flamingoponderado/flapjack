@@ -4893,6 +4893,41 @@ complete native state/register/SSA/table carriers. Opcode8092–8113, signed
 wrapped difference test and physical/fresh-flag output path are manually
 compared. No standalone tactic replay is claimed.
 
+`ssa_cc_trans_correct_inst_load_probeScript.sml` captures the original kernel
+theorem specialization at native Mem Load and full state/register/offset-word/
+SSA/table carriers. Original opcode8115–8123, address expression, domain errors
+and fresh destination relation are manually compared; no standalone tactic
+replay is claimed.
+
+`ssa_cc_trans_correct_inst_load8_probeScript.sml` captures the original kernel
+theorem specialization at Mem Load8 and complete native state/register/offset/
+SSA/table carriers. Opcode8124–8132, domain/endianness byte-load branches and
+HOL w2w byte-to-word fresh update are manually compared; no standalone tactic
+replay is claimed.
+
+`ssa_cc_trans_correct_inst_load32_probeScript.sml` captures the original kernel
+theorem specialization at Mem Load32 and complete native state/register/offset/
+SSA/table carriers. Opcode8133–8142, alignment/domain/endianness errors and
+HOL w2w 32-bit-to-word fresh update are manually compared; no standalone tactic
+replay is claimed.
+
+`ssa_cc_trans_correct_inst_store_probeScript.sml` captures the original kernel
+theorem specialization at Mem Store and complete native state/register/offset/
+SSA/table carriers. Opcode8143–8154, arbitrary WordLoc data, domain errors and
+memory-update frame/unchanged locals are manually compared; no standalone
+tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_store8_probeScript.sml` captures the original kernel
+theorem specialization at Mem Store8 and complete native state/register/offset/
+SSA/table carriers. Opcode8155–8163, word-to-byte/data-type errors, byte-store
+domain/endianness update and unchanged-locals frame are manually compared; no
+standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_store32_probeScript.sml` captures the original kernel
+theorem specialization at Mem Store32 and complete native state/register/offset/
+SSA/table carriers. Opcode8164–8173, word-to-32-bit/data-type errors, alignment,
+domain and four-byte endianness update, and unchanged-locals frame are manually
+compared; no standalone tactic replay is claimed.
 ### Balanced-map core independent carriers
 
 `balanced_map_core_types_probeScript.sml` captures the complete fully typed original
