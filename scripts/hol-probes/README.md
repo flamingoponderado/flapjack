@@ -6066,6 +6066,7 @@ Assembler-naming Inst probe captures the original generic seven-guard case appli
 `stack_alloc_generational_alloc_statement_probeScript.sml` and its `.out` capture the literal original `alloc_correct_lemma_Generational` statement, explicitly resolving `stack_alloc$compile`. The typed free variables confirm that `c` is the compiler config. This is statement elaboration evidence, not an executable oracle or proof replay. The Lean partial case retains all original premises and conclusions with the original partial-selector case condition; the full collector case remains open.
 Assembler-naming flat-constructor probe freshly prints the original general theorem with no open hypotheses and558 direct validity/complete-guard/actual-target-name observations (510T48F). Matching kernel fixtures include150 full seven-guard case applications. It covers all19 remaining nonrecursive constructors at widths1/2/8/32/64/80, both policy flags across families, arbitrary70bit natural fields, cycle/empty/odd moves, fixed five-bit Temp, ASCII mlstring FFI names, empty/nonempty live sets and constant lists, zero frame tail, strict frame minimum, natural subtraction underflow and rejected source conventions. Direct naming predicates are regression observations, not complete compiled-output comparisons or HOL-to-Lean equivalence. Recursive cases and full naming/compiler assembly remain open. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_flat_probeScript.sml.
 
+Whole-program assembler-naming probe freshly prints the original theorem with no open hypotheses and288 direct complete-seven-guard/actual-target-name predicates, allT. Matching kernel fixtures independently reduce the naming predicates and apply the complete all-program theorem144 times. Twelve families cover MustTerminate/Loop/Seq, register/accepted-immediate/loaded-immediate If, direct and indirect tail Call, empty returning Call, spilling returning Call, handler Call and nested combinations at widths1/2/8/32/64/80 with both two-register policies. Tail Call retains an ignored invalid handler; raw labels/frame tails exceed64 bits. Original bitmap input uses Append; actual compilation threads residual bitmaps. These are naming-predicate regressions, not complete compiled-output comparisons or cross-language equivalence. Full assembler conventions and compiler correctness remain open. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_compiler_probeScript.sml.
 ### Complete native L3 square-root equations
 
 `l3_riscv_sqrt_probeScript.sml` captures 56 original FSQRT_S/D cases over
@@ -6091,3 +6092,20 @@ collector success and both normal and insufficient-space Halt outcomes. This
 capture supplies statement elaboration evidence for both cases, not executable
 oracle coverage or proof replay. The full generational assembly and coordinator
 acceptance remain separate open work.
+### Native L3 separately rounded multiply/add/subtract instructions
+
+`l3_riscv_madd_probeScript.sml` captures 240 complete original FMADD/FMSUB/
+FNMADD/FNMSUB S/D cases. The original L3 clauses first round the product to
+a word, then decode it for a separately rounded add/subtract; the negative
+variants negate the final result. They do not use a hardware-fused primitive.
+The 208 numeric eleven-field tuples cover all four modes, dynamic rounding,
+invalid modes, signed zero, infinities and negative finite values. In both
+formats, the ties-even discriminator `(1 + ulp) * (1 - ulp) - 1` returns zero,
+while a truly fused operation would retain the small negative exact result.
+Thirty-two closed whole-state invalid-product equations preserve nested NaN
+choices without selecting payloads. `Flapjack.Test.L3RiscvMaddParity` replays
+the same inputs, states and expectations in the kernel. Full IEEE arithmetic
+uses the existing rational-real rendering assumption (docs/SOUNDNESS.md item 8);
+this does not establish HOL-to-Lean equivalence or full model correctness.
+
+`state_transformer_for_probe.out` records four complete original unit/state results for inclusive ascending, descending, equal-zero and descending-through-zero FOR. Kernel regressions in Misc/StateTransformer preserve all endpoints and the initial list state.
