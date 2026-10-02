@@ -5989,3 +5989,17 @@ and conclusion; its native port retains only the initial locals-domain premise.
 These are source-review regression captures, not cross-language equivalence.
 The executed SSA migration and end-to-end correctness remain open.
 `word_to_stack_asm_remove_compiler_probe` captures the entire original word_to_stack_stack_asm_remove_lem with hyp=[], then 280 original full-theorem applications and their guards at widths1/2/8/64/80, frames0/4, all26 source constructor families including all three Call forms and nested bitmap-changing bodies. Config retains arbitrary non-count fields and duplicate70-bit avoided registers, bitmap lists are nonempty, frame offsets and spilled arguments are70-bit. Lean fixtures apply the full theorem at those exact inputs. Frame0 exercises absence of post-allocation/minimum-frame assumptions. This is original theorem-application evidence, not fresh replay of its proof or HOL-to-Lean equivalence.
+## Complete binary64 directed rounding agreement
+
+BinaryIeeeDirectedFp64 proves all3 directed clauses and all4mode agreement for
+every rational input and both requested zero signs. Source comparison retains
+HOL round_def411–443 strict largest guards, exact per-mode infinity/clamp,
+finite candidate predicates, and float_round_def507–515 zero override. This
+untagged algorithm infrastructure proves rational-rendering agreement only;
+SOUNDNESS item8 remains external. Binary64 uses52/11 bits, scale2^-1074 and
+63-bit magnitude; explicit positive inverse/cancellation lemmas handle scaling.
+
+The directed64 probe freshly captures30 original toward-zero numeric rows and
+Lean kernel replays them. Six up/down signed tie checks are algorithm tests,
+not original HOL oracle evidence. Pinned original finite up/down conversion
+remains unsupported; the separate converter bead retains full144-row L3 scope.

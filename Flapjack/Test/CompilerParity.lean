@@ -1,5 +1,6 @@
 import Flapjack.Test.WordToStackRegOutputParity
 import Flapjack.Test.LabToTargetOffsetPaddingParity
+import Flapjack.Test.BinaryIeeeDirectedFp64Parity
 import Flapjack.Test.LabToTargetOffsetEstablishmentParity
 import Flapjack.Test.BinaryIeeeDirectedFp32Parity
 import Flapjack.Test.LabToTargetOffsetInvariantParity
