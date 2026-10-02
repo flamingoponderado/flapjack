@@ -183,4 +183,59 @@ theorem fp32Upper_value_extremal {X : Rat} (hX : 0 ≤ X)
         ((fp32N (fp32Pat b) : Nat) : Rat) := by exact_mod_cast hn
     grind
 
+/-- The lower bracket satisfies the literal finite/below closest predicate. -/
+theorem fp32Lower_isClosest {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) :
+    holIsClosest (fun b : HolFloat 23 8 =>
+      holFloatIsFinite b = true ∧ holFloatToReal b ≤ X / 2 ^ 149)
+      (X / 2 ^ 149) (fp32OfPat false (fp32Lower X)) := by
+  have hf := fp32Directed_finite_bracket hX hmax
+  constructor
+  · exact ⟨hf.1, hf.2.2.1⟩
+  · intro b hb
+    have he := fp32Lower_value_extremal hX hmax b hb.2
+    unfold holRatAbs
+    split <;> split <;> grind
+
+/-- The upper bracket satisfies the literal finite/above closest predicate. -/
+theorem fp32Upper_isClosest {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) :
+    holIsClosest (fun b : HolFloat 23 8 =>
+      holFloatIsFinite b = true ∧ X / 2 ^ 149 ≤ holFloatToReal b)
+      (X / 2 ^ 149) (fp32OfPat false (fp32Upper X)) := by
+  have hf := fp32Directed_finite_bracket hX hmax
+  constructor
+  · exact ⟨hf.2.1, hf.2.2.2⟩
+  · intro b hb
+    have he := fp32Upper_value_extremal hX hmax b hb.2
+    unfold holRatAbs
+    split <;> split <;> grind
+
+/-- The lower bracket also satisfies toward-zero's absolute-value restriction. -/
+theorem fp32Lower_zero_isClosest {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) :
+    holIsClosest (fun b : HolFloat 23 8 =>
+      holFloatIsFinite b = true ∧
+        holRatAbs (holFloatToReal b) ≤ holRatAbs (X / 2 ^ 149))
+      (X / 2 ^ 149) (fp32OfPat false (fp32Lower X)) := by
+  have hf := fp32Directed_finite_bracket hX hmax
+  have hl := fp32Lower_le_max hX hmax
+  have hm : fp32MaxPat < 2 ^ 31 := by decide
+  have hval := fp32OfPat_positive_value (q := fp32Lower X) (by omega)
+  have hn0 : (0 : Rat) ≤ ((fp32N (fp32Lower X) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
+  have hD := fp32_D_pos
+  have hv0 : 0 ≤ holFloatToReal (fp32OfPat false (fp32Lower X)) := by rw [hval]; grind
+  have hx0 : 0 ≤ X / 2 ^ 149 := by grind
+  constructor
+  · constructor
+    · exact hf.1
+    · unfold holRatAbs
+      split <;> split <;> grind
+  · intro b hb
+    have hbbelow : holFloatToReal b ≤ X / 2 ^ 149 := by
+      have ha := hb.2
+      unfold holRatAbs at ha
+      split at ha <;> split at ha <;> grind
+    exact (fp32Lower_isClosest hX hmax).2 b ⟨hb.1, hbbelow⟩
+
 end Flapjack.Binary32Rounding
