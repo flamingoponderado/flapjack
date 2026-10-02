@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameInstructions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameShare
 import Flapjack.Pancake.WordConvs.FullInstOkLess
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameHelpers

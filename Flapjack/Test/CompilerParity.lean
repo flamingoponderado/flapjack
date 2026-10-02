@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackAsmNameInstructionsParity
 import Flapjack.Test.WordToStackAsmNameShareParity
 import Flapjack.Test.WordToStackSortedRelationsParity
 import Flapjack.Test.WordToStackSortedKeysParity
