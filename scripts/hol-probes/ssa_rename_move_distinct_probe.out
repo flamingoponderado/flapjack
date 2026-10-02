@@ -1,0 +1,7 @@
+rename_move_distinct_full=⊢ list_next_var_rename_move ssa na ls = (mov,ssa',na') ∧ ALL_DISTINCT ls ∧ MEM x ls ∧ MEM y ls ∧ option_lookup ssa' x = option_lookup ssa' y ⇒ x = y
+rename_move_distinct_type_input=:num sptree$num_map
+rename_move_distinct_type_output=:num sptree$num_map
+rename_move_distinct_type_names=:num list
+rename_move_distinct_type_move=:α prog
+rename_move_distinct_type_next=:num
+rename_move_distinct_type_key=:num

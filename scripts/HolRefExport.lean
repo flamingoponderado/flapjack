@@ -1,3 +1,8 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStoreConsts
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsDelete
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticBufferWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMove
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsForceRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
@@ -60,6 +65,9 @@ import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstMemoryAppend
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSuffix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
