@@ -4298,3 +4298,7 @@ run_probe balanced_map_heterogeneous_probeScript.sml balanced_map_heterogeneous_
 run_probe balanced_map_core_types_probeScript.sml balanced_map_core_types_probe.out \
   bmct_lookup bmct_member \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_key_ordered_types_probeScript.sml balanced_map_key_ordered_types_probe.out \
+  bmkt_ordered bmkt_invariant \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
