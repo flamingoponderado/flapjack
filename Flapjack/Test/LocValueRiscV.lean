@@ -12,7 +12,7 @@ def locValueStackRemoveConfig : StackRemoveConfig :=
 #guard
   compileStackProgramNatListToRiscV (width := 64) { services := [] }
     locValueStackRemoveConfig 0 0
-    [(1, (.locValue 5 0 2 : StackProg Nat)),
+    [(1, (.locValue 5 2 0 : StackProg Nat)),
      (2, (.skip : StackProg Nat))] ==
     some [.auipc 5 (BitVec.ofNat 64 0),
       .addi 5 5 (BitVec.ofNat 64 8)]

@@ -282,14 +282,14 @@ def labJumpInstructions [NeZero width]
 def labBranch [NeZero width] (operator : Cmp) (left right : Fin 32)
     (offset : Word width) : Instruction width :=
   match operator with
-  | .equal => .branchNe left right offset
-  | .notEqual => .branchEq left right offset
-  | .less => .branchGe left right offset
-  | .notLess => .branchLt left right offset
-  | .lower => .branchGeU left right offset
-  | .notLower => .branchLtU left right offset
-  | .test => .branchNe left right offset
-  | .notTest => .branchEq left right offset
+  | .equal => .branchEq left right offset
+  | .notEqual => .branchNe left right offset
+  | .less => .branchLt left right offset
+  | .notLess => .branchGe left right offset
+  | .lower => .branchLtU left right offset
+  | .notLower => .branchGeU left right offset
+  | .test => .branchEq left right offset
+  | .notTest => .branchNe left right offset
 
 /-- Cake's `riscv_ast (JumpCmp c r ri a)`
     (`riscv_targetScript.sml:176-263`) tests the short-branch range against
