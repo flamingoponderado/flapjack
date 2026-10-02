@@ -4020,3 +4020,7 @@ run_probe riscv_jumpcmp_polarity_probeScript.sml riscv_jumpcmp_polarity_probe.ou
 run_probe ssa_reconcile_alookup_zip_probeScript.sml ssa_reconcile_alookup_zip_probe.out \
   sz_some_full sz_none_full sz_alookup_zip_map_some_type_ls sz_alookup_zip_map_some_type_vs sz_alookup_zip_map_some_type_i sz_alookup_zip_map_some_type_f sz_alookup_zip_map_option_lookup_none_type_f sz_alookup_zip_map_option_lookup_none_type_ns sz_alookup_zip_map_option_lookup_none_type_n sz_alookup_zip_map_option_lookup_none_type_ls sz_alookup_zip_map_option_lookup_none_type_vs \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_reconcile_empty_probeScript.sml ssa_reconcile_empty_probe.out \
+  re_original_full re_empty_full re_type_na re_type_cur_ssa re_type_tgt_ssa re_type_st_locs re_type_cst re_type_ns \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
