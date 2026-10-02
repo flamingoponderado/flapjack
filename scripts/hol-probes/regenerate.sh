@@ -5496,3 +5496,7 @@ run_probe lab_to_target_padding_labels_probeScript.sml lab_to_target_padding_lab
   empty_arbitrary_acc even_zero_label odd_asm_empty_nop odd_labasm_wide_nop successive_boundaries annotation_not_bytes boundary_guard_needed line_parity_guard_needed aux_parity_guard_false aux_zero_guard_false zero_label_id_ignored width1 width80_large_pos \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe l3_mmu_primitives_probeScript.sml l3_mmu_primitives_probe.out \
+  constant_ASID_SIZE constant_LEVEL_BITS constant_PAGESIZE_BITS constant_TLBEntries privilege_0 privilege_1 privilege_2 privilege_3 global_0 global_1 global_2 global_3 global_4 global_5 global_6 global_7 global_8 global_9 global_10 global_11 global_12 global_13 global_14 global_15 pte_0 pte_repack_0 vaddr_0 pte_1 pte_repack_1 vaddr_1 pte_2 pte_repack_2 vaddr_2 pte_3 pte_repack_3 vaddr_3 pte_4 pte_repack_4 vaddr_4 pte_5 pte_repack_5 vaddr_5 pte_6 pte_repack_6 vaddr_6 pte_7 pte_repack_7 vaddr_7 pte_8 pte_repack_8 vaddr_8 pte_9 pte_repack_9 vaddr_9 scsr_full tlb_full tlb_write_full mem_write_full mem_read_0 mem_read_1 mem_read_2 mem_read_3 \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"

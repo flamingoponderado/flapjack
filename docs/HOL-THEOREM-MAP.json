@@ -66214,5 +66214,117 @@
     "hol_name": "raise'exception_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison: riscvScript366-375 original Def parameter e:exception, Close state, tuple LX(VTy a) and conditional update only when state.exception=NoException. Lean retains generic return carrier and whole native state, canonical per-carrier holArb, exact first-exception conditional and full record update. Nonempty Ta represents intrinsic HOL type-kind nonemptiness, following already reviewed generic LINV/HD/EL/THE ports; no chosen Lean default or extra source hypothesis. Native exception/riscv_state carriers are reviewed source Types counterparts; derived BEq against payload-free NoException agrees with HOL equality. Fresh original full type and assumption-free full tuple equation are captured in l3_raise_exception probe, with matching generic Lean whole-result regression."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "privilege",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "privilege_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "SCSR",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "SCSR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "ASID_SIZE",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ASID_SIZE_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "«reg'SV_PTE»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'SV_PTE_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "MEM",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "MEM_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "«write'MEM»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'MEM_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "TLB",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "TLB_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "«write'TLB»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'TLB_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "«rec'SV_Vaddr»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'SV_Vaddr_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "LEVEL_BITS",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "LEVEL_BITS_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "«rec'SV_PTE»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'SV_PTE_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "isGlobal",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "isGlobal_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "PAGESIZE_BITS",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "PAGESIZE_BITS_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Primitives.lean",
+    "lean_name": "TLBEntries",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "TLBEntries_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
   }
 ]

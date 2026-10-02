@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.MMU.Primitives
 import Flapjack.RiscV.L3.Defs.MMU.Exception
 import Flapjack.Misc.Words.Formatting
 import Flapjack.Misc.Words.Replicate
