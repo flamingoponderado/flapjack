@@ -1,4 +1,5 @@
 import Flapjack.Test.MmioIndex
+import Flapjack.Test.LabInitialLabelSlots
 import Flapjack.Test.StackRemoveInitMemory
 import Flapjack.Test.StackRemoveStoreInit
 import Flapjack.Test.WordOverflowProduction

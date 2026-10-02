@@ -1261,9 +1261,9 @@ def labStoredProgramLength {width : Nat} [NeZero width] :
 
 def labInitialStoredLine [NeZero width] :
     LabLine (Word width) → LabLine (Word width)
-  /- Internal labels start with Cake's four-byte relocation slot.  The two
-     synthetic entry labels are handled separately below: Cake represents the
-     section-base label implicitly, while Flapjack materializes it. -/
+  /- Every real label starts with Cake's four-byte relocation slot
+     (`lab_to_target$enc_line_def`). The native section codec introduces no
+     synthetic entry labels, so section position does not exempt a label. -/
   | .label sectionId label _ =>
       .label sectionId label 4
   | .asm operation bytes _ =>
@@ -1291,7 +1291,7 @@ def labInitialStoredProgram [NeZero width] :
   | [] => []
   | sectionData :: sections =>
       { sectionData with
-          lines := labInitialStoredSectionLines 2 sectionData.lines } ::
+          lines := sectionData.lines.map labInitialStoredLine } ::
         labInitialStoredProgram sections
 
 def labCollectStoredSectionLabels [NeZero width] (sectionId base : Nat) :
