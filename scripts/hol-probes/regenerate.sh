@@ -4847,3 +4847,15 @@ run_probe stack_remove_code_rel_probeScript.sml stack_remove_code_rel_probe.out 
 run_probe set_sep_fun2set_probeScript.sml set_sep_fun2set_probe.out \
   fg_full_def fg_full_type fg_member_full memory_full_def memory_full_type fg_nat_bool_member fg_nat_bool_false_value fg_wrong_value fg_outside_domain fg_empty_domain fg_bool_nat_member fg_bool_nat_other fg_bool_product_value fg_noninjective \
   "$repo_dir/HOL/examples/machine-code/hoare-triple/set_sepScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe balanced_map_balanceR_correct_probeScript.sml balanced_map_balanceR_correct_probe.out \
+  bmrc_full bmrc_empty_tree bmrc_empty_invariant bmrc_empty_lookup1 bmrc_fallback_tree bmrc_fallback_invariant bmrc_fallback_lookup1 bmrc_single_tip_tree bmrc_single_tip_invariant bmrc_single_tip_lookup1 bmrc_double_tip_tree bmrc_double_tip_invariant bmrc_double_tip_lookup1 bmrc_heavy_single_tree bmrc_heavy_single_invariant bmrc_heavy_single_lookup1 bmrc_heavy_double_tree bmrc_heavy_double_invariant bmrc_heavy_double_lookup1 \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_almost_balance_correct_probeScript.sml balanced_map_almost_balance_correct_probe.out \
+  almost_balancedL_thm almost_balancedR_thm bmac_L_0_0 bmac_R_0_0 bmac_L_0_1 bmac_R_0_1 bmac_L_1_0 bmac_R_1_0 bmac_L_1_1 bmac_R_1_1 bmac_L_1_3 bmac_R_1_3 bmac_L_3_1 bmac_R_3_1 bmac_L_2_6 bmac_R_2_6 bmac_L_6_2 bmac_R_6_2 bmac_L_3_9 bmac_R_3_9 bmac_L_9_3 bmac_R_9_3 bmac_L_10_30 bmac_R_10_30 bmac_L_30_10 bmac_R_30_10 \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_cardinality_correct_probeScript.sml balanced_map_cardinality_correct_probe.out \
+  structure_size_thm structure_size_to_fmap size_thm bmcard_empty_size bmcard_empty_invariant bmcard_singleton_size bmcard_singleton_invariant bmcard_left_size bmcard_left_invariant bmcard_right_size bmcard_right_invariant bmcard_both_size bmcard_both_invariant bmcard_equivalent_invariant \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

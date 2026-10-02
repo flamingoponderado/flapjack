@@ -11,6 +11,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
+import Flapjack.Misc.BalancedMap.CardinalityCorrect
+import Flapjack.Misc.BalancedMap.AlmostBalanceCorrect
+import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceRCorrect
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceR
 import Flapjack.Misc.BalancedMap.RotationCorrect.RotateL
 import Flapjack.Misc.BalancedMap.RotationCorrect.DoubleL

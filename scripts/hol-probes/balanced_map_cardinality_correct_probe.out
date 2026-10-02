@@ -1,0 +1,14 @@
+structure_size_thm=⊢ ∀(cmp :α -> α -> ordering) (t :(α, β) balanced_map). invariant cmp t ⇒ size t = structure_size t
+structure_size_to_fmap=⊢ ∀(cmp :α -> α -> ordering) (t :(α, β) balanced_map). good_cmp cmp ∧ invariant cmp t ⇒ FCARD (to_fmap cmp t) = structure_size t
+size_thm=⊢ ∀(cmp :α -> α -> ordering) (t :(α, β) balanced_map). good_cmp cmp ∧ invariant cmp t ⇒ size t = FCARD (to_fmap cmp t)
+bmcard_empty_size=(0 :num)
+bmcard_empty_invariant=T
+bmcard_singleton_size=(1 :num)
+bmcard_singleton_invariant=T
+bmcard_left_size=(2 :num)
+bmcard_left_invariant=T
+bmcard_right_size=(2 :num)
+bmcard_right_invariant=T
+bmcard_both_size=(3 :num)
+bmcard_both_invariant=T
+bmcard_equivalent_invariant=T

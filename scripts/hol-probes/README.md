@@ -5582,3 +5582,25 @@ memory prerequisite type/equation and9 original graph proofs. The graph keeps
 independent address/value carriers; kernel counterparts include wrong value,
 outside/empty domain, Bool/Nat and Bool/product values, noninjective functions
 and an infinite-domain application. No finite-heap premise is introduced.
+
+## Full right balancing correctness
+
+`balanced_map_balanceR_correct_probeScript.sml` replays the literal original
+full correctness theorem and its balancing/rotation/arithmetic prerequisites,
+checking no open hypotheses. Nineteen rows capture the full type and six actual
+small/fallback/rotation trees, invariants and inserted-key lookups. Native
+consumers prove all original premises and use both conclusions. Observations
+are regression evidence, not a cross-language equivalence theorem.
+
+## Full almost-balance growth/decrement laws
+
+`balanced_map_almost_balance_correct_probeScript.sml` literally replays both
+full original arithmetic proofs with no open hypotheses. Twenty-six rows
+capture both complete types and twelve zero/singleton/delta-boundary pairs
+in both directions. Native consumers use all three conclusions, retaining
+truncated subtraction at zero. Observations are regression evidence, not
+a cross-language equivalence theorem.
+
+### Balanced map full cardinality laws
+
+`balanced_map_cardinality_correct_probeScript.sml` replays the literal original local disjoint-union and three size/cardinality proofs, checking empty hypotheses. Typed statements retain generic comparator/tree carriers and original premises. Five valid numeric tree shapes capture size and invariant observations; the equivalent-key singleton checks a constant Equal comparator. Native consumers apply both full generic theorems. These rows support source review; they do not prove cross-assistant equivalence.
