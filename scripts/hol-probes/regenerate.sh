@@ -5101,3 +5101,7 @@ run_probe stack_remove_memorywrite_probeScript.sml stack_remove_memorywrite_prob
 run_probe set_sep_assoc_probeScript.sml set_sep_assoc_probe.out \
   sa_source sa_statement sa_types sa_proved \
   "$hol_dir/examples/machine-code/hoare-triple/set_sepScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_label_position_updates_probeScript.sml lab_to_target_label_position_updates_probe.out \
+  lines_upd_lab_len_pos_ok lines_upd_lab_len_pos_ok_types upd_lab_len_pos_ok upd_lab_len_pos_ok_types mixed_odd_full_tuple mixed_odd_pos_ok mixed_even_full_tuple mixed_even_pos_ok odd_label_chain nonlabels_unchanged empty_list_width1 section_full_tuple section_all_pos_ok bad_input_repaired empty_code empty_sections large_width80_tuple large_width80_pos_ok \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
