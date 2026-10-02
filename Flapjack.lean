@@ -84,6 +84,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.ExpressionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Binary
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Arithmetic
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit

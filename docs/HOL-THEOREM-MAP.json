@@ -63764,5 +63764,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.8: genuine complete LongDiv case original state_rel_inst767-870. Exactly original3hyp fullstateRel/regBoundInst/native source instsuccess, EXISTS actual targetinstsuccess/fullpostrelation. Derive entire getVars equality from original boundedgetvar; failures/Word versus Loc payloads and native guards retained. No added divisor/quotient/overflow/carry/aliasing/inputvalue/targetrun/frame premise. Native signed wordQuot, carry test, signed overflow, longmul/div and ordered dualupdates unchanged; updates use original bounds, no distinct-register requirement. Actual imported canonical StackSemStateFiniteExact regs/fpRegs/store with local genuine broad/exact roundtrip witness, Spt code not named; widthNeZero/BitVec, C/F Type0 retained. Wholeinst closure conservatively inherits reals_as_rational_cuts assumption despite pure arithmetic execution. Fresh original fullcase/type/kernel replay and native complete generic proof checked. Fullparent memory/all16FP/assembly remainrequired."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InstructionSimulation/Memory.lean",
+    "lean_name": "stateRelInstMem",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.9: complete genuine Mem outerconstructor of state_rel_inst767-870, all8native opcodes and full HolAddr carrier. Original3premises fullstateRel/regBoundInst/actualnative sourceinstsuccess, originalEXISTS targetnativeinstsuccess/fullpostrelation. Effectiveaddress derives from accepted fullwordexp and originalbasebound; lowerregister value equality derived, accepts Word/Loc scalar values. Loads preserve full WordLoc result or original8/32 widening. Unsupported16sourcefailure excluded internally by source success. Scalar targetdomain/store success derived from fullread; byte/32targetmemory/store/relation derived from original existential store laws, no targetoutput premise. Actual native states/operators unchanged, allheap/frame assertions preserved, no finite/domain/frame/arithmetic assumption added. Canonical imported StackSemStateFiniteExact regs/fpRegs/store with genuine local broad/exact roundtrip witness; Spt code not named. NeZero/BitVec width, independent C/F Type0 retained. Wholeinst closure conservatively inherits reals_as_rational_cuts assumption despite nonFP memory execution; flag retained. Fresh full original Memcase/type/kernel replay and complete generic native proof checked. Fullparent FP/assembly stillrequired."
   }
 ]
