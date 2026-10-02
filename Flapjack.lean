@@ -2,6 +2,10 @@ import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
 import Flapjack.Compiler.Encoders.AsmProps.Encoding
 import Flapjack.Compiler.Encoders.AsmProps.Interference
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
 import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
