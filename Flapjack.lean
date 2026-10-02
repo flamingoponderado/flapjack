@@ -102,6 +102,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapWrites
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackPointer
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads

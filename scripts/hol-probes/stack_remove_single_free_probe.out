@@ -1,0 +1,2 @@
+sf_statement=∀t1 s2 s r off n k jump. state_rel jump off k s t1 ∧ (r,s2) = (NONE,s with stack_space := s.stack_space + n) ∧ ¬(LENGTH s.stack < s.stack_space + n) ∧ n ≠ 0 ∧ n ≤ max_stack_alloc ⇒ ∃ck t2. evaluate (single_stack_free k n,t1 with clock := t1.clock + ck) = (r,t2) ∧ state_rel jump off k s2 t2
+sf_proved=T

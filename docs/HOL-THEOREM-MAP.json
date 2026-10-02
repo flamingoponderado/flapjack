@@ -65061,5 +65061,20 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol original395-418 comparison: original full state_rel alone implies existential base alpha word, lookup k+1 Word base, lower address reserve widthDIV8*maxStackAlloc, nonwrapping stack upper bound, lookup k Word(base+bytes*stackSpace), complete original five-factor separated heap. Native source/target share same positive width and Type0 configuration/FFI carriers. Canonical imported finite-map state and genuine same-module broad/exact witness; code remains Spt. Native bitmaps++buffer followed by map Word equals original MAP Word bitmaps++MAP Word buffer, combined list length equals original length sum. Bool domains rendered as true predicates, ordinary HOL lists use List. No extra base/bitmap/lookup/safety/success/heap premise; all facts extracted from final fullstateRel conjunct, invalid lookup constructors contradicted. Literal original proof replay and native kernel proof checked; neither new evaluator nor real arithmetic involved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackFreeSimulation.lean",
+    "lean_name": "evaluateSingleStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "evaluate_single_stack_free",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original968-990 source comparison: precisely fullstateRel, original result/postsource pair equality NONE and stackSpace+count, original stack safety negated strict length comparison, nonzero count and maxStackAlloc bound imply existential clock/posttarget actual singleStackFree evaluation and fullstateRel. Original target.clock+clock order retained; clock0 proved. Native Add immediate at reserved pointer uses derived Word lookup from original stateRelGetVarK, native wordOffset widthDIV8 product. Untagged stateRelFreeStep factors original unfolded26conjunct postrelation argument with original safety discharged, no supplied postrelation or execution hypothesis. Arbitrary positive width and Type0 C/F; actual imported canonical regs/fpRegs/store state with genuine codec witness, Spt code excluded. Full evaluator inherits reals_as_rational_cuts assumption explicitly; kernel proof no added trusted decision."
   }
 ]

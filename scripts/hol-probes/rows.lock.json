@@ -912,6 +912,7 @@
     {"bytes": 101, "out": "stack_remove_name_cases_probe.out", "rows": 3, "sha256": "d84837519f89d0a0b6c286619375f42a998c47381192a8e4a18db61d4344443b"},
     {"bytes": 710, "out": "stack_remove_pointer_probe.out", "rows": 2, "sha256": "be8bad0e63d1a7a6ea02f781a88010f489268e277c4e6a69eb8b54d32b90d486"},
     {"bytes": 1777, "out": "stack_remove_prog_comp_probe.out", "rows": 17, "sha256": "7a0db64e90c5caafbf81d355fe06c3af0dfd43181ffda6c4c9221b4478a88c5a"},
+    {"bytes": 337, "out": "stack_remove_single_free_probe.out", "rows": 2, "sha256": "ff5b4a8fc74ee42b87bebd960a00a3125f3045733acebc1ca3adbd8351829a55"},
     {"bytes": 6513, "out": "stack_remove_stack_address_probe.out", "rows": 48, "sha256": "ef490d6f40b4441208f79696f986345fd5d37ea27557d4cad00b785f43cf93c2"},
     {"bytes": 5273, "out": "stack_remove_stack_alloc_probe.out", "rows": 32, "sha256": "2944c16c28cd62cc6d089969b13e5fe4c8b3ab2802130dd20564ba21fe2d01ef"},
     {"bytes": 1642, "out": "stack_remove_stack_free_probe.out", "rows": 19, "sha256": "a80f64b2e6aec5fd153da4de277af7f9cf92461f06076f6a91e4bdd15bd68e1a"},
