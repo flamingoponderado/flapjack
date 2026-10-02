@@ -38,6 +38,14 @@ class HolRefExportTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
             MODULE.check_records(manifest, [{**self.export[0], "qualifiers": without}])
 
+    def test_result_observation_producers_match_export(self):
+        self.check_qualifier(
+            "reviewed_fmap_as_finite_support_result_observations",
+            {"fmap_as_finite_support_result_observations": ["BalancedMap.toFmap"]},
+            {"fmap_as_finite_support_result_observations": ["BalancedMap.toFmap"]},
+            {"fmap_as_finite_support_result_observations": ["different"]},
+        )
+
     def test_reviewed_row_matches_its_declaration(self):
         self.assertEqual(MODULE.check_records(self.manifest, self.export), 1)
 

@@ -1,0 +1,14 @@
+bmf_normal_10=SOME 100
+
+bmf_normal_20=SOME 200
+
+bmf_normal_30=NONE
+
+bmf_always_equal=SOME 100
+
+bmf_always_less=SOME 100
+
+bmf_empty=NONE
+
+bmf_key_set_definition=⊢ ∀cmp k. key_set cmp k = {k' | cmp k k' = Equal}
+bmf_map_definition=⊢ (∀cmp. to_fmap cmp Tip = FEMPTY) ∧ ∀cmp s k v l r. to_fmap cmp (Bin s k v l r) = (to_fmap cmp l ⊌ to_fmap cmp r)⟨key_set cmp k ↦ v⟩
