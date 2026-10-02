@@ -58014,5 +58014,30 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison: full native Mem Store32 8164-8173 case of ssa_cc_trans_correct, original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no targeteval/success/poststate/IH assumptions. Compiler maps originaladdress/data andleavesSSA/next unchanged. Original expression/getVar relations derive targetwordaddress andworddata; NONE/Loc address/missing/nonworddata retain Error exemption. Native valueWord.setWidth32 matches HOL w2w word-to-32-bit. Original frame equatesmemory/domain/be and derives identical memStore32Exact result, includingalignment/aligneddomain/nonwordmemory failures andfour-byte endianness update. Successfulmemoryrecordupdate proves sameframe andunchangedlocals. Native Nat registers/positiveBitVecoffset/sharedType0 code-FFI/state/Spt/tablecarriers comparedto originalkernel theorem specialization. CanonicalfpRegs/store finite-support andwords translationonly, inheritsreals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Originalopcode proofmanuallyreviewed; originalkernel theoremQ.SPEC/carriersPASS no standalonetacticreplayclaimed. Lean kernelPASS; fullInst remainsopen."
+  },
+  {
+    "lean_path": "Flapjack/EvaluateProps.lean",
+    "lean_name": "callFFIRelHOL",
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "call_FFI_rel_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.62.1): evaluatePropsScript20-22 existential name/conf/bytes/t and equality to FFI_return s2 t retained exactly. Native HolFfiState, HolFfiName (exact MlString), BitVec8 byte lists and callFFIHOL are the reviewed source carriers and operation. Both states quantify over universe-0 host Type; no result assumption or successful-call callback. Definition is a single step, not RTC; full LabToTarget share_mem_state_rel parent remains open. Unconditional identity step is separately kernel checked using empty ExtCall and empty lists. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/InitMemory.lean",
+    "lean_name": "initMemory",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "init_memory_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.6.6.2): original five-element list_Seq retained literally: const0 bytes_in_word; sub k0; const0 zero; store0 k; store_list_code(k+1)0 xs. Canonical source-reviewed native helpers and HolProg positive-width carrier, List and Sum constructor-for-constructor; byte stride width DIV8 reduced modulo word dimension, arbitrary Nat registers, alias k0 allowed, no new bounds or semantic assumptions. Fresh original full definition/type and64 full outputs plus64 explicit-tree equalities across widths1/8/64/80, k0/1/23/2^80+9, empty/word/register/mixed lists; matching explicit native kernel trees. Proof-side definition only; full initializer and executed compiler route remain open on linked parent. Coordinator source-ready authorization2026-10-02T04:02 preserves storeListCode acceptance dependency. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/MmioIndex.lean",
+    "lean_name": "mmioPcsMinIndex",
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "mmio_pcs_min_index_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.62.2): targetSemScript268-276 optional some x is if exists boundary then SOME Hilbert-selected witness else NONE, matching HOL optionTheory.some_def794-796. Exact x<=LENGTH bound, all prefix ExtCall and all suffix SharedMem clauses retained through mmioIndexBoundary; guarded EL is reviewed faithful holEl, full HolFfiName exact MlString carrier and List retained. No first-MMIO shortcut: external calls after shared memory reject every boundary. Generic kernel uniqueness theorem proves selected index independent of choice operators, using disjoint constructors at an in-range index. Generic kernel some/none elimination equations and40 concrete choice consumers cover every three-kind name list of length0..3. Fresh original42-row capture records full definition/type and40 assumption-free proved optional-choice equations, matching all kernel fixture expectations. Full shared-memory/pass correctness remains open. Coordinator source review pending."
   }
 ]

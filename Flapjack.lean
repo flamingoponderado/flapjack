@@ -12,6 +12,8 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchMono
 import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence
 import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
+import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+import Flapjack.Compiler.Backend.StackRemove.InitMemory
 import Flapjack.Compiler.Backend.StackRemove.StoreInit
 import Flapjack.Compiler.Backend.StackRemove.StoreListCode
 import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
@@ -647,6 +649,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
 import Flapjack.HolRef
+import Flapjack.EvaluateProps
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem
