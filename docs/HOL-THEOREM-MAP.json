@@ -67913,5 +67913,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison original21-36 and native full Misc.wordListExists/SetSep sepExists/star/cond/emp/one/wordList definitions. Complete original zero and successor conjunction as heap-predicate equalities, arbitrary address/count/payload carrier and every heap retained. Source pure length condition remains a separated empty heap; local starCond proves its elimination without assuming a length or concrete list. Forward successor destructs actual existential list and reverse reconstructs value::values; full partition/frame retained, modular bytesInWord address increment unchanged. Positive-width BitVec translation only, no extra width/domain/alignment/nonempty/noalias/success assumption, no finite-map/evaluator/reals carrier. Fresh complete literal original proof replay PASS, two rows capture both original heap-predicate equalities and proof success; DataBuffer/fullpass assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CopyEach.lean",
+    "lean_name": "copyEachThm",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "copy_each_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; flapjack-sol-remove-copy-each), stack_removeProofScript.sml1250-1332: full original pattern induction, source successful copy_words_for_pattern and all original premises retained (distinct [1,2,3,t1,t2], dm equality, good_dimindex, all four register reads, d subset dm, word_list MAP Word bs * rest * memory m d). Result derives existential extra clock/y/target memory, native NONE evaluation, complete original state update with sentinel/non-sentinel temporary-register alternatives, and same separated memory frame for source output. Native Boolean mdomain denotes its true predicate set, as in reviewed native state relation. Arbitrary positive width with original good_dimindex, arbitrary compiler/FFI carriers, lists, functions and predicate frames remain; no target execution/read/postrelation premise or added width/range/alias condition. Source iteration heap derives target load/domain and accepted generic memory_write supplies frame transition; exact source low bit matches native Test. Owning imported StackSemStateFiniteExact and canonical regs/fpRegs/store codec witness reviewed, with no duplicate owner; Spt code untouched. Words qualifier records only type-indexed positive BitVec/FFI Type translation. Kernel source induction assembles clock allowance and final map updates, no native_decide. The native evaluator closure inherits the reviewed reals_as_rational_cuts FP real carrier (SOUNDNESS item 8), even though this body executes only integer instructions; no claim of full evaluator carrier independence.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
