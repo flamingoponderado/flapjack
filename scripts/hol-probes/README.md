@@ -4931,3 +4931,5 @@ payload String; existing homogeneous observations remain unchanged.
 independent query/key/result/payload types; the latter forces a homogeneous
 Ordering comparator. `BalancedMapKeyOrderedTypes` checks generic constructors
 and Bool-query/Nat-key/String-result/Bool-payload examples, including malformed sizes.
+
+`init_code_probeScript.sml` captures the full original definition/type and120 complete native-tree equalities across positive widths1/8/32/64/80, heap-limit multiplication below/at/above overflow, GC modes, and zero/large/aliased register indices. The original word_shift is2 for32-bit words and3 otherwise; narrow immediate truncation is preserved. `stack_remove_compile_native_probeScript.sml` adds full init_stubs/compile definitions/types and50 outputs with50 equality checks for all three initializer labels, tail-call start, both jump modes, empty/nonempty section lists, repeated section labels, and huge natural labels. Matching Lean fixtures use kernel-checked literal trees/equations. These are proof-side definitions; production routing and compile_semantics remain separate obligations.

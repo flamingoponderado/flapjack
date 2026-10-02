@@ -1,3 +1,6 @@
+import Flapjack.Compiler.Backend.StackRemove.InitCode
+import Flapjack.Compiler.Backend.StackRemove.InitStubs
+import Flapjack.Compiler.Backend.StackRemove.Compile
 import Flapjack.Byte.WordOfBytes
 import Flapjack.Byte.WordSliceAlt
 import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex

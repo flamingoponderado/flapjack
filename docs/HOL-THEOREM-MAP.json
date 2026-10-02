@@ -57801,5 +57801,32 @@
     "hol_path": "HOL/src/n-bit/byteScript.sml",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/InitCode.lean",
+    "lean_name": "initCode",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "init_code_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02: Original273-326 complete forty-element initialization sequence, both heap-limit guard branches and source word_shift branches, full aliasing and Nat register indices; same unsigned byte word stride, max_stack_alloc255, GC-dependent reverse storeList, final LocValue0 1 0. Independent120 complete explicit-tree kernel equalities and120 original equalityT captures at widths1/8/32/64/80, heap multiplication threshold below/at/overflow/huge, GC modes and zero/23/huge pointers. Standard positive-width BitVec/[NeZero width] translation only; original native carriers and all quantifiers retained, no added success/safety/evaluation premises. Proof-side definition group; compile_semantics and actual executed compiler routing remain separately tracked. Coordinator source-ready group authorization05:04:53 preserves acceptance dependencies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/InitStubs.lean",
+    "lean_name": "initStubs",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "init_stubs_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02: Original326-333 exact three sections with labels0/1/2; first Seq init_code and tailCall NONE(INLstart)NONE, literal const1/halt1 trees for word0/2. Ten original and native fixtures preserve arbitrary huge start and register indices, narrow-word truncation, GC modes, order and list carrier. Standard positive-width BitVec/[NeZero width] translation only; original native carriers and all quantifiers retained, no added success/safety/evaluation premises. Proof-side definition group; compile_semantics and actual executed compiler routing remain separately tracked. Coordinator source-ready group authorization05:04:53 preserves acceptance dependencies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Compile.lean",
+    "lean_name": "compileHOL",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "compile_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02: Original351-355 full seven-argument definition: init_stubs prefix appended to MAP(prog_comp jump off k) source sections, native List(Nat x HolProg width), no section deduplication or sorting. Forty original/native fixtures cover both jump settings and empty/nonempty input, duplicate labels, huge labels, Get CurrHeap lowering, retained Tick and Seq/Halt, zero/max word bounds. Standard positive-width BitVec/[NeZero width] translation only; original native carriers and all quantifiers retained, no added success/safety/evaluation premises. Proof-side definition group; compile_semantics and actual executed compiler routing remain separately tracked. Coordinator source-ready group authorization05:04:53 preserves acceptance dependencies."
   }
 ]

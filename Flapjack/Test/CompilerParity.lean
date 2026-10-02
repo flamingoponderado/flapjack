@@ -1,3 +1,5 @@
+import Flapjack.Test.StackRemoveInitCode
+import Flapjack.Test.StackRemoveCompile
 import Flapjack.Test.ByteDecoder
 import Flapjack.Test.ByteWordSliceAlt
 import Flapjack.Test.MmioIndex
