@@ -64389,5 +64389,13 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.9: original local word_store_CurrHeap266-270 unconditional equality of full heap predicates. Fresh original quantified types confirm base alpha word, state(beta,gamma,delta), value beta word_loc; Lean retains independent addressWidth/valueWidth each positive NeZero BitVec and independent C/F Type0. All original ordered48store_list slots, including Temp5bit0..31, exclude CurrHeap; lookup update at CurrHeap therefore leaves every slot unchanged, including missing-key Word0 fallback and arbitrary Word/Loc values. Actual imported StackSemStateFiniteExact.store uses canonical finite support with same-module genuine broad/exact roundtrip witness. No extra input/heap/success/finite-domain hypothesis, no fixed width restriction or weaker extensional pointwise result; exact whole predicate equality. Fresh original source proof/statement/types/kernel replay and native kernel proof checked. This lemma supplies only Set CurrHeap dependency; other cases and full compiler theorem remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StoreNames.lean",
+    "lean_name": "nameCases",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "name_cases",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.10: literal local name_cases1076-1085 quantified store_name != CurrHeap implies MEM store_list. Exact constructor-for-constructor StoreName, sixteen fixed nonCurrHeap constructors and Temp(BitVec5) matching HOL fixed5word; ordinary List carrier and fixed ordered48store slots. No generic word width replacing fixed5 payload, no extra enumerated-input premise, no state/evaluator or weakened result. Cases preserve all fixed names; Temp branch converts equality to toNat and derives complete0..31disjunction from intrinsic five-bit bound via kernel checked omega. No native_decide/bv_decide/trustCompiler. Full original source proof is replayed fresh, including its complete fixed5 Temp case argument. This lemma serves Get/Set membership prerequisites; neither fullcase nor global compiler theorem is claimed here."
   }
 ]

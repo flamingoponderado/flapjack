@@ -81,6 +81,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreNames
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
