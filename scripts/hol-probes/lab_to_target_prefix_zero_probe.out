@@ -1,0 +1,33 @@
+label_prefix_zero_def=∀(ls :α line list).
+  label_prefix_zero ls ⇔
+  ∀(n :num).
+    n < LENGTH ls ∧ (∀(m :num). m ≤ n ⇒ is_Label ls❲m❳) ⇒
+    ∀(m :num). m ≤ n ⇒ line_len ls❲m❳ = (0 :num)
+label_prefix_zero_def_types=(ls :α line list)::α line list;
+sec_label_prefix_zero_def=∀(k :num) (ls :α line list).
+  sec_label_prefix_zero (Section k ls) ⇔ label_prefix_zero ls
+sec_label_prefix_zero_def_types=(k :num)::num;(ls :α line list)::α line list;
+label_prefix_zero_cons=(label_prefix_zero
+   ((Label (l1 :num) (l2 :num) (len :num) :α line)::(ls :α line list)) ⇔
+ len = (0 :num) ∧ label_prefix_zero ls) ∧
+(label_prefix_zero (Asm (a :α asm_or_cbw) (b :word8 list) (c :num)::ls) ⇔ T) ∧
+(label_prefix_zero
+   (LabAsm (d :α asm_with_lab) (e :α word) (f :word8 list) (g :num)::ls) ⇔ T)
+label_prefix_zero_cons_types=(g :num)::num;(f :word8 list)::word8 list;(e :α word)::α word;(d :α asm_with_lab)::α asm_with_lab;(c :num)::num;(b :word8 list)::word8 list;(a :α asm_or_cbw)::α asm_or_cbw;(ls :α line list)::α line list;(len :num)::num;(l2 :num)::num;(l1 :num)::num;
+label_prefix_zero_append_suff=∀(l1 :α line list) (l2 :α line list).
+  label_prefix_zero l1 ∧ label_prefix_zero l2 ⇒ label_prefix_zero (l1 ++ l2)
+label_prefix_zero_append_suff_types=(l1 :α line list)::α line list;(l2 :α line list)::α line list;
+label_prefix_zero_append_suff2=∀(l1 :α line list) (l2 :α line list).
+  label_prefix_zero l1 ∧ EXISTS ($¬ ∘ (is_Label :α line -> bool)) l1 ⇒
+  label_prefix_zero (l1 ++ l2)
+label_prefix_zero_append_suff2_types=(l1 :α line list)::α line list;(l2 :α line list)::α line list;
+empty_prefix=T
+initial_zero_labels=T
+initial_bad_label_rejected=T
+nonlabel_masks_later_label=T
+zero_prefix_then_nonlabel=T
+labasm_masks_later_label=T
+append_positive=T
+append_bad_right_guard_required=T
+append_nonlabel_allows_bad_right=T
+append_nonlabel_guard_required=T
