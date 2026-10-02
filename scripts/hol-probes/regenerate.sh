@@ -5337,3 +5337,18 @@ run_probe lab_to_target_even_labels_probeScript.sml lab_to_target_even_labels_pr
 run_probe lab_to_target_zero_position_even_labels_probeScript.sml lab_to_target_zero_position_even_labels_probe.out \
   label_zero_pos_ok_lines_even_labels label_zero_pos_ok_lines_even_labels_types label_zero_pos_ok_even_labels label_zero_pos_ok_even_labels_types mixed_both_guards zero_guard_needed position_guard_needed odd_empty_section_valid multiple_sections_annotation width1_empty width80_large_position \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_label_comp_probeScript.sml stack_remove_label_comp_probe.out \
+  lc_statement lc_proved ll_statement ll_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_locvalue_probeScript.sml stack_remove_comp_locvalue_probe.out \
+  cl_statement cl_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_pointer_probeScript.sml stack_remove_pointer_probe.out \
+  sp_statement sp_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_strong_even_labels_probeScript.sml lab_to_target_strong_even_labels_probe.out \
+  even_labels_ends_imp_strong even_labels_ends_imp_strong_types mixed_three_guards weak_guard_needed ending_guard_needed zero_guard_needed width1_empty width80_large_position \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
