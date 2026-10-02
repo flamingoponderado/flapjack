@@ -1,0 +1,11 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallTheory stack_rawcallProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "shape_statement="; print_term (concl comp_seq_neq_IMP));
+val _ = print ("shape_hypotheses=" ^ Int.toString(length(hyp comp_seq_neq_IMP)) ^ "\n");
+fun emit label tm = (print(label ^ "="); print_term(rconc(EVAL tm)));
+val _ = emit "shape_equal_changes" ``comp_seq (StackFree 4) (Call NONE(INL 7)NONE) (insert 7 4 LN) (Skip:64 stackLang$prog) <> Skip``;
+val _ = emit "shape_smaller_changes" ``comp_seq (StackFree 4) (Call NONE(INL 7)NONE) (insert 7 2 LN) (Skip:64 stackLang$prog) <> Skip``;
+val _ = emit "shape_larger_changes" ``comp_seq (StackFree 4) (Call NONE(INL 7)NONE) (insert 7 6 LN) (Skip:64 stackLang$prog) <> Skip``;
+val _ = emit "shape_missing_fallback" ``comp_seq (StackFree 4) (Call NONE(INL 7)NONE) LN (Skip:64 stackLang$prog) = Skip``;
+val _ = emit "shape_handler_fallback" ``comp_seq (StackFree 4) (Call NONE(INL 7)(SOME(Skip,3,4))) (insert 7 4 LN) (Skip:64 stackLang$prog) = Skip``;
