@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
+import Flapjack.Compiler.Backend.StackProps.AllocationConstants
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackProps.StackLengths
 import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
