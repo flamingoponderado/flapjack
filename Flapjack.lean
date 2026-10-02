@@ -10,6 +10,10 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
+import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceR
+import Flapjack.Misc.BalancedMap.RotationCorrect.RotateL
+import Flapjack.Misc.BalancedMap.RotationCorrect.DoubleL
+import Flapjack.Misc.BalancedMap.RotationCorrect.SingleL
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceLCorrect
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceL
 import Flapjack.Misc.BalancedMap.RotationCorrect.RotateR
@@ -18,9 +22,9 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EncoderStepState
 import Flapjack.Compiler.Backend.Semantics.TargetProps.PostInterferenceState
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EncodingNonempty
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
 import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
 import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
 import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
 import Flapjack.Test.LabToTargetSimpleEncoderParity
 import Flapjack.Misc.BalancedMap.RotationCorrect.SingleR
@@ -49,6 +53,7 @@ import Flapjack.Test.LabToTargetByteLengthsParity
 import Flapjack.Test.LabPropsLabelSetsParity
 import Flapjack.Test.LabToTargetWordLocationParity
 import Flapjack.Compiler.Backend.LabToTarget.WordLocValByte
+import Flapjack.Compiler.Backend.LabToTarget.StateRel
 import Flapjack.Test.LabToTargetWordLocValByteParity
 import Flapjack.Test.LabToTargetFetchValidityParity
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SequenceLaws
@@ -189,6 +194,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveReconstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ALookupMap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstMemoryAppend
@@ -1248,6 +1254,7 @@ import Flapjack.PanValueFfiEventMonotonicity
 import Flapjack.PanValueFfiClockProjection
 import Flapjack.PanCost
 import Flapjack.RiscV.Model
+import Flapjack.RiscV.L3.Types
 import Flapjack.RiscV.Encoding
 import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.RiscV.PanMemory
@@ -1476,8 +1483,13 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveBitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveBitmaps
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRootsBitmaps
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveList
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveData
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveBitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveBitmaps
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveRootsBitmaps
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveList
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveRefList
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveList
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveLoop
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveBitmap
@@ -1579,6 +1591,7 @@ import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
 import Flapjack.Compiler.Backend.LabToTarget.SecondPass
 import Flapjack.Compiler.Backend.LabToTarget.Padding
 import Flapjack.Compiler.Backend.WordUnreach
+import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant

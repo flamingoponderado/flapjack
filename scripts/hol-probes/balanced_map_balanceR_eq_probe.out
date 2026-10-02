@@ -1,0 +1,11 @@
+bmbr_full=⊢ ∀(k :α) (v :β) (l :(α, β) balanced_map) (r :(α, β) balanced_map) (cmp :α -> α -> ordering). good_cmp cmp ∧ invariant cmp l ∧ invariant cmp r ⇒ balanceR k v l r = balR k v l r
+bmbr_empty=T
+bmbr_singleton=T
+bmbr_lr_only=T
+bmbr_ll_only=T
+bmbr_single_tip=T
+bmbr_double_tip=T
+bmbr_left_tip=T
+bmbr_fallback=T
+bmbr_heavy_single=T
+bmbr_heavy_double=T

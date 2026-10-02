@@ -157,6 +157,10 @@ The pinned external `HOL/src/n-bit/alignmentScript.sml` counterpart is
 `Flapjack/Misc/Alignment.lean` (`align`, `aligned`, `byte_align`, `byte_aligned`, and
 `wordsScript.sml`'s `word_slice`), with production bridges in `Flapjack/Misc/Alignment/Production.lean`.
 
+The pinned external `HOL/examples/l3-machine-code/riscv/model/riscvScript.sml` (the L3-generated
+RISC-V model) counterpart is `Flapjack/RiscV/L3/` (`Types.lean`: every `Construct`/`Record`
+datatype and the `riscv_state` record).
+
 The pinned external `HOL/src/pred_set/src/pred_setScript.sml` counterpart is
 `Flapjack/Misc/PredSet.lean` (the left inverse `LINV_OPT`/`LINV`, sets as predicates).
 

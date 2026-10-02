@@ -153,4 +153,3 @@ bounded-index definition; the original constructor conjunction is tagged above. 
   | labAsm a w bs n => simpa [isLabelHOL] using iff_true_intro (prefixNonlabel (.labAsm a w bs n) xs (by simp [isLabelHOL]))
 
 end Flapjack.Compiler.Backend.LabToTarget
-
