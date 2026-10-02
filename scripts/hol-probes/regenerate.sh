@@ -4234,3 +4234,7 @@ run_probe ssa_cc_trans_correct_heap_probeScript.sml ssa_cc_trans_correct_heap_pr
 run_probe lab_to_target_position_append_probeScript.sml lab_to_target_position_append_probe.out \
   label_zero_def label_zero_def_types sec_label_zero_def sec_label_zero_def_types sec_label_zero_pos_val_0 sec_label_zero_pos_val_0_types pos_val_append pos_val_append_types zero_label nonzero_label asm_annotation_ignored labasm_annotation_ignored suffix_valid prefix_invalid zero_suffix_position before_boundary at_boundary prefix_at_boundary suffix_at_boundary past_boundary far_past_boundary empty_prefix_zero empty_suffix_past label_only_prefix_boundary label_only_prefix_past \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_fetch_validity_probeScript.sml lab_to_target_fetch_validity_probe.out \
+  fetch_validity fetch_validity_types valid_code fetch_zero fetch_one fetch_end fetched_valid \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

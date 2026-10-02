@@ -1,0 +1,11 @@
+fetch_validity=∀(pc :num) (n :num) (code2 :α sec list).
+  all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) n code2 ∧
+  asm_fetch_aux pc code2 = SOME (line :α line) ⇒
+  line_ok c labs ffis (pos_val pc n code2) line
+fetch_validity_types=(pc :num)::num;(n :num)::num;(code2 :α sec list)::α sec list;(line :α line)::α line;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+valid_code=T
+fetch_zero=T
+fetch_one=T
+fetch_end=T
+fetched_valid=T

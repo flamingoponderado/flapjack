@@ -146,6 +146,7 @@ import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
 import Flapjack.Test.TargetPropsInterferenceParity
+import Flapjack.Test.LabToTargetFetchValidityParity
 import Flapjack.Test.LabToTargetEncodingValidityParity
 import Flapjack.Test.LabToTargetPositionAppendParity
 import Flapjack.Test.LabToTargetPositionValuesParity
@@ -1753,6 +1754,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordGcFunctionsParity.runChecks,
     Flapjack.Test.StackAllocGcCodeParity.runChecks,
     Flapjack.Test.StackAllocGetBitsParity.runChecks,
+    Flapjack.Test.LabToTargetFetchValidityParity.runChecks,
     Flapjack.Test.LabToTargetEncodingValidityParity.runChecks,
     Flapjack.Test.LabToTargetPositionAppendParity.runChecks,
     Flapjack.Test.LabToTargetPositionValuesParity.runChecks,
