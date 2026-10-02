@@ -56156,5 +56156,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 original source comparison 2026-10-02, original line1549, bead .18.5.15.10.57. Fresh original full statement and binder types captured in lab_to_target_fetch_validity_probe.out. Retains arbitrary configuration, nested natural Spt labels, native HolFfiName list, pc/n/code/fetched line and exactly the original conjunction of full all_enc_ok and actual asm_fetch_aux success, concluding full line_ok at actual pos_val. Native positive-width word-indexed Line, AsmConfigExact and instruction carriers preserve original fields; only words_as_type_indexed_bitvec translation applies. Fetch skips labels and empty sections, counts instructions while pos_val advances physical bytes. Five original observations include actual valid code, two distinct fetched instructions, exhaustion and fetched validity; kernel checks include an unconditional concrete validity instance and full arbitrary-width theorem consumer. No callback, target evaluation or extra successful-pass assumption; no full machine or compiler correctness closure inferred."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/WordLocation.lean",
+    "lean_name": "wordLocVal",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "word_loc_val_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original source comparison 2026-10-02, original line516 and bead .10.58. Fresh full original equations/types captured in lab_to_target_word_location_probe.out. Both original clauses retain arbitrary positive word dimension, base p, nested natural Spt labels and original word_loc Word/Loc constructors. Word w returns SOME w unchanged; Loc performs actual lab_lookup, NONE remains NONE, successful natural q is converted by n2w and added to p using modular word arithmetic. words_as_type_indexed_bitvec is the sole representation translation; no word specialization, callback, fallback offset, success premise, HD/EL or byte-alignment dependency. Six actual original and matching kernel observations cover Word, location hit, modular wrap, outer/inner miss and one-bit width; three full generic kernel consumers retain arbitrary base, labels, keys and natural offset. Proof-side relation helper directly used by original full state_rel, not a production compiler route or completed simulation."
   }
 ]
