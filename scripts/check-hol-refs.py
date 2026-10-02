@@ -1808,18 +1808,108 @@ def _option_map_projects_result_slot(
     return not after_map[projected[1]:].strip()
 
 
+def reviewed_gc_function_alias(module: str, root: str) -> str | None:
+    """Resolve the unique original gc_fun_type alias, without general unfolding."""
+    try:
+        rows = json.loads((Path(root) / "docs/HOL-THEOREM-MAP.json").read_text())
+    except (OSError, ValueError):
+        return None
+    reviewed = [row for row in rows if isinstance(row, dict)
+                and row.get("lean_path") ==
+                "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean"
+                and row.get("lean_name") == "WordSemGcFun"]
+    if (len(reviewed) != 1 or reviewed[0].get("hol_path") !=
+            "cakeml/compiler/backend/semantics/wordSemScript.sml"
+            or reviewed[0].get("hol_name") != "gc_fun_type"
+            or reviewed[0].get("statement_status") !=
+            "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec"
+            or reviewed[0].get("fmap_as_finite_support_function") !=
+            ["argument_4", "result_3"]
+            or reviewed[0].get("words_as_type_indexed_bitvec") is not True):
+        return None
+    pending = [module]
+    infos = {}
+    declarations = []
+    owner = "Flapjack.Compiler.Backend.Semantics.WordSem.State"
+    while pending:
+        name = pending.pop()
+        if name in infos:
+            continue
+        info = _lean_file_info(module_source_file(name, root))
+        if info is None:
+            continue
+        infos[name] = info
+        pending.extend(info.imports)
+        declarations.extend((name, start) for start in
+                            _carrier_declaration_starts(info, "WordSemGcFun"))
+    if len(declarations) != 1 or declarations[0][0] != owner:
+        return None
+    info = infos[owner]
+    sites = [site for site in hol_attribute_sites(info.lines, include_fmap_function=True)
+             if site[1:4] == ("cakeml/compiler/backend/semantics/wordSemScript.sml",
+                              "gc_fun_type", 193)]
+    if len(sites) != 1 or not sites[0][11] or sites[0][-1] != ("argument_4", "result_3"):
+        return None
+    source = strip_lean_comments(tagged_declaration_source(info.lines, sites[0][0]))
+    expected = """abbrev WordSemGcFun (width : Nat) [NeZero width] : Type :=
+      (List (WordLocW width) × (BitVec width → WordLocW width) × (BitVec width → Bool) ×
+        HolFiniteMapExact WordStoreHOL (WordLocW width)) →
+      Option (List (WordLocW width) × (BitVec width → WordLocW width) ×
+        HolFiniteMapExact WordStoreHOL (WordLocW width))"""
+    start = source.find("abbrev WordSemGcFun")
+    if start < 0 or " ".join(source[start:].split()) != " ".join(expected.split()):
+        return None
+    if fmap_as_finite_support_function_errors(info.lines, source, "WordSemGcFun",
+                                             ("argument_4", "result_3")):
+        return None
+    return source
+
+
+def gc_function_predicate_signature(source: str, decl_name: str) -> bool:
+    """Require the single alias argument and self-contained positive width."""
+    if not re.search(rf"\bdef\s+{re.escape(decl_name)}\b", strip_lean_comments(source)):
+        return False
+    parsed = _function_declaration_signature(strip_lean_comments(source), decl_name,
+                                            all_binders=True)
+    if parsed is None:
+        return False
+    groups, result = parsed
+    return ([(kind, " ".join(inner.split())) for kind, inner in groups] ==
+            [("{", "width : Nat"), ("[", "NeZero width"),
+             ("(", "f : WordSemGcFun width")] and result == "Prop")
+
+
 def fmap_as_finite_support_function_errors(
     lines: list[str], declaration_source: str, decl_name: str,
-    positions: tuple[str, ...],
+    positions: tuple[str, ...], *, module: str = "", root: str = "",
+    hol_reference: tuple[str, str] | None = None,
+    words_bitvec: bool = False,
 ) -> list[str]:
     """Validate the exact nested finite-map slots of a function type alias.
 
-    This qualifier is intentionally limited to a type abbreviation with one
-    top-level arrow, a tuple argument, and an Option-wrapped tuple result. The
+    Normally this qualifier requires a type abbreviation with one top-level
+    arrow, a tuple argument, and an Option-wrapped tuple result. The sole
+    approved predicate extension is original wordProps gc_fun_ok_def with
+    its one WordSemGcFun argument: it inherits exactly the existing reviewed
+    alias slots and positive word width. This does not review predicate clauses
+    or authorize an arbitrary higher-order predicate or alias. The
     position names are one-based (`argument_N`, `result_N`). It verifies both
     carrier slots are `HolFiniteMapExact`, contain identical canonical map
     types, and account for every such occurrence in the abbreviation.
     """
+    if (hol_reference == ("cakeml/compiler/backend/semantics/wordPropsScript.sml",
+                          "gc_fun_ok_def") and module and root
+            and gc_function_predicate_signature(declaration_source, decl_name)):
+        if not words_bitvec:
+            return ["gc_fun_ok must inherit words_as_type_indexed_bitvec together with map slots"]
+        if positions != ("argument_4", "result_3"):
+            return ["gc_fun_ok must inherit exactly argument_4/result_3"]
+        if re.search(r"^\s*(?:variable|variables|include|omit)\b",
+                     strip_lean_comments("\n".join(lines)), re.M):
+            return ["gc_fun_ok requires self-contained binders"]
+        if reviewed_gc_function_alias(module, root) is None:
+            return ["gc_fun_ok requires the unique source-reviewed WordSemGcFun alias"]
+        return []
     errors: list[str] = []
     if not positions:
         return ["fmap_as_finite_support_function requires named map positions"]
@@ -3276,6 +3366,17 @@ def words_as_type_indexed_bitvec_errors(
             )
 
     carrier_ok = bool(module and root and reviewed_hol_prog_word_alias(signature, module, root))
+    # gc_fun_ok alone inherits the already reviewed function alias translation.
+    # Keep arbitrary higher-order aliases outside this narrowly approved route.
+    if (not carrier_ok and module and root and lines is not None
+            and gc_function_predicate_signature(signature + " := True", declaration)):
+        sites = [site for site in hol_attribute_sites(lines, include_fmap_function=True)
+                 if site[1:3] == ("cakeml/compiler/backend/semantics/wordPropsScript.sml",
+                                  "gc_fun_ok_def")
+                 and site[11] and site[-1] == ("argument_4", "result_3")
+                 and gc_function_predicate_signature(
+                     tagged_declaration_source(lines, site[0]), declaration)]
+        carrier_ok = bool(len(sites) == 1 and reviewed_gc_function_alias(module, root))
     if identifier_token_occurs(signature, "HolProg") and not carrier_ok:
         errors.append("words_as_type_indexed_bitvec requires the source-resolved canonical "
                       "HolProg alias, its unique word payload owners and each positive width")
@@ -3754,7 +3855,9 @@ def main(argv: list[str]) -> int:
                     f"{where}: {error}"
                     for error in fmap_as_finite_support_function_errors(
                         lines, tagged_declaration_source(lines, number), lean_decl,
-                        fmap_function_positions,
+                        fmap_function_positions, module=module, root=str(ROOT),
+                        hol_reference=(hol_path, hol_name),
+                        words_bitvec=words_bitvec,
                     )
                 )
                 if (fmap_fields or fmap_result or fmap_parameters or fmap_existentials
