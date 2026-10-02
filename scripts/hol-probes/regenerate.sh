@@ -5824,3 +5824,14 @@ run_probe lab_to_target_shmem_distinct_probeScript.sml lab_to_target_shmem_disti
   full_guards entry_values distinct independent_query empty zero_validity encoding_guard zero_duplicate \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe l3_address_exception_probeScript.sml l3_address_exception_probe.out \
+  address_exception_definition address_exception_type load_zero store_max misaligned arbitrary_exception \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_integer_load_mode_probeScript.sml l3_integer_load_mode_probe.out \
+  architecture_definition architecture_type curArch_definition curArch_type in32BitMode_definition in32BitMode_type selector_0 selector_1 selector_2 selector_3 \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_reservation_probeScript.sml l3_reservation_probe.out \
+  reserve_read_definition reserve_read_type reserve_write_definition reserve_write_type reserve_match_definition reserve_match_type none_none none_zero clear_zero replace_match max_mismatch present_mismatch core_zero core_wrap \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"

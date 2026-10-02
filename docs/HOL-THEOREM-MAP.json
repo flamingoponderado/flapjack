@@ -67725,5 +67725,61 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 full original source9811 and exported fulltype0hyp comparison: retains all three guards LENGTH(prog_to_bytes code)<dimword alpha, enc_ok c and all_enc_ok at independent validity start, arbitrary queried p and complete native carriers. Exact ALL_DISTINCT mapped entry_pc over SND(get_shmem_info code p [] []) becomes List.Nodup, with original Nat entry/exit PCs and offsets, fixed word8 nbytes, positive-width native word fields and own NeZero. Genuine proof consumes checked full extraction characterization and strict position-order law; each enumerated index contributes at most one matching Nat PC, and distinct indices strictly increase. Dimensional size guard retained even though this alternative Nat-order proof does not need it. No desired result/simulation/target-run premise or HD/EL default. Generic full theorem consumer and actual arbitrary query consumer discharge all original guards. Fresh original eight paired observations include independent positions, exact PC values, empty code, and duplicate zero-byte extraction that still passes all_enc_ok but fails enc_ok. Kernel and oracle evidence supplement source review, not HOL-to-Lean equivalence or full initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AddressException.lean",
+    "lean_name": "signalAddressException",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "signalAddressException_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison riscvScript3460-3472: exact ExceptionType x word64 argument, full riscv_state -> riscv_state, setTrap(e,SOME vAddr) with original returned state. Dependencies setTrap3433-3459 and write NextFetch preserve all other state/core fields. Native fixed-width carriers match reviewed Types, canonical arbitrary intermediate SynchronousTrap overwritten at both fields. No premise or branch narrowing; full integer instruction assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoadMode.lean",
+    "lean_name": "architecture",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "architecture_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison pinned riscvScript397-415/1417-1440: complete architecture_def literal equation, all2-bit selector routes. Source0 RV32I/2 RV64I/3 RV128I retain original state; invalid1 raises original UNDEFINED Unknown architecture: decimal-selector message and canonical ARB Architecture. curArch reads original current-core MCSR.mcpuid.ArchBase; in32BitMode compares result with RV32I and forwards returned state. Fixed positive native widths and full state function carriers match Types; no mode/core-bound premise or forced unspecified result. Full integer instruction assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoadMode.lean",
+    "lean_name": "curArch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "curArch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison pinned riscvScript397-415/1417-1440: complete curArch_def literal equation, all2-bit selector routes. Source0 RV32I/2 RV64I/3 RV128I retain original state; invalid1 raises original UNDEFINED Unknown architecture: decimal-selector message and canonical ARB Architecture. curArch reads original current-core MCSR.mcpuid.ArchBase; in32BitMode compares result with RV32I and forwards returned state. Fixed positive native widths and full state function carriers match Types; no mode/core-bound premise or forced unspecified result. Full integer instruction assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/IntegerLoadMode.lean",
+    "lean_name": "in32BitMode",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "in32BitMode_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison pinned riscvScript397-415/1417-1440: complete in32BitMode_def literal equation, all2-bit selector routes. Source0 RV32I/2 RV64I/3 RV128I retain original state; invalid1 raises original UNDEFINED Unknown architecture: decimal-selector message and canonical ARB Architecture. curArch reads original current-core MCSR.mcpuid.ArchBase; in32BitMode compares result with RV32I and forwards returned state. Fixed positive native widths and full state function carriers match Types; no mode/core-bound premise or forced unspecified result. Full integer instruction assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Reservation.lean",
+    "lean_name": "«write'ReserveLoad»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'ReserveLoad_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison riscvScript1381-1398/5691-5702: complete write'ReserveLoad_def, fixed word8 current-core index, Option word64 virtual address and arbitrary full native riscv_state. ReserveLoad reads c_ReserveLoad(procID); write ReserveLoad updates precisely that ATy function with source UPDATE and preserves all other state fields; matchLoadReservation is IsSome AND THE reservation equals supplied vAddr. Canonical HOL THE NONE remains unspecified; no default, successful reservation/core-bound/alignment premise, or narrowed state. Constructors/types match original native Types. LR/SC/full Run/Next assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Reservation.lean",
+    "lean_name": "ReserveLoad",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ReserveLoad_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison riscvScript1381-1398/5691-5702: complete ReserveLoad_def, fixed word8 current-core index, Option word64 virtual address and arbitrary full native riscv_state. ReserveLoad reads c_ReserveLoad(procID); write ReserveLoad updates precisely that ATy function with source UPDATE and preserves all other state fields; matchLoadReservation is IsSome AND THE reservation equals supplied vAddr. Canonical HOL THE NONE remains unspecified; no default, successful reservation/core-bound/alignment premise, or narrowed state. Constructors/types match original native Types. LR/SC/full Run/Next assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Reservation.lean",
+    "lean_name": "matchLoadReservation",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "matchLoadReservation_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison riscvScript1381-1398/5691-5702: complete matchLoadReservation_def, fixed word8 current-core index, Option word64 virtual address and arbitrary full native riscv_state. ReserveLoad reads c_ReserveLoad(procID); write ReserveLoad updates precisely that ATy function with source UPDATE and preserves all other state fields; matchLoadReservation is IsSome AND THE reservation equals supplied vAddr. Canonical HOL THE NONE remains unspecified; no default, successful reservation/core-bound/alignment premise, or narrowed state. Constructors/types match original native Types. LR/SC/full Run/Next assembly remains open."
   }
 ]

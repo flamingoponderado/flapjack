@@ -6218,3 +6218,23 @@ This is the full model Fetch, distinct from riscv_step Fetch; probes are
 regression evidence, not cross-assistant equivalence or full modelRun coverage.
 
 `stack_remove_write_bytearray_probe` replays the three full original IGNORE_non_aligned/IGNORE/EQ proofs (324–370), captures 50 complete original reads and paired writes at seven observed keys, and records the original LOG specification plus its symbolic `LOG2 0` boundary. Widths 8/64/80 cover both endiannesses, empty writes, wraparound, Loc/domain failures and differing memories; width 1 has empty writes only. Nonempty width-one observations remain symbolic and are not assigned invented numeric expectations. Kernel/runtime checks compare only values decoded from the original outputs. Native support drafts remain untagged: their imported alignment chooses `Nat.log2 0 = 0`, whereas the source specification does not constrain `LOG2 0`. Exact acceptance remains open on `flapjack-wordsem-byte-align-total`, which must reuse the already reviewed canonical total alignment model. Numeric fixtures do not establish generic cross-language correspondence or compiler correctness.
+`l3_address_exception_probe.out` captures the complete original native
+`signalAddressException` definition/type and four fault-kind/address/current-core
+observations. The corresponding Lean guard proves an unconditional full-state
+update for arbitrary native states, with no core bound or address-validity premise.
+
+`l3_integer_load_mode_probe.out` captures complete `architecture`, `curArch` and
+`in32BitMode` equations/types and all four two-bit selectors on core255 with
+`totalCore=1`. Selector1 keeps the canonical unspecified Architecture/Boolean
+and the original UNDEFINED message. Lean regressions preserve arbitrary unrelated
+state and the first-exception rule; no default selector result is inferred.
+These are integer-load prerequisites, not full instruction/Run/Next assembly.
+
+`l3_reservation_probe.out` captures the complete original `ReserveLoad`,
+`write'ReserveLoad`, and `matchLoadReservation` equations/types. Eight fully
+reduced observations cover absent/present reservations, clearing/replacement,
+match/mismatch, maximum addresses, and wrapping core indices with `totalCore=1`.
+Each observes equality of the entire returned state to the literal single-field
+update. Lean guards retain arbitrary unrelated state; unconditional full-state,
+indexed-frame, read-after-write and match-shape lemmas preserve original THE
+NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
