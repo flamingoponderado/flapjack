@@ -1,0 +1,2 @@
+lt_ok_full=⊢ ∀lt. lt_ok lt ⇔ EVERY (λ(tgt_ssa,names,exit_names). INJ (option_lookup tgt_ssa) (domain names) 𝕌(:num) ∧ INJ (option_lookup tgt_ssa) (domain exit_names) 𝕌(:num)) lt
+lt_ok_type_lt=:(num sptree$num_map # α sptree$num_map # β sptree$num_map) list
