@@ -29,10 +29,10 @@ All count invariants hold:
 
 ## Lean coverage of the lexically cited set
 
-- Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `2602` (not the validated tag count)
-- Lexically cited names with a textual `(theory, name)` match: `1246`
-- Lexically cited names with no textual `(theory, name)` match: `5396`
-- ... of which also have no same-name textual match anywhere: `5302` (name heuristic: neither an over- nor an under-approximation of genuinely missing ports)
+- Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `2676` (not the validated tag count)
+- Lexically cited names with a textual `(theory, name)` match: `1309`
+- Lexically cited names with no textual `(theory, name)` match: `5333`
+- ... of which also have no same-name textual match anywhere: `5239` (name heuristic: neither an over- nor an under-approximation of genuinely missing ports)
 
 ## Direct citations of the root theorem
 

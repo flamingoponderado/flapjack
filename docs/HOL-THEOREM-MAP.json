@@ -51380,5 +51380,847 @@
     "lean_name": "linearScanRegAllocCorrect",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.19): linear_scanProofScript.sml:6008-6230 ∀k moves ct forced. EVERY (λ(r1,r2). in_clash_tree ct r1 ∧ in_clash_tree ct r2) forced ⇒ ∃col livein flivein. linear_scan_reg_alloc k moves ct forced = M_success col ∧ check_clash_tree (sp_default col) ct LN LN = SOME (livein, flivein) ∧ (∀r. in_clash_tree ct r ⇒ r ∈ domain col ∧ if is_phy_var r then sp_default col r = r DIV 2 else if is_stack_var r then k ≤ sp_default col r else T) ∧ (∀r. r ∈ domain col ⇒ in_clash_tree ct r) ∧ EVERY (λ(r1,r2). sp_default col r1 = sp_default col r2 ⇒ r1 = r2) forced; DB.fetch show_types compared (TV=0, no free variables). Lean: the same single hypothesis and five conclusion conjuncts over the exact tagged linearScanRegAlloc (Exc result, whose definition reads colours through HOL EL as the exact holEl), spDefault, checkClashTree, sptDomain, inClashTree, with the Bool if-chain. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "linesRel_encLine",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "LIST_REL_enc_line",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original local3353 complete EVERY2 equivalence, arbitrary ls/lsPrime, encoder and len binders, actual MAP(enc_line enc len). Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "codeSimilar_encSecList",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_enc_sec_list",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original3362 complete code_similar iff under actual initial encSecList, all code1/code2/n binders and encoder-dependent Skip byte length retained. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "encLinesAgain_implies_similar",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_lines_again_IMP_similar",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original local3376 all ten explicit binders labs/ffis/pos/enc/lines/acc/ok/linesPrime/okPrime/curr. Full execution equality retains okPrime:Nat×Bool, original EVERY2 curr (REVERSE acc) premise and full EVERY2(curr++lines)linesPrime conclusion. Actual recursive branch invariant includes unchanged offset, changed offset, MAX byte lengths, position and accumulated flag. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "encSecsAgain_implies_similar",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_secs_again_IMP_similar",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original3391 all pos/labs/ffis/enc/code/code1/ok binders, full result equality and code-similarity implication; complete recursion threads actual position and both section success flags. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "revive_moves_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "reviveMoves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:363-377. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "unspill_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "unspill",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:379-392. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_simplify_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doSimplify",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:400-415. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_coalesce_real_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doCoalesceReal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:457-471. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "bg_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "bgOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:524-554, both George and Briggs branches with k+1 as infinity for case1. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_coalesce_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doCoalesce",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:668-690. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_prefreeze_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doPrefreeze",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:726-746, including the unused result of set_unavail_moves_wl. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_freeze_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doFreeze",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:750-765. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_spill_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doSpill",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:809-829, NONE/SOME scost branches. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_step_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doStep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:831-858. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "rpt_do_step_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "rptDoStep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:860-867, both clauses (0 and SUC c). Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_upd_coalesce_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doUpdCoalesce",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1251-1254 update_coalesced i (0+i) kept literally. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "init_alloc1_heu_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "initAlloc1Heu",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1257-1286. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_alloc1_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doAlloc1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1288-1296. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "biased_pref_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "biasedPref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1369-1380, the case on lookup n mtable and handle_Subscript around first_match_col. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_reg_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doRegAlloc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1449-1462, if alg = Simple then [] else moves. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "reg_alloc_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "regAllocAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1473-1488, run_ira_state with the twelve-field ira_state record literally. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "reg_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "regAlloc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1490-1493 reg_alloc_aux ... (mk_bij ct). Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsStoreConsts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsAssign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsGet",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsStore",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsRaise",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsOpCurrHeap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsReturn",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsTick",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsSet",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsLocValue",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsCodeBufferWrite",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsDataBufferWrite",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsShareInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+    "lean_name": "ssaCcTransPropsSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+    "lean_name": "ssaCcTransPropsMustTerminate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+    "lean_name": "ssaCcTransPropsIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramProps.lean",
+    "lean_name": "ssaCcTransProps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-hyxt: full original all-program ssa_cc_trans_props5951ff, including resumed Loop/Break/Continue cases. Quantified native program/map/counter/loop-table/output tuple; actual compiler equality then original ssa_map_ok/is_alloc_var premise imply counter monotonicity/allocated counter/output-map bound. No case IH, desired target evaluation, validity or output-frame premise in final theorem. Native datatype induction includes both nested option-product handler programs and all27functional cases; scoped original case IHs are discharged by induction. Exact original HOL functional-induction assembly from literal27case proof replays, full source types captured. Spt Nat map, List of Spt Nat/two Spt Unit loop-table triples, native constructor arities and positive width BitVec match reviewed owning carriers. No executable behavior change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionLength.lean",
+    "lean_name": "secLengthSumLineLen",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_length_sum_line_len",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison at3142: retains every original quantified list/position/accumulator and unconditional conclusion. Sum is SUM(MAP line_len lines)+n; append is the full section_labels pair with pos+SUM(MAP line_len left) and SND(section_labels pos left labs). No accumulator uniqueness/byte annotation consistency or target result hypothesis. Canonical source-compared lineLen consumed at pushed abd7cf3a6 under coordinator23:18 delivered-dependency instruction, acceptance bead remains open. Native Line fixed byte8/MlString payloads and positive generic word translation only. Generalized list induction covers every constructor and label-zero branch. Six fresh original/kernel rows supplement all13previous rows, pinning duplicate-label accumulation and whole result pair."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionLength.lean",
+    "lean_name": "sectionLabelsAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "section_labels_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison at3213: retains every original quantified list/position/accumulator and unconditional conclusion. Sum is SUM(MAP line_len lines)+n; append is the full section_labels pair with pos+SUM(MAP line_len left) and SND(section_labels pos left labs). No accumulator uniqueness/byte annotation consistency or target result hypothesis. Canonical source-compared lineLen consumed at pushed abd7cf3a6 under coordinator23:18 delivered-dependency instruction, acceptance bead remains open. Native Line fixed byte8/MlString payloads and positive generic word translation only. Generalized list induction covers every constructor and label-zero branch. Six fresh original/kernel rows supplement all13previous rows, pinning duplicate-label accumulation and whole result pair."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Evaluate.lean",
+    "lean_name": "evaluateTargetHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "evaluate_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.5): Compared the entire original targetSemScript.sml:118-219. Retains machine_config and universe-0 FFI host, arbitrary positive word width, clock-only recursion, program-domain minus FFI-entry priority before halt/cache, encoded-memory existential, all three state_ok guards and frame only on ms1, failure rollback to original machine/FFI, separate shifted next/cache/FFI oracles, first-match find_index and ALOOKUP, total EL using shared HOL ARB without a length premise, both mapped templates and full-word alignment, canonical little-endian arbitrary-count bytes, external MMIO rejection and two optional reads, original FFI_final event and old FFI state, and FFI_return new host/events. words_as_type_indexed_bitvec records only the standard positive word/FFI carrier translation. No callback, successful-run premise, concrete unspecified FFI name, or executable compiler routing change. Original target_sem_evaluate probes and matching kernel examples provide regressions, not cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "select_reg_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SelectRegAlloc.lean",
+    "lean_name": "selectRegAlloc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.3.5): word_allocScript.sml:1697-1703 select_reg_alloc alg spillcosts k heu_moves tree forced fs = if 4 <= alg then linear_scan$linear_scan_reg_alloc k heu_moves tree forced else reg_alloc (if alg <= 1n then Simple else IRC) spillcosts k heu_moves tree forced fs, over the exact tagged linearScanRegAlloc and regAlloc (RegAlloc/Allocator.lean); type num -> num num_map option -> num -> (num # num # num) list -> clash_tree -> (num # num) list -> num_set -> (num num_map, state_exn) exc confirmed by the sra_type probe row and a Lean signature check. Seven original HOL EVAL rows (algorithms 0-5) kernel-replayed in Flapjack.Test.WordAllocSelectRegAllocParity. Proof-side; the executed compiler's allocator routing remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/LoadEvaluation.lean",
+    "lean_name": "evaluateLoadAnyDest",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_any_dest",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-load-evaluation, original221-270: Original op/r0/address/offset/value/state/target-destination binders and only not-store plus original successful source evaluation guard; derives target evaluation at any destination, including destination equal to address. All8memop constructor cases considered, stores excluded by original guard; Load16 retained and source-success impossible exactly as faithful native inst. Private loadValue is only factoring of actual native memory clauses, instLoadMap proves agreement under original guard; public statements use complete clocked evaluate. Generic assignment result iff recovers loaded value using full insert_eq internally on arbitrary sparse trees. No extra wf/range/width/clock/heap-domain hypothesis. fmap_as_finite_support_relation names reviewed owning WordSemStateFiniteExact.fpRegs/store, transitive original owner not duplicated and same-module LoadEvaluationWitness gives genuine broad/exact roundtrip; locals/code are original Spt num_map. words_as_type_indexed_bitvec records only positive-width words with NeZero and arbitrary universe-0 configuration/FFI hosts. Inherits reals_as_rational_cuts through evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Original full literal proof replays with hyp=[] including local address theorem, four inferred types and80complete whole theorem applications at1/32/64/80; matching80kernel applications include write/destination alias and target/address alias. Full CSE invariant/pass and compiler theorem remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/LoadEvaluation.lean",
+    "lean_name": "evaluateLoadSetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-load-evaluation, original221-270: Original op/destination/address/offset/write-register/input-value/output-value/state binders; only not-store and address != write-register guard; full bidirectional equivalence, including write-register = destination. No disjoint-destination premise added. All8memop constructor cases considered, stores excluded by original guard; Load16 retained and source-success impossible exactly as faithful native inst. Private loadValue is only factoring of actual native memory clauses, instLoadMap proves agreement under original guard; public statements use complete clocked evaluate. Generic assignment result iff recovers loaded value using full insert_eq internally on arbitrary sparse trees. No extra wf/range/width/clock/heap-domain hypothesis. fmap_as_finite_support_relation names reviewed owning WordSemStateFiniteExact.fpRegs/store, transitive original owner not duplicated and same-module LoadEvaluationWitness gives genuine broad/exact roundtrip; locals/code are original Spt num_map. words_as_type_indexed_bitvec records only positive-width words with NeZero and arbitrary universe-0 configuration/FFI hosts. Inherits reals_as_rational_cuts through evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Original full literal proof replays with hyp=[] including local address theorem, four inferred types and80complete whole theorem applications at1/32/64/80; matching80kernel applications include write/destination alias and target/address alias. Full CSE invariant/pass and compiler theorem remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/LoadEvaluation.lean",
+    "lean_name": "evaluateLoadChangeAddr",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_change_addr",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-load-evaluation, original221-270: Complete local original declaration retained: only not-store, actual input lookup equality and original source evaluation guard; derives evaluation at replaced address. No successful target, word-valued lookup or canonical-map invariant premise. All8memop constructor cases considered, stores excluded by original guard; Load16 retained and source-success impossible exactly as faithful native inst. Private loadValue is only factoring of actual native memory clauses, instLoadMap proves agreement under original guard; public statements use complete clocked evaluate. Generic assignment result iff recovers loaded value using full insert_eq internally on arbitrary sparse trees. No extra wf/range/width/clock/heap-domain hypothesis. fmap_as_finite_support_relation names reviewed owning WordSemStateFiniteExact.fpRegs/store, transitive original owner not duplicated and same-module LoadEvaluationWitness gives genuine broad/exact roundtrip; locals/code are original Spt num_map. words_as_type_indexed_bitvec records only positive-width words with NeZero and arbitrary universe-0 configuration/FFI hosts. Inherits reals_as_rational_cuts through evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Original full literal proof replays with hyp=[] including local address theorem, four inferred types and80complete whole theorem applications at1/32/64/80; matching80kernel applications include write/destination alias and target/address alias. Full CSE invariant/pass and compiler theorem remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/MachineSem.lean",
+    "lean_name": "machineSemHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "machine_sem_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.6): Literal entire targetSemScript221-234 three constructor clauses over actual evaluateTargetHOL. Terminate retains existential clock/machine/FFI witnesses, Halt outcome and exact event equality. Diverge retains every natural clock with TimeOut witnesses and genuine canonical HolLList.lprefixLub over IMAGE(fromList of evaluator final io_events) UNIV; set membership is existential k with image equality, without finite bound, callback, trace approximation or simulation premise. Fail retains existential clock and Error first projection. Uses canonical MachineConfig, HolFfiState universe-0 host, HolBehaviour/HolLList and existing source-reviewed prefix LUB. words_as_type_indexed_bitvec records only positive HOL word dimensions and FFI host translation. Consumes own delivered evaluator a2d0f139e/388b74af3 under coordinator delivered-dependency authorization; acceptance remains on its open bead. Three fresh original HOL kernel-proved full-clause rows correspond to generic Lean Iff.rfl examples; neither is cross-language equivalence evidence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_removeScript.sml",
+    "hol_name": "remove_must_terminate_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove.lean",
+    "lean_name": "removeMustTerminate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.11): literal HOL word_removeScript.sml:16-31, clause by clause in HOL order with HOL's final catchall: Seq, If, MustTerminate p => remove_must_terminate p, Call (both optional bodies, all other fields unchanged), Loop; over the exact WordLangProgHOL carrier with positive BitVec/NeZero as the only translation. Eight original HOL EVAL rows (word_remove_must_terminate_probe.out) replayed in the kernel by Flapjack/Test/WordRemoveMustTerminateParity.lean. Proof-side definition; executed-path status tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "remove_must_terminate_conventions",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveMustTerminate.lean",
+    "lean_name": "removeMustTerminateConventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.11): HOL wordConvsProofScript.sml:2929-2949 remove_must_terminate_conventions: quantifiers p c k with free instruction predicate P leading; the let comp and the five conjuncts in HOL order: flat_exp_conventions, full_inst_ok_less c, post_alloc_conventions k (postAllocConventionsHOL), every_inst P as implications and extract_labels equality. Statement over the exact WordLangProgHOL carrier and the reviewed removeMustTerminate (remove_must_terminate_def); positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeMustTerminate_induct mirroring HOL remove_must_terminate_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_remove_must_terminate",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveMustTerminate.lean",
+    "lean_name": "getCodeLabels_removeMustTerminate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.11): HOL wordConvsProofScript.sml:2951-2959 word_get_code_labels_remove_must_terminate: quantifier ps, word_get_code_labels (remove_must_terminate ps) = word_get_code_labels ps over the reviewed getCodeLabelsHOL. Statement over the exact WordLangProgHOL carrier and the reviewed removeMustTerminate (remove_must_terminate_def); positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeMustTerminate_induct mirroring HOL remove_must_terminate_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_remove_must_terminate",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveMustTerminate.lean",
+    "lean_name": "goodHandlers_removeMustTerminate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.11): HOL wordConvsProofScript.sml:2961-2969 word_good_handlers_remove_must_terminate: quantifier ps with free handler label n leading, word_good_handlers n (remove_must_terminate ps) <=> word_good_handlers n ps over the reviewed goodHandlersHOL. Statement over the exact WordLangProgHOL carrier and the reviewed removeMustTerminate (remove_must_terminate_def); positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeMustTerminate_induct mirroring HOL remove_must_terminate_ind; no extra premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveMustTerminate.lean",
+    "lean_name": "removeMustTerminate_induct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only structural induction over remove_must_terminate results used by the tagged wordConvsProof remove_must_terminate theorems; HOL uses remove_must_terminate_ind with remove_must_terminate_def directly, so no separate HOL declaration is being ported."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "gc_kind",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Config.lean",
+    "lean_name": "GcKind",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2): HOL Datatype gc_kind (data_to_wordScript.sml:17-23): None | Simple | Generational (num list), constructor for constructor with the num list as List Nat."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "config",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Config.lean",
+    "lean_name": "Config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2): HOL record config (data_to_wordScript.sml:25-36): all eleven fields in HOL order (tag_bits, len_bits, pad_bits, len_size : num; has_div, has_longdiv, has_fp_ops, has_fp_tern, be, call_empty_ffi : bool; gc_kind), camelCase names, num as Nat, bool as Bool."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "small_shift_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Config.lean",
+    "lean_name": "smallShiftLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2): literal small_shift_length conf = conf.len_bits + conf.tag_bits + 1 (101-103); original probe row replayed in Flapjack/Test/DataToWordConfigParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "shift_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Config.lean",
+    "lean_name": "shiftLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2): literal shift_length conf = 1 + conf.pad_bits + conf.len_bits + conf.tag_bits + 1 (105-107); original probe row replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "get_gen_size_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Config.lean",
+    "lean_name": "getGenSize",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2): literal get_gen_size (1109-1115): [] => bytes_in_word * -1w; x::xs => if w2n bytes_in_word * x < dimword then bytes_in_word * n2w x else bytes_in_word * -1w; bytes_in_word is wordSemBytesInWord (byteScript bytes_in_word = n2w (dimindex DIV 8)), dimword is 2 ^ width; positive BitVec/NeZero is the only translation. Four original rows (empty, in range, overflow at 64, 32-bit) replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "bytes_in_word_mul_eq_shift",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "bytesInWord_mul_eq_shift",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml good_dimindex (:'a) ==> bytes_in_word * w = w << shift (:'a) (14-20); goodDimindex hypothesis kept, bytes_in_word is wordSemBytesInWord and shift is wordShiftAmount width. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_or_eq_0",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "word_or_eq_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (w || v) = 0w <=> w = 0w /\\ v = 0w (22-27), BitVec or. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "shift_length_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "shiftLength_hasFpOps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml shift_length (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) = shift_length conf (31-35), record update as Lean structure update."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "ptr_to_addr_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "ptrToAddr",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml base + ((w >>> shift_length conf) * bytes_in_word) (41-44). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "update_addr_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "updateAddr",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (fwd_ptr << shift_length conf) || ((small_shift_length conf - 1) -- 0) old_addr (46-50); word_bits h 0 rendered by gcWordBitsLow h as w MOD 2^(h+1), the bits 0..MIN h (dimindex-1). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "memcpy_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "memcpy",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml curried w a b m dm; w = 0w gives (b,m,T), else recursive call on (w-1w) (a+bytes_in_word) (b+bytes_in_word) ((b =+ m a) m) returning c1 /\\ a IN dm /\\ b IN dm (52-58); =+ rendered by gcUpdate, dm as a Bool membership function; termination by w2n. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "decode_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "decodeLength",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml w >>> (dimindex (:'a) - conf.len_size) (60-62), Nat subtraction as in HOL. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_move_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGcMove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml both clauses (64-81): Loc returns l2 = 0; Word with (w && 1w) = 0w unchanged; forwarding pointer via update_addr (theWord v >>> 2); otherwise the header check, decode_length, memcpy (len+1w), header overwrite with Word (i << 2) and the same conjunction order; HOL tuple argument/result kept. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcPartialMove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml both clauses (83-103) including the generation-window test tmp <+ gs \\/ rs <=+ tmp as unsigned BitVec < and <=; remaining body identical to word_gc_move. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_move_roots_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGcMoveRoots",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml nil/cons clauses (105-111) with the conjunction c1 /\\ c2. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_move_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGcMoveList",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (113-121): l = 0w stops, else moves m a, updates a, recurses at a+bytes_in_word, l-1w, returning a IN dm /\\ c1 /\\ c2; termination by w2n l. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_roots_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcPartialMoveRoots",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml nil/cons clauses (123-129). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcPartialMoveList",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (131-139), as word_gc_move_list with gs rs threaded. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_list_zero",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcPartialMoveList_zero",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml theorem (141-145): l = 0w case. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_list_suc",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcPartialMoveList_suc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml theorem (147-159): n2w (SUC l) as BitVec.ofNat width (l+1), keeping the n2w (SUC l) = 0w guard and the recursive n2w l. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_list_append",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcPartialMoveList_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml theorem (161-177): all eleven binders in HOL order, l + l' < dimword (:'a) as < 2 ^ width, n2w as BitVec.ofNat and the paired lets as destructuring lets. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_move_loop_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGcMoveLoop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (179-193): k first then conf; pb = pa, k = 0 failure, header word_bit 2 skip by (len+1w)*bytes_in_word, else word_gc_move_list; word_bit 2 w as getLsbD 2 (false beyond the width, as HOL's index guard). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_full_gc_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordFullGc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (195-201): word_gc_move_roots from 0w then word_gc_move_loop with dimword (:'a) = 2 ^ width. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "new_trig_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "newTrig",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (231-240): w2n/n2w as toNat/ofNat, MIN as min, the four branches in order; byte_aligned rendered by gcByteAligned (aligned (LOG2 (dimindex DIV 8)), with HOL's unspecified LOG2 0 as the opaque gcLog2Zero). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_ref_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcPartialMoveRefList",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (249-259): k first then conf; pb = re stops, k = 0 fails, decode_length then word_gen_gc_partial_move_list from pb+bytes_in_word. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_data_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcPartialMoveData",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (262-282): conf then k; both header branches with the c /\\ c2 and c /\\ c1 /\\ c2 results. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcPartial",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (285-296): refs_end, gen_start = gs >>> shift (:'a), roots, ref list from curr+rs with c1 threaded, data from new, result c2 /\\ c3. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_full_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcPartialFull",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (298-304): word_gen_gc_partial then memcpy ((pa - new) >>> shift) new (curr + gs). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "is_ref_header_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "isRefHeader",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (v && 0b1100w) = 0b01000w (306-308). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcMove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml both clauses (310-336): (1w && w) = 0w test, isWord v added to c, forwarding pointer, is_ref_header branch copying to pb - (len+1w)*bytes_in_word and returning new ib/pb, data branch copying to pa. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_roots_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcMoveRoots",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml nil/cons clauses (338-344) with the rebinding of ib and pb. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcMoveList",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (346-354), as word_gc_move_list with ib/pb threaded. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_data_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcMoveData",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (356-376): conf then k; both header branches. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_refs_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcMoveRefs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (378-393): conf then k; r2a = r1a stops, k = 0 fails, move_list then recursion. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_loop_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcMoveLoop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (395-416): both pbx = pb sub-branches; the reference branch's k = 0 result returns the pre-call pb and the recursive call passes it as pbx, while the refs result pbx is unused, all as in HOL. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (418-426): new_end, len >>> shift, roots from 0w, loop with w2n len fuel, result c1 /\\ c2. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "glob_real_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "globReal",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (428-432): Word w to Word (curr + (w >>> shift_length c << shift (:'a))) (HOL shifts left-associative), other values unchanged. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_fun_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGcFun",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (434-503): the gc_fun_type lambda over (roots,m,dm,s); None/Simple/Generational branches with the same |++ lists in order (updateListEq, later entries win), HD as holHd, TL as List.tail (HOL TL [] = []), c2 /\\ c3 checks, Temp n as .temp n; s ' X via holFapply. The type is WordSemGcFun width spelled out, whose own tag records the nested finite-map translation; the checker admits finite-map qualifiers only on type abbreviations or named binders, so this row records only the word translation and the store carrier is that reviewed WordSemGcFun carrier. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_fun_assum_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGcFunAssum",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "s"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (203-217): the seven-element SUBSET FDOM s as membership of each listed store name, isWord (s ' X) via holFapply (HOL FAPPLY with its unspecified out-of-domain value), good_dimindex, len_size <> 0, len_size + 2 < dimindex and shift_length < dimindex; the store binder s is the canonical HolFiniteMapExact carrier (bare relation entry). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_can_do_partial_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "wordGenGcCanDoPartial",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "s"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (219-229): gen_sizes <> [] /\\ allo <=+ endh - trig with theWord (s ' _) via wordSemTheWord and holFapply; s is the canonical HolFiniteMapExact store binder (bare relation entry). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   }
 ]
