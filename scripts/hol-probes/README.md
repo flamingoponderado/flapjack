@@ -4474,3 +4474,7 @@ native Inst clauses; LoadEvaluation support was exposed without changing its
 implementation or old theorem statements. Existing finite-map/positive-word
 translations and inherited rational-cut assumption (SOUNDNESS item 8) remain.
 These are invariant-update prerequisites, not full CSE/compiler correctness.
+
+## Literal balanced-map core
+
+`balanced_map_core_probe.out` captures twelve original cached-size, lookup and membership observations, plus the full original lookup/member equations. `BalancedMapCore.lean` kernel checks the same malformed-tree and singleton inputs and both generic recursive lookup branches. These fixtures do not establish insertion invariants or production tree-map correspondence.

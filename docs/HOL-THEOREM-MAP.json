@@ -52460,5 +52460,85 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-cse-evaluation-frames, original179-218/272-285/521-550: Complete local original op/r/address/offset/w/s1/s2, source evaluation then not-store and only locals/memory/domain/be equalities, derives target evaluation. No target state/frame/simulation premise; Load16 and all8memops retained. Actual faithful clocked evaluate Inst and native set_var retained. Internal arithValue/instArithMap factor/prove exact native clauses under original eligibility, all8arithmetic constructors audited and no simplified tagged evaluator; typed signed division, both binop operands and Shift immediate match original. Value extraction uses unrestricted insert_eq through shared AssignmentResults, not an extra public hypothesis. LoadValue implementation unchanged while exposing checked proof-only support namespace for reuse; all prior load theorem signatures/manifest rows preserved. fmap_as_finite_support_relation names reviewed imported owner WordSemStateFiniteExact.fpRegs/store, not duplicated; same-module EvaluationFramesWitness genuine broad/exact roundtrip, original locals/code Spt not qualified. words_as_type_indexed_bitvec records only positive word dimensions/NeZero and arbitrary universe-0 config/FFI hosts. Inherits reals_as_rational_cuts through actual evaluate/inst, SOUNDNESS item8, no added IEEE assumption. Four literal complete original proof replays hyp=[] including three local declarations, four original inferred types and256whole theorem applications at1/32/64/80; matching256full kernel applications include write/destination alias and independent memory/state functions. Initial original harness prematurely reduced firstReg to99 and failed syntactic match; corrected original destination expression before successful complete regeneration. Whole CSE invariant/pass/compiler goal remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "Map",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_map",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "ratio",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "ratio_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "delta",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "delta_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "size",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "size_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "bin",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "bin_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "null",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "null_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "lookup",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "lookup_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "member",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "member_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "empty",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "empty_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Core.lean",
+    "lean_name": "singleton",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "singleton_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source audit 2026-10-02, bead flapjack-word-cse-balanced-map.1: compared literal HOL368-415 carrier and equations. Nat cached size preserved even on malformed trees; arbitrary comparator uses Ordering lt/eq/gt as Less/Equal/Greater; identical payloads and recursion, no invariant premise. Original12 observations and full lookup/member equations captured in balanced_map_core_probe.out and14 registered kernel fixtures. Independent coordinator source acceptance remains open; no production replacement or full CSE theorem claim."
   }
 ]

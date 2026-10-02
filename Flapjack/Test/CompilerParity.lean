@@ -43,6 +43,7 @@ import Flapjack.Test.ProductionMoves
 import Flapjack.Test.RegAllocProductionFixedTags
 import Flapjack.Test.RegAllocProductionColourLookup
 import Flapjack.Test.WordCseProductionScalarKeys
+import Flapjack.Test.BalancedMapCore
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
 import Flapjack.Test.WordCseEvaluationFramesParity
@@ -1693,6 +1694,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.RegAllocProductionFixedTags.runChecks,
     Flapjack.Test.RegAllocProductionColourLookup.runChecks,
     Flapjack.Test.WordCseProductionScalarKeys.runChecks,
+    Flapjack.Test.BalancedMapCore.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.WordConvsPreAllocExactParity.runChecks,
     Flapjack.Test.WordRemoveMustTerminateParity.runChecks,
