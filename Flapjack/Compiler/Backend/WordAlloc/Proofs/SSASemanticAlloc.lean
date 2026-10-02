@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 
@@ -122,5 +123,56 @@ theorem allocPrepareArguments {width : Nat} [NeZero width] {C F : Type}
       WordSemStateFiniteExact.setVars,WordSemStateFiniteExact.setVar,
       LoopSemStateFiniteExact.sptAlistInsert]
   · simp [WordSemStateFiniteExact.getVar,WordSemStateFiniteExact.setVar,sptLookup_sptInsert_same]
+
+/-- Flapjack-specific factoring of original Alloc9460-9480. Actual normal
+return supplies the branch guard; the post-GC locals domain is derived.
+No standalone HOL declaration or full SSA Alloc tag is claimed. -/
+theorem allocNormalLocalsDomain {width : Nat} [NeZero width] {C F : Type}
+    (amount : BitVec width) (first second : Spt Unit)
+    (source : WordSemStateFiniteExact width C F)
+    (normal : (WordSemStateFiniteExact.alloc amount (first,second) source).1 = none) :
+    sptDomain (WordSemStateFiniteExact.alloc amount (first,second) source).2.locals =
+      (fun key => sptDomain first key ∨ sptDomain second key) := by
+  classical
+  unfold WordSemStateFiniteExact.alloc at normal ⊢
+  cases cut : wordSemCutEnvs (first,second) source.locals with
+  | none => simp [cut] at normal
+  | some envs =>
+    have subsets := cutEnvsDomainSubset first second source.locals envs cut
+    have subsetFirst : LoopSemStateFiniteExact.sptSubsetLive first source.locals := subsets.1
+    have subsetSecond : LoopSemStateFiniteExact.sptSubsetLive second source.locals := subsets.2
+    have envDomains : sptDomain envs.1 = sptDomain first ∧
+        sptDomain envs.2 = sptDomain second := by
+      have shape : envs = (sptInter source.locals first,sptInter source.locals second) := by
+        simpa [wordSemCutEnvs,wordSemCutNames,subsetFirst,subsetSecond] using cut.symm
+      rw [shape]
+      constructor <;> funext key <;> simp only [sptDomain_sptInter]
+      · exact propext ⟨And.right,fun h => ⟨subsets.1 key h,h⟩⟩
+      · exact propext ⟨And.right,fun h => ⟨subsets.2 key h,h⟩⟩
+    cases collected : WordSemStateFiniteExact.gc
+        (WordSemStateFiniteExact.pushEnv envs none
+          (WordSemStateFiniteExact.setStore .allocSize (.word amount) source)) with
+    | none => simp [cut,collected] at normal
+    | some gcState =>
+      have keys := WordSemStackEq.gcSKeyEq _ _ collected
+      obtain ⟨n,l,ls,opt,stackShape,popped,pop,locals,domains,restKeys⟩ :=
+        WordSemStackEq.pushEnvPopEnvSKeyEq envs none
+          (WordSemStateFiniteExact.setStore .allocSize (.word amount) source) gcState keys
+      simp only [collected,pop]
+      simp only [cut,collected,pop] at normal
+      cases stored : WordSemStateFiniteExact.getStore .allocSize popped with
+      | none => simp [stored] at normal
+      | some value =>
+        dsimp only
+        cases space : WordSemStateFiniteExact.hasSpace value popped with
+        | none => simp [stored,space] at normal
+        | some available =>
+          cases available with
+          | false => simp [stored,space] at normal
+          | true =>
+            dsimp only
+            rw [← domains,envDomains.1,envDomains.2]
+            funext key
+            exact propext or_comm
 
 end Flapjack.Compiler.Backend.WordAlloc
