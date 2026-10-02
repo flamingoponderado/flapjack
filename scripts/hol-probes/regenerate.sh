@@ -5572,6 +5572,12 @@ run_probe lab_to_target_initial_encoding_navigation_probeScript.sml lab_to_targe
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_computed_label_positions_probeScript.sml lab_to_target_computed_label_positions_probe.out \
+  lab_lookup_compute_labels_test lab_lookup_compute_labels_test_types hypotheses \
+  head_zero trailing_label next_instruction tail_section empty_prefix \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_section_lookup_positions_probeScript.sml lab_to_target_section_lookup_positions_probe.out \
   ALOOKUP_section_labels ALOOKUP_section_labels_types ALOOKUP_section_labels_hypotheses \
   empty boundary_duplicate_acc head_success asm_prefix labasm_boundary missing distinct_guard_needed owner_guard_false length_guard_needed width1_large_pos width80_large_pos \

@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetComputedLabelPositionsParity
 import Flapjack.Test.LabToTargetSecPosZeroParity
 import Flapjack.Test.LabToTargetPaddingCodeLabelsParity
 import Flapjack.Test.LabToTargetPaddingLabelsParity
