@@ -120,6 +120,7 @@ import Flapjack.Test.WordToStackListUpdateSlicesParity
 import Flapjack.Test.SptreeWfDefinitionParity
 import Flapjack.Test.WordToStackTopLabelSafetyParity
 import Flapjack.Test.WordToStackWordExtractionParity
+import Flapjack.Test.StackRemoveWriteBytearrayParity
 import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.ParmoveAllDistinctPmovParity
 import Flapjack.Test.ParmoveTempPmovParity
@@ -1669,6 +1670,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordToStackListUpdateSlicesParity.runChecks,
     Flapjack.Test.SptreeWfDefinitionParity.runChecks,
     Flapjack.Test.WordToStackWordExtractionParity.run,
+    Flapjack.Test.StackRemoveWriteBytearrayParity.run,
     Flapjack.Test.WordToStackIndexListParity.runChecks,
     Flapjack.Test.WordToStackAbsStackLengthsParity.runChecks,
     Flapjack.Test.WordToStackAbsStackPrefixParity.runChecks,

@@ -1241,6 +1241,7 @@ import Flapjack.Compiler.Backend.StackNames
 import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap

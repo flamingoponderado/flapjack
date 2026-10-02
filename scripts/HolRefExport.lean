@@ -594,6 +594,7 @@ import Flapjack.Compiler.Backend.StackNames
 import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
