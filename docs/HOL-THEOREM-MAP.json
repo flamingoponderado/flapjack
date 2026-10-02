@@ -59293,5 +59293,16 @@
     "hol_name": "balR_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL1004-1071; explicit main chosen-function treatment05:26:28. Literal complete original definition with all conditional branches and argument carriers; rotate Tip clauses call unspecified double realization unchanged, no forced missing value. Cached-size ratio/delta arithmetic and conditional priority are unchanged. Fresh entire typed original equations hyp=[] and actual specified-branch observations captured; generic kernel specification proofs and both single/double branch fixtures. Conditional one_line_ify captured separately with its constructor hypothesis, never used as closed evidence. Proof auxiliaries only; existing reviewed balanceL/balanceR and executed compiler remain unchanged."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/SingleR.lean",
+    "lean_name": "singleRThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "singleR_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison 2026-10-02 HOL1181-1210: full nine premise conjuncts and both invariant and map equality conclusions, generic homogeneous comparator/key and independent payload, cached size and all children unchanged. Only canonical finite-support representation of observed to_fmap is qualified; union precedence and update at comparator equivalence class preserved. Native proof derives ordering and missing child lookup rather than assuming post-state/map facts. Uses only original specified singleR Bin clause of chosen whole function; no missing-case output or cross-prover choice equivalence claim. Complete original proof and required local prerequisite proofs replayed with no hypotheses; concrete invariant and all three key observations kernel-checked."
   }
 ]

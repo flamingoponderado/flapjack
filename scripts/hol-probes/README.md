@@ -5184,3 +5184,13 @@ rotate/balancing definitions retain their literal branch order and arithmetic.
 `BalancedMapRotationAuxParity` uses only specified equations, matching actual
 single/double outputs and both branches of each rotate wrapper. The extra
 conditional and unreduced audit rows remain explicitly qualified above.
+
+### Full single-right rotation correctness
+
+`balanced_map_singleR_probeScript.sml` replays the entire original local
+`singleR_thm` proof with its original local prerequisites, checking no open
+hypotheses. The typed statement retains all nine premise conjuncts and both
+invariant and map equality conclusions. Actual defined rotation, invariant,
+three recursive lookup values, and invalid cached-size rejection are captured.
+`BalancedMapSingleRParity` consumes both full native conclusions and derives
+all three canonical semantic lookups; missing constructor outputs are unused.
