@@ -58,6 +58,15 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapDecode
+import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapSentinelLength
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapBitStructure
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWordLemmas
 import Flapjack.Compiler.Backend.StackProps.RegisterBounds
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder

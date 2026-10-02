@@ -4662,3 +4662,11 @@ proof and its original non-exported getVar transport helper. No recursive IH
 or additional success/target-evaluation premise is introduced. The capture
 records the complete original statement and native state/register/map/table
 carriers; it is source evidence, not a cross-assistant equivalence proof.
+`word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
+original missing-bit, SNOC and prefix-reconstruction proofs plus their local
+original bit-index context, each with no open hypotheses. It prints two
+original types and 187 cases across widths 1/2/8/64/80, including truncating
+long lists, empty prefixes, missing bits and true/false terminal bits.
+`WordToStackBitmapBitStructureParity.lean` checks matching observations and
+whole theorem applications. The HOL context replay uses original EL read-only;
+no new Lean total-EL port or provenance allowance is introduced.
