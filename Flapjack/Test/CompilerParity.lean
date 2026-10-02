@@ -1,4 +1,5 @@
 import Flapjack.Test.SetNewTriggerParity
+import Flapjack.Test.LabToTargetLabelLookupEvennessParity
 import Flapjack.Test.LabToTargetStrongEvenLabelsParity
 import Flapjack.Test.LabToTargetZeroPositionEvenLabelsParity
 import Flapjack.Test.LabToTargetEvenLabelsParity
@@ -1887,6 +1888,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetAlignmentParity.runChecks,
     Flapjack.Test.LabToTargetPrefixZeroParity.runChecks,
     Flapjack.Test.LabToTargetPrefixPreservationParity.runChecks,
+    Flapjack.Test.LabToTargetLabelLookupEvennessParity.runChecks,
     Flapjack.Test.LabToTargetStrongEvenLabelsParity.runChecks,
     Flapjack.Test.LabToTargetZeroPositionEvenLabelsParity.runChecks,
     Flapjack.Test.LabToTargetEvenLabelsParity.runChecks,

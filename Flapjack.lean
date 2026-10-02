@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness
 import Flapjack.Compiler.Backend.LabToTarget.StrongEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
@@ -120,6 +121,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Floati
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Locations
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSpace
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
@@ -1598,6 +1600,7 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcSimple
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocSimple
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Partial
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocNone
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove

@@ -5361,3 +5361,14 @@ run_probe word_to_stack_asm_name_inst_probeScript.sml word_to_stack_asm_name_ins
 run_probe stack_remove_single_free_probeScript.sml stack_remove_single_free_probe.out \
   sf_statement sf_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_recursive_free_probeScript.sml stack_remove_recursive_free_probe.out \
+  rf_statement rf_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_free_probeScript.sml stack_remove_comp_free_probe.out \
+  cf_statement cf_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_label_lookup_evenness_probeScript.sml lab_to_target_label_lookup_evenness_probe.out \
+  lines_ok_section_lab_lookup_even lines_ok_section_lab_lookup_even_types all_enc_ok_split all_enc_ok_split_types all_enc_ok_even all_enc_ok_even_types all_enc_ok_lab_lookup_even all_enc_ok_lab_lookup_even_types mixed_full_section_tuple full_lines_valid hidden_odd_accumulator_first_match full_code_valid_even_end full_computed_nested_map old_map_query_local_guard duplicate_sections_no_distinct_guard even_start_guard_needed validity_guard_needed accumulator_parity_guard_needed width1_empty_retained width80_large_position \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

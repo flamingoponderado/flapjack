@@ -1,0 +1,39 @@
+lines_ok_section_lab_lookup_even=∀(pos :num) (lines :α line list) (acc :(num # num) list).
+  lines_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) pos lines ∧
+  (∀(l2 :num) (x :num). ALOOKUP acc l2 = SOME x ⇒ EVEN x) ∧
+  ALOOKUP (SND (section_labels pos lines acc)) (l2 :num) = SOME (x :num) ⇒
+  EVEN x
+lines_ok_section_lab_lookup_even_types=(pos :num)::num;(lines :α line list)::α line list;(acc :(num # num) list)::(num # num) list;(x :num)::num;(l2 :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+all_enc_ok_split=∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (k :num) (lines :α line list)
+    (xs :α sec list).
+  all_enc_ok c labs ffis pos (Section k lines::xs) ⇒
+  all_enc_ok c labs ffis pos [Section k lines] ∧
+  all_enc_ok c labs ffis (pos + sec_length lines (0 :num)) xs
+all_enc_ok_split_types=(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(k :num)::num;(lines :α line list)::α line list;(xs :α sec list)::α sec list;
+all_enc_ok_even=∀(lines :α line list) (pos :num).
+  all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) pos [Section (k :num) lines] ⇒
+  EVEN (sec_length lines pos)
+all_enc_ok_even_types=(lines :α line list)::α line list;(pos :num)::num;(k :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+all_enc_ok_lab_lookup_even=∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (sec_list :α sec list) (l1 :num)
+    (l2 :num) (acc :num sptree$num_map sptree$num_map) (x :num).
+  all_enc_ok c labs ffis pos sec_list ∧
+  lab_lookup l1 l2 (compute_labels_alt pos sec_list acc) = SOME x ∧
+  (∀(x :num). lab_lookup l1 l2 acc = SOME x ⇒ EVEN x) ∧ EVEN pos ⇒
+  EVEN x
+all_enc_ok_lab_lookup_even_types=(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(sec_list :α sec list)::α sec list;(l1 :num)::num;(l2 :num)::num;(acc :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(x :num)::num;
+mixed_full_section_tuple=T
+full_lines_valid=T
+hidden_odd_accumulator_first_match=T
+full_code_valid_even_end=T
+full_computed_nested_map=T
+old_map_query_local_guard=T
+duplicate_sections_no_distinct_guard=T
+even_start_guard_needed=T
+validity_guard_needed=T
+accumulator_parity_guard_needed=T
+width1_empty_retained=T
+width80_large_position=T
