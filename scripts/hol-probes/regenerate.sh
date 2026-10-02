@@ -4952,3 +4952,7 @@ run_probe stack_remove_wordstore_probeScript.sml stack_remove_wordstore_probe.ou
 run_probe misc_wordlist_heap_probeScript.sml misc_wordlist_heap_probe.out \
   wl_def wl_type we_def we_type wl_empty wl_single wl_wrap8 wl_wrap32 wl_product64 wl_wrap80 wl_zero_distinct wl_zero_same1 wl_zero_same7 we_zero we_single we_wrap8 we_zero_distinct we_wrong_zero we_wrong_address \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_staterel_probeScript.sml stack_remove_staterel_probe.out \
+  sr_def sr_type sr_star_shape sr_width1 sr_width8 sr_width80 sr_source_stack sr_source_store sr_target_stack sr_target_store sr_source_alloc sr_target_alloc sr_stack_space sr_bitmap_none sr_bitmap_loc sr_base_none sr_base_loc \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -5721,3 +5721,14 @@ condition from the empty separation partition; it adds no premise to the
 tagged definitions. Original existential proofs select bounded witnesses
 explicitly rather than searching through the recursive list definition. This
 is heap separation from miscScript, not WordToStack bitmap-word chunking.
+
+### Full native StackRemove state relation
+
+`stack_remove_staterel_probeScript.sml` captures the complete `state_rel_def`
+and its independently quantified configuration/FFI state type. The original
+term tree records the five heap assertions' left-associated STAR grouping.
+Fourteen original kernel proofs check rejected dimensions, mode flags,
+stack-space overflow, missing/non-word bitmap values, and missing/non-word
+base registers; corresponding Lean fixtures use the actual evaluator carrier.
+The source's local `num_stubs` is `stack_num_stubs`. This evidence verifies
+the relation definition, not the unfinished pass simulation theorem.

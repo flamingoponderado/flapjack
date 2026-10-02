@@ -62459,5 +62459,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.7: Original1864-1867: SEP_EXISTS values. word_list address values STAR cond(LENGTH values=length). Lean preserves the existential Listbeta, exact length equality, original STAR ordering and empty-heap cond, rather than accepting a list/representation/length premise. Full original address/payload polymorphic types reviewed. The only representation qualifier records address BitVec width/[NeZero width]; payloads and lists remain generic and heap sets are predicates. Canonical emp/one/STAR/cond/sepExists reused. No width>=8, nonwrapping-address, distinct-address, functional-heap or finite-domain side condition. Fresh original full equations/types and positive/negative wrap, zero-stride and existential-length probes compare the same inputs; fifteen Lean kernel fixtures and four regression helpers derive pure length from the partition. This is miscScript heap separation, distinct from the WordToStack bitmap word_list helper."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StateRelation.lean",
+    "lean_name": "stateRelHOL",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.7: complete original153-198 type bool->alpha word#alpha word->num->(alpha,beta,gamma)stackSemstate->same state->bool. Width has NeZero; independently quantified configuration C and FFI host F remain Type0. Imports actual evaluator StackSemStateFiniteExact with regs/fpRegs/store HolFiniteMapExact; code remains Spt, domain/save registers remain sets, lists stay lists. Same-module witness reexports genuine broad/exact codec roundtrips, no duplicate owner. All six mode flags, be/gc/clock/ffi/save-regs/fp-regs/code-buffer/shared-domain equalities preserved. Source compile transforms input list by exact progComp; target oracle transports only middle list while preserving config and data words. Oracle membership retains both full regBound and stackNumStubs<=name+1, source local num_stubs explicitly resolves to stackNumStubs. Dimension remains goodDimindex32or64 inside relation, not an added premise; lower-register lookup, full codeRel, stackErrLab exact halt2, CurrHeap alias, three FFI save registers, bitmap Word test, stack-space length, exact shifted bitmap base/data-buffer position all preserved. Existing unconditional WordLocW/generic constructor codecs and both inverse laws adapt native selector inputs without changing NONE/Loc shared ARB behavior. Base register rejects NONE/Loc, reserve-size and nonwrapping-stack arithmetic are numeric full-width bounds, top pointer uses modular word arithmetic. Five heap assertions retain original left-associative STAR grouping, complete memory graph, mapped Word bitmaps, existential free-space list, full48slot wordStore, source stack, and exact target whole memory graph. Boolean domain=true renders source predicate sets. No finite-memory, wf, output-success, run-result, equality-of-states or supplied separation premise, and no hidden extra hypothesis. Complete original type/equation and syntax-tree grouping plus same-input kernel exclusions provide source evidence; this definition alone does not establish comp_correct or compile_semantics."
   }
 ]
