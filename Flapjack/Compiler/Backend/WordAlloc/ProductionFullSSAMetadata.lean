@@ -85,15 +85,22 @@ end Flapjack.Compiler.Backend.WordAlloc
 namespace Flapjack
 open Compiler.Backend.WordAlloc
 
+/-- Decode an already encoded complete native full-pass result. The native
+setup/body pass runs once and provides the allocator metadata. -/
+def wordFullSsaCcTransNativeWithStateFromHOL {width : Nat} [NeZero width]
+    (parameterCount : Nat) (native : WordLangProgHOL (BitVec width)) :
+    Option (WordSsaState × List Nat × WordProg (BitVec width)) :=
+  let result := fullSsaCcTransWithMetadata parameterCount native
+  (wordLangProgFromHOL result.program).map fun body =>
+    (result.toProductionState, result.parameters, body)
+
 /-- Native full SSA with allocator metadata, using one native setup/body pass.
 This API adapter has no independent HOL original. -/
 def wordFullSsaCcTransNativeWithState {width : Nat} [NeZero width]
     (parameterCount : Nat) (program : WordProg (BitVec width)) :
     Option (WordSsaState × List Nat × WordProg (BitVec width)) :=
   (wordLangProgToHOL program).bind fun native =>
-    let result := fullSsaCcTransWithMetadata parameterCount native
-    (wordLangProgFromHOL result.program).map fun body =>
-      (result.toProductionState, result.parameters, body)
+    wordFullSsaCcTransNativeWithStateFromHOL parameterCount native
 
 /-- The tuple adapter preserves precisely the complete native full-pass program
 boundary, including rejection; no successful output is a premise. -/
@@ -102,7 +109,7 @@ theorem wordFullSsaCcTransNativeWithState_program {width : Nat} [NeZero width]
     (wordFullSsaCcTransNativeWithState parameterCount program).map (fun result => result.2.2) =
       wordFullSsaCcTransNative parameterCount program := by
   cases encoded : wordLangProgToHOL program <;>
-    simp [wordFullSsaCcTransNativeWithState, wordFullSsaCcTransNative, encoded,
+    simp [wordFullSsaCcTransNativeWithState, wordFullSsaCcTransNativeWithStateFromHOL, wordFullSsaCcTransNative, encoded,
       fullSsaCcTransWithMetadata_program, Option.map_map, Function.comp_def]
 
 /-- Every encoder-accepted production program obtains the whole native tuple;
