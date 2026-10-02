@@ -1,0 +1,30 @@
+get_shmem_info_APPEND=∀(secs :α sec list) (pos :num) (ffi_names :ffiname list)
+    (shmem_info :shmem_info_num list) (ffis1 :ffiname list)
+    (ffis2 :ffiname list) (info1 :shmem_info_num list)
+    (info2 :shmem_info_num list) (new_ffi_names :ffiname list)
+    (new_shmem_info :shmem_info_num list).
+  get_shmem_info secs pos ffi_names shmem_info =
+  (new_ffi_names,new_shmem_info) ∧ ffi_names = ffis1 ++ ffis2 ∧
+  shmem_info = info1 ++ info2 ⇒
+  new_ffi_names = ffis1 ++ FST (get_shmem_info secs pos ffis2 info2) ∧
+  new_shmem_info = info1 ++ SND (get_shmem_info secs pos ffis2 info2)
+get_shmem_info_APPEND_types=(secs :α sec list)::α sec list;(pos :num)::num;(ffi_names :ffiname list)::ffiname list;(shmem_info :shmem_info_num list)::shmem_info_num list;(ffis1 :ffiname list)::ffiname list;(ffis2 :ffiname list)::ffiname list;(info1 :shmem_info_num list)::shmem_info_num list;(info2 :shmem_info_num list)::shmem_info_num list;(new_ffi_names :ffiname list)::ffiname list;(new_shmem_info :shmem_info_num list)::shmem_info_num list;
+get_shmem_info_APPEND_hypotheses=0
+get_shmem_info_PREPEND=get_shmem_info (secs :α sec list) (pos :num) (ffi_names :ffiname list)
+  (shmem_info :shmem_info_num list) =
+((new_ffi_names :ffiname list),(new_shmem_info :shmem_info_num list)) ⇒
+new_ffi_names =
+ffi_names ++
+FST (get_shmem_info secs pos ([] :ffiname list) ([] :shmem_info_num list)) ∧
+new_shmem_info =
+shmem_info ++
+SND (get_shmem_info secs pos ([] :ffiname list) ([] :shmem_info_num list))
+get_shmem_info_PREPEND_types=(new_shmem_info :shmem_info_num list)::shmem_info_num list;(new_ffi_names :ffiname list)::ffiname list;(shmem_info :shmem_info_num list)::shmem_info_num list;(ffi_names :ffiname list)::ffiname list;(pos :num)::num;(secs :α sec list)::α sec list;
+get_shmem_info_PREPEND_hypotheses=0
+invalid_code_output=T
+prepend_names=T
+prepend_info=T
+append_split=T
+empty=T
+wide_offsets=T
+one_offsets=T

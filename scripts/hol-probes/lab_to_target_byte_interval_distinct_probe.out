@@ -1,0 +1,17 @@
+pos_val_asm_fetch_aux_distinct=all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+  (ffis :ffiname list) (p' :num) (code2 :α sec list) ∧ enc_ok c ∧
+asm_fetch_aux (pc :num) code2 = SOME (line :α line) ∧
+(a :num) < LENGTH (line_bytes line) ∧
+LENGTH (prog_to_bytes code2) < dimword (:α) ∧ (pc' :num) ≠ pc ⇒
+a + pos_val pc (p :num) code2 ≠ pos_val pc' p code2
+pos_val_asm_fetch_aux_distinct_types=(p :num)::num;(pc' :num)::num;(a :num)::num;(line :α line)::α line;(pc :num)::num;(code2 :α sec list)::α sec list;(p' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+pos_val_asm_fetch_aux_distinct_hypotheses=0
+interval0=T
+interval1=T
+interval2=T
+interval3=T
+interval4=T
+interval5=T
+same_pc_guard=T
+byte_bound_guard=T
+dimensional_bound_guard=T

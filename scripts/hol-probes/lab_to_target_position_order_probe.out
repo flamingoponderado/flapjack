@@ -1,0 +1,51 @@
+asm_fetch_SOME_IMP_LESS_num_pcs=∀(pc :num) (secs :α sec list) (x :α line).
+  asm_fetch_aux pc secs = SOME x ⇒ pc < num_pcs secs
+asm_fetch_SOME_IMP_LESS_num_pcs_types=(pc :num)::num;(secs :α sec list)::α sec list;(x :α line)::α line;
+asm_fetch_SOME_IMP_LESS_num_pcs_hypotheses=0
+pos_val_GE_pc=∀(i :num) (p :num) (code2 :α sec list). p ≤ pos_val i p code2
+pos_val_GE_pc_types=(i :num)::num;(p :num)::num;(code2 :α sec list)::α sec list;
+pos_val_GE_pc_hypotheses=0
+enc_ok_LENGTH_GT_0=enc_ok (c :α asm_config) ⇒ (0 :num) < LENGTH (c.encode (l :α asm))
+enc_ok_LENGTH_GT_0_types=(l :α asm)::α asm;(c :α asm_config)::α asm_config;
+enc_ok_LENGTH_GT_0_hypotheses=0
+pos_val_mono=∀(i :num) (p :num) (code2 :α sec list) (j :num) (p' :num).
+  i < j ∧ j ≤ num_pcs code2 ∧
+  all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) p' code2 ∧ enc_ok c ⇒
+  pos_val i p code2 < pos_val j p code2
+pos_val_mono_types=(i :num)::num;(p :num)::num;(code2 :α sec list)::α sec list;(j :num)::num;(p' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+pos_val_mono_hypotheses=0
+pos_val_mono_inv=∀(i :num) (p :num) (code2 :α sec list) (j :num).
+  pos_val i p code2 < pos_val j p code2 ∧ i ≤ num_pcs code2 ∧
+  all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (p' :num) code2 ∧ enc_ok c ⇒
+  i < j
+pos_val_mono_inv_types=(i :num)::num;(p :num)::num;(code2 :α sec list)::α sec list;(j :num)::num;(p' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+pos_val_mono_inv_hypotheses=0
+pos_val_inj=∀(p :num) (code2 :α sec list) (j :num).
+  pos_val (i :num) p code2 = pos_val j p code2 ∧ i ≤ num_pcs code2 ∧
+  j ≤ num_pcs code2 ∧
+  all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (p' :num) code2 ∧ enc_ok c ⇒
+  i = j
+pos_val_inj_types=(p :num)::num;(code2 :α sec list)::α sec list;(j :num)::num;(p' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;(i :num)::num;
+pos_val_inj_hypotheses=0
+pos_val_num_pcs=∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (p' :num) (code2 :α sec list).
+  all_enc_ok c labs ffis p' code2 ⇒
+  pos_val (num_pcs code2) (p :num) code2 = p + LENGTH (prog_to_bytes code2)
+pos_val_num_pcs_types=(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(p' :num)::num;(code2 :α sec list)::α sec list;(p :num)::num;
+pos_val_num_pcs_hypotheses=0
+pos_val_GE_num_pcs=∀(pc :num) (p :num) (code2 :α sec list).
+  num_pcs code2 ≤ pc ⇒ pos_val (num_pcs code2) p code2 = pos_val pc p code2
+pos_val_GE_num_pcs_types=(pc :num)::num;(p :num)::num;(code2 :α sec list)::α sec list;
+pos_val_GE_num_pcs_hypotheses=0
+fetch_bound=T
+unrestricted_lower=T
+encoder_positive=T
+strict_order=T
+inverse_unbounded_second=T
+bounded_injective=T
+physical_boundary=T
+unrestricted_saturation=T
+empty=T

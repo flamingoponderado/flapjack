@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
+import Flapjack.Misc.Sptree.Subspt
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStoreConsts
@@ -108,11 +110,13 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdate
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdateSlices
 import Flapjack.Compiler.Backend.WordToStack.Proofs.TopLabelSafety
+import Flapjack.Compiler.Backend.WordToStack.Proofs.WordExtraction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.WordListLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapFrameUpdates
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapDecode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder

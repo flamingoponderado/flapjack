@@ -1,0 +1,24 @@
+get_shmem_info_thm=∀(secs :α sec list) (p :num) (ffi_names :ffiname list)
+    (shmem_info :shmem_info_num list) (p' :num).
+  all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) p' secs ⇒
+  get_shmem_info secs p ffi_names shmem_info =
+  (let
+     ((new_ffis :ffiname list),(new_info :shmem_info_num list)) =
+       UNZIP
+         (FLAT
+            (MAP
+               (line_to_info secs p :
+                num # α line option -> (ffiname # shmem_info_num) list)
+               (GENLIST (λ(i :num). (i,asm_fetch_aux i secs)) (num_pcs secs))))
+   in
+     (ffi_names ++ new_ffis,shmem_info ++ new_info))
+get_shmem_info_thm_types=(secs :α sec list)::α sec list;(p :num)::num;(ffi_names :ffiname list)::ffiname list;(shmem_info :shmem_info_num list)::shmem_info_num list;(p' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+get_shmem_info_thm_hypotheses=0
+independent_validity=T
+full_prefix_output=T
+full_extraction=T
+empty_preserves_prefixes=T
+zero_labels=T
+wide_unsigned=T
+nonzero_label_guard=T

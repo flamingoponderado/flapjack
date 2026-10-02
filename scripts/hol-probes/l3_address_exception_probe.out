@@ -1,0 +1,7 @@
+address_exception_definition=∀e vAddr. signalAddressException (e,vAddr) = (λstate. setTrap (e,SOME vAddr) state)
+address_exception_type=:ExceptionType # word64 -> riscv_state -> riscv_state
+load_zero=((T,SOME 0),T,T,1,0)
+store_max=((T,SOME 18446744073709551615),T,T,1,255)
+misaligned=((T,SOME 3),T,T,1,7)
+arbitrary_exception=((T,SOME 1234),T,T,1,7)
+/tmp/flap-solc-l3-fp-reviewed/scripts/hol-probes/l3_address_exception_probeScript.sml:18: warning: The type of (it) contains a free type variable. Setting it to a unique monotype.

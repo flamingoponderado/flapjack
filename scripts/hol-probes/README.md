@@ -6197,6 +6197,9 @@ sptree_wf_definition_probeScript.sml captures the full original wf_def and254 co
 `stack_rawcall_loop_case_probe` captures the original full `comp_correct`, its zero external hypotheses, and the Loop specialization at width64. The native case retains arbitrary positive width and genuine body/smaller-clock re-entry induction hypotheses. Statement-shape evidence only; no runtime parity or full theorem assembly claim.
 `stack_remove_bytearray_read_probeScript.sml` replays the complete original bytearray-read preservation proof and its original local memory/read/load prerequisites. Two rows capture the full arbitrary-length/address statement and kernel proof success.
 
+`sptree_subspt_union_probe` captures the full original HOL subspt_def, subspt_lookup, subspt_trans, subspt_union and subspt_FOLDL_union statements with their zero external-hypothesis counts (10 rows). Generic native tree/List carrier statements are reviewed without executable compiler changes; statement evidence is not runtime parity.
+
+`word_to_stack_word_extraction_probe` replays all three full original successful `the_words` proofs (4068–4087), then captures 136 complete extraction outputs at widths 1/8/64/80: every zero/one/two-element combination of NONE, Word0, Word1, Loc3/5 and a 70-bit word literal, plus long successful and late/early failing lists. Lean expected results are decoded only from original outputs and checked in the kernel and compiled runtime. The full mapped-source theorem is applied with function-valued inputs without an equality instance. Anonymous projection defaults are unreachable under the original success guard, as proved by the membership theorem; the existing approved option THE is reused without a new default. The subsequent legacy expression consumers are commented in HOL, so this inventory section is not claimed as an active comp_correct dependency.
 `stack_remove_comp_raw_call_probeScript.sml` replays the complete original RawCall case with actual Seq-code/nonzero-clock guarded body IH and original local lookup/dec-clock helpers. It assumes no full `comp_correct`; two rows record the scoped statement and proof success.
 
 `stack_remove_comp_call_tail_probeScript.sml` replays the literal original ret=NONE Call case with arbitrary handlers and actual source lookup/handler-NONE/nonzero-clock guarded callee IH. Original local lookup/dec-clock proofs are recreated; no full `comp_correct` assumed. Two rows capture the scoped statement and proof success.
@@ -6210,3 +6213,41 @@ sptree_wf_definition_probeScript.sml captures the full original wf_def and254 co
 `stack_remove_memory_subset_probeScript.sml` replays the complete literal original generic separated-graph domain inclusion proof. Arbitrary address/value types, functions/domains and frame retained. Two rows capture the full statement and proof success.
 
 `stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.
+`l3_model_fetch_probe.out` captures the full original riscv model Fetch
+definition/type, an arbitrary-state odd-PC equation, and eighteen fully reduced
+route observations. L3ModelFetchParity kernel-checks an unconditional complete
+state equation and matching numeric cases: odd PC including unknown VM and word
+wrap, five unsupported VM modes, Bare half/word decoding and wrapped byte reads,
+Sv39/Sv48 TLB hits, denied permission, successful superpage walks and invalid
+PTE. Observations include all nine Delta fields on current/other cores, Skip,
+all nine fields of all sixteen TLB slots, PTE memory, exception and core metadata.
+PTE byte fixtures use equivalent explicit eight-byte maps in Lean, avoiding
+unreachable huge exponent reduction; every unrelated state field is arbitrary.
+The original walk clears the low PPN bits at a superpage level and sets PTE_R
+(bit 5), yielding PTE3111 and physical offset1656 in these two walk cases.
+This is the full model Fetch, distinct from riscv_step Fetch; probes are
+regression evidence, not cross-assistant equivalence or full modelRun coverage.
+
+`stack_remove_write_bytearray_probe` replays the three full original IGNORE_non_aligned/IGNORE/EQ proofs (324–370), captures 50 complete original reads and paired writes at seven observed keys, and records the original LOG specification plus its symbolic `LOG2 0` boundary. Widths 8/64/80 cover both endiannesses, empty writes, wraparound, Loc/domain failures and differing memories; width 1 has empty writes only. Nonempty width-one observations remain symbolic and are not assigned invented numeric expectations. Kernel/runtime checks compare only values decoded from the original outputs. Native support drafts remain untagged: their imported alignment chooses `Nat.log2 0 = 0`, whereas the source specification does not constrain `LOG2 0`. Exact acceptance remains open on `flapjack-wordsem-byte-align-total`, which must reuse the already reviewed canonical total alignment model. Numeric fixtures do not establish generic cross-language correspondence or compiler correctness.
+`l3_address_exception_probe.out` captures the complete original native
+`signalAddressException` definition/type and four fault-kind/address/current-core
+observations. The corresponding Lean guard proves an unconditional full-state
+update for arbitrary native states, with no core bound or address-validity premise.
+
+`l3_integer_load_mode_probe.out` captures complete `architecture`, `curArch` and
+`in32BitMode` equations/types and all four two-bit selectors on core255 with
+`totalCore=1`. Selector1 keeps the canonical unspecified Architecture/Boolean
+and the original UNDEFINED message. Lean regressions preserve arbitrary unrelated
+state and the first-exception rule; no default selector result is inferred.
+These are integer-load prerequisites, not full instruction/Run/Next assembly.
+
+`l3_reservation_probe.out` captures the complete original `ReserveLoad`,
+`write'ReserveLoad`, and `matchLoadReservation` equations/types. Eight fully
+reduced observations cover absent/present reservations, clearing/replacement,
+match/mismatch, maximum addresses, and wrapping core indices with `totalCore=1`.
+Each observes equality of the entire returned state to the literal single-field
+update. Lean guards retain arbitrary unrelated state; unconditional full-state,
+indexed-frame, read-after-write and match-shape lemmas preserve original THE
+NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
+
+`word_to_stack_bitmap_frame_updates_probe.out` replays the three complete original bitmap/frame-list proofs and captures the independently polymorphic Spt/word-location binder types. Its 63 original overwrite observations cover empty, truncated and location-valued stacks across widths 8/64/80 and terminal/continuation boundaries. The Lean generic proofs retain every original guard; the parity module checks the same concrete native operations. No evaluator simulation, source pipeline unreachability or provenance hold release is claimed.

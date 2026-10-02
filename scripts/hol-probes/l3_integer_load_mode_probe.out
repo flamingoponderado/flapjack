@@ -1,0 +1,11 @@
+architecture_definition=∀ab. architecture ab = (λstate. case ab of 0w => (RV32I,state) | 2w => (RV64I,state) | 3w => (RV128I,state) | v => raise'exception (UNDEFINED (STRCAT "Unknown architecture: " (toString (w2n ab)))) state)
+architecture_type=:word2 -> riscv_state -> Architecture # riscv_state
+curArch_definition=∀_. curArch _ = (λstate. architecture (MCSR state).mcpuid.ArchBase state)
+curArch_type=:unit -> riscv_state -> Architecture # riscv_state
+in32BitMode_definition=∀_. in32BitMode _ = (λstate. (let (v,s) = curArch () state in (v = RV32I,s)))
+in32BitMode_type=:unit -> riscv_state -> bool # riscv_state
+selector_0=(T,T,T,T,T,T,T)
+selector_1=(T,T,T,T,T,T,T)
+selector_2=(T,T,T,T,T,T,T)
+selector_3=(T,T,T,T,T,T,T)
+/tmp/flap-solc-l3-fp-reviewed/scripts/hol-probes/l3_integer_load_mode_probeScript.sml:22: warning: The type of (it) contains a free type variable. Setting it to a unique monotype.
