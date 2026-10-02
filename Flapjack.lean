@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.MMU.Insert
 import Flapjack.RiscV.L3.Defs.MMU.TLB
 import Flapjack.RiscV.L3.Defs.MMU.Access
 import Flapjack.RiscV.L3.Defs.MMU.Primitives

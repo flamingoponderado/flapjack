@@ -5591,3 +5591,7 @@ run_probe lab_to_target_section_lookup_positions_probeScript.sml lab_to_target_s
   empty boundary_duplicate_acc head_success asm_prefix labasm_boundary missing distinct_guard_needed owner_guard_false length_guard_needed width1_large_pos width80_large_pos \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe l3_mmu_insert_probeScript.sml l3_mmu_insert_probe.out \
+  insert_empty insert_holes insert_last_hole insert_full_ascending insert_full_tie insert_full_max insert_last_oldest insert_early_oldest \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"

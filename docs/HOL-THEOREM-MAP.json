@@ -66753,5 +66753,13 @@
     "hol_name": "lookupTLB_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison: Inclusive original0..15 FOR scan and first-match priority; global-or-ASID guard and masked virtual-address equality; complete Some/None branches, no hit premise. Original14-row TLB regression and Lean4.33.1 kernel replay. Fixed source word widths and literal carrier fields retained."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Insert.lean",
+    "lean_name": "addToTLB",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "addToTLB_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript5079-5385, complete sixteen-slot FOR scan. The six-component accumulator retains found-empty, candidate index, minimum age, updated table, new entry, and native state. Some uses strict unsigned age comparison and changes only candidate/minimum; None fills only the first empty slot. The initial candidate is zero and minimum is sign-extended one-bit one, so a full all-maximum-age table replaces slot zero. Final replacement occurs only when no empty slot was filled. mkTLBEntry retains arbitrary level and current-core age; no core, address, level or table restriction is added. Eight original HOL rows observe every slot at empty/multiple-hole/last-hole/full ascending/tie/all-max/last-oldest/early-oldest tables, replayed in L3MmuInsertParity. Fixed BitVec 4/6/64 and native SV_PTE/TLBEntry/riscv_state are literal source carriers. Original function-valued table retained; no finite-map representation qualifier."
   }
 ]
