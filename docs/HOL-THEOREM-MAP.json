@@ -57774,5 +57774,32 @@
     "hol_name": "mmio_pcs_min_index_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.62.2): targetSemScript268-276 optional some x is if exists boundary then SOME Hilbert-selected witness else NONE, matching HOL optionTheory.some_def794-796. Exact x<=LENGTH bound, all prefix ExtCall and all suffix SharedMem clauses retained through mmioIndexBoundary; guarded EL is reviewed faithful holEl, full HolFfiName exact MlString carrier and List retained. No first-MMIO shortcut: external calls after shared memory reject every boundary. Generic kernel uniqueness theorem proves selected index independent of choice operators, using disjoint constructors at an in-range index. Generic kernel some/none elimination equations and40 concrete choice consumers cover every three-kind name list of length0..3. Fresh original42-row capture records full definition/type and40 assumption-free proved optional-choice equations, matching all kernel fixture expectations. Full shared-memory/pass correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/Byte/WordSliceAlt.lean",
+    "lean_name": "wordSliceAlt",
+    "hol_path": "HOL/src/n-bit/byteScript.sml",
+    "hol_name": "word_slice_alt_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.62.3.1.1): byteScript26-28 FCP i. l<=i and i<h and w bit i retained pointwise by List.ofFn over Fin width then little-endian BitVec construction/cast. HOL finite positive type dimension is width with NeZero; both natural bounds and same word width retained, no bound assumptions or extraction/reindexing. Generic kernel wordSliceAlt_bit establishes each indexed output bit equal to the original three conjuncts. Independent explicit numeric fixtures cover widths1/7/8/16/64/80, empty/full/truncated/inverted/oversized and huge bounds; this declaration is distinct from wordsTheory word_slice and independent of LOG2/alignment work. Fresh original full definition/type and66 numeric results match kernel fixtures. Full target shared-memory relation and execution-path obligations remain linked open beads."
+  },
+  {
+    "lean_path": "Flapjack/Byte/SetByte.lean",
+    "lean_name": "setByte",
+    "hol_name": "set_byte_def",
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead .10.62.3.1): byteScript30-36 literal high-slice OR (w2w byte shifted) OR low-slice retained with original left associativity, exact byteIndex and arbitrary address/word at the same positive width. Captured original type alpha word -> word8 -> alpha word -> bool -> alpha word preserves fixed8-bit byte independently of width. Byte is setWidth width before shifting, preserving narrow-dimension truncation; no masked-byte shortcut or bounds/align assumptions. Literal wordSliceAlt prerequisite has a kernel generic bit equation.108 kernel writes cover both endian modes, zero/max/wrapped addresses and zero/full/pattern bytes at widths1/7/8/16/64/80. Fresh original full definition/type and108 actual numeric results match kernel fixtures. Explicit source-ready coordinator authorization2026-10-02T04:48:16 preserves acceptance edges.",
+    "hol_path": "HOL/src/n-bit/byteScript.sml",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Byte/WordOfBytes.lean",
+    "lean_name": "wordOfBytes",
+    "hol_name": "word_of_bytes_def",
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead .10.62.3): byteScript197-201 empty0word and cons set_byte a b (word_of_bytes be(a+1word)bs)be retained literally on fixed8-bit byte List and one arbitrary positive word dimension. Captured original type bool -> alpha word -> word8 list -> alpha word; head writes after tail, endian flag remains unchanged, address increment is BitVec addition and wraps at dimension, no length/alignment/nonempty premises.144 kernel decoder observations cover both endians, widths1/7/8/16/64/80, empty/single/five/eleven bytes and zero/one/max address; cyclic lanes and first-byte precedence retained. Fresh original full definition/type and144 actual numeric results match kernel fixtures. Full target shared-memory relation and production replacement remain open linked work.",
+    "hol_path": "HOL/src/n-bit/byteScript.sml",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true
   }
 ]

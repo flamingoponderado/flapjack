@@ -1,3 +1,12 @@
+`byte_word_slice_alt_probe.out` records the full original alternate-slice
+definition/type and66 complete numeric boundary results.
+`byte_decoder_native_probe.out` records set_byte/word_of_bytes definitions/types
+and252 complete numeric outputs;318 matching kernel fixtures cover widths
+1/7/8/16/64/80, both endians, truncated/oversized/inverted/huge slice bounds,
+wrapped addresses, repeated byte lanes and empty/single/five/eleven-byte lists.
+Registering original MOD_0 before EVAL avoids exponential residual expression
+expansion at sub-byte dimensions; this changes only probe reduction order.
+
 `mmio_index_probe.out` captures the full original optional-boundary definition
 and inferred type plus40 assumption-free proved choice equations for every
 external/read/write name list of length0..3. Matching kernel fixtures preserve

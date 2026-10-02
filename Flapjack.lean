@@ -1,3 +1,5 @@
+import Flapjack.Byte.WordOfBytes
+import Flapjack.Byte.WordSliceAlt
 import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
 import Flapjack.Compiler.Backend.StackRemove.InitMemory
 import Flapjack.Test.LabToTargetByteLengthsParity
