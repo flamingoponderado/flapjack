@@ -1,0 +1,2 @@
+rf_statement=∀off jump k n r s s2 t1. evaluate (StackFree n,s) = (r,s2) ∧ r ≠ SOME Error ∧ state_rel jump off k s t1 ⇒ ∃ck t2. evaluate (stack_free k n,t1 with clock := ck + t1.clock) = (r,t2) ∧ state_rel jump off k s2 t2
+rf_proved=T

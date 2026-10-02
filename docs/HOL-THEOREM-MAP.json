@@ -65076,5 +65076,35 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol original968-990 source comparison: precisely fullstateRel, original result/postsource pair equality NONE and stackSpace+count, original stack safety negated strict length comparison, nonzero count and maxStackAlloc bound imply existential clock/posttarget actual singleStackFree evaluation and fullstateRel. Original target.clock+clock order retained; clock0 proved. Native Add immediate at reserved pointer uses derived Word lookup from original stateRelGetVarK, native wordOffset widthDIV8 product. Untagged stateRelFreeStep factors original unfolded26conjunct postrelation argument with original safety discharged, no supplied postrelation or execution hypothesis. Arbitrary positive width and Type0 C/F; actual imported canonical regs/fpRegs/store state with genuine codec witness, Spt code excluded. Full evaluator inherits reals_as_rational_cuts assumption explicitly; kernel proof no added trusted decision."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackFreeSimulation.lean",
+    "lean_name": "evaluateStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "evaluate_stack_free",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 original992-1035: exactly source native evaluation, nonError and fullstateRel imply existential native targetclock/poststate with fullpostrelation. Arbitrary count includes zero and recursive255chunking, no added count/register/clockbound. Original source error branches excluded by nonError, safety derived; original source state.stackSpace update retained. Native runFree strong recursion proves every generated Add and faithful Seq fixClock, clock unchanged thus0witness. Canonical repeated updates and exact modular offset sum kernel proved; no assumed execution/postrelation. FullstateRelFreeStep preserves all26conjuncts. Native positive width NeZero/HolProg/BitVec, Type0 C/F and actual canonical regs/fpRegs/store state with same-module genuine roundtrip witness; code remains Spt. Full evaluator inherits reals_as_rational_cuts assumption explicitly, no new trusted decision."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StackSpace.lean",
+    "lean_name": "compCorrectStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 original2118-2126 full StackFree constructor: exactly original4premises/native total source evaluate,nonError,fullstateRel,originalregBound; existential native compiled targetevaluation and original resultbranch. Complete original recursive theorem supplies target execution/postrelation, no weakened evaluator or additional successful-target premise. Exceptional result FFI equality derived from fullpostrelation. Other compiler cases/fulltheorem remainopen. Native positive width NeZero/HolProg/BitVec, Type0 C/F and actual canonical regs/fpRegs/store state with same-module genuine roundtrip witness; code remains Spt. Full evaluator inherits reals_as_rational_cuts assumption explicitly, no new trusted decision."
   }
 ]
