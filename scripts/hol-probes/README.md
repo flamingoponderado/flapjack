@@ -5775,3 +5775,4 @@ at the18 declarations that directly use those operations. Remaining state
 access/update/rounding equations have individual complete source comparisons.
 The source-derived root selection validates dependencies; it does not prove
 HOL-to-Lean equivalence, and the broader pending model is not integrated here.
+Full compiler CallArgs probe captures the entire original generic theorem application,140direct post-allocation guard EVALs and140same-input full theorem applications, matched in kernel across widths1/2/8/64/80 and all source constructors/three Call branches. Includes nested allocations and malformed ignored tail handlers. Lean theorem retains the full original post_alloc_conventions/perf=F premises and discharges every recursive hypothesis internally. No direct target EVAL/full original proof replay/cross-language equivalence is claimed. Selector: HOL_PROBE_ONLY=word_to_stack_call_args_compiler_probeScript.sml.
