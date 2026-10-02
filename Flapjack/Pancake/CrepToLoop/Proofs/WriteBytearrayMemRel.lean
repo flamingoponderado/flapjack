@@ -115,6 +115,12 @@ theorem panSetByteHOL_eq_setByteHOL8 {width : Nat} [NeZero width]
 /-- Exact HOL `write_bytearray_mem_rel` (`crep_to_loopProofScript.sml:251-256`):
     `!nb sm tm w dm be. mem_rel sm tm dm ==>
       mem_rel (write_bytearray w nb sm dm be) (write_bytearray w nb tm dm be) dm`. -/
+-- Source review: HOL251-256 and its proof use the common byte_align
+-- symbolically. The induction preserves tail-first writes and returns the
+-- original outer memory on failure. The proof requires the two Lean writers
+-- to use the same alignment, but no numeric LOG2 theorem: it works with any
+-- common alignment at every positive width. The numeric executable definitions
+-- remain unchanged; this port assumes no equality with HOL's unspecified LOG2 0.
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "write_bytearray_mem_rel"
   (words_as_type_indexed_bitvec)]
 theorem write_bytearray_mem_rel {width : Nat} [NeZero width] :
@@ -150,5 +156,98 @@ theorem write_bytearray_mem_rel {width : Nat} [NeZero width] :
       · have hdf : dm (panByteAlignHOL w) = false := by simpa using hd
         simp only [panMemStoreByteWord8HOL, hc, hdf, memStoreByteAuxExact, hal]
         cases tr (panByteAlignHOL w) <;> simp <;> exact h
+
+/-- Flapjack-specific dependency analysis, not a second executable port:
+these helpers abstract only the common alignment used by the two native writers.
+No HOL tag is claimed for this additional parameterization. -/
+def panMemStoreByteWord8HOLAligned {width : Nat} [NeZero width] (alignment : BitVec width → BitVec width)
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) (address : RiscV.Word width) (byte : BitVec 8) :
+    Option (RiscV.Word width → HolWordLab width) :=
+  let aligned := alignment address
+  match memory aligned with
+  | .word cell =>
+      if domain aligned then
+        some (fun current =>
+          if current = aligned then
+            .word (panSetByteHOL address (BitVec.ofNat width byte.toNat) cell
+              bigEndian)
+          else memory current)
+      else none
+
+def panWriteBytearrayWord8HOLAligned {width : Nat} [NeZero width] (alignment : BitVec width → BitVec width)
+    (address : RiscV.Word width) (bytes : List (BitVec 8))
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) : RiscV.Word width → HolWordLab width :=
+  match bytes with
+  | [] => memory
+  | byte :: rest =>
+      match panMemStoreByteWord8HOLAligned alignment
+          (panWriteBytearrayWord8HOLAligned alignment (address + 1) rest memory domain bigEndian)
+          domain bigEndian address byte with
+      | some updated => updated
+      | none => memory
+
+
+def memStoreByteAuxExactAligned {width : Nat} [NeZero width] (alignment : BitVec width → BitVec width)
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (bigEndian : Bool) (address : BitVec width) (byte : BitVec 8) :
+    Option (BitVec width → WordLocW width) :=
+  match memory (alignment address) with
+  | .word v =>
+      if domain (alignment address) then
+        some (fun a => if a = alignment address then
+          .word (setByteHOL8 address byte v bigEndian) else memory a)
+      else none
+  | _ => none
+
+def writeBytearrayExactAligned {width : Nat} [NeZero width] (alignment : BitVec width → BitVec width) (address : BitVec width) :
+    List (BitVec 8) → (BitVec width → WordLocW width) → (BitVec width → Bool) → Bool →
+      BitVec width → WordLocW width
+  | [], memory, _, _ => memory
+  | b :: bs, memory, domain, bigEndian =>
+      match memStoreByteAuxExactAligned alignment (writeBytearrayExactAligned alignment (address + 1) bs memory domain bigEndian)
+          domain bigEndian address b with
+      | some m => m
+      | none => memory
+
+/-- The original writer relation is independent of the chosen common alignment.
+This is Flapjack-specific infrastructure; the original numeric instance above
+retains its HOL tag and unchanged hypotheses. -/
+theorem writeBytearrayMemRelAnyAlignment {width : Nat} [NeZero width] (alignment : BitVec width → BitVec width) :
+    ∀ (nb : List (BitVec 8)) (sm : BitVec width → HolWordLab width)
+      (tm : BitVec width → WordLocW width) (w : BitVec width) (dm : BitVec width → Bool)
+      (be : Bool),
+      crepToLoopMemRelHOLExact sm tm (fun a => dm a = true) →
+      crepToLoopMemRelHOLExact (panWriteBytearrayWord8HOLAligned alignment w nb sm (fun a => dm a = true) be)
+        (writeBytearrayExactAligned alignment w nb tm dm be) (fun a => dm a = true) := by
+  intro nb
+  induction nb with
+  | nil => intro sm tm w dm be h; exact h
+  | cons b bs ih =>
+    intro sm tm w dm be h
+    have hr := ih sm tm (w + 1) dm be h
+    simp only [panWriteBytearrayWord8HOLAligned, writeBytearrayExactAligned]
+    generalize panWriteBytearrayWord8HOLAligned alignment (w + 1) bs sm (fun a => dm a = true) be = pr at hr ⊢
+    generalize writeBytearrayExactAligned alignment (w + 1) bs tm dm be = tr at hr ⊢
+    cases hc : pr (alignment w) with
+    | word cell =>
+      by_cases hd : dm (alignment w) = true
+      · have htr : tr (alignment w) = .word cell := by
+          rw [← hr _ hd, hc]; rfl
+        simp only [panMemStoreByteWord8HOLAligned, hc, hd, if_true, memStoreByteAuxExactAligned, htr]
+        intro ad had
+        by_cases hadal : ad = alignment w
+        · subst hadal
+          simp only [wlabWlocExact, if_true]
+          rw [panSetByteHOL_eq_setByteHOL8]
+        · simp only [hadal, if_false]
+          exact hr ad had
+      · have hdf : dm (alignment w) = false := by simpa using hd
+        simp only [panMemStoreByteWord8HOLAligned, hc, hdf, memStoreByteAuxExactAligned]
+        cases tr (alignment w) <;> simp <;> exact h
+
 
 end Flapjack
