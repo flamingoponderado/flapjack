@@ -383,4 +383,67 @@ theorem fp32_closest_spec (s : HolFloat 23 8 → Prop) (x : Rat)
   apply (holClosestSuch_spec (fun _ => True) s x _).1
   exact ⟨a, ha, fun _ _ => True.intro⟩
 
+/-- Negation transports any closest predicate whose candidates are transported. -/
+theorem fp32_closest_negate (s r : HolFloat 23 8 → Prop) (x : Rat)
+    (c : HolFloat 23 8)
+    (hc : holIsClosest s x c)
+    (hforward : ∀ a, s a → r (holFloatNegate a))
+    (hbackward : ∀ b, r b → s (holFloatNegate b)) :
+    holIsClosest r (-x) (holFloatNegate c) := by
+  refine ⟨hforward c hc.1, fun b hb => ?_⟩
+  have hd := hc.2 (holFloatNegate b) (hbackward b hb)
+  rw [holFloatToReal_negate] at hd
+  rw [holFloatToReal_negate]
+  have e1 : -holFloatToReal c - -x = -(holFloatToReal c - x) := by grind
+  have e2 : -holFloatToReal b - x = -(holFloatToReal b - -x) := by grind
+  rw [e1, holRatAbs_neg]
+  rw [e2, holRatAbs_neg] at hd
+  exact hd
+
+/-- Negation swaps below and above candidate sets, including their finite guard. -/
+theorem fp32_below_closest_negate (x : Rat) (c : HolFloat 23 8)
+    (hc : holIsClosest (fun a : HolFloat 23 8 =>
+      holFloatIsFinite a = true ∧ holFloatToReal a ≤ x) x c) :
+    holIsClosest (fun a : HolFloat 23 8 =>
+      holFloatIsFinite a = true ∧ -x ≤ holFloatToReal a)
+      (-x) (holFloatNegate c) := by
+  apply fp32_closest_negate _ _ x c hc
+  · intro a ha
+    rw [holFloatIsFinite_negate, holFloatToReal_negate]
+    exact ⟨ha.1, by grind⟩
+  · intro b hb
+    rw [holFloatIsFinite_negate, holFloatToReal_negate]
+    exact ⟨hb.1, by grind⟩
+
+/-- Negation transports toward-zero's absolute-value candidate set unchanged. -/
+theorem fp32_zero_closest_negate (x : Rat) (c : HolFloat 23 8)
+    (hc : holIsClosest (fun a : HolFloat 23 8 =>
+      holFloatIsFinite a = true ∧ holRatAbs (holFloatToReal a) ≤ holRatAbs x) x c) :
+    holIsClosest (fun a : HolFloat 23 8 =>
+      holFloatIsFinite a = true ∧ holRatAbs (holFloatToReal a) ≤ holRatAbs (-x))
+      (-x) (holFloatNegate c) := by
+  apply fp32_closest_negate _ _ x c hc
+  · intro a ha
+    rw [holFloatIsFinite_negate, holFloatToReal_negate, holRatAbs_neg, holRatAbs_neg]
+    exact ha
+  · intro b hb
+    rw [holFloatIsFinite_negate, holFloatToReal_negate, holRatAbs_neg]
+    rw [holRatAbs_neg] at hb
+    exact hb
+
+/-- Negation swaps above candidates to below candidates. -/
+theorem fp32_above_closest_negate (x : Rat) (c : HolFloat 23 8)
+    (hc : holIsClosest (fun a : HolFloat 23 8 =>
+      holFloatIsFinite a = true ∧ x ≤ holFloatToReal a) x c) :
+    holIsClosest (fun a : HolFloat 23 8 =>
+      holFloatIsFinite a = true ∧ holFloatToReal a ≤ -x)
+      (-x) (holFloatNegate c) := by
+  apply fp32_closest_negate _ _ x c hc
+  · intro a ha
+    rw [holFloatIsFinite_negate, holFloatToReal_negate]
+    exact ⟨ha.1, by grind⟩
+  · intro b hb
+    rw [holFloatIsFinite_negate, holFloatToReal_negate]
+    exact ⟨hb.1, by grind⟩
+
 end Flapjack.Binary32Rounding
