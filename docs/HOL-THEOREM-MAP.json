@@ -54833,5 +54833,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Source comparison: original resumed If case9263-9331, complete six hypotheses and existential source permutation/result/frame/result-sensitive locals; only legitimate two universal smaller-branch IHs. Literal getVar/getVarImm/wordCmp failure and true/false branches, second compilation uses original SSA map at first fresh bound. Native compiler invariants derive growing bounds; original fixL/R derive NONE reconciliation internally. Canonical fpRegs/store finite-support translation and positive-width BitVec/Type0 host carriers reviewed; Spt locals/code and optional loop-table lookup unchanged. Inherits reals_as_rational_cuts evaluator boundary SOUNDNESS8 and canonical holEl/holHd via native compiler/reconciliation helpers with original bounded selector guards intact, no new default. Literal HOL replay with original local helpers passes; Lean kernel checked. Final assembly must discharge branch IHs."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticHeap.lean",
+  "lean_name": "ssaCcTransCorrectOpCurrHeap",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: original resumed OpCurrHeap9694-9704, all six original premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no extra IH/target-run/success/post-state premise. Native BinOp and register Nat constructor carriers; native word-expression op over source register and CurrHeap store read transported by original expression theorem; nextVarRename and original setVar locals relation derive fresh update. Canonical fpRegs/store finite-support and positive-width BitVec/Type0 hosts reviewed; Spt locals/code unchanged. Inherits reals_as_rational_cuts evaluator boundary SOUNDNESS8. Literal original resumed proof with original local helper replays PASS; only discarded primitive induction bookkeeping omitted. Lean kernel checked."
 }
 ]

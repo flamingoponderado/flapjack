@@ -4637,3 +4637,11 @@ map/locals bound, merge-move, and fix-inconsistencies local proofs are replayed.
 The capture records the recursive and original full statements and native
 state/program/map/fresh-bound/loop-table carriers. This is source evidence,
 not a cross-assistant equivalence proof; final assembly must discharge the IHs.
+
+### Native SSA OpCurrHeap semantic case
+
+`ssa_cc_trans_correct_heap_probeScript.sml` replays the literal resumed
+OpCurrHeap case and its original local variable/expression/fresh-update helpers.
+Only the discarded primitive induction bookkeeping is omitted. The capture
+records the complete original statement and native state/binop/register/table
+carriers; it is source evidence, not a cross-assistant equivalence proof.
