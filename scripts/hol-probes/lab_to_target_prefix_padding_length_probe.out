@@ -1,0 +1,15 @@
+line_len_pad_section=∀(nop :word8 list) (xs :α line list) (aux :α line list).
+  LENGTH nop = (1 :num) ∧ EVERY (label_one :α line -> bool) xs ∧
+  (EVERY (is_Label :α line -> bool) aux ⇒ label_prefix_zero xs) ⇒
+  (SUM (MAP (line_len :α line -> num) (pad_section nop xs aux)) :num) =
+  (SUM (MAP (line_len :α line -> num) xs) :num) +
+  (SUM (MAP (line_len :α line -> num) aux) :num)
+line_len_pad_section_types=(nop :word8 list)::word8 list;(xs :α line list)::α line list;(aux :α line list)::α line list;
+empty_aux_full_guard_sum=T
+all_label_aux_full_guard_sum=T
+all_label_aux_full_tuple=T
+nonlabel_guard_vacuous=T
+prefix_guard_necessary=T
+label_one_guard_necessary=T
+empty_source_width1=T
+large_width80_full_sum=T
