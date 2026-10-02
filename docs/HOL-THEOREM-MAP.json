@@ -62603,5 +62603,19 @@
     "hol_name": "TAKE_FLAT_REPLICATE_LEQ",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original miscScript3063, complete theorem and quantified j/k/alpha-list/len types freshly captured in misc_take_flat_replicate_probe.out. Full generic list carrier and independent original len binder retained, same conjunction len=LENGTH ls and k<=j, same TAKE(k*len)(FLAT(REPLICATE j ls))=FLAT(REPLICATE k ls). Ordinary List translation needs no qualifier; no fixed byte/word specialization, positivity or nonempty assumptions. Kernel induction on k preserves zero/empty chunks and equal counts. Seven original/native observations and full generic/actual empty-list consumers include both length and count guard counterexamples. Genuine dependency of full lab_to_targetProof enc_with_nop_pad_bytes4507; no other backend source change, no total HD/EL hold use, full padding-to-encoding/remove_labels_loop/end-to-end unfinished."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAllocCase.lean",
+    "lean_name": "ssaCcTransCorrectAlloc",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a author source comparison2026-10-02 original resumed Alloc9333-9606 of full ssa_cc_trans_correct7666: all six original premises and complete ssaSimulation existential source permutation, Error exemption, actual target result/frame and full result-sensitive locals retained. Original arbitrary Nat cutset/tree/local/code/stack/GC/FFI carriers and positive word width; explicit canonical fpRegs/store finite-map relation qualifiers only. Actual rename/count Move, scoped cut injection, GC permutation transport, post-domain, restricted SSA map and final rename derived from premises and actual total evaluator branches. Exhaustive native allocation leaves NONE or NotEnoughSpace with flush-empty locals; original source errors exempt, no targetrun/success/post-relation premise or induction hypothesis added. Inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Full SSA/end-to-end remain open."
   }
 ]
