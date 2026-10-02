@@ -1,4 +1,5 @@
 import Flapjack.Word
+import Flapjack.Compiler.Backend.WordCse.InstructionKeys
 import Std.Data.TreeMap
 
 /-!
@@ -17,9 +18,9 @@ address and diverges from Cake by several bytes.
 
 The port keeps Cake's structure; its only deviations are about the carrier:
 
-* the value type `α` is hashed to a `Nat` through `WordCseHash` instead of
-  Cake's `wordToNum w = w2n w`, because the port's `WordArith` carries an
-  immediate `WordRegImm` instead of Cake's `'a reg_imm`;
+* generic diagnostic values use `WordCseHash`; executed positive-width
+  machine words delegate reviewed native `wordToNum` and `regImmToNumList`
+  through a constructor-for-constructor immediate codec;
 * the two `num_map`s, the `store_name` alist and the two balanced maps are
   represented by association lists (`lookupNatInfo` is Cake's `lookup_any`,
   a first-match lookup, and `wordCseInsert` is a replacement insert);
@@ -40,9 +41,26 @@ open Flapjack
 /-- Cake's `wordToNum`: the numeral carried by a machine word. -/
 class WordCseHash (α : Type u) where
   hash : α → Nat
+  regImmKey : WordRegImm α → List Nat := fun
+    | .reg register => [33, register + 100]
+    | .imm value => [34, hash value]
 
-instance {width : Nat} : WordCseHash (BitVec width) where
+instance (priority := low) {width : Nat} : WordCseHash (BitVec width) where
   hash value := value.toNat
+
+/-- Constructor codec for the executed positive-width word immediate carrier.
+Flapjack infrastructure: the source and target constructors carry the same word. -/
+def wordCseNativeRegImm {width : Nat} [NeZero width] :
+    WordRegImm (BitVec width) → Flapjack.Compiler.Encoders.Asm.HolRegImm width
+  | .reg register => .reg register
+  | .imm value => .imm value
+
+/-- Machine-word CSE executes the reviewed native encoders. The lower-priority
+zero-width/generic diagnostic instance remains outside the HOL word claim. -/
+instance {width : Nat} [NeZero width] : WordCseHash (BitVec width) where
+  hash := Flapjack.Compiler.Backend.WordCse.wordToNum
+  regImmKey immediate := Flapjack.Compiler.Backend.WordCse.regImmToNumList
+    (wordCseNativeRegImm immediate)
 
 /-- The executable Word-to-Word probes also run on plain numerals, where the
     numeral is its own hash. -/
@@ -213,22 +231,16 @@ def wordCseCanonicalArith (data : WordCseKnowledge) : WordArith α → WordArith
      never recorded, so its operands are left alone. -/
   | operation => operation
 
-def wordCseShiftToNum : Shift → Nat
-  | .lsl => 40
-  | .lsr => 41
-  | .asr => 42
-  | .ror => 43
+/-- Executed CSE delegates the reviewed native scalar encoder; the carrier is identical. -/
+def wordCseShiftToNum (operator : Shift) : Nat :=
+  Flapjack.Compiler.Backend.WordCse.shiftToNum operator
 
-def wordCseBinOpToNum : BinOp → Nat
-  | .add => 35
-  | .sub => 36
-  | .and => 37
-  | .or => 38
-  | .xor => 39
+/-- Executed CSE delegates the reviewed native scalar encoder; the carrier is identical. -/
+def wordCseBinOpToNum (operator : BinOp) : Nat :=
+  Flapjack.Compiler.Backend.WordCse.arithOpToNum operator
 
-def wordCseRegImmToNumList [WordCseHash α] : WordRegImm α → List Nat
-  | .reg register => [33, register + 100]
-  | .imm value => [34, WordCseHash.hash value]
+def wordCseRegImmToNumList [WordCseHash α] (immediate : WordRegImm α) : List Nat :=
+  WordCseHash.regImmKey immediate
 
 def wordCseArithToNumList [WordCseHash α] : WordArith α → List Nat
   | .binOp operator _ sourceLeft sourceRight =>
@@ -246,15 +258,9 @@ def wordCseArithToNumList [WordCseHash α] : WordArith α → List Nat
      heads; `can_mem_arith` rejects the five-register primitive. -/
   | .addCarry _ _ _ _ _ => [31]
 
-def wordCseMemOpToNum : WordMemOp → Nat
-  | .load => 21
-  | .load8 => 22
-  | .load16 => 46
-  | .load32 => 44
-  | .store => 23
-  | .store8 => 47
-  | .store16 => 24
-  | .store32 => 45
+/-- Executed CSE delegates the reviewed native scalar encoder; the carrier is identical. -/
+def wordCseMemOpToNum (operator : WordMemOp) : Nat :=
+  Flapjack.Compiler.Backend.WordCse.memOpToNum operator
 
 /-- Cake's `loadToNumList`.  `WordInst.mem` has no immediate address offset,
     so the offset component is `0` there. -/

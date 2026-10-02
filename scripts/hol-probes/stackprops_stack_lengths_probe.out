@@ -1,0 +1,27 @@
+map_bitmap_length=∀(a :bool list) (b :α list) (c :α list) (x :α list) (y :α list) (z :α list).
+  map_bitmap a b c = SOME (x,y,z) ⇒
+  LENGTH c = LENGTH x + LENGTH z ∧ LENGTH x = LENGTH a
+map_bitmap_length_types=(a :bool list)::bool list;(b :α list)::α list;(c :α list)::α list;(x :α list)::α list;(y :α list)::α list;(z :α list)::α list;
+dec_stack_length=∀(bs :α word list) (enc :β word_loc list) (orig_stack :β word_loc list)
+    (new_stack :β word_loc list).
+  (dec_stack bs enc orig_stack :β word_loc list option) = SOME new_stack ⇒
+  LENGTH orig_stack = LENGTH new_stack
+dec_stack_length_types=(bs :α word list)::α word list;(enc :β word_loc list)::β word_loc list;(orig_stack :β word_loc list)::β word_loc list;(new_stack :β word_loc list)::β word_loc list;
+map_empty=SOME ([],[10],[20; 30])
+map_mixed=SOME ([10; 21; 11],[12],[23])
+map_false=SOME ([20; 21],[],[22])
+map_payload_lists=SOME ([[114]; [98]],[[117]],[[116]])
+map_missing_root=NONE
+map_missing_value=NONE
+dec_empty=NONE
+dec_zero=SOME [Word 0w]
+dec_true=SOME [Word 1w; Word 9w; Word 0w]
+dec_false=SOME [Word 1w; Loc 4 5; Word 0w]
+dec_short_roots=NONE
+dec_extra_roots=NONE
+dec_two=SOME [Word 1w; Word 9w; Word 1w; Loc 2 1; Word 0w]
+dec_zero_extra=NONE
+dec_mixed=SOME [Word 1w; Word 0w; Word 0w]
+dec_narrow_bitmap=NONE
+dec_loc_header=NONE
+dec_missing_sentinel=NONE
