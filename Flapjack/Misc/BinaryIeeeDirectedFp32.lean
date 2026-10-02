@@ -647,3 +647,28 @@ theorem holFloatRound_directed_fp32 (d : Fp32Direction) (toneg : Bool) (x : Rat)
         simp only [hl, hh, if_false] <;> exact h
 
 end Flapjack.Binary32Rounding
+
+namespace Flapjack
+
+/-- Computable binary32 rounding for all four original modes. This is untagged
+infrastructure: HOL does not name this algorithm. Agreement below is with the
+existing rational rendering; SOUNDNESS item 8 remains an external assumption. -/
+def holFp32Round (mode : HolRounding) (toneg : Bool) (x : Rat) : HolFloat 23 8 :=
+  match mode with
+  | .roundTiesToEven => holFp32RoundTiesToEven toneg x
+  | .roundTowardZero => Binary32Rounding.holFp32DirectedRound .zero toneg x
+  | .roundTowardPositive => Binary32Rounding.holFp32DirectedRound .positive toneg x
+  | .roundTowardNegative => Binary32Rounding.holFp32DirectedRound .negative toneg x
+
+/-- Complete binary32 agreement, with no additional premise, for every mode,
+rational argument and requested zero sign. This does not establish cross-HOL
+real equality, and therefore carries no original-declaration tag. -/
+theorem holFloatRound_fp32 (mode : HolRounding) (toneg : Bool) (x : Rat) :
+    (holFloatRound mode toneg x : HolFloat 23 8) = holFp32Round mode toneg x := by
+  cases mode
+  · exact holFloatRound_rte_fp32 toneg x
+  · exact Binary32Rounding.holFloatRound_directed_fp32 .positive toneg x
+  · exact Binary32Rounding.holFloatRound_directed_fp32 .negative toneg x
+  · exact Binary32Rounding.holFloatRound_directed_fp32 .zero toneg x
+
+end Flapjack
