@@ -607,7 +607,11 @@ def firstMatchColGuard : Bool :=
       nodeTag := CakeNodeMap.ofNatInfoMap 8
         [(1, .fixed 3), (2, .aTemp), (3, .fixed 5), (4, .fixed 7)] }
   cakeFirstMatchCol state [5, 7] [1, 2, 3, 4] == some 5 &&
-    cakeFirstMatchCol state [2] [1, 3, 4] == none
+    cakeFirstMatchCol state [2] [1, 3, 4] == none &&
+    -- A missing lookup stops the handled preference, even when a later
+    -- partner would match. Cover both a missing slot and an outside index.
+    cakeFirstMatchCol state [5] [0, 3] == none &&
+    cakeFirstMatchCol state [5] [8, 3] == none
 
 #guard firstMatchColGuard
 
@@ -1657,7 +1661,9 @@ def biasedPreferenceGuard : Bool :=
       coalesced := CakeNodeMap.ofNatInfoMap 4 [(1, 2)] }
   let partnerState : CakeRaState :=
     { CakeRaState.empty 4 with
-      nodeTag := CakeNodeMap.ofNatInfoMap 4 [(3, .fixed 0)] }
+      -- The root tag must exist for the original preference to reach its
+      -- partner table; an absent root instead triggers handled Subscript.
+      nodeTag := CakeNodeMap.ofNatInfoMap 4 [(1, .aTemp), (3, .fixed 0)] }
   let emptyMoves := CakeNodeMap.ofSize 4
   let partnerMoves := CakeNodeMap.ofNatInfoMap 4 [(1, [3])]
   cakeBiasedPref rootState emptyMoves 1 [0, 1] == some 1 &&
