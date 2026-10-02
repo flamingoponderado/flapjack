@@ -1,3 +1,5 @@
+import Flapjack.Test.NativeWordMemoryAddress
+import Flapjack.Test.NativeStackRuntimeBoundary
 import Flapjack.Test.StackRemoveProgComp
 import Flapjack.Test.StackRemoveComp
 import Flapjack.Test.StackRemoveCopyLoop
