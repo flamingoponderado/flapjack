@@ -246,6 +246,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackConventions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundRecursive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundFlat
@@ -1655,6 +1656,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallCase
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCorrect
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.FullSSACorrect
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
 import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
 import Flapjack.Compiler.Backend.LabToTarget.SecondPass

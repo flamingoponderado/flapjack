@@ -1446,4 +1446,45 @@ theorem ssaCcTransCorrectCallReturningSome {width : Nat} [NeZero width] {C F : T
           rw [prefixRun,targetRun,sourceSuffix]
           exact post
 
+/-- Complete original returning Call case, with only genuine smaller return and
+optional exception continuation IHs in addition to HOL's six premises.
+Inherits reals_as_rational_cuts (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+theorem ssaCcTransCorrectCallReturning {width : Nat} [NeZero width] {C F : Type}
+    (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat) (next : Nat)
+    (returns : List Nat) (firstNames secondNames : Spt Unit)
+    (body : WordLangProgHOL (BitVec width)) (l1 l2 : Nat) (dest : Option Nat) (args : List Nat)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (tables : List (Spt Nat × Spt Unit × Spt Unit))
+    (bodyIH : ∀ (st ct : WordSemStateFiniteExact width C F) (map : Spt Nat)
+      (na : Nat) (lt : List (Spt Nat × Spt Unit × Spt Unit)),
+      Flapjack.WordAlloc.wordStateEqRel st ct ∧ ssaLocalsRel na map st.locals ct.locals ∧
+      isAllocVar na ∧ everyVarHOL (fun key => decide (key < na)) body = true ∧
+      ssaMapOK na map ∧ ltOK lt → ssaSimulation body st ct map na lt)
+    (handlerIH : match handler with
+      | none => True
+      | some (_, handlerBody, _, _) => ∀ (st ct : WordSemStateFiniteExact width C F) (map : Spt Nat)
+      (na : Nat) (lt : List (Spt Nat × Spt Unit × Spt Unit)),
+      Flapjack.WordAlloc.wordStateEqRel st ct ∧ ssaLocalsRel na map st.locals ct.locals ∧
+      isAllocVar na ∧ everyVarHOL (fun key => decide (key < na)) handlerBody = true ∧
+      ssaMapOK na map ∧ ltOK lt → ssaSimulation handlerBody st ct map na lt)
+    (premises : Flapjack.WordAlloc.wordStateEqRel source target ∧
+      ssaLocalsRel next ssa source.locals target.locals ∧ isAllocVar next ∧
+      everyVarHOL (fun key => decide (key < next))
+        (.call (some (returns,(firstNames,secondNames),body,l1,l2)) dest args handler) = true ∧
+      ssaMapOK next ssa ∧ ltOK tables) :
+    ssaSimulation (.call (some (returns,(firstNames,secondNames),body,l1,l2)) dest args handler)
+      source target ssa next tables := by
+  cases handler with
+  | none =>
+    exact ssaCcTransCorrectCallReturningNone source target ssa next returns firstNames
+      secondNames body l1 l2 dest args tables bodyIH premises
+  | some handler =>
+    rcases handler with ⟨exceptionVar, handlerBody, handlerL1, handlerL2⟩
+    exact ssaCcTransCorrectCallReturningSome source target ssa next returns firstNames
+      secondNames body handlerBody l1 l2 exceptionVar handlerL1 handlerL2 dest args tables
+      handlerIH bodyIH premises
+
 end Flapjack.Compiler.Backend.WordAlloc
