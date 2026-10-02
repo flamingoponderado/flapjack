@@ -1,0 +1,16 @@
+lines_enc_with_nop_add_nop=∀(enc :α asm -> word8 list) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (ls :α line list).
+  LENGTH (enc (Inst (Skip :α inst) :α asm)) = (1 :num) ∧
+  lines_enc_with_nop enc labs ffis pos (REVERSE ls) ⇒
+  lines_enc_with_nop enc labs ffis pos
+    (REVERSE (add_nop (enc (Inst (Skip :α inst) :α asm)) ls))
+lines_enc_with_nop_add_nop_types=(enc :α asm -> word8 list)::α asm -> word8 list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(ls :α line list)::α line list;
+mixed_before_after=T
+mixed_full_tuple=T
+labfirst_before_after=T
+labfirst_full_tuple=T
+all_labels_unchanged=T
+empty_unchanged=T
+halt_before_after=T
+call_before_after=T
+one_byte_guard_required=T
