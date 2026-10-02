@@ -6126,6 +6126,12 @@ Seq Skip removal and flattening of the original bitmap append tree to its
 production list; generic proofs cover arbitrary handlers and unchanged states.
 
 `l3_raise_exception_probe.out` captures the original polymorphic type and assumption-free full result equation, preserving ARB and every returned state field through the conditional exception update. Defs/MMU/Exception kernel-checks that complete generic equation under only HOL intrinsic Nonempty; no chosen-default binder.
+
+`stack_rawcall_native_probe.out` captures seven complete original trees: three frame comparison branches, missing lookup, preserved top Seq, untouched NONE-return handler, and both compiled SOME-return continuations. Matching native kernel fixtures compare full trees. This is definition evidence, not production-path replacement or compiler correctness.
+
+`stack_rawcall_collect_probe.out` captures bare and nested allocation rejection, zero-sized entry acceptance, and all four queried map results for duplicate entries with an existing map. Native replay retains last-wins insertion; broad production frame collection remains a separate obligation.
+
+`stack_rawcall_state_ok_probe.out` captures the original generic tree-map/program type, full relation definition, and five assumption-free source proofs (empty, recognized/zero entry, bare allocation/wrong size rejection). Native kernel fixtures reproduce these propositions; this is not the whole rawcall state relation or simulation.
 `stackprops_extract_labels_probe.out` captures56 fresh complete original ordered label lists at positive widths1/8/64/80. Kernel fixtures retain duplicates, return/handler prefix order, nested continuation order, ignored NONE-return handler, zero/one and70bit labels, Loop/Seq/If and representative label-free leaves. This supports the complete native five-clause extract_labels definition; it is regression evidence, not cross-language equivalence or full WordToStack label preservation. Selector: HOL_PROBE_ONLY=stackprops_extract_labels_probeScript.sml.
 
 Ordered-label helper probe freshly replays five complete original local proofs10760-10802 with no open hypotheses and captures108 independent full label lists at widths1/8/64/80. Kernel fixtures retain arbitrary-continuation label order, duplicate return/handler labels, zero/multiple moves/copies, both flags,70bit frame/count fields, natural subtraction, empty/duplicate load lists, and five full generic theorem applications. These are regression observations and original proof replays, not cross-language equivalence or semantic compiler simulation. Selector: HOL_PROBE_ONLY=word_to_stack_extract_labels_helpers_probeScript.sml.
@@ -6134,9 +6140,7 @@ Complete ordered-label compiler probe prints three original full statements with
 
 WordToStack make_init probe captures the complete original definition and124 ground projections at widths1/8/64/80: reset fields, inherited fields and Handler deletion, full indexed frame trees including malformed normalization, oracle and callback failure/success with bitmap/counter/configuration threading. Abstract target states are projected only into closed observations; no ARB fixture state. Independent kernel equalities provide regression evidence, not HOL-to-Lean equivalence or initialization simulation. Selector: HOL_PROBE_ONLY=word_to_stack_make_init_probeScript.sml.
 
-`stack_rawcall_native_probe.out` captures seven complete original trees: three frame comparison branches, missing lookup, preserved top Seq, untouched NONE-return handler, and both compiled SOME-return continuations. Matching native kernel fixtures compare full trees. This is definition evidence, not production-path replacement or compiler correctness.
 
-`stack_rawcall_collect_probe.out` captures bare and nested allocation rejection, zero-sized entry acceptance, and all four queried map results for duplicate entries with an existing map. Native replay retains last-wins insertion; broad production frame collection remains a separate obligation.
 `stack_sem_evaluate_clock_probeScript.sml` replays the full original
 `evaluate_clock` and `fix_clock_evaluate` proof bodies, recreating their local
 atomic clock and `fix_clock_IMP` helpers. It uses the exported HOL evaluator

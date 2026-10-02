@@ -5469,6 +5469,12 @@
     },
     {
       "bytes": 558,
+      "out": "stack_rawcall_state_ok_probe.out",
+      "rows": 7,
+      "sha256": "d3ef1f8f9aab079091592d9457f09df02c8d32f9290a61f0bf723e81283d8ecb"
+    },
+    {
+      "bytes": 558,
       "out": "stack_remove_alloc_guard_probe.out",
       "rows": 12,
       "sha256": "61919c67cf5332803c82eab5243ad7a1a3cba20a80855dab9d7e82d7d45fd8fe"

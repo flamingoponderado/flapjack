@@ -3,6 +3,7 @@ import Flapjack.Test.LabToTargetPaddingCodeLabelsParity
 import Flapjack.Test.LabToTargetPaddingLabelsParity
 import Flapjack.Test.StackRawCallCollectParity
 import Flapjack.Test.StackRawCallNativeParity
+import Flapjack.Test.StackRawCallStateOkParity
 import Flapjack.Test.WordToStackTailHandlerParity
 import Flapjack.Test.L3MmuPrimitivesParity
 import Flapjack.Test.LabToTargetSectionLookupPositionsParity

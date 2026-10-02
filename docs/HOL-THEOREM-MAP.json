@@ -66727,5 +66727,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-stack-evaluate-clock: full original stackSemScript1079-1106. Same unconditional fix_clock input(evaluate program,input)=evaluate program,input identity, derived from full native evaluateClock with no added premise. Reviewed canonical finite-support regs/fpRegs/store and positive type-indexed words/Type0 host, Spt code and List stack unchanged. Same-module imported canonical state codec roundtrip; inherits reals_as_rational_cuts from faithful total evaluator. Original proof replay recreates unexported local atomic/fix_clock_IMP helpers; uses exported HOL evaluate_def/evaluate_ind after original allow_rebind and explicit DB.fetch stackSem state_component_equality in lieu of current-theory lookup. This replay is not an independent reconstruction of pre-rebind definitions; Lean proof independently uses actual pre-rebind evaluator clauses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "state_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/StateOk.lean",
+    "lean_name": "stateOk",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 .15.4.6: original23-28 state_ok_def and loaded type num num_map -> alpha prog num_map -> bool. Retains forall n v lookup info SOME v implication and existential program p with literal lookup code SOME Seq(StackAlloc v)p; no bound, total lookup, success or target result premise. Source maps use reviewed native Spt (not finite-map function translation), program uses faithful HolProg positive word dimension with NeZero. Only conventional word-dimension carrier translation. Original full definition/type and five assumption-free HOL proofs compared with five native kernel fixtures: empty info, recognized size4/zero, bare allocation and wrong-size rejection. This frame-info relation does not assert state_rel, compiler simulation or executed routing."
   }
 ]
