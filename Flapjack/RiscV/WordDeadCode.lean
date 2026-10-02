@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordUnreach
 import Flapjack.RiscV.AllocatorMemoryInvariant
 import Flapjack.Compiler.Backend.WordAlloc.LivenessRoute
 import Flapjack.NatDedup
@@ -411,17 +412,17 @@ def wordThreeToTwoReg : WordProg α → WordProg α
 termination_by program => sizeOf program
 decreasing_by all_goals decreasing_trivial
 
-/-! The post-copy `word_unreach` boundary.  The public WordUnreach module
-    depends on this file for its dead-code definitions, so keep this small
-    local copy here to preserve the allocator pass order without introducing
-    an import cycle. -/
+/-! The post-copy `word_unreach` boundary. Move merging calls the reviewed
+    native HOL definition. The generic program traversal below is still a
+    separate implementation: routing it through the width-indexed native
+    program carrier remains tracked by `flapjack-word-unreach-production`.
+    The public WordUnreach module imports this file, so its generic traversal
+    cannot be imported back here without a cycle. -/
+/-- Executed post-copy move merging delegates to the reviewed HOL definition.
+The enclosing generic program traversal remains separately tracked. -/
 def wordCopyUnreachMergeMoves (first second : List (Nat × Nat)) :
     List (Nat × Nat) :=
-  let rewritten := second.map (fun move =>
-    (move.1, (lookupNatInfo move.2 first).getD move.2))
-  (rewritten ++ first).foldl (fun seen move =>
-    if seen.any (fun prior => prior.1 == move.1) then seen
-    else move :: seen) [] |>.reverse
+  Compiler.Backend.WordUnreach.mergeMoves first second
 
 def wordCopyUnreachSeq (first second : WordProg α) : WordProg α :=
   match first, second with

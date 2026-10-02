@@ -1,0 +1,1 @@
+bmko_full_theorem=⊢ ∀cmp k t res. good_cmp cmp ⇒ (key_ordered cmp k t res ⇔ ∀ks. ks ∈ FDOM (to_fmap cmp t) ⇒ key_set_cmp cmp k ks res)

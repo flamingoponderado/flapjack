@@ -122,10 +122,12 @@ example : sectionToExecuted? (7, (.locValue 2 17 29 : HolProg 64)) =
     ExecutedCodec.sectionToExecuted?, ExecutedCodec.mapCodec?, ExecutedCodec.lineToExecuted?,
     ExecutedCodec.labAsmToExecuted, ExecutedCodec.refToExecuted]
 
--- The residual guard does not pretend the executed codec supports overflow/FP.
+-- Overflow is now supported; the residual guard still excludes FP.
 example : supported (.inst (.arith (.addOverflow 1 2 3 4)) : HolProg 64) = true := by
   simp [supported, leafSupported]
-example : sectionToExecuted? (7, (.inst (.arith (.addOverflow 1 2 3 4)) : HolProg 64)) = none := by
+example : sectionToExecuted? (7, (.inst (.arith (.addOverflow 1 2 3 4)) : HolProg 64)) =
+    some { name := 7, lines := [.asm (.word (.arith (.addOverflow 1 2 3 4))) [] 0,
+      .label 7 1 0] } := by
   simp [sectionToExecuted?, supported, leafSupported, progToSectionHOL, flattenHOL,
     isSeqHOL, Flapjack.Compiler.Backend.StackAlloc.nextLab, appListAppend, appendAux,
     ExecutedCodec.sectionToExecuted?, ExecutedCodec.mapCodec?, ExecutedCodec.lineToExecuted?,
