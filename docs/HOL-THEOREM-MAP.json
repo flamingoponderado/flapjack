@@ -56195,5 +56195,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison: genuine original resumedInst Binop7874-7880 opcode case of ssa_cc_trans_correct, both register/immediate branches. Same six original premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no added targeteval/success/poststate/IH. Native BinOp, Nat register and WordRegImm(BitVec width) carriers match original binop/num/alpha reg_imm. Actual native inst/assign/op expressions and SSA compiler branches use original operand map before nextVarRename; original expression and setVar locals helpers derive target success/fresh update from source success internally. Full state/map/table carriers shared arbitrary Type0 code/FFI hosts, canonical fpRegs/store finite-support and positive-widthBitVec translations reviewed. Inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Fresh literal original opcode/setup_tac/expression/setVar helpers and complete carrier captures PASS; fixed-constructor selection and discarded primitive induction bookkeeping omitted. Lean kernel checked; fullInst assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FetchValidity.lean",
+    "lean_name": "allEncOk_fetch_lineOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_asm_fetch_aux_IMP_line_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original source comparison 2026-10-02, original line1549, bead .18.5.15.10.57. Fresh original full statement and binder types captured in lab_to_target_fetch_validity_probe.out. Retains arbitrary configuration, nested natural Spt labels, native HolFfiName list, pc/n/code/fetched line and exactly the original conjunction of full all_enc_ok and actual asm_fetch_aux success, concluding full line_ok at actual pos_val. Native positive-width word-indexed Line, AsmConfigExact and instruction carriers preserve original fields; only words_as_type_indexed_bitvec translation applies. Fetch skips labels and empty sections, counts instructions while pos_val advances physical bytes. Five original observations include actual valid code, two distinct fetched instructions, exhaustion and fetched validity; kernel checks include an unconditional concrete validity instance and full arbitrary-width theorem consumer. No callback, target evaluation or extra successful-pass assumption; no full machine or compiler correctness closure inferred."
   }
 ]
