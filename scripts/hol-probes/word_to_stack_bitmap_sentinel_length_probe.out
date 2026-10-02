@@ -1,0 +1,93 @@
+sl_source_bits_to_word_bit=⊢ ∀bs i. i < dimindex (:α) ∧ i < LENGTH bs ⇒ (bits_to_word bs ' i ⇔ bs❲i❳)
+sl_source_bits_to_word_miss=⊢ ∀bs i. i < dimindex (:α) ∧ LENGTH bs ≤ i ⇒ ¬bits_to_word bs ' i
+sl_source_shift_shift_lemma=⊢ ¬word_msb w ⇒ w ≪ 1 ⋙ 1 = w
+sl_source_word_or_eq_0=⊢ w ‖ v = 0w ⇔ w = 0w ∧ v = 0w
+sl_source_GENLIST_bits_to_word_alt=⊢ LENGTH (xs ++ ys) ≤ dimindex (:α) ⇒ GENLIST (λi. bits_to_word (xs ++ ys) ' i) (LENGTH xs) = xs
+sl_source_bit_length_bits_to_word=⊢ ∀qs. LENGTH qs + 1 < dimindex (:α) ⇒ bit_length (bits_to_word (qs ++ [T])) = LENGTH qs + 1
+sl_source_GENLIST_bits_to_word=⊢ LENGTH qs' + 1 < dimindex (:α) ⇒ GENLIST (λi. bits_to_word (qs' ++ [T]) ' i) (LENGTH qs') = qs'
+sl_length_0_2=⊢ bit_length (bits_to_word ([] ++ [T])) = 1
+sl_prefix_0_2=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+sl_value_0_2=⊢ w2n (bits_to_word ([] ++ [T])) = 1
+sl_length_5_2=⊢ bit_length (bits_to_word ([] ++ [T])) = 1
+sl_prefix_5_2=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+sl_value_5_2=⊢ w2n (bits_to_word ([] ++ [T])) = 1
+sl_length_6_2=⊢ bit_length (bits_to_word ([] ++ [T])) = 1
+sl_prefix_6_2=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+sl_value_6_2=⊢ w2n (bits_to_word ([] ++ [T])) = 1
+sl_length_7_2=⊢ bit_length (bits_to_word ([] ++ [T])) = 1
+sl_prefix_7_2=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+sl_value_7_2=⊢ w2n (bits_to_word ([] ++ [T])) = 1
+sl_length_0_8=⊢ bit_length (bits_to_word ([] ++ [T])) = 1
+sl_prefix_0_8=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+sl_value_0_8=⊢ w2n (bits_to_word ([] ++ [T])) = 1
+sl_length_1_8=⊢ bit_length (bits_to_word ([F] ++ [T])) = 2
+sl_prefix_1_8=⊢ GENLIST (λi. bits_to_word ([F] ++ [T]) ' i) 1 = [F] ⇔ T
+sl_value_1_8=⊢ w2n (bits_to_word ([F] ++ [T])) = 2
+sl_length_2_8=⊢ bit_length (bits_to_word ([T] ++ [T])) = 2
+sl_prefix_2_8=⊢ GENLIST (λi. bits_to_word ([T] ++ [T]) ' i) 1 = [T] ⇔ T
+sl_value_2_8=⊢ w2n (bits_to_word ([T] ++ [T])) = 3
+sl_length_3_8=⊢ bit_length (bits_to_word ([T; F; T] ++ [T])) = 4
+sl_prefix_3_8=⊢ GENLIST (λi. bits_to_word ([T; F; T] ++ [T]) ' i) 3 = [T; F; T] ⇔ T
+sl_value_3_8=⊢ w2n (bits_to_word ([T; F; T] ++ [T])) = 13
+sl_length_4_8=⊢ bit_length (bits_to_word ([F; T; F; T] ++ [T])) = 5
+sl_prefix_4_8=⊢ GENLIST (λi. bits_to_word ([F; T; F; T] ++ [T]) ' i) 4 = [F; T; F; T] ⇔ T
+sl_value_4_8=⊢ w2n (bits_to_word ([F; T; F; T] ++ [T])) = 26
+sl_length_5_8=⊢ bit_length (bits_to_word ([F; F; F; F; F; F] ++ [T])) = 7
+sl_prefix_5_8=⊢ GENLIST (λi. bits_to_word ([F; F; F; F; F; F] ++ [T]) ' i) 6 = [F; F; F; F; F; F] ⇔ T
+sl_value_5_8=⊢ w2n (bits_to_word ([F; F; F; F; F; F] ++ [T])) = 64
+sl_length_6_8=⊢ bit_length (bits_to_word ([T; T; T; T; T; T] ++ [T])) = 7
+sl_prefix_6_8=⊢ GENLIST (λi. bits_to_word ([T; T; T; T; T; T] ++ [T]) ' i) 6 = [T; T; T; T; T; T] ⇔ T
+sl_value_6_8=⊢ w2n (bits_to_word ([T; T; T; T; T; T] ++ [T])) = 127
+sl_length_7_8=⊢ bit_length (bits_to_word ([T; F; T; F; T; F] ++ [T])) = 7
+sl_prefix_7_8=⊢ GENLIST (λi. bits_to_word ([T; F; T; F; T; F] ++ [T]) ' i) 6 = [T; F; T; F; T; F] ⇔ T
+sl_value_7_8=⊢ w2n (bits_to_word ([T; F; T; F; T; F] ++ [T])) = 85
+sl_length_0_64=⊢ bit_length (bits_to_word ([] ++ [T])) = 1
+sl_prefix_0_64=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+sl_value_0_64=⊢ w2n (bits_to_word ([] ++ [T])) = 1
+sl_length_1_64=⊢ bit_length (bits_to_word ([F] ++ [T])) = 2
+sl_prefix_1_64=⊢ GENLIST (λi. bits_to_word ([F] ++ [T]) ' i) 1 = [F] ⇔ T
+sl_value_1_64=⊢ w2n (bits_to_word ([F] ++ [T])) = 2
+sl_length_2_64=⊢ bit_length (bits_to_word ([T] ++ [T])) = 2
+sl_prefix_2_64=⊢ GENLIST (λi. bits_to_word ([T] ++ [T]) ' i) 1 = [T] ⇔ T
+sl_value_2_64=⊢ w2n (bits_to_word ([T] ++ [T])) = 3
+sl_length_3_64=⊢ bit_length (bits_to_word ([T; F; T] ++ [T])) = 4
+sl_prefix_3_64=⊢ GENLIST (λi. bits_to_word ([T; F; T] ++ [T]) ' i) 3 = [T; F; T] ⇔ T
+sl_value_3_64=⊢ w2n (bits_to_word ([T; F; T] ++ [T])) = 13
+sl_length_4_64=⊢ bit_length (bits_to_word ([F; T; F; T] ++ [T])) = 5
+sl_prefix_4_64=⊢ GENLIST (λi. bits_to_word ([F; T; F; T] ++ [T]) ' i) 4 = [F; T; F; T] ⇔ T
+sl_value_4_64=⊢ w2n (bits_to_word ([F; T; F; T] ++ [T])) = 26
+sl_length_5_64=⊢ bit_length (bits_to_word ([F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F] ++ [T])) = 63
+sl_prefix_5_64=⊢ GENLIST (λi. bits_to_word ([F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F] ++ [T]) ' i) 62 = [F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F] ⇔ T
+sl_value_5_64=⊢ w2n (bits_to_word ([F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F] ++ [T])) = 4611686018427387904
+sl_length_6_64=⊢ bit_length (bits_to_word ([T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ++ [T])) = 63
+sl_prefix_6_64=⊢ GENLIST (λi. bits_to_word ([T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ++ [T]) ' i) 62 = [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ⇔ T
+sl_value_6_64=⊢ w2n (bits_to_word ([T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ++ [T])) = 9223372036854775807
+sl_length_7_64=⊢ bit_length (bits_to_word ([T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F] ++ [T])) = 63
+sl_prefix_7_64=⊢ GENLIST (λi. bits_to_word ([T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F] ++ [T]) ' i) 62 = [T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F] ⇔ T
+sl_value_7_64=⊢ w2n (bits_to_word ([T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F] ++ [T])) = 6148914691236517205
+sl_length_0_80=⊢ bit_length (bits_to_word ([] ++ [T])) = 1
+sl_prefix_0_80=⊢ GENLIST (λi. bits_to_word ([] ++ [T]) ' i) 0 = [] ⇔ T
+sl_value_0_80=⊢ w2n (bits_to_word ([] ++ [T])) = 1
+sl_length_1_80=⊢ bit_length (bits_to_word ([F] ++ [T])) = 2
+sl_prefix_1_80=⊢ GENLIST (λi. bits_to_word ([F] ++ [T]) ' i) 1 = [F] ⇔ T
+sl_value_1_80=⊢ w2n (bits_to_word ([F] ++ [T])) = 2
+sl_length_2_80=⊢ bit_length (bits_to_word ([T] ++ [T])) = 2
+sl_prefix_2_80=⊢ GENLIST (λi. bits_to_word ([T] ++ [T]) ' i) 1 = [T] ⇔ T
+sl_value_2_80=⊢ w2n (bits_to_word ([T] ++ [T])) = 3
+sl_length_3_80=⊢ bit_length (bits_to_word ([T; F; T] ++ [T])) = 4
+sl_prefix_3_80=⊢ GENLIST (λi. bits_to_word ([T; F; T] ++ [T]) ' i) 3 = [T; F; T] ⇔ T
+sl_value_3_80=⊢ w2n (bits_to_word ([T; F; T] ++ [T])) = 13
+sl_length_4_80=⊢ bit_length (bits_to_word ([F; T; F; T] ++ [T])) = 5
+sl_prefix_4_80=⊢ GENLIST (λi. bits_to_word ([F; T; F; T] ++ [T]) ' i) 4 = [F; T; F; T] ⇔ T
+sl_value_4_80=⊢ w2n (bits_to_word ([F; T; F; T] ++ [T])) = 26
+sl_length_5_80=⊢ bit_length (bits_to_word ([F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F] ++ [T])) = 79
+sl_prefix_5_80=⊢ GENLIST (λi. bits_to_word ([F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F] ++ [T]) ' i) 78 = [F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F] ⇔ T
+sl_value_5_80=⊢ w2n (bits_to_word ([F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F; F] ++ [T])) = 302231454903657293676544
+sl_length_6_80=⊢ bit_length (bits_to_word ([T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ++ [T])) = 79
+sl_prefix_6_80=⊢ GENLIST (λi. bits_to_word ([T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ++ [T]) ' i) 78 = [T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ⇔ T
+sl_value_6_80=⊢ w2n (bits_to_word ([T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T; T] ++ [T])) = 604462909807314587353087
+sl_length_7_80=⊢ bit_length (bits_to_word ([T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F] ++ [T])) = 79
+sl_prefix_7_80=⊢ GENLIST (λi. bits_to_word ([T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F] ++ [T]) ' i) 78 = [T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F] ⇔ T
+sl_value_7_80=⊢ w2n (bits_to_word ([T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F; T; F] ++ [T])) = 402975273204876391568725
+sl_type_word=:80 word
+sl_type_length=:num
