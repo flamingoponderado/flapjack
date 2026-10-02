@@ -65864,5 +65864,50 @@
   "hol_name": "restrict_zero_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol3 source comparison: complete backendPropsScript.sml354-357, unconditional arbitrary Nat-pair set comprehension retains original membership and SND equal to zero. No word dimension, map-value specialization, finiteness, extra premise or representation qualifier. Fresh original observations and native kernel replays cover empty/mixed/absent entries, first-component zero versus second-component zero, >64-bit naturals and infinite UNIV. Generic kernel consumer retains arbitrary input sets. Proof-side set definition has no executable compiler caller; prerequisite of lab_to_targetProof5006-5066, not compiler correctness or a cross-language equivalence proof."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroLabelExistence.lean",
+  "lean_name": "zeroLabsAccOf_eq_zeroLabsOf",
+  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+  "hol_name": "zero_labs_acc_of_eq_zero_labs_of",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol3 source comparison: complete original five statements/proofs5006-5066 and captured fulltypes. All four domain equalities retain arbitrary source NumSet Spt Unit accumulators, with exact native constructors and original FOLDR including arbitrary code-fold accumulator. Final equivalence retains independently generic labs value alpha and native positive code word dimension; no Nat map specialization, BEq/DecidableEq, freshness, finiteness or desired-subset/success assumption. words_as_type_indexed_bitvec names only the reviewed positive native HOL word carrier, with exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads. Original restrict_zero retains SND=0 and original labsOf ignores Call. Actual sptToAList test is proved equivalent using exact membership and nested lookup; no raw fmap specialization. Fresh literal Q.prove replays preserve all5 original statements/proofs with zero open hypotheses; original observations/native kernel replays cover arbitrary existing accumulator, zero/nonzero reference, ignored Call, LocValue, empty code, independently Bool-valued map, missing outer/inner-zero, widths1/8/80 and >64-bit labels. These are faithful local support laws, not full remove_labels_loop or compiler correctness or a cross-language equivalence proof."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroLabelExistence.lean",
+  "lean_name": "lineGetZeroLabsAcc_eq_lineGetZeroLabels",
+  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+  "hol_name": "line_get_zero_labs_acc_eq_line_get_zero_labels",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol3 source comparison: complete original five statements/proofs5006-5066 and captured fulltypes. All four domain equalities retain arbitrary source NumSet Spt Unit accumulators, with exact native constructors and original FOLDR including arbitrary code-fold accumulator. Final equivalence retains independently generic labs value alpha and native positive code word dimension; no Nat map specialization, BEq/DecidableEq, freshness, finiteness or desired-subset/success assumption. words_as_type_indexed_bitvec names only the reviewed positive native HOL word carrier, with exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads. Original restrict_zero retains SND=0 and original labsOf ignores Call. Actual sptToAList test is proved equivalent using exact membership and nested lookup; no raw fmap specialization. Fresh literal Q.prove replays preserve all5 original statements/proofs with zero open hypotheses; original observations/native kernel replays cover arbitrary existing accumulator, zero/nonzero reference, ignored Call, LocValue, empty code, independently Bool-valued map, missing outer/inner-zero, widths1/8/80 and >64-bit labels. These are faithful local support laws, not full remove_labels_loop or compiler correctness or a cross-language equivalence proof."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroLabelExistence.lean",
+  "lean_name": "secGetZeroLabsAcc_eq_secGetZeroLabels",
+  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+  "hol_name": "sec_get_zero_labs_acc_eq_sec_get_zero_labels",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol3 source comparison: complete original five statements/proofs5006-5066 and captured fulltypes. All four domain equalities retain arbitrary source NumSet Spt Unit accumulators, with exact native constructors and original FOLDR including arbitrary code-fold accumulator. Final equivalence retains independently generic labs value alpha and native positive code word dimension; no Nat map specialization, BEq/DecidableEq, freshness, finiteness or desired-subset/success assumption. words_as_type_indexed_bitvec names only the reviewed positive native HOL word carrier, with exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads. Original restrict_zero retains SND=0 and original labsOf ignores Call. Actual sptToAList test is proved equivalent using exact membership and nested lookup; no raw fmap specialization. Fresh literal Q.prove replays preserve all5 original statements/proofs with zero open hypotheses; original observations/native kernel replays cover arbitrary existing accumulator, zero/nonzero reference, ignored Call, LocValue, empty code, independently Bool-valued map, missing outer/inner-zero, widths1/8/80 and >64-bit labels. These are faithful local support laws, not full remove_labels_loop or compiler correctness or a cross-language equivalence proof."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroLabelExistence.lean",
+  "lean_name": "getZeroLabsAcc_eq_getZeroLabels",
+  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+  "hol_name": "get_zero_labs_acc_eq_get_zero_labels",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol3 source comparison: complete original five statements/proofs5006-5066 and captured fulltypes. All four domain equalities retain arbitrary source NumSet Spt Unit accumulators, with exact native constructors and original FOLDR including arbitrary code-fold accumulator. Final equivalence retains independently generic labs value alpha and native positive code word dimension; no Nat map specialization, BEq/DecidableEq, freshness, finiteness or desired-subset/success assumption. words_as_type_indexed_bitvec names only the reviewed positive native HOL word carrier, with exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads. Original restrict_zero retains SND=0 and original labsOf ignores Call. Actual sptToAList test is proved equivalent using exact membership and nested lookup; no raw fmap specialization. Fresh literal Q.prove replays preserve all5 original statements/proofs with zero open hypotheses; original observations/native kernel replays cover arbitrary existing accumulator, zero/nonzero reference, ignored Call, LocValue, empty code, independently Bool-valued map, missing outer/inner-zero, widths1/8/80 and >64-bit labels. These are faithful local support laws, not full remove_labels_loop or compiler correctness or a cross-language equivalence proof."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroLabelExistence.lean",
+  "lean_name": "zeroLabsAccExist_eq",
+  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+  "hol_name": "zero_labs_acc_exist_eq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol3 source comparison: complete original five statements/proofs5006-5066 and captured fulltypes. All four domain equalities retain arbitrary source NumSet Spt Unit accumulators, with exact native constructors and original FOLDR including arbitrary code-fold accumulator. Final equivalence retains independently generic labs value alpha and native positive code word dimension; no Nat map specialization, BEq/DecidableEq, freshness, finiteness or desired-subset/success assumption. words_as_type_indexed_bitvec names only the reviewed positive native HOL word carrier, with exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads. Original restrict_zero retains SND=0 and original labsOf ignores Call. Actual sptToAList test is proved equivalent using exact membership and nested lookup; no raw fmap specialization. Fresh literal Q.prove replays preserve all5 original statements/proofs with zero open hypotheses; original observations/native kernel replays cover arbitrary existing accumulator, zero/nonzero reference, ignored Call, LocValue, empty code, independently Bool-valued map, missing outer/inner-zero, widths1/8/80 and >64-bit labels. These are faithful local support laws, not full remove_labels_loop or compiler correctness or a cross-language equivalence proof."
 }
 ]

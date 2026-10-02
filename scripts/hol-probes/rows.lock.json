@@ -341,6 +341,7 @@
     {"bytes": 1044, "out": "lab_to_target_validity_nop_probe.out", "rows": 13, "sha256": "f69bd648919bc37f78848f3adfdc5e96d9a9cd5bef6dd9d4b891a1a719593c21"},
     {"bytes": 1581, "out": "lab_to_target_word_loc_byte_probe.out", "rows": 11, "sha256": "51415c93a515002c4d1fd25735961f6c8911c2eb475506248d83167d1bd8a9c3"},
     {"bytes": 501, "out": "lab_to_target_word_location_probe.out", "rows": 8, "sha256": "094e81cbf1690807b736e16eb77f21eb6aa775792f473c12d10e85c3cbb717cd"},
+    {"bytes": 2118, "out": "lab_to_target_zero_label_existence_probe.out", "rows": 25, "sha256": "39a082a4c6e1d55ecb160737a2a3cb41811a2776ea1ac6ab5e56d23b36ad3cde"},
     {"bytes": 677, "out": "lab_to_target_zero_position_even_labels_probe.out", "rows": 11, "sha256": "2865d99c2187cdfe798e88cbbcf1b3be9baa3d0c26fe189058034113777caaac"},
     {"bytes": 2301, "out": "lab_to_target_zero_preservation_probe.out", "rows": 19, "sha256": "641490b27c0dc44eb4e433eccfbe4db16ecdff06a5bee81c885a3c81c9e04882"},
     {"bytes": 950, "out": "lab_validity_native_probe.out", "rows": 19, "sha256": "167e997a47efd3a23257f16167854374737ed1e386c949567b3877869a51b4b6"},
