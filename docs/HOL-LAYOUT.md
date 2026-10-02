@@ -70,11 +70,12 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/semantics/backendPropsScript.sml` | `Flapjack/Compiler/Backend/BackendProps.lean` (nonzero-entry label restriction and set support) |
 | `compiler/backend/semantics/stackSemScript.sml` | `Flapjack/Compiler/Backend/Semantics/StackSem/State.lean` (exact state/result carriers and canonical finite-support state roundtrip), `StackSem/StateOps.lean` (memory/register/clock primitives), `StackSem/Control.lean` (code lookup and clock clamp/bound), `StackSem/Bitmap.lean` (polymorphic bitmap filter/map and length theorems), `StackSem/WordBitmap.lean` (word bit length and bitmap decoding), `StackSem/StackCodec.lean` (descriptor and recursive stack codecs), `StackSem/Evaluate.lean` (assembled total evaluator), `StackSem/EvaluateDef.lean` (`evaluate` and the 34-clause `evaluate_def`) |
 | `compiler/encoders/asm/asmScript.sml` | `Flapjack/Compiler/Encoders/Asm.lean` (asm_config validity predicates: `reg_ok`, `fp_reg_ok`, `reg_imm_ok`, `offset_ok`, `arith_ok`, `fp_ok`, `cmp_ok`, `inst_ok`; exact carriers `reg_imm`, `addr`, `inst`, `arith`, `fp`, `binop`, `cmp`, `memop`, `asm`) |
+| `compiler/encoders/asm/asmSemScript.sml` | `Flapjack/Compiler/Encoders/AsmSem/` (`State.lean` asm_state, `Arithmetic.lean` register/arith updates, `FpUpdates.lean` fp_upd, `Memory.lean` addr/read_mem_word/write_mem_word, `MemOps.lean` mem_load/mem_store/mem_op, `Step.lean` inst/jump_to_offset/asm/asm_step) |
 | `compiler/backend/labLangScript.sml` | `Flapjack/Compiler/Backend/LabLang.lean` (generic HOL `lab`, `line`, and `sec` syntax) |
 | `compiler/backend/lab_to_targetScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`cbw_to_asm` carrier boundary only; target encoding remains open), `Flapjack/Compiler/Backend/LabToTarget/` (exact encoding/labels/positions/second-pass/padding/remove-labels/shmem-info and the `config`/`compile_lab`/`compile` entry) |
 | `compiler/backend/lab_filterScript.sml` | `Flapjack/Compiler/Backend/LabFilter.lean` |
 | `misc/miscScript.sml` (`list_subset`) | `Flapjack/Misc/ListSubset.lean` |
-| `compiler/backend/proofs/lab_to_targetProofScript.sml` | `Flapjack/Compiler/Backend/LabToTarget/` (code similarity and structural preservation) |
+| `compiler/backend/proofs/lab_to_targetProofScript.sml` | `Flapjack/Compiler/Backend/LabToTarget/` (code similarity and structural preservation; `ShareMemDomain.lean` share_mem_domain_code_rel, `ShareMemState.lean` share_mem_state_rel) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labSemScript.sml` | `Flapjack/Compiler/Backend/LabSem.lean` (`is_Label`) |
@@ -149,6 +150,15 @@ declarations remain in `Flapjack/Misc/LprefixLub.lean`.
 
 The pinned external `HOL/src/n-bit/byteScript.sml` counterpart is
 `Flapjack/Byte.lean` (byte extraction and arbitrary-count word serialization).
+
+The pinned external `HOL/src/n-bit/alignmentScript.sml` counterpart is
+`Flapjack/Misc/Alignment.lean` (`align`, `aligned`, `byte_align`, `byte_aligned`, and
+`wordsScript.sml`'s `word_slice`), with production bridges in `Flapjack/Misc/Alignment/Production.lean`.
+
+The pinned external `HOL/src/num/extra_theories/logrootScript.sml` counterpart is
+`Flapjack/Misc/Logroot.lean` (the specified `LOG`, rendered by Hilbert choice like HOL's
+`new_specification`), and `HOL/src/num/extra_theories/bitScript.sml`'s is `Flapjack/Misc/Bit.lean`
+(`LOG2`).
 
 The pinned external `hol4/src/finite_maps/sptreeScript.sml` counterpart is
 `Flapjack/Misc/Sptree.lean` with submodules under `Flapjack/Misc/Sptree/` (for example

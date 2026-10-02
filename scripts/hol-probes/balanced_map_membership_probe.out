@@ -1,0 +1,7 @@
+bmm_theorem=⊢ ∀(cmp :α -> β -> ordering) (k :α) (t :(β, γ) balanced_map). member cmp k t ⇔ IS_SOME (lookup cmp k t)
+bmm_nil=F
+bmm_root=T
+bmm_left_absent=F
+bmm_right_absent=F
+bmm_left_present=T
+bmm_right_present=T

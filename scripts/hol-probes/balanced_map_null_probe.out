@@ -1,0 +1,4 @@
+bmn_full=⊢ ∀cmp t. null t ⇔ to_fmap cmp t = FEMPTY
+bmn_typed=⊢ ∀(cmp :α -> β -> ordering) (t :(α, γ) balanced_map). null t ⇔ to_fmap cmp t = (FEMPTY :(β -> bool) |-> γ)
+bmn_tip=T
+bmn_bin_badsize=F
