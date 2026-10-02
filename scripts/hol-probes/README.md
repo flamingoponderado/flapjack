@@ -1,3 +1,8 @@
+`riscv_jumpcmp_polarity_probe.out` records 32 fresh original encoder byte
+vectors: all eight JumpCmp predicates, register/immediate operands, and
+short/long ranges. RiscVBranchPolarity kernel-checks actual executed Lab
+emission against these complete bytes; no full compiler theorem is asserted.
+
 `lab_implicit_section_zero_probe.out` records six original ignored-zero,
 implicit-section-base and nonzero-label positions. Executed collectors replay
 matching pre-encoding lines using actual instruction counts. This pins the
@@ -2784,6 +2789,12 @@ the executed allocator. Regenerate read-only with
 
 `word_alloc_get_forced_probeScript.sml` captures twenty-eight original `get_forced` rows over `c with ISA := _`: each forced `AddCarry`/`AddOverflow`/`SubOverflow`/`LongMul` ISA guard and its rejected ISA, omitted equal-register pairs, `FPMovToReg`/`FPMovFromReg` at 32 and 64 bits, an unforced instruction, `Seq`/`If`/`MustTerminate`/`Loop`, returning calls with and without a handler, a tail call with a handler, `Skip`, and registers above 2^64. `Flapjack/Test/GetForcedParity.lean` replays each row and instantiates `getForcedInGetClashTree`. These are proof-side ports; the executed RISC-V allocator still uses its own forced-edge traversal.
 
+`data_to_word_config_probeScript.sml` captures six original `data_to_word` pointer-layout rows: `shift_length` and `small_shift_length` of one configuration, and `get_gen_size` for an empty list, an in-range first generation, an overflowing first generation at 64 bits and a 32-bit size. `Flapjack/Test/DataToWordConfigParity.lean` replays every row in the kernel.
+
+`word_gc_functions_probeScript.sml` captures twenty-four original `word_gcFunctions` rows at 64 bits: `ptr_to_addr`, `update_addr`, `decode_length`, both `is_ref_header` outcomes, `memcpy` with its result memory and a failing domain check, `word_gc_move` on a zero and a non-zero `Loc`, a small word, a copied object and a forwarding pointer, `word_gen_gc_move` copying a data object and a reference object, `word_gen_gc_partial_move` outside and inside the young generation, `word_gc_move_roots`, `word_gc_move_list`, `glob_real` on a word and a `Loc`, and the four `new_trig` branches. `Flapjack/Test/WordGcFunctionsParity.lean` replays every row in the kernel, comparing memories at the probed addresses.
+
+`word_remove_must_terminate_probeScript.sml` captures eight original `remove_must_terminate` rows: a `MustTerminate` over a `Seq`, nested `MustTerminate`, a `Seq` of two `MustTerminate`s, an `If` branch, a `Loop` body, a returning call with both a `MustTerminate` return handler and exception handler, a tail call with a `MustTerminate` handler, and the catchall `Tick`. `Flapjack/Test/WordRemoveMustTerminateParity.lean` replays every row in the kernel.
+
 `word_alloc_remove_dead_probeScript.sml` captures twenty-five original `remove_dead`/`remove_dead_prog` rows over one live set (each observed as program, `toAList` keys and dead stores): partial and fully dead `Move`, dead and live `Inst`, `Get`, `OpCurrHeap`, dead `LocValue`, `Set` of a register to a dead and a live store, `Set` of a compound expression, `Seq` dropping a `Skip` and keeping both children, `MustTerminate`, a fully dead `If` and an immediate `If`, a returning call with a handler, a tail call, `Alloc`, `Loop`, `Break`, a `Continue` outside its loop context, the catchall `Tick`, and `remove_dead_prog`. Two `live_store_rel` rows are decided by proving the row or its negation. `Flapjack/Test/WordAllocRemoveDeadParity.lean` replays every row in the kernel.
 
 `word_alloc_nlive_store_probeScript.sml` captures twelve original `nlive_store` rows: a dead and a live `Lookup`, `Var`/`Const`, `Op` with a dead, a live and no argument, live and dead `Load`, `Shift` with each operand dead, and a live `Shift`. `Flapjack/Test/WordAllocNliveStoreParity.lean` proves each `T` row and refutes each `F` row in the kernel.
@@ -4305,6 +4316,7 @@ label-only code, nonempty accumulators and unchanged resolved offsets. Kernel
 fixtures replay them and apply the full theorem at arbitrary positive width and
 arbitrary accumulator; no full compiler or cross-language equivalence is claimed.
 
+### SSA primitive program invariants
 `binary_ieee_real_carrier_source_probeScript.sml` captures all 14 original
 real-rounding/sqrt and fixed64 codec definitions, with their full quantified
 types (28 rows), for the source review of `BinaryIeeeSqrt.RealCarrier`.
@@ -4400,3 +4412,36 @@ records its full twelve-field statement and types, and proves fifteen actual
 success/final/failure applications with no undischarged hypotheses. The Lean
 fixture applies the full twelve-conjunct theorem to the same native cases,
 preserving arbitrary GC/compiler/domain functions as equalities.
+## Full Word CSE load evaluation transports
+
+`word_cse_load_evaluation_probeScript.sml` literally replays all three original
+proofs at word_cseProofScript221-270, including the local address-substitution
+theorem, and captures their complete conclusions with no open hypotheses. Four
+original inferred types and 80 complete theorem applications cover word/byte/16/32
+loads at widths 1/32/64/80, both target/address aliasing and write/destination
+aliasing. Store cases are excluded only by the original guard; Load16 remains
+quantified with the same impossible source-success premise.
+`WordCseLoadEvaluationParity.lean` applies the full kernel theorems in all 80
+cases on arbitrary host/state/value inputs. The proofs use actual clocked WordSem
+evaluation and internally derive the loaded value from insertion equality;
+no target evaluation or memory-domain premise is added. Native finite-map/word
+translations and the evaluator's inherited IEEE rational-cut assumption
+(SOUNDNESS item 8) are retained. These are invariant-update prerequisites,
+not a completed CSE/compiler correctness proof.
+
+`target_sem_machine_sem_probeScript.sml` kernel-proves the full original
+Terminate/Diverge/Fail clauses for arbitrary machine and FFI carriers, checking
+exact conclusions and empty theorem hypotheses before capture. Divergence uses
+all clocks and the original IMAGE/UNIV lazy-list least upper bound. Generic Lean
+clause checks live in `Flapjack.Test.TargetSemMachineSemParity`; these check
+local definition shape and are not a cross-language equivalence theorem.
+### Complete SSA program invariant
+
+`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
+
+### SSA reconciliation list prerequisites
+
+`ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.

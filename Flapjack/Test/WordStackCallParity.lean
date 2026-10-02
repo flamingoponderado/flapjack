@@ -341,13 +341,13 @@ def containsHandlerCallCakeShape : StackProg Nat → Bool
   | .call (some (_, freeFrame, returnLabel, entryLabel)) (.label target)
       (some (_, exceptionLabel, handlerEntryLabel)) =>
       freeFrame == 0 && returnLabel == 20 && entryLabel == 21 &&
-        target == 7 && exceptionLabel == 40 && handlerEntryLabel == 31
+        target == 7 && exceptionLabel == 30 && handlerEntryLabel == 31
   | .seq first second =>
       containsHandlerCallCakeShape first || containsHandlerCallCakeShape second
   | _ => false
 
-/- Cake's handler-call carrier keeps the target and all three label carriers in
-   the final call node after the handler setup and argument prefix. -/
+/- HOL comp preserves handler section/local (30,31), independently of the
+   exception variable 40; the final Call must agree with PushHandler. -/
 def handlerCallCarrierCakeGuard : Bool :=
   containsHandlerCallCakeShape
     (wordToStackCallWithHandlerInSection (α := Nat) false 7 0 6 3

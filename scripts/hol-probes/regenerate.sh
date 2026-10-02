@@ -3170,6 +3170,20 @@ run_probe word_to_stack_native_top_probeScript.sml word_to_stack_native_top_prob
   wts_top_empty_plain wts_top_empty_perf wts_top_empty_zero wts_top_empty_narrow wts_top_width_one_plain wts_top_width_one_perf wts_top_zero_registers wts_top_reg_underflow wts_top_avoid_duplicate wts_top_avoid_single wts_top_reg_only wts_top_stack_args wts_top_perf_args wts_top_break wts_top_duplicates wts_top_duplicates_reverse wts_top_order wts_top_large_identifier wts_top_bitmap_plain wts_top_bitmap_perf wts_top_bitmap_order wts_top_bitmap_reverse wts_top_bitmap_multiword wts_top_bitmap_zero_frame \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
+# `word_remove$remove_must_terminate`: nested and sequenced `MustTerminate`,
+# `If`, `Loop`, both `Call` bodies and the catchall.
+run_probe word_remove_must_terminate_probeScript.sml word_remove_must_terminate_probe.out \
+  rmt_mt_seq rmt_tick \
+  "$cake_dir/compiler/backend/word_removeScript.sml" \
+  "$cake_dir/compiler/backend"
+
+# `data_to_word` pointer-layout helpers: `shift_length`, `small_shift_length`
+# and `get_gen_size` (empty, in range, overflowing) at 64 and 32 bits.
+run_probe data_to_word_config_probeScript.sml data_to_word_config_probe.out \
+  shift_length gen_size_three_32 \
+  "$cake_dir/compiler/backend/data_to_wordScript.sml" \
+  "$cake_dir/compiler/backend"
+
 run_probe word_alloc_checker_call_none_probeScript.sml word_alloc_checker_call_none_probe.out \
   ccn_empty ccn_one ccn_duplicate ccn_args ccn_collision ccn_handler_ignored \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend"
@@ -3218,6 +3232,11 @@ run_probe word_alloc_remove_dead_probeScript.sml word_alloc_remove_dead_probe.ou
 run_probe word_alloc_nlive_store_probeScript.sml word_alloc_nlive_store_probe.out \
   ns_lookup_dead ns_lookup_live ns_var ns_const ns_op_dead ns_op_live ns_op_empty ns_load ns_load_dead ns_shift_left_dead ns_shift_right_dead ns_shift_live \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_gc_functions_probeScript.sml word_gc_functions_probe.out \
+  gc_ptr_to_addr gc_new_trig_unaligned \
+  "$cake_dir/compiler/backend/proofs/word_gcFunctionsScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
   gf_addcarry_riscv gf_addcarry_mips gf_addcarry_self gf_addcarry_x86 gf_addovf_riscv gf_addovf_armv8 gf_subovf_mips gf_subovf_self gf_longmul_armv7 gf_longmul_armv7_self gf_longmul_riscv gf_longmul_ag32 gf_longmul_x86 gf_fptoreg_32 gf_fptoreg_32_self gf_fptoreg_64 gf_fpfromreg_32 gf_fpfromreg_64 gf_other_inst gf_seq gf_if gf_must gf_loop gf_call_return gf_call_both gf_call_tail gf_skip gf_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
@@ -3985,3 +4004,18 @@ run_probe ssa_cc_trans_props_probeScript.sml ssa_cc_trans_props_probe.out \
 run_probe target_sem_evaluate_probeScript.sml target_sem_evaluate_probe.out \
   te_zero te_unknown te_halt_success te_halt_resource te_cache te_shared_missing te_external_mmio te_cache_shift te_empty_external te_empty_external_shift te_normal_priority_encoding_fail te_normal_success te_normal_shift te_normal_guard_rollback te_mm_read_return te_mm_write_return te_mm_write_narrow te_mm_read_final te_mm_unshared te_mm_invalid_size \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe word_cse_load_evaluation_probeScript.sml word_cse_load_evaluation_probe.out \
+  ld_full_any ld_full_write ld_full_addr ld_type_state ld_type_word ld_type_value ld_type_op ld_any_load_98_1 ld_any_load_3_1 ld_write_load_99_1 ld_write_load_77_1 ld_addr_load_1 ld_any_load8_98_1 ld_any_load8_3_1 ld_write_load8_99_1 ld_write_load8_77_1 ld_addr_load8_1 ld_any_load16_98_1 ld_any_load16_3_1 ld_write_load16_99_1 ld_write_load16_77_1 ld_addr_load16_1 ld_any_load32_98_1 ld_any_load32_3_1 ld_write_load32_99_1 ld_write_load32_77_1 ld_addr_load32_1 ld_any_load_98_32 ld_any_load_3_32 ld_write_load_99_32 ld_write_load_77_32 ld_addr_load_32 ld_any_load8_98_32 ld_any_load8_3_32 ld_write_load8_99_32 ld_write_load8_77_32 ld_addr_load8_32 ld_any_load16_98_32 ld_any_load16_3_32 ld_write_load16_99_32 ld_write_load16_77_32 ld_addr_load16_32 ld_any_load32_98_32 ld_any_load32_3_32 ld_write_load32_99_32 ld_write_load32_77_32 ld_addr_load32_32 ld_any_load_98_64 ld_any_load_3_64 ld_write_load_99_64 ld_write_load_77_64 ld_addr_load_64 ld_any_load8_98_64 ld_any_load8_3_64 ld_write_load8_99_64 ld_write_load8_77_64 ld_addr_load8_64 ld_any_load16_98_64 ld_any_load16_3_64 ld_write_load16_99_64 ld_write_load16_77_64 ld_addr_load16_64 ld_any_load32_98_64 ld_any_load32_3_64 ld_write_load32_99_64 ld_write_load32_77_64 ld_addr_load32_64 ld_any_load_98_80 ld_any_load_3_80 ld_write_load_99_80 ld_write_load_77_80 ld_addr_load_80 ld_any_load8_98_80 ld_any_load8_3_80 ld_write_load8_99_80 ld_write_load8_77_80 ld_addr_load8_80 ld_any_load16_98_80 ld_any_load16_3_80 ld_write_load16_99_80 ld_write_load16_77_80 ld_addr_load16_80 ld_any_load32_98_80 ld_any_load32_3_80 ld_write_load32_99_80 ld_write_load32_77_80 ld_addr_load32_80 \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe target_sem_machine_sem_probeScript.sml target_sem_machine_sem_probe.out \
+  ts_terminate_clause ts_diverge_clause ts_fail_clause \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe ssa_reconcile_list_props_probeScript.sml ssa_reconcile_list_props_probe.out \
+  sr_moves_full sr_filtered_full sr_type_L sr_type_m sr_type_f sr_type_cur_ssa sr_type_tgt_ssa sr_type_ns \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe riscv_jumpcmp_polarity_probeScript.sml riscv_jumpcmp_polarity_probe.out \
+  branch_equal_reg_short branch_equal_reg_long branch_equal_imm_short branch_equal_imm_long branch_notequal_reg_short branch_notequal_reg_long branch_notequal_imm_short branch_notequal_imm_long branch_less_reg_short branch_less_reg_long branch_less_imm_short branch_less_imm_long branch_notless_reg_short branch_notless_reg_long branch_notless_imm_short branch_notless_imm_long branch_lower_reg_short branch_lower_reg_long branch_lower_imm_short branch_lower_imm_long branch_notlower_reg_short branch_notlower_reg_long branch_notlower_imm_short branch_notlower_imm_long branch_test_reg_short branch_test_reg_long branch_test_imm_short branch_test_imm_long branch_nottest_reg_short branch_nottest_reg_long branch_nottest_imm_short branch_nottest_imm_long \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
+  "$cake_dir/compiler/encoders/riscv"
