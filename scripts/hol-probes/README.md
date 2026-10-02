@@ -5367,3 +5367,13 @@ and both invariant/map conclusions. Original actual single/double branch
 outputs, invariants and all three key values are captured.
 `BalancedMapRotateRParity` consumes both complete native conclusions and
 derives six semantic finite-map lookups through the native full lookup theorem.
+
+### Original production/proof left-balancing equality
+
+`balanced_map_balanceL_eq_probeScript.sml` replays the complete original
+local `balanceL_balL` proof and prints its typed closed generic equality.
+Ten actual original executable equalities cover empty/singleton, both one-sided
+children, nonempty single/double rotations, left Tip, nonempty-right fallback,
+and both heavy branches. Kernel fixtures check their input invariants and
+consume the full equality. Small-child constructors and impossible malformed
+heavy branches are derived from invariants; no stronger premises are added.

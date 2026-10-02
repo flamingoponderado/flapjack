@@ -60238,5 +60238,13 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL1268-1288: entire original eight premise conjuncts and BOTH invariant/map union-update equality conclusions; generic original key/payload/comparator/left/right carriers retained. Literal strict middle-size ratio guard chooses original specified full singleR/doubleR proofs. Heaviness rules out outer Tip directly; no extra constructor/success/order/target invariant/map hypothesis or unspecified output claim. Only canonical finite-support to_fmap observer representation qualified, left-biased union and equivalence-class update unchanged. Complete literal original HOL assembly proof with full constructor proofs replayed hyp=[]; both actual branch outputs/invariants/three lookups captured, full generic kernel assembly and both-conclusion canonical semantic fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/BalanceL.lean",
+    "lean_name": "balanceLBalL",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanceL_balL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL1289-1320: entire original generic production balanceL versus proof balL equality under good_cmp and both input invariants only. Original keys/payload/comparator/tree carriers and all cached-size/error/strict-ratio branches retained. Small-tree and impossible heavy/error constructor constraints derived from literal invariants and balance, never extra premises. Defining Bin clauses of chosen whole-function rotations used only when constructor constraints hold; no missing-output/cross-function choice equivalence claim. Original whole literal equality proof replay hyp=[] and ten actual executable branch equalities T captured; full generic native kernel proof and ten invariant-checked constructor/ratio/heavy/fallback consumers. Executed balanceL unchanged; this theorem relates that implementation to original proof auxiliary, with no production caller or output change."
   }
 ]

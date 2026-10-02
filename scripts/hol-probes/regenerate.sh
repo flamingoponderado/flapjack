@@ -4733,3 +4733,7 @@ run_probe balanced_map_doubleR_probeScript.sml balanced_map_doubleR_probe.out \
 run_probe balanced_map_rotateR_probeScript.sml balanced_map_rotateR_probe.out \
   bmrr_full bmrr_single_tree bmrr_single_invariant bmrr_single_lookup0 bmrr_single_lookup1 bmrr_single_lookup2 bmrr_double_tree bmrr_double_invariant bmrr_double_lookup0 bmrr_double_lookup1 bmrr_double_lookup2 \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_balanceL_eq_probeScript.sml balanced_map_balanceL_eq_probe.out \
+  bmbl_full bmbl_empty bmbl_singleton bmbl_lr_only bmbl_ll_only bmbl_single_tip bmbl_double_tip bmbl_left_tip bmbl_fallback bmbl_heavy_single bmbl_heavy_double \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
