@@ -1,3 +1,7 @@
+import Flapjack.Test.WordCseProductionRegisterClassifiers
+import Flapjack.Test.WordCseProductionInstructionKeys
+import Flapjack.Test.WordCseProductionLoadHeapKeys
+import Flapjack.Test.WordCseProductionArithmeticKeys
 import Flapjack.Test.TargetPropsClockIoEventsParity
 import Flapjack.Test.LabToTargetIgnoreClocksParity
 import Flapjack.Test.StackPropsAllocationConstantsParity
