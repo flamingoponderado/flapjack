@@ -4939,3 +4939,8 @@ payload String; existing homogeneous observations remain unchanged.
 independent query/key/result/payload types; the latter forces a homogeneous
 Ordering comparator. `BalancedMapKeyOrderedTypes` checks generic constructors
 and Bool-query/Nat-key/String-result/Bool-payload examples, including malformed sizes.
+
+`ssa_cc_trans_correct_inst_fpcompare_probeScript.sml` captures original kernel
+FPLess/FPLessEqual/FPEqual specializations and full native state/register/SSA/table
+carriers. Original FP proof8174–8222 and fixed binary64 comparison/fresh word
+result cases are manually reviewed; no standalone tactic replay is claimed.
