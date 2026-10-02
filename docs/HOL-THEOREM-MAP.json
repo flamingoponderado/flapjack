@@ -66900,5 +66900,14 @@
     "hol_name": "translate64_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript5491-5623 complete hit/miss equation. Current ASID and current-core TLB select the first matching entry. A hit checks permission, retains its returned state, and combines physical base with masked virtual offset. Only a Write hit with D=false sets D, writes exactly eight PTE bytes, and updates the same TLB index; R and age remain unchanged. Failure forwards None and the permission-returned state. A miss walks from original SCSR.sptbr at the supplied level, forwards a failed walk state, or inserts the entire successful result into the returned state's TLB using the original ASID. No hit, permission, alignment, level or core-bound hypothesis is added. Fixed word64/ASID6/index4, native state/SV_PTE/TLBEntry and function-valued core maps retained exactly. Nine original observations replay complete optional physical address, all nine entry fields in every slot and the PTE memory word. Both observation languages leave other state fields unobserved; this regression scope does not replace full source comparison."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "get_labels_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Labels.lean",
+    "lean_name": "getLabelsComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.8: original85-108 full forall info/body get_labels(comp info body)=get_labels body AND get_labels(comp_top info body)=get_labels body. Actual Spt Nat info and positive-width HolProg; faithful StackSem.getLabelsExact predicate sets, not ordered extractor. No validity/success/evaluation/target premise or public IH. Native functional induction handles all recursive/returning/handler clauses; changedSeq derives original literal StackFree/tailCall shape via comp_seq_neq_IMP, splits source lookup/frame comparisons, and proves empty labelset for rewritten rawcall sequences. NONE-return labels ignore handler exactly source. Sole positive type-indexed word translation; actual tree map unchanged. Fresh original full statement hyp0 plus five complete finite set pairs independently kernel-replayed, generic theorem application separate. Axiomsonlypropext/Classical.choice/Quot.sound. Full simulation/production parent remainsOPEN."
   }
 ]

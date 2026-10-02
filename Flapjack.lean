@@ -4,11 +4,12 @@ import Flapjack.RiscV.L3.Defs.MMU.Insert
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
-import Flapjack.RiscV.L3.Defs.MMU.TLB
-import Flapjack.RiscV.L3.Defs.MMU.Access
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.Labels
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompLn
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateOk
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompLn
+import Flapjack.RiscV.L3.Defs.MMU.TLB
+import Flapjack.RiscV.L3.Defs.MMU.Access
 import Flapjack.RiscV.L3.Defs.MMU.Primitives
 import Flapjack.Compiler.Backend.StackRawCall
 import Flapjack.RiscV.L3.Defs.MMU.Exception
