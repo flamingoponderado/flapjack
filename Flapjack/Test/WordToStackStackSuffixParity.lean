@@ -583,4 +583,3 @@ example : wordSemLastN (3+1) (false::([false, true, false] : List Bool)) = [fals
 
 -- sl_cons_Bool_4_1
 example : wordSemLastN (3+1) (true::([false, true, false] : List Bool)) = [true, false, true, false] := by decide +kernel
-
