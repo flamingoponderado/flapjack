@@ -5883,3 +5883,7 @@ run_probe lab_to_target_shmem_names_probeScript.sml lab_to_target_shmem_names_pr
   word8_names narrow_names wide_names extcall_prefix all_ops ffi_only empty \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe l3_lrw_probeScript.sml l3_lrw_probe.out \
+  lrw_definition lrw_type lrw_negative lrw_positive lrw_rd_zero lrw_core_wrap lrw_fault_sv32 lrw_rv32_mode lrw_rv128_mode lrw_walk_returned_state lrw_misaligned_1 lrw_misaligned_2 lrw_misaligned_3 lrw_order_0_1 lrw_order_1_0 lrw_order_1_1 \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"

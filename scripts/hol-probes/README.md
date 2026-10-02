@@ -6252,3 +6252,12 @@ NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 `stack_remove_memory_subset_probeScript.sml` replays the complete literal original generic separated-graph domain inclusion proof. Arbitrary address/value types, functions/domains and frame retained. Two rows capture the full statement and proof success.
 
 `stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.
+
+`l3_lrw_probe.out` captures the complete original LR_W definition/type and
+14 whole-state observations. These retain all aq/rl payloads, early virtual
+misalignment residues1/2/3, aligned Sv32 fault, signed32 success, register-zero,
+core255 with totalCore1, RV32/RV128 and Sv39 returned-state PTE3079->3111 reads.
+The reservation is the virtual address on success and remains unchanged on
+fault/misalignment; the other-core reservation and full frame outside the six
+potentially changed fields are observed. No whole atomic/runtime assembly is
+claimed; probes are regression evidence, not cross-language equivalence proofs.

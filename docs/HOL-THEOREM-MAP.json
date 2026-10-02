@@ -67978,5 +67978,13 @@
     "hol_name": "dfn'LD_def",
     "statement_status": "reviewed_exact",
     "reviewer": "Full source/body comparison pinned riscvScript7286-7324: Source7286-7324: complete LD; low 64 bits with raw word64. Original mode guard precedes address computation; its returned state is retained, including unspecified-mode behavior. HOL right-nested tuple word5 x word5 x word12 and full riscv_state -> riscv_state match native carriers. GPR rs1 plus signed12 offset wraps at64; translateAddr Data Read receives original/current-mode returned state. NONE calls signalAddressException(Load_Fault, original virtual address) on returned translation state; SOME reads rawReadData at physical address on that same state and writes original rd. Extraction high63/low0 within64 and original sign/zero/raw extension compared. Original GPR0 suppression and total core functions retained; no alignment/success/core bound or evaluator replacement. Full Run/Next/runtime routing remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/LRSC.lean",
+    "lean_name": "«dfn'LR_W»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LR_W_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7463-7505 comparison: full word1 aq/rl and word5 rd/rs1 tuple, arbitrary complete native riscv_state; unused order payloads retained. Early low2 virtual-address AMO_Misaligned before any translation; otherwise exact Data/Read, returned-state Load_Fault with original virtual address or low32 signed64 read/GPR write followed by virtual-address reservation on that resulting state. No successful/core/alignment premise or changed architecture mode. Original definition/type plus14 whole-state observations freshly regenerated; independently derived expected values match14/14, including all order bits, misalignment residues1/2/3, fault reservation retention, zero register, core255,totalCore1,RV32/RV128 and Sv39 PTE3079->3111 returned-state read. Unconditional normal form kernel checked; full regression/final gates pending. Not full LR/SC/Run/Next or compiler correctness."
   }
 ]
