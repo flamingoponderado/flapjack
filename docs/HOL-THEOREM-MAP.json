@@ -60316,5 +60316,16 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original resumed ShareInst10012-10045, same sixpremises and entire existential sourcepermutation/Errorexemption/result/frame/result-sensitive locals simulation. All eight asmMemOp constructors preserve native shared domainalignment/configuration/bytepayload/callFFI/flush clauses. Stores transport actual sourcegetVar and preserve SSAmap; loads use actual nextVarRename freshdestination and original localssetvar theorem. Source failed expression/nonword/missingregister/outofdomain branches use only original Error exemption. Native Spt maps/tables and fixedbyte lists retained; only canonical fpRegs/store finite-support and positive indexedword translations qualified. No targetrun/postlocals/success extra hypothesis. Inherits evaluator reals_as_rational_cuts SOUNDNESS item8. Original manual source/carrier comparison and proved theorem specialization capture, Lean kernel evidence; no isolated tactic replay or equivalence proof claimed. FullSSA/endtoend remain open."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/RotateR.lean",
+    "lean_name": "rotateRThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "rotateR_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL1268-1288: entire original eight premise conjuncts and BOTH invariant/map union-update equality conclusions; generic original key/payload/comparator/left/right carriers retained. Literal strict middle-size ratio guard chooses original specified full singleR/doubleR proofs. Heaviness rules out outer Tip directly; no extra constructor/success/order/target invariant/map hypothesis or unspecified output claim. Only canonical finite-support to_fmap observer representation qualified, left-biased union and equivalence-class update unchanged. Complete literal original HOL assembly proof with full constructor proofs replayed hyp=[]; both actual branch outputs/invariants/three lookups captured, full generic kernel assembly and both-conclusion canonical semantic fixtures."
   }
 ]

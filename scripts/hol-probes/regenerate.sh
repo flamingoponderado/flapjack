@@ -4744,3 +4744,7 @@ run_probe word_to_stack_native_insert_wf_probeScript.sml word_to_stack_native_in
 run_probe ssa_cc_trans_correct_share_inst_probeScript.sml ssa_cc_trans_correct_share_inst_probe.out \
   share_inst_full share_inst_type_operator share_inst_type_name share_inst_type_expression share_inst_type_st share_inst_type_cst share_inst_type_ssa share_inst_type_next share_inst_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe balanced_map_rotateR_probeScript.sml balanced_map_rotateR_probe.out \
+  bmrr_full bmrr_single_tree bmrr_single_invariant bmrr_single_lookup0 bmrr_single_lookup1 bmrr_single_lookup2 bmrr_double_tree bmrr_double_invariant bmrr_double_lookup0 bmrr_double_lookup1 bmrr_double_lookup2 \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

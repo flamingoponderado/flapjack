@@ -5392,3 +5392,13 @@ Successful stores preserve locals; returning loads use fresh SSA insertion;
 final FFI outcomes flush locals. Original proved theorem specialization capture,
 not isolated tactic replay or cross-language equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cc_trans_correct_share_inst_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Full right-rotation correctness assembly
+
+`balanced_map_rotateR_probeScript.sml` replays the complete original local
+`rotateR_thm` proof with the entire original singleR/doubleR proofs and local
+prerequisites. Its typed closed statement retains all eight premise conjuncts
+and both invariant/map conclusions. Original actual single/double branch
+outputs, invariants and all three key values are captured.
+`BalancedMapRotateRParity` consumes both complete native conclusions and
+derives six semantic finite-map lookups through the native full lookup theorem.
