@@ -721,4 +721,210 @@ theorem extendCliqueSet_production (new initial : List Nat)
   simpa only [cakeExtendCliqueSet, cakeExtendCliqueSetFast] using
     extendCliqueBatch_production new initial cache related bounds
 
+/-- Actual fast clique insertion observations on its genuine duplicate-free
+input domain. This is untagged production infrastructure: the native HOL
+operation inserts pairs recursively rather than executing this union fold.
+Present input rows are required; no output graph is assumed. -/
+theorem cliqueInsertEdgeFast_membership (live : List Nat)
+    (cache : CakeNodeMap (Std.TreeSet Nat)) (distinct : live.Nodup)
+    (present : ∀ node ∈ live, (cache.get node).isSome = true)
+    (key member : Nat) :
+    ((cakeCliqueInsertEdgeSetFast live cache).get key).map
+      (fun row => row.contains member) =
+      (cache.get key).map (fun row => row.contains member ||
+        (live.contains key && live.contains member && !(key == member))) := by
+  have folded := unionRowsFold_membership live
+    (fun node => (Std.TreeSet.ofList live).erase node) cache key member
+  have graph : cakeCliqueInsertEdgeSetFast live cache =
+      live.foldl (unionRow (fun node => (Std.TreeSet.ofList live).erase node)) cache := by
+    unfold cakeCliqueInsertEdgeSetFast unionRow
+    simp only [distinct, dif_pos]
+  rw [graph]
+  rw [folded]
+  simp only [Std.TreeSet.contains_erase, Std.TreeSet.contains_ofList]
+  cases old : cache.get key with
+  | none =>
+    have absent : key ∉ live := by
+      intro belongs
+      have available := present key belongs
+      simp [old] at available
+    simp [absent]
+  | some row =>
+    by_cases same : key = member
+    · subst member; cases live.contains key <;> simp
+    · cases live.contains key <;> cases live.contains member
+      all_goals simp [same, bne, Bool.beq_eq_decide_eq,
+        Std.LawfulEqCmp.compare_eq_iff_eq]
+
+/-- Complete native recursive clique insertion correspondence on original
+input bounds, including the optional actual set cache and failure latch.
+Untagged production infrastructure; native cliqueInsertEdge already carries
+its reviewed HOL definition tag. Duplicate inputs follow the same recursion. -/
+theorem cliqueInsertEdgeReference_production (live : List Nat)
+    {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native production)
+    (bounds : ∀ node ∈ live, node < native.adj_ls.length) :
+    ∃ result, cliqueInsertEdge live native = (.success (), result) ∧
+      result.adj_ls.length = native.adj_ls.length ∧
+      ProductionStateRel result {production with
+        adjLists := cakeCliqueInsertEdge live production.adjLists
+        adjSets := production.adjSets.map (cakeCliqueInsertEdgeSet live)} := by
+  induction live generalizing native production with
+  | nil =>
+    refine ⟨native, ?_, rfl, ?_⟩
+    · rfl
+    · have identity : production.adjSets.map (fun cache => cache) = production.adjSets := by
+        cases production.adjSets <;> rfl
+      simpa only [cakeCliqueInsertEdge, cakeCliqueInsertEdgeSet, identity] using related
+  | cons node rest ih =>
+    obtain ⟨first, firstRun, firstLength, firstRel⟩ := listInsertEdge_production node rest related
+      (bounds node List.mem_cons_self)
+      (fun partner belongs => bounds partner (List.mem_cons_of_mem _ belongs))
+    obtain ⟨result, run, length, rel⟩ := ih firstRel (by
+      intro next belongs
+      rw [firstLength]
+      exact bounds next (List.mem_cons_of_mem _ belongs))
+    refine ⟨result, ?_, length.trans firstLength, ?_⟩
+    · simp only [cliqueInsertEdge, Translator.Monadic.MonadBase.ignoreBind, firstRun, run]
+    · simpa only [cakeCliqueInsertEdge, cakeCliqueInsertEdgeSet,
+        Option.map_map, Function.comp_def] using rel
+
+private theorem cliqueEdge_cons (node : Nat) (rest : List Nat)
+    (fresh : node ∉ rest) (key member : Nat) :
+    ((node :: rest).contains key && (node :: rest).contains member && !(key == member)) =
+      (((key == node && rest.contains member) || (member == node && rest.contains key)) ||
+        (rest.contains key && rest.contains member && !(key == member))) := by
+  by_cases atKey : key = node
+  · subst key
+    by_cases atMember : member = node
+    · subst member; simp [fresh]
+    · simp [fresh, atMember, Ne.symm atMember]
+  · by_cases atMember : member = node
+    · subst member; simp [fresh, atKey]
+    · simp [atKey, atMember]
+
+/-- Recursive cache insertion has the same complete incoming-row observation
+as the fast union fold on duplicate-free inputs. Present rows are an input
+domain fact; they are propagated through the actual edge writes. -/
+theorem cliqueInsertEdgeSet_membership (live : List Nat)
+    (cache : CakeNodeMap (Std.TreeSet Nat)) (distinct : live.Nodup)
+    (present : ∀ node ∈ live, (cache.get node).isSome = true)
+    (key member : Nat) :
+    ((cakeCliqueInsertEdgeSet live cache).get key).map (fun row => row.contains member) =
+      (cache.get key).map (fun row => row.contains member ||
+        (live.contains key && live.contains member && !(key == member))) := by
+  induction live generalizing cache with
+  | nil => simp [cakeCliqueInsertEdgeSet]
+  | cons node rest ih =>
+    have nodePresent := present node List.mem_cons_self
+    have restPresent : ∀ next ∈ rest, (cache.get next).isSome = true :=
+      fun next belongs => present next (List.mem_cons_of_mem _ belongs)
+    have still : ∀ next ∈ rest,
+        ((cakeListInsertEdgeSet node rest cache).get next).isSome = true := by
+      intro next belongs
+      exact listInsertEdgeSet_present rest cache node next (restPresent next belongs)
+    rw [cakeCliqueInsertEdgeSet, ih _ distinct.of_cons still]
+    have step := listInsertEdgeSet_membership rest cache node key member nodePresent restPresent
+    have carried := congrArg (Option.map (fun bit => bit ||
+      (rest.contains key && rest.contains member && !(key == member)))) step
+    simp only [Option.map_map, Function.comp_def] at carried
+    rw [carried, cliqueEdge_cons node rest (List.nodup_cons.mp distinct).1]
+    congr 1
+    funext row
+    simp only [Bool.or_assoc]
+
+/-- Complete ordered row equality for the actual fast clique caller.
+Duplicate inputs use the literal recursive fallback; distinct inputs use
+the independently proved union and recursive membership equations. -/
+theorem cliqueInsertEdgeFast_rows_reference (live : List Nat)
+    (cache : CakeNodeMap (Std.TreeSet Nat))
+    (present : ∀ node ∈ live, (cache.get node).isSome = true) (key : Nat) :
+    ((cakeCliqueInsertEdgeSetFast live cache).mapValues cakeAdjSetList).get key =
+      ((cakeCliqueInsertEdgeSet live cache).mapValues cakeAdjSetList).get key := by
+  by_cases distinct : live.Nodup
+  · have observations (member : Nat) :=
+      (cliqueInsertEdgeFast_membership live cache distinct present key member).trans
+        (cliqueInsertEdgeSet_membership live cache distinct present key member).symm
+    rw [CakeNodeMap.get_mapValues, CakeNodeMap.get_mapValues]
+    cases left : (cakeCliqueInsertEdgeSetFast live cache).get key <;>
+      cases right : (cakeCliqueInsertEdgeSet live cache).get key
+    · rfl
+    · have impossible := observations 0; simp [left, right] at impossible
+    · have impossible := observations 0; simp [left, right] at impossible
+    · rename_i first second
+      have same : ∀ member, first.contains member = second.contains member := by
+        intro member
+        have observed := observations member
+        simpa only [left, right, Option.map_some, Option.some.injEq] using observed
+      exact congrArg some (congrArg List.reverse
+        (Std.TreeSet.Equiv.toList_eq (Std.TreeSet.Equiv.of_forall_contains_eq same)))
+  · simp only [cakeCliqueInsertEdgeSetFast, dif_neg distinct]
+
+private theorem cliqueInsertEdgeSet_materialize (live : List Nat)
+    (cache : CakeNodeMap (Std.TreeSet Nat)) :
+    (cakeCliqueInsertEdgeSet live cache).mapValues cakeAdjSetList =
+      cakeCliqueInsertEdge live (cache.mapValues cakeAdjSetList) := by
+  induction live generalizing cache with
+  | nil => rfl
+  | cons node rest ih =>
+    rw [cakeCliqueInsertEdgeSet, ih, listInsertEdgeSet_materialize_eq]
+    rfl
+
+/-- Full state transport for the executed fast clique caller, including its
+duplicate fallback. Original native input bounds derive every present row;
+the output graph, successful result and post-state are proved here.
+This is untagged correspondence infrastructure for the actual compiler. -/
+theorem cliqueInsertEdgeFast_production (live : List Nat)
+    (cache : CakeNodeMap (Std.TreeSet Nat)) {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native {production with
+      adjLists := cache.mapValues cakeAdjSetList, adjSets := some cache})
+    (bounds : ∀ node ∈ live, node < native.adj_ls.length) :
+    ∃ result, cliqueInsertEdge live native = (.success (), result) ∧
+      result.adj_ls.length = native.adj_ls.length ∧
+      ProductionStateRel result {production with
+        adjLists := (cakeCliqueInsertEdgeSetFast live cache).mapValues cakeAdjSetList
+        adjSets := some (cakeCliqueInsertEdgeSetFast live cache)} := by
+  have present : ∀ node ∈ live, (cache.get node).isSome = true := by
+    intro node belongs
+    have read := related.adjacency_read node (bounds node belongs)
+    change (cache.mapValues cakeAdjSetList).get node = _ at read
+    rw [CakeNodeMap.get_mapValues] at read
+    cases found : cache.get node <;> simp_all
+  obtain ⟨result, run, length, rel⟩ := cliqueInsertEdgeReference_production live related bounds
+  have materialized := cliqueInsertEdgeSet_materialize live cache
+  have rows (key : Nat) := (cliqueInsertEdgeFast_rows_reference live cache present key).trans
+    (congrArg (fun graph => graph.get key) materialized)
+  by_cases distinct : live.Nodup
+  · have dimension : cache.slots.size = native.adj_ls.length := by
+      simpa only [CakeNodeMap.mapValues, Array.size_map] using related.adjacency.2.1
+    have graph : cakeCliqueInsertEdgeSetFast live cache =
+        live.foldl (unionRow (fun node => (Std.TreeSet.ofList live).erase node)) cache := by
+      unfold cakeCliqueInsertEdgeSetFast unionRow
+      simp only [distinct, dif_pos]
+    have frame := unionRowsFold_frame live
+      (fun node => (Std.TreeSet.ofList live).erase node) cache (by
+        intro node belongs
+        rw [dimension]
+        exact bounds node belongs)
+    rw [← graph] at frame
+    refine ⟨result, run, length, {rel with adjacency := ?_, adjacencyCache := ?_}⟩
+    · refine ⟨?_, ?_, ?_⟩
+      · change (cakeCliqueInsertEdgeSetFast live cache).outside.map
+          (fun entry => (entry.1, cakeAdjSetList entry.2)) = []
+        rw [frame.2]
+        exact related.adjacency.1
+      · change ((cakeCliqueInsertEdgeSetFast live cache).slots.map
+          (fun entry => entry.map cakeAdjSetList)).size = result.adj_ls.length
+        rw [Array.size_map, frame.1, dimension, length]
+      · intro node bounded
+        rw [rows node]
+        exact rel.adjacency.2.2 node bounded
+    · exact productionAdjacencyMap_membership _
+  · refine ⟨result, run, length, ?_⟩
+    have adjusted : ProductionStateRel result {production with
+        adjLists := (cakeCliqueInsertEdgeSet live cache).mapValues cakeAdjSetList
+        adjSets := some (cakeCliqueInsertEdgeSet live cache)} := by
+      simpa only [materialized, Option.map_some] using rel
+    simpa only [cakeCliqueInsertEdgeSetFast, dif_neg distinct] using adjusted
+
 end Flapjack.RegAlloc
