@@ -651,7 +651,8 @@ the qualifier exactly on the tagged declarations whose own source (signature
 and body, comments excluded) names a rendering declaration, and rejects it
 elsewhere, except for the reviewed bit-only forms `HolFloat`,
 `holFloatIsNormal`, `holFloatIsSubnormal`, `holFloatNegate`, `holFloatAbs`,
-`holFp64ToFloat`, `holFloatToFp64`, `holFp64Abs`, and `holFp64Negate`.
+`holFp64ToFloat`, `holFloatToFp64`, `holFp64Abs`, `holFp64Negate`,
+`holFp32ToFloat`, and `holFloatToFp32`.
 The checker exempts these forms only while their canonical bodies, namespace,
 and unique declaration ownership pass its fail-closed checks; real-dependent
 operations still require the qualifier. These checks do not establish

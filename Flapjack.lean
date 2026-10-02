@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
+import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
 import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
 import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceDomain
@@ -94,6 +96,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
+import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreNames
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapWrites
@@ -193,6 +196,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAInstructionCodec
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGeneratedProgramCodec
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAControlCodec
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSADataCodec
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramCodec
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstConst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstBinop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstShift
