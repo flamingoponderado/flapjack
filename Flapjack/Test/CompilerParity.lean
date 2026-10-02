@@ -1,6 +1,10 @@
+import Flapjack.Test.LabToTargetGoodCodeParity
 import Flapjack.Test.TargetRegisterOraclesParity
 import Flapjack.Test.TargetInterferenceSequenceParity
 import Flapjack.Test.TargetFindNextInterferenceParity
+import Flapjack.Test.MmioIndex
+import Flapjack.Test.LabInitialLabelSlots
+import Flapjack.Test.StackRemoveInitMemory
 import Flapjack.Test.StackRemoveStoreInit
 import Flapjack.Test.WordOverflowProduction
 import Flapjack.Test.StackRemoveStoreListCode
@@ -1784,6 +1788,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordGcFunctionsParity.runChecks,
     Flapjack.Test.StackAllocGcCodeParity.runChecks,
     Flapjack.Test.StackAllocGetBitsParity.runChecks,
+    Flapjack.Test.LabToTargetGoodCodeParity.runChecks,
     Flapjack.Test.LabToTargetByteLengthsParity.runChecks,
     Flapjack.Test.LabPropsLabelSetsParity.runChecks,
     Flapjack.Test.LabToTargetWordLocationParity.runChecks,

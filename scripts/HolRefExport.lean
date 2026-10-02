@@ -12,6 +12,12 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLongDiv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstAddCarry
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstAddOverflow
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstSubOverflow
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad8
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad32
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore8
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore32
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp
@@ -44,6 +50,8 @@ import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList
+import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
 import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MapBitmap
