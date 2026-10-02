@@ -169,9 +169,8 @@ def labFlatten (tail : Bool) (sectionId counter : Nat)
   | .alloc words =>
       ⟨[.labAsm (.heapAlloc words) [] 0], false, counter⟩
   | .locValue register label entry =>
-      /- StackLang stores the target as (label, entry-section), while LabRef
-         stores it as (section, label). -/
-      ⟨[.labAsm (.locValue register ⟨entry, label⟩) [] 0], false, counter⟩
+      /- HOL LocValue preserves its (section,local label) operands literally. -/
+      ⟨[.labAsm (.locValue register ⟨label, entry⟩) [] 0], false, counter⟩
   | .halt _register =>
       ⟨[.labAsm .halt [] 0], true, counter⟩
   | .seq (.seq (.const scratch value) (.arith operator addressRegister base right))
@@ -375,28 +374,28 @@ def labFlatten (tail : Bool) (sectionId counter : Nat)
         ⟨[], false, counter⟩
       else if labIsSkip thenBranch then
         let joinLabel := elseResult.nextLabel
-        ⟨[labJumpCmp (labNegateCmp operator) condition right sectionId joinLabel] ++
+        ⟨[labJumpCmp operator condition right sectionId joinLabel] ++
           elseResult.lines ++ [labLabel sectionId joinLabel],
           false, joinLabel + 1⟩
       else if labIsSkip elseBranch then
         let joinLabel := thenResult.nextLabel
-        ⟨[labJumpCmp operator condition right sectionId joinLabel] ++
+        ⟨[labJumpCmp (labNegateCmp operator) condition right sectionId joinLabel] ++
           thenResult.lines ++ [labLabel sectionId joinLabel],
           false, joinLabel + 1⟩
       else if thenResult.terminal then
         let joinLabel := elseResult.nextLabel
-        ⟨[labJumpCmp operator condition right sectionId joinLabel] ++
+        ⟨[labJumpCmp (labNegateCmp operator) condition right sectionId joinLabel] ++
           thenResult.lines ++ [labLabel sectionId joinLabel] ++ elseResult.lines,
           elseResult.terminal, joinLabel + 1⟩
       else if elseResult.terminal then
         let joinLabel := elseResult.nextLabel
-        ⟨[labJumpCmp (labNegateCmp operator) condition right sectionId joinLabel] ++
+        ⟨[labJumpCmp operator condition right sectionId joinLabel] ++
           elseResult.lines ++ [labLabel sectionId joinLabel] ++ thenResult.lines,
           thenResult.terminal, joinLabel + 1⟩
       else
         let thenLabel := elseResult.nextLabel
         let joinLabel := thenLabel + 1
-        ⟨[labJumpCmp (labNegateCmp operator) condition right sectionId thenLabel] ++
+        ⟨[labJumpCmp operator condition right sectionId thenLabel] ++
           elseResult.lines ++ [labJump sectionId joinLabel,
             labLabel sectionId thenLabel] ++ thenResult.lines ++
           [labLabel sectionId joinLabel],

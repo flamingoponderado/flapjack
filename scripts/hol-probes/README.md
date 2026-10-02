@@ -1,3 +1,8 @@
+`riscv_jumpcmp_polarity_probe.out` records 32 fresh original encoder byte
+vectors: all eight JumpCmp predicates, register/immediate operands, and
+short/long ranges. RiscVBranchPolarity kernel-checks actual executed Lab
+emission against these complete bytes; no full compiler theorem is asserted.
+
 `lab_implicit_section_zero_probe.out` records six original ignored-zero,
 implicit-section-base and nonzero-label positions. Executed collectors replay
 matching pre-encoding lines using actual instruction counts. This pins the

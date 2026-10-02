@@ -665,6 +665,11 @@ theorem wordToStackProgNatWithLocationBitmaps_call_handler
     separate mirrors the stack-machine control-flow boundary and avoids
     unfolding the implementation of the callee in clients of the theorem. -/
 
+/- Flapjack-only reduced evaluator lemmas below are not HOL ports. Its Call
+   evaluator still interprets the handler's first label as a register; after
+   repairing production metadata to HOL's (section,local), these hypotheses
+   describe that reduced evaluator literally, not faithful exception semantics.
+   Faithful StackSem correctness must use the native carrier and state relation. -/
 theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_raise_of_eval
     [NeZero width]
     (host : StackMachineFfiHandler width)
@@ -675,7 +680,7 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_raise_of_eval
     (returnCode handlerCode : StackProg Nat)
     (result : StackMachineControl width)
     (hsetup : evalStackProgFuelWithCodeAndFfi host (fuel + 3) code state
-      (stackPushHandler config.perf config.sectionId config.handlerLabel config.scratch) =
+      (stackPushHandler config.perf config.handlerLabel config.sectionId config.scratch) =
       some (.normal setupState))
     (hargs : evalStackProgFuelWithCodeAndFfi host (fuel + 2) code setupState
       (stackHandlerArgs config.perf (argumentCount + 1) (wordStackCallFrameOffset config)
@@ -685,7 +690,7 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_raise_of_eval
     (hcallee : evalStackProgFuelWithCodeAndFfi host (fuel + 1) code calleeState
       callee = some (.raised calleeState value))
     (hhandler : evalStackProgFuelWithCodeAndFfi host (fuel + 1) code
-      (wordStackMachineWriteRegister calleeState exception value)
+      (wordStackMachineWriteRegister calleeState config.handlerLabel value)
       handlerCode = some result) :
     evalStackProgFuelWithCodeAndFfi host (fuel + 4) code state
       (wordToStackCallWithHandlerInSection config.perf target argumentCount
@@ -697,12 +702,12 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_raise_of_eval
         (.call (some (stackPopHandler config.perf config.scratch returnCode, 0,
             config.returnLabel, config.entryLabel))
           (.label target)
-          (some (handlerCode, exception, config.sectionId))) =
+          (some (handlerCode, config.handlerLabel, config.sectionId))) =
         some result := by
     rw [evalStackProgFuelWithCodeAndFfi_call_raise_handler_of_eval
       (host := host) (fuel := fuel) (code := code) (state := calleeState)
       (calleeState := calleeState) (target := target)
-      (exceptionRegister := exception) (handlerLabel := config.sectionId)
+      (exceptionRegister := config.handlerLabel) (handlerLabel := config.sectionId)
       (returnCode := stackPopHandler config.perf config.scratch returnCode) (link := 0)
       (returnLabel := config.returnLabel) (entryLabel := config.entryLabel)
       (handlerCode := handlerCode) (callee := callee) (value := value)
@@ -717,12 +722,12 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_raise_of_eval
       (.call (some (stackPopHandler config.perf config.scratch returnCode, 0,
           config.returnLabel, config.entryLabel))
         (.label target)
-        (some (handlerCode, exception, config.sectionId))))
+        (some (handlerCode, config.handlerLabel, config.sectionId))))
     (result := some result) hargs hcall
   have houter := evalStackProgFuelWithCodeAndFfi_seq_normal_result
     (host := host) (fuel := fuel + 3) (code := code) (state := state)
     (middle := setupState)
-    (first := stackPushHandler config.perf config.sectionId config.handlerLabel
+    (first := stackPushHandler config.perf config.handlerLabel config.sectionId
       config.scratch)
     (second :=
       (stackSeq [
@@ -731,7 +736,7 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_raise_of_eval
         (.call (some (stackPopHandler config.perf config.scratch returnCode, 0,
             config.returnLabel, config.entryLabel))
           (.label target)
-      (some (handlerCode, exception, config.sectionId))) ]))
+      (some (handlerCode, config.handlerLabel, config.sectionId))) ]))
     (result := some result) hsetup hinner
   simpa [wordToStackCallWithHandlerInSection, stackSeq] using houter
 
@@ -745,7 +750,7 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_return_of_eva
     (returnCode handlerCode : StackProg Nat)
     (result : StackMachineControl width)
     (hsetup : evalStackProgFuelWithCodeAndFfi host (fuel + 3) code state
-      (stackPushHandler config.perf config.sectionId config.handlerLabel
+      (stackPushHandler config.perf config.handlerLabel config.sectionId
         config.scratch) = some (.normal setupState))
     (hargs : evalStackProgFuelWithCodeAndFfi host (fuel + 2) code setupState
       (stackHandlerArgs config.perf (argumentCount + 1) (wordStackCallFrameOffset config)
@@ -766,14 +771,14 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_return_of_eva
         (.call (some (stackPopHandler config.perf config.scratch returnCode, 0,
             config.returnLabel, config.entryLabel))
           (.label target)
-          (some (handlerCode, exception, config.sectionId))) =
+          (some (handlerCode, config.handlerLabel, config.sectionId))) =
         some result := by
     rw [evalStackProgFuelWithCodeAndFfi_call_return_handler_of_eval
       (host := host) (fuel := fuel) (code := code) (state := calleeState)
       (calleeState := calleeState) (target := target)
       (returnCode := stackPopHandler config.perf config.scratch returnCode) (link := 0)
       (returnLabel := config.returnLabel) (entryLabel := config.entryLabel)
-      (handler := some (handlerCode, exception, config.sectionId))
+      (handler := some (handlerCode, config.handlerLabel, config.sectionId))
       (callee := callee) (value := value) hcode hcallee]
     exact hreturn
   have hinner := evalStackProgFuelWithCodeAndFfi_seq_normal_result
@@ -785,7 +790,7 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_return_of_eva
       (.call (some (stackPopHandler config.perf config.scratch returnCode, 0,
           config.returnLabel, config.entryLabel))
         (.label target)
-        (some (handlerCode, exception, config.sectionId))))
+        (some (handlerCode, config.handlerLabel, config.sectionId))))
     (result := some result) hargs hcall
   have hinner' :
       evalStackProgFuelWithCodeAndFfi host (fuel + 3) code setupState
@@ -795,13 +800,13 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_return_of_eva
           (.call (some (stackPopHandler config.perf config.scratch returnCode, 0,
               config.returnLabel, config.entryLabel))
             (.label target)
-            (some (handlerCode, exception, config.sectionId))) ]) =
+            (some (handlerCode, config.handlerLabel, config.sectionId))) ]) =
       some result := by
     simpa [stackSeq, Nat.add_assoc] using hinner
   have houter := evalStackProgFuelWithCodeAndFfi_seq_normal_result
     (host := host) (fuel := fuel + 3) (code := code) (state := state)
     (middle := setupState)
-    (first := stackPushHandler config.perf config.sectionId config.handlerLabel
+    (first := stackPushHandler config.perf config.handlerLabel config.sectionId
         config.scratch)
     (second :=
       (stackSeq [
@@ -810,7 +815,7 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_return_of_eva
         (.call (some (stackPopHandler config.perf config.scratch returnCode, 0,
             config.returnLabel, config.entryLabel))
           (.label target)
-          (some (handlerCode, exception, config.sectionId))) ]))
+          (some (handlerCode, config.handlerLabel, config.sectionId))) ]))
     (result := some result) hsetup hinner'
   simpa [wordToStackCallWithHandlerInSection, stackSeq] using houter
 
@@ -850,7 +855,7 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackCallWithHandler_return_of_eva
     (hmove : evalStackProgFuelWithCodeAndFfi host (fuel + 4) code machineState
       argumentMoves = some (.normal middle))
     (hsetup : evalStackProgFuelWithCodeAndFfi host (fuel + 3) code middle
-      (stackPushHandler config.perf config.sectionId config.handlerLabel config.scratch) =
+      (stackPushHandler config.perf config.handlerLabel config.sectionId config.scratch) =
       some (.normal setupState))
     (hhandlerArgs : evalStackProgFuelWithCodeAndFfi host (fuel + 2) code setupState
       (stackHandlerArgs config.perf (arguments.length + 1) (wordStackCallFrameOffset config)
