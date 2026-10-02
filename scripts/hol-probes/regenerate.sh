@@ -5177,3 +5177,7 @@ run_probe word_to_stack_asm_remove_helpers_probeScript.sml word_to_stack_asm_rem
 run_probe stack_remove_comp_inst_probeScript.sml stack_remove_comp_inst_probe.out \
   ci_statement ci_types ci_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_reg_output_probeScript.sml word_to_stack_reg_output_probe.out \
+  rbo_must_alloc rbo_loop_if_reg rbo_seq_loops rbo_tail_indirect rbo_return_direct rbo_handler_indirect \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend/proofs"
