@@ -55171,5 +55171,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison: original resumed OpCurrHeap9694-9704, all six original premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no extra IH/target-run/success/post-state premise. Native BinOp and register Nat constructor carriers; native word-expression op over source register and CurrHeap store read transported by original expression theorem; nextVarRename and original setVar locals relation derive fresh update. Canonical fpRegs/store finite-support and positive-width BitVec/Type0 hosts reviewed; Spt locals/code unchanged. Inherits reals_as_rational_cuts evaluator boundary SOUNDNESS8. Literal original resumed proof with original local helper replays PASS; only discarded primitive induction bookkeeping omitted. Lean kernel checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/FindNextInterference.lean",
+    "lean_name": "findNextInterference",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "find_next_interference_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 bead flapjack-native-target-find-next-interference: Compared complete HOL112-211 definition and original inferred (alpha,beta,gamma)machine_config -> delta ffi_state -> num -> beta -> ((alpha,beta)interference_app # machine_config # ffi_state)option. Native MachineConfig/InterferenceApp exact imported carriers, arbitrary independent state/projection/universe0 FFI host and positive BitVec width/NeZero. Clock0 NONE; normal priority domain minus entries, encoded bytes, next then normal oracle shift, all3 state_ok guards and frame on ms1 only, recursive clock decrement; halt NONE; cache returns full CcApp with pre/post and shifted cache oracle. Retains every mapped-read/write lookup/alignment/shared-domain/template guard, bytecount/endian payload, total names lookup, final NONE and return full FfiApp/configuration/newFFI; external MMIO rejection and both optional bytearray reads. No extra bounds, successful-run or oracle-validity premise. words_as_type_indexed_bitvec records only standard positive word/FFI translation. Explicit holEl/holHd source review: literal original EL ffi_index ffi_names in shared and external branches, in-range selection via recursive TL/HD, past end holHdNil/shared opaque holArb HolFfiName. Inhabitation instance chooses no missing list name; no added length premise, guard, Option fallback or concrete unspecified value. Fresh original full definition/type and guard/full-return/event/normal-to-cache regression equations plus matching generic native kernel checks; regressions do not prove cross-language equivalence."
   }
 ]

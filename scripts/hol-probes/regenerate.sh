@@ -4236,3 +4236,9 @@ run_probe ssa_cc_trans_correct_if_probeScript.sml ssa_cc_trans_correct_if_probe.
 run_probe ssa_cc_trans_correct_heap_probeScript.sml ssa_cc_trans_correct_heap_probe.out \
   heap_full heap_type_st heap_type_cst heap_type_operator heap_type_dst heap_type_src heap_type_lt \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe target_find_next_interference_probeScript.sml target_find_next_interference_probe.out \
+  search_type search_full_definition search_unknown search_halt_success search_halt_resource search_shared_missing search_external_mmio search_normal_priority_encoding_fail search_normal_success search_normal_shift search_normal_guard_rollback search_mm_unshared search_mm_invalid_size search_cache_full search_zero \
+  search_mm_read_full search_mm_write_full search_mm_write_narrow_full search_mm_final search_empty_external_full \
+  search_normal_to_cache_full \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
