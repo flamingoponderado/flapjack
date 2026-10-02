@@ -100,4 +100,87 @@ theorem fp32Directed_finite_bracket {X : Rat} (hX : 0 ≤ X)
   · have hD := fp32_D_pos
     grind
 
+/-- Every magnitude below the input lies at or below the lower bracket. -/
+theorem fp32Lower_extremal {X : Rat} (hX : 0 ≤ X) {q : Nat}
+    (hq : ((fp32N q : Nat) : Rat) ≤ X) : q ≤ fp32Lower X := by
+  have hhi := (fp32Bracket_rat hX).2
+  apply Nat.le_of_not_lt
+  intro h
+  have hn := fp32N_mono (show fp32Lower X + 1 ≤ q by omega)
+  have hc : ((fp32N (fp32Lower X + 1) : Nat) : Rat) ≤
+      ((fp32N q : Nat) : Rat) := by exact_mod_cast hn
+  change X < ((fp32N (fp32Lower X + 1) : Nat) : Rat) at hhi
+  grind
+
+/-- Every magnitude above the input lies at or above the upper bracket. -/
+theorem fp32Upper_extremal {X : Rat} (hX : 0 ≤ X) {q : Nat}
+    (hq : X ≤ ((fp32N q : Nat) : Rat)) : fp32Upper X ≤ q := by
+  have hlo := (fp32Directed_bracket hX).1
+  have hp : fp32Lower X ≤ q := by
+    apply Nat.le_of_not_lt
+    intro h
+    have hn := fp32N_strictMono h
+    have hc : ((fp32N q : Nat) : Rat) <
+        ((fp32N (fp32Lower X) : Nat) : Rat) := by exact_mod_cast hn
+    grind
+  unfold fp32Upper
+  split
+  · exact hp
+  · next hne =>
+      by_cases heq : fp32Lower X = q
+      · rw [← heq] at hq
+        have : ((fp32N (fp32Lower X) : Nat) : Rat) = X := by grind
+        exact False.elim (hne this)
+      · omega
+
+/-- The lower float dominates every represented value below a nonnegative input. -/
+theorem fp32Lower_value_extremal {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) (b : HolFloat 23 8)
+    (hb : holFloatToReal b ≤ X / 2 ^ 149) :
+    holFloatToReal b ≤ holFloatToReal (fp32OfPat false (fp32Lower X)) := by
+  have hl := fp32Lower_le_max hX hmax
+  have hm : fp32MaxPat < 2 ^ 31 := by decide
+  rw [fp32OfPat_positive_value (by omega), holFloatToReal_fp32] at *
+  have hD := fp32_D_pos
+  have hn0 : (0 : Rat) ≤ ((fp32N (fp32Pat b) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
+  have hl0 : (0 : Rat) ≤ ((fp32N (fp32Lower X) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
+  by_cases hs : b.sign = 1
+  · simp only [hs, if_true] at hb ⊢
+    grind
+  · simp only [hs, if_false, Rat.one_mul] at hb ⊢
+    have hq : ((fp32N (fp32Pat b) : Nat) : Rat) ≤ X := by grind
+    have hp := fp32Lower_extremal hX hq
+    have hn := fp32N_mono hp
+    have hc : ((fp32N (fp32Pat b) : Nat) : Rat) ≤
+        ((fp32N (fp32Lower X) : Nat) : Rat) := by exact_mod_cast hn
+    grind
+
+/-- The upper float is below every represented value above a nonnegative input. -/
+theorem fp32Upper_value_extremal {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) (b : HolFloat 23 8)
+    (hb : X / 2 ^ 149 ≤ holFloatToReal b) :
+    holFloatToReal (fp32OfPat false (fp32Upper X)) ≤ holFloatToReal b := by
+  have hu := fp32Upper_le_max hX hmax
+  have hm : fp32MaxPat < 2 ^ 31 := by decide
+  rw [fp32OfPat_positive_value (by omega), holFloatToReal_fp32] at *
+  have hD := fp32_D_pos
+  have hn0 : (0 : Rat) ≤ ((fp32N (fp32Pat b) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
+  by_cases hs : b.sign = 1
+  · simp only [hs, if_true] at hb ⊢
+    have hx0 : X = 0 := by grind
+    have hp : fp32Upper X ≤ 0 := fp32Upper_extremal hX (by simp [hx0, fp32N])
+    have hp0 : fp32Upper X = 0 := by omega
+    rw [hp0]
+    have hnzero : fp32N 0 = 0 := by decide
+    rw [hnzero]
+    change (0 : Rat) / 2 ^ 149 ≤ -1 * ((fp32N (fp32Pat b) : Nat) : Rat) / 2 ^ 149
+    grind
+  · simp only [hs, if_false, Rat.one_mul] at hb ⊢
+    have hq : X ≤ ((fp32N (fp32Pat b) : Nat) : Rat) := by grind
+    have hp := fp32Upper_extremal hX hq
+    have hn := fp32N_mono hp
+    have hc : ((fp32N (fp32Upper X) : Nat) : Rat) ≤
+        ((fp32N (fp32Pat b) : Nat) : Rat) := by exact_mod_cast hn
+    grind
+
 end Flapjack.Binary32Rounding
