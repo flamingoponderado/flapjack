@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: first-large
 
     steps:
       - uses: actions/checkout@v5
@@ -23,7 +23,7 @@ jobs:
           python3 -m unittest discover -s scripts/tests -p 'test_check_native_trust.py'
           ./scripts/check-native-decide.sh
 
-      - name: Check the build is warning-free
+      - name: Check non-test modules are warning-free
         run: ./scripts/check-warnings.sh
 
       - name: Check @[hol] cross-references point at existing HOL declarations

@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog
 import Flapjack.Pancake.WordLang
 import Flapjack.HolRef
+import Flapjack.HolArb
 import Flapjack.FfiHOL
 
 /-!
@@ -44,6 +45,19 @@ width-indexed: HOL's `word_loc` payload is the actual `'a word`. -/
 def isSomeWord {width : Nat} [NeZero width] : Option (WordLoc (BitVec width)) → Bool
   | some (.word _) => true
   | _ => false
+
+/-- HOL's word selector. The exported equation specifies `SOME (Word w)`;
+the primitive definition completes both `NONE` and `SOME (Loc _ _)` with the
+same `bool$ARB` at the result word type. The shared opaque `holArb` preserves
+that symbolic arbitrary value and its cross-accessor identity; no concrete
+word, input-dependent choice or successful-input premise is introduced. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "the_SOME_Word_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def theSomeWord {width : Nat} [NeZero width] :
+    Option (WordLoc (BitVec width)) → BitVec width
+  | some (.word value) => value
+  | none => holArb (BitVec width)
+  | some (.loc _ _) => holArb (BitVec width)
 
 /-- HOL `read_mem` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml:2739-2742`),
 for an arbitrary memory codomain as in HOL (`m : 'a word -> 'b`). -/

@@ -1,0 +1,25 @@
+load "preamble";
+load "stack_removeProofTheory";
+open bossLib HolKernel Parse preamble stack_removeProofTheory stackSemTheory;
+val _ = Globals.linewidth := 20000;
+fun check q = prove(q,
+  rpt strip_tac >> fs [state_rel_def,get_var_def,dec_clock_def] >> metis_tac []);
+fun statement label th = print(label ^ "=" ^ term_to_string(concl th) ^ "\n");
+fun types label th = print(label ^ "=" ^ String.concatWith ";" (map (fn v => fst(dest_var v) ^ type_to_string(type_of v)) (fst(strip_forall(concl th)))) ^ "\n");
+fun proved label th = print(label ^ "=" ^ term_to_string(rhs(concl(EQT_INTRO th))) ^ "\n");
+val sl_getvar = check ``!jump off k s t n. state_rel jump off k s t /\ n < k ==> get_var n s = get_var n t``;
+val _ = statement "sl_getvar" sl_getvar;
+val _ = types "sl_getvar_types" sl_getvar;
+val _ = proved "sl_getvar_proved" sl_getvar;
+val sl_decclock = check ``!jump off k s t. state_rel jump off k s t ==> state_rel jump off k (dec_clock s) (dec_clock t)``;
+val _ = statement "sl_decclock" sl_decclock;
+val _ = types "sl_decclock_types" sl_decclock;
+val _ = proved "sl_decclock_proved" sl_decclock;
+val sl_withclock = check ``!jump off k s t c. state_rel jump off k s t ==> state_rel jump off k (s with clock := c) (t with clock := c)``;
+val _ = statement "sl_withclock" sl_withclock;
+val _ = types "sl_withclock_types" sl_withclock;
+val _ = proved "sl_withclock_proved" sl_withclock;
+val sl_const = check ``!jump off k s t. state_rel jump off k s t ==> t.code_buffer = s.code_buffer /\ t.sh_mdomain = s.sh_mdomain /\ ~t.use_stack /\ s.use_stack /\ t.ffi = s.ffi /\ t.compile_oracle = (\n. (I ## MAP (prog_comp jump off k) ## I) (s.compile_oracle n)) /\ s.compile = (\c p. t.compile c (MAP (prog_comp jump off k) p))``;
+val _ = statement "sl_const" sl_const;
+val _ = types "sl_const_types" sl_const;
+val _ = proved "sl_const_proved" sl_const;

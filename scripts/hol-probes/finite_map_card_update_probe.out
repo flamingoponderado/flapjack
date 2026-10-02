@@ -1,0 +1,5 @@
+FCARD_FUPDATE=⊢ ∀(fm :α |-> β) (a :α) (b :β). FCARD fm⟨a ↦ b⟩ = if a ∈ FDOM fm then FCARD fm else (1 :num) + FCARD fm
+fmcard_empty=(1 :num)
+fmcard_replace=(1 :num)
+fmcard_fresh=(2 :num)
+fmcard_repeat=(1 :num)

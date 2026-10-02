@@ -324,3 +324,29 @@ ALookupMap probes replay three complete original lookup mapping proofs and
 and payload carriers, repeated/absent/large keys and noninjective sentinels
 retain the original injection boundary. Regression evidence does not establish
 cross-language equivalence.
+
+Move reconstruction probes replay the complete original theorem and four
+original prerequisites. 560 matching packets compare full native reads,
+optional pairs of whole Spt trees and all six source guard observations.
+Widths1/2/8/64/80 retain word truncation; duplicate/missing/70bit keys, swaps,
+omitted self/nonself moves and malformed trees are included. Failed reads
+produce NONE rather than evaluating THE NONE. Regression evidence is not a
+HOL-to-Lean equivalence proof.
+Fifteen extra packets isolate the subset guard failure while all other guards
+succeed; they inspect absent lookup directly and never compute THE NONE.
+
+Load-continuation probes replay the complete original `wStackLoad_append` and
+`get_labels_wStackLoad` proofs. 410 matching packets retain whole native ASTs
+and label observations across all 34 continuation constructors, widths
+1/2/8/64/80, repeated and 70-bit load indices, and nested return/handler cases.
+The handler-without-return case preserves its AST while contributing no labels,
+as in the original semantics. These checks are regression evidence, not a
+HOL-to-Lean equivalence proof.
+
+Return-copy label probes replay the complete original `copy_ret_aux_thm` and
+`get_labels_copy_ret` proofs. 460 matching native/original packets compare whole
+recursive return-copy ASTs and continuation labels, including saturated natural
+subtraction, independent Nat/Bool value and frame metadata carriers, all four
+performance/handler modes, 70-bit indices, and widths 1/2/8/64/80.
+They retain the descending load/store sequence and zero-count continuation.
+These observations provide regression evidence, not cross-language equivalence.

@@ -1,0 +1,296 @@
+state_rel_full_definition=∀mc_conf code2 labs p s1 t1 ms1.
+  state_rel (mc_conf,code2,labs,p) s1 t1 ms1 ⇔
+  target_state_rel mc_conf.target t1 ms1 ∧ good_dimindex (:α) ∧
+  mc_conf.prog_addresses = t1.mem_domain ∧
+  mc_conf.halt_pc ∉ mc_conf.prog_addresses ∧
+  mc_conf.ccache_pc ∉ mc_conf.prog_addresses ∧
+  reg_ok s1.ptr_reg mc_conf.target.config ∧ mc_conf.ptr_reg = s1.ptr_reg ∧
+  reg_ok s1.len_reg mc_conf.target.config ∧ mc_conf.len_reg = s1.len_reg ∧
+  reg_ok s1.ptr2_reg mc_conf.target.config ∧ mc_conf.ptr2_reg = s1.ptr2_reg ∧
+  reg_ok s1.len2_reg mc_conf.target.config ∧ mc_conf.len2_reg = s1.len2_reg ∧
+  reg_ok s1.link_reg mc_conf.target.config ∧
+  (∃i. mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+       ∀index.
+         if i ≤ index ∧ index < LENGTH mc_conf.ffi_names then
+           ∃info. ALOOKUP mc_conf.mmio_info index = SOME info
+         else ALOOKUP mc_conf.mmio_info index = NONE) ∧
+  (∀ms2 k index new_bytes t1 bytes bytes2 st new_st i.
+     mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧ index < i ∧
+     read_ffi_bytearrays mc_conf ms2 = (SOME bytes,SOME bytes2) ∧
+     call_FFI_rel꙳ s1.ffi st ∧
+     call_FFI st mc_conf.ffi_names❲index❳ bytes bytes2 =
+     FFI_return new_st new_bytes ∧ mc_conf.prog_addresses = t1.mem_domain ∧
+     target_state_rel mc_conf.target
+       (t1 with pc := p − n2w ((3 + index) * ffi_offset)) ms2 ∧
+     aligned mc_conf.target.config.code_alignment (t1.regs s1.link_reg) ⇒
+     (let
+        ms' = mc_conf.ffi_interfer k (index,new_bytes,ms2)
+      in
+        target_state_rel mc_conf.target
+          (t1 with
+           <|regs :=
+               (λa.
+                    if
+                      MEM a mc_conf.callee_saved_regs ∨
+                      ¬(a < mc_conf.target.config.reg_count) ∨
+                      MEM a mc_conf.target.config.avoid_regs
+                    then
+                      t1.regs a
+                    else mc_conf.target.get_reg ms' a);
+             fp_regs := (λn. mc_conf.target.get_fp_reg ms' n);
+             mem :=
+               asm_write_bytearray (t1.regs s1.ptr2_reg) new_bytes t1.mem;
+             pc := t1.regs s1.link_reg|>) ms')) ∧
+  (∀ms2 t1 k a1 a2.
+     target_state_rel mc_conf.target (t1 with pc := p − n2w (2 * ffi_offset))
+       ms2 ∧
+     aligned mc_conf.target.config.code_alignment (t1.regs s1.link_reg) ⇒
+     (let
+        ms' = mc_conf.ccache_interfer k (a1,a2,ms2)
+      in
+        target_state_rel mc_conf.target
+          (t1 with
+           <|regs :=
+               (λa.
+                    if
+                      MEM a mc_conf.callee_saved_regs ∨ a = s1.ptr_reg ∨
+                      ¬(a < mc_conf.target.config.reg_count) ∨
+                      MEM a mc_conf.target.config.avoid_regs
+                    then
+                      t1.regs a
+                    else mc_conf.target.get_reg ms' a);
+             fp_regs := (λn. mc_conf.target.get_fp_reg ms' n);
+             pc := t1.regs s1.link_reg|>) ms')) ∧
+  s1.compile = compile_lab mc_conf.target.config ∧
+  (no_share_mem_inst code2 ⇒
+   ∀k. (let
+          (cfg,code) = s1.compile_oracle k
+        in
+          good_code mc_conf.target.config cfg.labels code ∧
+          no_share_mem_inst code ∧
+          (k = 0 ⇒
+           cfg.labels = labs ∧ cfg.pos = LENGTH (prog_to_bytes code2) ∧
+           cfg.ffi_names = SOME mc_conf.ffi_names))) ∧
+  (∀l1 l2 x. lab_lookup l1 l2 labs = SOME x ⇒ EVEN x) ∧ 1w && p = 0w ∧
+  list_subset (FILTER (λx. ∃s. x = ExtCall s) (find_ffi_names s1.code))
+    mc_conf.ffi_names ∧ EVEN (LENGTH (prog_to_bytes code2)) ∧
+  (∀name i.
+     MEM name mc_conf.ffi_names ∧
+     mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+     get_ffi_index mc_conf.ffi_names name < i ⇒
+     (∃s. name = ExtCall s) ∧
+     p − n2w ((3 + get_ffi_index mc_conf.ffi_names name) * ffi_offset) ∉
+     mc_conf.prog_addresses ∧
+     p − n2w ((3 + get_ffi_index mc_conf.ffi_names name) * ffi_offset) ≠
+     mc_conf.halt_pc ∧
+     p − n2w ((3 + get_ffi_index mc_conf.ffi_names name) * ffi_offset) ≠
+     mc_conf.ccache_pc ∧
+     find_index
+       (p − n2w ((3 + get_ffi_index mc_conf.ffi_names name) * ffi_offset))
+       mc_conf.ffi_entry_pcs 0 = SOME (get_ffi_index mc_conf.ffi_names name)) ∧
+  p − n2w ffi_offset = mc_conf.halt_pc ∧
+  p − n2w (2 * ffi_offset) = mc_conf.ccache_pc ∧
+  interference_ok mc_conf.next_interfer (mc_conf.target.proj t1.mem_domain) ∧
+  (∀l1 l2 x2.
+     loc_to_pc l1 l2 s1.code = SOME x2 ⇒
+     lab_lookup l1 l2 labs = SOME (pos_val x2 0 code2)) ∧
+  (∀r. s1.fp_regs r = t1.fp_regs r) ∧
+  (∀r. word_loc_val p labs (read_reg r s1) = SOME (t1.regs r)) ∧
+  (∀a. byte_align a ∈ s1.mem_domain ⇒
+       a ∈ t1.mem_domain ∧ a ∈ s1.mem_domain ∧
+       word_loc_val_byte p labs s1.mem a s1.be = SOME (t1.mem a)) ∧
+  (∀n. n < s1.code_buffer.space_left ⇒
+       (let
+          addr =
+            s1.code_buffer.position + n2w (LENGTH s1.code_buffer.buffer + n)
+        in
+          addr ∈ t1.mem_domain ∧ addr ∉ s1.mem_domain)) ∧
+  bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+  s1.code_buffer.position = p + n2w (LENGTH (prog_to_bytes code2)) ∧
+  bytes_in_mem s1.code_buffer.position s1.code_buffer.buffer t1.mem
+    t1.mem_domain s1.mem_domain ∧
+  LENGTH (prog_to_bytes code2) + LENGTH s1.code_buffer.buffer +
+  s1.code_buffer.space_left < dimword (:α) ∧
+  (∀bn.
+     bn < LENGTH s1.code_buffer.buffer + s1.code_buffer.space_left ⇒
+     ¬MEM (s1.code_buffer.position + n2w bn) mc_conf.ffi_entry_pcs) ∧
+  ¬s1.failed ∧ ¬t1.failed ∧ (s1.be ⇔ t1.be) ∧
+  t1.pc = p + n2w (pos_val s1.pc 0 code2) ∧
+  p && n2w (2 ** t1.align − 1) = 0w ∧
+  (case mc_conf.target.config.link_reg of NONE => T | SOME r => t1.lr = r) ∧
+  (t1.be ⇔ mc_conf.target.config.big_endian) ∧
+  t1.align = mc_conf.target.config.code_alignment ∧
+  enc_ok mc_conf.target.config ∧
+  all_enc_ok mc_conf.target.config labs
+    (TAKE (THE (mmio_pcs_min_index mc_conf.ffi_names)) mc_conf.ffi_names) 0
+    code2 ∧ EVERY sec_labels_ok code2 ∧ code_similar s1.code code2 ∧
+  share_mem_state_rel mc_conf s1 t1 ms1 ∧
+  share_mem_domain_code_rel mc_conf p code2 s1.shared_mem_domain ∧
+  LENGTH mc_conf.ffi_names = LENGTH mc_conf.ffi_entry_pcs ∧
+  no_install_or_no_share_mem code2 mc_conf.ffi_names
+state_rel_full_definition_types=∀(mc_conf :(α, β, γ) machine_config) (code2 :α sec list)
+    (labs :num sptree$num_map sptree$num_map) (p :α word)
+    (s1 :(α, config, 'ffi) labSem$state) (t1 :α asm_state) (ms1 :β).
+  (state_rel (mc_conf,code2,labs,p) s1 t1 ms1 :bool) ⇔
+  target_state_rel mc_conf.target t1 ms1 ∧ good_dimindex (:α) ∧
+  mc_conf.prog_addresses = t1.mem_domain ∧
+  mc_conf.halt_pc ∉ mc_conf.prog_addresses ∧
+  mc_conf.ccache_pc ∉ mc_conf.prog_addresses ∧
+  reg_ok s1.ptr_reg mc_conf.target.config ∧ mc_conf.ptr_reg = s1.ptr_reg ∧
+  reg_ok s1.len_reg mc_conf.target.config ∧ mc_conf.len_reg = s1.len_reg ∧
+  reg_ok s1.ptr2_reg mc_conf.target.config ∧ mc_conf.ptr2_reg = s1.ptr2_reg ∧
+  reg_ok s1.len2_reg mc_conf.target.config ∧ mc_conf.len2_reg = s1.len2_reg ∧
+  reg_ok s1.link_reg mc_conf.target.config ∧
+  (∃(i :num).
+     mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+     ∀(index :num).
+       if i ≤ index ∧ index < LENGTH mc_conf.ffi_names then
+         ∃(info :word8 # α addr # num # α word).
+           ALOOKUP mc_conf.mmio_info index = SOME info
+       else
+         ALOOKUP mc_conf.mmio_info index =
+         (NONE :(word8 # α addr # num # α word) option)) ∧
+  (∀(ms2 :β) (k :num) (index :num) (new_bytes :word8 list) (t1 :α asm_state)
+       (bytes :word8 list) (bytes2 :word8 list) (st :'ffi ffi_state)
+       (new_st :'ffi ffi_state) (i :num).
+     mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧ index < i ∧
+     read_ffi_bytearrays mc_conf ms2 = (SOME bytes,SOME bytes2) ∧
+     (call_FFI_rel :'ffi ffi_state -> 'ffi ffi_state -> bool)꙳ s1.ffi st ∧
+     call_FFI st mc_conf.ffi_names❲index❳ bytes bytes2 =
+     FFI_return new_st new_bytes ∧ mc_conf.prog_addresses = t1.mem_domain ∧
+     target_state_rel mc_conf.target
+       (t1 with pc := p − (n2w (((3 :num) + index) * ffi_offset) :α word))
+       ms2 ∧
+     aligned mc_conf.target.config.code_alignment
+       (t1.regs s1.link_reg :α word) ⇒
+     (let
+        (ms' :β) = mc_conf.ffi_interfer k (index,new_bytes,ms2)
+      in
+        target_state_rel mc_conf.target
+          (t1 with
+           <|regs :=
+               (λ(a :num).
+                    if
+                      MEM a mc_conf.callee_saved_regs ∨
+                      ¬(a < mc_conf.target.config.reg_count) ∨
+                      MEM a mc_conf.target.config.avoid_regs
+                    then
+                      (t1.regs a :α word)
+                    else mc_conf.target.get_reg ms' a);
+             fp_regs := (λ(n :num). mc_conf.target.get_fp_reg ms' n);
+             mem :=
+               asm_write_bytearray (t1.regs s1.ptr2_reg :α word) new_bytes
+                 t1.mem; pc := (t1.regs s1.link_reg :α word)|>) ms')) ∧
+  (∀(ms2 :β) (t1 :α asm_state) (k :num) (a1 :α word) (a2 :α word).
+     target_state_rel mc_conf.target
+       (t1 with pc := p − (n2w ((2 :num) * ffi_offset) :α word)) ms2 ∧
+     aligned mc_conf.target.config.code_alignment
+       (t1.regs s1.link_reg :α word) ⇒
+     (let
+        (ms' :β) = mc_conf.ccache_interfer k (a1,a2,ms2)
+      in
+        target_state_rel mc_conf.target
+          (t1 with
+           <|regs :=
+               (λ(a :num).
+                    if
+                      MEM a mc_conf.callee_saved_regs ∨ a = s1.ptr_reg ∨
+                      ¬(a < mc_conf.target.config.reg_count) ∨
+                      MEM a mc_conf.target.config.avoid_regs
+                    then
+                      (t1.regs a :α word)
+                    else mc_conf.target.get_reg ms' a);
+             fp_regs := (λ(n :num). mc_conf.target.get_fp_reg ms' n);
+             pc := (t1.regs s1.link_reg :α word)|>) ms')) ∧
+  s1.compile = compile_lab mc_conf.target.config ∧
+  (no_share_mem_inst code2 ⇒
+   ∀(k :num).
+     (let
+        ((cfg :config),(code :α sec list)) =
+          (s1.compile_oracle k :config # α sec list)
+      in
+        good_code mc_conf.target.config cfg.labels code ∧
+        no_share_mem_inst code ∧
+        (k = (0 :num) ⇒
+         cfg.labels = labs ∧ cfg.pos = LENGTH (prog_to_bytes code2) ∧
+         cfg.ffi_names = SOME mc_conf.ffi_names))) ∧
+  (∀(l1 :num) (l2 :num) (x :num). lab_lookup l1 l2 labs = SOME x ⇒ EVEN x) ∧
+  (1w :α word) && p = (0w :α word) ∧
+  list_subset
+    (FILTER (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s)
+       (find_ffi_names s1.code)) mc_conf.ffi_names ∧
+  EVEN (LENGTH (prog_to_bytes code2)) ∧
+  (∀(name :ffiname) (i :num).
+     MEM name mc_conf.ffi_names ∧
+     mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+     get_ffi_index mc_conf.ffi_names name < i ⇒
+     (∃(s :mlstring). name = ExtCall s) ∧
+     p −
+     (n2w (((3 :num) + get_ffi_index mc_conf.ffi_names name) * ffi_offset) :
+      α word) ∉ mc_conf.prog_addresses ∧
+     p −
+     (n2w (((3 :num) + get_ffi_index mc_conf.ffi_names name) * ffi_offset) :
+      α word) ≠ mc_conf.halt_pc ∧
+     p −
+     (n2w (((3 :num) + get_ffi_index mc_conf.ffi_names name) * ffi_offset) :
+      α word) ≠ mc_conf.ccache_pc ∧
+     find_index
+       (p −
+        (n2w
+           (((3 :num) + get_ffi_index mc_conf.ffi_names name) * ffi_offset) :
+         α word)) mc_conf.ffi_entry_pcs (0 :num) =
+     SOME (get_ffi_index mc_conf.ffi_names name)) ∧
+  p − (n2w ffi_offset :α word) = mc_conf.halt_pc ∧
+  p − (n2w ((2 :num) * ffi_offset) :α word) = mc_conf.ccache_pc ∧
+  interference_ok mc_conf.next_interfer (mc_conf.target.proj t1.mem_domain) ∧
+  (∀(l1 :num) (l2 :num) (x2 :num).
+     loc_to_pc l1 l2 s1.code = SOME x2 ⇒
+     lab_lookup l1 l2 labs = SOME (pos_val x2 (0 :num) code2)) ∧
+  (∀(r :num). (s1.fp_regs r :word64) = (t1.fp_regs r :word64)) ∧
+  (∀(r :num).
+     word_loc_val p labs (read_reg r s1 :α word_loc) =
+     SOME (t1.regs r :α word)) ∧
+  (∀(a :α word).
+     byte_align a ∈ s1.mem_domain ⇒
+     a ∈ t1.mem_domain ∧ a ∈ s1.mem_domain ∧
+     word_loc_val_byte p labs s1.mem a s1.be = SOME (t1.mem a :word8)) ∧
+  (∀(n :num).
+     n < s1.code_buffer.space_left ⇒
+     (let
+        (addr :α word) =
+          s1.code_buffer.position +
+          (n2w (LENGTH s1.code_buffer.buffer + n) :α word)
+      in
+        addr ∈ t1.mem_domain ∧ addr ∉ s1.mem_domain)) ∧
+  bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+  s1.code_buffer.position = p + (n2w (LENGTH (prog_to_bytes code2)) :α word) ∧
+  bytes_in_mem s1.code_buffer.position s1.code_buffer.buffer t1.mem
+    t1.mem_domain s1.mem_domain ∧
+  LENGTH (prog_to_bytes code2) + LENGTH s1.code_buffer.buffer +
+  s1.code_buffer.space_left < dimword (:α) ∧
+  (∀(bn :num).
+     bn < LENGTH s1.code_buffer.buffer + s1.code_buffer.space_left ⇒
+     ¬MEM (s1.code_buffer.position + (n2w bn :α word)) mc_conf.ffi_entry_pcs) ∧
+  ¬s1.failed ∧ ¬t1.failed ∧ (s1.be ⇔ t1.be) ∧
+  t1.pc = p + (n2w (pos_val s1.pc (0 :num) code2) :α word) ∧
+  p && (n2w ((2 :num) ** t1.align − (1 :num)) :α word) = (0w :α word) ∧
+  (case mc_conf.target.config.link_reg of
+     (NONE :num option) => T
+   | SOME r => t1.lr = r) ∧ (t1.be ⇔ mc_conf.target.config.big_endian) ∧
+  t1.align = mc_conf.target.config.code_alignment ∧
+  enc_ok mc_conf.target.config ∧
+  all_enc_ok mc_conf.target.config labs
+    (TAKE (THE (mmio_pcs_min_index mc_conf.ffi_names)) mc_conf.ffi_names)
+    (0 :num) code2 ∧ EVERY (sec_labels_ok :α sec -> bool) code2 ∧
+  code_similar s1.code code2 ∧ share_mem_state_rel mc_conf s1 t1 ms1 ∧
+  share_mem_domain_code_rel mc_conf p code2 s1.shared_mem_domain ∧
+  LENGTH mc_conf.ffi_names = LENGTH mc_conf.ffi_entry_pcs ∧
+  no_install_or_no_share_mem code2 mc_conf.ffi_names
+state_rel_target_projection=state_rel (mc,code,labs,p) s t ms ⇒ target_state_rel mc.target t ms
+state_rel_compile_projection=state_rel (mc,code,labs,p) s t ms ⇒ s.compile = compile_lab mc.target.config
+state_rel_memory_projection=state_rel (mc,code,labs,p) s t ms ∧ byte_align a ∈ s.mem_domain ⇒
+a ∈ t.mem_domain ∧ a ∈ s.mem_domain ∧
+word_loc_val_byte p labs s.mem a s.be = SOME (t.mem a)
+state_rel_clock_update=state_rel (mc,code,labs,p) (s with clock := clock) t ms ⇔
+state_rel (mc,code,labs,p) s t ms
+state_rel_one_bit_rejected=¬state_rel (mc,code,labs,p) s t ms

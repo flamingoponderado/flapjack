@@ -1,0 +1,20 @@
+lines_upd_lab_len_encd0_label_zero=∀(pos :num) (lines :α line list) (aux :α line list).
+  enc_ok (c :α asm_config) ∧ (enc :α asm -> word8 list) = c.encode ∧
+  c.code_alignment ≠ (0 :num) ∧ EVERY (line_encd0 enc) lines ∧ EVEN pos ∧
+  EVERY (label_zero :α line -> bool) aux ⇒
+  EVERY (label_zero :α line -> bool) (FST (lines_upd_lab_len pos lines aux))
+lines_upd_lab_len_encd0_label_zero_types=(pos :num)::num;(lines :α line list)::α line list;(aux :α line list)::α line list;(enc :α asm -> word8 list)::α asm -> word8 list;(c :α asm_config)::α asm_config;
+upd_lab_len_encd0_label_zero=∀(pos :num) (code :α sec list).
+  enc_ok (c :α asm_config) ∧ (enc :α asm -> word8 list) = c.encode ∧
+  c.code_alignment ≠ (0 :num) ∧ all_encd0 enc code ∧ EVEN pos ∧
+  EVERY (sec_ends_with_label :α sec -> bool) code ⇒
+  EVERY (sec_label_zero :α sec -> bool) (upd_lab_len pos code)
+upd_lab_len_encd0_label_zero_types=(pos :num)::num;(code :α sec list)::α sec list;(enc :α asm -> word8 list)::α asm -> word8 list;(c :α asm_config)::α asm_config;
+full_even_update=T
+mixed_source_encd0=T
+all_updated_labels_zero=T
+zero_accumulator_preserved=T
+full_two_sections=T
+odd_position_guard_required=T
+nonzero_alignment_guard_required=T
+bad_accumulator_guard_required=T

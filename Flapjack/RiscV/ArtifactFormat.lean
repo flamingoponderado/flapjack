@@ -1,3 +1,6 @@
+import Flapjack.Compiler.Backend.StackRemove.StubNames
+import Flapjack.Compiler.Backend.StackAlloc.StubNames
+import Flapjack.Compiler.Backend.WordToStack.StubNames
 import Flapjack.RiscV.PipelineDiagnostics
 
 /-!
@@ -167,19 +170,29 @@ def pancakeAssembly (crepe : List (CompiledFunction (RiscV.Word 64)))
       ++ assemblySymbolLines crepe 0 sections
       ++ [""])
 
-/-- Symbols derived from the actual original-namespace initialized sections. -/
+/-- Native runtime stub lookup uses the reviewed original symbol tables.
+This Flapjack artifact dispatcher has no single HOL declaration: HOL backend
+collects these tables before export, whereas this route formats initialized
+Pancake runtime sections directly. -/
+def initializedRuntimeStubName (label : Nat) : Option String :=
+  let names := Flapjack.Compiler.Backend.StackRemove.stubNames () ++
+    Flapjack.Compiler.Backend.StackAlloc.stubNames () ++
+    Flapjack.Compiler.Backend.WordToStack.stubNames ()
+  (names.find? (fun entry => entry.1 == label)).map
+    (fun entry => Flapjack.Basis.Pure.MlString.toStringOfBytes entry.2)
+
+/-- Symbols derived from actual initialized sections and the reviewed native
+HOL runtime-name tables; ordinal, source-function and fallback behavior is
+preserved by the unconditional kernel equality in RuntimeSymbolPreservation. -/
 def initializedRuntimeSymbolName (crepe : List (CompiledFunction (RiscV.Word 64)))
     (ordinal label : Nat) : String :=
-  if label == 0 then s!"cml__Init_{ordinal}"
-  else if label == 1 then s!"cml__Halt0_{ordinal}"
-  else if label == 2 then s!"cml__Halt2_{ordinal}"
-  else if label == Flapjack.Compiler.Backend.StackLang.gcStubLocation then s!"cml__GC_{ordinal}"
-  else if label == Flapjack.raiseStubLocation then s!"cml__Raise_{ordinal}"
-  else if label == Flapjack.storeConstsStubLocation then s!"cml__StoreConsts_{ordinal}"
-  else if label == Flapjack.firstLoopName then s!"cml_generated_main_{ordinal}"
-  else match crepe[label - Flapjack.firstLoopName]? with
-    | some function => s!"cml_{sanitizeSymbolName function.name}_{ordinal}"
-    | none => s!"cml_section_{ordinal}"
+  match initializedRuntimeStubName label with
+  | some name => s!"cml_{name}_{ordinal}"
+  | none =>
+    if label == Flapjack.firstLoopName then s!"cml_generated_main_{ordinal}"
+    else match crepe[label - Flapjack.firstLoopName]? with
+      | some function => s!"cml_{sanitizeSymbolName function.name}_{ordinal}"
+      | none => s!"cml_section_{ordinal}"
 
 def initializedRuntimeSymbolLines (crepe : List (CompiledFunction (RiscV.Word 64)))
     (sections : List (EncodedRiscVSection 64)) : List String :=

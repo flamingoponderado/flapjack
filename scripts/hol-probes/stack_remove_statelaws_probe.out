@@ -1,0 +1,12 @@
+sl_getvar=∀jump off k s t n. state_rel jump off k s t ∧ n < k ⇒ get_var n s = get_var n t
+sl_getvar_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;n:num
+sl_getvar_proved=T
+sl_decclock=∀jump off k s t. state_rel jump off k s t ⇒ state_rel jump off k (dec_clock s) (dec_clock t)
+sl_decclock_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state
+sl_decclock_proved=T
+sl_withclock=∀jump off k s t c. state_rel jump off k s t ⇒ state_rel jump off k (s with clock := c) (t with clock := c)
+sl_withclock_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;c:num
+sl_withclock_proved=T
+sl_const=∀jump off k s t. state_rel jump off k s t ⇒ t.code_buffer = s.code_buffer ∧ t.sh_mdomain = s.sh_mdomain ∧ ¬t.use_stack ∧ s.use_stack ∧ t.ffi = s.ffi ∧ t.compile_oracle = (λn. (I ## MAP (prog_comp jump off k) ## I) (s.compile_oracle n)) ∧ s.compile = (λc p. t.compile c (MAP (prog_comp jump off k) p))
+sl_const_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state
+sl_const_proved=T

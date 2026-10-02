@@ -1,4 +1,5 @@
 import Flapjack.Pancake.WordConvs
+import Flapjack.HolArb
 
 /-! Boolean structural conventions on the exact WordLang syntax.
 The general checker exposes HOL's unspecified `ARB : memop` as a parameter.
@@ -88,11 +89,12 @@ theorem notCreatedSubprogsWithMemOp_congr {α : Type}
   | _ => rfl
 termination_by sizeOf program
 
-/-- HOL `ARB : memop` (`HOL/src/bool/boolScript.sml`: `new_constant("ARB",alpha)`,
-"doesn't have to be defined at all"), rendered as an uninterpreted Lean
-`opaque` constant: no theorem can depend on its value, exactly as in HOL.
-Flapjack rendering; HOL's `ARB` is an axiomatised constant, not a definition. -/
-opaque holArbMemOp : WordMemOp := .load
+/-- Canonical HOL `ARB : memop`, sharing `Flapjack.holArb` with every other
+HOL ARB occurrence at this carrier. The `.load` below witnesses only
+nonemptiness; it does not specify the arbitrary value. This transparent alias
+is Flapjack infrastructure, not another independent HOL constant. -/
+noncomputable abbrev holArbMemOp : WordMemOp :=
+  @Flapjack.holArb WordMemOp ⟨.load⟩
 
 /-- Exact HOL `wordConvs$not_created_subprogs_def` (`wordConvsScript.sml:536-556`),
 clause by clause, on the faithful Spt-backed program with HOL `ARB` as the
@@ -100,7 +102,7 @@ uninterpreted `holArbMemOp`. HOL's predicate is `bool`-valued (`P : 'a prog ->
 bool`), as here. -/
 @[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "not_created_subprogs_def"
   (words_as_type_indexed_bitvec)]
-def notCreatedSubprogsHOL {width : Nat} [NeZero width]
+noncomputable def notCreatedSubprogsHOL {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) : WordLangProgHOL (BitVec width) → Bool
   | .mustTerminate body => P (.mustTerminate .skip) && notCreatedSubprogsHOL P body
   | .seq first second => notCreatedSubprogsHOL P first && notCreatedSubprogsHOL P second
