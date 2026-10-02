@@ -1538,6 +1538,12 @@
       "sha256": "5c64e715db775806650a419e26b6fbde06563b179b08f488933b8e400ead79df"
     },
     {
+      "bytes": 6166,
+      "out": "l3_model_fetch_probe.out",
+      "rows": 21,
+      "sha256": "3c73360db940f639011b0a721abc75eb706566fa7a5c74403757d16eea62e086"
+    },
+    {
       "bytes": 187,
       "out": "l3_raise_exception_probe.out",
       "rows": 2,
@@ -6126,6 +6132,12 @@
       "out": "stack_remove_wordstore_probe.out",
       "rows": 16,
       "sha256": "ce1469356760239739d4f68eb0b1a71104710ee16424d716df287fca79509c46"
+    },
+    {
+      "bytes": 32471,
+      "out": "stack_remove_write_bytearray_probe.out",
+      "rows": 55,
+      "sha256": "3cee9546d0af6c619746598e337c0152ca8fae9e34351933b406e559b842c103"
     },
     {
       "bytes": 560,

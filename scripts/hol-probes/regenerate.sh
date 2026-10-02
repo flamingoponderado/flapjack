@@ -5784,6 +5784,10 @@ run_probe lab_to_target_position_order_probeScript.sml lab_to_target_position_or
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe l3_model_fetch_probeScript.sml l3_model_fetch_probe.out \
+  model_fetch_full_definition model_fetch_full_type model_fetch_odd_generic_equation odd_unknown_vm odd_wrap none_vm_1 none_vm_2 none_vm_8 none_vm_11 none_vm_12 bare_0_0 bare_0_3 bare_2_3 bare_18446744073709551614_0 bare_18446744073709551614_3 hit_sv39 hit_sv48_half hit_denied walk_sv39 walk_sv48 walk_invalid \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
 run_probe lab_to_target_memory_transport_probeScript.sml lab_to_target_memory_transport_probe.out \
   bytes_in_memory_eq_mem bytes_in_memory_eq_mem_types bytes_in_memory_eq_mem_hypotheses \
   wrap8 wrap1 wrap64 wrap80 outside_diff empty_domain missing_domain \
@@ -5806,6 +5810,9 @@ run_probe lab_to_target_byte_interval_distinct_probeScript.sml lab_to_target_byt
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_remove_write_bytearray_probeScript.sml stack_remove_write_bytearray_probe.out \
+  write_full_write_bytearray_IGNORE_non_aligned write_full_write_bytearray_IGNORE write_full_write_bytearray_EQ write_w1_be0_0 write_w1_be1_0 write_w8_be0_0 write_w8_be0_1 write_w8_be0_2 write_w8_be0_3 write_w8_be0_4 write_w8_be0_5 write_w8_be0_6 write_w8_be0_7 write_w8_be1_0 write_w8_be1_1 write_w8_be1_2 write_w8_be1_3 write_w8_be1_4 write_w8_be1_5 write_w8_be1_6 write_w8_be1_7 write_w64_be0_0 write_w64_be0_1 write_w64_be0_2 write_w64_be0_3 write_w64_be0_4 write_w64_be0_5 write_w64_be0_6 write_w64_be0_7 write_w64_be1_0 write_w64_be1_1 write_w64_be1_2 write_w64_be1_3 write_w64_be1_4 write_w64_be1_5 write_w64_be1_6 write_w64_be1_7 write_w80_be0_0 write_w80_be0_1 write_w80_be0_2 write_w80_be0_3 write_w80_be0_4 write_w80_be0_5 write_w80_be0_6 write_w80_be0_7 write_w80_be1_0 write_w80_be1_1 write_w80_be1_2 write_w80_be1_3 write_w80_be1_4 write_w80_be1_5 write_w80_be1_6 write_w80_be1_7 write_LOG_original_spec write_LOG2_zero_residual \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_shmem_extraction_probeScript.sml lab_to_target_shmem_extraction_probe.out \
   get_shmem_info_thm get_shmem_info_thm_types get_shmem_info_thm_hypotheses \
   independent_validity full_prefix_output full_extraction empty_preserves_prefixes zero_labels wide_unsigned nonzero_label_guard \

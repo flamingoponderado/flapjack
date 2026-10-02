@@ -67700,24 +67700,32 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 full original source6889-6946 comparison: all free c/labs/ffis/p-prime/code/pc/line/a/pc-prime/p binders preserved. All SIX literal original conjuncts retained: complete all_enc_ok at independent start, complete enc_ok, actual successful asm_fetch_aux, a<LENGTH(line_bytes line), LENGTH(prog_to_bytes code)<dimword alpha rendered 2^width, pc-prime≠pc. Exact NAT a+pos_valpcpcode≠pos_valpc-primepcode conclusion; not a word equality reinterpretation. Source original native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/BitVec positive-width carriers and canonical nested numeric Spt reviewed. Kernel proof uses unbounded natural-position order and fetched-successor; retained dimensional size guard need not enter this alternative natural-order argument and is not omitted from the statement. Actual checked147 fc311 and accepted146 are consumed directly, not an assumed simulation callback or desired target execution. Fresh registered original fulltype0hyp and nine original/native cases covering earlier/later/past-end PCs, same-PC and byte-bound guard counterexamples, exact256-byte word-size guard boundary; full generic and arbitrary queried-position actual consumer discharges all six guards. Kernel/oracle evidence supplements source review, not cross-language equivalence or full shared-memory/initializer/compiler/machine correctness."
   },
-{
-  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemExtraction.lean",
-  "lean_name": "getShmemInfo_characterization",
-  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-  "hol_name": "get_shmem_info_thm",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-sol3 full original source9691 comparison and exported full types0hyp: sole complete all_enc_ok guard at independent validity position; arbitrary queried position and existing ffi_names/shmem_info prefixes; all c/labs/ffis/secs/p/p-prime binders retained. Exact accumulated tuple from UNZIP(FLAT(MAP line_to_info (GENLIST indexed asm_fetch_aux (num_pcs secs)))) retained literally through List.range.map/flatten/unzip, with native full constructor carriers, fixed word8 byte lists and nbytes, with Nat entry/exit PCs, address registers, unsigned address offsets and result registers. Structural kernel proof consumes accepted full fetch enumeration and four-dimension LineInfo helpers; no assumed target result, callback, additional encoding/size guard or simulation premise. Fresh original full statement0hyp and seven original/native observations allT cover arbitrary prefixes, independent positions, empty sections/zero labels, unsigned80bit negative offset and invalid nonzero-label guard counterexample; full generic and arbitrary-prefix actual theorem consumers kernel checked. Positive word width has own NeZero. Evidence supplements source review, not cross-language equivalence or full initializer/compiler/machine correctness."
-},
-{
-  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemDistinct.lean",
-  "lean_name": "getShmemInfo_entryDistinct",
-  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-  "hol_name": "get_shmem_info_ALL_DISTINCT",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-sol3 full original source9811 and exported fulltype0hyp comparison: retains all three guards LENGTH(prog_to_bytes code)<dimword alpha, enc_ok c and all_enc_ok at independent validity start, arbitrary queried p and complete native carriers. Exact ALL_DISTINCT mapped entry_pc over SND(get_shmem_info code p [] []) becomes List.Nodup, with original Nat entry/exit PCs and offsets, fixed word8 nbytes, positive-width native word fields and own NeZero. Genuine proof consumes checked full extraction characterization and strict position-order law; each enumerated index contributes at most one matching Nat PC, and distinct indices strictly increase. Dimensional size guard retained even though this alternative Nat-order proof does not need it. No desired result/simulation/target-run premise or HD/EL default. Generic full theorem consumer and actual arbitrary query consumer discharge all original guards. Fresh original eight paired observations include independent positions, exact PC values, empty code, and duplicate zero-byte extraction that still passes all_enc_ok but fails enc_ok. Kernel and oracle evidence supplement source review, not HOL-to-Lean equivalence or full initializer/compiler/machine correctness."
-},
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Fetch.lean",
+    "lean_name": "Fetch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Fetch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared model riscvScript.sml:11947-12156, not step Fetch: Unit argument/full native riscv_state and FetchResult carriers. PC bit0 error preserves original state before translation. NONE translation fault preserves returned state. SOME rawReadInst on returned state followed by all nine literal sequential Delta writes (exc_taken/fetch_exc false, virtual pc/raw rinstr, addr/data1/data2/fp_data/st_width NONE), preserving other cores and all other state fields/MMU effects. Existing Delta/writeDelta are reviewed exact Defs.lean declarations; no extra success/alignment/core-bound premise and no substituted evaluator."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemExtraction.lean",
+    "lean_name": "getShmemInfo_characterization",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "get_shmem_info_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source9691 comparison and exported full types0hyp: sole complete all_enc_ok guard at independent validity position; arbitrary queried position and existing ffi_names/shmem_info prefixes; all c/labs/ffis/secs/p/p-prime binders retained. Exact accumulated tuple from UNZIP(FLAT(MAP line_to_info (GENLIST indexed asm_fetch_aux (num_pcs secs)))) retained literally through List.range.map/flatten/unzip, with native full constructor carriers, fixed word8 byte lists and nbytes, with Nat entry/exit PCs, address registers, unsigned address offsets and result registers. Structural kernel proof consumes accepted full fetch enumeration and four-dimension LineInfo helpers; no assumed target result, callback, additional encoding/size guard or simulation premise. Fresh original full statement0hyp and seven original/native observations allT cover arbitrary prefixes, independent positions, empty sections/zero labels, unsigned80bit negative offset and invalid nonzero-label guard counterexample; full generic and arbitrary-prefix actual theorem consumers kernel checked. Positive word width has own NeZero. Evidence supplements source review, not cross-language equivalence or full initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemDistinct.lean",
+    "lean_name": "getShmemInfo_entryDistinct",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "get_shmem_info_ALL_DISTINCT",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source9811 and exported fulltype0hyp comparison: retains all three guards LENGTH(prog_to_bytes code)<dimword alpha, enc_ok c and all_enc_ok at independent validity start, arbitrary queried p and complete native carriers. Exact ALL_DISTINCT mapped entry_pc over SND(get_shmem_info code p [] []) becomes List.Nodup, with original Nat entry/exit PCs and offsets, fixed word8 nbytes, positive-width native word fields and own NeZero. Genuine proof consumes checked full extraction characterization and strict position-order law; each enumerated index contributes at most one matching Nat PC, and distinct indices strictly increase. Dimensional size guard retained even though this alternative Nat-order proof does not need it. No desired result/simulation/target-run premise or HD/EL default. Generic full theorem consumer and actual arbitrary query consumer discharge all original guards. Fresh original eight paired observations include independent positions, exact PC values, empty code, and duplicate zero-byte extraction that still passes all_enc_ok but fails enc_ok. Kernel and oracle evidence supplement source review, not HOL-to-Lean equivalence or full initializer/compiler/machine correctness."
+  },
 {
   "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemPrefix.lean",
   "lean_name": "getShmemInfo_append",

@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.Fetch
 import Flapjack.Misc.Sptree.Subspt
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.RawCall
@@ -666,6 +667,10 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionNumSet
 import Flapjack.Compiler.Backend.RegAlloc.ProductionBijection
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInputCodec
 import Flapjack.Compiler.Backend.RegAlloc.ProductionGraphRows
+import Flapjack.Compiler.Backend.RegAlloc.ProductionCliqueBatch
+import Flapjack.Compiler.Backend.RegAlloc.ProductionForcedGraph
+import Flapjack.Compiler.Backend.RegAlloc.ProductionMkGraph
+import Flapjack.Compiler.Backend.RegAlloc.ProductionInitDomain
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
@@ -1760,6 +1765,7 @@ import Flapjack.Compiler.Backend.StackNames.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.StackNames.Proofs.MakeInit
 import Flapjack.Compiler.Backend.StackNames.Proofs.LabelsCallArgs
 import Flapjack.Compiler.Backend.StackRemove
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
 import Flapjack.Compiler.Backend.WordToStackRegFormat
