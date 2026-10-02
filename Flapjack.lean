@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.OffsetEstablishment
 import Flapjack.Compiler.Backend.LabToTarget.OffsetInvariant
 import Flapjack.Compiler.Backend.LabToTarget.CodeLabelPositionPadding
 import Flapjack.Compiler.Backend.LabToTarget.PrefixPaddingLength
