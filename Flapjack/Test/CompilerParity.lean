@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackTailHandlerParity
 import Flapjack.Test.NumericFormattingParity
 import Flapjack.Test.WordReplicateParity
 import Flapjack.Test.L3RiscvMaddParity
@@ -1979,5 +1980,3 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
 end Flapjack.Test.CompilerParity
 
 def main : IO Unit := Flapjack.Test.CompilerParity.main
-
-import Flapjack.Test.WordToStackTailHandlerParity

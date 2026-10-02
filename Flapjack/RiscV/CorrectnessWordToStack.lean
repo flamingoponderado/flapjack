@@ -484,8 +484,8 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackProgWord_ffi
   rw [hcompile]
   simpa using hstack
 
-/-! The stateful lowering keeps the bitmap accumulator threaded through a
-    handler body.  This equation exposes the generated handler call and the
+/-! The stateful lowering threads the bitmap accumulator through a returning
+    handler body. Tail calls erase the handler and preserve the original state.  This equation exposes the generated handler call and the
     final bitmap state together, which is the compiler-side premise needed by
     a later frame-machine simulation theorem. -/
 
@@ -516,7 +516,9 @@ theorem wordToStackProgNatWithBitmapBuilder_call_handler
       bitmapRegister frameSlots wordBits storeConstsStub state
       (.call returns (some target) arguments
         (some (exception, body, handlerLabel, entryLabel))) =
-      some (wordStackJoin liveCode
+      (if returns.isNone then (wordToStackProgNat config (.call none (some target) arguments none)).map
+          (fun code => (code, state))
+      else some (wordStackJoin liveCode
           (wordToStackCallWithHandlerInSectionAtRegisterCountReturn config.perf target
             arguments.length registerCount (wordStackCallFrameOffset config) config.scratch
             (wordStackReturnStackSuffix config
@@ -524,10 +526,10 @@ theorem wordToStackProgNatWithBitmapBuilder_call_handler
             (wordStackReturnLabel config returns) (wordStackEntryLabel config returns)
             (wordStackHandlerLabel config handlerLabel)
             (wordStackHandlerEntryLabel config entryLabel) exception),
-        finalState) := by
+        finalState)) := by
   cases returns with
   | none =>
-      simp [wordToStackProgNatWithBitmapBuilder, hlive, hreturnNone rfl, hhandler]
+      simp [wordToStackProgNatWithBitmapBuilder]
   | some returnData =>
       simp [wordToStackProgNatWithBitmapBuilder, hlive,
         hreturnSome returnData rfl, hhandler]
@@ -630,7 +632,9 @@ theorem wordToStackProgNatWithLocationBitmaps_call_handler
       frameSlots wordBits storeConstsStub state
       (.call returns (some target) arguments
         (some (exception, body, handlerLabel, entryLabel))) =
-      some (wordStackJoin liveCode
+      (if returns.isNone then (wordToStackProgNat config (.call none (some target) arguments none)).map
+          (fun code => (code, state))
+      else some (wordStackJoin liveCode
           (wordToStackCallWithHandlerInSectionAtRegisterCountReturn config.perf target
             arguments.length registerCount (wordStackCallFrameOffset config) config.scratch
             (wordStackReturnStackSuffix config
@@ -638,8 +642,8 @@ theorem wordToStackProgNatWithLocationBitmaps_call_handler
             (wordStackReturnLabel config returns) (wordStackEntryLabel config returns)
             (wordStackHandlerLabel config handlerLabel)
             (wordStackHandlerEntryLabel config entryLabel) exception),
-        finalState) := by
-  simpa [wordToStackProgNatWithLocationBitmaps] using
+        finalState)) := by
+  simpa only [wordToStackProgNatWithLocationBitmaps] using
     (wordToStackProgNatWithBitmapBuilder_call_handler
       (config := config)
       (bitmapBuilder := wordStackLiveBitmapFromLocations config frameSlots wordBits)
@@ -1162,6 +1166,9 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackProgNatWithBitmapBuilder_call
     bitmap/live prefix is the only caller-side code now: argument moves are
     already represented by the Cake-shaped call lowering and must not be
     replayed by this machine theorem. -/
+/- This handler-execution case requires an actual return continuation. HOL
+   erases tail-call handlers; generic erasure/state laws cover that separate case.
+   This is untagged production simulation infrastructure. -/
 theorem evalStackProgFuelWithCodeAndFfi_wordToStackProgNatWithBitmapBuilder_call_handler_raise_of_eval_faithful
     [BEq Nat] [NeZero width]
     (host : StackMachineFfiHandler width)
@@ -1173,6 +1180,7 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackProgNatWithBitmapBuilder_call
     (bitmapState liveState returnState finalState : WordStackBitmapState)
     (machineState middle : WordStackMachineState width)
     (returns : Option (List Nat × (List Nat × List Nat) × WordProg Nat × Nat × Nat))
+    (returning : ∃ data, returns = some data)
     (target : Nat) (arguments : List Nat)
     (exception handlerLabel entryLabel : Nat)
     (body : WordProg Nat)
@@ -1235,7 +1243,8 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackProgNatWithBitmapBuilder_call
           (wordStackReturnLabel config returns) (wordStackEntryLabel config returns)
           (wordStackHandlerLabel config handlerLabel)
           (wordStackHandlerEntryLabel config entryLabel) exception), finalState) := by
-    simpa [wordStackJoin] using hcompile
+    obtain ⟨data, present⟩ := returning
+    simpa [wordStackJoin, present] using hcompile
   rw [hcompile']
   simp only [Option.bind_some]
   have hcallNe :
@@ -1357,6 +1366,9 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackProgNatWithBitmapBuilder_call
 /-! Zero-frame calls have no live bitmap prefix.  Their evaluator boundary
     consumes the call at the outer `fuel + 1`, rather than at the inner fuel
     used by the nonempty-prefix sequence theorem above. -/
+/- This handler-execution case requires an actual return continuation. HOL
+   erases tail-call handlers; generic erasure/state laws cover that separate case.
+   This is untagged production simulation infrastructure. -/
 theorem evalStackProgFuelWithCodeAndFfi_wordToStackProgNatWithBitmapBuilder_call_handler_skip_live_of_eval
     [BEq Nat] [NeZero width]
     (host : StackMachineFfiHandler width)
@@ -1368,6 +1380,7 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackProgNatWithBitmapBuilder_call
     (bitmapState finalState : WordStackBitmapState)
     (machineState : WordStackMachineState width)
     (returns : Option (List Nat × (List Nat × List Nat) × WordProg Nat × Nat × Nat))
+    (returning : ∃ data, returns = some data)
     (target : Nat) (arguments : List Nat)
     (exception handlerLabel entryLabel : Nat)
     (body : WordProg Nat)
@@ -1428,7 +1441,8 @@ theorem evalStackProgFuelWithCodeAndFfi_wordToStackProgNatWithBitmapBuilder_call
           (wordStackReturnLabel config returns) (wordStackEntryLabel config returns)
           (wordStackHandlerLabel config handlerLabel)
           (wordStackHandlerEntryLabel config entryLabel) exception), finalState) := by
-    simpa [wordStackJoin] using hcompile
+    obtain ⟨data, present⟩ := returning
+    simpa [wordStackJoin, present] using hcompile
   rw [hcompile']
   simp only [Option.bind_some]
   simpa [wordStackJoin] using hcall
