@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackALookupMapParity
 import Flapjack.Test.WordToStackNativeInsertWfParity
 import Flapjack.Test.WordToStackConstMemoryAppendParity
 import Flapjack.Test.WordToStackNativeAccessorsParity
