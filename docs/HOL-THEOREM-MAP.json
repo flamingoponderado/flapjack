@@ -60930,5 +60930,23 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.17), stack_allocProofScript.sml:3809-3897 word_gen_gc_partial_move_list_code_thm: HOL binder order !l a s pa1 pa old m1 m i1 i dm conf a1 gs rs explicit, with HOL's three curried premise groups kept (word_gen_gc_partial_move_list conf (a,l,i,pa,old,m,dm,gs,rs) = (a1,i1,pa1,m1,T), shift_length/word_shift/2 < dimindex, len_size <> 0, !w. w << word_shift = w * bytes_in_word, FLOOKUP CurrHeap = Word old, use_store, memory/mdomain, good_dimindex, FLOOKUP Temp 0w = Word gs and Temp 1w = Word rs, 0,1,2 IN FDOM, get_var 3/4, 5 IN FDOM ==> 6 IN FDOM ==> get_var 7 = Word l and get_var 8 = Word a). Conclusion ?ck r0 r1 r2 r5 r6 with memory m1 and the nine-register |++ ((7,Word 0w), (8,Word a1)) and an unchanged store, over the exact StackSem evaluate. Proved as HOL does by induction on the count n2w n, composing word_gen_gc_partial_move_code_thm with the IH through the tagged evaluate_add_clock. Temp nw as WordStore.temp, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/UpdatePosition.lean",
+    "lean_name": "linesUpdLabLen_position",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "SND_lines_upd_lab_len",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original3286 and4023 with fresh complete original statements/quantified types in lab_to_target_update_position_probe.out. Full arbitrary pos/lines/acc preserved; exact Nat subtraction equation unconditional. Evenness retains complete if NULL lines premise, both empty conjuncts and nonempty LAST-label plus EVEN(pos+accumulator annotated length). Guarded optional LAST classifier used solely nonempty, no total HOL LAST or HD/EL claim. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and byte8 match; sole words_as_type_indexed_bitvec translates arbitrary positive word dimension. Proof establishes arithmetic conservation and ending-label final-position parity, assumes neither output relation nor success. Seven fresh original/native fixtures include odd position/odd accumulator valid case and counterexamples showing parity and final-label guards required; two full arbitrary-width kernel consumers. Full remove_labels_loop and end-to-end remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/UpdatePosition.lean",
+    "lean_name": "linesUpdLabLen_evenLength",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EVEN_sec_length_lines_upd_lab_len",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original3286 and4023 with fresh complete original statements/quantified types in lab_to_target_update_position_probe.out. Full arbitrary pos/lines/acc preserved; exact Nat subtraction equation unconditional. Evenness retains complete if NULL lines premise, both empty conjuncts and nonempty LAST-label plus EVEN(pos+accumulator annotated length). Guarded optional LAST classifier used solely nonempty, no total HOL LAST or HD/EL claim. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and byte8 match; sole words_as_type_indexed_bitvec translates arbitrary positive word dimension. Proof establishes arithmetic conservation and ending-label final-position parity, assumes neither output relation nor success. Seven fresh original/native fixtures include odd position/odd accumulator valid case and counterexamples showing parity and final-label guards required; two full arbitrary-width kernel consumers. Full remove_labels_loop and end-to-end remain unfinished."
   }
 ]
