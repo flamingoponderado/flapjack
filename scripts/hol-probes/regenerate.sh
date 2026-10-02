@@ -3986,3 +3986,7 @@ run_probe word_cse_load_evaluation_probeScript.sml word_cse_load_evaluation_prob
 run_probe ssa_reconcile_list_props_probeScript.sml ssa_reconcile_list_props_probe.out \
   sr_moves_full sr_filtered_full sr_type_L sr_type_m sr_type_f sr_type_cur_ssa sr_type_tgt_ssa sr_type_ns \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_reconcile_alookup_zip_probeScript.sml ssa_reconcile_alookup_zip_probe.out \
+  sz_some_full sz_none_full sz_alookup_zip_map_some_type_ls sz_alookup_zip_map_some_type_vs sz_alookup_zip_map_some_type_i sz_alookup_zip_map_some_type_f sz_alookup_zip_map_option_lookup_none_type_f sz_alookup_zip_map_option_lookup_none_type_ns sz_alookup_zip_map_option_lookup_none_type_n sz_alookup_zip_map_option_lookup_none_type_ls sz_alookup_zip_map_option_lookup_none_type_vs \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -51824,5 +51824,21 @@
   "lean_name": "ssaReconcileFilteredAllDistinct",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol-a source comparison flapjack-li4v: Original6500 unconditional filtered native toAList key ALL_DISTINCT; current/target maps Spt Nat as forced by option_lookup, names Spt α with arbitrary payload. ALL_DISTINCT as List.Nodup, actual Boolean lookup/inequality filter. No injection/map/tree-validity/Nodup input premise. Fresh literal original proof kernel replay and full original types captured; native List/Nat/Spt and ordinary constructors unchanged. Actual original evaluator-reconcile proof6609/6612 consumes these statements; proof-only behavior unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "alookup_zip_map_some",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileLookupProps.lean",
+  "lean_name": "alookupZipMapSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-a source comparison flapjack-04ze: Full original6551-6590 generic statement, original conjuncts/order and result. List/Nat/Spt carriers unchanged; indexedSome input/value/key types independently generic, absentKey native Nat domain with arbitrary tree payload, value and key types. HOL inhabited EL types represented by Nonempty; canonical opaque holEl retained. INJ domain UNIV is precisely domain-restricted equality implication (range UNIV tautological). DecidableEq implements lawful HOL key equality. No stronger map invariant, lookup success, output frame or target evaluation premise. Literal original proofs and complete inferred types replayed successfully. Lean list induction kernel checked; evaluator simulation remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "alookup_zip_map_option_lookup_none",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileLookupProps.lean",
+  "lean_name": "alookupZipMapOptionLookupNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-a source comparison flapjack-04ze: Full original6551-6590 generic statement, original conjuncts/order and result. List/Nat/Spt carriers unchanged; indexedSome input/value/key types independently generic, absentKey native Nat domain with arbitrary tree payload, value and key types. HOL inhabited EL types represented by Nonempty; canonical opaque holEl retained. INJ domain UNIV is precisely domain-restricted equality implication (range UNIV tautological). DecidableEq implements lawful HOL key equality. No stronger map invariant, lookup success, output frame or target evaluation premise. Literal original proofs and complete inferred types replayed successfully. Lean list induction kernel checked; evaluator simulation remains open."
 }
 ]
