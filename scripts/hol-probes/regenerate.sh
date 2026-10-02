@@ -5507,3 +5507,7 @@ run_probe stack_remove_comp_bitmap_probeScript.sml stack_remove_comp_bitmap_prob
 run_probe stack_sem_atomic_clocks_probeScript.sml stack_sem_atomic_clocks_probe.out \
   gc_clock_statement gc_clock_proved alloc_clock_statement alloc_clock_proved store_const_sem_clock_statement store_const_sem_clock_proved inst_clock_statement inst_clock_proved sh_mem_op_clock_statement sh_mem_op_clock_proved \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_sem_clock_control_probeScript.sml stack_sem_clock_control_probe.out \
+  cseq_statement cseq_proved cif_statement cif_proved cloop_statement cloop_proved \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"

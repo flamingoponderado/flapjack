@@ -966,6 +966,7 @@
     {"bytes": 403, "out": "stack_remove_wordlistrev_probe.out", "rows": 13, "sha256": "bc07ae8771b3635bf888209dc4a76b72c3e6d6be9d3379b98ee7b8bbd2a449c7"},
     {"bytes": 3835, "out": "stack_remove_wordstore_probe.out", "rows": 16, "sha256": "ce1469356760239739d4f68eb0b1a71104710ee16424d716df287fca79509c46"},
     {"bytes": 560, "out": "stack_sem_atomic_clocks_probe.out", "rows": 10, "sha256": "12ff9d1858e8a107f19a8f6013cf0897bcb5fd2c16395dc4287b7573afc013b4"},
+    {"bytes": 1056, "out": "stack_sem_clock_control_probe.out", "rows": 6, "sha256": "4c4749100cac0d1411fac34188cba459adbe880acc7594d18184891021d11b72"},
     {"bytes": 718, "out": "stack_to_lab_executed_codec_probe.out", "rows": 9, "sha256": "937890cbe9b3f353e33b3b9efbb33e24a3035eb83b2f0fb57b25f1a515ce5976"},
     {"bytes": 390, "out": "stack_to_lab_executed_input_probe.out", "rows": 7, "sha256": "d9a4b2221754a7755b1ed6ff37031d6ded0d9edac3f0e57656b1ac10a14e37fa"},
     {"bytes": 402, "out": "stack_to_lab_flatten_app_list_probe.out", "rows": 7, "sha256": "98f1b08a13e1672439df040bad404b3f8051a38069ee8e715cbe8cfaf6d4c8a8"},
