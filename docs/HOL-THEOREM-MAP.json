@@ -53860,5 +53860,23 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (xs7j): complete original StackProps170-231 store_const_sem_with_const literal proof replayed and full quantified types captured. Exact native gc/alloc/storeConstSem and actual imported StackSemStateFiniteExact preserve all source error/success/GC/Halt/copy branches. alloc_const keeps all15 original field equality conjuncts; store_const_sem_const all16 including store, each with sole original returned-pair equality. Clock results are full unconditional Option.map/Prod.map equalities, not a projected or success-only result. Arbitrary state configuration/FFI/domain/GC/compiler functions retained. Store-constant results retain independent resultWidth from state width, confirmed by fresh original definition and theorem types and repaired w1pn; both NeZero instances retained. Canonical regs/fpRegs/store fields have same-module roundtrip witness; qualifiers cover only finite-support and positive word translation. Six allocation and five constant-store original/native full-frame/clock applications and outcomes plus four GC clock cases; no target evaluation, callback law, bounds or domain assumptions added. These are actual evaluate_consts/evaluate_add_clock support results, not a full evaluator/compiler/composition theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NavigationBounds.lean",
+    "lean_name": "secLocToPc_bound",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_loc_to_pc_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02, navigation bounds .10.36/.37: full original theorem at line6493, directly regenerated HOL conclusion and all binder types in lab_to_target_navigation_bounds_probe.out. Native labLang Line/Section carries HOL instruction, cmp/reg_imm/MlString, fixed word8 bytes and natural labels/positions unchanged; the only carrier translation is positive-width BitVec for HOL word dimension. secLocToPc_bound preserves forall n/xs/x and the sole successful lookup premise, including label zero on empty lists; locToPc_bound preserves forall code/l1/l2/x, the EVERY sec_labels_ok and successful lookup conjuncts, and complete SUM(MAP(len_no_lab o Section_lines)) upper bound. Uses faithful native section decomposition and actual recursive navigation; no encoding callback, extra bound premise or simulation assumption. Six fresh original observations and nine native kernel checks include final-label equality and empty-tail section equality, with arbitrary-width theorem application. No full pass-correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NavigationBounds.lean",
+    "lean_name": "locToPc_bound",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "loc_to_pc_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02, navigation bounds .10.36/.37: full original theorem at line6506, directly regenerated HOL conclusion and all binder types in lab_to_target_navigation_bounds_probe.out. Native labLang Line/Section carries HOL instruction, cmp/reg_imm/MlString, fixed word8 bytes and natural labels/positions unchanged; the only carrier translation is positive-width BitVec for HOL word dimension. secLocToPc_bound preserves forall n/xs/x and the sole successful lookup premise, including label zero on empty lists; locToPc_bound preserves forall code/l1/l2/x, the EVERY sec_labels_ok and successful lookup conjuncts, and complete SUM(MAP(len_no_lab o Section_lines)) upper bound. Uses faithful native section decomposition and actual recursive navigation; no encoding callback, extra bound premise or simulation assumption. Six fresh original observations and nine native kernel checks include final-label equality and empty-tail section equality, with arbitrary-width theorem application. No full pass-correctness claim."
   }
 ]
