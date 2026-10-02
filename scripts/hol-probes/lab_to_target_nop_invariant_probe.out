@@ -1,0 +1,118 @@
+line_enc_with_nop_def=(line_enc_with_nop (enc :α asm -> word8 list)
+   (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos' :num)
+   (Asm (b' :α asm_or_cbw) (bytes :word8 list) (len :num)) ⇔
+ enc_with_nop enc (cbw_to_asm b') bytes ∧ LENGTH bytes = len) ∧
+(line_enc_with_nop enc labs ffis pos'
+   (LabAsm (Halt :α asm_with_lab) (v0 :α word) bytes len) ⇔
+ enc_with_nop enc (Jump (-(n2w (pos' + ffi_offset) :α word)) :α asm) bytes ∧
+ LENGTH bytes = len) ∧
+(line_enc_with_nop enc labs ffis pos'
+   (LabAsm (Install :α asm_with_lab) (v1 :α word) bytes len) ⇔
+ enc_with_nop enc
+   (Jump (-(n2w (pos' + (2 :num) * ffi_offset) :α word)) :α asm) bytes ∧
+ LENGTH bytes = len) ∧
+(line_enc_with_nop enc labs ffis pos'
+   (LabAsm (CallFFI (s :mlstring) :α asm_with_lab) (v2 :α word) bytes len) ⇔
+ enc_with_nop enc
+   (Jump
+      (-(n2w
+          (pos' + (get_ffi_index ffis (ExtCall s) + (3 :num)) * ffi_offset) :
+        α word)) :α asm) bytes ∧ LENGTH bytes = len) ∧
+(line_enc_with_nop enc labs ffis pos'
+   (LabAsm (Jump (l :lab) :α asm_with_lab) (v3 :α word) bytes len) ⇔
+ enc_with_nop enc
+   (Jump ((n2w (find_pos l labs) :α word) + -(n2w pos' :α word)) :α asm)
+   bytes ∧ LENGTH bytes = len) ∧
+(line_enc_with_nop enc labs ffis pos'
+   (LabAsm (JumpCmp (a :cmp) (b :num) (c :α reg_imm) l :α asm_with_lab)
+      (v4 :α word) bytes len) ⇔
+ enc_with_nop enc
+   (JumpCmp a b c ((n2w (find_pos l labs) :α word) + -(n2w pos' :α word)) :
+    α asm) bytes ∧ LENGTH bytes = len) ∧
+(line_enc_with_nop enc labs ffis pos'
+   (LabAsm (LocValue (k :num) l :α asm_with_lab) (v5 :α word) bytes len) ⇔
+ enc_with_nop enc
+   (Loc k ((n2w (find_pos l labs) :α word) + -(n2w pos' :α word)) :α asm)
+   bytes ∧ LENGTH bytes = len) ∧
+(line_enc_with_nop enc labs ffis pos'
+   (LabAsm (Call (v32 :lab) :α asm_with_lab) (v7 :α word) bytes len) ⇔
+ LENGTH bytes = len) ∧
+(line_enc_with_nop enc labs ffis pos' (Label (v8 :num) (v9 :num) len :α line) ⇔
+ len = (0 :num))
+line_enc_with_nop_def_types=(v9 :num)::num;(v8 :num)::num;(v7 :α word)::α word;(v32 :lab)::lab;(v5 :α word)::α word;(k :num)::num;(v4 :α word)::α word;(c :α reg_imm)::α reg_imm;(b :num)::num;(a :cmp)::cmp;(v3 :α word)::α word;(l :lab)::lab;(v2 :α word)::α word;(s :mlstring)::mlstring;(v1 :α word)::α word;(v0 :α word)::α word;(len :num)::num;(bytes :word8 list)::word8 list;(b' :α asm_or_cbw)::α asm_or_cbw;(pos' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(enc :α asm -> word8 list)::α asm -> word8 list;
+lines_enc_with_nop_def=(∀(enc :α asm -> word8 list) (labs :num sptree$num_map sptree$num_map)
+     (ffis :ffiname list) (pos :num).
+   lines_enc_with_nop enc labs ffis pos ([] :α line list) ⇔ T) ∧
+∀(enc :α asm -> word8 list) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (l :α line) (ls :α line list).
+  lines_enc_with_nop enc labs ffis pos (l::ls) ⇔
+  line_enc_with_nop enc labs ffis pos l ∧
+  lines_enc_with_nop enc labs ffis (pos + line_length l) ls
+lines_enc_with_nop_def_types=
+lines_enc_with_nop_append=∀(enc :α asm -> word8 list) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (l1 :α line list) (l2 :α line list).
+  lines_enc_with_nop enc labs ffis pos (l1 ++ l2) ⇔
+  lines_enc_with_nop enc labs ffis pos l1 ∧
+  lines_enc_with_nop enc labs ffis
+    (pos + (SUM (MAP (line_length :α line -> num) l1) :num)) l2
+lines_enc_with_nop_append_types=(enc :α asm -> word8 list)::α asm -> word8 list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(l1 :α line list)::α line list;(l2 :α line list)::α line list;
+all_enc_with_nop_def=(∀(pos :num) (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+     (enc :α asm -> word8 list).
+   all_enc_with_nop enc labs ffis pos ([] :α sec list) ⇔ T) ∧
+(∀(xs :α sec list) (pos :num) (labs :num sptree$num_map sptree$num_map)
+     (k :num) (ffis :ffiname list) (enc :α asm -> word8 list).
+   all_enc_with_nop enc labs ffis pos (Section k ([] :α line list)::xs) ⇔
+   all_enc_with_nop enc labs ffis pos xs) ∧
+∀(ys :α line list) (y :α line) (xs :α sec list) (pos :num)
+    (labs :num sptree$num_map sptree$num_map) (k :num) (ffis :ffiname list)
+    (enc :α asm -> word8 list).
+  all_enc_with_nop enc labs ffis pos (Section k (y::ys)::xs) ⇔
+  line_enc_with_nop enc labs ffis pos y ∧
+  all_enc_with_nop enc labs ffis (pos + line_length y) (Section k ys::xs)
+all_enc_with_nop_def_types=
+all_enc_with_nop_alt=(all_enc_with_nop (enc :α asm -> word8 list)
+   (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+   ([] :α sec list) ⇔ T) ∧
+(all_enc_with_nop enc labs ffis pos
+   (Section (k :num) (ls :α line list)::(ss :α sec list)) ⇔
+ lines_enc_with_nop enc labs ffis pos ls ∧
+ all_enc_with_nop enc labs ffis
+   (pos + (SUM (MAP (line_length :α line -> num) ls) :num)) ss)
+all_enc_with_nop_alt_types=(ss :α sec list)::α sec list;(ls :α line list)::α line list;(k :num)::num;(pos :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(enc :α asm -> word8 list)::α asm -> word8 list;
+line_enc_with_nop_length_ok=∀(enc :α asm -> word8 list) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (line :α line).
+  line_enc_with_nop enc labs ffis pos line ⇒ line_length_ok line
+line_enc_with_nop_length_ok_types=(enc :α asm -> word8 list)::α asm -> word8 list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(line :α line)::α line;
+lines_enc_with_nop_length_ok=∀(enc :α asm -> word8 list) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (ls :α line list).
+  lines_enc_with_nop enc labs ffis pos ls ⇒
+  EVERY (line_length_ok :α line -> bool) ls
+lines_enc_with_nop_length_ok_types=(enc :α asm -> word8 list)::α asm -> word8 list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(ls :α line list)::α line list;
+line_enc_with_nop_label_zero=∀(enc :α asm -> word8 list) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (line :α line).
+  line_enc_with_nop enc labs ffis pos line ⇒ label_zero line
+line_enc_with_nop_label_zero_types=(enc :α asm -> word8 list)::α asm -> word8 list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(line :α line)::α line;
+lines_enc_with_nop_label_zero=∀(enc :α asm -> word8 list) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (lines :α line list).
+  lines_enc_with_nop enc labs ffis pos lines ⇒
+  EVERY (label_zero :α line -> bool) lines
+lines_enc_with_nop_label_zero_types=(enc :α asm -> word8 list)::α asm -> word8 list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(lines :α line list)::α line list;
+all_enc_with_nop_label_zero=∀(enc :α asm -> word8 list) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (ls :α sec list).
+  all_enc_with_nop enc labs ffis pos ls ⇒
+  EVERY (sec_label_zero :α sec -> bool) ls
+all_enc_with_nop_label_zero_types=(enc :α asm -> word8 list)::α asm -> word8 list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(ls :α sec list)::α sec list;
+asm_padded=T
+halt_position=T
+install_position=T
+ffi_position=T
+jump_position=T
+jumpcmp_position=T
+loc_position=T
+call_length_only=T
+label_zero=T
+label_nonzero_rejected=T
+bytes_length_rejected=T
+physical_position_threading=T
+sections_empty_and_position=T
+bad_padding_rejected=T
