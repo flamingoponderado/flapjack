@@ -4948,3 +4948,7 @@ run_probe stack_remove_wordlistrev_probeScript.sml stack_remove_wordlistrev_prob
 run_probe stack_remove_wordstore_probeScript.sml stack_remove_wordstore_probe.out \
   ws_def ws_type ws_store_list ws_empty8 ws_mixed8 ws_mixed1 ws_mixed80 ws_generic_empty ws_independent64_8 ws_independent1_80 ws_independent80_1 ws_unlisted ws_length ws_values8 ws_values1 ws_values80 \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe backend_runtime_stub_names_probeScript.sml backend_runtime_stub_names_probe.out \
+  word_stub_names_def word_stub_names_type gc_stub_names_def gc_stub_names_type word_stub_names_values word_stub_names_bytes gc_stub_names_values gc_stub_names_bytes word_stub_names_count gc_stub_names_count \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

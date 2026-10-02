@@ -62473,5 +62473,21 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.4: original128-133 full type alpha word->(store_name |-> beta word_loc)->(alpha word#beta word_loc->bool)->bool has independent address and stored-word dimensions. Lean preserves two Nat widths with own NeZero discharges; actual finite map parameter store is HolFiniteMapExact WordStoreHOL(WordLocW valueWidth), matching the faithful StackSem state map, not a raw function carrier. Bare relation qualifier store accounts for that parameter; no field-owner witness is required. Full unchanged48storeList order is mapped through existing complete constructor-preserving StackSemRegisterTransfers.storeOfSyntax, whose two unconditional inverse laws preserve all18 constructors and fixed Temp5. Missing lookups become Word0 at valueWidth, present Word/Loc values pass through, and the full list is supplied to exact generic wordListRev at addressWidth. No required-key/success/map-wf/width-agreement/finite-heap premise or altered store ordering. Original full definitions/types, complete empty/mixed48slot vectors with Temp0/31 and populated unlisted CurrHeap, independent-dimension assertion equalities and word projections provide source evidence; generic Lean finite-support and whole-assertion fixtures compare the same values/order/defaults. No duplicate state or compiler implementation is introduced."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "stub_names_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/StubNames.lean",
+    "lean_name": "stubNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against original619-624: entire unit argument, ordered raise_stub_location/_Raise and store_consts_stub_location/_StoreConsts pairs retained; actual reviewed WordLang locations evaluate5/6; exact native implode bytes. Full original unit->(num#mlstring)list type/equation captured; native MlString character list, no String carrier translation or additional premise. Original full values/bytes/count observations match kernel fixtures. Actual artifact-format symbol dispatch remains separately tracked parent production wiring; source table alone is not executed-route completion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "stub_names_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/StubNames.lean",
+    "lean_name": "stubNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against original642-644: entire unit argument, singleton gc_stub_location/_GC pair retained; actual reviewed StackLang location evaluates4; exact native implode bytes. Full original unit->(num#mlstring)list type/equation captured; native MlString character list, no String carrier translation or additional premise. Original full values/bytes/count observations match kernel fixtures. Actual artifact-format symbol dispatch remains separately tracked parent production wiring; source table alone is not executed-route completion."
   }
 ]

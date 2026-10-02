@@ -7,6 +7,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstall
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticLoop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopIteration
+import Flapjack.RiscV.RuntimeSymbolPreservation
+import Flapjack.Compiler.Backend.WordToStack.StubNames
+import Flapjack.Compiler.Backend.StackAlloc.StubNames
 import Flapjack.Compiler.Backend.StackRemove.StubNames
 import Flapjack.Misc.BalancedMap.InsertCorrect
 import Flapjack.Misc.BalancedMap.CardinalityCorrect

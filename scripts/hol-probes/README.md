@@ -5708,3 +5708,7 @@ length48. Twelve Lean kernel fixtures in `Flapjack.Test.StackRemoveWordStore`
 use an actual canonical finite-support map and the existing complete store-name
 codec, with generic payload/width proofs and lookup extensionality. Assertion
 proofs compare complete lists before heap separation is expanded.
+
+### WordToStack and StackAlloc runtime symbol tables
+
+`backend_runtime_stub_names_probeScript.sml` captures both full original `stub_names_def` equations and generic types. Original ordered label/name pairs, exact character bytes and table lengths match six native kernel fixtures. Reviewed label constants are used directly, rather than handwritten numeric labels. Artifact dispatch remains a separately tracked executed route; these source tables do not establish compiler simulation.
