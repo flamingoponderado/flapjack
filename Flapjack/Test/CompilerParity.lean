@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetAlignmentParity
 import Flapjack.Test.LabToTargetUpdateZeroParity
 import Flapjack.Test.LabToTargetZeroPreservationParity
 import Flapjack.Test.LabToTargetUpdatePositionParity
@@ -1823,6 +1824,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetUpdatePositionParity.runChecks,
     Flapjack.Test.LabToTargetZeroPreservationParity.runChecks,
     Flapjack.Test.LabToTargetUpdateZeroParity.runChecks,
+    Flapjack.Test.LabToTargetAlignmentParity.runChecks,
     Flapjack.Test.LabToTargetEncd0Parity.runChecks,
     Flapjack.Test.LabToTargetLabelValidityParity.runChecks,
     Flapjack.Test.LabToTargetSimilarLabelsParity.runChecks,
