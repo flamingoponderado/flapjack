@@ -213,7 +213,7 @@ def wordToStackProgNatChecked [BEq Nat]
     Assignment and shared-memory leaves check their actual executed producer,
     including its optimizations. This is still not a complete locator for
     moves, instructions, calls, FFI or the whole source pipeline; that remaining
-    obligation is tracked by `flapjack-pxn.2.11`. -/
+    obligation is tracked by GitHub issue #1158. -/
 def wordProgFirstExpressionLoweringFailure (config : WordStackConfig) :
     WordProg Nat → Option (List Nat)
   | .seq first second =>
