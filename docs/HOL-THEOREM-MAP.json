@@ -62420,5 +62420,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison: genuine full Ffi case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListRev.lean",
+    "lean_name": "wordListRev",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_rev_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.3: original122-126 full type alpha word->beta list->(alpha word#beta->bool)->bool retains independent generic payload beta. Empty list is exact emp; cons is one(address-bytes_in_word,value) STAR word_list_rev(address-bytes_in_word,tail), with modular subtraction before both singleton and recursive address. Native bytesInWord is BitVec.ofNat width(width/8); the only qualifier is positive BitVec width/[NeZero width] for original address-word dimension. Canonical one/emp/STAR used directly. No fixed word_loc payload, width>=8, nonwrapping address, distinct-address, functional-heap or finiteness premise. Zero stride at widths1/7 means equal pair cells overlap and fail but distinct payloads at one address remain allowed by literal HOL set separation. Full original type/equation and generic/wrap/product/overlap probes, plus generic Lean one/two-cell kernel regressions, verify this precise behavior. Compiler state_rel later imposes its separate full-memory obligations; none are silently added to this predicate."
   }
 ]

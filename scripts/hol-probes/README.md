@@ -5685,3 +5685,14 @@ open separately.
 Allocation-argument instruction probes capture two entire generic Inst/ShareInst cases of original word_to_stack_alloc_arg and660 direct actual compiler predicate observations. Matching kernel fixtures cover all asm constructors, ordinary16bit fallback, width64FP splitting, all eight shared operations, address extraction success/failure, zero/spilled frames and70bit registers at widths1/2/8/64/80. The two case theorem statements retain every original input and only perf=F; full compiler assembly remains open. These are regression observations and original theorem applications, not a replay of the full compiler proof or cross-language equivalence. Selector: HOL_PROBE_ONLY=word_to_stack_alloc_instructions_probeScript.sml.
 
 Flat allocation-argument probes capture all nineteen entire generic original nonrecursive cases apart from Inst/ShareInst and Call, plus360 direct compiler EVAL predicates and30 Alloc-case theorem applications at the same concrete inputs. The Alloc rows use the captured full original theorem to avoid eager construction of an irrelevant70bit bitmap; no input or conclusion is changed. All390 matching kernel fixtures cover widths1/2/8/64/80, all flat constructors, arbitrary generic source theorem inputs, malformed cutsets, move cycles/self/repeated sources, rejected Set expressions, and zero/70bit frame fields. Original theorem applications have no open hypotheses. These are regression evidence, not a replay of the entire original compiler proof or cross-language equivalence. Recursive/Call cases and full assembly remain open. Selector: HOL_PROBE_ONLY=word_to_stack_alloc_flat_probeScript.sml.
+`stack_remove_wordlistrev_probe.out` records the full independently generic
+address-word/payload type and both recursive equations, plus eleven fresh
+original kernel-proved fixtures. They cover generic empty/singleton heaps,
+modular subtraction at widths 8/32/64/80, product payloads, two cells, zero
+byte stride at widths 1/7, and wrong addresses. Separation acts on pairs: two
+different payloads at one address remain distinct heap elements; identical
+pairs cannot be separated. `Flapjack.Test.StackRemoveWordListRev` replays eleven
+fixtures through kernel-proved generic one/two-cell regression helpers. No
+functional-heap, distinct-address, nonwrapping or width-at-least-eight premise
+is added. Logical separation reasoning handles symbolic heaps before word
+arithmetic decisions. The original statements and definitions are unchanged.
