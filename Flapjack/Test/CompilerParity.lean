@@ -292,6 +292,7 @@ import Flapjack.Test.WordUnreachDefParity
 import Flapjack.Test.WordCopyDefParity
 import Flapjack.Test.LogrootParity
 import Flapjack.Test.AlignmentParity
+import Flapjack.Test.LabToTargetShareMemDomainParity
 import Flapjack.Test.RegAllocStempColouringParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity

@@ -4720,6 +4720,14 @@ through `LOG2 8 = 3`. Kernel-replayed in `AlignmentParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=alignment_align_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`lab_to_target_share_mem_domain_probe` captures the original typed `share_mem_domain_code_rel`
+definition and three HOL-proved consumers: its reduction on code with no lines to the
+`byte_align` domain closure and `shared_addresses` equation, the full-domain instance, and the
+64-bit singleton `{8w}` counterexample (`byte_align 9w = 8w` through `LOG2 8 = 3`).
+`LabToTargetShareMemDomainParity` replays the three consumers in the kernel. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=lab_to_target_share_mem_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 
 
 `word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
