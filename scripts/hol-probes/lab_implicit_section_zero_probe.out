@@ -1,0 +1,6 @@
+zero_original_skip_late_zero=(1004,[(2,1004)])
+zero_original_section_base=1000
+zero_original_second_base=1004
+zero_original_second_label=1008
+zero_original_empty_section=17
+zero_original_crosssection_bytes=[111; 0; 64; 0; 147; 96; 112; 0]

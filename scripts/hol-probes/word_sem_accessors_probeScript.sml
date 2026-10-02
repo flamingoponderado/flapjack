@@ -65,7 +65,8 @@ val _ = print_eval "mem_store_hit"
 val _ = print_eval "var_imm" ``get_var_imm (Imm 4w) ^st``;
 val _ = print_eval "var_imm_reg" ``get_var_imm (Reg 2) ^st``;
 
-(* h29l.12: only the specified Word clauses are observable. Never evaluate Loc. *)
+(* Specified Word clauses. The missing clauses are checked by reviewing HOL's
+   TFL pattern completion; exported partial equations do not reduce them. *)
 val _ = print_eval "the_word_word1" ``theWord (Word (1w:word1))``;
 val _ = print_eval "the_word_word64" ``theWord (Word (18446744073709551615w:word64))``;
 val _ = print_eval "get_word_word32" ``get_word (Word (2147483648w:word32))``;

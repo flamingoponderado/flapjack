@@ -138,3 +138,6 @@ The pinned external `hol4/src/coretypes/optionScript.sml` counterpart is
 The pinned external `hol4/src/coalgebras/llistScript.sml` counterpart is
 `Flapjack/Misc/LList.lean`; `lprefix_lubScript.sml` chain and least-upper-bound
 declarations remain in `Flapjack/Misc/LprefixLub.lean`.
+
+The pinned external `HOL/src/n-bit/byteScript.sml` counterpart is
+`Flapjack/Byte.lean` (byte extraction and arbitrary-count word serialization).

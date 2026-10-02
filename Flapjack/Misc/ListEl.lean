@@ -1,4 +1,5 @@
 import Flapjack.HolRef
+import Flapjack.HolArb
 
 /-!
 # HOL list `HD` and `EL`
@@ -6,9 +7,10 @@ import Flapjack.HolRef
 Exact ports of HOL `HD` (`HOL/src/list/src/listScript.sml:128-130`) and
 `EL_def` (`listScript.sml:225-228`), cited in the pinned upstream HOL
 submodule. `HD` has only the `h::t` clause, so `HD []` is an unspecified value
-of the (inhabited) element type: it is rendered by the opaque constant
-`holHdNil`, about which no Lean proof can learn anything, exactly as HOL proves
-nothing about `HD []`. `EL 0 l = HD l` and `EL (SUC n) l = EL n (TL l)` with
+of the (inhabited) element type: `holHdNil` aliases the shared opaque
+`holArb` at that type. This preserves equality with other missing clauses
+completed by the same HOL `ARB`, without choosing a concrete value.
+`EL 0 l = HD l` and `EL (SUC n) l = EL n (TL l)` with
 HOL `TL` as `List.tail` (`TL [] = []`, `TL_DEF` 132-135), so `EL n l` past the
 end of `l` is that same unspecified value; under the bound `holEl n l` is the
 ordinary `l[n]` (`holEl_eq_getElem`).
@@ -17,7 +19,7 @@ ordinary `l[n]` (`holEl_eq_getElem`).
 namespace Flapjack
 
 /-- HOL's unspecified `HD []` at each (inhabited) type. -/
-noncomputable opaque holHdNil (α : Type) [Nonempty α] : α
+noncomputable abbrev holHdNil (α : Type) [Nonempty α] : α := holArb α
 
 /-- Exact HOL `HD` (`listScript.sml:128-130`); the missing `[]` clause is the
 unspecified `holHdNil`. -/

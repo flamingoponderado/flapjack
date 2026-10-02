@@ -1,0 +1,18 @@
+ie_full=⊢ ∀n1 n2 v1 v2 l. insert n1 v1 l = insert n1 v2 l ⇔ v1 = v2
+ie_replay=⊢ ∀n1 n2 v1 v2 l. insert n1 v1 l = insert n1 v2 l ⇔ v1 = v2
+ie_0_7=T
+ie_0_8=F
+ie_1_7=T
+ie_1_8=F
+ie_2_7=T
+ie_2_8=F
+ie_3_7=T
+ie_3_8=F
+ie_4_7=T
+ie_4_8=F
+ie_binder_types=n1
+::num n2
+::α v1
+::β v2
+::β l
+::β sptree$num_map 

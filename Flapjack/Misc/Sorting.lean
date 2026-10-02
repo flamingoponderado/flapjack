@@ -6,14 +6,44 @@ import Flapjack.Misc.Relation
 
 Exact ports of `HOL/src/sort/sortingScript.sml` `SORTED_DEF` (564-568),
 `PART_DEF` (643-648) and `PARTITION_DEF` (740-741), with the theorems
-`SORTED_EQ` (588-596) and `SORTED_TL` (1117-1121), cited in the pinned
-upstream HOL submodule. HOL relations `'a -> 'a -> bool` are rendered as
+`SORTED_EQ` (588-596) and `SORTED_TL` (1117-1121), and `PERM_DEF` (17-18),
+cited in the pinned upstream HOL submodule. HOL relations `'a -> 'a -> bool` are rendered as
 `α → α → Prop`; the partition predicate `'a -> bool` is a `Bool`-valued
 function, so `if P h` is the Boolean branch. All three are total and fully
 specified.
 -/
 
 namespace Flapjack
+
+open Classical in
+/-- Exact HOL `PERM_DEF` (`sortingScript.sml:17-18`):
+`PERM L1 L2 = !x. FILTER ($= x) L1 = FILTER ($= x) L2`. HOL equality is a
+total boolean test; the filter predicate decides it classically. -/
+@[hol "HOL/src/sort/sortingScript.sml" "PERM_DEF"]
+def holPerm {α : Type} (L1 L2 : List α) : Prop :=
+  ∀ x, L1.filter (fun y => decide (x = y)) = L2.filter (fun y => decide (x = y))
+
+/-- HOL `PERM` is the core `List.Perm`. Flapjack infrastructure, not a HOL
+theorem. -/
+theorem holPerm_iff {α : Type} (L1 L2 : List α) : holPerm L1 L2 ↔ L1.Perm L2 := by
+  classical
+  have key : ∀ (l : List α) (x : α),
+      l.filter (fun y => decide (x = y)) = List.replicate (l.count x) x := by
+    intro l x
+    induction l with
+    | nil => rfl
+    | cons h t ih =>
+      by_cases e : x = h
+      · subst e; simp [ih, List.replicate_succ]
+      · simp [e, ih, Ne.symm e]
+  unfold holPerm
+  rw [List.perm_iff_count]
+  constructor
+  · intro h x
+    have := congrArg List.length (h x)
+    simpa [key] using this
+  · intro h x
+    rw [key, key, h x]
 
 /-- Exact HOL `SORTED_DEF` (`sortingScript.sml:564-568`): every adjacent pair is
 related; no transitivity is assumed. -/
