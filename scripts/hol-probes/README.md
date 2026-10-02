@@ -5009,3 +5009,8 @@ captures a valid singleton, an invalid cached size, and an equal-key child.
 The capture also replays the original private `key_ordered_to_fmap` proof
 and the complete original `invariant_eq` proof body, checking the replay has
 no open hypotheses. Batch tactics use their equivalent qualified HOL names.
+The same probe now replays the complete private `inv_props` statement and
+literal original proof, prints its fully typed closed theorem, and evaluates
+a valid tree with two nonempty children. The Lean fixtures also instantiate
+all three `invProps` conclusions for a checked three-key comparator, using
+actual nonempty canonical child lookups rather than assumed domain facts.

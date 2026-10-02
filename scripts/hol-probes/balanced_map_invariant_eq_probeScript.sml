@@ -13,6 +13,11 @@ val replay = prove(concl invariant_eq,
   metis_tac [comparisonTheory.cmp_thms]);
 val _ = if null(hyp replay) then () else raise Fail "open replay hypotheses";
 val _ = (print "bmi_replay="; print_thm replay; print "\n");
+val inv_props = prove(``!cmp s k v l r. good_cmp cmp /\ invariant cmp (Bin s k v l r) ==> DISJOINT (FDOM (to_fmap cmp l)) (FDOM (to_fmap cmp r)) /\ (!x. key_set cmp x IN FDOM (to_fmap cmp l) ==> cmp k x = Greater) /\ (!x. key_set cmp x IN FDOM (to_fmap cmp r) ==> cmp k x = Less)``,
+  rw [invariant_eq] >> Tactic.IMP_RES_TAC key_ordered_to_fmap >> rfs [key_set_cmp_thm]);
+val _ = if null(hyp inv_props) then () else raise Fail "open inv_props hypotheses";
+val _ = (print "bmi_props_typed="; Globals.show_types := true; print_thm inv_props; print "\n"; Globals.show_types := false);
+val _ = (print "bmi_children="; print_term(rand(concl(EVAL ``invariant (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) (Bin 3 1 99 (Bin 1 0 7 Tip Tip) (Bin 1 2 8 Tip Tip))``))); print "\n");
 val _ = (print "bmi_singleton="; print_term(rand(concl(EVAL ``invariant (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) (Bin 1 4 99 Tip Tip)``))); print "\n");
 val _ = (print "bmi_badsize="; print_term(rand(concl(EVAL ``invariant (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) (Bin 0 4 99 Tip Tip)``))); print "\n");
 val _ = (print "bmi_equal_child="; print_term(rand(concl(EVAL ``invariant (\x:num y:num. if x < y then Less else if x = y then Equal else Greater) (Bin 2 4 99 (Bin 1 4 7 Tip Tip) Tip)``))); print "\n");
