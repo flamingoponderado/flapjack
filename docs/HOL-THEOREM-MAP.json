@@ -65161,5 +65161,52 @@
     "statement_status": "reviewed_reals_as_rational_cuts",
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02: literal machine_ieeeScript24-82 and machine_ieeeLib49-78/100-108 fixed codecs23/8/32 and52/11/64. Complete convert branches preserve independently typed codecs and supplied real/flags function, finite-real result/flags, signalling input detection, arbitrary ANY NaN choice without quiet restriction, signed infinity/clear_flags. Generated finite flags wrapper composes real_to_float_with_flags at mode=roundTowardNegative zero sign; all six flags retained. Widening fixes ties-to-even; narrowing keeps supplied mode; SND wrappers discard flags only explicitly. Generic words_as_type_indexed_bitvec retains positivity for each of six independent HOL word-type dimensions; fixed wrappers retain literal fixed widths. reals_as_rational_cuts rendering and SOUNDNESS item8 agreement assumption apply to real-dependent declarations, not to bit-only codecs; no cross-HOL equality claim. Fresh original source theorem and14observations plus15kernel tests cover full infinity/NaN flags/exact finite tuples; finite tie kernel checks observe bits/Precision only, not a full underflow tuple replay. Full family acceptance remains coordinator-owned; no full model theorem inferred."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelPreservation.lean",
+    "lean_name": "labelsComp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_labels_comp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 original950-967: full unconditional all-constructor comp label predicate equality and full code_rel/source loc_check conjunction implies target loc_check. Exact native HolProg width with NeZero, original Spt code including malformed trees; no finite-map qualifier. All recursive Seq/If/Loop and both optional Call continuations retained, including Call NONE ignores handler. Generated stack/copy builders introduce no labels. Both domain-zero and existential stored-program location branches derived from literal codeRelHOL lookup/domain conjuncts. No register-bound, target-location, evaluator-success, fixed-width or simulation premise added. Original literal HOL proofs replayed using fresh local builder proofs; native kernels checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelPreservation.lean",
+    "lean_name": "codeRelLocCheck",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "code_rel_loc_check",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 original950-967: full unconditional all-constructor comp label predicate equality and full code_rel/source loc_check conjunction implies target loc_check. Exact native HolProg width with NeZero, original Spt code including malformed trees; no finite-map qualifier. All recursive Seq/If/Loop and both optional Call continuations retained, including Call NONE ignores handler. Generated stack/copy builders introduce no labels. Both domain-zero and existential stored-program location branches derived from literal codeRelHOL lookup/domain conjuncts. No register-bound, target-location, evaluator-success, fixed-width or simulation premise added. Original literal HOL proofs replayed using fresh local builder proofs; native kernels checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Locations.lean",
+    "lean_name": "compCorrectLocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original2099-2106 full LocValue case: exactly original four premises, faithful total evaluate and existential target clock/state with original result branch. Source nonError establishes source loc_check; full stateRel code conjunct and source-reviewed codeRelLocCheck derive target check. Native bounded setVar preserves all26 fullstateRel conjuncts, clock0. No additional success/location/post-state/simulation premise, no altered evaluator. Positive width NeZero native BitVec/HolProg and Type0 C/F; actual canonical regs/fpRegs/store with same-module genuine codec witness; Spt code excluded. Total evaluator inherits reals_as_rational_cuts assumption explicitly; no new trust decision."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackPointer.lean",
+    "lean_name": "stateRelGetVarK",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_get_var_k",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original395-418 comparison: original full state_rel alone implies existential base alpha word, lookup k+1 Word base, lower address reserve widthDIV8*maxStackAlloc, nonwrapping stack upper bound, lookup k Word(base+bytes*stackSpace), complete original five-factor separated heap. Native source/target share same positive width and Type0 configuration/FFI carriers. Canonical imported finite-map state and genuine same-module broad/exact witness; code remains Spt. Native bitmaps++buffer followed by map Word equals original MAP Word bitmaps++MAP Word buffer, combined list length equals original length sum. Bool domains rendered as true predicates, ordinary HOL lists use List. No extra base/bitmap/lookup/safety/success/heap premise; all facts extracted from final fullstateRel conjunct, invalid lookup constructors contradicted. Literal original proof replay and native kernel proof checked; neither new evaluator nor real arithmetic involved."
   }
 ]
