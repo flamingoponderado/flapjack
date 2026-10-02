@@ -64472,5 +64472,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.7: genuine full Get constructor case comp_correct1481-1493/1578-1597. Exactly original4premises actual source total evaluate/result/poststate, nonError, complete stateRelHOL, original regBound. EXISTS target extra clock/poststate, actual compiled total evaluate same result and original fullrelation versus Halt/TimeOut/FinalFFI ffi result branch. Source store lookup success derived from originalnonError; sourceuseStore from fullrelation. CurrHeap uses actual canonical moveHOL Or same-register copy, preserving arbitrary Word/Loc payload through reserved-reg lookup derived from fullrelation. All other names use complete native name_cases/mem_load_lemma; actual base-register Word case and original five-factor heap derived from fullrelation, target address expression/load execution established, no targetsuccess/domain/heap-frame assumption. Extra clock0 and fullpostrelation derived through original bounded setVar. Actual native canonical regs/fpRegs/store with same-module genuine codec witness; Spt code excluded. Positive BitVec/NeZero width, independent C/F Type0; phantom Get program bound pinned at same width. Total native evaluator inherits reals_as_rational_cuts explicitly flagged; no unqualified real or wholecompiler equivalence claim. Fresh original complete case proof/types and native fullkernel proof checked; Set/remainingcases/fullassembly remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StoreTransfers.lean",
+    "lean_name": "compCorrectSet",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.8: genuine complete Set constructor case comp_correct1481-1493/1598-1625, exactly original4premises source total evaluate/nonError/fullstateRel/fullregBound. EXISTS targetclock/posttarget/samecompiled total evaluate result and original result branch. Source getVar success from originalnonError; bounded target input lookup from fullrelation. CurrHeap actual moveHOL Or same-register copies arbitrary Word/Loc value to reserved k+2, source canonicalstore CurrHeap update preserves all26relation conjuncts using original word_store_CurrHeap and bounded lower-register lookup exclusion. All other names derive actual base Word/full5heap and target mdomain from original mem_load_lemma2; native memory store execution established; original store_write_lemma supplies complete heap update while all other fullrelation conjuncts are proved, preserving CurrHeap and BitmapBase lookups by constructor codec equality. BitmapBase exclusion only original regBound Set conjunct, nonCurrHeap only compiler case split; no extra success/domain/heap/frame/clock/postrelation assumption or permanent case parameter. Extra clock0 derived. Actual canonical native regs/fpRegs/store with same-module genuine codec witness; fixed5Temp carrier; Spt code excluded; positive BitVec/NeZero and independent C/F Type0, phantom Set program bound pinned to same width. Native total evaluator inherits reals_as_rational_cuts explicitly retained, not a global real equivalence claim. Full native kernel proof and fresh literal original fullcase/genuine local helper proofs/types checked. Remaining constructors/IHs/fullassembly and compiler passes remain separate obligations."
   }
 ]

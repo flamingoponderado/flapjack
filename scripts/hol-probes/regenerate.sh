@@ -5206,3 +5206,7 @@ run_probe stack_remove_store_heap_write_probeScript.sml stack_remove_store_heap_
 run_probe stack_remove_comp_get_probeScript.sml stack_remove_comp_get_probe.out \
   cg_statement cg_types cg_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_set_probeScript.sml stack_remove_comp_set_probe.out \
+  cs_statement cs_types cs_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
