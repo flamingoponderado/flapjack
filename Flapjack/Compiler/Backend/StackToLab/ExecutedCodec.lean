@@ -31,10 +31,11 @@ forward name map is injective. Current executed FFI service/index lookup uses
 String equality only (RiscV/Ffi.lean:26-38), with no UTF-8 serialization here.
 This is a carrier correspondence, not an FFI transition-equivalence theorem.
 
-The executed compiler does not call these codecs yet. The source-input codec,
-section-label/entry conventions, source/target semantic preservation, and
-production wiring remain separately tracked on 52bq.1. No performance exception
-or full compiler correctness claim is made by this module.
+The runtime-image native removal/section boundary and machine-word CSE key
+routes now use these supported codecs. Source-input coverage and source/target
+semantic preservation remain separately tracked on 52bq.1 and the production
+inventory beads. No performance exception or full compiler correctness claim
+is made by this module.
 -/
 
 namespace Flapjack.Compiler.Backend.StackToLab.ExecutedCodec

@@ -1,5 +1,12 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
+import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
+import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+import Flapjack.Compiler.Backend.LabToTarget.PositionValues
 import Flapjack.Compiler.Backend.StackProps.AllocationConstants
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
@@ -52,6 +59,15 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapDecode
+import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapSentinelLength
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapBitStructure
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWordLemmas
 import Flapjack.Compiler.Backend.StackProps.RegisterBounds
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
@@ -147,6 +163,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
 import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.WordAlloc.SelectRegAlloc
+import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstall
@@ -604,6 +621,9 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
 import Flapjack.Compiler.Backend.Semantics.StackSem.FpInstructions
 import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
+import Flapjack.Compiler.Backend.Semantics.StackSem.InstCase
+import Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
+import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
@@ -1285,29 +1305,88 @@ import Flapjack.Compiler.Backend.StackAlloc.GcCode
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
-import Flapjack.Compiler.Backend.WordAlloc.FullSSA
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
-import Flapjack.FiniteMap.Comparison
-import Flapjack.Misc.BalancedMap.Core
-import Flapjack.Misc.BalancedMap.Insert
-import Flapjack.Misc.BalancedMap.Invariants
-import Flapjack.Misc.BalancedMap.KeySetComparison
-import Flapjack.Misc.BalancedMap.KeySets
-import Flapjack.Misc.BalancedMap.Rotations
-import Flapjack.Misc.BalancedMap.Semantics
-import Flapjack.Misc.BalancedMap.StructuralSize
-import Flapjack.Misc.FlatReplicate
-import Flapjack.Misc.FoldrMaxList
-import Flapjack.Misc.ListSubset
-import Flapjack.Misc.Uncurry
+import Flapjack.Compiler.Backend.WordToStackRegFormat
+import Flapjack.Compiler.Backend.Parmove
+import Flapjack.Compiler.Backend.Parmove.Semantics
+import Flapjack.Compiler.Backend.Parmove.Invariants
+import Flapjack.Compiler.Backend.Parmove.Invariants.Path
+import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
+import Flapjack.Compiler.Backend.Parmove.StepSem.StartExtend
+import Flapjack.Compiler.Backend.Parmove.StepSem.RemoveSelfEmitLast
+import Flapjack.Compiler.Backend.Parmove.StepSem.Save
+import Flapjack.Compiler.Backend.Parmove.EnvironmentChange
+import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
+import Flapjack.Compiler.Backend.Parmove.Permutation
+import Flapjack.Compiler.Backend.Parmove.Steps
+import Flapjack.Compiler.Backend.Parmove.NoRead
+import Flapjack.RiscV.CakeAllocatorBitsBridge
+import Flapjack.StackAlloc
+import Flapjack.StackAlloc.Runtime
+import Flapjack.StackAlloc.Machine
+import Flapjack.StackAlloc.FrameMachine
+import Flapjack.StackAlloc.CollectorSemantics
+import Flapjack.StackAlloc.Correctness
+import Flapjack.StackAlloc.BitmapSemantics
+import Flapjack.StackRemove
+import Flapjack.Lab
+import Flapjack.RiscV.Lab
+import Flapjack.RiscV.LabDiagnostics
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.FfiHOL
+import Flapjack.FfiBridge
+import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+import Flapjack.Compiler.Backend.RegAlloc.StateFilter
+import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
+import Flapjack.Compiler.Backend.RegAlloc.TagColour
+import Flapjack.Compiler.Backend.RegAlloc.MoveTable
+import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColourExtraction
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColouringTransport
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkGraphCheckClashTree
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
+import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
+import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
+import Flapjack.Compiler.Backend.RegAlloc.Worklists
+import Flapjack.Compiler.Backend.RegAlloc.Allocator
+import Flapjack.Misc.LookupAny
+import Flapjack.Compiler.Backend.RegAlloc.Coalesce
+import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
+import Flapjack.Compiler.Backend.RegAlloc.MovePrep
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
+import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
+import Flapjack.Compiler.Backend.WordAlloc.ProductionMergeMoves
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
+import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
+import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
+import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
+import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAExpressions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesProps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAInstructionProps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsMove
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsAllocation
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsLoopControl
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
+
+
+/- The context-aware Crep-to-Loop correctness file is being updated alongside
+   the faithful `findLoopVar` lowering and is intentionally not in this
+   umbrella until its old identity-map assumptions are repaired. -/
+
+/-!
+# Flapjack in Lean
+
+The library currently contains the first Lean representation of Flapjack's
+front-end language. The source of truth used while porting is the CakeML HOL
+development in `cakeml/pancake`.
+-/

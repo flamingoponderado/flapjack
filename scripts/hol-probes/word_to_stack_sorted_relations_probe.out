@@ -1,0 +1,103 @@
+sr_full_SORTED_weaken2=⊢ ∀ls. SORTED R ls ∧ ALL_DISTINCT ls ∧ (∀x y. MEM x ls ∧ MEM y ls ∧ x ≠ y ∧ R x y ⇒ R' x y) ⇒ SORTED R' ls
+sr_full_EVEN_GT=⊢ ∀a b. EVEN a ∧ EVEN b ∧ a > b ⇒ a DIV 2 > b DIV 2
+sr_full_transitive_GT=⊢ transitive $>
+sr_weaken_0_0=⊢ SORTED (λx y. x > y) [] ∧ ALL_DISTINCT [] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x > y) x y ⇒ (λx y. x ≥ y) x y) []) [] ⇒ SORTED (λx y. x ≥ y) [] ⇔ T
+sr_weaken_0_1=⊢ SORTED (λx y. T) [] ∧ ALL_DISTINCT [] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. T) x y ⇒ (λx y. x ≠ y) x y) []) [] ⇒ SORTED (λx y. x ≠ y) [] ⇔ T
+sr_weaken_0_2=⊢ SORTED (λx y. x = y) [] ∧ ALL_DISTINCT [] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x = y) x y ⇒ (λx y. F) x y) []) [] ⇒ SORTED (λx y. F) [] ⇔ T
+sr_weaken_0_3=⊢ SORTED (λx y. x ≥ y) [] ∧ ALL_DISTINCT [] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x ≥ y) x y ⇒ (λx y. x > y) x y) []) [] ⇒ SORTED (λx y. x > y) [] ⇔ T
+sr_weaken_1_0=⊢ SORTED (λx y. x > y) [0] ∧ ALL_DISTINCT [0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x > y) x y ⇒ (λx y. x ≥ y) x y) [0]) [0] ⇒ SORTED (λx y. x ≥ y) [0] ⇔ T
+sr_weaken_1_1=⊢ SORTED (λx y. T) [0] ∧ ALL_DISTINCT [0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. T) x y ⇒ (λx y. x ≠ y) x y) [0]) [0] ⇒ SORTED (λx y. x ≠ y) [0] ⇔ T
+sr_weaken_1_2=⊢ SORTED (λx y. x = y) [0] ∧ ALL_DISTINCT [0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x = y) x y ⇒ (λx y. F) x y) [0]) [0] ⇒ SORTED (λx y. F) [0] ⇔ T
+sr_weaken_1_3=⊢ SORTED (λx y. x ≥ y) [0] ∧ ALL_DISTINCT [0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x ≥ y) x y ⇒ (λx y. x > y) x y) [0]) [0] ⇒ SORTED (λx y. x > y) [0] ⇔ T
+sr_weaken_2_0=⊢ SORTED (λx y. x > y) [2; 1; 0] ∧ ALL_DISTINCT [2; 1; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x > y) x y ⇒ (λx y. x ≥ y) x y) [2; 1; 0]) [2; 1; 0] ⇒ SORTED (λx y. x ≥ y) [2; 1; 0] ⇔ T
+sr_weaken_2_1=⊢ SORTED (λx y. T) [2; 1; 0] ∧ ALL_DISTINCT [2; 1; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. T) x y ⇒ (λx y. x ≠ y) x y) [2; 1; 0]) [2; 1; 0] ⇒ SORTED (λx y. x ≠ y) [2; 1; 0] ⇔ T
+sr_weaken_2_2=⊢ SORTED (λx y. x = y) [2; 1; 0] ∧ ALL_DISTINCT [2; 1; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x = y) x y ⇒ (λx y. F) x y) [2; 1; 0]) [2; 1; 0] ⇒ SORTED (λx y. F) [2; 1; 0] ⇔ T
+sr_weaken_2_3=⊢ SORTED (λx y. x ≥ y) [2; 1; 0] ∧ ALL_DISTINCT [2; 1; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x ≥ y) x y ⇒ (λx y. x > y) x y) [2; 1; 0]) [2; 1; 0] ⇒ SORTED (λx y. x > y) [2; 1; 0] ⇔ T
+sr_weaken_3_0=⊢ SORTED (λx y. x > y) [0; 1; 2] ∧ ALL_DISTINCT [0; 1; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x > y) x y ⇒ (λx y. x ≥ y) x y) [0; 1; 2]) [0; 1; 2] ⇒ SORTED (λx y. x ≥ y) [0; 1; 2] ⇔ T
+sr_weaken_3_1=⊢ SORTED (λx y. T) [0; 1; 2] ∧ ALL_DISTINCT [0; 1; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. T) x y ⇒ (λx y. x ≠ y) x y) [0; 1; 2]) [0; 1; 2] ⇒ SORTED (λx y. x ≠ y) [0; 1; 2] ⇔ T
+sr_weaken_3_2=⊢ SORTED (λx y. x = y) [0; 1; 2] ∧ ALL_DISTINCT [0; 1; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x = y) x y ⇒ (λx y. F) x y) [0; 1; 2]) [0; 1; 2] ⇒ SORTED (λx y. F) [0; 1; 2] ⇔ T
+sr_weaken_3_3=⊢ SORTED (λx y. x ≥ y) [0; 1; 2] ∧ ALL_DISTINCT [0; 1; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x ≥ y) x y ⇒ (λx y. x > y) x y) [0; 1; 2]) [0; 1; 2] ⇒ SORTED (λx y. x > y) [0; 1; 2] ⇔ T
+sr_weaken_4_0=⊢ SORTED (λx y. x > y) [1; 1] ∧ ALL_DISTINCT [1; 1] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x > y) x y ⇒ (λx y. x ≥ y) x y) [1; 1]) [1; 1] ⇒ SORTED (λx y. x ≥ y) [1; 1] ⇔ T
+sr_weaken_4_1=⊢ SORTED (λx y. T) [1; 1] ∧ ALL_DISTINCT [1; 1] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. T) x y ⇒ (λx y. x ≠ y) x y) [1; 1]) [1; 1] ⇒ SORTED (λx y. x ≠ y) [1; 1] ⇔ T
+sr_weaken_4_2=⊢ SORTED (λx y. x = y) [1; 1] ∧ ALL_DISTINCT [1; 1] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x = y) x y ⇒ (λx y. F) x y) [1; 1]) [1; 1] ⇒ SORTED (λx y. F) [1; 1] ⇔ T
+sr_weaken_4_3=⊢ SORTED (λx y. x ≥ y) [1; 1] ∧ ALL_DISTINCT [1; 1] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x ≥ y) x y ⇒ (λx y. x > y) x y) [1; 1]) [1; 1] ⇒ SORTED (λx y. x > y) [1; 1] ⇔ T
+sr_weaken_5_0=⊢ SORTED (λx y. x > y) [2; 1; 2] ∧ ALL_DISTINCT [2; 1; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x > y) x y ⇒ (λx y. x ≥ y) x y) [2; 1; 2]) [2; 1; 2] ⇒ SORTED (λx y. x ≥ y) [2; 1; 2] ⇔ T
+sr_weaken_5_1=⊢ SORTED (λx y. T) [2; 1; 2] ∧ ALL_DISTINCT [2; 1; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. T) x y ⇒ (λx y. x ≠ y) x y) [2; 1; 2]) [2; 1; 2] ⇒ SORTED (λx y. x ≠ y) [2; 1; 2] ⇔ T
+sr_weaken_5_2=⊢ SORTED (λx y. x = y) [2; 1; 2] ∧ ALL_DISTINCT [2; 1; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x = y) x y ⇒ (λx y. F) x y) [2; 1; 2]) [2; 1; 2] ⇒ SORTED (λx y. F) [2; 1; 2] ⇔ T
+sr_weaken_5_3=⊢ SORTED (λx y. x ≥ y) [2; 1; 2] ∧ ALL_DISTINCT [2; 1; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x ≥ y) x y ⇒ (λx y. x > y) x y) [2; 1; 2]) [2; 1; 2] ⇒ SORTED (λx y. x > y) [2; 1; 2] ⇔ T
+sr_weaken_6_0=⊢ SORTED (λx y. x > y) [1208925819614629174706178; 1208925819614629174706176; 0] ∧ ALL_DISTINCT [1208925819614629174706178; 1208925819614629174706176; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x > y) x y ⇒ (λx y. x ≥ y) x y) [1208925819614629174706178; 1208925819614629174706176; 0]) [1208925819614629174706178; 1208925819614629174706176; 0] ⇒ SORTED (λx y. x ≥ y) [1208925819614629174706178; 1208925819614629174706176; 0] ⇔ T
+sr_weaken_6_1=⊢ SORTED (λx y. T) [1208925819614629174706178; 1208925819614629174706176; 0] ∧ ALL_DISTINCT [1208925819614629174706178; 1208925819614629174706176; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. T) x y ⇒ (λx y. x ≠ y) x y) [1208925819614629174706178; 1208925819614629174706176; 0]) [1208925819614629174706178; 1208925819614629174706176; 0] ⇒ SORTED (λx y. x ≠ y) [1208925819614629174706178; 1208925819614629174706176; 0] ⇔ T
+sr_weaken_6_2=⊢ SORTED (λx y. x = y) [1208925819614629174706178; 1208925819614629174706176; 0] ∧ ALL_DISTINCT [1208925819614629174706178; 1208925819614629174706176; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x = y) x y ⇒ (λx y. F) x y) [1208925819614629174706178; 1208925819614629174706176; 0]) [1208925819614629174706178; 1208925819614629174706176; 0] ⇒ SORTED (λx y. F) [1208925819614629174706178; 1208925819614629174706176; 0] ⇔ T
+sr_weaken_6_3=⊢ SORTED (λx y. x ≥ y) [1208925819614629174706178; 1208925819614629174706176; 0] ∧ ALL_DISTINCT [1208925819614629174706178; 1208925819614629174706176; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x ≥ y) x y ⇒ (λx y. x > y) x y) [1208925819614629174706178; 1208925819614629174706176; 0]) [1208925819614629174706178; 1208925819614629174706176; 0] ⇒ SORTED (λx y. x > y) [1208925819614629174706178; 1208925819614629174706176; 0] ⇔ T
+sr_weaken_7_0=⊢ SORTED (λx y. x > y) [0; 0; 0] ∧ ALL_DISTINCT [0; 0; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x > y) x y ⇒ (λx y. x ≥ y) x y) [0; 0; 0]) [0; 0; 0] ⇒ SORTED (λx y. x ≥ y) [0; 0; 0] ⇔ T
+sr_weaken_7_1=⊢ SORTED (λx y. T) [0; 0; 0] ∧ ALL_DISTINCT [0; 0; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. T) x y ⇒ (λx y. x ≠ y) x y) [0; 0; 0]) [0; 0; 0] ⇒ SORTED (λx y. x ≠ y) [0; 0; 0] ⇔ T
+sr_weaken_7_2=⊢ SORTED (λx y. x = y) [0; 0; 0] ∧ ALL_DISTINCT [0; 0; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x = y) x y ⇒ (λx y. F) x y) [0; 0; 0]) [0; 0; 0] ⇒ SORTED (λx y. F) [0; 0; 0] ⇔ T
+sr_weaken_7_3=⊢ SORTED (λx y. x ≥ y) [0; 0; 0] ∧ ALL_DISTINCT [0; 0; 0] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x ≥ y) x y ⇒ (λx y. x > y) x y) [0; 0; 0]) [0; 0; 0] ⇒ SORTED (λx y. x > y) [0; 0; 0] ⇔ T
+sr_weaken_8_0=⊢ SORTED (λx y. x > y) [7; 2] ∧ ALL_DISTINCT [7; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x > y) x y ⇒ (λx y. x ≥ y) x y) [7; 2]) [7; 2] ⇒ SORTED (λx y. x ≥ y) [7; 2] ⇔ T
+sr_weaken_8_1=⊢ SORTED (λx y. T) [7; 2] ∧ ALL_DISTINCT [7; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. T) x y ⇒ (λx y. x ≠ y) x y) [7; 2]) [7; 2] ⇒ SORTED (λx y. x ≠ y) [7; 2] ⇔ T
+sr_weaken_8_2=⊢ SORTED (λx y. x = y) [7; 2] ∧ ALL_DISTINCT [7; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x = y) x y ⇒ (λx y. F) x y) [7; 2]) [7; 2] ⇒ SORTED (λx y. F) [7; 2] ⇔ T
+sr_weaken_8_3=⊢ SORTED (λx y. x ≥ y) [7; 2] ∧ ALL_DISTINCT [7; 2] ∧ EVERY (λx. EVERY (λy. x ≠ y ∧ (λx y. x ≥ y) x y ⇒ (λx y. x > y) x y) [7; 2]) [7; 2] ⇒ SORTED (λx y. x > y) [7; 2] ⇔ T
+sr_even_0_0=⊢ EVEN 0 ∧ EVEN 0 ∧ 0 > 0 ⇒ 0 DIV 2 > 0 DIV 2 ⇔ T
+sr_even_0_1=⊢ EVEN 0 ∧ EVEN 1 ∧ 0 > 1 ⇒ 0 DIV 2 > 1 DIV 2 ⇔ T
+sr_even_0_2=⊢ EVEN 0 ∧ EVEN 2 ∧ 0 > 2 ⇒ 0 DIV 2 > 2 DIV 2 ⇔ T
+sr_even_0_3=⊢ EVEN 0 ∧ EVEN 6 ∧ 0 > 6 ⇒ 0 DIV 2 > 6 DIV 2 ⇔ T
+sr_even_0_4=⊢ EVEN 0 ∧ EVEN 1208925819614629174706176 ∧ 0 > 1208925819614629174706176 ⇒ 0 DIV 2 > 1208925819614629174706176 DIV 2 ⇔ T
+sr_even_0_5=⊢ EVEN 0 ∧ EVEN 1208925819614629174706178 ∧ 0 > 1208925819614629174706178 ⇒ 0 DIV 2 > 1208925819614629174706178 DIV 2 ⇔ T
+sr_even_1_0=⊢ EVEN 1 ∧ EVEN 0 ∧ 1 > 0 ⇒ 1 DIV 2 > 0 DIV 2 ⇔ T
+sr_even_1_1=⊢ EVEN 1 ∧ EVEN 1 ∧ 1 > 1 ⇒ 1 DIV 2 > 1 DIV 2 ⇔ T
+sr_even_1_2=⊢ EVEN 1 ∧ EVEN 2 ∧ 1 > 2 ⇒ 1 DIV 2 > 2 DIV 2 ⇔ T
+sr_even_1_3=⊢ EVEN 1 ∧ EVEN 6 ∧ 1 > 6 ⇒ 1 DIV 2 > 6 DIV 2 ⇔ T
+sr_even_1_4=⊢ EVEN 1 ∧ EVEN 1208925819614629174706176 ∧ 1 > 1208925819614629174706176 ⇒ 1 DIV 2 > 1208925819614629174706176 DIV 2 ⇔ T
+sr_even_1_5=⊢ EVEN 1 ∧ EVEN 1208925819614629174706178 ∧ 1 > 1208925819614629174706178 ⇒ 1 DIV 2 > 1208925819614629174706178 DIV 2 ⇔ T
+sr_even_2_0=⊢ EVEN 2 ∧ EVEN 0 ∧ 2 > 0 ⇒ 2 DIV 2 > 0 DIV 2 ⇔ T
+sr_even_2_1=⊢ EVEN 2 ∧ EVEN 1 ∧ 2 > 1 ⇒ 2 DIV 2 > 1 DIV 2 ⇔ T
+sr_even_2_2=⊢ EVEN 2 ∧ EVEN 2 ∧ 2 > 2 ⇒ 2 DIV 2 > 2 DIV 2 ⇔ T
+sr_even_2_3=⊢ EVEN 2 ∧ EVEN 6 ∧ 2 > 6 ⇒ 2 DIV 2 > 6 DIV 2 ⇔ T
+sr_even_2_4=⊢ EVEN 2 ∧ EVEN 1208925819614629174706176 ∧ 2 > 1208925819614629174706176 ⇒ 2 DIV 2 > 1208925819614629174706176 DIV 2 ⇔ T
+sr_even_2_5=⊢ EVEN 2 ∧ EVEN 1208925819614629174706178 ∧ 2 > 1208925819614629174706178 ⇒ 2 DIV 2 > 1208925819614629174706178 DIV 2 ⇔ T
+sr_even_3_0=⊢ EVEN 6 ∧ EVEN 0 ∧ 6 > 0 ⇒ 6 DIV 2 > 0 DIV 2 ⇔ T
+sr_even_3_1=⊢ EVEN 6 ∧ EVEN 1 ∧ 6 > 1 ⇒ 6 DIV 2 > 1 DIV 2 ⇔ T
+sr_even_3_2=⊢ EVEN 6 ∧ EVEN 2 ∧ 6 > 2 ⇒ 6 DIV 2 > 2 DIV 2 ⇔ T
+sr_even_3_3=⊢ EVEN 6 ∧ EVEN 6 ∧ 6 > 6 ⇒ 6 DIV 2 > 6 DIV 2 ⇔ T
+sr_even_3_4=⊢ EVEN 6 ∧ EVEN 1208925819614629174706176 ∧ 6 > 1208925819614629174706176 ⇒ 6 DIV 2 > 1208925819614629174706176 DIV 2 ⇔ T
+sr_even_3_5=⊢ EVEN 6 ∧ EVEN 1208925819614629174706178 ∧ 6 > 1208925819614629174706178 ⇒ 6 DIV 2 > 1208925819614629174706178 DIV 2 ⇔ T
+sr_even_4_0=⊢ EVEN 1208925819614629174706176 ∧ EVEN 0 ∧ 1208925819614629174706176 > 0 ⇒ 1208925819614629174706176 DIV 2 > 0 DIV 2 ⇔ T
+sr_even_4_1=⊢ EVEN 1208925819614629174706176 ∧ EVEN 1 ∧ 1208925819614629174706176 > 1 ⇒ 1208925819614629174706176 DIV 2 > 1 DIV 2 ⇔ T
+sr_even_4_2=⊢ EVEN 1208925819614629174706176 ∧ EVEN 2 ∧ 1208925819614629174706176 > 2 ⇒ 1208925819614629174706176 DIV 2 > 2 DIV 2 ⇔ T
+sr_even_4_3=⊢ EVEN 1208925819614629174706176 ∧ EVEN 6 ∧ 1208925819614629174706176 > 6 ⇒ 1208925819614629174706176 DIV 2 > 6 DIV 2 ⇔ T
+sr_even_4_4=⊢ EVEN 1208925819614629174706176 ∧ EVEN 1208925819614629174706176 ∧ 1208925819614629174706176 > 1208925819614629174706176 ⇒ 1208925819614629174706176 DIV 2 > 1208925819614629174706176 DIV 2 ⇔ T
+sr_even_4_5=⊢ EVEN 1208925819614629174706176 ∧ EVEN 1208925819614629174706178 ∧ 1208925819614629174706176 > 1208925819614629174706178 ⇒ 1208925819614629174706176 DIV 2 > 1208925819614629174706178 DIV 2 ⇔ T
+sr_even_5_0=⊢ EVEN 1208925819614629174706178 ∧ EVEN 0 ∧ 1208925819614629174706178 > 0 ⇒ 1208925819614629174706178 DIV 2 > 0 DIV 2 ⇔ T
+sr_even_5_1=⊢ EVEN 1208925819614629174706178 ∧ EVEN 1 ∧ 1208925819614629174706178 > 1 ⇒ 1208925819614629174706178 DIV 2 > 1 DIV 2 ⇔ T
+sr_even_5_2=⊢ EVEN 1208925819614629174706178 ∧ EVEN 2 ∧ 1208925819614629174706178 > 2 ⇒ 1208925819614629174706178 DIV 2 > 2 DIV 2 ⇔ T
+sr_even_5_3=⊢ EVEN 1208925819614629174706178 ∧ EVEN 6 ∧ 1208925819614629174706178 > 6 ⇒ 1208925819614629174706178 DIV 2 > 6 DIV 2 ⇔ T
+sr_even_5_4=⊢ EVEN 1208925819614629174706178 ∧ EVEN 1208925819614629174706176 ∧ 1208925819614629174706178 > 1208925819614629174706176 ⇒ 1208925819614629174706178 DIV 2 > 1208925819614629174706176 DIV 2 ⇔ T
+sr_even_5_5=⊢ EVEN 1208925819614629174706178 ∧ EVEN 1208925819614629174706178 ∧ 1208925819614629174706178 > 1208925819614629174706178 ⇒ 1208925819614629174706178 DIV 2 > 1208925819614629174706178 DIV 2 ⇔ T
+sr_transit_0_0_0=⊢ 0 > 0 ∧ 0 > 0 ⇒ 0 > 0 ⇔ T
+sr_transit_0_0_1=⊢ 0 > 0 ∧ 0 > 1 ⇒ 0 > 1 ⇔ T
+sr_transit_0_0_2=⊢ 0 > 0 ∧ 0 > 1208925819614629174706176 ⇒ 0 > 1208925819614629174706176 ⇔ T
+sr_transit_0_1_0=⊢ 0 > 2 ∧ 2 > 0 ⇒ 0 > 0 ⇔ T
+sr_transit_0_1_1=⊢ 0 > 2 ∧ 2 > 1 ⇒ 0 > 1 ⇔ T
+sr_transit_0_1_2=⊢ 0 > 2 ∧ 2 > 1208925819614629174706176 ⇒ 0 > 1208925819614629174706176 ⇔ T
+sr_transit_0_2_0=⊢ 0 > 1208925819614629174706176 ∧ 1208925819614629174706176 > 0 ⇒ 0 > 0 ⇔ T
+sr_transit_0_2_1=⊢ 0 > 1208925819614629174706176 ∧ 1208925819614629174706176 > 1 ⇒ 0 > 1 ⇔ T
+sr_transit_0_2_2=⊢ 0 > 1208925819614629174706176 ∧ 1208925819614629174706176 > 1208925819614629174706176 ⇒ 0 > 1208925819614629174706176 ⇔ T
+sr_transit_1_0_0=⊢ 6 > 0 ∧ 0 > 0 ⇒ 6 > 0 ⇔ T
+sr_transit_1_0_1=⊢ 6 > 0 ∧ 0 > 1 ⇒ 6 > 1 ⇔ T
+sr_transit_1_0_2=⊢ 6 > 0 ∧ 0 > 1208925819614629174706176 ⇒ 6 > 1208925819614629174706176 ⇔ T
+sr_transit_1_1_0=⊢ 6 > 2 ∧ 2 > 0 ⇒ 6 > 0 ⇔ T
+sr_transit_1_1_1=⊢ 6 > 2 ∧ 2 > 1 ⇒ 6 > 1 ⇔ T
+sr_transit_1_1_2=⊢ 6 > 2 ∧ 2 > 1208925819614629174706176 ⇒ 6 > 1208925819614629174706176 ⇔ T
+sr_transit_1_2_0=⊢ 6 > 1208925819614629174706176 ∧ 1208925819614629174706176 > 0 ⇒ 6 > 0 ⇔ T
+sr_transit_1_2_1=⊢ 6 > 1208925819614629174706176 ∧ 1208925819614629174706176 > 1 ⇒ 6 > 1 ⇔ T
+sr_transit_1_2_2=⊢ 6 > 1208925819614629174706176 ∧ 1208925819614629174706176 > 1208925819614629174706176 ⇒ 6 > 1208925819614629174706176 ⇔ T
+sr_transit_2_0_0=⊢ 1208925819614629174706176 > 0 ∧ 0 > 0 ⇒ 1208925819614629174706176 > 0 ⇔ T
+sr_transit_2_0_1=⊢ 1208925819614629174706176 > 0 ∧ 0 > 1 ⇒ 1208925819614629174706176 > 1 ⇔ T
+sr_transit_2_0_2=⊢ 1208925819614629174706176 > 0 ∧ 0 > 1208925819614629174706176 ⇒ 1208925819614629174706176 > 1208925819614629174706176 ⇔ T
+sr_transit_2_1_0=⊢ 1208925819614629174706176 > 2 ∧ 2 > 0 ⇒ 1208925819614629174706176 > 0 ⇔ T
+sr_transit_2_1_1=⊢ 1208925819614629174706176 > 2 ∧ 2 > 1 ⇒ 1208925819614629174706176 > 1 ⇔ T
+sr_transit_2_1_2=⊢ 1208925819614629174706176 > 2 ∧ 2 > 1208925819614629174706176 ⇒ 1208925819614629174706176 > 1208925819614629174706176 ⇔ T
+sr_transit_2_2_0=⊢ 1208925819614629174706176 > 1208925819614629174706176 ∧ 1208925819614629174706176 > 0 ⇒ 1208925819614629174706176 > 0 ⇔ T
+sr_transit_2_2_1=⊢ 1208925819614629174706176 > 1208925819614629174706176 ∧ 1208925819614629174706176 > 1 ⇒ 1208925819614629174706176 > 1 ⇔ T
+sr_transit_2_2_2=⊢ 1208925819614629174706176 > 1208925819614629174706176 ∧ 1208925819614629174706176 > 1208925819614629174706176 ⇒ 1208925819614629174706176 > 1208925819614629174706176 ⇔ T
+sr_type_relation=:num -> num -> bool
