@@ -62453,5 +62453,13 @@
     "lean_name": "allocNormalLocalsDomain",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific internal factoring of original Alloc9460-9480, no standalone HOL declaration. Actual alloc NONE return derives collector/pop success and post-locals domain equal union of original paired-cut names through native gcSKeyEq and pushEnvPopEnvSKeyEq. No target-run or desired-domain premise. Full six-premise SSA Alloc case remains open on flapjack-sola-alloc."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean",
+    "lean_name": "allocRestoreLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal factoring of original Alloc9478-9606, no standalone HOL declaration. Intermediate collector domain/scoped-local relation, original map validity and source-name bounds derive restricted SSA relation and actual final listNextVarRenameMove NONE/full SSA/frame. No target-run or desired final SSA premise. Collector transport and full six-premise Alloc assembly remain open on flapjack-sola-alloc."
   }
 ]
