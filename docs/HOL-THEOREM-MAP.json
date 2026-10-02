@@ -59375,5 +59375,25 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:1038-1053 and full original compiled theorem capture: identical six original hypotheses, all c/s1/ms1/io/i binders, existential l/ms2, universal evaluation equality, original asm post-state relation and l!=0. HOL directly projects asm_step_IMP_evaluate_step_find_next; Lean projects the full native asmStepImpEvaluate without any additional premise. Positive BitVec width/NeZero and sigma Type translation retained, same reviewed native evaluator/encoder/asm predicates. Inherited total holEl/holHd retains shared opaque holHdNil/holArb without bounds or fallback. Transitively inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through encoder/FP semantics; no executable behavior change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "encoder_correct_asm_step_target_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/EncoderStepState.lean",
+    "lean_name": "encoderCorrectAsmStepStateRel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:1207-1257 and full original compiled theorem capture. All three original encoder_correct/state relation/asm_step hypotheses, existential FUNPOW final relation, every strict-prefix encoded byte/PC/state_ok fact, and inclusive-prefix out-of-domain byte equality are preserved. Exact native encoder predicate specialized to identity interference; genuine witness n+1 constructed by assertion induction, initial byte/PC/state invariants from original source conditions, cumulative memory frame by stepwise assertions2. No assumed final target evaluation or extra premise. BitVec width/NeZero and native HolAsmTarget/AsmState retain positive word dimensions and Type carriers; lists and predicate sets unchanged. Inherited total holEl/holHd retains shared opaque holHdNil/holArb without bounds/fallback. Transitively inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through exact encoder/assembly FP semantics. No executable behavior change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "encoder_correct_RTC_asm_step_target_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/EncoderStepState.lean",
+    "lean_name": "encoderCorrectRtcAsmStepStateRel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:1259-1277 and full original compiled theorem capture. All original encoder_correct, initial state relation and RTC of existential literal asm_step hypotheses preserved; existential FUNPOW final target relation constructed by RTC induction and addition of exact single-step witnesses. Relation.ReflTransGen is the same least reflexive-transitive closure; Function.iterate is HOL FUNPOW. No final execution/post-state premise. BitVec width/NeZero and native HolAsmTarget/AsmState retain positive word dimensions and Type carriers; lists and predicate sets unchanged. Inherited total holEl/holHd retains shared opaque holHdNil/holArb without bounds/fallback. Transitively inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through exact encoder/assembly FP semantics. No executable behavior change."
   }
 ]

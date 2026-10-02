@@ -5251,3 +5251,12 @@ Regenerate with `HOL_PROBE_ONLY=target_asm_step_evaluate_probeScript.sml bash sc
 The same assembly-step probe also captures the full original evaluator-only
 `asm_step_IMP_evaluate_step` conclusion (1038), projected by
 `asmStepImpEvaluateOnly`; its nonzero step count and all source premises remain.
+
+### Native encoder target-state simulation
+
+`target_encoder_step_state_probeScript.sml` captures the complete original
+`encoder_correct_asm_step_target_state_rel` and its RTC consequence from
+`targetPropsScript.sml:1207-1277`, including strict-prefix encoded-byte/PC/state
+invariants and inclusive-prefix out-of-domain byte preservation. Lean proofs
+live in `TargetProps/EncoderStepState.lean`. These original full statements
+provide regression evidence, not cross-language equivalence.
