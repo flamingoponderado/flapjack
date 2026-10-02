@@ -1,3 +1,4 @@
+import Flapjack.Test.WordCseProductionArithmeticKeys
 import Flapjack.Test.NativeWordMemoryAddress
 import Flapjack.Test.NativeStackRuntimeBoundary
 import Flapjack.Test.StackRemoveProgComp

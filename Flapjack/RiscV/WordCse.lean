@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.WordCse.ListOrder
 import Flapjack.Word
 import Flapjack.Compiler.Backend.WordCse.InstructionKeys
+import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
 import Std.Data.TreeMap
 
 /-!
@@ -21,7 +22,8 @@ The port keeps Cake's structure; its only deviations are about the carrier:
 
 * generic diagnostic values use `WordCseHash`; executed positive-width
   machine words delegate reviewed native `wordToNum` and `regImmToNumList`
-  through a constructor-for-constructor immediate codec;
+  through a constructor-for-constructor immediate codec; shared arithmetic
+  keys also execute native `arithToNumList` through the positional codec;
 * the two `num_map`s, the `store_name` alist and the two balanced maps are
   represented by association lists (`lookupNatInfo` is Cake's `lookup_any`,
   a first-match lookup, and `wordCseInsert` is a replacement insert);
@@ -42,6 +44,7 @@ open Flapjack
 /-- Cake's `wordToNum`: the numeral carried by a machine word. -/
 class WordCseHash (α : Type u) where
   hash : α → Nat
+  nativeArithKey : WordArith α → Option (List Nat) := fun _ => none
   regImmKey : WordRegImm α → List Nat := fun
     | .reg register => [33, register + 100]
     | .imm value => [34, hash value]
@@ -60,6 +63,9 @@ def wordCseNativeRegImm {width : Nat} [NeZero width] :
 zero-width/generic diagnostic instance remains outside the HOL word claim. -/
 instance {width : Nat} [NeZero width] : WordCseHash (BitVec width) where
   hash := Flapjack.Compiler.Backend.WordCse.wordToNum
+  nativeArithKey operation :=
+    (Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted? operation).map
+      Compiler.Backend.WordCse.arithToNumList
   regImmKey immediate := Flapjack.Compiler.Backend.WordCse.regImmToNumList
     (wordCseNativeRegImm immediate)
 
@@ -244,7 +250,7 @@ def wordCseBinOpToNum (operator : BinOp) : Nat :=
 def wordCseRegImmToNumList [WordCseHash α] (immediate : WordRegImm α) : List Nat :=
   WordCseHash.regImmKey immediate
 
-def wordCseArithToNumList [WordCseHash α] : WordArith α → List Nat
+private def wordCseArithDiagnosticKey [WordCseHash α] : WordArith α → List Nat
   | .binOp operator _ sourceLeft sourceRight =>
       [25, wordCseBinOpToNum operator, sourceLeft + 100] ++
         wordCseRegImmToNumList sourceRight
@@ -259,6 +265,24 @@ def wordCseArithToNumList [WordCseHash α] : WordArith α → List Nat
   /- Never stored, so the hash only has to be distinct from the stored
      heads; `can_mem_arith` rejects the five-register primitive. -/
   | .addCarry _ _ _ _ _ => [31]
+
+/-- Positive-width executed words use the reviewed native arithmetic encoder
+through its existing positional codec. Generic diagnostics and the distinct
+five-register AddCarry extension retain their explicit diagnostic key. This
+routing infrastructure is not a full arithmetic-carrier or CSE correctness port. -/
+def wordCseArithToNumList [WordCseHash α] (operation : WordArith α) : List Nat :=
+  match WordCseHash.nativeArithKey operation with
+  | some key => key
+  | none => wordCseArithDiagnosticKey operation
+
+/-- Successful canonical arithmetic conversion makes the actual executed key
+exactly the native key. Flapjack codec correspondence, with no HOL original;
+this assumes only carrier conversion, not a target run or simulation. -/
+theorem wordCseArithToNumList_native {width : Nat} [NeZero width]
+    (operation : WordArith (BitVec width)) (native : Compiler.Encoders.Asm.HolArith width)
+    (converted : Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted? operation = some native) :
+    wordCseArithToNumList operation = Compiler.Backend.WordCse.arithToNumList native := by
+  simp [wordCseArithToNumList, WordCseHash.nativeArithKey, converted]
 
 /-- Executed CSE delegates the reviewed native scalar encoder; the carrier is identical. -/
 def wordCseMemOpToNum (operator : WordMemOp) : Nat :=
