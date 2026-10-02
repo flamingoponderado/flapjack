@@ -54367,5 +54367,332 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (xs7j): complete original StackProps170-231 store_const_sem_with_const literal proof replayed and full quantified types captured. Exact native gc/alloc/storeConstSem and actual imported StackSemStateFiniteExact preserve all source error/success/GC/Halt/copy branches. alloc_const keeps all15 original field equality conjuncts; store_const_sem_const all16 including store, each with sole original returned-pair equality. Clock results are full unconditional Option.map/Prod.map equalities, not a projected or success-only result. Arbitrary state configuration/FFI/domain/GC/compiler functions retained. Store-constant results retain independent resultWidth from state width, confirmed by fresh original definition and theorem types and repaired w1pn; both NeZero instances retained. Canonical regs/fpRegs/store fields have same-module roundtrip witness; qualifiers cover only finite-support and positive word translation. Six allocation and five constant-store original/native full-frame/clock applications and outcomes plus four GC clock cases; no target evaluation, callback law, bounds or domain assumptions added. These are actual evaluate_consts/evaluate_add_clock support results, not a full evaluator/compiler/composition theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "map_bitmap_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Bitmap.lean",
+    "lean_name": "map_bitmap_APPEND",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:100-117 map_bitmap_APPEND: !x q stack p0 p1. filter_bitmap x stack = SOME (p0,p1) /\\ LENGTH q = LENGTH p0 ==> map_bitmap x (q ++ q') stack = case map_bitmap x q stack of NONE => NONE | SOME (hd,ts,ws) => SOME (hd,ts++q',ws), q' free. HOL list as List; filter_bitmap/map_bitmap are the reviewed stackSem renderings."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "filter_bitmap_map_bitmap",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Bitmap.lean",
+    "lean_name": "filter_bitmap_map_bitmap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:119-148 filter_bitmap_map_bitmap: !x t q xs xs1 z ys ys1. filter_bitmap x t = SOME (xs,xs1) /\\ LENGTH q = LENGTH xs /\\ map_bitmap x q t = SOME (ys,z,ys1) ==> z = [] /\\ ys1 = xs1. HOL list as List; filter_bitmap/map_bitmap are the reviewed stackSem renderings."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "filter_bitmap_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Bitmap.lean",
+    "lean_name": "filter_bitmap_APPEND",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:209-224 filter_bitmap_APPEND: !xs stack ys. filter_bitmap (xs ++ ys) stack as the nested case of the two filters. HOL list as List; filter_bitmap/map_bitmap are the reviewed stackSem renderings."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "map_bitmap_IMP_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Bitmap.lean",
+    "lean_name": "map_bitmap_IMP_LENGTH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:327-335 map_bitmap_IMP_LENGTH: !x wl stack xs ys. map_bitmap x wl stack = SOME (xs,ys) ==> LENGTH xs = LENGTH x (ys the remaining pair). HOL list as List; filter_bitmap/map_bitmap are the reviewed stackSem renderings."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "filter_bitmap_IMP_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Bitmap.lean",
+    "lean_name": "filter_bitmap_IMP_LENGTH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:337-345 filter_bitmap_IMP_LENGTH: !x stack q r. filter_bitmap x stack = SOME (q,r) ==> LENGTH stack = LENGTH x + LENGTH r. HOL list as List; filter_bitmap/map_bitmap are the reviewed stackSem renderings."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "filter_bitmap_map_bitmap_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Bitmap.lean",
+    "lean_name": "filter_bitmap_map_bitmap_IMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:4984-4996 filter_bitmap_map_bitmap_IMP: !x ws q r x' q' q'' r''. filter_bitmap x ws = SOME (q,r) /\\ map_bitmap x (q ++ x') ws = SOME (q',q'',r'') ==> q'' = x' /\\ r = r'' /\\ ws = q' ++ r. HOL list as List; filter_bitmap/map_bitmap are the reviewed stackSem renderings."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "enc_dec_stack",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Bitmap.lean",
+    "lean_name": "enc_dec_stack",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:4998-5016 enc_dec_stack: !bs ys2 x1 x2. enc_stack bs ys2 = SOME x1 /\\ dec_stack bs x1 ys2 = SOME x2 ==> ys2 = x2 over the reviewed stackSem encStack/decStack (independent bitmap and stack widths as HOL infers). HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_roots_bitmaps_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGcMoveRootsBitmaps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:526-536 word_gc_move_roots_bitmaps_def: enc_stack, word_gc_move_roots from (i1,pa1,curr,m,dm), dec_stack, with HOL's (ARB,ARB,ARB,ARB,F) failure tuples as holArb components. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change. Original HOL rows in scripts/hol-probes/stack_alloc_gc_bitmaps_probe.out replayed in Flapjack/Test/StackAllocGcBitmapsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_bitmaps_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGcMoveBitmaps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:613-627 word_gc_move_bitmaps_def: full_read_bitmap, filter_bitmap, word_gc_move_roots, map_bitmap, SOME (hd,ws,i2,pa2,m2,c2); descriptor, stack and bitmap widths independent as HOL infers. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change. Original HOL rows in scripts/hol-probes/stack_alloc_gc_bitmaps_probe.out replayed in Flapjack/Test/StackAllocGcBitmapsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_bitmap_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGcMoveBitmap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:706-716 word_gc_move_bitmap_def: bs = get_bits w, filter_bitmap, word_gc_move_roots, map_bitmap, SOME (hd,ws,...); descriptor word width independent. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change. Original HOL rows in scripts/hol-probes/stack_alloc_gc_bitmaps_probe.out replayed in Flapjack/Test/StackAllocGcBitmapsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_roots_bitmaps_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcMoveRootsBitmaps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:1842-1852 word_gen_gc_move_roots_bitmaps_def: as word_gc_move_roots_bitmaps with ib/pb threaded and seven-component ARB failure tuples. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_roots_bitmaps_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcPartialMoveRootsBitmaps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:1854-1864 word_gen_gc_partial_move_roots_bitmaps_def: as word_gc_move_roots_bitmaps with gs/rs threaded. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_bitmaps_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcMoveBitmaps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:1999-2013 word_gen_gc_move_bitmaps_def: as word_gc_move_bitmaps with ib/pb threaded. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_bitmaps_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcPartialMoveBitmaps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2015-2029 word_gen_gc_partial_move_bitmaps_def: as word_gc_move_bitmaps with gs/rs threaded. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_bitmap_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcMoveBitmap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2199-2210 word_gen_gc_move_bitmap_def: as word_gc_move_bitmap with ib/pb threaded. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_bitmap_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcPartialMoveBitmap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2212-2223 word_gen_gc_partial_move_bitmap_def: as word_gc_move_bitmap with gs/rs threaded. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_loop_F",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGcMoveLoop_F",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:538-546 word_gc_move_loop_F: !k conf pb i pa old m dm i1 pa1 m1 c1. word_gc_move_loop k conf (pb,i,pa,old,m,dm,F) = (i1,pa1,m1,c1) ==> ~c1. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_loop_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGcMoveLoop_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:548-552 word_gc_move_loop_ok: word_gc_move_loop k conf (pb,i,pa,old,m,dm,c) = (i1,pa1,m1,c1) ==> c1 ==> c, free variables implicit. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_ref_list_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcPartialMoveRefList_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:1866-1882 word_gen_gc_partial_move_ref_list_ok: !k rs re pb pa old m i gs dm conf c i1 pa1 m1. word_gen_gc_partial_move_ref_list k conf (pb,i,pa,old,m,dm,c,gs,rs,re) = (i1,pa1,m1,T) ==> c. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_roots_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGcMoveRoots_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:629-644 word_gc_move_roots_APPEND: !xs ys i1 pa1 m with conf curr dm free; result paired lets and c1 /\\ c2. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_roots_IMP_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGcMoveRoots_IMP_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:646-654 word_gc_move_roots_IMP_LENGTH: !xs r0 r1 curr r2 dm ys i2 pa2 m2 c conf. ... ==> LENGTH ys = LENGTH xs. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_roots_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcMoveRoots_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2031-2047 word_gen_gc_move_roots_APPEND: !xs ys i1 pa1 ib1 pb1 m with conf curr dm free. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_roots_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcPartialMoveRoots_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2049-2065 word_gen_gc_partial_move_roots_APPEND: !xs ys i1 pa1 ib1 pb1 m (HOL's unused ib1 pb1 retained as binders) with conf curr dm gs rs free. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_roots_IMP_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcMoveRoots_IMP_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2067-2077 word_gen_gc_move_roots_IMP_LENGTH: !xs r0 r1 r3 r4 curr r2 dm ys i2 pa2 m2 c conf ib2 pb2 in HOL order. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_roots_IMP_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcPartialMoveRoots_IMP_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2079-2089 word_gen_gc_partial_move_roots_IMP_LENGTH: !xs r0 r1 r3 r4 curr r2 dm ys i2 pa2 m2 c conf with the call (xs,r0,r1,curr,r2,dm,r3,r4). HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_bitmaps_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGcMoveBitmaps_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:1311-1321 word_gc_move_bitmaps_LENGTH: ... = SOME (xs,stack1,i1,pa1,m1,T) ==> LENGTH stack = LENGTH xs + LENGTH stack1. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_bitmaps_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcMoveBitmaps_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:3134-3144 word_gen_gc_move_bitmaps_LENGTH: ... = SOME (xs,stack1,i1,pa1,ib1,pb1,m1,T) ==> LENGTH stack = LENGTH xs + LENGTH stack1. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_bitmaps_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcBitmaps.lean",
+    "lean_name": "wordGenGcPartialMoveBitmaps_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:3146-3156 word_gen_gc_partial_move_bitmaps_LENGTH: ... = SOME (xs,stack1,i1,pa1,m1,T) ==> LENGTH stack = LENGTH xs + LENGTH stack1. HOL 'a word as positive-width BitVec with [NeZero]; HOL's independently inferred word dimensions (frame descriptor, stack words, bitmap words) are kept as independent Lean widths; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_bitmap_unroll",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Unroll.lean",
+    "lean_name": "wordGcMoveBitmap_unroll",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:823-873 word_gc_move_bitmap_unroll ([local] in HOL): unconditional equation: w = 0w and w = 1w give SOME ([],stack,i1,pa1,m,T); empty stack NONE; low bit clear keeps x and recurses on w >>> 1 (natural shift); low bit set moves x with word_gc_move first; c1 /\\ c. HOL 'a word as positive-width BitVec with [NeZero]; the independently inferred descriptor/stack/bitmap word dimensions are kept independent; HOL ARB as holArb; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_bitmap_unroll",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Unroll.lean",
+    "lean_name": "wordGenGcMoveBitmap_unroll",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2414-2467 word_gen_gc_move_bitmap_unroll ([local] in HOL): as word_gc_move_bitmap_unroll with ib/pb threaded through word_gen_gc_move. HOL 'a word as positive-width BitVec with [NeZero]; the independently inferred descriptor/stack/bitmap word dimensions are kept independent; HOL ARB as holArb; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_bitmap_unroll",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Unroll.lean",
+    "lean_name": "wordGenGcPartialMoveBitmap_unroll",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2469-2524 word_gen_gc_partial_move_bitmap_unroll ([local] in HOL): as word_gc_move_bitmap_unroll with gs/rs threaded through word_gen_gc_partial_move. HOL 'a word as positive-width BitVec with [NeZero]; the independently inferred descriptor/stack/bitmap word dimensions are kept independent; HOL ARB as holArb; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_bitmaps_unroll",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Unroll.lean",
+    "lean_name": "wordGcMoveBitmaps_unroll",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:746-821 word_gc_move_bitmaps_unroll ([local] in HOL): hypotheses word_gc_move_bitmaps ... = SOME x /\\ LENGTH bitmaps < dimword (:'a) - 1 /\\ good_dimindex (:'a) over the descriptor dimension 'a (dimword as 2 ^ descWidth); conclusion the DROP (w2n (w - 1w)) case split, ~word_msb y stop, continuation at Word (w + 1w) and hd ++ hd3, c2 /\\ c3. HOL 'a word as positive-width BitVec with [NeZero]; the independently inferred descriptor/stack/bitmap word dimensions are kept independent; HOL ARB as holArb; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_bitmaps_unroll",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Unroll.lean",
+    "lean_name": "wordGenGcMoveBitmaps_unroll",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2257-2332 word_gen_gc_move_bitmaps_unroll ([local] in HOL): as word_gc_move_bitmaps_unroll with ib/pb threaded. HOL 'a word as positive-width BitVec with [NeZero]; the independently inferred descriptor/stack/bitmap word dimensions are kept independent; HOL ARB as holArb; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_bitmaps_unroll",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Unroll.lean",
+    "lean_name": "wordGenGcPartialMoveBitmaps_unroll",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2334-2412 word_gen_gc_partial_move_bitmaps_unroll ([local] in HOL): as word_gc_move_bitmaps_unroll with gs/rs threaded. HOL 'a word as positive-width BitVec with [NeZero]; the independently inferred descriptor/stack/bitmap word dimensions are kept independent; HOL ARB as holArb; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_roots_bitmaps",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Unroll.lean",
+    "lean_name": "wordGcMoveRootsBitmaps_unroll",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:656-704 word_gc_move_roots_bitmaps ([local] in HOL): !stack i1 pa1 m stack2 i2 pa2 m2 with conf bitmaps curr dm free; hypothesis the roots_bitmaps result has c = T; conclusion the [] / Word 0w (ws = []) / word_gc_move_bitmaps case split with ARB failure tuples and (w::new++stack, ..., c2 /\\ c3). HOL 'a word as positive-width BitVec with [NeZero]; the independently inferred descriptor/stack/bitmap word dimensions are kept independent; HOL ARB as holArb; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_roots_bitmaps",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Unroll.lean",
+    "lean_name": "wordGenGcMoveRootsBitmaps_unroll",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2091-2142 word_gen_gc_move_roots_bitmaps ([local] in HOL): as word_gc_move_roots_bitmaps with ib/pb threaded; ib1 pb1 ib2 pb2 free as in HOL. HOL 'a word as positive-width BitVec with [NeZero]; the independently inferred descriptor/stack/bitmap word dimensions are kept independent; HOL ARB as holArb; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_roots_bitmaps",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Unroll.lean",
+    "lean_name": "wordGenGcPartialMoveRootsBitmaps_unroll",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.6), stack_allocProofScript.sml:2144-2197 word_gen_gc_partial_move_roots_bitmaps ([local] in HOL): as word_gc_move_roots_bitmaps with gs/rs threaded. HOL 'a word as positive-width BitVec with [NeZero]; the independently inferred descriptor/stack/bitmap word dimensions are kept independent; HOL ARB as holArb; no hypothesis, side condition or conclusion change."
   }
 ]
