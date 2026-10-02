@@ -384,13 +384,13 @@ def wordToStackCallNoHandler (_perf : Bool) (target : Nat)
 def wordToStackCallWithHandlerInSection (perf : Bool) (target : Nat)
     (argumentCount frameOffset scratch : Nat)
     (returnCode handlerCode : StackProg α)
-    (returnLabel entryLabel handlerLabel handlerEntryLabel exceptionLabel : Nat) : StackProg α :=
+    (returnLabel entryLabel handlerLabel handlerEntryLabel _exceptionLabel : Nat) : StackProg α :=
   let returnCode := stackPopHandler perf scratch returnCode
   let callCode :=
     .call (some (returnCode, 0, returnLabel, entryLabel)) (.label target)
-      (some (handlerCode, exceptionLabel, handlerEntryLabel))
+      (some (handlerCode, handlerLabel, handlerEntryLabel))
   stackSeq [
-    stackPushHandler perf handlerEntryLabel handlerLabel scratch,
+    stackPushHandler perf handlerLabel handlerEntryLabel scratch,
     stackHandlerArgs perf (argumentCount + 1) frameOffset scratch,
     callCode
   ]
@@ -401,15 +401,15 @@ def wordToStackCallWithHandlerInSection (perf : Bool) (target : Nat)
 def wordToStackCallWithHandlerInSectionAtRegisterCount (perf : Bool) (target : Nat)
     (argumentCount registerCount frameOffset scratch : Nat)
     (returnCode handlerCode : StackProg α)
-    (returnLabel entryLabel handlerLabel handlerEntryLabel exceptionLabel : Nat) :
+    (returnLabel entryLabel handlerLabel handlerEntryLabel _exceptionLabel : Nat) :
     StackProg α :=
   let returnCode := stackPopHandler perf scratch returnCode
   let callCode :=
     .call (some (returnCode, 0, returnLabel, entryLabel)) (.label target)
-      (some (handlerCode, exceptionLabel, handlerEntryLabel))
+      (some (handlerCode, handlerLabel, handlerEntryLabel))
   let stackArgumentCount := argumentCount + 1 - registerCount
   stackSeq [
-    stackPushHandler perf handlerEntryLabel handlerLabel scratch,
+    stackPushHandler perf handlerLabel handlerEntryLabel scratch,
     stackHandlerArgs perf stackArgumentCount frameOffset scratch,
     callCode
   ]
@@ -447,13 +447,13 @@ def wordToStackCallNoHandlerTarget (_perf : Bool) (target : StackCallTarget)
 def wordToStackCallWithHandlerInSectionTarget (perf : Bool) (target : StackCallTarget)
     (argumentCount frameOffset scratch : Nat)
     (returnCode handlerCode : StackProg α)
-    (returnLabel entryLabel handlerLabel handlerEntryLabel exceptionLabel : Nat) : StackProg α :=
+    (returnLabel entryLabel handlerLabel handlerEntryLabel _exceptionLabel : Nat) : StackProg α :=
   let returnCode := stackPopHandler perf scratch returnCode
   let callCode :=
     .call (some (returnCode, 0, returnLabel, entryLabel)) target
-      (some (handlerCode, exceptionLabel, handlerEntryLabel))
+      (some (handlerCode, handlerLabel, handlerEntryLabel))
   stackSeq [
-    stackPushHandler perf handlerEntryLabel handlerLabel scratch,
+    stackPushHandler perf handlerLabel handlerEntryLabel scratch,
     stackHandlerArgs perf (argumentCount + 1) frameOffset scratch,
     callCode
   ]
@@ -465,15 +465,15 @@ def wordToStackCallWithHandlerInSectionTarget (perf : Bool) (target : StackCallT
 def wordToStackCallWithHandlerInSectionReturn (perf : Bool) (target : Nat)
     (argumentCount frameOffset scratch : Nat) (returnValues : List Nat)
     (returnCode handlerCode : StackProg α)
-    (returnLabel entryLabel handlerLabel handlerEntryLabel exceptionLabel : Nat) :
+    (returnLabel entryLabel handlerLabel handlerEntryLabel _exceptionLabel : Nat) :
     StackProg α :=
   let returnCode := stackCopyReturnSuffix perf true scratch frameOffset
     returnValues (stackPopHandler perf scratch returnCode)
   let callCode :=
     .call (some (returnCode, 0, returnLabel, entryLabel)) (.label target)
-      (some (handlerCode, exceptionLabel, handlerEntryLabel))
+      (some (handlerCode, handlerLabel, handlerEntryLabel))
   stackSeq [
-    stackPushHandler perf handlerEntryLabel handlerLabel scratch,
+    stackPushHandler perf handlerLabel handlerEntryLabel scratch,
     stackHandlerArgs perf (argumentCount + 1) frameOffset scratch,
     callCode
   ]
@@ -481,16 +481,16 @@ def wordToStackCallWithHandlerInSectionReturn (perf : Bool) (target : Nat)
 def wordToStackCallWithHandlerInSectionAtRegisterCountReturn (perf : Bool)
     (target : Nat) (argumentCount registerCount frameOffset scratch : Nat)
     (returnValues : List Nat) (returnCode handlerCode : StackProg α)
-    (returnLabel entryLabel handlerLabel handlerEntryLabel exceptionLabel : Nat) :
+    (returnLabel entryLabel handlerLabel handlerEntryLabel _exceptionLabel : Nat) :
     StackProg α :=
   let returnCode := stackCopyReturnSuffix perf true scratch frameOffset
     returnValues (stackPopHandler perf scratch returnCode)
   let callCode :=
     .call (some (returnCode, 0, returnLabel, entryLabel)) (.label target)
-      (some (handlerCode, exceptionLabel, handlerEntryLabel))
+      (some (handlerCode, handlerLabel, handlerEntryLabel))
   let stackArgumentCount := argumentCount + 1 - registerCount
   stackSeq [
-    stackPushHandler perf handlerEntryLabel handlerLabel scratch,
+    stackPushHandler perf handlerLabel handlerEntryLabel scratch,
     stackHandlerArgs perf stackArgumentCount frameOffset scratch,
     callCode
   ]
@@ -498,15 +498,15 @@ def wordToStackCallWithHandlerInSectionAtRegisterCountReturn (perf : Bool)
 def wordToStackCallWithHandlerInSectionTargetReturn (perf : Bool)
     (target : StackCallTarget) (argumentCount frameOffset scratch : Nat)
     (returnValues : List Nat) (returnCode handlerCode : StackProg α)
-    (returnLabel entryLabel handlerLabel handlerEntryLabel exceptionLabel : Nat) :
+    (returnLabel entryLabel handlerLabel handlerEntryLabel _exceptionLabel : Nat) :
     StackProg α :=
   let returnCode := stackCopyReturnSuffix perf true scratch frameOffset
     returnValues (stackPopHandler perf scratch returnCode)
   let callCode :=
     .call (some (returnCode, 0, returnLabel, entryLabel)) target
-      (some (handlerCode, exceptionLabel, handlerEntryLabel))
+      (some (handlerCode, handlerLabel, handlerEntryLabel))
   stackSeq [
-    stackPushHandler perf handlerEntryLabel handlerLabel scratch,
+    stackPushHandler perf handlerLabel handlerEntryLabel scratch,
     stackHandlerArgs perf (argumentCount + 1) frameOffset scratch,
     callCode
   ]

@@ -1,0 +1,99 @@
+sh_mem_load_with_const=(sh_mem_load (r :num) (x :α word)
+   ((y :(α, β, γ) state) with clock := (k :num)) :
+ α result option # (α, β, γ) state) =
+((I :α result option -> α result option) ##
+ (λ(s :(α, β, γ) state). s with clock := k))
+  (sh_mem_load r x y :α result option # (α, β, γ) state)
+sh_mem_load_with_const_types=(y :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(x :α word)::α word;(r :num)::num;
+sh_mem_store_with_const=(sh_mem_store (x :num) (y :α word)
+   ((z :(α, β, γ) state) with clock := (k :num)) :
+ α result option # (α, β, γ) state) =
+((I :α result option -> α result option) ##
+ (λ(s :(α, β, γ) state). s with clock := k))
+  (sh_mem_store x y z :α result option # (α, β, γ) state)
+sh_mem_store_with_const_types=(z :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(y :α word)::α word;(x :num)::num;
+sh_mem_load32_with_const=(sh_mem_load32 (r :num) (x :α word)
+   ((y :(α, β, γ) state) with clock := (k :num)) :
+ α result option # (α, β, γ) state) =
+((I :α result option -> α result option) ##
+ (λ(s :(α, β, γ) state). s with clock := k))
+  (sh_mem_load32 r x y :α result option # (α, β, γ) state)
+sh_mem_load32_with_const_types=(y :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(x :α word)::α word;(r :num)::num;
+sh_mem_store32_with_const=(sh_mem_store32 (x :num) (y :α word)
+   ((z :(α, β, γ) state) with clock := (k :num)) :
+ α result option # (α, β, γ) state) =
+((I :α result option -> α result option) ##
+ (λ(s :(α, β, γ) state). s with clock := k))
+  (sh_mem_store32 x y z :α result option # (α, β, γ) state)
+sh_mem_store32_with_const_types=(z :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(y :α word)::α word;(x :num)::num;
+sh_mem_load16_with_const=(sh_mem_load16 (r :num) (x :α word)
+   ((y :(α, β, γ) state) with clock := (k :num)) :
+ α result option # (α, β, γ) state) =
+((I :α result option -> α result option) ##
+ (λ(s :(α, β, γ) state). s with clock := k))
+  (sh_mem_load16 r x y :α result option # (α, β, γ) state)
+sh_mem_load16_with_const_types=(y :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(x :α word)::α word;(r :num)::num;
+sh_mem_store16_with_const=(sh_mem_store16 (x :num) (y :α word)
+   ((z :(α, β, γ) state) with clock := (k :num)) :
+ α result option # (α, β, γ) state) =
+((I :α result option -> α result option) ##
+ (λ(s :(α, β, γ) state). s with clock := k))
+  (sh_mem_store16 x y z :α result option # (α, β, γ) state)
+sh_mem_store16_with_const_types=(z :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(y :α word)::α word;(x :num)::num;
+sh_mem_load_byte_with_const=(sh_mem_load_byte (r :num) (x :α word)
+   ((y :(α, β, γ) state) with clock := (k :num)) :
+ α result option # (α, β, γ) state) =
+((I :α result option -> α result option) ##
+ (λ(s :(α, β, γ) state). s with clock := k))
+  (sh_mem_load_byte r x y :α result option # (α, β, γ) state)
+sh_mem_load_byte_with_const_types=(y :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(x :α word)::α word;(r :num)::num;
+sh_mem_store_byte_with_const=(sh_mem_store_byte (x :num) (y :α word)
+   ((z :(α, β, γ) state) with clock := (k :num)) :
+ α result option # (α, β, γ) state) =
+((I :α result option -> α result option) ##
+ (λ(s :(α, β, γ) state). s with clock := k))
+  (sh_mem_store_byte x y z :α result option # (α, β, γ) state)
+sh_mem_store_byte_with_const_types=(z :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(y :α word)::α word;(x :num)::num;
+sh_mem_op_with_const=sh_mem_op (op :memop) (x :num) (y :α word)
+  ((z :(α, β, γ) state) with clock := (k :num)) =
+((I :α result option -> α result option) ##
+ (λ(s :(α, β, γ) state). s with clock := k)) (sh_mem_op op x y z)
+sh_mem_op_with_const_types=(z :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(y :α word)::α word;(x :num)::num;(op :memop)::memop;
+sh_mem_op_const=sh_mem_op (op :memop) (a :num) (r :α word) (s :(α, β, γ) state) =
+((res :α result option),(t :(α, β, γ) state)) ⇒
+t.clock = s.clock ∧ (t.use_alloc ⇔ s.use_alloc) ∧
+(t.use_store ⇔ s.use_store) ∧ (t.use_stack ⇔ s.use_stack) ∧ t.code = s.code ∧
+(t.be ⇔ s.be) ∧ t.gc_fun = s.gc_fun ∧ t.mdomain = s.mdomain ∧
+t.sh_mdomain = s.sh_mdomain ∧ t.bitmaps = s.bitmaps ∧ t.compile = s.compile ∧
+t.compile_oracle = s.compile_oracle
+sh_mem_op_const_types=(t :(α, β, γ) state)::(α, β, γ) state;(res :α result option)::α result option;(s :(α, β, γ) state)::(α, β, γ) state;(r :α word)::α word;(a :num)::num;(op :memop)::memop;
+store=(0,37,1,1,0)
+load=(0,37,1,1,72340172838076681)
+store8=(0,37,1,1,0)
+load8=(0,37,1,1,72340172838076682)
+store16=(0,37,1,1,0)
+load16=(0,37,1,1,72340172838076683)
+store32=(0,37,1,1,0)
+load32=(0,37,1,1,72340172838076685)
+load_outside=(1,37,0,0,0)
+store8_outside=(1,37,0,0,0)
+load_word_unaligned=(1,37,0,0,0)
+store_word_unaligned=(1,37,0,0,0)
+load_final=(2,37,0,0,0)
+store_final=(2,37,0,0,0)
+store_loc=(1,37,0,0,0)
+store_frame=T
+load_frame=T
+store8_frame=T
+load8_frame=T
+store16_frame=T
+load16_frame=T
+store32_frame=T
+load32_frame=T
+load_outside_frame=T
+store8_outside_frame=T
+load_word_unaligned_frame=T
+store_word_unaligned_frame=T
+load_final_frame=T
+store_final_frame=T
+store_loc_frame=T

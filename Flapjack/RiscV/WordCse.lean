@@ -1,4 +1,5 @@
 import Flapjack.Word
+import Flapjack.Compiler.Backend.WordCse.InstructionKeys
 import Std.Data.TreeMap
 
 /-!
@@ -213,18 +214,13 @@ def wordCseCanonicalArith (data : WordCseKnowledge) : WordArith α → WordArith
      never recorded, so its operands are left alone. -/
   | operation => operation
 
-def wordCseShiftToNum : Shift → Nat
-  | .lsl => 40
-  | .lsr => 41
-  | .asr => 42
-  | .ror => 43
+/-- Executed CSE delegates the reviewed native scalar encoder; the carrier is identical. -/
+def wordCseShiftToNum (operator : Shift) : Nat :=
+  Flapjack.Compiler.Backend.WordCse.shiftToNum operator
 
-def wordCseBinOpToNum : BinOp → Nat
-  | .add => 35
-  | .sub => 36
-  | .and => 37
-  | .or => 38
-  | .xor => 39
+/-- Executed CSE delegates the reviewed native scalar encoder; the carrier is identical. -/
+def wordCseBinOpToNum (operator : BinOp) : Nat :=
+  Flapjack.Compiler.Backend.WordCse.arithOpToNum operator
 
 def wordCseRegImmToNumList [WordCseHash α] : WordRegImm α → List Nat
   | .reg register => [33, register + 100]
@@ -246,15 +242,9 @@ def wordCseArithToNumList [WordCseHash α] : WordArith α → List Nat
      heads; `can_mem_arith` rejects the five-register primitive. -/
   | .addCarry _ _ _ _ _ => [31]
 
-def wordCseMemOpToNum : WordMemOp → Nat
-  | .load => 21
-  | .load8 => 22
-  | .load16 => 46
-  | .load32 => 44
-  | .store => 23
-  | .store8 => 47
-  | .store16 => 24
-  | .store32 => 45
+/-- Executed CSE delegates the reviewed native scalar encoder; the carrier is identical. -/
+def wordCseMemOpToNum (operator : WordMemOp) : Nat :=
+  Flapjack.Compiler.Backend.WordCse.memOpToNum operator
 
 /-- Cake's `loadToNumList`.  `WordInst.mem` has no immediate address offset,
     so the offset component is `0` there. -/
