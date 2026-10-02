@@ -67552,5 +67552,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 original421-440 genuine Seq induction case: actual source evaluation equality plus only first/second subprogram IHs, each universally states full original result for arbitrary input state/result/output. CodeBitmaps expands definitionally to all three existential conjuncts, without extra side conditions. Actual Seq uses first evaluation then fixClock, which changes clock only; non-NONE returns that state, NONE executes second at actual clamped state. Derive count a+b, exact shifted oracle via associativity, original GENLIST prefix concatenation via List.range_add and map composition, left-accumulator FOLDL union via foldl_append and bitmap FLAT/append in same order. No count/prefix/target execution or postrelation assumption outside genuine IHs. Canonical imported native state regs/fpRegs/store and same-module real codec roundtrip re-export; code Spt and lists List unchanged, positive width and Type0 hosts retained. Full evaluator closure inherits reals_as_rational_cuts assumption; no new real rendering. Original full closed statement and Seq specialization are statement evidence only; no fullassembly or runtime parity claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Loop.lean",
+    "lean_name": "evaluateCodeBitmapsLoop",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 original421-440 genuine Loop induction case: actual source evaluation equality plus genuine body IH and sameLoop IH strictly restricted to state.clock < original source.clock. CodeBitmaps unfolds all three original existential conjuncts without changed result or successful-run premise. Actual evaluator runs body, clamps clock by min, dispatches contLoop; exit preserves oracle/code/bitmaps, timeout emptyEnv modifies only regs/stack, nonzero reentry decrements clock. Strict descent follows min bound/nonzero, never assumes evaluator outcome or target simulation. Compose exact actual prefix through checked Seq composition, count addition and original union fold/bitmap order. Imported full native state canonical regs/fpRegs/store with same-module genuine codec witness, code Spt/lists List unchanged, positive words/Type0 hosts. Full evaluator closure inherits reals_as_rational_cuts assumption; no new real model. Original closed full/Loop statements are statement evidence, not runtime parity/fullassembly."
   }
 ]
