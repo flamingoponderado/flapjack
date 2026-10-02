@@ -5894,7 +5894,7 @@ coverage of unspecified nonword headers.
 
 Recursive register-bound probes capture seven full generic original cases and210 guard EVAL/whole-theorem application pairs at widths1/2/8/64/80 and three frames including70bit offset. Kernel fixtures apply each complete recursive case, discharging only proper-subprogram hypotheses through the checked Alloc case. Seq, If and returning/handler Calls retain actual bitmap threading; direct, empty-indirect, spilled-indirect, ignored invalid tail handlers and arbitrary configuration immediate acceptance/rejection are covered. No eager irrelevant bitmap EVAL, full original proof replay, cross-language equivalence or full compiler correctness is claimed. Full register-bound assembly remains open. Selector: HOL_PROBE_ONLY=word_to_stack_reg_recursive_probeScript.sml.
 
-Full native register-bound compiler probe captures the entire original generic theorem and135 guard EVAL/full original theorem application pairs. Kernel matches cover widths1/2/8/64/80,threeframesincluding70bitoffset,nonempty live maps,deep MustTerminate/Loop/If/Seq/returned and handler Calls,spilled source registers and indirect destinations,ignored invalid tail handlers and arbitrary configurations. The public Lean theorem discharges all induction hypotheses internally and retains exactly original post_alloc_conventions,4<=frame,perf=F premises. These are original theorem applications and regression observations, not whole original proof replay or cross-language equivalence. Full pass semantics and compiler composition remain unfinished. Selector: HOL_PROBE_ONLY=word_to_stack_reg_compiler_probeScript.sml.
+Full native register-bound compiler probe captures the entire original generic theorem and135 guard EVAL/full original theorem application pairs. Kernel matches cover widths1/2/8/64/80,threeframesincluding70bitoffset,nonempty live maps,deep MustTerminate/Loop/If/Seq/returned and handler Calls,spilled source registers and indirect destinations,ignored invalid tail handlers and arbitrary configurations. The public Lean theorem discharges all induction hypotheses internally and retains exactly original post_alloc_conventions,4<=frame,perf=F premises. These135target rows are original theorem applications, not independent target-output observations; the135guard rows independently evaluate only source guards. They do not constitute whole original proof replay or cross-language output equivalence. Full pass semantics and compiler composition remain unfinished. Selector: HOL_PROBE_ONLY=word_to_stack_reg_compiler_probeScript.sml.
 `ssa_call_returning_some_probe.out` captures the full arbitrary handler-present specialization of original `ssa_cc_trans_correct`, all six premises and complete existential source-permutation/Error-exempt result, frame and result-sensitive locals. The native case adds only the two genuine smaller continuation IHs, derives exception-frame/root restoration and both native reconciliation paths, and retains the exception binder counter after compiling the return continuation. This is source-review regression evidence, not cross-language equivalence; full returning Call/SSA assembly remains open.
 
 `ssa_call_returning_probe.out` captures the original arbitrary optional-handler returning Call specialization with all six premises and full simulation conclusion. The native assembly adds only genuine smaller continuation IHs and splits the handler Option. Full all-program SSA correctness remains open; this capture is source regression evidence, not cross-language equivalence.
@@ -5922,3 +5922,32 @@ local generational `word_gc_fun_thm` (1731) and `gc_thm` (1884), retaining
 all branches and printing their typed statements and free carriers. This is
 statement evidence, not a replay of the original HOL proof or concrete execution.
 The full Lean equalities live in `StackAlloc/Proofs/GcGenerational.lean`.
+
+### Independent Word-to-Stack register-bound compiler output observations
+
+`word_to_stack_reg_output_probeScript.sml` calls HOL `EVAL` directly on
+`word_to_stack$comp`, without applying `word_to_stack_reg_bound` or another
+correctness theorem. Six captured output tuples include the entire target
+StackLang program, bitmap AppList, and next bitmap index.
+`Flapjack/Test/WordToStackRegOutputParity.lean` compares `compNative` with their
+literal constructor translations by kernel `cbv`, without a register-bound
+theorem. Config is universally arbitrary because these six inputs do not
+inspect it. HOL's printed `const_inst` is the `Inst (Const r w)` overload at
+`stackLangScript.sml:82`, not an opaque output placeholder.
+
+| Evidence set | Source guard EVALs | Bound theorem applications | Actual comp output tuples |
+| --- | ---: | ---: | ---: |
+| reg_compiler | 135 | 135 | 0 |
+| reg_recursive | 210 | 210 | 0 |
+| reg_output | 0 | 0 | 6 |
+
+The six outputs cover MustTerminate/Alloc/Seq, Loop/If with a register operand,
+Seq of loops, indirect tail Call, direct returned Call, and an indirect returned
+Call with a handler and nested allocation. Frame `(4,7,9)`, spilled register
+80/82, nonempty live maps, and initial bitmap index17 produce one bitmap at
+index18 or two at index19. These observations use width64; they are not counted
+as output observations for the other widths/frames in the theorem fixtures,
+configuration-dependent immediate cases, performance mode, or all constructors.
+This is intermediate compiler-output parity, not target execution or full
+compiler correctness. Existing oracle rows and full quantified theorem are
+unchanged. Selector: `HOL_PROBE_ONLY=word_to_stack_reg_output_probeScript.sml`.

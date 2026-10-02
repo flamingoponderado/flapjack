@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackRegOutputParity
 import Flapjack.Test.LabToTargetOffsetInvariantParity
 import Flapjack.Test.LabToTargetCodeLabelPositionPaddingParity
 import Flapjack.Test.LabToTargetPrefixPaddingLengthParity

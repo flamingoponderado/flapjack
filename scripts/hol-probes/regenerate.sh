@@ -5192,3 +5192,7 @@ run_probe lab_to_target_offset_invariant_probeScript.sml lab_to_target_offset_in
 run_probe stack_alloc_generational_statement_probeScript.sml stack_alloc_generational_statement_probe.out \
   gen_word_gc_fun_thm_typed_statement gen_word_gc_fun_thm_free_vars gen_gc_thm_typed_statement gen_gc_thm_free_vars \
   "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_reg_output_probeScript.sml word_to_stack_reg_output_probe.out \
+  rbo_must_alloc rbo_loop_if_reg rbo_seq_loops rbo_tail_indirect rbo_return_direct rbo_handler_indirect \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend/proofs"
