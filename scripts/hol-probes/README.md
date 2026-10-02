@@ -5932,6 +5932,15 @@ linked prerequisites; these regressions do not stand in for those modes.
 Regenerate using `HOL_PROBE_ONLY=binary_ieee_round_fp32_probeScript.sml` with
 the matching built original HOL and the standard probe driver.
 
+Independent stack-removal carrier probe freshly prints original stack_asm_remove type and full definition,then400 direct predicate EVALs matching kernel expectations. Original type has independent config/program word dimensions; repaired native signature retains both with independent positivity. All34constructor families,1/80,80/1,2/64,64/2,8/8 dimensions,boundary register limits and natural-subtraction underflow,duplicate70bitavoid entries,ignored conditions/instructions/metadata and active/ignored handlers are covered (255T145F). Existing22same-width original oracle rows remain unchanged. Only the predicate carrier binder restriction changed; no clause,source assumption,hold or policy change. This is regression evidence,not cross-language equivalence. Selector: HOL_PROBE_ONLY=stack_props_remove_independent_probeScript.sml.
+
+### Generational collector full statement captures
+
+`stack_alloc_generational_statement_probeScript.sml` elaborates both complete
+local generational `word_gc_fun_thm` (1731) and `gc_thm` (1884), retaining
+all branches and printing their typed statements and free carriers. This is
+statement evidence, not a replay of the original HOL proof or concrete execution.
+The full Lean equalities live in `StackAlloc/Proofs/GcGenerational.lean`.
 ## Complete binary32 directed rounding agreement
 
 The untagged BinaryIeeeDirectedFp32 infrastructure proves all three directed
@@ -5945,3 +5954,4 @@ replayed by Lean kernel proofs. Finite upward/downward conversion is rejected
 by the pinned original binary_ieeeLib; six signed tie checks are explicitly
 Lean algorithm regressions. The independent certified-converter bead remains
 open for the complete144-row original int-to-FP oracle; no modes are dropped.
+`word_to_stack_asm_remove_helpers_probe` freshly replays the five complete original local proofs at word_to_stackProofScript.sml:11129-11182, then captures 95 cross-width helper predicates (five independent width pairs, direct/empty/register/spilled destinations, zero/nonzero live bitmaps, arbitrary-continuation movement equivalences, auxiliary copies and both handler modes). Lean fixtures replay all observations. Regression evidence does not prove HOL-to-Lean equivalence.

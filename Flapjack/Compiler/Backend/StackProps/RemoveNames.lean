@@ -7,10 +7,13 @@ open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 /-- HOL's register-name prerequisite for stack removal. Fixed Store/Load check
 the first positional argument exactly as the source does, regardless of Lean's
 field labels. Call checks a handler only inside the SOME-return branch; its
-target and metadata are ignored. -/
+target and metadata are ignored. The original inferred type is
+`alpha asm_config -> beta stackLang.prog -> bool`: configuration and program
+word dimensions are independent, including when they differ. -/
 @[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "stack_asm_remove_def"
   (words_as_type_indexed_bitvec)]
-def stackAsmRemove {width : Nat} [NeZero width] (config : AsmConfigExact width) :
+def stackAsmRemove {configWidth : Nat} {width : Nat} [NeZero configWidth] [NeZero width]
+    (config : AsmConfigExact configWidth) :
     HolProg width → Prop
   | .get n _ | .set _ n | .stackStore n _ | .stackLoad n _ |
       .stackGetSize n | .stackSetSize n => regName n config

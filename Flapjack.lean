@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.LabToTarget.OffsetEstablishment
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcGenerational
 import Flapjack.Compiler.Backend.LabToTarget.OffsetInvariant
 import Flapjack.Compiler.Backend.LabToTarget.CodeLabelPositionPadding
 import Flapjack.Compiler.Backend.LabToTarget.PrefixPaddingLength
@@ -97,6 +99,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Binary
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Arithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.FloatingPoint
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
@@ -255,6 +258,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmRemoveHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackConventions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundRecursive
