@@ -51824,7 +51824,7 @@
     "lean_name": "bytesInWord_mul_eq_shift",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml good_dimindex (:'a) ==> bytes_in_word * w = w << shift (:'a) (14-20); goodDimindex hypothesis kept, bytes_in_word is wordSemBytesInWord and shift is wordShiftAmount width. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml good_dimindex (:'a) ==> bytes_in_word * w = w << shift (:'a) (15-21); goodDimindex hypothesis kept, bytes_in_word is wordSemBytesInWord and shift is wordShiftAmount width. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51833,7 +51833,7 @@
     "lean_name": "word_or_eq_0",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (w || v) = 0w <=> w = 0w /\\ v = 0w (22-27), BitVec or. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (w || v) = 0w <=> w = 0w /\\ v = 0w (23-28), BitVec or. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51841,7 +51841,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
     "lean_name": "shiftLength_hasFpOps",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml shift_length (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) = shift_length conf (31-35), record update as Lean structure update."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml shift_length (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) = shift_length conf (32-36), record update as Lean structure update."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51850,7 +51850,7 @@
     "lean_name": "ptrToAddr",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml base + ((w >>> shift_length conf) * bytes_in_word) (41-44). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml base + ((w >>> shift_length conf) * bytes_in_word) (42-45). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51859,7 +51859,7 @@
     "lean_name": "updateAddr",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (fwd_ptr << shift_length conf) || ((small_shift_length conf - 1) -- 0) old_addr (46-50); word_bits h 0 rendered by gcWordBitsLow h as w MOD 2^(h+1), the bits 0..MIN h (dimindex-1). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (fwd_ptr << shift_length conf) || ((small_shift_length conf - 1) -- 0) old_addr (47-51); word_bits h 0 rendered by gcWordBitsLow h as w MOD 2^(h+1), the bits 0..MIN h (dimindex-1). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51868,7 +51868,7 @@
     "lean_name": "memcpy",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml curried w a b m dm; w = 0w gives (b,m,T), else recursive call on (w-1w) (a+bytes_in_word) (b+bytes_in_word) ((b =+ m a) m) returning c1 /\\ a IN dm /\\ b IN dm (52-58); =+ rendered by gcUpdate, dm as a Bool membership function; termination by w2n. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml curried w a b m dm; w = 0w gives (b,m,T), else recursive call on (w-1w) (a+bytes_in_word) (b+bytes_in_word) ((b =+ m a) m) returning c1 /\\ a IN dm /\\ b IN dm (53-59); =+ rendered by gcUpdate, dm as a Bool membership function; termination by w2n. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51877,7 +51877,7 @@
     "lean_name": "decodeLength",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml w >>> (dimindex (:'a) - conf.len_size) (60-62), Nat subtraction as in HOL. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml w >>> (dimindex (:'a) - conf.len_size) (61-63), Nat subtraction as in HOL. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51886,7 +51886,7 @@
     "lean_name": "wordGcMove",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml both clauses (64-81): Loc returns l2 = 0; Word with (w && 1w) = 0w unchanged; forwarding pointer via update_addr (theWord v >>> 2); otherwise the header check, decode_length, memcpy (len+1w), header overwrite with Word (i << 2) and the same conjunction order; HOL tuple argument/result kept. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml both clauses (65-82): Loc returns l2 = 0; Word with (w && 1w) = 0w unchanged; forwarding pointer via update_addr (theWord v >>> 2); otherwise the header check, decode_length, memcpy (len+1w), header overwrite with Word (i << 2) and the same conjunction order; HOL tuple argument/result kept. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51895,7 +51895,7 @@
     "lean_name": "wordGenGcPartialMove",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml both clauses (83-103) including the generation-window test tmp <+ gs \\/ rs <=+ tmp as unsigned BitVec < and <=; remaining body identical to word_gc_move. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml both clauses (84-105) including the generation-window test tmp <+ gs \\/ rs <=+ tmp as unsigned BitVec < and <=; remaining body identical to word_gc_move. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51904,7 +51904,7 @@
     "lean_name": "wordGcMoveRoots",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml nil/cons clauses (105-111) with the conjunction c1 /\\ c2. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml nil/cons clauses (107-113) with the conjunction c1 /\\ c2. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51913,7 +51913,7 @@
     "lean_name": "wordGcMoveList",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (113-121): l = 0w stops, else moves m a, updates a, recurses at a+bytes_in_word, l-1w, returning a IN dm /\\ c1 /\\ c2; termination by w2n l. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (115-123): l = 0w stops, else moves m a, updates a, recurses at a+bytes_in_word, l-1w, returning a IN dm /\\ c1 /\\ c2; termination by w2n l. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51922,7 +51922,7 @@
     "lean_name": "wordGenGcPartialMoveRoots",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml nil/cons clauses (123-129). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml nil/cons clauses (125-131). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51931,7 +51931,7 @@
     "lean_name": "wordGenGcPartialMoveList",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (131-139), as word_gc_move_list with gs rs threaded. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (133-141), as word_gc_move_list with gs rs threaded. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51940,7 +51940,7 @@
     "lean_name": "wordGenGcPartialMoveList_zero",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml theorem (141-145): l = 0w case. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml theorem (143-147): l = 0w case. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51949,7 +51949,7 @@
     "lean_name": "wordGenGcPartialMoveList_suc",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml theorem (147-159): n2w (SUC l) as BitVec.ofNat width (l+1), keeping the n2w (SUC l) = 0w guard and the recursive n2w l. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml theorem (149-160): n2w (SUC l) as BitVec.ofNat width (l+1), keeping the n2w (SUC l) = 0w guard and the recursive n2w l. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51958,7 +51958,7 @@
     "lean_name": "wordGenGcPartialMoveList_append",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml theorem (161-177): all eleven binders in HOL order, l + l' < dimword (:'a) as < 2 ^ width, n2w as BitVec.ofNat and the paired lets as destructuring lets. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml theorem (162-178): all eleven binders in HOL order, l + l' < dimword (:'a) as < 2 ^ width, n2w as BitVec.ofNat and the paired lets as destructuring lets. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51967,7 +51967,7 @@
     "lean_name": "wordGcMoveLoop",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (179-193): k first then conf; pb = pa, k = 0 failure, header word_bit 2 skip by (len+1w)*bytes_in_word, else word_gc_move_list; word_bit 2 w as getLsbD 2 (false beyond the width, as HOL's index guard). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (180-194): k first then conf; pb = pa, k = 0 failure, header word_bit 2 skip by (len+1w)*bytes_in_word, else word_gc_move_list; word_bit 2 w as getLsbD 2 (false beyond the width, as HOL's index guard). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51976,7 +51976,7 @@
     "lean_name": "wordFullGc",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (195-201): word_gc_move_roots from 0w then word_gc_move_loop with dimword (:'a) = 2 ^ width. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (196-202): word_gc_move_roots from 0w then word_gc_move_loop with dimword (:'a) = 2 ^ width. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51985,7 +51985,7 @@
     "lean_name": "newTrig",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (231-240): w2n/n2w as toNat/ofNat, MIN as min, the four branches in order; byte_aligned rendered by gcByteAligned (aligned (LOG2 (dimindex DIV 8)), with HOL's unspecified LOG2 0 as the opaque gcLog2Zero). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (234-243): w2n/n2w as toNat/ofNat, MIN as min, the four branches in order; byte_aligned rendered by gcByteAligned (aligned (LOG2 (dimindex DIV 8)), with HOL's unspecified LOG2 0 as the opaque gcLog2Zero). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -51994,7 +51994,7 @@
     "lean_name": "wordGenGcPartialMoveRefList",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (249-259): k first then conf; pb = re stops, k = 0 fails, decode_length then word_gen_gc_partial_move_list from pb+bytes_in_word. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (252-262): k first then conf; pb = re stops, k = 0 fails, decode_length then word_gen_gc_partial_move_list from pb+bytes_in_word. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52003,7 +52003,7 @@
     "lean_name": "wordGenGcPartialMoveData",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (262-282): conf then k; both header branches with the c /\\ c2 and c /\\ c1 /\\ c2 results. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (265-285): conf then k; both header branches with the c /\\ c2 and c /\\ c1 /\\ c2 results. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52012,7 +52012,7 @@
     "lean_name": "wordGenGcPartial",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (285-296): refs_end, gen_start = gs >>> shift (:'a), roots, ref list from curr+rs with c1 threaded, data from new, result c2 /\\ c3. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (288-299): refs_end, gen_start = gs >>> shift (:'a), roots, ref list from curr+rs with c1 threaded, data from new, result c2 /\\ c3. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52021,7 +52021,7 @@
     "lean_name": "wordGenGcPartialFull",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (298-304): word_gen_gc_partial then memcpy ((pa - new) >>> shift) new (curr + gs). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (301-307): word_gen_gc_partial then memcpy ((pa - new) >>> shift) new (curr + gs). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52030,7 +52030,7 @@
     "lean_name": "isRefHeader",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (v && 0b1100w) = 0b01000w (306-308). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (v && 0b1100w) = 0b01000w (309-311). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52039,7 +52039,7 @@
     "lean_name": "wordGenGcMove",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml both clauses (310-336): (1w && w) = 0w test, isWord v added to c, forwarding pointer, is_ref_header branch copying to pb - (len+1w)*bytes_in_word and returning new ib/pb, data branch copying to pa. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml both clauses (313-340): (1w && w) = 0w test, isWord v added to c, forwarding pointer, is_ref_header branch copying to pb - (len+1w)*bytes_in_word and returning new ib/pb, data branch copying to pa. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52048,7 +52048,7 @@
     "lean_name": "wordGenGcMoveRoots",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml nil/cons clauses (338-344) with the rebinding of ib and pb. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml nil/cons clauses (342-348) with the rebinding of ib and pb. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52057,7 +52057,7 @@
     "lean_name": "wordGenGcMoveList",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (346-354), as word_gc_move_list with ib/pb threaded. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (350-358), as word_gc_move_list with ib/pb threaded. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52066,7 +52066,7 @@
     "lean_name": "wordGenGcMoveData",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (356-376): conf then k; both header branches. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (360-380): conf then k; both header branches. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52075,7 +52075,7 @@
     "lean_name": "wordGenGcMoveRefs",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (378-393): conf then k; r2a = r1a stops, k = 0 fails, move_list then recursion. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (382-396): conf then k; r2a = r1a stops, k = 0 fails, move_list then recursion. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52084,7 +52084,7 @@
     "lean_name": "wordGenGcMoveLoop",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (395-416): both pbx = pb sub-branches; the reference branch's k = 0 result returns the pre-call pb and the recursive call passes it as pbx, while the refs result pbx is unused, all as in HOL. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (398-418): both pbx = pb sub-branches; the reference branch's k = 0 result returns the pre-call pb and the recursive call passes it as pbx, while the refs result pbx is unused, all as in HOL. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52093,7 +52093,7 @@
     "lean_name": "wordGenGc",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (418-426): new_end, len >>> shift, roots from 0w, loop with w2n len fuel, result c1 /\\ c2. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (420-429): new_end, len >>> shift, roots from 0w, loop with w2n len fuel, result c1 /\\ c2. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52102,7 +52102,7 @@
     "lean_name": "globReal",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (428-432): Word w to Word (curr + (w >>> shift_length c << shift (:'a))) (HOL shifts left-associative), other values unchanged. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (431-435): Word w to Word (curr + (w >>> shift_length c << shift (:'a))) (HOL shifts left-associative), other values unchanged. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52111,7 +52111,7 @@
     "lean_name": "wordGcFun",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (434-503): the gc_fun_type lambda over (roots,m,dm,s); None/Simple/Generational branches with the same |++ lists in order (updateListEq, later entries win), HD as holHd, TL as List.tail (HOL TL [] = []), c2 /\\ c3 checks, Temp n as .temp n; s ' X via holFapply. The type is WordSemGcFun width spelled out, whose own tag records the nested finite-map translation; the checker admits finite-map qualifiers only on type abbreviations or named binders, so this row records only the word translation and the store carrier is that reviewed WordSemGcFun carrier. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (437-502): the gc_fun_type lambda over (roots,m,dm,s); None/Simple/Generational branches with the same |++ lists in order (updateListEq, later entries win), HD as holHd, TL as List.tail (HOL TL [] = []), c2 /\\ c3 checks, Temp n as .temp n; s ' X via holFapply. The type is WordSemGcFun width spelled out, whose own tag records the nested finite-map translation; the checker admits finite-map qualifiers only on type abbreviations or named binders, so this row records only the word translation and the store carrier is that reviewed WordSemGcFun carrier. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52123,7 +52123,7 @@
       "s"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (203-217): the seven-element SUBSET FDOM s as membership of each listed store name, isWord (s ' X) via holFapply (HOL FAPPLY with its unspecified out-of-domain value), good_dimindex, len_size <> 0, len_size + 2 < dimindex and shift_length < dimindex; the store binder s is the canonical HolFiniteMapExact carrier (bare relation entry). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (204-219): the seven-element SUBSET FDOM s as membership of each listed store name, isWord (s ' X) via holFapply (HOL FAPPLY with its unspecified out-of-domain value), good_dimindex, len_size <> 0, len_size + 2 < dimindex and shift_length < dimindex; the store binder s is the canonical HolFiniteMapExact carrier (bare relation entry). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52135,7 +52135,7 @@
       "s"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (219-229): gen_sizes <> [] /\\ allo <=+ endh - trig with theWord (s ' _) via wordSemTheWord and holFapply; s is the canonical HolFiniteMapExact store binder (bare relation entry). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (221-232): gen_sizes <> [] /\\ allo <=+ endh - trig with theWord (s ' _) via wordSemTheWord and holFapply; s is the canonical HolFiniteMapExact store binder (bare relation entry). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
@@ -52171,7 +52171,7 @@
     "lean_name": "wordGenGcMoveRoots_IMP_EVERY2",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:523-542: sixteen binders in HOL order, word_gen_gc_move_roots c (xs,i,pa,ib,pb,old,m,dm) = (ys,i1,pa1,ib1,pb1,m1,c1) hypothesis, EVERY2 conclusion. HOL EVERY2 (LIST_REL) as the exact inductive Flapjack.ListRel; the inline relation (isWord x <=> isWord y) /\\ (is_gc_word_const x ==> x = y) with Bool isWord equality. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:523-543: sixteen binders in HOL order, word_gen_gc_move_roots c (xs,i,pa,ib,pb,old,m,dm) = (ys,i1,pa1,ib1,pb1,m1,c1) hypothesis, EVERY2 conclusion. HOL EVERY2 (LIST_REL) as the exact inductive Flapjack.ListRel; the inline relation (isWord x <=> isWord y) /\\ (is_gc_word_const x ==> x = y) with Bool isWord equality. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52180,7 +52180,7 @@
     "lean_name": "wordGenGcPartialMoveRoots_IMP_EVERY2",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:544-563: fourteen binders in HOL order, word_gen_gc_partial_move_roots c (xs,i,pa,old,m,dm,gs,rs) = (ys,i1,pa1,m1,c1) hypothesis, EVERY2 conclusion. HOL EVERY2 (LIST_REL) as the exact inductive Flapjack.ListRel; the inline relation (isWord x <=> isWord y) /\\ (is_gc_word_const x ==> x = y) with Bool isWord equality. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:545-566: fourteen binders in HOL order, word_gen_gc_partial_move_roots c (xs,i,pa,old,m,dm,gs,rs) = (ys,i1,pa1,m1,c1) hypothesis, EVERY2 conclusion. HOL EVERY2 (LIST_REL) as the exact inductive Flapjack.ListRel; the inline relation (isWord x <=> isWord y) /\\ (is_gc_word_const x ==> x = y) with Bool isWord equality. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52193,7 +52193,7 @@
       "s1"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:565-586: free c xs m dm st ys m1 s1 as implicit binders, hypothesis word_gc_fun c (xs,m,dm,st) = SOME (ys,m1,s1), EVERY2 conclusion; store binders st and s1 are the canonical HolFiniteMapExact carrier (bare relation entries). HOL EVERY2 (LIST_REL) as the exact inductive Flapjack.ListRel; the inline relation (isWord x <=> isWord y) /\\ (is_gc_word_const x ==> x = y) with Bool isWord equality. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. The statement mentions word_gc_fun, whose HOL HD is the reviewed total holHd (unspecified HD [] value), so this is an EL/HD-dependent row reviewed against holHd."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:568-589: free c xs m dm st ys m1 s1 as implicit binders, hypothesis word_gc_fun c (xs,m,dm,st) = SOME (ys,m1,s1), EVERY2 conclusion; store binders st and s1 are the canonical HolFiniteMapExact carrier (bare relation entries). HOL EVERY2 (LIST_REL) as the exact inductive Flapjack.ListRel; the inline relation (isWord x <=> isWord y) /\\ (is_gc_word_const x ==> x = y) with Bool isWord equality. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. The statement mentions word_gc_fun, whose HOL HD is the reviewed total holHd (unspecified HD [] value), so this is an EL/HD-dependent row reviewed against holHd."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -52206,7 +52206,7 @@
       "s1"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:588-592: word_gc_fun c (xs,m,dm,s) = SOME (zs,m1,s1) ==> LENGTH xs = LENGTH zs; store binders s and s1 are the canonical HolFiniteMapExact carrier (bare relation entries). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. The statement mentions word_gc_fun, whose HOL HD is the reviewed total holHd (unspecified HD [] value), so this is an EL/HD-dependent row reviewed against holHd."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:591-596: word_gc_fun c (xs,m,dm,s) = SOME (zs,m1,s1) ==> LENGTH xs = LENGTH zs; store binders s and s1 are the canonical HolFiniteMapExact carrier (bare relation entries). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. The statement mentions word_gc_fun, whose HOL HD is the reviewed total holHd (unspecified HD [] value), so this is an EL/HD-dependent row reviewed against holHd."
   },
   {
     "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
@@ -52367,7 +52367,7 @@
     "lean_name": "wordGcMoveLoopCode",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:83-96 word_gc_move_loop_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:83-95 word_gc_move_loop_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
@@ -52376,7 +52376,7 @@
     "lean_name": "wordGcMoveBitmapCode",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:98-110 word_gc_move_bitmap_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:98-109 word_gc_move_bitmap_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
   },
   {
     "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
@@ -52602,5 +52602,228 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:720-722 compile c prog = stubs c ++ MAP prog_comp prog. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "lsl_lsr",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "lsl_lsr",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:28-49 lsl_lsr: hypothesis w2n n * 2 ** a < dimword (:'a) as n.toNat * 2 ^ a < 2 ^ width, conclusion n << a >>> a = n. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "bytes_in_word_word_shift",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "bytesInWord_wordShift",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:51-62 bytes_in_word_word_shift: good_dimindex /\\ w2n bytes_in_word * w2n n < dimword ==> (bytes_in_word * n) >>> word_shift = n, bytes_in_word as wordSemBytesInWord, word_shift as wordShiftAmount width. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "get_bits_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "getBits",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:150-152 get_bits_def: get_bits w = GENLIST (\\i. w ' i) (bit_length w - 1) as (List.range (bitLength w - 1)).map w.getLsbD (indices below the width, where getLsbD is HOL's index). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "bit_length_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "bitLength_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:154-165 bit_length_thm: !w. (w >>> bit_length w = 0w) /\\ !n. n < bit_length w ==> w >>> n <> 0w with the reviewed stackSem bitLength. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_lsr_dimindex",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "word_lsr_dimindex",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:167-171 word_lsr_dimindex: w >>> dimindex (:'a) = 0w. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "bit_length_LESS_EQ_dimindex",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "bitLength_le_dimindex",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:173-179 bit_length_LESS_EQ_dimindex: bit_length w <= dimindex (:'a). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "shift_to_zero_word_msb",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "shift_to_zero_word_msb",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:181-190 shift_to_zero_word_msb: (w >>> n = 0w /\\ word_msb w) ==> dimindex (:'a) <= n, word_msb as BitVec.msb. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_msb_IMP_bit_length",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "word_msb_IMP_bitLength",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:192-200 word_msb_IMP_bit_length: !h. word_msb h ==> bit_length h = dimindex (:'a). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "get_bits_intro",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "getBits_intro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:202-207 get_bits_intro: word_msb h ==> GENLIST (\\i. h ' i) (dimindex (:'a) - 1) = get_bits h. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "bit_length_minus_1",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "bitLength_minus_1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:226-230 bit_length_minus_1: w <> 0w ==> bit_length w - 1 = bit_length (w >>> 1) (natural shift amount, as HOL). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "bit_length_eq_1",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "bitLength_eq_1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:232-244 bit_length_eq_1: bit_length w = 1 <=> w = 1w. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_and_one_eq_0_iff",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "word_and_one_eq_0_iff",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:246-250 word_and_one_eq_0_iff: !w. (w && 1w) = 0w <=> ~(w ' 0) with w ' 0 as getLsbD 0. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "split_num_forall_to_10",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "split_num_forall_to_10",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:252-262 split_num_forall_to_10: ($! P) <=> P 0 /\\ ... /\\ P 9 /\\ !x. 9 < x ==> P x over num, P a free predicate binder."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_shift_not_0",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "wordShift_not_0",
+    "statement_status": "reviewed_word_dimension_as_width",
+    "word_dimension_as_width": "width",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:268-272 word_shift_not_0: word_shift (:'a) <> 0; HOL uses the dimension only numerically (word_dimension_as_width). Lean binds (width : Nat) [NeZero width] explicitly."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "select_lower_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "select_lower_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:274-280 select_lower_lemma: (n -- 0) w = (w << (dimindex - n - 1)) >>> (dimindex - n - 1), with (n -- 0) w as the untagged gcWordBitsLow rendering (bits 0..MIN n (dimindex-1)). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "is_fwd_ptr_iff",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "is_fwd_ptr_iff",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:288-292 is_fwd_ptr_iff: !w. is_fwd_ptr w <=> ?v. w = Word v /\\ (v && 3w) = 0w, with the reviewed wordSemIsFwdPtr. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "isWord_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "isWord_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:294-298 isWord_thm: !w. isWord w = ?v. w = Word v (bool equality as iff), with the reviewed wordSemIsWordLoc. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "lower_2w_eq",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "lower_2w_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:300-305 lower_2w_eq: !w. good_dimindex ==> (w <+ 2w <=> w = 0w \\/ w = 1w), unsigned BitVec <. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "EL_LENGTH_ADD_LEMMA",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "EL_LENGTH_ADD_LEMMA",
+    "hol_line": 307,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:307-312 EL_LENGTH_ADD_LEMMA: EL (LENGTH init + LENGTH old) (init ++ old ++ [x] ++ st1) = x with EL as the reviewed total holEl rendering (EL/holEl-dependent row reviewed against holEl)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "EL_LENGTH_ADD_LEMMA",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "EL_LENGTH_ADD_LEMMA'",
+    "hol_line": 347,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:347-351 second EL_LENGTH_ADD_LEMMA: !n xs y ys. LENGTH xs = n ==> EL n (xs ++ y::ys) = y, EL as the reviewed total holEl rendering (EL/holEl-dependent row reviewed against holEl)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "LUPDATE_LENGTH_ADD_LEMMA",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "LUPDATE_LENGTH_ADD_LEMMA",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:314-319 LUPDATE_LENGTH_ADD_LEMMA: LUPDATE w (LENGTH init + LENGTH old) (init ++ old ++ [x] ++ st1) = init ++ old ++ [w] ++ st1 with LUPDATE as List.set (same out-of-range behaviour)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_msb_IFF_lsr_EQ_0",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "word_msb_IFF_lsr_EQ_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:321-325 word_msb_IFF_lsr_EQ_0: word_msb h <=> h >>> (dimindex - 1) <> 0w. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "bytes_in_word_word_shift_n2w",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "bytesInWord_wordShift_n2w",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:353-362 bytes_in_word_word_shift_n2w: good_dimindex /\\ (dimindex DIV 8) * n < dimword ==> (bytes_in_word * n2w n) >>> word_shift = n2w n, n2w as BitVec.ofNat. HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_sub_0_eq",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "word_sub_0_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:4536-4542 word_sub_0_eq: both conjuncts ((-1w * w + v = 0w) <=> w = v) /\\ ((v + -1w * w = 0w) <=> w = v). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "good_dimindex_byte_aligned_eq",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "good_dimindex_byte_aligned_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:4544-4551 good_dimindex_byte_aligned_eq: good_dimindex ==> (byte_aligned w <=> (w && (if dimindex = 32 then 3w else 7w)) = 0w), byte_aligned as the untagged gcByteAligned rendering (aligned (LOG2 (dimindex DIV 8)); the unspecified LOG2 0 case is excluded by good_dimindex). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
   }
 ]

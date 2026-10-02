@@ -1236,6 +1236,7 @@ import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.StackAlloc.GcCode
 import Flapjack.Compiler.Backend.StackAlloc.Compile
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize

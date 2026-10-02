@@ -80,7 +80,7 @@ def wordGcMoveListCode {width : Nat} [NeZero width] (conf : Config) : HolProg wi
     (listSeqHOL [loadInst 5 8, sub1Inst 7, wordGcMoveCode conf, storeInst 5 8,
       addBytesInWordInst 8])
 
-/-- Exact HOL `word_gc_move_loop_code_def` (`stack_allocScript.sml:83-96`). -/
+/-- Exact HOL `word_gc_move_loop_code_def` (`stack_allocScript.sml:83-95`). -/
 @[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gc_move_loop_code_def"
   (words_as_type_indexed_bitvec)]
 def wordGcMoveLoopCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
@@ -92,7 +92,7 @@ def wordGcMoveLoopCode {width : Nat} [NeZero width] (conf : Config) : HolProg wi
         (listSeqHOL [rightShiftInst 7 (width - conf.lenSize), add1Inst 7,
           leftShiftInst 7 (wordShiftAmount width), addInst 8 7])])
 
-/-- Exact HOL `word_gc_move_bitmap_code_def` (`stack_allocScript.sml:98-110`). -/
+/-- Exact HOL `word_gc_move_bitmap_code_def` (`stack_allocScript.sml:98-109`). -/
 @[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gc_move_bitmap_code_def"
   (words_as_type_indexed_bitvec)]
 def wordGcMoveBitmapCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=

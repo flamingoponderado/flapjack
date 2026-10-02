@@ -86,7 +86,7 @@ theorem wordGenGcMoveRoots_rootRel {width : Nat} [NeZero width] (c : Config) :
       simp only [wordGenGcMoveRoots]
       exact .cons (wordGenGcMove_rootRel c x i pa ib pb old m dm) (wordGenGcMoveRoots_rootRel c xs _ _ _ _ _ _ _)
 
-/-- Exact HOL `word_gen_gc_move_roots_IMP_EVERY2` (`word_gcFunctionsScript.sml:523-542`). -/
+/-- Exact HOL `word_gen_gc_move_roots_IMP_EVERY2` (`word_gcFunctionsScript.sml:523-543`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
   "word_gen_gc_move_roots_IMP_EVERY2" (words_as_type_indexed_bitvec)]
 theorem wordGenGcMoveRoots_IMP_EVERY2 {width : Nat} [NeZero width] :
@@ -110,7 +110,7 @@ theorem wordGenGcPartialMoveRoots_rootRel {width : Nat} [NeZero width] (c : Conf
       exact .cons (wordGenGcPartialMove_rootRel c x i pa old m dm gs rs) (wordGenGcPartialMoveRoots_rootRel c xs _ _ _ _ _ _ _)
 
 /-- Exact HOL `word_gen_gc_partial_move_roots_IMP_EVERY2`
-(`word_gcFunctionsScript.sml:544-563`). -/
+(`word_gcFunctionsScript.sml:545-566`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
   "word_gen_gc_partial_move_roots_IMP_EVERY2" (words_as_type_indexed_bitvec)]
 theorem wordGenGcPartialMoveRoots_IMP_EVERY2 {width : Nat} [NeZero width] :
@@ -143,7 +143,7 @@ theorem wordGenGc_fst {width : Nat} [NeZero width] (c : Config) (r : List (WordL
       (wordGenGcMoveRoots c (r, 0, new, len >>> wordShiftAmount width, new + len, curr, m, dm)).1 := by
   simp only [wordGenGc]
 
-/-- Exact HOL `word_gc_IMP_EVERY2` (`word_gcFunctionsScript.sml:565-586`). -/
+/-- Exact HOL `word_gc_IMP_EVERY2` (`word_gcFunctionsScript.sml:568-589`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gc_IMP_EVERY2"
   (fmap_as_finite_support_relation := [st, s1]) (words_as_type_indexed_bitvec)]
 theorem word_gc_IMP_EVERY2 {width : Nat} [NeZero width] {c : Config}
@@ -204,7 +204,7 @@ theorem word_gc_IMP_EVERY2 {width : Nat} [NeZero width] {c : Config}
             exact wordGenGcMoveRoots_rootRel c _ _ _ _ _ _ _ _
           · exact absurd h (by simp)
 
-/-- Exact HOL `word_gc_fun_LENGTH` (`word_gcFunctionsScript.sml:588-592`). -/
+/-- Exact HOL `word_gc_fun_LENGTH` (`word_gcFunctionsScript.sml:591-596`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gc_fun_LENGTH"
   (fmap_as_finite_support_relation := [s, s1]) (words_as_type_indexed_bitvec)]
 theorem word_gc_fun_LENGTH {width : Nat} [NeZero width] {c : Config}
