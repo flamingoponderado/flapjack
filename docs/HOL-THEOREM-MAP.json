@@ -57749,5 +57749,104 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1396-1404 evaluate_copy_prop: FST (evaluate (e,s)) ≠ SOME Error ⇒ evaluate (copy_prop e, s) = evaluate (e, s), FST as .1, free e s. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SearchConst.lean",
+    "lean_name": "findNextInterferenceConst",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "find_next_interference_const",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source354, full original statement freshly captured in target_search_const_probe.out: sole successful search/choice premise and exact three conjunctions target equality, callee_saved_regs equality, ptr_reg equality retained. Complete native MachineConfig and InterferenceApp, independent state/projection/FFIhost Type and positive width NeZero. Clocked induction covers normaloracle recursion and every literal halt/cache/MMIO/externalFFI branch; unbounded theorem obtains real clock witness from reviewed holOptionSome, no added existence/validity/bounds assumption. EL provenance through findNextInterference source112-211 uses reviewed total holEl of ffi_names, in-range element and sharedopaque holHdNil/holArb out of range; no concrete missingname fallback. Both whole generic proofs kernel checked79jobs0warnings. Noexecutedcompilerbodychange."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SearchConst.lean",
+    "lean_name": "nextInterferenceConst",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "next_interference_const",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source370, full original statement freshly captured in target_search_const_probe.out: sole successful search/choice premise and exact three conjunctions target equality, callee_saved_regs equality, ptr_reg equality retained. Complete native MachineConfig and InterferenceApp, independent state/projection/FFIhost Type and positive width NeZero. Clocked induction covers normaloracle recursion and every literal halt/cache/MMIO/externalFFI branch; unbounded theorem obtains real clock witness from reviewed holOptionSome, no added existence/validity/bounds assumption. EL provenance through findNextInterference source112-211 uses reviewed total holEl of ffi_names, in-range element and sharedopaque holHdNil/holArb out of range; no concrete missingname fallback. Both whole generic proofs kernel checked79jobs0warnings. Noexecutedcompilerbodychange."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SequenceLaws.lean",
+    "lean_name": "interferenceAppSeqEq",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_app_seq_EQ",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source383: full original statement freshly captured in target_sequence_laws_probe.out compared literally. Initial whole next-interference result equality gives full sequence equality for every n; no additional context premise. Complete native MachineConfig/InterferenceApp/HolFfiState retained, independent state/projection/FFIhostσ Type and positive width NeZero. Native kernel checked79jobs0warnings; proofs use literal sequence recurrence or successor count and nonnegative Nat addition as original. EL provenance via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and sharedopaque holHdNil/holArb out of range, no concrete fallback/indexbounds premise. No executed compiler body change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SequenceLaws.lean",
+    "lean_name": "interferenceAppSeqTail",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_app_seq_tail",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source391: full original statement freshly captured in target_sequence_laws_probe.out compared literally. Exact successful first result gives every successor suffix at returned configuration, FFI and appPost; no changed clock or oracle. Complete native MachineConfig/InterferenceApp/HolFfiState retained, independent state/projection/FFIhostσ Type and positive width NeZero. Native kernel checked79jobs0warnings; proofs use literal sequence recurrence or successor count and nonnegative Nat addition as original. EL provenance via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and sharedopaque holHdNil/holArb out of range, no concrete fallback/indexbounds premise. No executed compiler body change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SequenceLaws.lean",
+    "lean_name": "interferenceCountMono",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_count_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source399: full original statement freshly captured in target_sequence_laws_probe.out compared literally. Arbitrary predicate count at m is at most count at m+i for all i,m; no presence or success assumption. Complete native MachineConfig/InterferenceApp/HolFfiState retained, independent state/projection/FFIhostσ Type and positive width NeZero. Native kernel checked79jobs0warnings; proofs use literal sequence recurrence or successor count and nonnegative Nat addition as original. EL provenance via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and sharedopaque holHdNil/holArb out of range, no concrete fallback/indexbounds premise. No executed compiler body change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PositionUnique.lean",
+    "lean_name": "interferenceCountLt",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_count_lt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:411: fresh full original theorem statement in target_position_unique_probe.out; exact three conjuncts: sequence n is SOME(app,mc′,ffi′), P app, n<n2; conclusion count n<count n2. Proof follows original successor increment and monotonicity with n2-(n+1). Full generic MachineConfig/InterferenceApp/HolFfiState state/projection/host carriers, independent σ : Type, positive width NeZero, no bounds or added premises. Kernel checked80jobs zero warnings. EL provenance via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and shared opaque holHdNil/holArb out of range, no concrete fallback/indexbounds premise. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PositionUnique.lean",
+    "lean_name": "interferencePosUnique",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_pos_unique",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:425: fresh full original theorem statement in target_position_unique_probe.out; exact five conjuncts: both sequence results present, both applications selected, counts equal; conclusion n1=n2. Proof uses Nat order and strict count law in either direction. Full generic MachineConfig/InterferenceApp/HolFfiState state/projection/host carriers, independent σ : Type, positive width NeZero, no bounds or added premises. Kernel checked80jobs zero warnings. EL provenance via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and shared opaque holHdNil/holArb out of range, no concrete fallback/indexbounds premise. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PositionLaws.lean",
+    "lean_name": "interferenceCountTail",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_count_tail",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:437: same sole successful nextInterference premise, all n, indicator P app0 plus suffix count at returned mcc/ffic/appPost. Proof follows original count induction and literal sequence tail. Exact native generic MachineConfig/InterferenceApp/HolFfiState carriers, σ : Type and positive width NeZero retained. Kernel81jobs zero warnings. Original full statements captured by target_position_laws_probeScript.sml. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names preserves list element in range and shared opaque holHdNil/holArb out of range, no bounds premise or concrete fallback. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PositionLaws.lean",
+    "lean_name": "interferencePosHead",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_pos_head",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:449: same conjunction of successful nextInterference and P app0, conclusion interferencePos at count zero = SOME zero. Guarded choice existence is proved by zero witness; full position uniqueness excludes every other candidate, no added existence/uniqueness premise. Exact native generic MachineConfig/InterferenceApp/HolFfiState carriers, σ : Type and positive width NeZero retained. Kernel81jobs zero warnings. Original full statements captured by target_position_laws_probeScript.sml. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names preserves list element in range and shared opaque holHdNil/holArb out of range, no bounds premise or concrete fallback. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PositionTail.lean",
+    "lean_name": "interferencePosTailHit",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_pos_tail_hit",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:468: fresh complete compiled original statement captured in target_position_tail_probe.out. Same successful whole nextInterference result premise and P app0; initial position at SUC k, equals OPTION_MAP SUC suffix position at k in returned mcc/ffic/appPost. Option.map (n+1) is literal OPTION_MAP SUC; NONE and SOME both preserved. Complete generic MachineConfig/InterferenceApp/HolFfiState and independent σ : Type/positive width NeZero retained. Kernel82jobs zero warnings. Private Flapjack choice lemma premises are fully discharged by literal sequence/count tail, zero exclusion and interferencePosUnique; no extra choice/existence/uniqueness/bounds premise on port. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names preserves in-range list element and shared opaque holHdNil/holArb out of range, no fallback. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PositionTail.lean",
+    "lean_name": "interferencePosTailMiss",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_pos_tail_miss",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:498: fresh complete compiled original statement captured in target_position_tail_probe.out. Same successful whole nextInterference result premise and not P app0; initial position at k, equals OPTION_MAP SUC suffix position at k in returned mcc/ffic/appPost. Option.map (n+1) is literal OPTION_MAP SUC; NONE and SOME both preserved. Complete generic MachineConfig/InterferenceApp/HolFfiState and independent σ : Type/positive width NeZero retained. Kernel82jobs zero warnings. Private Flapjack choice lemma premises are fully discharged by literal sequence/count tail, zero exclusion and interferencePosUnique; no extra choice/existence/uniqueness/bounds premise on port. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names preserves in-range list element and shared opaque holHdNil/holArb out of range, no fallback. No executed compiler change."
   }
 ]

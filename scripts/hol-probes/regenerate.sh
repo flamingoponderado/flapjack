@@ -4413,3 +4413,22 @@ run_probe balanced_map_core_types_probeScript.sml balanced_map_core_types_probe.
 run_probe balanced_map_key_ordered_types_probeScript.sml balanced_map_key_ordered_types_probe.out \
   bmkt_ordered bmkt_invariant \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+run_probe target_search_const_probeScript.sml target_search_const_probe.out \
+  search_const_full_statement next_const_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_sequence_laws_probeScript.sml target_sequence_laws_probe.out \
+  sequence_eq_full_statement sequence_tail_full_statement count_mono_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_position_unique_probeScript.sml target_position_unique_probe.out \
+  count_lt_full_statement pos_unique_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_position_laws_probeScript.sml target_position_laws_probe.out \
+  count_tail_full_statement pos_head_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_position_tail_probeScript.sml target_position_tail_probe.out \
+  pos_tail_hit_full_statement pos_tail_miss_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
