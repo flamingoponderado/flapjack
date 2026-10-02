@@ -1490,6 +1490,12 @@
       "sha256": "cc697a59f4477ab0e85f83e32e6a51cb4a5d00b02f7538f4469e28cb9b41aa79"
     },
     {
+      "bytes": 1891,
+      "out": "l3_mmu_insert_probe.out",
+      "rows": 8,
+      "sha256": "078c6b157fa025265b7500c96c9eb9f6af3a6df79dbce0b6c9b64cca75f1c231"
+    },
+    {
       "bytes": 1589,
       "out": "l3_mmu_primitives_probe.out",
       "rows": 62,

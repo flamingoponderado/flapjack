@@ -66816,5 +66816,13 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-remove-seq: genuine original comp_correct Seq1645-1663, full theorem1481-1490. Same four evaluation/nonError/full26conjunct state relation/register bound premises and existential target run at ck+target.clock; same Halt/TimeOut/FinalFFI ffi equality versus full stateRelHOL result split. Only original subprogram induction hypotheses: first fixed at actual source, second guarded by actual first NONE run; both retain arbitrary result/poststate/target/pointer/bounds/jump quantifiers. Rewritten HOL evaluator equation recovered in Lean from checked unconditional full fixClockEvaluate; actual target NONE run extended by original evaluateAddClock (NONE is not TimeOut), additional allowances combined by Nat associativity/commutativity. No target-evaluation, global simulation law, extra clock bound or successful-pass premise. Canonical native finite-support regs/fpRegs/store witness reexported from owning imported state; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scoped HOL statement proved by literal original Seq case body, prefixed only rpt strip_tac for standalone constructor goal."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Insert.lean",
+    "lean_name": "addToTLB",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "addToTLB_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript5079-5385, complete sixteen-slot FOR scan. The six-component accumulator retains found-empty, candidate index, minimum age, updated table, new entry, and native state. Some uses strict unsigned age comparison and changes only candidate/minimum; None fills only the first empty slot. The initial candidate is zero and minimum is sign-extended one-bit one, so a full all-maximum-age table replaces slot zero. Final replacement occurs only when no empty slot was filled. mkTLBEntry retains arbitrary level and current-core age; no core, address, level or table restriction is added. Eight original HOL rows observe every slot at empty/multiple-hole/last-hole/full ascending/tie/all-max/last-oldest/early-oldest tables, replayed in L3MmuInsertParity. Fixed BitVec 4/6/64 and native SV_PTE/TLBEntry/riscv_state are literal source carriers. Original function-valued table retained; no finite-map representation qualifier."
   }
 ]

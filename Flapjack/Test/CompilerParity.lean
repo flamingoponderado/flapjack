@@ -4,11 +4,12 @@ import Flapjack.Test.StackRawCallCompileParity
 import Flapjack.Test.StackRawCallStateOkParity
 import Flapjack.Test.StackRawCallCollectParity
 import Flapjack.Test.StackRawCallNativeParity
+import Flapjack.Test.L3MmuInsertParity
+import Flapjack.Test.L3MmuPrimitivesParity
 import Flapjack.Test.LabToTargetSecPosZeroParity
 import Flapjack.Test.LabToTargetPaddingCodeLabelsParity
 import Flapjack.Test.LabToTargetPaddingLabelsParity
 import Flapjack.Test.WordToStackTailHandlerParity
-import Flapjack.Test.L3MmuPrimitivesParity
 import Flapjack.Test.LabToTargetSectionLookupPositionsParity
 import Flapjack.Test.LabToTargetInitialEncodingNavigationParity
 import Flapjack.Test.LabToTargetLookupPrerequisitesParity
