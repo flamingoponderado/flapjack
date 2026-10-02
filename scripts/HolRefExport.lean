@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSuffix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
