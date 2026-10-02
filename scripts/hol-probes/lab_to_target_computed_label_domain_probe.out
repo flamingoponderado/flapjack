@@ -1,0 +1,13 @@
+labs_domain_compute_labels_alt=∀(pos :num) (code :α sec list) (labs :num sptree$num_map sptree$num_map).
+  ALL_DISTINCT (MAP (Section_num :α sec -> num) code) ∧
+  DISJOINT (domain labs :num -> bool)
+    (set (MAP (Section_num :α sec -> num) code)) ⇒
+  labs_domain (compute_labels_alt pos code labs) =
+  get_code_labels code ∪ labs_domain labs
+labs_domain_compute_labels_alt_types=(pos :num)::num;(code :α sec list)::α sec list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;
+mixed_full_nested_map=T
+old_values_duplicate_priority_empty_entry=T
+distinctness_counterexample=T
+freshness_counterexample=T
+width1_empty_initial_retained=T
+width80_large_position=T

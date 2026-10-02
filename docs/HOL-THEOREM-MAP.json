@@ -49472,7 +49472,7 @@
     "lean_name": "removeDeadConventions",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1545-1561 remove_dead_conventions: quantifiers p live nlive lt c with free instruction predicate P leading; HOL's binder k does not occur in the statement and is omitted (documented beside the theorem); the let comp and the six conjuncts in HOL order: flat_exp_conventions, full_inst_ok_less c, pre_alloc_conventions (preAllocConventionsHOL), every_inst P, wf_cutsets as implications and extract_labels equality. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+    "reviewer": "flapjack-main source comparison2026-10-02, review1199 repair: original wordConvsProof1545-1565 and2929-2949. Full original conjunctions, quantified program/live/nlive/loop-table/configuration and leading instruction predicate retained; unused HOL k binder of remove_dead_conventions omitted. Configuration now AsmConfigExact width and instruction convention fullInstOkLessExact, not the untagged broader configuration/policy wrapper. Positive type-indexed words retain original word carriers. No added success, target evaluation, simulation or post-state premise; recursive structural induction preserves exact policy. Executed compiler unchanged. Targeted1702-job and full8327-job builds, lake test, warning/reference/export/manifest/oracle gates and525checker tests passed on2026-10-02."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
@@ -49481,7 +49481,7 @@
     "lean_name": "removeDeadProgConventions",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1563-1565 remove_dead_prog_conventions: the HOL derived theorem remove_dead_conventions SPEC p LN [] [] with LET_THM/FORALL_AND_THM and GSYM remove_dead_prog_def: free p, c, P and the six conjuncts on remove_dead_prog p. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+    "reviewer": "flapjack-main source comparison2026-10-02, review1199 repair: original wordConvsProof1545-1565 and2929-2949. Full original conjunctions, quantified program/live/nlive/loop-table/configuration and leading instruction predicate retained; unused HOL k binder of remove_dead_conventions omitted. Configuration now AsmConfigExact width and instruction convention fullInstOkLessExact, not the untagged broader configuration/policy wrapper. Positive type-indexed words retain original word carriers. No added success, target evaluation, simulation or post-state premise; recursive structural induction preserves exact policy. Executed compiler unchanged. Targeted1702-job and full8327-job builds, lake test, warning/reference/export/manifest/oracle gates and525checker tests passed on2026-10-02."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
@@ -51785,7 +51785,7 @@
     "lean_name": "removeMustTerminateConventions",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.11): HOL wordConvsProofScript.sml:2929-2949 remove_must_terminate_conventions: quantifiers p c k with free instruction predicate P leading; the let comp and the five conjuncts in HOL order: flat_exp_conventions, full_inst_ok_less c, post_alloc_conventions k (postAllocConventionsHOL), every_inst P as implications and extract_labels equality. Statement over the exact WordLangProgHOL carrier and the reviewed removeMustTerminate (remove_must_terminate_def); positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeMustTerminate_induct mirroring HOL remove_must_terminate_ind; no extra premise."
+    "reviewer": "flapjack-main source comparison2026-10-02, review1199 repair: original wordConvsProof1545-1565 and2929-2949. Full original conjunctions, quantified program/live/nlive/loop-table/configuration and leading instruction predicate retained; unused HOL k binder of remove_dead_conventions omitted. Configuration now AsmConfigExact width and instruction convention fullInstOkLessExact, not the untagged broader configuration/policy wrapper. Positive type-indexed words retain original word carriers. No added success, target evaluation, simulation or post-state premise; recursive structural induction preserves exact policy. Executed compiler unchanged. Targeted1702-job and full8327-job builds, lake test, warning/reference/export/manifest/oracle gates and525checker tests passed on2026-10-02."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
@@ -64954,5 +64954,391 @@
     "statement_status": "reviewed_reals_as_rational_cuts",
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .18.5.13.8.2.6.3.2: literal full riscvScript.sml:10008 equation, rd/rs fixedBitVec5, fprnd fixedBitVec3, whole native riscv_state -> riscv_state. Input is zero-prefixed full64 (65bits) then Int; preserves original ordered round NONE->signalException Illegal_Instr and SOME mode->writeFPRS/writeFPRD with no extra premise or restricted modes. machine_ieeeLib68-78/100-108/128-134 defines fieldconcat codec and int_to_fp=real_to_fp mode(real_of_int); integer arguments are rational, binary_ieeeScript539-541 zero sign is mode=roundTowardNegative. Full generic choice-shaped holRealToFloat/holIntToFp64 retained; all-mode numerical agreement proved separately by holFloatRound_fp32/fp64. reals_as_rational_cuts records only this rational real rendering and docs/SOUNDNESS.md item8, not cross-HOL equality. Native dependency fields/carriers/state access/write bodies are the previously reviewed original64/32bit model closure; function fields remain original ATy functions, not finite maps. writeFPRS preserves upper32 FP bits, marks MFS Dirty/MSDtrue and records zero-extended payload Delta.data1; writeFPRD replaces64bits with matching status/delta effects. No invented NV/NX changes. Fresh original144 tuples and all144 kernel replays observe destination/source, MFS/MSD, Delta.data1, NV/NX, othercore FP and Illegal_Instr trap across18scenarios, all4supportedmodes/dynamic/zero/invalid. This review covers these8complete equations and their specific dependencies, not full Run/NextRISCV or unrelated model clauses."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StoreTransfers.lean",
+    "lean_name": "compCorrectSet",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.8: genuine complete Set constructor case comp_correct1481-1493/1598-1625, exactly original4premises source total evaluate/nonError/fullstateRel/fullregBound. EXISTS targetclock/posttarget/samecompiled total evaluate result and original result branch. Source getVar success from originalnonError; bounded target input lookup from fullrelation. CurrHeap actual moveHOL Or same-register copies arbitrary Word/Loc value to reserved k+2, source canonicalstore CurrHeap update preserves all26relation conjuncts using original word_store_CurrHeap and bounded lower-register lookup exclusion. All other names derive actual base Word/full5heap and target mdomain from original mem_load_lemma2; native memory store execution established; original store_write_lemma supplies complete heap update while all other fullrelation conjuncts are proved, preserving CurrHeap and BitmapBase lookups by constructor codec equality. BitmapBase exclusion only original regBound Set conjunct, nonCurrHeap only compiler case split; no extra success/domain/heap/frame/clock/postrelation assumption or permanent case parameter. Extra clock0 derived. Actual canonical native regs/fpRegs/store with same-module genuine codec witness; fixed5Temp carrier; Spt code excluded; positive BitVec/NeZero and independent C/F Type0, phantom Set program bound pinned to same width. Native total evaluator inherits reals_as_rational_cuts explicitly retained, not a global real equivalence claim. Full native kernel proof and fresh literal original fullcase/genuine local helper proofs/types checked. Remaining constructors/IHs/fullassembly and compiler passes remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ComputedLabelDomain.lean",
+    "lean_name": "labsDomain_computeLabelsAlt",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "labs_domain_compute_labels_alt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5197-5221 and fresh full original theorem/types in lab_to_target_computed_label_domain_probe.out. Retains forall pos/native code/labs with fixed nested Nat Spt maps (source inserted numeric positions force Nat values), full original ALL_DISTINCT section numbers and DISJOINT initial outer domain from section numbers conjunctive guard, and actual labsDomain(computeLabelsAlt pos code labs) = getCodeLabels code union labsDomain labs. Sole words_as_type_indexed_bitvec translation of positive HOL word dimension to NeZero BitVec width; native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers and fixed word8 bytes retained. Standard set image and existential membership translate source sets without representation difference. Full structural section induction uses actual computeLabelsAlt/sectionLabels, source section-label extraction, canonical Spt domain fromAList/insert, original fresh-map insert theorem and actual source union calculation. Both guards retained, no callback/encoder/parity/section validity/success/target-output premise. Fresh original/native full nested-map observation checks all positions and old values including duplicate-label last position, zero entry, empty section; distinctness and freshness counterexamples demonstrate overwritten label loss when either guard is removed; widths1/8/80 and arbitrary-width theorem consumer. No production operation change. Probes are regression evidence, not HOL-to-Lean equivalence proof; full remove-label loop/pass/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelBuilders.lean",
+    "lean_name": "labelsStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_labels_stack_free",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02: original local get_labels_stack_free at917-948. Unconditional whole label-set equality to empty predicate, arbitrary registers/counts and positive type-indexed word dimension. Native HolProg constructor carrier, original zero/small/255-word chunk recursion; allocation preserves both jump/conditional overflow branches. No extra register bound, evaluator success, fixed-width or target-label premise. HOL sets represented as predicates; NeZero discharges inherent word dimension positivity. Kernel strong induction follows original decreasing count recursion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelBuilders.lean",
+    "lean_name": "labelsStackAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_labels_stack_alloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02: original local get_labels_stack_alloc at917-948. Unconditional whole label-set equality to empty predicate, arbitrary registers/counts and positive type-indexed word dimension. Native HolProg constructor carrier, original zero/small/255-word chunk recursion; allocation preserves both jump/conditional overflow branches. No extra register bound, evaluator success, fixed-width or target-label premise. HOL sets represented as predicates; NeZero discharges inherent word dimension positivity. Kernel strong induction follows original decreasing count recursion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelBuilders.lean",
+    "lean_name": "labelsUpshift",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_labels_upshift",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02: original local get_labels_upshift at917-948. Unconditional whole label-set equality to empty predicate, arbitrary registers/counts and positive type-indexed word dimension. Native HolProg constructor carrier, original zero/small/255-word chunk recursion; allocation preserves both jump/conditional overflow branches. No extra register bound, evaluator success, fixed-width or target-label premise. HOL sets represented as predicates; NeZero discharges inherent word dimension positivity. Kernel strong induction follows original decreasing count recursion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelBuilders.lean",
+    "lean_name": "labelsDownshift",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_labels_downshift",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02: original local get_labels_downshift at917-948. Unconditional whole label-set equality to empty predicate, arbitrary registers/counts and positive type-indexed word dimension. Native HolProg constructor carrier, original zero/small/255-word chunk recursion; allocation preserves both jump/conditional overflow branches. No extra register bound, evaluator success, fixed-width or target-label premise. HOL sets represented as predicates; NeZero discharges inherent word dimension positivity. Kernel strong induction follows original decreasing count recursion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EvenLabels.lean",
+    "lean_name": "evenLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "even_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5221-5260/5606-5617, full original statements/types freshly captured in lab_to_target_even_labels_probe.out. even_labels_def retains native positive-word Line/Section carriers with HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and fixed word8 bytes; sole words_as_type_indexed_bitvec dimension translation. All quantified positions/lists/section numbers retained; original numeric EVEN is Nat remainder2=0. Weak evenLabels skips empty sections unconditionally, strong evenLabelsStrong requires even section-end position, both require even current position exactly for Label and advance actual annotation lineLen for all constructors. Definitions retain original recursive clauses; local termination measure changes no behavior. Full original type query confirms even_labels_alt has independent alpha empty-code and beta section dimensions; Lean binds independent emptyWidth/width, each NeZero, and the full consumer retains both. Full evenLabels_alt retains both original conjuncts (empty code and section decomposition) and advances SUM MAP lineLen. Full linesEvenLabels_append is unconditional iff with both suffix and prefix parity at original cumulative position. No parity/encoding/validity/success/output/clock/callback premise. Nine fresh original/native observations demonstrate odd empty weak/strong difference, duplicate empty sections, annotation lengths independent from bytes, unrestricted nonlabels, odd end after even Label, zero label requires even position, widths1/8/80 and large positions; arbitrary-width full append/decomposition consumers checked. Source loops stronger and zero-position theorems depend on this group; those and full loop/pass/end-to-end remain open. No production definition change; oracle fixtures are regression evidence, not formal HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EvenLabels.lean",
+    "lean_name": "linesEvenLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lines_even_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5221-5260/5606-5617, full original statements/types freshly captured in lab_to_target_even_labels_probe.out. lines_even_labels_def retains native positive-word Line/Section carriers with HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and fixed word8 bytes; sole words_as_type_indexed_bitvec dimension translation. All quantified positions/lists/section numbers retained; original numeric EVEN is Nat remainder2=0. Weak evenLabels skips empty sections unconditionally, strong evenLabelsStrong requires even section-end position, both require even current position exactly for Label and advance actual annotation lineLen for all constructors. Definitions retain original recursive clauses; local termination measure changes no behavior. Full original type query confirms even_labels_alt has independent alpha empty-code and beta section dimensions; Lean binds independent emptyWidth/width, each NeZero, and the full consumer retains both. Full evenLabels_alt retains both original conjuncts (empty code and section decomposition) and advances SUM MAP lineLen. Full linesEvenLabels_append is unconditional iff with both suffix and prefix parity at original cumulative position. No parity/encoding/validity/success/output/clock/callback premise. Nine fresh original/native observations demonstrate odd empty weak/strong difference, duplicate empty sections, annotation lengths independent from bytes, unrestricted nonlabels, odd end after even Label, zero label requires even position, widths1/8/80 and large positions; arbitrary-width full append/decomposition consumers checked. Source loops stronger and zero-position theorems depend on this group; those and full loop/pass/end-to-end remain open. No production definition change; oracle fixtures are regression evidence, not formal HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EvenLabels.lean",
+    "lean_name": "evenLabels_alt",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "even_labels_alt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5221-5260/5606-5617, full original statements/types freshly captured in lab_to_target_even_labels_probe.out. even_labels_alt retains native positive-word Line/Section carriers with HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and fixed word8 bytes; sole words_as_type_indexed_bitvec dimension translation. All quantified positions/lists/section numbers retained; original numeric EVEN is Nat remainder2=0. Weak evenLabels skips empty sections unconditionally, strong evenLabelsStrong requires even section-end position, both require even current position exactly for Label and advance actual annotation lineLen for all constructors. Definitions retain original recursive clauses; local termination measure changes no behavior. Full original type query confirms even_labels_alt has independent alpha empty-code and beta section dimensions; Lean binds independent emptyWidth/width, each NeZero, and the full consumer retains both. Full evenLabels_alt retains both original conjuncts (empty code and section decomposition) and advances SUM MAP lineLen. Full linesEvenLabels_append is unconditional iff with both suffix and prefix parity at original cumulative position. No parity/encoding/validity/success/output/clock/callback premise. Nine fresh original/native observations demonstrate odd empty weak/strong difference, duplicate empty sections, annotation lengths independent from bytes, unrestricted nonlabels, odd end after even Label, zero label requires even position, widths1/8/80 and large positions; arbitrary-width full append/decomposition consumers checked. Source loops stronger and zero-position theorems depend on this group; those and full loop/pass/end-to-end remain open. No production definition change; oracle fixtures are regression evidence, not formal HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EvenLabels.lean",
+    "lean_name": "evenLabelsStrong",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "even_labels_strong_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5221-5260/5606-5617, full original statements/types freshly captured in lab_to_target_even_labels_probe.out. even_labels_strong_def retains native positive-word Line/Section carriers with HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and fixed word8 bytes; sole words_as_type_indexed_bitvec dimension translation. All quantified positions/lists/section numbers retained; original numeric EVEN is Nat remainder2=0. Weak evenLabels skips empty sections unconditionally, strong evenLabelsStrong requires even section-end position, both require even current position exactly for Label and advance actual annotation lineLen for all constructors. Definitions retain original recursive clauses; local termination measure changes no behavior. Full original type query confirms even_labels_alt has independent alpha empty-code and beta section dimensions; Lean binds independent emptyWidth/width, each NeZero, and the full consumer retains both. Full evenLabels_alt retains both original conjuncts (empty code and section decomposition) and advances SUM MAP lineLen. Full linesEvenLabels_append is unconditional iff with both suffix and prefix parity at original cumulative position. No parity/encoding/validity/success/output/clock/callback premise. Nine fresh original/native observations demonstrate odd empty weak/strong difference, duplicate empty sections, annotation lengths independent from bytes, unrestricted nonlabels, odd end after even Label, zero label requires even position, widths1/8/80 and large positions; arbitrary-width full append/decomposition consumers checked. Source loops stronger and zero-position theorems depend on this group; those and full loop/pass/end-to-end remain open. No production definition change; oracle fixtures are regression evidence, not formal HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EvenLabels.lean",
+    "lean_name": "linesEvenLabels_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lines_even_labels_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5221-5260/5606-5617, full original statements/types freshly captured in lab_to_target_even_labels_probe.out. lines_even_labels_append retains native positive-word Line/Section carriers with HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and fixed word8 bytes; sole words_as_type_indexed_bitvec dimension translation. All quantified positions/lists/section numbers retained; original numeric EVEN is Nat remainder2=0. Weak evenLabels skips empty sections unconditionally, strong evenLabelsStrong requires even section-end position, both require even current position exactly for Label and advance actual annotation lineLen for all constructors. Definitions retain original recursive clauses; local termination measure changes no behavior. Full original type query confirms even_labels_alt has independent alpha empty-code and beta section dimensions; Lean binds independent emptyWidth/width, each NeZero, and the full consumer retains both. Full evenLabels_alt retains both original conjuncts (empty code and section decomposition) and advances SUM MAP lineLen. Full linesEvenLabels_append is unconditional iff with both suffix and prefix parity at original cumulative position. No parity/encoding/validity/success/output/clock/callback premise. Nine fresh original/native observations demonstrate odd empty weak/strong difference, duplicate empty sections, annotation lengths independent from bytes, unrestricted nonlabels, odd end after even Label, zero label requires even position, widths1/8/80 and large positions; arbitrary-width full append/decomposition consumers checked. Source loops stronger and zero-position theorems depend on this group; those and full loop/pass/end-to-end remain open. No production definition change; oracle fixtures are regression evidence, not formal HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroPositionEvenLabels.lean",
+    "lean_name": "labelZero_posOk_linesEvenLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "label_zero_pos_ok_lines_even_labels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5619-5643, fresh full typed source captures in lab_to_target_zero_position_even_labels_probe.out. label_zero_pos_ok_lines_even_labels retains arbitrary pos/native positive-word lines or sections and exactly original EVERY label_zero/sec_label_zero conjunct lab_len_pos_ok/all_lab_len_pos_ok guards, implies full linesEvenLabels/evenLabels. Sole words_as_type_indexed_bitvec dimension translation; native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed word8 bytes, Nat annotations retained. Source EVERY is literal forall membership. Kernel constructor induction on lines uses zero annotation plus original position-validity conditional to derive even Label position; nonlabels unconstrained and every constructor advances lineLen. Section induction uses full source decomposition and actual secLength sum equation. No extra success/output/encoding/desired parity/clock/callback premise. Seven fresh original/native observations cover both guards and annotation-versus-byte advancement, independent counterexamples dropping either guard, odd empty section accepted, multiple section transport, widths1/8/80 and large positions; full arbitrary-width implication consumers checked. No total HD/EL dependency or production operation change. Probes are regression evidence, not HOL-to-Lean equivalence proof. Full loop/pass/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ZeroPositionEvenLabels.lean",
+    "lean_name": "labelZero_posOk_evenLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "label_zero_pos_ok_even_labels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5619-5643, fresh full typed source captures in lab_to_target_zero_position_even_labels_probe.out. label_zero_pos_ok_even_labels retains arbitrary pos/native positive-word lines or sections and exactly original EVERY label_zero/sec_label_zero conjunct lab_len_pos_ok/all_lab_len_pos_ok guards, implies full linesEvenLabels/evenLabels. Sole words_as_type_indexed_bitvec dimension translation; native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed word8 bytes, Nat annotations retained. Source EVERY is literal forall membership. Kernel constructor induction on lines uses zero annotation plus original position-validity conditional to derive even Label position; nonlabels unconstrained and every constructor advances lineLen. Section induction uses full source decomposition and actual secLength sum equation. No extra success/output/encoding/desired parity/clock/callback premise. Seven fresh original/native observations cover both guards and annotation-versus-byte advancement, independent counterexamples dropping either guard, odd empty section accepted, multiple section transport, widths1/8/80 and large positions; full arbitrary-width implication consumers checked. No total HD/EL dependency or production operation change. Probes are regression evidence, not HOL-to-Lean equivalence proof. Full loop/pass/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
+    "lean_name": "holFp32ToFloat",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp32_to_float_def",
+    "statement_status": "reviewed_exact",
+    "hol_line": 15,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02: literal machine_ieeeScript24-82 and machine_ieeeLib49-78/100-108 fixed codecs23/8/32 and52/11/64. Complete convert branches preserve independently typed codecs and supplied real/flags function, finite-real result/flags, signalling input detection, arbitrary ANY NaN choice without quiet restriction, signed infinity/clear_flags. Generated finite flags wrapper composes real_to_float_with_flags at mode=roundTowardNegative zero sign; all six flags retained. Widening fixes ties-to-even; narrowing keeps supplied mode; SND wrappers discard flags only explicitly. Generic words_as_type_indexed_bitvec retains positivity for each of six independent HOL word-type dimensions; fixed wrappers retain literal fixed widths. reals_as_rational_cuts rendering and SOUNDNESS item8 agreement assumption apply to real-dependent declarations, not to bit-only codecs; no cross-HOL equality claim. Fresh original source theorem and14observations plus15kernel tests cover full infinity/NaN flags/exact finite tuples; finite tie kernel checks observe bits/Precision only, not a full underflow tuple replay. Full family acceptance remains coordinator-owned; no full model theorem inferred."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
+    "lean_name": "holFloatToFp32",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "float_to_fp32_def",
+    "statement_status": "reviewed_exact",
+    "hol_line": 15,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02: literal machine_ieeeScript24-82 and machine_ieeeLib49-78/100-108 fixed codecs23/8/32 and52/11/64. Complete convert branches preserve independently typed codecs and supplied real/flags function, finite-real result/flags, signalling input detection, arbitrary ANY NaN choice without quiet restriction, signed infinity/clear_flags. Generated finite flags wrapper composes real_to_float_with_flags at mode=roundTowardNegative zero sign; all six flags retained. Widening fixes ties-to-even; narrowing keeps supplied mode; SND wrappers discard flags only explicitly. Generic words_as_type_indexed_bitvec retains positivity for each of six independent HOL word-type dimensions; fixed wrappers retain literal fixed widths. reals_as_rational_cuts rendering and SOUNDNESS item8 agreement assumption apply to real-dependent declarations, not to bit-only codecs; no cross-HOL equality claim. Fresh original source theorem and14observations plus15kernel tests cover full infinity/NaN flags/exact finite tuples; finite tie kernel checks observe bits/Precision only, not a full underflow tuple replay. Full family acceptance remains coordinator-owned; no full model theorem inferred."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
+    "lean_name": "holMachineConvert",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "convert_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reals_as_rational_cuts": true,
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02: literal machine_ieeeScript24-82 and machine_ieeeLib49-78/100-108 fixed codecs23/8/32 and52/11/64. Complete convert branches preserve independently typed codecs and supplied real/flags function, finite-real result/flags, signalling input detection, arbitrary ANY NaN choice without quiet restriction, signed infinity/clear_flags. Generated finite flags wrapper composes real_to_float_with_flags at mode=roundTowardNegative zero sign; all six flags retained. Widening fixes ties-to-even; narrowing keeps supplied mode; SND wrappers discard flags only explicitly. Generic words_as_type_indexed_bitvec retains positivity for each of six independent HOL word-type dimensions; fixed wrappers retain literal fixed widths. reals_as_rational_cuts rendering and SOUNDNESS item8 agreement assumption apply to real-dependent declarations, not to bit-only codecs; no cross-HOL equality claim. Fresh original source theorem and14observations plus15kernel tests cover full infinity/NaN flags/exact finite tuples; finite tie kernel checks observe bits/Precision only, not a full underflow tuple replay. Full family acceptance remains coordinator-owned; no full model theorem inferred."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
+    "lean_name": "holRealToFp32WithFlags",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "real_to_fp32_with_flags_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "hol_line": 15,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02: literal machine_ieeeScript24-82 and machine_ieeeLib49-78/100-108 fixed codecs23/8/32 and52/11/64. Complete convert branches preserve independently typed codecs and supplied real/flags function, finite-real result/flags, signalling input detection, arbitrary ANY NaN choice without quiet restriction, signed infinity/clear_flags. Generated finite flags wrapper composes real_to_float_with_flags at mode=roundTowardNegative zero sign; all six flags retained. Widening fixes ties-to-even; narrowing keeps supplied mode; SND wrappers discard flags only explicitly. Generic words_as_type_indexed_bitvec retains positivity for each of six independent HOL word-type dimensions; fixed wrappers retain literal fixed widths. reals_as_rational_cuts rendering and SOUNDNESS item8 agreement assumption apply to real-dependent declarations, not to bit-only codecs; no cross-HOL equality claim. Fresh original source theorem and14observations plus15kernel tests cover full infinity/NaN flags/exact finite tuples; finite tie kernel checks observe bits/Precision only, not a full underflow tuple replay. Full family acceptance remains coordinator-owned; no full model theorem inferred."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
+    "lean_name": "holRealToFp64WithFlags",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "real_to_fp64_with_flags_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "hol_line": 16,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02: literal machine_ieeeScript24-82 and machine_ieeeLib49-78/100-108 fixed codecs23/8/32 and52/11/64. Complete convert branches preserve independently typed codecs and supplied real/flags function, finite-real result/flags, signalling input detection, arbitrary ANY NaN choice without quiet restriction, signed infinity/clear_flags. Generated finite flags wrapper composes real_to_float_with_flags at mode=roundTowardNegative zero sign; all six flags retained. Widening fixes ties-to-even; narrowing keeps supplied mode; SND wrappers discard flags only explicitly. Generic words_as_type_indexed_bitvec retains positivity for each of six independent HOL word-type dimensions; fixed wrappers retain literal fixed widths. reals_as_rational_cuts rendering and SOUNDNESS item8 agreement assumption apply to real-dependent declarations, not to bit-only codecs; no cross-HOL equality claim. Fresh original source theorem and14observations plus15kernel tests cover full infinity/NaN flags/exact finite tuples; finite tie kernel checks observe bits/Precision only, not a full underflow tuple replay. Full family acceptance remains coordinator-owned; no full model theorem inferred."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
+    "lean_name": "holFp32ToFp64WithFlags",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp32_to_fp64_with_flags_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02: literal machine_ieeeScript24-82 and machine_ieeeLib49-78/100-108 fixed codecs23/8/32 and52/11/64. Complete convert branches preserve independently typed codecs and supplied real/flags function, finite-real result/flags, signalling input detection, arbitrary ANY NaN choice without quiet restriction, signed infinity/clear_flags. Generated finite flags wrapper composes real_to_float_with_flags at mode=roundTowardNegative zero sign; all six flags retained. Widening fixes ties-to-even; narrowing keeps supplied mode; SND wrappers discard flags only explicitly. Generic words_as_type_indexed_bitvec retains positivity for each of six independent HOL word-type dimensions; fixed wrappers retain literal fixed widths. reals_as_rational_cuts rendering and SOUNDNESS item8 agreement assumption apply to real-dependent declarations, not to bit-only codecs; no cross-HOL equality claim. Fresh original source theorem and14observations plus15kernel tests cover full infinity/NaN flags/exact finite tuples; finite tie kernel checks observe bits/Precision only, not a full underflow tuple replay. Full family acceptance remains coordinator-owned; no full model theorem inferred."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
+    "lean_name": "holFp64ToFp32WithFlags",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_to_fp32_with_flags_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02: literal machine_ieeeScript24-82 and machine_ieeeLib49-78/100-108 fixed codecs23/8/32 and52/11/64. Complete convert branches preserve independently typed codecs and supplied real/flags function, finite-real result/flags, signalling input detection, arbitrary ANY NaN choice without quiet restriction, signed infinity/clear_flags. Generated finite flags wrapper composes real_to_float_with_flags at mode=roundTowardNegative zero sign; all six flags retained. Widening fixes ties-to-even; narrowing keeps supplied mode; SND wrappers discard flags only explicitly. Generic words_as_type_indexed_bitvec retains positivity for each of six independent HOL word-type dimensions; fixed wrappers retain literal fixed widths. reals_as_rational_cuts rendering and SOUNDNESS item8 agreement assumption apply to real-dependent declarations, not to bit-only codecs; no cross-HOL equality claim. Fresh original source theorem and14observations plus15kernel tests cover full infinity/NaN flags/exact finite tuples; finite tie kernel checks observe bits/Precision only, not a full underflow tuple replay. Full family acceptance remains coordinator-owned; no full model theorem inferred."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
+    "lean_name": "holFp32ToFp64",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp32_to_fp64_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02: literal machine_ieeeScript24-82 and machine_ieeeLib49-78/100-108 fixed codecs23/8/32 and52/11/64. Complete convert branches preserve independently typed codecs and supplied real/flags function, finite-real result/flags, signalling input detection, arbitrary ANY NaN choice without quiet restriction, signed infinity/clear_flags. Generated finite flags wrapper composes real_to_float_with_flags at mode=roundTowardNegative zero sign; all six flags retained. Widening fixes ties-to-even; narrowing keeps supplied mode; SND wrappers discard flags only explicitly. Generic words_as_type_indexed_bitvec retains positivity for each of six independent HOL word-type dimensions; fixed wrappers retain literal fixed widths. reals_as_rational_cuts rendering and SOUNDNESS item8 agreement assumption apply to real-dependent declarations, not to bit-only codecs; no cross-HOL equality claim. Fresh original source theorem and14observations plus15kernel tests cover full infinity/NaN flags/exact finite tuples; finite tie kernel checks observe bits/Precision only, not a full underflow tuple replay. Full family acceptance remains coordinator-owned; no full model theorem inferred."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
+    "lean_name": "holFp64ToFp32",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_to_fp32_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02: literal machine_ieeeScript24-82 and machine_ieeeLib49-78/100-108 fixed codecs23/8/32 and52/11/64. Complete convert branches preserve independently typed codecs and supplied real/flags function, finite-real result/flags, signalling input detection, arbitrary ANY NaN choice without quiet restriction, signed infinity/clear_flags. Generated finite flags wrapper composes real_to_float_with_flags at mode=roundTowardNegative zero sign; all six flags retained. Widening fixes ties-to-even; narrowing keeps supplied mode; SND wrappers discard flags only explicitly. Generic words_as_type_indexed_bitvec retains positivity for each of six independent HOL word-type dimensions; fixed wrappers retain literal fixed widths. reals_as_rational_cuts rendering and SOUNDNESS item8 agreement assumption apply to real-dependent declarations, not to bit-only codecs; no cross-HOL equality claim. Fresh original source theorem and14observations plus15kernel tests cover full infinity/NaN flags/exact finite tuples; finite tie kernel checks observe bits/Precision only, not a full underflow tuple replay. Full family acceptance remains coordinator-owned; no full model theorem inferred."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelPreservation.lean",
+    "lean_name": "labelsComp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_labels_comp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 original950-967: full unconditional all-constructor comp label predicate equality and full code_rel/source loc_check conjunction implies target loc_check. Exact native HolProg width with NeZero, original Spt code including malformed trees; no finite-map qualifier. All recursive Seq/If/Loop and both optional Call continuations retained, including Call NONE ignores handler. Generated stack/copy builders introduce no labels. Both domain-zero and existential stored-program location branches derived from literal codeRelHOL lookup/domain conjuncts. No register-bound, target-location, evaluator-success, fixed-width or simulation premise added. Original literal HOL proofs replayed using fresh local builder proofs; native kernels checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelPreservation.lean",
+    "lean_name": "codeRelLocCheck",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "code_rel_loc_check",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 original950-967: full unconditional all-constructor comp label predicate equality and full code_rel/source loc_check conjunction implies target loc_check. Exact native HolProg width with NeZero, original Spt code including malformed trees; no finite-map qualifier. All recursive Seq/If/Loop and both optional Call continuations retained, including Call NONE ignores handler. Generated stack/copy builders introduce no labels. Both domain-zero and existential stored-program location branches derived from literal codeRelHOL lookup/domain conjuncts. No register-bound, target-location, evaluator-success, fixed-width or simulation premise added. Original literal HOL proofs replayed using fresh local builder proofs; native kernels checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Locations.lean",
+    "lean_name": "compCorrectLocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original2099-2106 full LocValue case: exactly original four premises, faithful total evaluate and existential target clock/state with original result branch. Source nonError establishes source loc_check; full stateRel code conjunct and source-reviewed codeRelLocCheck derive target check. Native bounded setVar preserves all26 fullstateRel conjuncts, clock0. No additional success/location/post-state/simulation premise, no altered evaluator. Positive width NeZero native BitVec/HolProg and Type0 C/F; actual canonical regs/fpRegs/store with same-module genuine codec witness; Spt code excluded. Total evaluator inherits reals_as_rational_cuts assumption explicitly; no new trust decision."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackPointer.lean",
+    "lean_name": "stateRelGetVarK",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_get_var_k",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original395-418 comparison: original full state_rel alone implies existential base alpha word, lookup k+1 Word base, lower address reserve widthDIV8*maxStackAlloc, nonwrapping stack upper bound, lookup k Word(base+bytes*stackSpace), complete original five-factor separated heap. Native source/target share same positive width and Type0 configuration/FFI carriers. Canonical imported finite-map state and genuine same-module broad/exact witness; code remains Spt. Native bitmaps++buffer followed by map Word equals original MAP Word bitmaps++MAP Word buffer, combined list length equals original length sum. Bool domains rendered as true predicates, ordinary HOL lists use List. No extra base/bitmap/lookup/safety/success/heap premise; all facts extracted from final fullstateRel conjunct, invalid lookup constructors contradicted. Literal original proof replay and native kernel proof checked; neither new evaluator nor real arithmetic involved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/StrongEvenLabels.lean",
+    "lean_name": "evenLabels_ends_imp_strong",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "even_labels_ends_imp_strong",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5261-5276, fresh full theorem/type capture in lab_to_target_strong_even_labels_probe.out. Retains forall arbitrary pos/native code and exactly source three conjunctive guards even_labels pos code, EVERY sec_ends_with_label code, EVERY sec_label_zero code, implies full even_labels_strong pos code. Sole words_as_type_indexed_bitvec dimension translation, native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and fixed word8 bytes preserved; source EVERY is literal forall membership. Kernel full structural code and line induction derives even section-end position from weak predicate at final Label and original zero annotation, using only outer structural tail induction hypothesis; no extra terminal-evenness, success, output, encoding, clock or callback premise. Reviewed native SectionEnd reverse/nonempty predicate implements guarded LAST without any held total HD/EL dependency. Two local untagged helpers are documented Flapjack induction infrastructure, not independently named HOL declarations. Six fresh original/native observations capture mixed annotation/physical-byte behavior with duplicate section IDs and mismatched label metadata, all three guards and strong output, independent counterexamples omitting each guard, widths1/8/80 and large positions; full arbitrary-width consumer kernel checked. No production operation changes; full loop/pass/end-to-end remains open. Oracle regressions do not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCVT_S_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCVT_S_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.7.2: full literal original riscvScript10104 clause, fixed rd/rs word5 and rounding word3, native whole state->state. Preserves round NONE->Illegal_Instr validation even when widening ignores successful mode. Narrowing uses selected mode on full FPRD; widening reads low32 FPRS and original converter fixed ties-even. Full reviewed machine_ieee converter finite/any-NaN/infinity branches retained; SND discards converter flags and instruction does not update NV/NX. Native writeFPRS preserves destination upper32, writeFPRD replaces64; both mark MFS Dirty/MSD and exact delta payload. Complete64selectedoriginaldependency bodies reproduced0fail and existingtextmatch. Fresh33originalfullstate rows and33kernelreplays include all4supported modes, dynamicup/invalidstatic/invaliddynamic, signedzero mode behavior, finite tie/one/subnormal/infinities, source/destination registers,MFS/MSD,delta,NV/NX,othercore andtraps. Original proof converter reconstructs untrusted bits at exact original compound types before full kernel certificate/inputidentitycheck; no type conflation or host float oracle. reals_as_rational_cuts/SOUNDNESS item8 is the rational-real rendering assumption, not a HOL-to-Lean equivalence proof. NaN output payload not fixed by regressions; full arbitrary-NaN source branch retained. This completes these2clauses, not full Run/Next/MMU/model/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCVT_D_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCVT_D_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.7.2: full literal original riscvScript10126 clause, fixed rd/rs word5 and rounding word3, native whole state->state. Preserves round NONE->Illegal_Instr validation even when widening ignores successful mode. Narrowing uses selected mode on full FPRD; widening reads low32 FPRS and original converter fixed ties-even. Full reviewed machine_ieee converter finite/any-NaN/infinity branches retained; SND discards converter flags and instruction does not update NV/NX. Native writeFPRS preserves destination upper32, writeFPRD replaces64; both mark MFS Dirty/MSD and exact delta payload. Complete64selectedoriginaldependency bodies reproduced0fail and existingtextmatch. Fresh33originalfullstate rows and33kernelreplays include all4supported modes, dynamicup/invalidstatic/invaliddynamic, signedzero mode behavior, finite tie/one/subnormal/infinities, source/destination registers,MFS/MSD,delta,NV/NX,othercore andtraps. Original proof converter reconstructs untrusted bits at exact original compound types before full kernel certificate/inputidentitycheck; no type conflation or host float oracle. reals_as_rational_cuts/SOUNDNESS item8 is the rational-real rendering assumption, not a HOL-to-Lean equivalence proof. NaN output payload not fixed by regressions; full arbitrary-NaN source branch retained. This completes these2clauses, not full Run/Next/MMU/model/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameInstructions.lean",
+    "lean_name": "wordToStackStackAsmNameInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-inst: complete Inst case of original11007-11127 with all seven original guards, arbitrary positive shared config/program word width, bitmap/frame and raw instruction. Actual compNative first projection; no target naming, result or simulation premise. Arithmetic, all eight memory operations and all sixteen FP constructors preserve original inst_ok_less, physical even-register halving, conditional two-register constraints and ISA side conditions. FP register pairs retain the original64-bit ignored second-register case and32-bit distinctness via physical even registers. Source strict4<frame and frame+1<reducedcount guards retained. words_as_type_indexed_bitvec records only the standard positive word-carrier translation. Fresh original generic case application has no open hypotheses;900 direct validity/guard/target observations and224 full seven-guard kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural registers/frame slots and rejected guards. Regression evidence is not HOL-to-Lean equivalence or a full original proof replay. Full naming assembly and compiler correctness remain separate open results."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackFreeSimulation.lean",
+    "lean_name": "evaluateSingleStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "evaluate_single_stack_free",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original968-990 source comparison: precisely fullstateRel, original result/postsource pair equality NONE and stackSpace+count, original stack safety negated strict length comparison, nonzero count and maxStackAlloc bound imply existential clock/posttarget actual singleStackFree evaluation and fullstateRel. Original target.clock+clock order retained; clock0 proved. Native Add immediate at reserved pointer uses derived Word lookup from original stateRelGetVarK, native wordOffset widthDIV8 product. Untagged stateRelFreeStep factors original unfolded26conjunct postrelation argument with original safety discharged, no supplied postrelation or execution hypothesis. Arbitrary positive width and Type0 C/F; actual imported canonical regs/fpRegs/store state with genuine codec witness, Spt code excluded. Full evaluator inherits reals_as_rational_cuts assumption explicitly; kernel proof no added trusted decision."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackFreeSimulation.lean",
+    "lean_name": "evaluateStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "evaluate_stack_free",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 original992-1035: exactly source native evaluation, nonError and fullstateRel imply existential native targetclock/poststate with fullpostrelation. Arbitrary count includes zero and recursive255chunking, no added count/register/clockbound. Original source error branches excluded by nonError, safety derived; original source state.stackSpace update retained. Native runFree strong recursion proves every generated Add and faithful Seq fixClock, clock unchanged thus0witness. Canonical repeated updates and exact modular offset sum kernel proved; no assumed execution/postrelation. FullstateRelFreeStep preserves all26conjuncts. Native positive width NeZero/HolProg/BitVec, Type0 C/F and actual canonical regs/fpRegs/store state with same-module genuine roundtrip witness; code remains Spt. Full evaluator inherits reals_as_rational_cuts assumption explicitly, no new trusted decision."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StackSpace.lean",
+    "lean_name": "compCorrectStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 original2118-2126 full StackFree constructor: exactly original4premises/native total source evaluate,nonError,fullstateRel,originalregBound; existential native compiled targetevaluation and original resultbranch. Complete original recursive theorem supplies target execution/postrelation, no weakened evaluator or additional successful-target premise. Exceptional result FFI equality derived from fullpostrelation. Other compiler cases/fulltheorem remainopen. Native positive width NeZero/HolProg/BitVec, Type0 C/F and actual canonical regs/fpRegs/store state with same-module genuine roundtrip witness; code remains Spt. Full evaluator inherits reals_as_rational_cuts assumption explicitly, no new trusted decision."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabelLookupEvenness.lean",
+    "lean_name": "linesOk_sectionLabels_lookup_even",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lines_ok_section_lab_lookup_even",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5288-5366. Fresh full typed original captures in lab_to_target_label_lookup_evenness_probe.out: original three local split/even/computed-lookup declarations are replayed via Q.prove using their literal original statements/proof scripts plus original local lab_lookup_IMP and bool case equations, checked with no open hypotheses, since these local declarations are not exported by original theory. lines_ok_section_lab_lookup_even retains all original c/labs/ffis/pos/native lines or code/acc/keys/result binders with native AsmConfigExact/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 bytes; positive BitVec width with NeZero is the sole words_as_type_indexed_bitvec translation. Original fixed Nat association-list and nested Spt values retained; actual numeric first-match ALOOKUP is sptAListLookup, no Nodup/equality-instance premise. Original lines lookup theorem retains linesOk AND all initial association lookups even AND actual returned association lookup. Split theorem retains sole allEncOk premise and both singleton/tail conclusions at actual pos+secLength lines0. End theorem retains sole singleton allEncOk premise and EVEN actual secLength lines pos. Final theorem retains exactly allEncOk AND actual computed-map lookup=SOME value AND old same-key lookup parity AND even initial pos, implies even value; the old guard concerns this query only, not every old map key. No additional encoder-success/desired parity/target simulation/callback/freshness/distinctness premise. Kernel full line/section induction uses actual recursive sectionLabels/computeLabelsAlt/Spt insert/fromAList first-match behavior and full source validity-to-NOP length facts; it derives annotation/physical position agreement from validity rather than assuming it. All four original arbitrary-width consumers checked. Twelve fresh original/native observations cover full mixed section tuple, actual lines/code validity, duplicate association keys with a hidden odd shadowed value, full computed nested map, preserved huge old Nat values and unrelated odd key, duplicate section overwrite without freshness/distinctness assumptions, independent counterexamples dropping even-start/validity/accumulator-parity guards, widths1/8/80 and large positions. Local helper is documented Flapjack infrastructure with no separately named source declaration. No held total HD/EL dependency or production operation change; full remove-label loop/pass/end-to-end remain open. Probes establish regressions, not formal HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabelLookupEvenness.lean",
+    "lean_name": "allEncOk_split",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_split",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5288-5366. Fresh full typed original captures in lab_to_target_label_lookup_evenness_probe.out: original three local split/even/computed-lookup declarations are replayed via Q.prove using their literal original statements/proof scripts plus original local lab_lookup_IMP and bool case equations, checked with no open hypotheses, since these local declarations are not exported by original theory. all_enc_ok_split retains all original c/labs/ffis/pos/native lines or code/acc/keys/result binders with native AsmConfigExact/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 bytes; positive BitVec width with NeZero is the sole words_as_type_indexed_bitvec translation. Original fixed Nat association-list and nested Spt values retained; actual numeric first-match ALOOKUP is sptAListLookup, no Nodup/equality-instance premise. Original lines lookup theorem retains linesOk AND all initial association lookups even AND actual returned association lookup. Split theorem retains sole allEncOk premise and both singleton/tail conclusions at actual pos+secLength lines0. End theorem retains sole singleton allEncOk premise and EVEN actual secLength lines pos. Final theorem retains exactly allEncOk AND actual computed-map lookup=SOME value AND old same-key lookup parity AND even initial pos, implies even value; the old guard concerns this query only, not every old map key. No additional encoder-success/desired parity/target simulation/callback/freshness/distinctness premise. Kernel full line/section induction uses actual recursive sectionLabels/computeLabelsAlt/Spt insert/fromAList first-match behavior and full source validity-to-NOP length facts; it derives annotation/physical position agreement from validity rather than assuming it. All four original arbitrary-width consumers checked. Twelve fresh original/native observations cover full mixed section tuple, actual lines/code validity, duplicate association keys with a hidden odd shadowed value, full computed nested map, preserved huge old Nat values and unrelated odd key, duplicate section overwrite without freshness/distinctness assumptions, independent counterexamples dropping even-start/validity/accumulator-parity guards, widths1/8/80 and large positions. Local helper is documented Flapjack infrastructure with no separately named source declaration. No held total HD/EL dependency or production operation change; full remove-label loop/pass/end-to-end remain open. Probes establish regressions, not formal HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabelLookupEvenness.lean",
+    "lean_name": "allEncOk_even",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_even",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5288-5366. Fresh full typed original captures in lab_to_target_label_lookup_evenness_probe.out: original three local split/even/computed-lookup declarations are replayed via Q.prove using their literal original statements/proof scripts plus original local lab_lookup_IMP and bool case equations, checked with no open hypotheses, since these local declarations are not exported by original theory. all_enc_ok_even retains all original c/labs/ffis/pos/native lines or code/acc/keys/result binders with native AsmConfigExact/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 bytes; positive BitVec width with NeZero is the sole words_as_type_indexed_bitvec translation. Original fixed Nat association-list and nested Spt values retained; actual numeric first-match ALOOKUP is sptAListLookup, no Nodup/equality-instance premise. Original lines lookup theorem retains linesOk AND all initial association lookups even AND actual returned association lookup. Split theorem retains sole allEncOk premise and both singleton/tail conclusions at actual pos+secLength lines0. End theorem retains sole singleton allEncOk premise and EVEN actual secLength lines pos. Final theorem retains exactly allEncOk AND actual computed-map lookup=SOME value AND old same-key lookup parity AND even initial pos, implies even value; the old guard concerns this query only, not every old map key. No additional encoder-success/desired parity/target simulation/callback/freshness/distinctness premise. Kernel full line/section induction uses actual recursive sectionLabels/computeLabelsAlt/Spt insert/fromAList first-match behavior and full source validity-to-NOP length facts; it derives annotation/physical position agreement from validity rather than assuming it. All four original arbitrary-width consumers checked. Twelve fresh original/native observations cover full mixed section tuple, actual lines/code validity, duplicate association keys with a hidden odd shadowed value, full computed nested map, preserved huge old Nat values and unrelated odd key, duplicate section overwrite without freshness/distinctness assumptions, independent counterexamples dropping even-start/validity/accumulator-parity guards, widths1/8/80 and large positions. Local helper is documented Flapjack infrastructure with no separately named source declaration. No held total HD/EL dependency or production operation change; full remove-label loop/pass/end-to-end remain open. Probes establish regressions, not formal HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabelLookupEvenness.lean",
+    "lean_name": "allEncOk_computeLabels_lookup_even",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_lab_lookup_even",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original5288-5366. Fresh full typed original captures in lab_to_target_label_lookup_evenness_probe.out: original three local split/even/computed-lookup declarations are replayed via Q.prove using their literal original statements/proof scripts plus original local lab_lookup_IMP and bool case equations, checked with no open hypotheses, since these local declarations are not exported by original theory. all_enc_ok_lab_lookup_even retains all original c/labs/ffis/pos/native lines or code/acc/keys/result binders with native AsmConfigExact/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 bytes; positive BitVec width with NeZero is the sole words_as_type_indexed_bitvec translation. Original fixed Nat association-list and nested Spt values retained; actual numeric first-match ALOOKUP is sptAListLookup, no Nodup/equality-instance premise. Original lines lookup theorem retains linesOk AND all initial association lookups even AND actual returned association lookup. Split theorem retains sole allEncOk premise and both singleton/tail conclusions at actual pos+secLength lines0. End theorem retains sole singleton allEncOk premise and EVEN actual secLength lines pos. Final theorem retains exactly allEncOk AND actual computed-map lookup=SOME value AND old same-key lookup parity AND even initial pos, implies even value; the old guard concerns this query only, not every old map key. No additional encoder-success/desired parity/target simulation/callback/freshness/distinctness premise. Kernel full line/section induction uses actual recursive sectionLabels/computeLabelsAlt/Spt insert/fromAList first-match behavior and full source validity-to-NOP length facts; it derives annotation/physical position agreement from validity rather than assuming it. All four original arbitrary-width consumers checked. Twelve fresh original/native observations cover full mixed section tuple, actual lines/code validity, duplicate association keys with a hidden odd shadowed value, full computed nested map, preserved huge old Nat values and unrelated odd key, duplicate section overwrite without freshness/distinctness assumptions, independent counterexamples dropping even-start/validity/accumulator-parity guards, widths1/8/80 and large positions. Local helper is documented Flapjack infrastructure with no separately named source declaration. No held total HD/EL dependency or production operation change; full remove-label loop/pass/end-to-end remain open. Probes establish regressions, not formal HOL-to-Lean equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "alloc_correct_lemma_Generational",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/AllocGenerational/Partial.lean",
+    "lean_name": "alloc_correct_lemma_Generational_partial",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02, bead .5.8.5.1: original partial collector case 4592-4832 only; full Generational case remains open. Fresh literal typed HOL capture confirms c is stack_alloc config. Original allocation, non-error, gcFun/kind, bitmap/stack bounds and initial register premises retained; only original partial branch selector added. Actual wordGcCode evaluation, existential clock/register map, full final state, halt-only result, register submap and return register conclusion retained. Source collector success derives every move/roots/ref-list/data/memcpy premise; no target evaluation or successful pass assumed. Original store updates, root order, stack prefix, memory/domain and clock compared. Imported actual StackSemStateFiniteExact owner uses canonical regs/fpRegs/store maps, same-module genuine codec roundtrip; positive-width BitVec and Type host translation only. Exact instruction closure inherits SOUNDNESS item 8 reals_as_rational_cuts assumption; this source comparison does not certify arbitrary untagged dependencies."
   }
 ]

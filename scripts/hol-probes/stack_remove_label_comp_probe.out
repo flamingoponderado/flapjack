@@ -1,0 +1,4 @@
+lc_statement=∀jump off k e. get_labels (comp jump off k e) = get_labels e
+lc_proved=T
+ll_statement=code_rel jump off k c1 c2 ∧ loc_check c1 (l1,l2) ⇒ loc_check c2 (l1,l2)
+ll_proved=T

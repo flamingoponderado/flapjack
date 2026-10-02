@@ -1,3 +1,9 @@
+import Flapjack.Test.SetNewTriggerParity
+import Flapjack.Test.LabToTargetLabelLookupEvennessParity
+import Flapjack.Test.LabToTargetStrongEvenLabelsParity
+import Flapjack.Test.LabToTargetZeroPositionEvenLabelsParity
+import Flapjack.Test.LabToTargetEvenLabelsParity
+import Flapjack.Test.LabToTargetComputedLabelDomainParity
 import Flapjack.Test.WordToStackRegOutputParity
 import Flapjack.Test.LabToTargetCodeOffsetPaddingParity
 import Flapjack.Test.LabToTargetSectionLabelExtractionParity
@@ -162,6 +168,7 @@ import Flapjack.Test.FiniteMapUnionExact
 import Flapjack.Test.ComparisonGoodCmp
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordToStackAsmNameInstructionsParity
 import Flapjack.Test.WordToStackAsmNameShareParity
 import Flapjack.Test.WordToStackSortedRelationsParity
 import Flapjack.Test.WordToStackSortedKeysParity
@@ -1017,6 +1024,8 @@ import Flapjack.Test.LabToTargetShareMemStateParity
 import Flapjack.Test.AsmSemMemOpsParity
 import Flapjack.Test.AsmSemStepParity
 import Flapjack.Test.AsmPropsEncoderCorrectParity
+import Flapjack.Test.MachineIeeeCrossFormatParity
+import Flapjack.Test.L3RiscvCrossFormatParity
 
 
 
@@ -1879,6 +1888,11 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetAlignmentParity.runChecks,
     Flapjack.Test.LabToTargetPrefixZeroParity.runChecks,
     Flapjack.Test.LabToTargetPrefixPreservationParity.runChecks,
+    Flapjack.Test.LabToTargetLabelLookupEvennessParity.runChecks,
+    Flapjack.Test.LabToTargetStrongEvenLabelsParity.runChecks,
+    Flapjack.Test.LabToTargetZeroPositionEvenLabelsParity.runChecks,
+    Flapjack.Test.LabToTargetEvenLabelsParity.runChecks,
+    Flapjack.Test.LabToTargetComputedLabelDomainParity.runChecks,
     Flapjack.Test.LabToTargetSectionLabelExtractionParity.runChecks,
     Flapjack.Test.LabToTargetLabelExistenceDomainParity.runChecks,
     Flapjack.Test.LabToTargetLabelExistenceEncodingParity.runChecks,
