@@ -4687,6 +4687,16 @@ OpCurrHeap case and its original local variable/expression/fresh-update helpers.
 Only the discarded primitive induction bookkeeping is omitted. The capture
 records the complete original statement and native state/binop/register/table
 carriers; it is source evidence, not a cross-assistant equivalence proof.
+
+### Native first-interference search
+
+`target_find_next_interference_probeScript.sml` captures the full original
+definition and polymorphic type, normal/halt/lookup/guard failures, and complete
+cache, mapped-read/write/narrow-write, final and empty-external return equations.
+The normal-to-cache row checks pre/post states and both shifted oracles.
+`Flapjack.Test.TargetFindNextInterferenceParity` checks native counterparts
+including complete continuation configurations and returned FFI events.
+The full definition retains total EL without an added bounds premise.
 `word_alloc_def_probe` captures the original HOL `word_alloc` type and eight EVAL results on
 small 64-bit programs: each allocator branch (Simple, IRC, linear scan), an accepted and a
 clashing oracle colouring (the latter falls back to the allocator), stack variables under

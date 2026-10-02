@@ -28,6 +28,7 @@ import Flapjack.Misc.BalancedMap.StructuralSize
 import Flapjack.Misc.FlatReplicate
 import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry
+import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap

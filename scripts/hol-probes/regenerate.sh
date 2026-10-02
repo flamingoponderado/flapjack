@@ -4252,6 +4252,12 @@ run_probe ssa_cc_trans_correct_if_probeScript.sml ssa_cc_trans_correct_if_probe.
 run_probe ssa_cc_trans_correct_heap_probeScript.sml ssa_cc_trans_correct_heap_probe.out \
   heap_full heap_type_st heap_type_cst heap_type_operator heap_type_dst heap_type_src heap_type_lt \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe target_find_next_interference_probeScript.sml target_find_next_interference_probe.out \
+  search_type search_full_definition search_unknown search_halt_success search_halt_resource search_shared_missing search_external_mmio search_normal_priority_encoding_fail search_normal_success search_normal_shift search_normal_guard_rollback search_mm_unshared search_mm_invalid_size search_cache_full search_zero \
+  search_mm_read_full search_mm_write_full search_mm_write_narrow_full search_mm_final search_empty_external_full \
+  search_normal_to_cache_full \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe lab_to_target_position_append_probeScript.sml lab_to_target_position_append_probe.out \
   label_zero_def label_zero_def_types sec_label_zero_def sec_label_zero_def_types sec_label_zero_pos_val_0 sec_label_zero_pos_val_0_types pos_val_append pos_val_append_types zero_label nonzero_label asm_annotation_ignored labasm_annotation_ignored suffix_valid prefix_invalid zero_suffix_position before_boundary at_boundary prefix_at_boundary suffix_at_boundary past_boundary far_past_boundary empty_prefix_zero empty_suffix_past label_only_prefix_boundary label_only_prefix_past \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
