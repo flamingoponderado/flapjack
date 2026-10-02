@@ -1,12 +1,14 @@
 import Flapjack.Test.L3ModelFetchParity
+import Flapjack.Test.LabToTargetByteIntervalDistinctParity
+import Flapjack.Test.LabToTargetLineInfoParity
+import Flapjack.Test.LabToTargetShmemExtractionParity
+import Flapjack.Test.LabToTargetShmemDistinctParity
 import Flapjack.Test.LabToTargetEncodingValidityClosureParity
 import Flapjack.Test.LabToTargetProgramByteLengthsParity
 import Flapjack.Test.LabToTargetPositionExtensionParity
 import Flapjack.Test.LabToTargetFetchSuccessorParity
 import Flapjack.Test.LabToTargetPositionOrderParity
 import Flapjack.Test.LabToTargetMemoryTransportParity
-import Flapjack.Test.LabToTargetLineInfoParity
-import Flapjack.Test.LabToTargetByteIntervalDistinctParity
 import Flapjack.Test.LabToTargetRemoveLabelsCorrectnessParity
 import Flapjack.Test.L3FetchPrimitivesParity
 import Flapjack.Test.L3MmuTranslateAddrParity

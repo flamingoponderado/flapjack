@@ -2150,6 +2150,18 @@
       "sha256": "3edeedf49fed826bda2c2ec9fdf0f91ad356ac43d1e59459f0bc98cb50b4b2b6"
     },
     {
+      "bytes": 791,
+      "out": "lab_to_target_shmem_distinct_probe.out",
+      "rows": 11,
+      "sha256": "885db3703a12330d54d8485e594a5c4915e00e6568d911b4fa4cd00d78201197"
+    },
+    {
+      "bytes": 1155,
+      "out": "lab_to_target_shmem_extraction_probe.out",
+      "rows": 10,
+      "sha256": "7b4bcbcd2cd698b448ea383c4ec6d7489a12f8f6cd1e66e0a0be70298e38a311"
+    },
+    {
       "bytes": 923,
       "out": "lab_to_target_shmeminfo_probe.out",
       "rows": 18,
