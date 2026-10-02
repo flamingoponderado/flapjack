@@ -52136,5 +52136,76 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (219-229): gen_sizes <> [] /\\ allo <=+ endh - trig with theWord (s ' _) via wordSemTheWord and holFapply; s is the canonical HolFiniteMapExact store binder (bare relation entry). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "is_gc_const_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "isGcConst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_simpScript.sml:253-255 is_gc_const c = ((c && 1w) = 0w), decided equality. Original probe rows gc_is_gc_const_even/odd replayed in Flapjack/Test/WordGcFunctionsParity.lean. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "is_gc_word_const_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcWordConst.lean",
+    "lean_name": "isGcWordConst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_simpProofScript.sml:130-133 both clauses: Loc _ _ = T, Word w = is_gc_const w. Original probe rows replayed. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_move_roots_IMP_EVERY2",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/Roots.lean",
+    "lean_name": "wordGcMoveRoots_IMP_EVERY2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:504-521: all twelve universal binders in HOL order (xs ys pa m i c1 m1 pa1 i1 old dm c), hypothesis word_gc_move_roots c (xs,i,pa,old,m,dm) = (ys,i1,pa1,m1,c1), EVERY2 conclusion. HOL EVERY2 (LIST_REL) as the exact inductive Flapjack.ListRel; the inline relation (isWord x <=> isWord y) /\\ (is_gc_word_const x ==> x = y) with Bool isWord equality. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_roots_IMP_EVERY2",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/Roots.lean",
+    "lean_name": "wordGenGcMoveRoots_IMP_EVERY2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:523-542: sixteen binders in HOL order, word_gen_gc_move_roots c (xs,i,pa,ib,pb,old,m,dm) = (ys,i1,pa1,ib1,pb1,m1,c1) hypothesis, EVERY2 conclusion. HOL EVERY2 (LIST_REL) as the exact inductive Flapjack.ListRel; the inline relation (isWord x <=> isWord y) /\\ (is_gc_word_const x ==> x = y) with Bool isWord equality. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_roots_IMP_EVERY2",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/Roots.lean",
+    "lean_name": "wordGenGcPartialMoveRoots_IMP_EVERY2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:544-563: fourteen binders in HOL order, word_gen_gc_partial_move_roots c (xs,i,pa,old,m,dm,gs,rs) = (ys,i1,pa1,m1,c1) hypothesis, EVERY2 conclusion. HOL EVERY2 (LIST_REL) as the exact inductive Flapjack.ListRel; the inline relation (isWord x <=> isWord y) /\\ (is_gc_word_const x ==> x = y) with Bool isWord equality. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_IMP_EVERY2",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/Roots.lean",
+    "lean_name": "word_gc_IMP_EVERY2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "st",
+      "s1"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:565-586: free c xs m dm st ys m1 s1 as implicit binders, hypothesis word_gc_fun c (xs,m,dm,st) = SOME (ys,m1,s1), EVERY2 conclusion; store binders st and s1 are the canonical HolFiniteMapExact carrier (bare relation entries). HOL EVERY2 (LIST_REL) as the exact inductive Flapjack.ListRel; the inline relation (isWord x <=> isWord y) /\\ (is_gc_word_const x ==> x = y) with Bool isWord equality. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. The statement mentions word_gc_fun, whose HOL HD is the reviewed total holHd (unspecified HD [] value), so this is an EL/HD-dependent row reviewed against holHd."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_fun_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/Roots.lean",
+    "lean_name": "word_gc_fun_LENGTH",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "s",
+      "s1"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:588-592: word_gc_fun c (xs,m,dm,s) = SOME (zs,m1,s1) ==> LENGTH xs = LENGTH zs; store binders s and s1 are the canonical HolFiniteMapExact carrier (bare relation entries). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. The statement mentions word_gc_fun, whose HOL HD is the reviewed total holHd (unspecified HD [] value), so this is an EL/HD-dependent row reviewed against holHd."
   }
 ]
