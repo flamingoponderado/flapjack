@@ -95,6 +95,10 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreNames
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapReads
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapWrites
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
@@ -111,6 +115,8 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Floati
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
 import Flapjack.Compiler.Backend.StackToLab.InitializedProduction
@@ -186,6 +192,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRaise
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticReturn
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAInstructionCodec
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGeneratedProgramCodec
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAControlCodec
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSADataCodec
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstConst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstBinop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstShift
@@ -269,6 +278,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameShare
 import Flapjack.Pancake.WordConvs.FullInstOkLess
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmRemoveCompiler

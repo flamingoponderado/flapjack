@@ -1,0 +1,3 @@
+wc_statement=∀base s x. word_store base s.store⟨CurrHeap ↦ x⟩ = word_store base s.store
+wc_types=base:α word;s:(β, γ, δ) stackSem$state;x:β word_loc
+wc_proved=T
