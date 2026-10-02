@@ -61744,5 +61744,17 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.3: original122-126 full type alpha word->beta list->(alpha word#beta->bool)->bool retains independent generic payload beta. Empty list is exact emp; cons is one(address-bytes_in_word,value) STAR word_list_rev(address-bytes_in_word,tail), with modular subtraction before both singleton and recursive address. Native bytesInWord is BitVec.ofNat width(width/8); the only qualifier is positive BitVec width/[NeZero width] for original address-word dimension. Canonical one/emp/STAR used directly. No fixed word_loc payload, width>=8, nonwrapping address, distinct-address, functional-heap or finiteness premise. Zero stride at widths1/7 means equal pair cells overlap and fail but distinct payloads at one address remain allowed by literal HOL set separation. Full original type/equation and generic/wrap/product/overlap probes, plus generic Lean one/two-cell kernel regressions, verify this precise behavior. Compiler state_rel later imposes its separate full-memory obligations; none are silently added to this predicate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordStore.lean",
+    "lean_name": "wordStoreHOL",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_store_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.4: original128-133 full type alpha word->(store_name |-> beta word_loc)->(alpha word#beta word_loc->bool)->bool has independent address and stored-word dimensions. Lean preserves two Nat widths with own NeZero discharges; actual finite map parameter store is HolFiniteMapExact WordStoreHOL(WordLocW valueWidth), matching the faithful StackSem state map, not a raw function carrier. Bare relation qualifier store accounts for that parameter; no field-owner witness is required. Full unchanged48storeList order is mapped through existing complete constructor-preserving StackSemRegisterTransfers.storeOfSyntax, whose two unconditional inverse laws preserve all18 constructors and fixed Temp5. Missing lookups become Word0 at valueWidth, present Word/Loc values pass through, and the full list is supplied to exact generic wordListRev at addressWidth. No required-key/success/map-wf/width-agreement/finite-heap premise or altered store ordering. Original full definitions/types, complete empty/mixed48slot vectors with Temp0/31 and populated unlisted CurrHeap, independent-dimension assertion equalities and word projections provide source evidence; generic Lean finite-support and whole-assertion fixtures compare the same values/order/defaults. No duplicate state or compiler implementation is introduced."
   }
 ]

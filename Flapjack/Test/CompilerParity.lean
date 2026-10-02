@@ -18,6 +18,7 @@ import Flapjack.Test.SetSepElementary
 import Flapjack.Test.StackRemoveWordSelector
 import Flapjack.Test.StackRemoveMemory
 import Flapjack.Test.StackRemoveWordListRev
+import Flapjack.Test.StackRemoveWordStore
 import Flapjack.Test.StackRemoveCodeRelation
 import Flapjack.Test.DataMaxHeapLimit
 import Flapjack.Test.InitializedProduction
