@@ -5239,3 +5239,12 @@ capture, not an isolated tactic replay or equivalence proof. Regenerate with
 exported from `targetPropsTheory`. Its output captures the full kernel-checked
 conclusion, retaining `asm_ok`. This is regression/source-review evidence.
 Regenerate with `HOL_PROBE_ONLY=target_encoding_nonempty_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`ssa_cc_trans_correct_buffer_writes_probe` captures the full original theorem
+specialized to CodeBufferWrite/DataBufferWrite and seven inferred numeric/state/SSA/table
+carriers. Original exp_tac2:6294 and resumed cases9860/9864, compiler124/126, and
+evaluator1152/1160 were compared with `SSASemanticBufferWrites.lean`. All six premises
+and the entire simulation conclusion remain; source-read and buffer-write failures
+use only the original Error exemption. Native buffers and exact byte narrowing
+retain their source clauses. Original proved theorem specialization capture, not
+an isolated tactic replay or equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_buffer_writes_probeScript.sml scripts/hol-probes/regenerate.sh`.

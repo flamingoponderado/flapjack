@@ -4680,3 +4680,7 @@ run_probe ssa_locals_force_rename_probeScript.sml ssa_locals_force_rename_probe.
 run_probe ssa_cc_trans_correct_move_probeScript.sml ssa_cc_trans_correct_move_probe.out \
   move_full move_type_priority move_type_moves move_type_st move_type_cst move_type_ssa move_type_next move_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_buffer_writes_probeScript.sml ssa_cc_trans_correct_buffer_writes_probe.out \
+  buffer_code_full buffer_data_full buffer_type_first buffer_type_second buffer_type_st buffer_type_cst buffer_type_ssa buffer_type_next buffer_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
