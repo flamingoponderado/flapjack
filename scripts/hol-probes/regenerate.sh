@@ -101,6 +101,11 @@ run_probe() {
   done
 }
 
+run_probe target_interference_contracts_probeScript.sml target_interference_contracts_probe.out \
+  ffi_contract_full_definition cache_contract_full_definition \
+  post_ffi_state_full_statement post_cache_state_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe target_encoder_step_state_probeScript.sml target_encoder_step_state_probe.out \
   encoder_step_state_full_statement encoder_rtc_state_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

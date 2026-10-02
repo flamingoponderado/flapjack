@@ -855,6 +855,7 @@
     {"bytes": 74, "out": "target_encoding_nonempty_probe.out", "rows": 1, "sha256": "cb858d08879e3e59eb6dece1076393f09ccba9db53ea9c853ab661c053f2b93a"},
     {"bytes": 3692, "out": "target_evaluate_eq_probe.out", "rows": 2, "sha256": "d0868cff7d546af54a1c174ac289be0879b577a8788f176990ae8e996761f938"},
     {"bytes": 5689, "out": "target_find_next_interference_probe.out", "rows": 21, "sha256": "eff6553096062ec2f547257e0e1748962b834a1f72a17261725879b7407cb887"},
+    {"bytes": 4301, "out": "target_interference_contracts_probe.out", "rows": 4, "sha256": "9c6918b2eabd72f794430cb8c8d865e3e80db63b27b6e8914f6448733642dfac"},
     {"bytes": 1665, "out": "target_interference_sequence_probe.out", "rows": 15, "sha256": "a510f7a718ad845c354edd17894835e84f4f571e2798186183c46e0e36f60669"},
     {"bytes": 1101, "out": "target_next_cases_probe.out", "rows": 2, "sha256": "04a2cd7d6be954e2b9fb816d13bf3cb6c19f2365ab3abe57719ee54d53eb1570"},
     {"bytes": 306, "out": "target_next_interference_probe.out", "rows": 2, "sha256": "9cd54a485fa2534c561f871efcf54032a9eced781a86a0fd9198fbc0a979eb6a"},

@@ -59395,5 +59395,41 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:1259-1277 and full original compiled theorem capture. All original encoder_correct, initial state relation and RTC of existential literal asm_step hypotheses preserved; existential FUNPOW final target relation constructed by RTC induction and addition of exact single-step witnesses. Relation.ReflTransGen is the same least reflexive-transitive closure; Function.iterate is HOL FUNPOW. No final execution/post-state premise. BitVec width/NeZero and native HolAsmTarget/AsmState retain positive word dimensions and Type carriers; lists and predicate sets unchanged. Inherited total holEl/holHd retains shared opaque holHdNil/holArb without bounds/fallback. Transitively inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through exact encoder/assembly FP semantics. No executable behavior change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "ffi_interfer_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/InterferenceContracts.lean",
+    "lean_name": "ffiInterferOkHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetSemScript.sml:317-365 and full original compiled HOL capture. All eight original universal variables retained after pc/mc; original index/optional-MMIO-boundary/program-domain antecedent implies conjunction of ordinary branch and MMIO branch. Ordinary branch keeps read pair/byte length/empty native mlstring equality/entry-PC/link alignment and all state_ok/return-PC/domain-byte/saved-register promises. MMIO branch keeps existential first-match info lookup, mapped-read universal bytes/native word_of_bytes register update and mapped-write PC update. No branch, guard, implication or existential witness removed. HolByte.wordOfBytes retains literal BitVec8 payload and positive arbitrary word dimension, including narrow/wrapped addresses; sptAListLookup is exact Nat-key first-match association lookup. Inherited total holEl/holHd retains shared opaque holHdNil/holArb without bounds or fallback. BitVec width under NeZero and fixed BitVec8/64 payloads preserve source word dimensions; native MachineConfig/HolAsmTarget/AsmState, predicate sets, Lists and Type state/projection carriers retained. HOL membership as Prop and Boolean state/alignment predicates as = true are literal logical renderings. Native empty mlstring is implode []. Proof-side logical contracts, no compiler executable behavior change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "ccache_interfer_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/InterferenceContracts.lean",
+    "lean_name": "ccacheInterferOkHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetSemScript.sml:371-392 and full original compiled HOL capture. All five original universal variables retained after pc/mc, entry-PC negative doubled FFI offset and literal link-reg alignment imply state_ok/return-PC, all domain bytes unchanged, and saved-or-pointer register equality under original count/avoid guards. No added premise or post-state relation assumed. BitVec width under NeZero and fixed BitVec8/64 payloads preserve source word dimensions; native MachineConfig/HolAsmTarget/AsmState, predicate sets, Lists and Type state/projection carriers retained. HOL membership as Prop and Boolean state/alignment predicates as = true are literal logical renderings. Native empty mlstring is implode []. Proof-side logical contracts, no compiler executable behavior change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "ffi_interfer_ok_post_ffi_asm",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PostInterferenceState.lean",
+    "lean_name": "ffiInterferOkPostFfiAsm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:1281-1306 and full original compiled HOL capture. All ten original hypotheses and all pc/mc/index/i/k/t1/ms2/bytes/bytes2/newBytes variables retained; conclusion is the original target_state_rel on canonical post_ffi_asm and exact ffi_interfer result. Derives all target-state components from the full native contract, proving conditional preserved/caller-saved register cases with source count/avoid guards. No assumed post-state relation or omitted empty-name/alignment condition. Inherited total holEl/holHd retains shared opaque holHdNil/holArb without bounds/fallback. BitVec width under NeZero and fixed BitVec8/64 payloads preserve source word dimensions; native MachineConfig/HolAsmTarget/AsmState, predicate sets, Lists and Type state/projection carriers retained. HOL membership as Prop and Boolean state/alignment predicates as = true are literal logical renderings. Native empty mlstring is implode []. Proof-side logical contracts, no compiler executable behavior change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "ccache_interfer_ok_post_ccache_asm",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PostInterferenceState.lean",
+    "lean_name": "ccacheInterferOkPostCcacheAsm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:1309-1325 and full original compiled HOL capture. All three original contract/entry-state/link-alignment hypotheses and all pc/mc/t1/ms2/k/a1/a2 variables retained; conclusion uses canonical post_ccache_asm and exact cache interference result. Every state_ok/PC/memory/register/FP conjunct proved; pointer-preservation branch retained. No added premise or assumed final state relation. BitVec width under NeZero and fixed BitVec8/64 payloads preserve source word dimensions; native MachineConfig/HolAsmTarget/AsmState, predicate sets, Lists and Type state/projection carriers retained. HOL membership as Prop and Boolean state/alignment predicates as = true are literal logical renderings. Native empty mlstring is implode []. Proof-side logical contracts, no compiler executable behavior change."
   }
 ]

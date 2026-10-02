@@ -5260,3 +5260,14 @@ The same assembly-step probe also captures the full original evaluator-only
 invariants and inclusive-prefix out-of-domain byte preservation. Lean proofs
 live in `TargetProps/EncoderStepState.lean`. These original full statements
 provide regression evidence, not cross-language equivalence.
+
+### Native FFI and cache-clear interference contracts
+
+`target_interference_contracts_probeScript.sml` captures both complete original
+`targetSem` contract definitions and both complete `targetProps` post-state
+theorems. It retains the ordinary FFI branch, the existential MMIO lookup and
+its read/write promises, every source entry/alignment condition, and all
+memory/register postconditions. Counterparts are
+`TargetSem/InterferenceContracts.lean` and
+`TargetProps/PostInterferenceState.lean`. Full original statement/definition
+captures are regression evidence, not HOL-to-Lean equivalence proofs.
