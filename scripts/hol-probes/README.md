@@ -5443,3 +5443,12 @@ clock-update equivalence, and rejection at the one-element word index. Native
 kernel consumers in `LabToTarget/StateRel.lean` use the complete relation. Lab
 Boolean memory domains are read by equality to true; both Boolean values have
 a checked truth roundtrip. Every FFI/cache/oracle/code-buffer condition remains.
+
+### Full native LabToTarget positional oracle tie
+
+`lab_to_target_oracle_tie_probeScript.sml` captures the full original definition
+and seven whole shift/state/FFI/cache/residue theorem statements with inferred
+carrier types. An original proved four-field record installation satisfies the
+full relation. Kernel proofs in `LabToTarget/OracleTie.lean` derive every whole
+function equality from the actual native interference search/step; external
+residues keep all original guards and total EL behavior.
