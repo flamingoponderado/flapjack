@@ -4639,3 +4639,7 @@ run_probe ssa_cc_trans_correct_move_probeScript.sml ssa_cc_trans_correct_move_pr
 run_probe ssa_cc_trans_correct_buffer_writes_probeScript.sml ssa_cc_trans_correct_buffer_writes_probe.out \
   buffer_code_full buffer_data_full buffer_type_first buffer_type_second buffer_type_st buffer_type_cst buffer_type_ssa buffer_type_next buffer_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_delete_probeScript.sml ssa_locals_delete_probe.out \
+  delete_left_full delete_right_full delete_type_source delete_type_target delete_type_ssa delete_type_name delete_type_next \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -5172,3 +5172,12 @@ use only the original Error exemption. Native buffers and exact byte narrowing
 retain their source clauses. Original proved theorem specialization capture, not
 an isolated tactic replay or equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cc_trans_correct_buffer_writes_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_locals_delete_probe` captures the original generic deletion-left/right
+locals relation theorems6321–6350 and five inferred carrier types. Original
+premises and arbitrary alpha native Spt payloads are unchanged in
+`SSALocalsDelete.lean`. Source deletion only removes read obligations; physical
+target deletion preserves all SSA-image reads because ssa_map_ok excludes that
+register. Original proved theorem capture and manual source comparison, not
+a cross-language equivalence proof or isolated source tactic replay. Regenerate
+with `HOL_PROBE_ONLY=ssa_locals_delete_probeScript.sml scripts/hol-probes/regenerate.sh`.

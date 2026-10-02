@@ -59147,5 +59147,21 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original DataBufferWrite resumed9860/9864 using original exp_tac2:6294, six premises and complete Error-exempt source-permutation/result/full frame/result-sensitive locals conclusion unchanged. Actual getVar NONE/location branches and failed buffer_write preserve sourceError exemption; two word reads transported by original ssaLocalsRelGetVar, original frame dataBuffer equality derives identical buffer_write/update outcome. Native compiler renames both source registers without changing SSA/counter, buffer update preserves locals relation and all other frame fields. CodeBufferWrite w2w to fixed8 matches setWidth8; DataBufferWrite full indexedwidth word retained. Nat registers, positiveindexed words, native Spt/state/table and Type0 code/FFI confirmed by original kernel specialization/carrier capture. fpRegs/store finite-support and words qualifiers explicit; inherits reals_as_rational_cuts evaluator SOUNDNESS8. Originalsource manual comparison, HOL theorem capture and Lean kernel PASS, no isolated tactic replay claimed. FullSSA and end-to-end remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_locals_rel_delete_left",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsDelete.lean",
+  "lean_name": "ssaLocalsRelDeleteLeft",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original deletionLeft theorem6321/6331, generic alpha source/target Spt and Nat SSA tree/key/bound confirmed by original theorem and fivecarriercapture. Left original localsrelation premise alone; right original mapOK/localsrelation/physicalkey3premises only. Conclusions exact native source/target delete, no extra treevalidity/domain/readsuccess/bounds premise. Kernel lookup_delete branches derive preserved source obligations or physical exclusion from SSA image respectively. Existing guarded THE selector independence applies under original source-domain conjunct. No word/fmap carrier translation or executable behavior change. Original source manually compared, original provedtheorem capture and Lean kernel PASS; isolated tactic replay not claimed. FullStoreConsts/fullSSA remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_locals_rel_delete_right",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsDelete.lean",
+  "lean_name": "ssaLocalsRelDeleteRight",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02: full original deletionRight theorem6321/6331, generic alpha source/target Spt and Nat SSA tree/key/bound confirmed by original theorem and fivecarriercapture. Left original localsrelation premise alone; right original mapOK/localsrelation/physicalkey3premises only. Conclusions exact native source/target delete, no extra treevalidity/domain/readsuccess/bounds premise. Kernel lookup_delete branches derive preserved source obligations or physical exclusion from SSA image respectively. Existing guarded THE selector independence applies under original source-domain conjunct. No word/fmap carrier translation or executable behavior change. Original source manually compared, original provedtheorem capture and Lean kernel PASS; isolated tactic replay not claimed. FullStoreConsts/fullSSA remain open."
 }
 ]
