@@ -66843,5 +66843,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.8: original85-108 full forall info/body get_labels(comp info body)=get_labels body AND get_labels(comp_top info body)=get_labels body. Actual Spt Nat info and positive-width HolProg; faithful StackSem.getLabelsExact predicate sets, not ordered extractor. No validity/success/evaluation/target premise or public IH. Native functional induction handles all recursive/returning/handler clauses; changedSeq derives original literal StackFree/tailCall shape via comp_seq_neq_IMP, splits source lookup/frame comparisons, and proves empty labelset for rewritten rawcall sequences. NONE-return labels ignore handler exactly source. Sole positive type-indexed word translation; actual tree map unchanged. Fresh original full statement hyp0 plus five complete finite set pairs independently kernel-replayed, generic theorem application separate. Axiomsonlypropext/Classical.choice/Quot.sound. Full simulation/production parent remainsOPEN."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/StateRelation.lean",
+    "lean_name": "stateRel",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "state_rel_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 bead .4.9: literal source30-46 full relation. Arbitrary info Spt Nat and full imported 22-field StackSem state, positive width and independently quantified Type0 configuration/FFI. Existential Spt code has exact predicate-domain equality; target is whole source updated only at code. Therefore all other fields, including compile and compileOracle, remain equal; commented source transport clauses are inactive. Outer state_ok info source.code retained. Every successful source code lookup retains existential independent entryInfo, state_ok entryInfo source.code and exact compTop lookup. Inner source i shadows outer i; no equality between witnesses added. Native code uses actual Spt, not finite-support qualifier. Whole-state equality includes canonical regs/fpRegs/store; imported owner reused without shadowing and same-module genuine roundtrip witness reexported. Lists remain lists, widths and full word/program/FFI carriers unchanged under existing standard translation. Original HOL full type/equation capture and assumption-free generic self/oracle consequences terminal PASS, matching kernel generic proofs. No evaluation/validity/success premise or changed state field. This definition does not establish comp_correct, compile_semantics or executed compiler replacement."
   }
 ]

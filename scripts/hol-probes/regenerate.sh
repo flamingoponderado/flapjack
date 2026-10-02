@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe stack_rawcall_state_rel_probeScript.sml stack_rawcall_state_rel_probe.out \
+  state_rel_type state_rel_definition state_rel_self state_rel_oracle \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_state_ok_probeScript.sml stack_rawcall_state_ok_probe.out \
   state_ok_type state_ok_definition state_ok_empty state_ok_entry state_ok_zero state_ok_bare_rejected state_ok_wrong_size \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
