@@ -1,8 +1,10 @@
+import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionUpdates
-import Flapjack.Compiler.Backend.LabToTarget.LabelPosition
-import Flapjack.Compiler.Backend.LabToTarget.CodeNopEncoding
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRefs
+import Flapjack.Compiler.Backend.LabToTarget.CodeNopEncoding
 import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
+import Flapjack.Compiler.Backend.LabToTarget.LabelPosition
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveData
 import Flapjack.Compiler.Backend.LabToTarget.NopInsertEncoding
 import Flapjack.Compiler.Backend.LabToTarget.NopPadding

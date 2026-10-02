@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetLabelPositionEncodingParity
 import Flapjack.Test.LabToTargetLabelPositionUpdatesParity
 import Flapjack.Test.LabToTargetLabelPositionParity
 import Flapjack.Test.LabToTargetCodeNopEncodingParity
@@ -1861,6 +1862,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetAlignmentParity.runChecks,
     Flapjack.Test.LabToTargetPrefixZeroParity.runChecks,
     Flapjack.Test.LabToTargetPrefixPreservationParity.runChecks,
+    Flapjack.Test.LabToTargetLabelPositionEncodingParity.runChecks,
     Flapjack.Test.LabToTargetLabelPositionUpdatesParity.runChecks,
     Flapjack.Test.LabToTargetLabelPositionParity.runChecks,
     Flapjack.Test.LabToTargetCodeNopEncodingParity.runChecks,

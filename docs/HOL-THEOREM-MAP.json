@@ -63945,5 +63945,38 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source/type review2026-10-02 original1098-1153 full native transport. Full original state relation and tuple retained. Only actual interference sequence shifts; universal index i obligation is discharged by original i+l; all other original conjuncts preserved without extra transition premise. Positive-width BitVec translation alone, Type0 independent native carriers and source quantifiers/guards/conclusions compared with freshly captured original full/type rows. holEl/holHd remain literal total EL/HD with opaque nil result through actual full relation, no bound/fallback or weakened source condition added. Generic kernel proofs and repeated full-state shift consumer; compiler execution unchanged, complete compiler correctness goal remains open. Recovered and re-reviewed on current canonical carriers by flapjack-sol-c (2026-10-02), branch fleet-solc-native-state-transport; full original statements/types freshly regenerated."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_loop_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenGcMoveLoop.lean",
+    "lean_name": "word_gen_gc_move_loop_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 original stack_allocProofScript.sml:4347-4540 and fresh fully typed local statement: exact explicit binder order, original free conf and c1 implicit universals, all original conjuncts including unused len_size+2 and c1 retained. Twelve existential word_loc witnesses, added clock, exact memory output, seven Temp updates and nine register updates in original order; all other state fields preserved. Complete fuel induction covers stop/data/refs; derives collector flags, strict decrease and recursive entry facts from actual collector equations, then full data/refs code theorems and native evaluate_add_clock. No good_dimindex, target evaluation, output relation or simulation premise added. Canonical actual StackSemStateFiniteExact regs/fpRegs/store and nonvacuous same-module codec witness; positive-width BitVec NeZero translation. Kernel theorem audit only propext Classical.choice Quot.sound. Exact evaluator Inst closure inherits SOUNDNESS item8 reals_as_rational_cuts; this does not certify arbitrary dependency source acceptance."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabelPositionEncoding.lean",
+    "lean_name": "encLinesAgainSimp_posOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_lines_again_simp_pos_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original4744-4770 complete statements and quantified types freshly captured in lab_to_target_label_position_encoding_probe.out. Full arbitrary native positive-width Line/Section, encoder HolAsm width to fixed word8 list, native Spt label maps and HolFfiName list retained; sole words_as_type_indexed_bitvec translation. Exactly original successful result equality (res,true) AND input labLenPosOk/allLabLenPosOk imply output parity; no additional encoder validity/evenness/nonempty/output/callback hypothesis. Actual simple encoder clauses preserve labels and nonlabel constructors; successful changed LabAsm clause proves new annotation equals old via actual Boolean success guard. Full section proof uses original enc_lines_again_simp_EQ and enc_lines_again_simp_len plus sec_length_sum_line_len to identify actual next position before IH. Twelve original/native observations cover changed and unchanged stored offsets, actual full list/section tuples/bytes/annotations/IDs, growth false flag and parity counterexample, invalid input not repaired, empty width1 lists/sections, width80 large words/positions; full arbitrary-width theorem consumers checked. Original executed accumulator encoder unchanged, proof-side simple encoder already reviewed. No total HD/EL dependency or individual hold release. Full loop and end-to-end correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabelPositionEncoding.lean",
+    "lean_name": "encSecsAgain_posOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_secs_again_pos_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-02 original4744-4770 complete statements and quantified types freshly captured in lab_to_target_label_position_encoding_probe.out. Full arbitrary native positive-width Line/Section, encoder HolAsm width to fixed word8 list, native Spt label maps and HolFfiName list retained; sole words_as_type_indexed_bitvec translation. Exactly original successful result equality (res,true) AND input labLenPosOk/allLabLenPosOk imply output parity; no additional encoder validity/evenness/nonempty/output/callback hypothesis. Actual simple encoder clauses preserve labels and nonlabel constructors; successful changed LabAsm clause proves new annotation equals old via actual Boolean success guard. Full section proof uses original enc_lines_again_simp_EQ and enc_lines_again_simp_len plus sec_length_sum_line_len to identify actual next position before IH. Twelve original/native observations cover changed and unchanged stored offsets, actual full list/section tuples/bytes/annotations/IDs, growth false flag and parity counterexample, invalid input not repaired, empty width1 lists/sections, width80 large words/positions; full arbitrary-width theorem consumers checked. Original executed accumulator encoder unchanged, proof-side simple encoder already reviewed. No total HD/EL dependency or individual hold release. Full loop and end-to-end correctness remain unfinished."
   }
 ]
