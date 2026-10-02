@@ -759,7 +759,10 @@ example : ssaView (.addOverflow 2 3 4 5) =
     (.seq (.inst (.arith (.addOverflow 21 11 12 0))) (.move 1 [(25, 0)]),
       some 21, some 25, 29) := by
   simp [ssaView, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
-    wordSsaRead, wordSsaFresh, wordSsaSeq, lookupNatInfo]
+    wordSsaRead, wordSsaFresh, wordSsaSeq, lookupNatInfo,
+    Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable,
+    Compiler.Backend.WordAlloc.nextVarRename,
+    sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext]
 
 -- overflow_copy_add_0 / overflow_copy_add_1
 example : (wordCopyInst (α := BitVec 64) wordCopyEmpty (.arith (.addOverflow 1 2 3 4))).1 =
@@ -787,7 +790,10 @@ example : ssaView (.subOverflow 2 3 4 5) =
     (.seq (.inst (.arith (.subOverflow 21 11 12 0))) (.move 1 [(25, 0)]),
       some 21, some 25, 29) := by
   simp [ssaView, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
-    wordSsaRead, wordSsaFresh, wordSsaSeq, lookupNatInfo]
+    wordSsaRead, wordSsaFresh, wordSsaSeq, lookupNatInfo,
+    Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable,
+    Compiler.Backend.WordAlloc.nextVarRename,
+    sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext]
 
 -- overflow_copy_sub_0 / overflow_copy_sub_1
 example : (wordCopyInst (α := BitVec 64) wordCopyEmpty (.arith (.subOverflow 1 2 3 4))).1 =

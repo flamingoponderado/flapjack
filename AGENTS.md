@@ -174,6 +174,9 @@ Lake artifacts, and run focused tests first. Independent reference, mapping,
 and probe checks may run concurrently. `check-warnings.sh` invokes Lake, so
 run it sequentially with other Lake commands; do not run multiple Lake builds
 against the same worktree at once.
+Treat `check_hol_ref_export.py` and the HOL checker unit suite as Lake users,
+too: their native-export regression can build modules. Run them sequentially
+with builds, `lake test`, and the warning check to avoid artifact-write races.
 Run the full required suite before reporting a branch ready and again on the
 coordinator's merged tree before integration. Profile a persistently slow
 theorem or checker and fix the bottleneck; never shorten default build targets
@@ -646,7 +649,14 @@ records that representation only: it authorizes no change to clauses,
 hypotheses, conclusions, NaN or flag behavior. `check-hol-refs.py` requires
 the qualifier exactly on the tagged declarations whose own source (signature
 and body, comments excluded) names a rendering declaration, and rejects it
-elsewhere. A declaration that merely calls a qualified declaration (for
+elsewhere, except for the reviewed bit-only forms `HolFloat`,
+`holFloatIsNormal`, `holFloatIsSubnormal`, `holFloatNegate`, `holFloatAbs`,
+`holFp64ToFloat`, `holFloatToFp64`, `holFp64Abs`, and `holFp64Negate`.
+The checker exempts these forms only while their canonical bodies, namespace,
+and unique declaration ownership pass its fail-closed checks; real-dependent
+operations still require the qualifier. These checks do not establish
+HOL-to-Lean equivalence or replace source review.
+A declaration that merely calls a qualified declaration (for
 example the wordSem `evaluate` calling `inst`) is a dependent: it does not
 carry the qualifier but must record `"inherits_reals_as_rational_cuts": true`
 and a note naming the inherited assumption in the theorem map.

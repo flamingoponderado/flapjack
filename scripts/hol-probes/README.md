@@ -5894,5 +5894,141 @@ coverage of unspecified nonword headers.
 
 Recursive register-bound probes capture seven full generic original cases and210 guard EVAL/whole-theorem application pairs at widths1/2/8/64/80 and three frames including70bit offset. Kernel fixtures apply each complete recursive case, discharging only proper-subprogram hypotheses through the checked Alloc case. Seq, If and returning/handler Calls retain actual bitmap threading; direct, empty-indirect, spilled-indirect, ignored invalid tail handlers and arbitrary configuration immediate acceptance/rejection are covered. No eager irrelevant bitmap EVAL, full original proof replay, cross-language equivalence or full compiler correctness is claimed. Full register-bound assembly remains open. Selector: HOL_PROBE_ONLY=word_to_stack_reg_recursive_probeScript.sml.
 
-Full native register-bound compiler probe captures the entire original generic theorem and135 guard EVAL/full original theorem application pairs. Kernel matches cover widths1/2/8/64/80,threeframesincluding70bitoffset,nonempty live maps,deep MustTerminate/Loop/If/Seq/returned and handler Calls,spilled source registers and indirect destinations,ignored invalid tail handlers and arbitrary configurations. The public Lean theorem discharges all induction hypotheses internally and retains exactly original post_alloc_conventions,4<=frame,perf=F premises. These are original theorem applications and regression observations, not whole original proof replay or cross-language equivalence. Full pass semantics and compiler composition remain unfinished. Selector: HOL_PROBE_ONLY=word_to_stack_reg_compiler_probeScript.sml.
+Full native register-bound compiler probe captures the entire original generic theorem and135 guard EVAL/full original theorem application pairs. Kernel matches cover widths1/2/8/64/80,threeframesincluding70bitoffset,nonempty live maps,deep MustTerminate/Loop/If/Seq/returned and handler Calls,spilled source registers and indirect destinations,ignored invalid tail handlers and arbitrary configurations. The public Lean theorem discharges all induction hypotheses internally and retains exactly original post_alloc_conventions,4<=frame,perf=F premises. These135target rows are original theorem applications, not independent target-output observations; the135guard rows independently evaluate only source guards. They do not constitute whole original proof replay or cross-language output equivalence. Full pass semantics and compiler composition remain unfinished. Selector: HOL_PROBE_ONLY=word_to_stack_reg_compiler_probeScript.sml.
 `ssa_call_returning_some_probe.out` captures the full arbitrary handler-present specialization of original `ssa_cc_trans_correct`, all six premises and complete existential source-permutation/Error-exempt result, frame and result-sensitive locals. The native case adds only the two genuine smaller continuation IHs, derives exception-frame/root restoration and both native reconciliation paths, and retains the exception binder counter after compiling the return continuation. This is source-review regression evidence, not cross-language equivalence; full returning Call/SSA assembly remains open.
+
+`ssa_call_returning_probe.out` captures the original arbitrary optional-handler returning Call specialization with all six premises and full simulation conclusion. The native assembly adds only genuine smaller continuation IHs and splits the handler Option. Full all-program SSA correctness remains open; this capture is source regression evidence, not cross-language equivalence.
+
+Whole native compiled-stack-conventions probes capture the complete original theorem and its output-projection application,90 source EVERY EVALs,270 original target-predicate theorem applications and30rejected source guards. Matching kernel fixtures prove all three conventions over actual compileNative output including both stubs. Widths1/2/8/64/80,register counts4/8,empty/duplicate70bit avoid lists,empty/multiple/duplicate identifiers,nested Alloc/Loop/If/Seq/returned-handler Calls,70bit registers/argument counts and invalid ignored tail handlers are retained. The full theorem has exactly original compile tuple equality/source EVERY/k equation/4<=k premises. These are regression observations and original theorem applications,not direct eager bitmap EVAL/full original proof replay/cross-language equivalence. Full pass simulation and compiler composition remain unfinished. Selector: HOL_PROBE_ONLY=word_to_stack_stack_convs_probeScript.sml.
+### Native trigger-update simulation
+
+`stack_alloc_trigger_statement_probeScript.sml` captures the literal full local
+`evaluate_SetNewTrigger` statement and all free/quantified carrier types, seven
+original `new_trig` results and seven actual StackSem `SetNewTrigger` runs.
+The run tuples include result, registers1/7/4, TriggerGC, clock, untouched
+registers0/3/8 and CurrHeap. Both32/64-bit alignment branches are covered; the
+remaining state fields are arbitrary. `Flapjack/Test/SetNewTriggerParity.lean`
+replays all14 observations in the kernel. The capture elaborates the original
+simulation statement; it does not replay its original proof.
+## Complete binary32 nearest-even rounding agreement
+
+`binary_ieee_round_fp32_probeScript.sml` evaluates the original choice-based
+`float_round roundTiesToEven` and `float_to_fp32` through the pinned HOL
+library's certified conversion. All50 numeric rows cover both requested zero
+signs at integer ties, binade boundaries, signed/unsigned integer extremes,
+half/min/max subnormal values, the normal boundary, largest finite values,
+threshold-adjacent values and positive/negative threshold overflow.
+`BinaryIeeeRoundFp32Parity` rewrites that complete rational specification using
+`holFloatRound_rte_fp32` before50 kernel evaluations; no numerical equality is
+assumed. `BinaryIeeeRoundFp32` proves agreement for every rational argument and
+both zero signs. This is Flapjack algorithm/proof infrastructure; HOL does not
+name the algorithm, and the HOL-real rendering assumption remains unchanged.
+Directed modes and the full eight L3 integer-to-FP case acceptance stay open on
+linked prerequisites; these regressions do not stand in for those modes.
+Regenerate using `HOL_PROBE_ONLY=binary_ieee_round_fp32_probeScript.sml` with
+the matching built original HOL and the standard probe driver.
+
+Independent stack-removal carrier probe freshly prints original stack_asm_remove type and full definition,then400 direct predicate EVALs matching kernel expectations. Original type has independent config/program word dimensions; repaired native signature retains both with independent positivity. All34constructor families,1/80,80/1,2/64,64/2,8/8 dimensions,boundary register limits and natural-subtraction underflow,duplicate70bitavoid entries,ignored conditions/instructions/metadata and active/ignored handlers are covered (255T145F). Existing22same-width original oracle rows remain unchanged. Only the predicate carrier binder restriction changed; no clause,source assumption,hold or policy change. This is regression evidence,not cross-language equivalence. Selector: HOL_PROBE_ONLY=stack_props_remove_independent_probeScript.sml.
+
+### Generational collector full statement captures
+
+`stack_alloc_generational_statement_probeScript.sml` elaborates both complete
+local generational `word_gc_fun_thm` (1731) and `gc_thm` (1884), retaining
+all branches and printing their typed statements and free carriers. This is
+statement evidence, not a replay of the original HOL proof or concrete execution.
+The full Lean equalities live in `StackAlloc/Proofs/GcGenerational.lean`.
+## Complete binary32 directed rounding agreement
+
+The untagged BinaryIeeeDirectedFp32 infrastructure proves all three directed
+clauses for every rational input and both zero signs, and assembles all four
+modes. Source review compared HOL round_def411–443's strict largest guards,
+per-mode clamps/infinities and finite candidate sets, plus float_round's zero
+selection. Agreement is with the rational rendering; SOUNDNESS item8 remains.
+
+The directed probe captures 50 fresh original toward-zero numeric outputs,
+replayed by Lean kernel proofs. Finite upward/downward conversion is rejected
+by the pinned original binary_ieeeLib; six signed tie checks are explicitly
+Lean algorithm regressions. The independent certified-converter bead remains
+open for the complete144-row original int-to-FP oracle; no modes are dropped.
+`word_to_stack_asm_remove_helpers_probe` freshly replays the five complete original local proofs at word_to_stackProofScript.sml:11129-11182, then captures 95 cross-width helper predicates (five independent width pairs, direct/empty/register/spilled destinations, zero/nonzero live bitmaps, arbitrary-continuation movement equivalences, auxiliary copies and both handler modes). Lean fixtures replay all observations. Regression evidence does not prove HOL-to-Lean equivalence.
+
+
+### Independent Word-to-Stack register-bound compiler output observations
+
+`word_to_stack_reg_output_probeScript.sml` calls HOL `EVAL` directly on
+`word_to_stack$comp`, without applying `word_to_stack_reg_bound` or another
+correctness theorem. Six captured output tuples include the entire target
+StackLang program, bitmap AppList, and next bitmap index.
+`Flapjack/Test/WordToStackRegOutputParity.lean` compares `compNative` with their
+literal constructor translations by kernel `cbv`, without a register-bound
+theorem. Config is universally arbitrary because these six inputs do not
+inspect it. HOL's printed `const_inst` is the `Inst (Const r w)` overload at
+`stackLangScript.sml:82`, not an opaque output placeholder.
+
+| Evidence set | Source guard EVALs | Bound theorem applications | Actual comp output tuples |
+| --- | ---: | ---: | ---: |
+| reg_compiler | 135 | 135 | 0 |
+| reg_recursive | 210 | 210 | 0 |
+| reg_output | 0 | 0 | 6 |
+
+The six outputs cover MustTerminate/Alloc/Seq, Loop/If with a register operand,
+Seq of loops, indirect tail Call, direct returned Call, and an indirect returned
+Call with a handler and nested allocation. Frame `(4,7,9)`, spilled register
+80/82, nonempty live maps, and initial bitmap index17 produce one bitmap at
+index18 or two at index19. These observations use width64; they are not counted
+as output observations for the other widths/frames in the theorem fixtures,
+configuration-dependent immediate cases, performance mode, or all constructors.
+This is intermediate compiler-output parity, not target execution or full
+compiler correctness. Existing oracle rows and full quantified theorem are
+unchanged. Selector: `HOL_PROBE_ONLY=word_to_stack_reg_output_probeScript.sml`.
+
+`ssa_cc_trans_correct_probe.out` captures the complete original all-program
+statement and conclusion. The native assembly discharges constructor induction
+hypotheses internally and retains the six original premises.
+`full_ssa_cc_trans_correct_probe.out` captures the original wrapper statement
+and conclusion; its native port retains only the initial locals-domain premise.
+These are source-review regression captures, not cross-language equivalence.
+The executed SSA migration and end-to-end correctness remain open.
+
+`ssa_cutset_route_probe.out` captures six original heterogeneous `sptree$inter` cutset observations: empty map/set, repeated first-match keys, missing keys, native traversal order and names/values beyond 64 bits. `SSAStateMapRouteParity.lean` replays complete outputs through the actual `wordSsaRestrict` caller. The full native program SSA route remains open.
+
+`ssa_reconcile_route_probe.out` captures seven original complete `ssa_reconcile` outputs, including Skip/identity, missing source/target, repeated first-match keys, native order and values beyond 64 bits. `SSAStateMapRouteParity.lean` kernel-replays the entire production caller program. Its API codec has a checked full result reconstruction theorem at every positive word width.
+
+`ssa_listmove_route_probe.out` captures six original full `list_next_var_rename_move` program/map/counter tuples. Cases include an empty renaming over a noncanonical duplicate-key input codec, missing names, repeated names, source/destination aliases, native map order and counters beyond 64 bits. Kernel fixtures replay the entire actual caller output, including its independent initial state counter and both returned counters.
+
+`word_to_stack_asm_remove_compiler_probe` captures the entire original word_to_stack_stack_asm_remove_lem with hyp=[], then 280 original full-theorem applications and their guards at widths1/2/8/64/80, frames0/4, all26 source constructor families including all three Call forms and nested bitmap-changing bodies. Config retains arbitrary non-count fields and duplicate70-bit avoided registers, bitmap lists are nonempty, frame offsets and spilled arguments are70-bit. Lean fixtures apply the full theorem at those exact inputs. Frame0 exercises absence of post-allocation/minimum-frame assumptions. This is original theorem-application evidence, not fresh replay of its proof or HOL-to-Lean equivalence.
+## Complete binary64 directed rounding agreement
+
+BinaryIeeeDirectedFp64 proves all3 directed clauses and all4mode agreement for
+every rational input and both requested zero signs. Source comparison retains
+HOL round_def411–443 strict largest guards, exact per-mode infinity/clamp,
+finite candidate predicates, and float_round_def507–515 zero override. This
+untagged algorithm infrastructure proves rational-rendering agreement only;
+SOUNDNESS item8 remains external. Binary64 uses52/11 bits, scale2^-1074 and
+63-bit magnitude; explicit positive inverse/cancellation lemmas handle scaling.
+
+The directed64 probe freshly captures30 original toward-zero numeric rows and
+Lean kernel replays them. Six up/down signed tie checks are algorithm tests,
+not original HOL oracle evidence. Pinned original finite up/down conversion
+remains unsupported; the separate converter bead retains full144-row L3 scope.
+
+### Full L3 integer-to-floating conversion
+
+`l3_riscv_int_to_fp_probeScript.sml` captures all eight original integer-to-FP
+clauses over 18 state scenarios (144 rows), including every supported rounding
+mode, dynamic rounding, signed zero, and illegal-mode traps. Mode 2 is toward
+negative and mode 3 toward positive. The observations retain destination/source
+registers, status and flag updates, delta, other-core state, and trap behavior.
+
+`binary_ieee_directed_certificates.sml` supplies closed original HOL proofs for
+finite directed integer rounding where the upstream converter is unimplemented.
+It discovers a candidate using original toward-zero conversion and an adjacent
+pattern, then independently proves finite/value/ULP/boundary obligations and the
+literal closest-choice result, including the original zero-sign override. It
+uses no host floating-point oracle and does not modify either reference tree.
+The standard driver sets `FLAPJACK_HOL_PROBE_DIR` and refreshes the capture when
+the certificate library changes. This is original-HOL regression evidence,
+not a cross-language equivalence proof.
+`word_to_stack_asm_name_helpers_probe` captures the original shared config/program word type, freshly replays five exact local proofs at10958-11005 with their original local simp registrations, and records230 naming observations at widths1/2/8/64/80. Both performance/handler flags, empty/direct/indirect/spilled destinations, arbitrary-continuation movement, return-copy counts and zero/nonzero live bitmaps are tested. Count-underflow cases show five nonzero live failures while unconditional helpers still succeed (225T/5F). Lean fixtures replay captured expectations; original proof/kernel validity and regression observations do not establish HOL-to-Lean equivalence.
+
+`word_convs_full_inst_native_probe` captures the complete original predicate/type and828 literal validity observations at widths1/2/8/32/64/80 and both two_reg_arith flags. It covers all26 source constructor families, all16 FP forms, immediate validity, all8 ShareInst offset classes, recursive bad bodies and the ignored NONE-return handler. Address/halfword/byte policies have distinct ranges, while non-policy config fields remain arbitrary. Exact native Lean fixtures replay every original expectation. Broad original output/fixture behavior is retained through one shared recursive traversal; broad encoder and width carriers remain explicitly untagged. Regression evidence does not establish HOL-to-Lean equivalence.

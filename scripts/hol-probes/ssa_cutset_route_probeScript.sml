@@ -1,0 +1,10 @@
+load "preamble"; load "word_allocTheory";
+open HolKernel Parse bossLib preamble word_allocTheory sptreeTheory;
+val _ = Globals.linewidth := 1000;
+fun out label term = (print(label ^ "="); print_term(rconc(EVAL term)); print "\n");
+val _ = out "cut_empty_map" ``toAList (inter (LN:num num_map) (fromAList [(2,())]))``;
+val _ = out "cut_empty_names" ``toAList (inter (fromAList [(2,7);(0,3)]) (LN:unit num_map))``;
+val _ = out "cut_duplicates" ``toAList (inter (fromAList [(2,7);(2,9);(0,3);(5,11)]) (fromAList [(2,());(2,());(5,())]))``;
+val _ = out "cut_missing" ``toAList (inter (fromAList [(2,7);(0,3)]) (fromAList [(99,());(2,())]))``;
+val _ = out "cut_order" ``toAList (inter (fromAList [(6,212);(5,208);(1,204);(0,200);(2,100);(3,101);(4,102)]) (fromAList [(6,());(5,());(1,());(0,());(2,());(3,());(4,())]))``;
+val _ = out "cut_big" ``toAList (inter (fromAList [(18446744073709551616,18446744073709551620);(2,7)]) (fromAList [(18446744073709551616,())]))``;

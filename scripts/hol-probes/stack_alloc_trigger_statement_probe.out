@@ -1,0 +1,16 @@
+trigger_full_typed_statement=(evaluate ((SetNewTrigger (endh_reg :num) (ib_reg :num) (gen_sizes :num list) :α stackLang$prog),(s5 :(α, β, γ) state)) :α result option # (α, β, γ) state) = ((res :α result option),(new_s :(α, β, γ) state)) ⇒ ∀(ib :α word) (endh :α word) (w :α word). good_dimindex (:α) ∧ s5.use_store ∧ ALL_DISTINCT [(1 :num); (4 :num); (7 :num); ib_reg; endh_reg] ∧ FLOOKUP s5.regs ib_reg = SOME (Word ib) ∧ FLOOKUP s5.regs endh_reg = SOME (Word endh) ∧ FLOOKUP s5.store AllocSize = SOME (Word w) ⇒ ∃(r7 :α word_loc) (r1 :α word_loc) (r4 :α word_loc). res = (NONE :α result option) ∧ new_s = s5 with <|regs := s5.regs⟨(4 :num) ↦ r4; (7 :num) ↦ r7; (1 :num) ↦ r1⟩; store := s5.store⟨TriggerGC ↦ Word (ib + new_trig (endh − ib) w gen_sizes)⟩|>
+trigger_free_vars=new_s::(α, β, γ) state,res::α result option,s5::(α, β, γ) state,gen_sizes::num list,ib_reg::num,endh_reg::num
+trigger_generation_cap=(32w :word64)
+trigger_heap_cap=(24w :word64)
+trigger_alloc_exceeds_heap=(24w :word64)
+trigger_aligned_alloc=(64w :word64)
+trigger_unaligned_alloc=(1000w :word64)
+trigger_32_aligned_alloc=(20w :word32)
+trigger_32_unaligned_alloc=(1000w :word32)
+trigger_run_generation_cap=((NONE :64 result option),SOME (Word (132w :word64)),SOME (Word (16w :word64)),SOME (Word (1000w :word64)),SOME (Word (132w :word64)),(6 :num),SOME (Word (42w :word64)),SOME (Word (100w :word64)),SOME (Word (1100w :word64)),SOME (Word (9w :word64)))
+trigger_run_heap_cap=((NONE :64 result option),SOME (Word (32w :word64)),SOME (Word (16w :word64)),SOME (Word (24w :word64)),SOME (Word (124w :word64)),(6 :num),SOME (Word (42w :word64)),SOME (Word (100w :word64)),SOME (Word (124w :word64)),SOME (Word (9w :word64)))
+trigger_run_alloc_exceeds_heap=((NONE :64 result option),SOME (Word (32w :word64)),SOME (Word (64w :word64)),SOME (Word (24w :word64)),SOME (Word (124w :word64)),(6 :num),SOME (Word (42w :word64)),SOME (Word (100w :word64)),SOME (Word (124w :word64)),SOME (Word (9w :word64)))
+trigger_run_aligned_alloc=((NONE :64 result option),SOME (Word (32w :word64)),SOME (Word (164w :word64)),SOME (Word (1000w :word64)),SOME (Word (164w :word64)),(6 :num),SOME (Word (42w :word64)),SOME (Word (100w :word64)),SOME (Word (1100w :word64)),SOME (Word (9w :word64)))
+trigger_run_unaligned_alloc=((NONE :64 result option),SOME (Word (32w :word64)),SOME (Word (65w :word64)),SOME (Word (1000w :word64)),SOME (Word (1100w :word64)),(6 :num),SOME (Word (42w :word64)),SOME (Word (100w :word64)),SOME (Word (1100w :word64)),SOME (Word (9w :word64)))
+trigger_run_32_aligned_alloc=((NONE :32 result option),SOME (Word (16w :word32)),SOME (Word (120w :word32)),SOME (Word (1000w :word32)),SOME (Word (120w :word32)),(6 :num),SOME (Word (42w :word32)),SOME (Word (100w :word32)),SOME (Word (1100w :word32)),SOME (Word (9w :word32)))
+trigger_run_32_unaligned_alloc=((NONE :32 result option),SOME (Word (16w :word32)),SOME (Word (21w :word32)),SOME (Word (1000w :word32)),SOME (Word (1100w :word32)),(6 :num),SOME (Word (42w :word32)),SOME (Word (100w :word32)),SOME (Word (1100w :word32)),SOME (Word (9w :word32)))

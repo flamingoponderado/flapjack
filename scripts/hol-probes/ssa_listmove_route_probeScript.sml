@@ -1,0 +1,10 @@
+load "preamble"; load "word_allocTheory";
+open HolKernel Parse bossLib preamble word_allocTheory sptreeTheory;
+val _ = Globals.linewidth := 1000;
+fun out label term = (print(label ^ "="); print_term(rconc(EVAL term)); print "\n");
+val _ = out "lm_empty" ``let (p,m,n) = list_next_var_rename_move (fromAList [(2,7);(0,3);(2,9)]) 10 [] : 64 wordLang$prog # num num_map # num in (p,toAList m,n)``;
+val _ = out "lm_missing" ``let (p,m,n) = list_next_var_rename_move (LN:num num_map) 10 [2;5] : 64 wordLang$prog # num num_map # num in (p,toAList m,n)``;
+val _ = out "lm_repeated" ``let (p,m,n) = list_next_var_rename_move (fromAList [(2,7);(2,9)]) 10 [2;2] : 64 wordLang$prog # num num_map # num in (p,toAList m,n)``;
+val _ = out "lm_source_alias" ``let (p,m,n) = list_next_var_rename_move (fromAList [(2,10);(5,14)]) 10 [2;5;2] : 64 wordLang$prog # num num_map # num in (p,toAList m,n)``;
+val _ = out "lm_order" ``let (p,m,n) = list_next_var_rename_move (fromAList [(0,21);(4,41);(6,33);(12,37)]) 200 [0;4;12;6] : 64 wordLang$prog # num num_map # num in (p,toAList m,n)``;
+val _ = out "lm_big" ``let (p,m,n) = list_next_var_rename_move (fromAList [(18446744073709551616,7)]) 18446744073709551616 [18446744073709551616;2] : 64 wordLang$prog # num num_map # num in (p,toAList m,n)``;

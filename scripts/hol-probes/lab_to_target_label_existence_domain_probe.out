@@ -1,0 +1,19 @@
+line_labs_exist_get_labels=∀(labs :α sptree$num_map sptree$num_map) (line :β line).
+  line_labs_exist labs line ⇔ line_get_labels line ⊆ labs_domain labs
+line_labs_exist_get_labels_types=(labs :α sptree$num_map sptree$num_map)::α sptree$num_map sptree$num_map;(line :β line)::β line;
+sec_labs_exist_get_labels=∀(labs :α sptree$num_map sptree$num_map) (sec :β sec).
+  sec_labs_exist labs sec ⇔ sec_get_labels sec ⊆ labs_domain labs
+sec_labs_exist_get_labels_types=(labs :α sptree$num_map sptree$num_map)::α sptree$num_map sptree$num_map;(sec :β sec)::β sec;
+all_labs_exist_get_labels=all_labs_exist (labs :α sptree$num_map sptree$num_map) (code :β sec list) ⇔
+get_labels code ⊆ labs_domain labs
+all_labs_exist_get_labels_types=(code :β sec list)::β sec list;(labs :α sptree$num_map sptree$num_map)::α sptree$num_map sptree$num_map;
+line_present_false_value=T
+line_missing_outer=T
+line_missing_inner=T
+call_nonreference_empty_domain=T
+section_full_extraction=T
+code_full_extraction=T
+empty_inner_map_failure=T
+zero_label_reference=T
+unconstrained_nonreferences=T
+empty_width1=T

@@ -49,7 +49,6 @@ private theorem supportsCodec_wordSsaRenameInstProgram {α : Type u} [OfNat α 0
     (source target : WordSsaState) (names : List Nat) :
     supportsCodec (wordSsaReconcileTo (α := α) source target names) = true := by
   unfold wordSsaReconcileTo
-  dsimp only
   split <;> simp [supportsCodec]
 
 /-- Flapjack-only scaffolding for the actual SSA codec domain; no HOL original. -/
@@ -110,9 +109,7 @@ private theorem supportsCodec_wordSsaRenameProgramWithLoops
   all_goals simp_all (config := { zetaDelta := true }) [supportsCodec, wordSsaFresh,
       supportsCodec_wordSsaRenameInstProgram,
       supportsCodec_wordSsaSeq,
-      supportsCodec_wordSsaListNextVarRenameMove,
-      supportsCodec_wordSsaReconcileTo,
-      supportsCodec_wordSsaFixInconsistencies]
+      supportsCodec_wordSsaReconcileTo]
 
   all_goals grind only [supportsCodec_wordSsaListNextVarRenameMove,
     supportsCodec_wordSsaLoopSetup,
