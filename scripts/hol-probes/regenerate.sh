@@ -5170,3 +5170,7 @@ run_probe lab_to_target_label_position_padding_probeScript.sml lab_to_target_lab
 run_probe stack_remove_comp_inst_probeScript.sml stack_remove_comp_inst_probe.out \
   ci_statement ci_types ci_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_heap_probeScript.sml stack_remove_comp_heap_probe.out \
+  ch_statement ch_types ch_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
