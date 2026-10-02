@@ -1,3 +1,4 @@
+import Flapjack.Misc.Words.Formatting
 import Flapjack.Misc.Words.Replicate
 import Flapjack.Misc.StateTransformer
 import Flapjack.Compiler.Backend.LabToTarget.ZeroLabelExistence

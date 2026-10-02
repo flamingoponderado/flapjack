@@ -457,6 +457,7 @@
     {"bytes": 319, "out": "num_set_audit_probe.out", "rows": 16, "sha256": "ab1cf111a588d2a04174ae550b4a2a035ab537b3d86ab69d795e182755a8285b"},
     {"bytes": 152, "out": "num_set_spt_probe.out", "rows": 11, "sha256": "e6d7df80a2aed661f16a32c880c7ff784dfd0eb203a84ddba006d56e16c4d928"},
     {"bytes": 180, "out": "num_set_to_alist_probe.out", "rows": 6, "sha256": "fcd321225787ad169f2586222f58229af7287c24ac453dc6592d7fc43eabf8a5"},
+    {"bytes": 1799, "out": "numeric_formatting_probe.out", "rows": 70, "sha256": "c9000da280438db7f19365b8a8726dbfea23c494b842c730ad6f97397b34d366"},
     {"bytes": 227, "out": "ocompile_probe.out", "rows": 5, "sha256": "c97ad0ed71e245ecddef24f2f1722b9cd5a591f5531ed21f28dd592d1cba9f35"},
     {"bytes": 208, "out": "old_exp_shape_probe.out", "rows": 10, "sha256": "631de63b5fea5a6ae8914a3ef640f7d786bd58a4db36dc278f4f8395a384489e"},
     {"bytes": 190, "out": "pan_bst_probe.out", "rows": 12, "sha256": "a197b7b6a0785ff533d07dea782622e4c4b94435d3214e27284bc096fb33f8a2"},
