@@ -1,0 +1,19 @@
+get_shmem_info_ALL_DISTINCT=LENGTH (prog_to_bytes (code2 :α sec list)) < dimword (:α) ∧
+enc_ok (c :α asm_config) ∧
+all_enc_ok c (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+  (p' :num) code2 ⇒
+ALL_DISTINCT
+  (MAP (λ(rec :shmem_info_num). rec.entry_pc)
+     (SND
+        (get_shmem_info code2 (p :num) ([] :ffiname list)
+           ([] :shmem_info_num list))))
+get_shmem_info_ALL_DISTINCT_types=(p :num)::num;(p' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;(code2 :α sec list)::α sec list;
+get_shmem_info_ALL_DISTINCT_hypotheses=0
+full_guards=T
+entry_values=T
+distinct=T
+independent_query=T
+empty=T
+zero_validity=T
+encoding_guard=T
+zero_duplicate=T

@@ -1538,6 +1538,12 @@
       "sha256": "5c64e715db775806650a419e26b6fbde06563b179b08f488933b8e400ead79df"
     },
     {
+      "bytes": 6166,
+      "out": "l3_model_fetch_probe.out",
+      "rows": 21,
+      "sha256": "3c73360db940f639011b0a721abc75eb706566fa7a5c74403757d16eea62e086"
+    },
+    {
       "bytes": 187,
       "out": "l3_raise_exception_probe.out",
       "rows": 2,
@@ -2142,6 +2148,18 @@
       "out": "lab_to_target_share_mem_state_probe.out",
       "rows": 3,
       "sha256": "3edeedf49fed826bda2c2ec9fdf0f91ad356ac43d1e59459f0bc98cb50b4b2b6"
+    },
+    {
+      "bytes": 791,
+      "out": "lab_to_target_shmem_distinct_probe.out",
+      "rows": 11,
+      "sha256": "885db3703a12330d54d8485e594a5c4915e00e6568d911b4fa4cd00d78201197"
+    },
+    {
+      "bytes": 1155,
+      "out": "lab_to_target_shmem_extraction_probe.out",
+      "rows": 10,
+      "sha256": "7b4bcbcd2cd698b448ea383c4ec6d7489a12f8f6cd1e66e0a0be70298e38a311"
     },
     {
       "bytes": 923,
@@ -6102,6 +6120,12 @@
       "out": "stack_remove_wordstore_probe.out",
       "rows": 16,
       "sha256": "ce1469356760239739d4f68eb0b1a71104710ee16424d716df287fca79509c46"
+    },
+    {
+      "bytes": 32471,
+      "out": "stack_remove_write_bytearray_probe.out",
+      "rows": 55,
+      "sha256": "3cee9546d0af6c619746598e337c0152ca8fae9e34351933b406e559b842c103"
     },
     {
       "bytes": 560,

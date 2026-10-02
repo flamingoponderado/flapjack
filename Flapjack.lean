@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.Fetch
 import Flapjack.Misc.Sptree.Subspt
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.RawCall
@@ -23,6 +24,8 @@ import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
 import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
 import Flapjack.Compiler.Backend.LabToTarget.MemoryTransport
 import Flapjack.Compiler.Backend.LabToTarget.LineInfo
+import Flapjack.Compiler.Backend.LabToTarget.ShmemExtraction
+import Flapjack.Compiler.Backend.LabToTarget.ShmemDistinct
 import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
@@ -1761,6 +1764,7 @@ import Flapjack.Compiler.Backend.StackNames.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.StackNames.Proofs.MakeInit
 import Flapjack.Compiler.Backend.StackNames.Proofs.LabelsCallArgs
 import Flapjack.Compiler.Backend.StackRemove
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
 import Flapjack.Compiler.Backend.WordToStackRegFormat

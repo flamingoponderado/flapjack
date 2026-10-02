@@ -6202,3 +6202,19 @@ sptree_wf_definition_probeScript.sml captures the full original wf_def and254 co
 `word_to_stack_word_extraction_probe` replays all three full original successful `the_words` proofs (4068–4087), then captures 136 complete extraction outputs at widths 1/8/64/80: every zero/one/two-element combination of NONE, Word0, Word1, Loc3/5 and a 70-bit word literal, plus long successful and late/early failing lists. Lean expected results are decoded only from original outputs and checked in the kernel and compiled runtime. The full mapped-source theorem is applied with function-valued inputs without an equality instance. Anonymous projection defaults are unreachable under the original success guard, as proved by the membership theorem; the existing approved option THE is reused without a new default. The subsequent legacy expression consumers are commented in HOL, so this inventory section is not claimed as an active comp_correct dependency.
 `stack_remove_comp_raw_call_probeScript.sml` replays the complete original RawCall case with actual Seq-code/nonzero-clock guarded body IH and original local lookup/dec-clock helpers. It assumes no full `comp_correct`; two rows record the scoped statement and proof success.
 
+`l3_model_fetch_probe.out` captures the full original riscv model Fetch
+definition/type, an arbitrary-state odd-PC equation, and eighteen fully reduced
+route observations. L3ModelFetchParity kernel-checks an unconditional complete
+state equation and matching numeric cases: odd PC including unknown VM and word
+wrap, five unsupported VM modes, Bare half/word decoding and wrapped byte reads,
+Sv39/Sv48 TLB hits, denied permission, successful superpage walks and invalid
+PTE. Observations include all nine Delta fields on current/other cores, Skip,
+all nine fields of all sixteen TLB slots, PTE memory, exception and core metadata.
+PTE byte fixtures use equivalent explicit eight-byte maps in Lean, avoiding
+unreachable huge exponent reduction; every unrelated state field is arbitrary.
+The original walk clears the low PPN bits at a superpage level and sets PTE_R
+(bit 5), yielding PTE3111 and physical offset1656 in these two walk cases.
+This is the full model Fetch, distinct from riscv_step Fetch; probes are
+regression evidence, not cross-assistant equivalence or full modelRun coverage.
+
+`stack_remove_write_bytearray_probe` replays the three full original IGNORE_non_aligned/IGNORE/EQ proofs (324–370), captures 50 complete original reads and paired writes at seven observed keys, and records the original LOG specification plus its symbolic `LOG2 0` boundary. Widths 8/64/80 cover both endiannesses, empty writes, wraparound, Loc/domain failures and differing memories; width 1 has empty writes only. Nonempty width-one observations remain symbolic and are not assigned invented numeric expectations. Kernel/runtime checks compare only values decoded from the original outputs. Native support drafts remain untagged: their imported alignment chooses `Nat.log2 0 = 0`, whereas the source specification does not constrain `LOG2 0`. Exact acceptance remains open on `flapjack-wordsem-byte-align-total`, which must reuse the already reviewed canonical total alignment model. Numeric fixtures do not establish generic cross-language correspondence or compiler correctness.
