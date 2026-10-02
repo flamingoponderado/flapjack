@@ -2,6 +2,8 @@ import Flapjack.Compiler.Backend.LabToTarget.PrefixPreservation
 import Flapjack.Compiler.Backend.LabToTarget.PrefixZero
 import Flapjack.Compiler.Backend.LabToTarget.Alignment
 import Flapjack.Compiler.Backend.LabToTarget.UpdateZero
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticLoop
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopIteration
 import Flapjack.Compiler.Backend.LabToTarget.ZeroPreservation
 import Flapjack.Compiler.Backend.LabToTarget.UpdatePosition
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSetup
