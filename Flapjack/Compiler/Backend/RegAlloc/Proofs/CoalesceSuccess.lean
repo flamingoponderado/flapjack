@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.EdgeInsertion
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ConsideredVarFilter
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedForeach
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
 
 /-!
 # reg_allocProof: success of the coalesce phase
@@ -62,7 +63,7 @@ theorem consistencyOkSuccess :
       simp only [Translator.Monadic.MonadBase.bind, hbx, hby, moveRelatedSubEqn, if_pos hxm,
         if_pos hym, ret]
 
-/-- Exact HOL `st_ex_FILTER_consistency_ok` (`reg_allocProofScript.sml:2320-2336`). -/
+/-- Exact HOL `st_ex_FILTER_consistency_ok` (`reg_allocProofScript.sml:2320-2347`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml"
   "st_ex_FILTER_consistency_ok"]
 theorem stExFilterConsistencyOk :
@@ -288,5 +289,262 @@ theorem resetMoveRelatedSuccess {α : Type} :
   refine ⟨mv, ?_, hl2⟩
   simp only [resetMoveRelated, Translator.Monadic.MonadBase.bind, getDim, ignoreBind, hrun1]
   exact hrun2
+
+/-- Exact HOL `st_ex_FIRST_consistency_ok_bg_ok` (`reg_allocProofScript.sml:2495-2547`); `k`
+is free in HOL. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml"
+  "st_ex_FIRST_consistency_ok_bg_ok"]
+theorem stExFirstConsistencyOkBgOk (k : Nat) :
+    ∀ (ls acc : List (Nat × (Nat × Nat))) (s : State),
+      goodRaState s ∧ (∀ m ∈ ls, m.2.1 < s.dim ∧ m.2.2 < s.dim) ∧
+        (∀ m ∈ acc, m.2.1 < s.dim ∧ m.2.2 < s.dim) →
+      ∃ ores ys s' coal,
+        stExFirst consistencyOk (bgOk k) ls acc s = (.success (ores, ys), s') ∧
+        goodRaState s' ∧ s' = { s with coalesced := coal } ∧
+        (∀ m ∈ ys, m.2.1 < s.dim ∧ m.2.2 < s.dim) ∧
+        match ores with
+        | some ((x, y), (case1, case2), rest) =>
+            x < s.dim ∧ y < s.dim ∧ (∀ v ∈ case1, v < s.dim) ∧ (∀ v ∈ case2, v < s.dim) ∧
+              (∀ m ∈ rest, m.2.1 < s.dim ∧ m.2.2 < s.dim)
+        | _ => True := by
+  intro ls
+  induction ls with
+  | nil =>
+      intro acc s ⟨hg, _, hacc⟩
+      exact ⟨none, acc, s, s.coalesced, rfl, hg, rfl, hacc, trivial⟩
+  | cons m ms ih =>
+      intro acc s ⟨hg, hb, hacc⟩
+      obtain ⟨p, x, y⟩ := m
+      obtain ⟨hx, hy⟩ := hb (p, x, y) List.mem_cons_self
+      have hms : ∀ m ∈ ms, m.2.1 < s.dim ∧ m.2.2 < s.dim :=
+        fun m hm => hb m (List.mem_cons_of_mem _ hm)
+      obtain ⟨x', s1, c1, h1, hx', hg1, rfl⟩ := coalesceParentSuccess x s ⟨hx, hg⟩
+      obtain ⟨y', s2, c2, h2, hy', hg2, rfl⟩ :=
+        coalesceParentSuccess y { s with coalesced := c1 } ⟨hy, hg1⟩
+      have e2 : ({ ({ s with coalesced := c1 } : State) with coalesced := c2 } : State) =
+          { s with coalesced := c2 } := rfl
+      rw [e2] at h2 hg2
+      obtain ⟨b, h3, _⟩ := consistencyOkSuccess x' y' { s with coalesced := c2 } ⟨hg2, hx', hy'⟩
+      cases b with
+      | false =>
+          obtain ⟨ores, ys, s', coal, hrun, hg', rfl, hys, hores⟩ :=
+            ih acc { s with coalesced := c2 } ⟨hg2, hms, hacc⟩
+          refine ⟨ores, ys, _, coal, ?_, hg', rfl, hys, hores⟩
+          simp only [stExFirst, Translator.Monadic.MonadBase.bind, h1, h2, h3,
+            Bool.false_eq_true, not_false_eq_true, ↓reduceIte]
+          exact hrun
+      | true =>
+          obtain ⟨x2, y2, h4, hx2, hy2⟩ :=
+            canonizeMoveSuccess x' y' { s with coalesced := c2 } ⟨hx', hy', hg2⟩
+          obtain ⟨opt, h5, hopt⟩ := bgOkSuccess { s with coalesced := c2 } x2 y2 k ⟨hg2, hx2, hy2⟩
+          cases opt with
+          | none =>
+              have hacc' : ∀ m ∈ (p, (x2, y2)) :: acc, m.2.1 < s.dim ∧ m.2.2 < s.dim := by
+                intro m hm
+                rcases List.mem_cons.mp hm with rfl | hm
+                · exact ⟨hx2, hy2⟩
+                · exact hacc m hm
+              obtain ⟨ores, ys, s', coal, hrun, hg', rfl, hys, hores⟩ :=
+                ih ((p, (x2, y2)) :: acc) { s with coalesced := c2 } ⟨hg2, hms, hacc'⟩
+              refine ⟨ores, ys, _, coal, ?_, hg', rfl, hys, hores⟩
+              simp only [stExFirst, Translator.Monadic.MonadBase.bind, h1, h2, h3, h4, h5,
+                not_true_eq_false, ↓reduceIte]
+              exact hrun
+          | some pr =>
+              obtain ⟨c1', c2'⟩ := pr
+              refine ⟨some ((x2, y2), (c1', c2'), ms), acc, _, c2, ?_, hg2, rfl, hacc,
+                hx2, hy2, hopt.1, hopt.2, hms⟩
+              simp only [stExFirst, Translator.Monadic.MonadBase.bind, h1, h2, h3, h4, h5,
+                not_true_eq_false, ↓reduceIte, ret]
+
+private theorem good_degrees' {s : State} {d : List Nat} (h : goodRaState s)
+    (hl : d.length = s.degrees.length) : goodRaState { s with degrees := d } := by
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14⟩ := h
+  exact ⟨h1, h2, hl.trans h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14⟩
+
+private theorem good_push {s : State} {d : List Nat} {mr : List Bool} {st : List Nat}
+    (h : goodRaState s) (hd : d.length = s.degrees.length)
+    (hm : mr.length = s.move_related.length) :
+    goodRaState { s with degrees := d, move_related := mr, stack := st } := by
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14⟩ := h
+  exact ⟨h1, h2, hd.trans h3, h4, hm.trans h5, h6, h7, h8, h9, h10, h11, h12, h13, h14⟩
+
+/-- Exact HOL `do_coalesce_real_success` (`reg_allocProofScript.sml:2549-2604`). -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml"
+  "do_coalesce_real_success"]
+theorem doCoalesceRealSuccess :
+    ∀ (x y : Nat) (case1 case2 : List Nat) (s : State),
+      y < s.dim ∧ x < s.dim ∧ (∀ v ∈ case1, v < s.dim) ∧ (∀ v ∈ case2, v < s.dim) ∧
+        goodRaState s →
+      ∃ s', doCoalesceReal x y case1 case2 s = (.success (), s') ∧ goodRaState s' ∧
+        isSubgraph s.adj_ls s'.adj_ls ∧ s.dim = s'.dim ∧ s.node_tag = s'.node_tag := by
+  intro x y case1 case2 s ⟨hy, hx, hc1, hc2, hg⟩
+  have hyc : y < s.coalesced.length := by rw [hg.2.2.2.1]; exact hy
+  have hg1 : goodRaState { s with coalesced := s.coalesced.set y x } :=
+    good_coalesced hg (by rw [List.length_set]; exact hg.2.2.2.1) (fun v hv => by
+      rcases List.mem_or_eq_of_mem_set hv with hv | rfl
+      · exact hg.2.2.2.2.2.1 v hv
+      · exact hx)
+  obtain ⟨bx, hbx⟩ := isFixed_ok hg1 hx
+  obtain ⟨d2, h2, hg2⟩ : ∃ d2,
+      (if bx then ret () else incDeg x case2.length) { s with coalesced := s.coalesced.set y x } =
+        (.success (), { s with coalesced := s.coalesced.set y x, degrees := d2 }) ∧
+      goodRaState { s with coalesced := s.coalesced.set y x, degrees := d2 } := by
+    cases bx with
+    | true => exact ⟨s.degrees, rfl, hg1⟩
+    | false =>
+        have hxd : x < s.degrees.length := by rw [hg.2.2.1]; exact hx
+        refine ⟨s.degrees.set x (holEl x s.degrees + case2.length), ?_,
+          good_degrees' hg1 (List.length_set ..)⟩
+        simp only [Bool.false_eq_true, ↓reduceIte, incDeg, Translator.Monadic.MonadBase.bind,
+          degreesSubEqn, updateDegreesEqn, if_pos hxd]
+  obtain ⟨s3, h3, hg3, hs3, hedge⟩ :=
+    listInsertEdgeSucceeds case2 x { s with coalesced := s.coalesced.set y x, degrees := d2 }
+      ⟨hg2, hx, hc2⟩
+  have hdim3 : s3.dim = s.dim := by have h := congrArg State.dim hs3; exact h
+  have htag3 : s3.node_tag = s.node_tag := by have h := congrArg State.node_tag hs3; exact h
+  obtain ⟨d4, h4, hl4⟩ := decDegSuccess case1 s3 ⟨fun v hv => hdim3 ▸ hc1 v hv, hg3⟩
+  obtain ⟨d5, mr5, st5, h5, hl5, hm5⟩ := pushStackSuccess [y] { s3 with degrees := d4 }
+    ⟨fun v hv => by
+      rw [List.mem_singleton.mp hv]; show y < s3.dim; rw [hdim3]; exact hy,
+     good_degrees' hg3 hl4⟩
+  have hp : pushStack y { s3 with degrees := d4 } =
+      (.success (), { s3 with degrees := d5, move_related := mr5, stack := st5 }) := by
+    simp only [stExForeach, ignoreBind] at h5
+    split at h5
+    · next r s5 hps =>
+        simp only [ret, Prod.mk.injEq] at h5
+        rw [hps, h5.2]
+    · simp only [Prod.mk.injEq, reduceCtorEq, false_and] at h5
+  refine ⟨{ s3 with degrees := d5, move_related := mr5, stack := st5 }, ?_,
+    good_push hg3 (hl5.trans hl4) hm5, fun a b h => (hedge a b).2 (Or.inr (Or.inr h)),
+    hdim3.symm, htag3.symm⟩
+  simp only [doCoalesceReal, ignoreBind, Translator.Monadic.MonadBase.bind, updateCoalescedEqn,
+    if_pos hyc, hbx, h2, h3, h4, hp]
+
+private theorem good_wl {s : State} (h : goodRaState s) {sp fr : List Nat}
+    {av un : List (Nat × (Nat × Nat))} (hsp : ∀ v ∈ sp, v < s.dim) (hfr : ∀ v ∈ fr, v < s.dim)
+    (hav : ∀ m ∈ av, m.2.1 < s.dim ∧ m.2.2 < s.dim)
+    (hun : ∀ m ∈ un, m.2.1 < s.dim ∧ m.2.2 < s.dim) :
+    goodRaState { s with spill_wl := sp, freeze_wl := fr, avail_moves_wl := av,
+                         unavail_moves_wl := un } := by
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, _, _, _, _, h14⟩ := h
+  exact ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, hsp, hfr, hav, hun, h14⟩
+
+/-- `respill` keeps the graph and the state invariant. -/
+private theorem respill_ok (k x : Nat) (s : State) (hg : goodRaState s) (hx : x < s.dim) :
+    ∃ s', respill k x s = (.success (), s') ∧ goodRaState s' ∧ s'.adj_ls = s.adj_ls ∧
+      s'.dim = s.dim ∧ s'.node_tag = s.node_tag := by
+  have hxd : x < s.degrees.length := by rw [hg.2.2.1]; exact hx
+  by_cases hlt : holEl x s.degrees < k
+  · exact ⟨s, by simp only [respill, Translator.Monadic.MonadBase.bind, degreesSubEqn,
+      if_pos hxd, if_pos hlt, ret], hg, rfl, rfl, rfl⟩
+  · by_cases hm : x ∈ s.freeze_wl
+    · refine ⟨({ s with spill_wl := [x] ++ s.spill_wl,
+                         freeze_wl := s.freeze_wl.filter (fun y => decide (y ≠ x)) }),
+        ?_, ?_, rfl, rfl, rfl⟩
+      · simp only [respill, Translator.Monadic.MonadBase.bind, degreesSubEqn, if_pos hxd,
+          if_neg hlt, getFreezeWl, if_pos hm, ignoreBind, addSpillWl, getSpillWl, setSpillWl,
+          setFreezeWl]
+      · exact good_wl hg
+          (fun v hv => by
+            rcases List.mem_append.mp hv with hv | hv
+            · rw [List.mem_singleton.mp hv]; exact hx
+            · exact hg.2.2.2.2.2.2.2.2.2.1 v hv)
+          (fun v hv => hg.2.2.2.2.2.2.2.2.2.2.1 v (List.mem_filter.mp hv).1)
+          hg.2.2.2.2.2.2.2.2.2.2.2.1 hg.2.2.2.2.2.2.2.2.2.2.2.2.1
+    · exact ⟨s, by simp only [respill, Translator.Monadic.MonadBase.bind, degreesSubEqn,
+        if_pos hxd, if_neg hlt, getFreezeWl, if_neg hm, ret], hg, rfl, rfl, rfl⟩
+
+/-- Exact HOL `do_coalesce_success` (`reg_allocProofScript.sml:2606-2643`); `k` is free in
+HOL. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "do_coalesce_success"]
+theorem doCoalesceSuccess (k : Nat) :
+    ∀ (s : State),
+      goodRaState s →
+      ∃ (s' : State) (b : Bool), doCoalesce k s = (.success b, s') ∧ goodRaState s' ∧
+        isSubgraph s.adj_ls s'.adj_ls ∧ s.dim = s'.dim ∧ s.node_tag = s'.node_tag := by
+  intro s hg
+  have hav := hg.2.2.2.2.2.2.2.2.2.2.2.1
+  have hun := hg.2.2.2.2.2.2.2.2.2.2.2.2.1
+  obtain ⟨ores, ys, _, coal, h1, hg1, rfl, hys, hores⟩ :=
+    stExFirstConsistencyOkBgOk k s.avail_moves_wl [] s ⟨hg, hav, fun _ h => by cases h⟩
+  have hun' : ∀ m ∈ ys ++ s.unavail_moves_wl, m.2.1 < s.dim ∧ m.2.2 < s.dim := fun m hm => by
+    rcases List.mem_append.mp hm with hm | hm
+    · exact hys m hm
+    · exact hun m hm
+  match ores, hores, h1 with
+  | none, _, h1 =>
+      refine ⟨({ s with coalesced := coal, unavail_moves_wl := ys ++ s.unavail_moves_wl,
+                         avail_moves_wl := [] }), false, ?_,
+        good_wl hg1 hg.2.2.2.2.2.2.2.2.2.1 hg.2.2.2.2.2.2.2.2.2.2.1 (fun _ h => by cases h) hun',
+        isSubgraphRefl _, rfl, rfl⟩
+      simp only [doCoalesce, Translator.Monadic.MonadBase.bind, ignoreBind, getAvailMovesWl, h1,
+        addUnavailMovesWl, getUnavailMovesWl, setUnavailMovesWl, setAvailMovesWl, ret]
+  | some ((x, y), (c1, c2), ms), ⟨hx, hy, hc1, hc2, hms⟩, h1 =>
+      have hg3 : goodRaState { s with coalesced := coal,
+                                      unavail_moves_wl := ys ++ s.unavail_moves_wl,
+                                      avail_moves_wl := ms } :=
+        good_wl hg1 hg.2.2.2.2.2.2.2.2.2.1 hg.2.2.2.2.2.2.2.2.2.2.1 hms hun'
+      obtain ⟨s4, h4, hg4, hsub4, hdim4, htag4⟩ := doCoalesceRealSuccess x y c1 c2
+        { s with coalesced := coal, unavail_moves_wl := ys ++ s.unavail_moves_wl,
+                 avail_moves_wl := ms } ⟨hy, hx, hc1, hc2, hg3⟩
+      obtain ⟨s5, _, h5, hg5, hsub5, hdim5, htag5⟩ := unspillSuccess (α := Unit) k s4 hg4
+      obtain ⟨s6, h6, hg6, hadj6, hdim6, htag6⟩ :=
+        respill_ok k x s5 hg5 (by rw [← hdim5, ← hdim4]; exact hx)
+      refine ⟨s6, true, ?_, hg6,
+        isSubgraphTrans _ _ _ ⟨hsub4, hadj6 ▸ hsub5⟩,
+        hdim4.trans (hdim5.trans hdim6.symm), htag4.trans (htag5.trans htag6.symm)⟩
+      simp only [doCoalesce, Translator.Monadic.MonadBase.bind, ignoreBind, getAvailMovesWl, h1,
+        addUnavailMovesWl, getUnavailMovesWl, setUnavailMovesWl, setAvailMovesWl]
+      rw [h4]
+      simp only [h5, h6, ret]
+
+/-- Exact HOL `do_prefreeze_success` (`reg_allocProofScript.sml:2684-2725`); `k` is free in
+HOL. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "do_prefreeze_success"]
+theorem doPrefreezeSuccess (k : Nat) :
+    ∀ (s : State),
+      goodRaState s →
+      ∃ (s' : State) (b : Bool), doPrefreeze k s = (.success b, s') ∧ goodRaState s' ∧
+        isSubgraph s.adj_ls s'.adj_ls ∧ s.dim = s'.dim ∧ s.node_tag = s'.node_tag := by
+  intro s hg
+  obtain ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14⟩ := hg
+  obtain ⟨fwl, hf1, hfb⟩ := stExFilterIsNotCoalesced s.freeze_wl [] s
+    ⟨fun x hx => by rw [g4]; exact g11 x hx, fun _ h => by cases h⟩
+  obtain ⟨swl, hs1, hsb⟩ := stExFilterIsNotCoalesced s.spill_wl [] s
+    ⟨fun x hx => by rw [g4]; exact g10 x hx, fun _ h => by cases h⟩
+  have hfd : ∀ x ∈ fwl, x < s.dim := fun x hx => by rw [← g4]; exact hfb x hx
+  have hg1 : goodRaState { s with spill_wl := swl } :=
+    ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, fun v hv => by rw [← g4]; exact hsb v hv, g11, g12, g13,
+      g14⟩
+  obtain ⟨uam, hu1, hub⟩ :=
+    stExFilterConsistencyOk s.unavail_moves_wl [] { s with spill_wl := swl } ⟨hg1, g13⟩
+  have hub' : ∀ m ∈ uam, m.2.1 < s.dim ∧ m.2.2 < s.dim := fun m hm =>
+    (hub m hm).resolve_right (fun h => by cases h)
+  obtain ⟨mv, hr1, hmv⟩ := resetMoveRelatedSuccess uam { s with spill_wl := swl } ⟨hg1, hub'⟩
+  obtain ⟨ltkf, ltks, hp1, hpf, hps⟩ := stExPartitionMoveRelatedSub fwl [] []
+    { s with spill_wl := swl, move_related := mv, unavail_moves_wl := uam }
+    (fun x hx => by show x < mv.length; rw [hmv]; exact hfd x hx)
+  have hg5 : goodRaState { s with spill_wl := swl, move_related := mv, unavail_moves_wl := uam,
+                                  simp_wl := ltks ++ s.simp_wl, freeze_wl := ltkf } :=
+    ⟨g1, g2, g3, g4, hmv, g6, g7, g8,
+      fun v hv => by
+        rcases List.mem_append.mp hv with hv | hv
+        · rcases hps v hv with hv | hv
+          · cases hv
+          · exact hfd v hv
+        · exact g9 v hv,
+      fun v hv => by rw [← g4]; exact hsb v hv,
+      fun v hv => by
+        rcases hpf v hv with hv | hv
+        · cases hv
+        · exact hfd v hv,
+      g12, hub', g14⟩
+  obtain ⟨s', b, h6, hg6, hsub6, hd6, ht6⟩ := doSimplifySuccess k _ hg5
+  refine ⟨s', b, ?_, hg6, hsub6, hd6, ht6⟩
+  simp only [doPrefreeze, Translator.Monadic.MonadBase.bind, ignoreBind, getFreezeWl, hf1,
+    getSpillWl, hs1, setSpillWl, getUnavailMovesWl, hu1, hr1, setUnavailMovesWl, hp1, addSimpWl,
+    getSimpWl, setSimpWl, setFreezeWl, h6]
 
 end Flapjack.RegAlloc

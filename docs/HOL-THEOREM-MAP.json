@@ -52373,7 +52373,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CoalesceSuccess.lean",
     "lean_name": "stExFilterConsistencyOk",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.14): reg_allocProofScript.sml:2320-2336, ∀ls acc s over (num # num # num) lists; the pattern lambdas λ(p,x,y)/λ(_,x,y) are the projections m.2.1/m.2.2, and the conclusion disjunct MEM (p,(x,y)) acc is m ∈ acc; st_ex_FILTER the exact tagged stExFilter. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, M_success Exc.success, record update `s with f := v` the Lean structure update. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.14): reg_allocProofScript.sml:2320-2347, ∀ls acc s over (num # num # num) lists; the pattern lambdas λ(p,x,y)/λ(_,x,y) are the projections m.2.1/m.2.2, and the conclusion disjunct MEM (p,(x,y)) acc is m ∈ acc; st_ex_FILTER the exact tagged stExFilter. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, M_success Exc.success, record update `s with f := v` the Lean structure update. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
@@ -52406,5 +52406,69 @@
     "lean_name": "resetMoveRelatedSuccess",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.21): reg_allocProofScript.sml:2658-2682, ∀ls s; HOL's move payload p is a free type variable, rendered {α : Type}; conclusion s with move_related := mv ∧ LENGTH mv = s.dim; reset_move_related the exact tagged resetMoveRelated (COUNT_LIST as List.range). Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, M_success Exc.success, record update `s with f := v` the Lean structure update. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "st_ex_FIRST_consistency_ok_bg_ok",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CoalesceSuccess.lean",
+    "lean_name": "stExFirstConsistencyOkBgOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.18): reg_allocProofScript.sml:2495-2547, k free in HOL (explicit parameter), ∀ls acc s over (num # num # num) lists with the three premises; conclusion ∃ores ys s' coal incl. s' = s with coalesced:=coal and the `case ores of SOME((x,y),(case1,case2),rest) => ... | _ => T` rendered as the Lean match with a wildcard arm; pattern lambdas λ(p,x,y) are the projections m.2.1/m.2.2; st_ex_FIRST, consistency_ok and bg_ok the exact tagged stExFirst/consistencyOk/bgOk. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, M_success Exc.success, record update `s with f := v` the Lean structure update, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "do_coalesce_real_success",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CoalesceSuccess.lean",
+    "lean_name": "doCoalesceRealSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.19): reg_allocProofScript.sml:2549-2604, ∀x y case1 case2 s with the five premises in HOL order; conclusion ∃s' with good_ra_state, is_subgraph, dim and node_tag equalities; do_coalesce_real the exact tagged doCoalesceReal. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, M_success Exc.success, record update `s with f := v` the Lean structure update, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "do_coalesce_success",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CoalesceSuccess.lean",
+    "lean_name": "doCoalesceSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.2): reg_allocProofScript.sml:2606-2643, k free in HOL (explicit parameter), ∀s; do_coalesce the exact tagged doCoalesce (incl. respill). Conclusion ∃s' b with do_coalesce k s = (M_success b,s') ∧ good_ra_state s' ∧ is_subgraph s.adj_ls s'.adj_ls ∧ s.dim = s'.dim ∧ s.node_tag = s'.node_tag, as in HOL. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, M_success Exc.success, record update `s with f := v` the Lean structure update, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "do_prefreeze_success",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CoalesceSuccess.lean",
+    "lean_name": "doPrefreezeSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.3): reg_allocProofScript.sml:2684-2725, k free in HOL (explicit parameter), ∀s; do_prefreeze the exact tagged doPrefreeze. Conclusion ∃s' b with do_prefreeze k s = (M_success b,s') ∧ good_ra_state s' ∧ is_subgraph s.adj_ls s'.adj_ls ∧ s.dim = s'.dim ∧ s.node_tag = s'.node_tag, as in HOL. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, M_success Exc.success, record update `s with f := v` the Lean structure update, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "do_freeze_success",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/FreezeSpillSuccess.lean",
+    "lean_name": "doFreezeSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.4): reg_allocProofScript.sml:2727-2755, k free in HOL (explicit parameter), ∀s; do_freeze the exact tagged doFreeze. Conclusion ∃s' b with do_freeze k s = (M_success b,s') ∧ good_ra_state s' ∧ is_subgraph s.adj_ls s'.adj_ls ∧ s.dim = s'.dim ∧ s.node_tag = s'.node_tag, as in HOL. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, M_success Exc.success, record update `s with f := v` the Lean structure update, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "st_ex_list_MIN_cost_success",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/FreezeSpillSuccess.lean",
+    "lean_name": "stExListMinCostSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.22): reg_allocProofScript.sml:2758-2772, scost free in HOL (explicit parameter, num_map as the reviewed Spt Nat used by the tagged stExListMinCost), ∀ls s k v acc with the three premises; conclusion ∃x y with state unchanged, x < s.dim and EVERY bound on y. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, M_success Exc.success, record update `s with f := v` the Lean structure update, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "st_ex_list_MAX_deg_success",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/FreezeSpillSuccess.lean",
+    "lean_name": "stExListMaxDegSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.23): reg_allocProofScript.sml:2774-2788, ∀ls s k v acc with the three premises; conclusion ∃x y with state unchanged, x < s.dim and EVERY bound on y; st_ex_list_MAX_deg the exact tagged stExListMaxDeg. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, M_success Exc.success, record update `s with f := v` the Lean structure update, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "do_spill_success",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/FreezeSpillSuccess.lean",
+    "lean_name": "doSpillSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.5): reg_allocProofScript.sml:2790-2837, scost (num_map option, the reviewed Option (Spt Nat)) and k free in HOL (explicit parameters), ∀s; do_spill the exact tagged doSpill. Conclusion ∃s' b with do_spill scost k s = (M_success b,s') ∧ good_ra_state s' ∧ is_subgraph s.adj_ls s'.adj_ls ∧ s.dim = s'.dim ∧ s.node_tag = s'.node_tag, as in HOL. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, M_success Exc.success, record update `s with f := v` the Lean structure update, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
   }
 ]

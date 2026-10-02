@@ -1286,6 +1286,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.PhaseSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.EdgeInsertion
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.CoalesceSuccess
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.FreezeSpillSuccess
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
 import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
