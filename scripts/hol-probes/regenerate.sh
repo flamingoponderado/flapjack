@@ -5117,3 +5117,7 @@ run_probe lab_to_target_label_position_encoding_probeScript.sml lab_to_target_la
 run_probe lab_to_target_label_position_prefix_probeScript.sml lab_to_target_label_position_prefix_probe.out \
   lab_len_pos_ok_even_prefix_zero lab_len_pos_ok_even_prefix_zero_types zero_label_chain odd_guard_necessary parity_guard_necessary empty_width1 malformed_nonlabel large_width80 \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_label_position_padding_probeScript.sml lab_to_target_label_position_padding_probe.out \
+  pad_section_pos_ok pad_section_pos_ok_types mixed_original_four_guards mixed_full_tuple mixed_output_parity empty_nop_allowed multibyte_nop_allowed empty_aux_masked_guard label_head_guard prefix_guard_necessary input_parity_guard_necessary acc_parity_guard_necessary empty_width1 large_width80 \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
