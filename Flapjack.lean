@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveData
 import Flapjack.Compiler.Backend.LabToTarget.NopPadding
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstallCase
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAllocCase

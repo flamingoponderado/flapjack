@@ -62694,5 +62694,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.7: Original1864-1867: SEP_EXISTS values. word_list address values STAR cond(LENGTH values=length). Lean preserves the existential Listbeta, exact length equality, original STAR ordering and empty-heap cond, rather than accepting a list/representation/length premise. Full original address/payload polymorphic types reviewed. The only representation qualifier records address BitVec width/[NeZero width]; payloads and lists remain generic and heap sets are predicates. Canonical emp/one/STAR/cond/sepExists reused. No width>=8, nonwrapping-address, distinct-address, functional-heap or finite-domain side condition. Fresh original full equations/types and positive/negative wrap, zero-stride and existential-length probes compare the same inputs; fifteen Lean kernel fixtures and four regression helpers derive pure length from the partition. This is miscScript heap separation, distinct from the WordToStack bitmap word_list helper."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_data_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenPartialMoveData.lean",
+    "lean_name": "word_gen_gc_partial_move_data_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02, original stack_allocProofScript.sml:4124-4241: full binder order and four curried premise groups, free conf/gs/rs implicit; all shift/width/lenSize/goodDimindex, store, memory/domain and register hypotheses preserved. Exact StackSem evaluate existential clock, memory m2 and nine-register update (register8 Word pa2); store unchanged. Complete fuel induction follows original empty/data-bit/pointer-list cases using native partial-list theorem and evaluateAddClock, no supplied target evaluation. Fresh original HOL typed capture confirms unused existential t0:delta,t1:epsilon, retained as independently arbitrary D/E with Nonempty instances; main source-review policy agmsg2026-10-02T10:04:33Z confirms standard HOL inhabited-type interpretation, not additional operational premise/qualifier. Canonical actual StackSemStateFiniteExact regs/fpRegs/store codec witness; positive-width BitVec NeZero. Seven original concrete EVAL observations; no claimed concrete oracle for unspecified theWord(Loc). Inst evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts, not an independent review of all dependencies."
   }
 ]
