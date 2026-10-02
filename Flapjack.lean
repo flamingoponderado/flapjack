@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
 import Flapjack.Compiler.Backend.LabToTarget.NopInsertEncoding
 import Flapjack.Compiler.Backend.LabToTarget.NopPadding
 import Flapjack.Misc.TakeFlatReplicate

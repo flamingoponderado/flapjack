@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetSectionNopEncodingParity
 import Flapjack.Test.LabToTargetNopInsertEncodingParity
 import Flapjack.Test.LabToTargetNopPaddingParity
 import Flapjack.Test.MiscTakeFlatReplicateParity
@@ -1843,6 +1844,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetAlignmentParity.runChecks,
     Flapjack.Test.LabToTargetPrefixZeroParity.runChecks,
     Flapjack.Test.LabToTargetPrefixPreservationParity.runChecks,
+    Flapjack.Test.LabToTargetSectionNopEncodingParity.runChecks,
     Flapjack.Test.LabToTargetNopInsertEncodingParity.runChecks,
     Flapjack.Test.LabToTargetNopPaddingParity.runChecks,
     Flapjack.Test.MiscTakeFlatReplicateParity.runChecks,
