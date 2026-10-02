@@ -3299,6 +3299,10 @@ run_probe parmove_temp_mixed_probeScript.sml parmove_temp_mixed_probe.out \
   ntm_real ntm_read ntm_write ntm_both \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe parmove_temp_insert_probeScript.sml parmove_temp_insert_probe.out \
+  nti_empty nti_real_ok nti_read_bad nti_write_first nti_bad_append nti_append_ok \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembly_probe.out \
   ca_control ca_return ca_handler ca_tail_ignored ca_collision \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
@@ -3428,6 +3432,11 @@ run_probe monad_array_length_probeScript.sml monad_array_length_probe.out \
 run_probe word_alloc_canonize_moves_probeScript.sml word_alloc_canonize_moves_probe.out \
   cm_empty cm_one cm_two cm_three cm_four cm_five cm_odd cm_even cm_dups cm_priority cm_x_first cm_y_second cm_reversed_coords cm_large cm_zeros cm_descending cm_ascending cm_self_moves cm_all_flipped \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe asm_sem_mem_word_probeScript.sml asm_sem_mem_word_probe.out \
+  addr rw_zero rw_le_ok rw_be_fail rw_fail_dom ww_zero ww_le ww_le_ok ww_be_fail rw_le2 rw_be2 rw_wrap_ok rw_wrap_oob rw_widen ww_widen \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
+
 run_probe word_copy_codec_domain_probeScript.sml word_copy_codec_domain_probe.out \
   copy_carry copy_load16 copy_store16 copy_seq_alias copy_if copy_loop copy_must copy_both \
   "$cake_dir/compiler/backend/word_copyScript.sml" "$cake_dir/compiler/backend"

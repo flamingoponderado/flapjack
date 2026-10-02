@@ -1,0 +1,15 @@
+addr=T
+rw_zero=T
+rw_le_ok=T
+rw_be_fail=T
+rw_fail_dom=T
+ww_zero=T
+ww_le=T
+ww_le_ok=T
+ww_be_fail=T
+rw_le2=T
+rw_be2=T
+rw_wrap_ok=T
+rw_wrap_oob=T
+rw_widen=T
+ww_widen=T

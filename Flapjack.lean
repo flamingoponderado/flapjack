@@ -258,6 +258,7 @@ import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Navigation
 import Flapjack.Compiler.Backend.LabToTarget.Memory
+import Flapjack.Compiler.Backend.Parmove.InjOnState.Step
 import Flapjack.Compiler.Backend.LabToTarget.Fetch
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
@@ -303,6 +304,7 @@ import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CallNone
 import Flapjack.Misc.FindIndex.Bounds
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Append
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Insert
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
 import Flapjack.Compiler.Backend.WordAlloc.GetForced
 import Flapjack.Compiler.Backend.WordAlloc.RemoveDead
@@ -557,6 +559,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
 import Flapjack.Compiler.Backend.Semantics.TargetSem.State
 import Flapjack.Compiler.Encoders.AsmProps.Target
 import Flapjack.Compiler.Encoders.AsmSem.State
+import Flapjack.Compiler.Encoders.AsmProps.Memory
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
 import Flapjack.Misc.AsmWriteBytearray
 import Flapjack.Misc.BytesInMemory
@@ -1399,6 +1402,17 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
 import Flapjack.Compiler.Backend.WordAlloc.FullSSA
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
+import Flapjack.Compiler.Backend.LabSem
+import Flapjack.Compiler.Backend.LabProps
+import Flapjack.Compiler.Backend.LabToTarget.Positions
+import Flapjack.Compiler.Backend.LabToTarget.Labels
+import Flapjack.Compiler.Backend.StackNames
+import Flapjack.Compiler.Backend.StackNames.NamesOk
+import Flapjack.Compiler.Backend.StackNames.Labels
+import Flapjack.Compiler.Backend.StackRemove
+import Flapjack.Compiler.Backend.StackAlloc
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.Parmove
@@ -1469,19 +1483,10 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
-import Flapjack.Compiler.Backend.LabSem
-import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
-import Flapjack.Compiler.Backend.LabToTarget.Labels
-import Flapjack.Compiler.Backend.LabToTarget.Positions
 import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
 import Flapjack.Compiler.Backend.LabToTarget.SecondPass
 import Flapjack.Compiler.Backend.LabToTarget.Padding
-import Flapjack.Compiler.Backend.StackNames
-import Flapjack.Compiler.Backend.StackNames.NamesOk
-import Flapjack.Compiler.Backend.StackNames.Labels
-import Flapjack.Compiler.Backend.StackRemove
-import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordUnreach
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 

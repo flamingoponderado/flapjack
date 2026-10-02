@@ -276,6 +276,7 @@ import Flapjack.Test.HeuCountersParity
 import Flapjack.Test.ClashTreeCallNoneParity
 import Flapjack.Test.FindIndexBoundsParity
 import Flapjack.Test.ParmoveTempAppendParity
+import Flapjack.Test.AsmSemMemoryParity
 import Flapjack.Test.WordAllocShareCheckerParity
 import Flapjack.Test.SpDefaultParity
 import Flapjack.Test.InClashTreeParity
@@ -1804,6 +1805,9 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetNavigationBoundsParity.runChecks,
     Flapjack.Test.LabToTargetPositionAppendParity.runChecks,
     Flapjack.Test.LabToTargetPositionValuesParity.runChecks,
+    Flapjack.Test.LabToTargetPositionsParity.runChecks,
+    Flapjack.Test.LabToTargetLabelsParity.runChecks,
+    Flapjack.Test.AsmSemMemoryParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
     Flapjack.Test.AsmPropsPcCoverageParity.runChecks,
