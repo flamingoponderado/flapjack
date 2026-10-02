@@ -59730,5 +59730,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-02: fulloriginal6405-6423, exactly producer equation/distinct names/two memberships/equaloptionLookup5premises and inputkey equality. Actual listNextVarRenameMove is decomposed; original arithmetic lemma1 gives distinct generated names, original lookup lemma2prime identifies that list with mapped selectors. All selected inputs have successful outputmap lookups by original lemma2 fourthconjunct, so guarded THE/getD rendering remains justified; selector-independent infrastructure already checked, no THE NONE agreement claimed. Native Nat SSA/input/output maps, names/keys/counters and original word-indexed program confirmed by original theorem/sixcarriers. Sole standard words_as_type_indexed_bitvec positiveword translation explicit, no finite-map carrier changes/globalinjectivity/allocation/success/newpremise. Source manually compared/HOLcapture/Lean kernel PASS; no isolated tactic replay claimed. FullFFI/fullSSA/end-to-end remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "asm_step_IMP_evaluate_step_find_next",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/AsmStepEvaluate.lean",
+    "lean_name": "asmStepImpEvaluate",
+    "inherits_reals_as_rational_cuts": true,
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:940-955 and full original compiled theorem capture. All c/s1/ms1/io/i quantifiers and six hypotheses retained: exact encoder_correct, program domain equality, FFI entry disjointness over full encode length, projection-preserving next interference, literal asm_step to asm post-state, target_state_rel. Conclusion exists l/ms2 forall k keeps both evaluator/search shifted-clock equalities, original assembly post-state relation and l!=0; no added premise or assumed evaluation/post-state. Uses full reviewed native encoderCorrect89044bd06, asmStep and evaluateEqEvaluate_all, with genuine witnesses n+1/ms2 constructed. Positive word dimensions use BitVec width under NeZero and sigma Type, original list/predicate sets and oracle shapes retained. Inherited total holEl/holHd retains holHdNil/shared opaque holArb past end, no bounds guard or fallback. Full original theorem captured and complete Lean proof kernel checked. The declaration transitively inherits reals_as_rational_cuts and the external agreement assumption in docs/SOUNDNESS.md item 8 through exact encoderCorrect/asmStep and their FP semantics; it adds no altered FP behavior."
   }
 ]

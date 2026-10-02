@@ -5212,6 +5212,14 @@ behavior. A faithful port must retain that unspecified function specification
 (or prove a justified defining-body correspondence), and its missing-case
 outputs must not be treated as concrete parity fixtures. Full rotation proofs
 still need their original constructor premises and specified equations.
+
+### Target encoding nonemptiness
+
+`target_encoding_nonempty_probeScript.sml` replays the literal original local
+`enc_ok_not_empty` statement and proof in HOL; local declarations are not
+exported from `targetPropsTheory`. Its output captures the full kernel-checked
+conclusion, retaining `asm_ok`. This is regression/source-review evidence.
+Regenerate with `HOL_PROBE_ONLY=target_encoding_nonempty_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `target_next_shared_mem_probeScript.sml` captures the complete original
 `next_interference_SharedMem` statement with no open hypotheses; native
 assembly is in `TargetProps/NextSharedMem.lean`.
@@ -5232,7 +5240,7 @@ use the existing guarded holEl translation. This is a theorem specialization
 capture, not an isolated tactic replay or equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cc_trans_correct_move_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-### Target encoding nonemptiness
+### Full ASM-step target evaluation theorem
 
 `target_encoding_nonempty_probeScript.sml` replays the literal original local
 `enc_ok_not_empty` statement and proof in HOL; local declarations are not
@@ -5305,3 +5313,8 @@ input equality. Standard positive indexed-word program translation is explicit.
 Original theorem capture/manual source comparison, not isolated tactic replay
 or equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_rename_move_distinct_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`target_asm_step_evaluate_probeScript.sml` captures the complete original
+`asm_step_IMP_evaluate_step_find_next` statement, including all six hypotheses
+and both equalities, the assembly post-state relation, and nonzero step count.
+This is source-review regression evidence, not cross-language equivalence.
+Regenerate with `HOL_PROBE_ONLY=target_asm_step_evaluate_probeScript.sml bash scripts/hol-probes/regenerate.sh`.

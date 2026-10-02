@@ -856,6 +856,7 @@
     {"bytes": 268, "out": "stacksem_word_bitmap_probe.out", "rows": 11, "sha256": "2bccd8807cc28a4cc17ec6a92d04822083c8949ea97ec1cf5bdab9b2476addaf"},
     {"bytes": 13870, "out": "store_init_probe.out", "rows": 34, "sha256": "35ed1c605a56ff0cd259b440614e170994b13fca30642fb64236837824bbf0a4"},
     {"bytes": 6035, "out": "store_list_code_probe.out", "rows": 26, "sha256": "34da3bfe4d7c8fe09e8bd8c812547038778c983a096cf560a2b1c2ecdf5f3949"},
+    {"bytes": 714, "out": "target_asm_step_evaluate_probe.out", "rows": 1, "sha256": "3957657e907724f9ba786c36fd6bbb7b619af8cebf772272ba63c25130e54627"},
     {"bytes": 201, "out": "target_callee_saved_probe.out", "rows": 2, "sha256": "014f3662a60d930b12ec30265e9ca306d310de3a91f00a19ed898250debb69f5"},
     {"bytes": 1428, "out": "target_constructed_oracles_probe.out", "rows": 2, "sha256": "0fa9b9fdcc31d707255a80ebe08275e30823b451b91b94a392a7f8ec201d403b"},
     {"bytes": 74, "out": "target_encoding_nonempty_probe.out", "rows": 1, "sha256": "cb858d08879e3e59eb6dece1076393f09ccba9db53ea9c853ab661c053f2b93a"},
