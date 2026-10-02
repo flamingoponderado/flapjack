@@ -1,3 +1,4 @@
+import Flapjack.Test.TargetPropsClockParity
 import Flapjack.Test.TargetSemMachineSemParity
 import Flapjack.Test.TargetSemEvaluateParity
 import Flapjack.Test.LabToTargetLineLenParity

@@ -4389,3 +4389,12 @@ exact conclusions and empty theorem hypotheses before capture. Divergence uses
 all clocks and the original IMAGE/UNIV lazy-list least upper bound. Generic Lean
 clause checks live in `Flapjack.Test.TargetSemMachineSemParity`; these check
 local definition shape and are not a cross-language equivalence theorem.
+
+`target_props_clock_probeScript.sml` checks the original closed
+`evaluate_add_clock` theorem against its entire quantified statement and captures
+halt/error equality at clocks one and five. The Lean theorem and generic replay
+are in `TargetProps/EvaluateAddClock.lean` and `TargetPropsClockParity.lean`.
+The proof uses clock induction on the literal evaluator, with a local heartbeat
+budget for the complete constructor case analysis. No default target or gate is
+shortened. Source-reviewed total `holEl`/`holHd` behavior is retained at both
+clocks and explicitly recorded for the evaluator and machine semantics.

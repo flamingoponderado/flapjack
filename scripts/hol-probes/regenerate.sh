@@ -3983,3 +3983,7 @@ run_probe target_sem_evaluate_probeScript.sml target_sem_evaluate_probe.out \
 run_probe target_sem_machine_sem_probeScript.sml target_sem_machine_sem_probe.out \
   ts_terminate_clause ts_diverge_clause ts_fail_clause \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_props_clock_probeScript.sml target_props_clock_probe.out \
+  tp_clock_theorem_closed tp_clock_type tp_clock_statement tp_halt_stable tp_error_stable \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
