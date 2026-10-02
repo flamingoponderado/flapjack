@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls
+import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
 import Flapjack.Compiler.Backend.LabToTarget.LineLength
 import Flapjack.Compiler.Backend.LabToTarget.SectionLength
@@ -11,6 +12,8 @@ import Flapjack.Byte
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
 import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
+import Flapjack.FpSemHOL.RealSqrtAgreement
+import Flapjack.Compiler.Backend.Semantics.WordSem.Inst.RealSqrtAgreement
 import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
@@ -401,6 +404,11 @@ import Flapjack.Compiler.Backend.StackProps.RemoveNames
 import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
 import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
+import Flapjack.Compiler.Backend.WordRemove
+import Flapjack.Compiler.Backend.DataToWord.Config
+import Flapjack.Compiler.Backend.WordGcFunctions
+import Flapjack.Misc.FiniteMapApply
+import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
 import Flapjack.Pancake.WordLang.OccurrencesExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators

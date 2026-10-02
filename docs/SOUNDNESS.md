@@ -103,8 +103,13 @@ The following are open review or verification obligations:
    (with `Real.sqrt`, HOL `abs` and all flag tests kept), for every rounding
    mode and input.
    The agreement of that Lean real specification with HOL's
-   real specification remains an external assurance assumption, and this
-   sqrt specification is not an exact `@[hol]` port. Lean proves that the
+   real specification remains an external assurance assumption. The fixed
+   binary64 `holFp64SqrtR` wrapper has a source-reviewed `@[hol]` tag with
+   the conservative IEEE real-representation qualifier; the generic
+   zero-width-capable real helpers remain untagged. Consumer agreement proofs
+   cover the actual unary evaluator and native WordSem sqrt instruction,
+   including missing-register failure. These kernel equalities remove the
+   cut-comparison proof gap without proving cross-assistant real equivalence. Lean proves that the
    computable binary64 sqrt equals the cut specification for every rational
    `r ≥ 0` (`holFloatRoundSqrt_rte_fp64`).
 
