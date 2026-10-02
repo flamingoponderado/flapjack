@@ -4047,3 +4047,7 @@ run_probe target_props_io_events_probeScript.sml target_props_io_events_probe.ou
 run_probe lab_to_target_ignore_clocks_probeScript.sml lab_to_target_ignore_clocks_probe.out \
   lt_ignore_full_statement lt_ignore_type \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe target_props_clock_io_events_probeScript.sml target_props_clock_io_events_probe.out \
+  tp_clock_io_full_statement tp_clock_io_type \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
