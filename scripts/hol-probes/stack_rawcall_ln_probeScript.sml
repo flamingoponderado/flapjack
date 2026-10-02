@@ -1,0 +1,10 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallTheory stack_rawcallProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "ln_statement="; print_term(concl comp_LN));
+val _ = print("ln_hypotheses=" ^ Int.toString(length(hyp comp_LN)) ^ "\n");
+fun emit label tm = (print(label ^ "="); print_term(rconc(EVAL tm)));
+val _ = emit "ln_seq" ``(comp_top LN (Seq(StackFree 4)(Call NONE(INL 7)NONE):64 stackLang$prog),comp LN (Seq(StackFree 4)(Call NONE(INL 7)NONE):64 stackLang$prog))``;
+val _ = emit "ln_loop" ``(comp_top LN (Loop(Seq(StackFree 0)(Call NONE(INL 9)NONE)):64 stackLang$prog),comp LN (Loop(Seq(StackFree 0)(Call NONE(INL 9)NONE)):64 stackLang$prog))``;
+val _ = emit "ln_return_handler" ``(comp_top LN (Call (SOME(Seq(StackFree 4)(Call NONE(INL 7)NONE),2,3,4)) (INR 9) (SOME(Loop(Seq(StackFree 4)(Call NONE(INL 7)NONE)),31,37)):64 stackLang$prog),comp LN (Call (SOME(Seq(StackFree 4)(Call NONE(INL 7)NONE),2,3,4)) (INR 9) (SOME(Loop(Seq(StackFree 4)(Call NONE(INL 7)NONE)),31,37)):64 stackLang$prog))``;
+val _ = emit "ln_tail_handler" ``(comp_top LN (Call NONE(INL 9)(SOME(Seq(StackFree 4)(Call NONE(INL 7)NONE),31,37)):64 stackLang$prog),comp LN (Call NONE(INL 9)(SOME(Seq(StackFree 4)(Call NONE(INL 7)NONE),31,37)):64 stackLang$prog))``;

@@ -152,12 +152,13 @@ reset_move_related transition under the original success invariant and move
 bounds. All lookup domains, native success, phase order and final represented
 fields are derived. This cross-implementation theorem has no independent HOL
 original and does not establish prefreeze or the whole allocator by itself. -/
-theorem resetMoveRelated_production (moves : List (Nat × (Nat × Nat)))
+theorem resetMoveRelated_production_invariant (moves : List (Nat × (Nat × Nat)))
     {native : State} {production : CakeRaState}
     (related : ProductionStateRel native production) (good : goodRaState native)
     (bounds : ∀ move ∈ moves, move.2.1 < native.dim ∧ move.2.2 < native.dim) :
     ∃ result : State, resetMoveRelated moves native = (.success (), result) ∧
-      ProductionStateRel result (cakeResetMoveRelated moves production) := by
+      ProductionStateRel result (cakeResetMoveRelated moves production) ∧
+      goodRaState result ∧ result.dim = native.dim := by
   let cleared : State := {native with move_related := List.replicate native.dim false}
   let actualCleared : CakeRaState := {production with
     moveRelated := CakeNodeMap.filled production.dim false}
@@ -171,7 +172,8 @@ theorem resetMoveRelated_production (moves : List (Nat × (Nat × Nat)))
   have goodClear : goodRaState cleared := by
     obtain ⟨a,b,c,d,_,f,g,h,i,j,k,l,m,n⟩ := good
     exact ⟨a,b,c,d,List.length_replicate,f,g,h,i,j,k,l,m,n⟩
-  obtain ⟨result, run, _, represented, _⟩ := markEndpoints_foreach moves clearRel goodClear bounds
+  obtain ⟨result, run, goodResult, represented, dimension⟩ :=
+    markEndpoints_foreach moves clearRel goodClear bounds
   have source : resetMoveRelated moves native = (.success (), result) := by
     simp only [resetMoveRelated, Translator.Monadic.MonadBase.bind, getDim, ignoreBind,
       moveClear_foreach native good]
@@ -179,7 +181,45 @@ theorem resetMoveRelated_production (moves : List (Nat × (Nat × Nat)))
   have actual : cakeResetMoveRelated moves production = moves.foldl markEndpoints actualCleared := by
     rw [markEndpoints_fold]
     rfl
-  refine ⟨result, source, ?_⟩
+  refine ⟨result, source, ?_, goodResult, dimension⟩
   simpa only [actual] using represented
+
+/-- Compatibility projection of the full reset correspondence. This relates
+the two implementations and has no independent HOL original. -/
+theorem resetMoveRelated_production (moves : List (Nat × (Nat × Nat)))
+    {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native production) (good : goodRaState native)
+    (bounds : ∀ move ∈ moves, move.2.1 < native.dim ∧ move.2.2 < native.dim) :
+    ∃ result : State, resetMoveRelated moves native = (.success (), result) ∧
+      ProductionStateRel result (cakeResetMoveRelated moves production) := by
+  obtain ⟨result, run, represented, _, _⟩ :=
+    resetMoveRelated_production_invariant moves related good bounds
+  exact ⟨result, run, represented⟩
+
+/-- The executed reset clears the dense flag map and then marks endpoints,
+reading the original immutable tags. This unconditional implementation equation
+connects the initializer's inline marking to reset; it has no HOL original. -/
+theorem resetMoveRelated_production_equation (moves : List (Nat × (Nat × Nat)))
+    (production : CakeRaState) :
+    cakeResetMoveRelated moves production = {production with
+      moveRelated := moves.foldl (fun flags move =>
+        (flags.set move.2.1 (!cakeIsFixed production move.2.1)).set
+          move.2.2 (!cakeIsFixed production move.2.2))
+        (CakeNodeMap.filled production.dim false)} := by
+  rfl
+
+/-- On an already cleared state, the initializer's inline endpoint traversal
+is the complete executed reset. The premise is established by the initializer's
+full-range traversal, rather than assumed in the whole initializer theorem.
+This factoring lemma has no independent HOL original. -/
+theorem resetMoveRelated_cleared (moves : List (Nat × (Nat × Nat)))
+    (production : CakeRaState)
+    (cleared : production.moveRelated = CakeNodeMap.filled production.dim false) :
+    moves.foldl (fun state move => {state with
+      moveRelated := (state.moveRelated.set move.2.1 (!cakeIsFixed state move.2.1)).set
+        move.2.2 (!cakeIsFixed state move.2.2)}) production =
+      cakeResetMoveRelated moves production := by
+  change moves.foldl markEndpoints production = _
+  rw [markEndpoints_fold, resetMoveRelated_production_equation, cleared]
 
 end Flapjack.RegAlloc

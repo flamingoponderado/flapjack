@@ -1,11 +1,18 @@
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
+import Flapjack.RiscV.L3.Defs.MMU.Translate
+import Flapjack.RiscV.L3.Defs.MMU.Walk
+import Flapjack.RiscV.L3.Defs.MMU.Insert
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateRelation
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.Labels
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompLn
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateOk
 import Flapjack.RiscV.L3.Defs.MMU.TLB
 import Flapjack.RiscV.L3.Defs.MMU.Access
 import Flapjack.RiscV.L3.Defs.MMU.Primitives
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateOk
 import Flapjack.Compiler.Backend.StackRawCall
 import Flapjack.RiscV.L3.Defs.MMU.Exception
 import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
@@ -160,6 +167,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Clock
 import Flapjack.Compiler.Backend.Semantics.StackSem.ClockControl
 import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Seq
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.If
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
@@ -533,6 +541,7 @@ import Flapjack.Misc.Sptree.Map
 import Flapjack.Misc.Sptree.InterEq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
+import Flapjack.Misc.ListLookup
 import Flapjack.Compiler.Backend.Parmove.Independence
 import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
 import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
@@ -614,6 +623,10 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionParentCompression
 import Flapjack.Compiler.Backend.RegAlloc.ProductionBgOk
 import Flapjack.Compiler.Backend.RegAlloc.ProductionCoalesce
 import Flapjack.Compiler.Backend.RegAlloc.ProductionStep
+import Flapjack.Compiler.Backend.RegAlloc.ProductionInitAlloc
+import Flapjack.Compiler.Backend.RegAlloc.ProductionAllocLoop
+import Flapjack.Compiler.Backend.RegAlloc.ProductionColourReads
+import Flapjack.Compiler.Backend.RegAlloc.ProductionStempReads
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
