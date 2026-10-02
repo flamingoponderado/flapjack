@@ -5746,3 +5746,5 @@ stack-space overflow, missing/non-word bitmap values, and missing/non-word
 base registers; corresponding Lean fixtures use the actual evaluator carrier.
 The source's local `num_stubs` is `stack_num_stubs`. This evidence verifies
 the relation definition, not the unfinished pass simulation theorem.
+`ssa_install_case_probe.out` captures the full original `ssa_cc_trans_correct` Install specialization, all six premises and complete source-permutation/Error-exempt result/frame/locals conclusion. Native proof derives input guards, compiled preparation, actual callback execution, pointer copy and final rename. Full SSA/end-to-end assembly remain open.
+`ssa_alloc_case_probe.out` captures the full original `ssa_cc_trans_correct` Alloc specialization with all six premises, source permutation/Error exemption, actual target result/frame and result-sensitive locals. Native SSA Alloc derives rename/count preparation, GC transport, normal restoration and exhausted-space stopping; full SSA assembly remains open.
