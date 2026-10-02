@@ -5048,3 +5048,9 @@ run_probe stack_remove_comp_atoms_probeScript.sml stack_remove_comp_atoms_probe.
 run_probe lab_to_target_section_prefix_nop_probeScript.sml lab_to_target_section_prefix_nop_probe.out \
   lines_enc_with_nop_pad_section lines_enc_with_nop_pad_section_types mixed_full_guards mixed_padded_encoding mixed_full_tuple prefix_guard_required empty_accumulator only_zero_labels empty_code call_first \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe l3_riscv_fclass_probeScript.sml l3_riscv_fclass_probe.out \
+  fclass_s_neg_inf fclass_s_neg_normal fclass_s_neg_subnormal fclass_s_neg_zero fclass_s_pos_zero fclass_s_pos_subnormal fclass_s_pos_normal fclass_s_pos_inf fclass_s_snan fclass_s_canonical_nan fclass_s_payload_qnan fclass_s_neg_qnan fclass_s_neg_snan fclass_s_dest_zero fclass_d_neg_inf fclass_d_neg_normal fclass_d_neg_subnormal fclass_d_neg_zero fclass_d_pos_zero fclass_d_pos_subnormal fclass_d_pos_normal fclass_d_pos_inf fclass_d_snan fclass_d_canonical_nan fclass_d_payload_qnan fclass_d_neg_qnan fclass_d_neg_snan fclass_d_dest_zero \
+  "$repo_dir/HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe stack_remove_comp_control_probeScript.sml stack_remove_comp_control_probe.out \
+  cc_tick cc_tick_types cc_tick_proved cc_return cc_return_types cc_return_proved cc_raise cc_raise_types cc_raise_proved cc_break cc_break_types cc_break_proved cc_continue cc_continue_types cc_continue_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

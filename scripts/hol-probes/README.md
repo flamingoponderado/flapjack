@@ -5786,3 +5786,21 @@ result-dependent FFI/state-relation conclusion. Full binder types are captured.
 Halt permits either Word or Loc payloads; Alloc is excluded by the original
 relation's allocation flag and original non-Error premise. No target run is
 assumed. The remaining constructor cases and assembly are still required.
+
+## Full original L3 FCLASS state observations
+
+`l3_riscv_fclass_probe.out` records28 complete original FCLASS_S/D state
+observations: all ten classes, noncanonical and negative quiet NaNs (original
+canonical-only bit9), negative signaling NaNs and zero destination. Kernel
+replays preserve source words, NV/NX, MFS, Delta.data1 and other-core GPRs.
+These fixtures are regression evidence, not whole-model equivalence.
+### Full StackRemove Tick and control-transfer simulation cases
+
+`stack_remove_comp_control_probeScript.sml` reproves the genuine Tick, Return,
+Raise, Break and Continue cases with the same complete original four premises
+and existential target evaluation/result condition. Each complete statement,
+quantified binder type and kernel proof is captured. Tick includes the zero
+clock TimeOut path and arbitrary nonzero decrement path; Return/Raise derive
+Loc-only success from the original run/non-Error premises. Break/Continue
+retain their actual successful results and unchanged state. No target run or
+extra successful lookup is supplied. Full remaining simulation is still open.

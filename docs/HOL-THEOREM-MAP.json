@@ -63362,38 +63362,147 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-02 original stack_allocProofScript.sml:4243-4345: full quantified binder order, free conf implicit, unused c1 Boolean retained, all four curried premise groups in original order including Temp0/1 domain, Temp2/3/4 values, register0 bound and registers1..8. No good_dimindex extra premise. Exact evaluate conclusion existential clock, six register witnesses and two store witnesses, memory m2, Temp0..3 updates, register0 Word r1a1 and register8 Word r2a2, all other fields preserved. Source complete induction follows original empty interval/fuel contradiction/header-load+length/native word_gen_gc_move_list_code_thm/Get0 Temp4/IH/evaluate_add_clock; proves Temp4 survives four-temp updates and clocks/threaded finite-map equalities directly, no supplied target result. Native positive-width BitVec NeZero and actual canonical StackSemStateFiniteExact regs/fpRegs/store with codec witness. Fresh original full typed statement and five determinate EVAL observations, kernel replays; no unspecified nonword oracle claim. Exact evaluator Inst closure inherits SOUNDNESS item8 reals_as_rational_cuts, not source acceptance of arbitrary dependencies."
   },
-{
-  "hol_path": null,
-  "hol_name": null,
-  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
-  "lean_name": "returningPopCutRelation",
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-specific inline returning Call8477-8550 factoring, no standalone HOL declaration. Actual callee key/value stack facts and pushed root-map correspondence derive successful source/target pops, complete wordStateEqRel, popped cut domain and all value lookup transport using native pushEnvPopEnvSKeyEq/popEnvFrame/keyMapImplies/allocLocalsRel. Internal actual cut domain/scoped lookup relation plus map-domain and source-bound facts reconstruct all restricted SSA conjuncts. No desired popped-local relation/output SSA or target evaluation premise. Continuation/exception full returning Call and fullSSA assembly remain open on flapjack-sola-callreturn."
-},
-{
-  "hol_path": null,
-  "hol_name": null,
-  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
-  "lean_name": "returningCutSSA",
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-specific inline returning Call8477-8550 factoring, no standalone HOL declaration. Actual callee key/value stack facts and pushed root-map correspondence derive successful source/target pops, complete wordStateEqRel, popped cut domain and all value lookup transport using native pushEnvPopEnvSKeyEq/popEnvFrame/keyMapImplies/allocLocalsRel. Internal actual cut domain/scoped lookup relation plus map-domain and source-bound facts reconstruct all restricted SSA conjuncts. No desired popped-local relation/output SSA or target evaluation premise. Continuation/exception full returning Call and fullSSA assembly remain open on flapjack-sola-callreturn."
-},
-{
-  "hol_path": null,
-  "hol_name": null,
-  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
-  "lean_name": "returningRestoreRegistersRead",
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-specific inline returning Call8575-8610 factoring, no standalone HOL declaration. Existing actual retMov preservation plus duplicate-free physical convention writes derive successful return-register rereads; actual listNextVarRename producer and Move copy derive NONE/source-setVars versus target-setVars SSA/frame from internal cut SSA/map/nonphysical/bounds and native Call return Nodup/length guards. No target continuation run or desired output relation premise. Counter class/bounds are internal original producer facts to be discharged in full case. Full continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn."
-},
-{
-  "hol_path": null,
-  "hol_name": null,
-  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
-  "lean_name": "returningBindResults",
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-specific inline returning Call8575-8610 factoring, no standalone HOL declaration. Existing actual retMov preservation plus duplicate-free physical convention writes derive successful return-register rereads; actual listNextVarRename producer and Move copy derive NONE/source-setVars versus target-setVars SSA/frame from internal cut SSA/map/nonphysical/bounds and native Call return Nodup/length guards. No target continuation run or desired output relation premise. Counter class/bounds are internal original producer facts to be discharged in full case. Full continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn."
-},
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FP32_Sign",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FP32_Sign_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 .18.5.13.8.2.5: complete literal riscvScript.sml:1581 equation, original fixed input/output carriers. The bit at index31/63 is read from the fixed32/64-bit input; in-range BitVec getLsbD is original word indexing. No premise or carrier change."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FP64_Sign",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FP64_Sign_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 .18.5.13.8.2.5: complete literal riscvScript.sml:1584 equation, original fixed input/output carriers. The bit at index31/63 is read from the fixed32/64-bit input; in-range BitVec getLsbD is original word indexing. No premise or carrier change."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCLASS_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCLASS_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 .18.5.13.8.2.5: complete literal riscvScript.sml:9377 equation, original fixed input/output carriers. Two5-bit register operands and full native riscv_state -> riscv_state; reads FPRS32/FPRD64, original zero10/state pair, all ten nested one-bit BFI operations and zero extension10->64 followed by write GPR on original paired state. Bit9 is canonical NaN equality only, bit8 original signaling predicate, bits7/0 signed infinities, bits6/1 signed normal, bits5/2 signed subnormal, bits4/3 exact signed zeros. No invented FP flags or narrowed branches. All BFI source indices h=l0..9 are within singleton Boolean-word input. machine_ieeeLib lift1b fixed codecs sign31/63, exponent23:8/52:11, significand0:23/0:52 agree with BinaryIeee normal107-110/subnormal112-115 field predicates; signed zero constants agree with float_plus_zero172/float_minus_zero199 and encoding. Current checker requires reals_as_rational_cuts for direct generic BinaryIeee rendering uses (docs/SOUNDNESS.md item8), even these real-free field predicates; no stronger exact classification claimed. Fresh original28 state tuples and kernel replays cover all categories, payload/negative quiet NaNs, negative signaling NaNs and zero destination, preserving source, flags, MFS, delta and other core. Remaining full Run/NextRISCV model obligations stay open.",
+    "reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCLASS_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCLASS_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 .18.5.13.8.2.5: complete literal riscvScript.sml:10309 equation, original fixed input/output carriers. Two5-bit register operands and full native riscv_state -> riscv_state; reads FPRS32/FPRD64, original zero10/state pair, all ten nested one-bit BFI operations and zero extension10->64 followed by write GPR on original paired state. Bit9 is canonical NaN equality only, bit8 original signaling predicate, bits7/0 signed infinities, bits6/1 signed normal, bits5/2 signed subnormal, bits4/3 exact signed zeros. No invented FP flags or narrowed branches. All BFI source indices h=l0..9 are within singleton Boolean-word input. machine_ieeeLib lift1b fixed codecs sign31/63, exponent23:8/52:11, significand0:23/0:52 agree with BinaryIeee normal107-110/subnormal112-115 field predicates; signed zero constants agree with float_plus_zero172/float_minus_zero199 and encoding. Current checker requires reals_as_rational_cuts for direct generic BinaryIeee rendering uses (docs/SOUNDNESS.md item8), even these real-free field predicates; no stronger exact classification claimed. Fresh original28 state tuples and kernel replays cover all categories, payload/negative quiet NaNs, negative signaling NaNs and zero destination, preserving source, flags, MFS, delta and other core. Remaining full Run/NextRISCV model obligations stay open.",
+    "reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectTick",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.3: genuine constructor case of full comp_correct1481-1493. Keeps full original source evaluate=(result,postSource), result not SOME Error, full native stateRel and regBound hypotheses, and existential extraNatclock/targetpoststate with compiled evaluate equal same result plus original Halt/TimeOut/FinalFFI ffi equality and full stateRel for every other result. No target-run, postrelation, successful lookup or clock assumption supplied. Actual StackSemEvaluate.evaluate with reviewed34equations, native comp/regBound, StackSemStateFiniteExact canonical regs/fpRegs/store and Spt code. Width has NeZero; independent configuration C/FFI F Type0. Same-module nested Control canonical witness reexports genuine carrier roundtrips; no duplicate owner. Fresh original complete statement/binder-type/kernel proof replay compares identical cases. Conservative inherits_reals_as_rational_cuts marker propagates full evaluator closure assumption from existing FP implementation/docsSOUNDNESS; these specialized constructors perform no FP, and no direct real carrier difference or theorem premise is added. Remaining constructor cases/assembly remain open. Original1639-1644: source/target clock equality from fullstateRel synchronizes exact native evaluate_tick branch. Clock0 gives TimeOut/emptyEnv with unchangedffi; nonzero givesNONE/decClock on both states and fullstateRelDecClock. Supplies0extra clock and actual target state, no nonzero-clock hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.3: genuine constructor case of full comp_correct1481-1493. Keeps full original source evaluate=(result,postSource), result not SOME Error, full native stateRel and regBound hypotheses, and existential extraNatclock/targetpoststate with compiled evaluate equal same result plus original Halt/TimeOut/FinalFFI ffi equality and full stateRel for every other result. No target-run, postrelation, successful lookup or clock assumption supplied. Actual StackSemEvaluate.evaluate with reviewed34equations, native comp/regBound, StackSemStateFiniteExact canonical regs/fpRegs/store and Spt code. Width has NeZero; independent configuration C/FFI F Type0. Same-module nested Control canonical witness reexports genuine carrier roundtrips; no duplicate owner. Fresh original complete statement/binder-type/kernel proof replay compares identical cases. Conservative inherits_reals_as_rational_cuts marker propagates full evaluator closure assumption from existing FP implementation/docsSOUNDNESS; these specialized constructors perform no FP, and no direct real carrier difference or theorem premise is added. Remaining constructor cases/assembly remain open. Original1664-1672: boundregister<k plus stateRelGetVar gives exact native lookup equality. None/Word produce Error and contradict only original nonError; arbitrary Loc(block,offset) gives Result sameLoc and unchangedstate. Supplies0/target and original full postrelation. Loc-only success is derived inside proof, not an extra premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.3: genuine constructor case of full comp_correct1481-1493. Keeps full original source evaluate=(result,postSource), result not SOME Error, full native stateRel and regBound hypotheses, and existential extraNatclock/targetpoststate with compiled evaluate equal same result plus original Halt/TimeOut/FinalFFI ffi equality and full stateRel for every other result. No target-run, postrelation, successful lookup or clock assumption supplied. Actual StackSemEvaluate.evaluate with reviewed34equations, native comp/regBound, StackSemStateFiniteExact canonical regs/fpRegs/store and Spt code. Width has NeZero; independent configuration C/FFI F Type0. Same-module nested Control canonical witness reexports genuine carrier roundtrips; no duplicate owner. Fresh original complete statement/binder-type/kernel proof replay compares identical cases. Conservative inherits_reals_as_rational_cuts marker propagates full evaluator closure assumption from existing FP implementation/docsSOUNDNESS; these specialized constructors perform no FP, and no direct real carrier difference or theorem premise is added. Remaining constructor cases/assembly remain open. Original1673-1680: boundregister<k and native lookup equality, None/Word excluded by original nonError, arbitrary Loc gives Exception sameLoc and unchangedstate. Supplies0/target and fulloriginalpostrelation, no lookup-success premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectBreak",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.3: genuine constructor case of full comp_correct1481-1493. Keeps full original source evaluate=(result,postSource), result not SOME Error, full native stateRel and regBound hypotheses, and existential extraNatclock/targetpoststate with compiled evaluate equal same result plus original Halt/TimeOut/FinalFFI ffi equality and full stateRel for every other result. No target-run, postrelation, successful lookup or clock assumption supplied. Actual StackSemEvaluate.evaluate with reviewed34equations, native comp/regBound, StackSemStateFiniteExact canonical regs/fpRegs/store and Spt code. Width has NeZero; independent configuration C/FFI F Type0. Same-module nested Control canonical witness reexports genuine carrier roundtrips; no duplicate owner. Fresh original complete statement/binder-type/kernel proof replay compares identical cases. Conservative inherits_reals_as_rational_cuts marker propagates full evaluator closure assumption from existing FP implementation/docsSOUNDNESS; these specialized constructors perform no FP, and no direct real carrier difference or theorem premise is added. Remaining constructor cases/assembly remain open. Original1681-1682: faithful evaluate_break returns SOME(Break label), unchangedsource; compiler leaves constructor unchanged. Supplies0/unchangedtarget, same Break label and fullstateRel. Does not classify Break as Error or add a vacuous contradiction."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectContinue",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.3: genuine constructor case of full comp_correct1481-1493. Keeps full original source evaluate=(result,postSource), result not SOME Error, full native stateRel and regBound hypotheses, and existential extraNatclock/targetpoststate with compiled evaluate equal same result plus original Halt/TimeOut/FinalFFI ffi equality and full stateRel for every other result. No target-run, postrelation, successful lookup or clock assumption supplied. Actual StackSemEvaluate.evaluate with reviewed34equations, native comp/regBound, StackSemStateFiniteExact canonical regs/fpRegs/store and Spt code. Width has NeZero; independent configuration C/FFI F Type0. Same-module nested Control canonical witness reexports genuine carrier roundtrips; no duplicate owner. Fresh original complete statement/binder-type/kernel proof replay compares identical cases. Conservative inherits_reals_as_rational_cuts marker propagates full evaluator closure assumption from existing FP implementation/docsSOUNDNESS; these specialized constructors perform no FP, and no direct real carrier difference or theorem premise is added. Remaining constructor cases/assembly remain open. Original1683-1684: faithful evaluate_continue returns SOME(Continue label), unchangedsource; compiler leaves constructor unchanged. Supplies0/unchangedtarget, same Continue label and fullstateRel; no weakened result condition or successful-run premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+    "lean_name": "returningPopCutRelation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific inline returning Call8477-8550 factoring, no standalone HOL declaration. Actual callee key/value stack facts and pushed root-map correspondence derive successful source/target pops, complete wordStateEqRel, popped cut domain and all value lookup transport using native pushEnvPopEnvSKeyEq/popEnvFrame/keyMapImplies/allocLocalsRel. Internal actual cut domain/scoped lookup relation plus map-domain and source-bound facts reconstruct all restricted SSA conjuncts. No desired popped-local relation/output SSA or target evaluation premise. Continuation/exception full returning Call and fullSSA assembly remain open on flapjack-sola-callreturn."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+    "lean_name": "returningCutSSA",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific inline returning Call8477-8550 factoring, no standalone HOL declaration. Actual callee key/value stack facts and pushed root-map correspondence derive successful source/target pops, complete wordStateEqRel, popped cut domain and all value lookup transport using native pushEnvPopEnvSKeyEq/popEnvFrame/keyMapImplies/allocLocalsRel. Internal actual cut domain/scoped lookup relation plus map-domain and source-bound facts reconstruct all restricted SSA conjuncts. No desired popped-local relation/output SSA or target evaluation premise. Continuation/exception full returning Call and fullSSA assembly remain open on flapjack-sola-callreturn."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+    "lean_name": "returningRestoreRegistersRead",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific inline returning Call8575-8610 factoring, no standalone HOL declaration. Existing actual retMov preservation plus duplicate-free physical convention writes derive successful return-register rereads; actual listNextVarRename producer and Move copy derive NONE/source-setVars versus target-setVars SSA/frame from internal cut SSA/map/nonphysical/bounds and native Call return Nodup/length guards. No target continuation run or desired output relation premise. Counter class/bounds are internal original producer facts to be discharged in full case. Full continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+    "lean_name": "returningBindResults",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific inline returning Call8575-8610 factoring, no standalone HOL declaration. Existing actual retMov preservation plus duplicate-free physical convention writes derive successful return-register rereads; actual listNextVarRename producer and Move copy derive NONE/source-setVars versus target-setVars SSA/frame from internal cut SSA/map/nonphysical/bounds and native Call return Nodup/length guards. No target continuation run or desired output relation premise. Counter class/bounds are internal original producer facts to be discharged in full case. Full continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn."
+  },
 {
   "hol_path": null,
   "hol_name": null,
