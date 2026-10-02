@@ -1,0 +1,18 @@
+load "preamble";
+load "word_to_stackTheory";
+load "stack_allocTheory";
+open HolKernel Parse preamble bossLib mlstringTheory;
+val _ = Globals.linewidth := 10000;
+val _ = Globals.show_types := true;
+fun print_th label th = (print(label ^ "="); print_thm th; print "\n");
+fun print_eval label q = (print(label ^ "="); print_term(rand(concl(EVAL q))); print "\n");
+val _ = print_th "word_stub_names_def" word_to_stackTheory.stub_names_def;
+val _ = (print "word_stub_names_type="; print_type(type_of ``word_to_stack$stub_names``); print "\n");
+val _ = print_th "gc_stub_names_def" stack_allocTheory.stub_names_def;
+val _ = (print "gc_stub_names_type="; print_type(type_of ``stack_alloc$stub_names``); print "\n");
+val _ = print_eval "word_stub_names_values" ``word_to_stack$stub_names ()``;
+val _ = print_eval "word_stub_names_bytes" ``MAP (\(n,s). (n, MAP ORD (explode s))) (word_to_stack$stub_names ())``;
+val _ = print_eval "gc_stub_names_values" ``stack_alloc$stub_names ()``;
+val _ = print_eval "gc_stub_names_bytes" ``MAP (\(n,s). (n, MAP ORD (explode s))) (stack_alloc$stub_names ())``;
+val _ = print_eval "word_stub_names_count" ``LENGTH (word_to_stack$stub_names ())``;
+val _ = print_eval "gc_stub_names_count" ``LENGTH (stack_alloc$stub_names ())``;

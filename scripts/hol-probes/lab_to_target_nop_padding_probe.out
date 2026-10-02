@@ -1,0 +1,18 @@
+enc_with_nop_pad_bytes_length=enc_with_nop (enc :α asm -> β list) (x :α asm)
+  (pad_bytes (enc x) (LENGTH (enc x)) (enc (Inst (Skip :α inst) :α asm)))
+enc_with_nop_pad_bytes_length_types=(x :α asm)::α asm;(enc :α asm -> β list)::α asm -> β list;
+enc_with_nop_pad_bytes=(nop :α list) = (enc :β asm -> α list) (Inst (Skip :β inst) :β asm) ∧
+LENGTH (enc (x :β asm)) ≤ (len :num) ∧
+LENGTH (enc x) MOD LENGTH nop = (0 :num) ∧ len MOD LENGTH nop = (0 :num) ∧
+(0 :num) < LENGTH nop ⇒
+enc_with_nop enc x (pad_bytes (enc x) len nop)
+enc_with_nop_pad_bytes_types=(len :num)::num;(x :β asm)::β asm;(enc :β asm -> α list)::β asm -> α list;(nop :α list)::α list;
+base_multibyte=T
+base_empty_nop=T
+generic_nat_padding=T
+generic_bool_padding=T
+zero_target=T
+empty_initial_extended=T
+target_mod_guard_required=T
+initial_mod_guard_required=T
+nop_identity_guard_required=T

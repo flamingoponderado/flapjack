@@ -1,0 +1,7 @@
+aar_full_MustTerminate=⊢ ∀c perf body bs frame. (perf ⇔ F) ⇒ alloc_arg (FST (comp c perf (MustTerminate body) bs frame))
+aar_full_Loop=⊢ ∀c perf liveIn body liveOut bs frame. (perf ⇔ F) ⇒ alloc_arg (FST (comp c perf (Loop liveIn body liveOut) bs frame))
+aar_full_Seq=⊢ ∀c perf first second bs frame. (perf ⇔ F) ⇒ alloc_arg (FST (comp c perf (Seq first second) bs frame))
+aar_full_If=⊢ ∀c perf cmp reg ri first second bs frame. (perf ⇔ F) ⇒ alloc_arg (FST (comp c perf (If cmp reg ri first second) bs frame))
+aar_full_CallTail=⊢ ∀c perf dest args handler bs frame. (perf ⇔ F) ⇒ alloc_arg (FST (comp c perf (Call NONE dest args handler) bs frame))
+aar_full_CallReturn=⊢ ∀c perf values live retCode l1 l2 dest args bs frame. (perf ⇔ F) ⇒ alloc_arg (FST (comp c perf (Call (SOME (values,live,retCode,l1,l2)) dest args NONE) bs frame))
+aar_full_CallHandler=⊢ ∀c perf values live retCode l1 l2 dest args handleValue handleCode h1 h2 bs frame. (perf ⇔ F) ⇒ alloc_arg (FST (comp c perf (Call (SOME (values,live,retCode,l1,l2)) dest args (SOME (handleValue,handleCode,h1,h2))) bs frame))

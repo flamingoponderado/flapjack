@@ -1,3 +1,7 @@
+import Flapjack.Test.LabToTargetNopInsertEncodingParity
+import Flapjack.Test.LabToTargetNopPaddingParity
+import Flapjack.Test.MiscTakeFlatReplicateParity
+import Flapjack.Test.LabToTargetValidityNopParity
 import Flapjack.Test.StackRemoveStateRelation
 import Flapjack.Test.LabToTargetNopInvariantParity
 import Flapjack.Test.LabToTargetLengthCorrectnessParity
@@ -1843,6 +1847,10 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetAlignmentParity.runChecks,
     Flapjack.Test.LabToTargetPrefixZeroParity.runChecks,
     Flapjack.Test.LabToTargetPrefixPreservationParity.runChecks,
+    Flapjack.Test.LabToTargetNopInsertEncodingParity.runChecks,
+    Flapjack.Test.LabToTargetNopPaddingParity.runChecks,
+    Flapjack.Test.MiscTakeFlatReplicateParity.runChecks,
+    Flapjack.Test.LabToTargetValidityNopParity.runChecks,
     Flapjack.Test.LabToTargetNopInvariantParity.runChecks,
     Flapjack.Test.LabToTargetLengthCorrectnessParity.runChecks,
     Flapjack.Test.LabToTargetPaddingLengthPropsParity.runChecks,

@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: first-large
 
     steps:
       - uses: actions/checkout@v5
