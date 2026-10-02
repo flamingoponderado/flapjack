@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.RecursiveCalls
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Flat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Instructions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnAllocArgs
