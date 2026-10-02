@@ -684,6 +684,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionMkGraph
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInitDomain
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInitializer
 import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveAdmission
+import Flapjack.Compiler.Backend.RegAlloc.ProductionMovePreparation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorSetWF
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
