@@ -429,4 +429,72 @@ theorem initAllocFused_separate (limit : Nat) {native : State} {production : Cak
   rw [initAllocDegrees_projection]
   simp only [related.dimension]
 
+/-- The initializer's executed endpoint marking is the complete reset phase
+on its fused initialized state, including the sorted move worklist. Full-range
+clearing supplies the reset precondition; no final-state relation is assumed.
+This connects two actual implementations and has no independent HOL original. -/
+theorem initAllocFused_marking (moves : List (Nat × (Nat × Nat))) (limit : Nat)
+    {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native production) (good : goodRaState native) :
+    let initialized := ((List.range production.dim).foldl
+      (initAllocFusedStep production limit) ([], production)).2
+    let withMoves := {initialized with availMovesWl := cakeSortMoves moves}
+    moves.foldl (fun state move => {state with
+      moveRelated := (state.moveRelated.set move.2.1 (!cakeIsFixed state move.2.1)).set
+        move.2.2 (!cakeIsFixed state move.2.2)}) withMoves =
+      cakeResetMoveRelated moves withMoves := by
+  dsimp only
+  apply resetMoveRelated_cleared
+  change ((List.range production.dim).foldl
+    (initAllocFusedStep production limit) ([], production)).2.moveRelated = _
+  rw [initAllocFused_flags]
+  have dimension : ((List.range production.dim).foldl
+      (initAllocFusedStep production limit) ([], production)).2.dim = production.dim := by
+    rw [initAllocFused_frame]
+  change (List.range production.dim).foldl (fun flags node => flags.set node false)
+    production.moveRelated = CakeNodeMap.filled
+      (((List.range production.dim).foldl
+        (initAllocFusedStep production limit) ([], production)).2.dim) false
+  rw [dimension, related.dimension]
+  simpa only [related.dimension] using initAllocFlags_filled related good
+
+private theorem initPartition_pure (predicate : Nat → M State Bool StateException)
+    (pure : Nat → Bool) (nodes yes no : List Nat) (state : State)
+    (reads : ∀ node ∈ nodes, predicate node state = (.success (pure node), state)) :
+    stExPartition predicate nodes yes no state =
+      (.success (holPart pure nodes yes no), state) := by
+  induction nodes generalizing yes no with
+  | nil => rfl
+  | cons node rest ih =>
+    simp only [stExPartition, Translator.Monadic.MonadBase.bind, reads node List.mem_cons_self]
+    cases selected : pure node <;>
+      simp only [Bool.false_eq_true, if_false, if_true, holPart, selected]
+    all_goals exact ih _ _ (fun next member => reads next (List.mem_cons_of_mem node member))
+
+/-- The whole degree partition preserves the original reverse-accumulator
+order and leaves the state unchanged. Every native read follows from the
+represented good state; this is implementation correspondence, not a HOL port. -/
+theorem initAllocDegreePartition_production (limit : Nat) (nodes : List Nat)
+    {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native production) (good : goodRaState native) :
+    stExPartition (splitDegree native.dim limit) nodes [] [] native =
+      (.success (partitionReversed (fun node => cakeSplitDegree production native.dim limit node)
+        nodes), native) := by
+  rw [partitionReversed_production]
+  exact initPartition_pure _ _ _ _ _ _
+    (fun node _ => splitDegree_production limit node related good)
+
+/-- The whole move-related partition preserves both reversed worklists.
+The bounds are supplied by the preceding degree partition's membership proof
+in the whole initializer. This Flapjack correspondence has no HOL original. -/
+theorem initAllocMovePartition_production (nodes : List Nat)
+    {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native production) (good : goodRaState native)
+    (bounds : ∀ node ∈ nodes, node < native.dim) :
+    stExPartition moveRelatedSub nodes [] [] native =
+      (.success (partitionReversed (cakeMoveRelatedSub production) nodes), native) := by
+  rw [partitionReversed_production]
+  exact initPartition_pure _ _ _ _ _ _
+    (fun node member => moveRelatedSub_production node related good (bounds node member))
+
 end Flapjack.RegAlloc
