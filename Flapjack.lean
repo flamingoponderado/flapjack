@@ -1434,6 +1434,9 @@ import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Models
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Move
+import Flapjack.Compiler.Backend.WordCopy.Proofs.Store
+import Flapjack.Compiler.Backend.WordCopy.Proofs.Inst
+import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
 import Flapjack.Misc.Anub
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 

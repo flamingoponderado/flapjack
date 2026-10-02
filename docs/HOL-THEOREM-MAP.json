@@ -56575,5 +56575,283 @@
     "lean_name": "sptLookupInterEq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): sptreeScript.sml:383-394 (pinned HOL submodule): same universally quantified m1 m2 k and conclusion lookup k (inter_eq m1 m2) = case lookup k m1 of NONE => NONE | SOME v => if lookup k m2 = SOME v then SOME v else NONE; no well-formedness premise, as in HOL; [DecidableEq α] decides HOL equality."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "copy_prop_move_model",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "copyPropMoveModel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:758-806 copy_prop_move_model: same binders cs st moves moves' cs' values and the five curried premises (CPstate_inv, CPstate_models, set (MAP FST moves) ∩ set (MAP SND moves) = ∅ rendered as ∀ x, ¬(x ∈ MAP FST moves ∧ x ∈ MAP SND moves), copy_prop_move result, get_vars (MAP SND moves) st = SOME values); conclusion CPstate_models cs' (set_vars (MAP FST moves) values st). Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "EVERY_NOT_MEM_D",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "everyNotMemD",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:808-812 EVERY_NOT_MEM_D: EVERY (λt. ¬MEM t ss) tt ⇒ set tt ∩ set ss = {} with EVERY as bounded membership and the empty intersection as ∀ x, ¬(x ∈ tt ∧ x ∈ ss), the same rendering used by copy_prop_move_model."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "copy_prop_move_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "copyPropMoveCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:814-838 copy_prop_move_correct: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "word_exp_cong_Var",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "wordExpCongVar",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:840-845 word_exp_cong_Var: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "word_exp_cong_Load",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "wordExpCongLoad",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:847-852 word_exp_cong_Load: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "word_exp_cong_Op",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "wordExpCongOp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:854-862 word_exp_cong_Op: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "word_exp_cong_Shift",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "wordExpCongShift",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:864-870 word_exp_cong_Shift: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "remove_eq_comm",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "removeEqComm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:931-935 remove_eq_comm: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "remove_eq_model_unset_var",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "removeEqModelUnsetVar",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:956-965 remove_eq_model_unset_var: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "CPstate_modelsD_copy_prop_share",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "cpStateModelsDCopyPropShare",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:983-991 CPstate_modelsD_copy_prop_share: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "lookup_store_eq_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "lookupStoreEqSome",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:993-1000 lookup_store_eq_SOME: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "lookup_remove_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "lookupRemoveEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1002-1007 lookup_remove_eq: [simp] in HOL; lookup n (remove_eq cs n).to_eq = NONE."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "lookup_eq_set_store_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "lookupEqSetStoreEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1009-1019 lookup_eq_set_store_eq: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "lookup_store_eq_set_store_eq_1",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "lookupStoreEqSetStoreEq1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1021-1031 lookup_store_eq_set_store_eq_1: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "lookup_store_eq_set_store_eq_2",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "lookupStoreEqSetStoreEq2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1033-1044 lookup_store_eq_set_store_eq_2: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "set_store_eq_model_set_store",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "setStoreEqModelSetStore",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1046-1069 set_store_eq_model_set_store: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "lookup_eq_remove_t_same",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "lookupEqRemoveTSame",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1071-1075 lookup_eq_remove_t_same: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "lookup_store_eq_set_store_eq_same",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "lookupStoreEqSetStoreEqSame",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1077-1083 lookup_store_eq_set_store_eq_same: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "set_store_eq_model_set_var",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "setStoreEqModelSetVar",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1085-1124 set_store_eq_model_set_var: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "evaluate_Loop_body_cong_err",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Store.lean",
+    "lean_name": "evaluateLoopBodyCongErr",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1129-1156 evaluate_Loop_body_cong_err: same ∀s names c c' exit_names res s' order, premise (∀v res s'. evaluate (c,v) = (res,s') ∧ res ≠ SOME Error ⇒ evaluate (c',v) = (res,s')) ∧ evaluate (Loop names c exit_names, s) = (res,s') ∧ res ≠ SOME Error, conclusion evaluate (Loop names c' exit_names, s) = (res,s'). Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "copy_prop_inst_eval",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Inst.lean",
+    "lean_name": "copyPropInstEval",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:919-929 copy_prop_inst_eval: same ∀ins cs st prog' cs' and curried premises CPstate_inv cs, CPstate_models cs st, (prog',cs') = copy_prop_inst ins cs (equation orientation kept); conclusion evaluate (prog',st) = evaluate (Inst ins, st) on the faithful wordSem evaluate. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "copy_prop_inst_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Inst.lean",
+    "lean_name": "copyPropInstCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:937-954 copy_prop_inst_correct: same quantified variables, hypotheses and conclusion (implications kept curried or conjoined exactly as in HOL); is_alloc_var as the tagged Bool isAllocVar = true, ALOOKUP as List.lookup, FLOOKUP s.store as HolFiniteMapExact.lookup, get_var/get_vars/word_exp/set_var/unset_var/set_store/set_fp_var as the tagged wordSem accessors. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "copy_prop_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Correct.lean",
+    "lean_name": "copyPropCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1158-1393 copy_prop_correct: same ∀prog cs st prog' cs' err st', conjunctive premise CPstate_inv cs ∧ CPstate_models cs st ∧ copy_prop_prog prog cs = (prog',cs') ∧ err ≠ SOME Error ∧ evaluate (prog,st) = (err,st'), conclusion evaluate (prog',st) = (err,st') ∧ (err = NONE ⇒ CPstate_models cs' st'). HOL proves it by structural induction with the Loop case resumed at 1379-1389; the Lean proof recurses structurally over every wordLang constructor. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_copyProofScript.sml",
+    "hol_name": "evaluate_copy_prop",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy/Proofs/Correct.lean",
+    "lean_name": "evaluateCopyProp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.34): HOL word_copyProofScript.sml:1396-1404 evaluate_copy_prop: FST (evaluate (e,s)) ≠ SOME Error ⇒ evaluate (copy_prop e, s) = evaluate (e, s), FST as .1, free e s. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
