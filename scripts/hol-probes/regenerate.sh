@@ -107,6 +107,10 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_tail_handler_probeScript.sml word_to_stack_tail_handler_probe.out \
+  tail_direct_F_handler_erased tail_direct_T_handler_erased tail_indirect_F_handler_erased tail_indirect_T_handler_erased tail_direct_F_move_complete tail_direct_F_bitmap_complete tail_direct_T_move_complete tail_direct_T_bitmap_complete tail_indirect_F_move_complete tail_indirect_F_bitmap_complete tail_indirect_T_move_complete tail_indirect_T_bitmap_complete return_direct_F_bitmap_complete return_direct_T_bitmap_complete return_indirect_F_bitmap_complete return_indirect_T_bitmap_complete \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
 run_probe target_interference_contracts_probeScript.sml target_interference_contracts_probe.out \
   ffi_contract_full_definition cache_contract_full_definition \
   post_ffi_state_full_statement post_cache_state_full_statement \

@@ -6116,4 +6116,13 @@ Assembler-convention assembly probe prints both full original theorems with no o
 
 `numeric_formatting_probe.out` records70 original full digit/character-code observations: bases0/1/2/3/10/16/17/37, all HEX digits and invalid16/17/999, arbitrary shifted converter, 121-bit decimal numerals and widths1/7/8/16/64/80 with word wrapping. NumericFormattingParity kernel replays all70 using reviewed canonical HolChar rather than Lean String.
 
+`word_to_stack_tail_handler_probe.out` captures four original whole-result
+handler-erasure equalities and twelve direct/indirect, perf on/off compiler
+outputs. NONE-return calls ignore Move and Alloc handlers and preserve the
+supplied bitmap tree/counter; SOME-return Alloc handlers remain and update both.
+Returning trees retain original opaque instruction-builder macros. Actual fused
+production regressions replay the eight tail outputs with explicit leading
+Seq Skip removal and flattening of the original bitmap append tree to its
+production list; generic proofs cover arbitrary handlers and unchanged states.
+
 `l3_raise_exception_probe.out` captures the original polymorphic type and assumption-free full result equation, preserving ARB and every returned state field through the conditional exception update. Defs/MMU/Exception kernel-checks that complete generic equation under only HOL intrinsic Nonempty; no chosen-default binder.

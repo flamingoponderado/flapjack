@@ -3491,7 +3491,7 @@ def wordToStackProgNat [BEq Nat] (config : WordStackConfig) :
   | .continue label => pure (.continue label)
   | .raise exception => pure (wordToStackRaise exception)
   | .return returnLabel values => wordStackReturn config returnLabel values
-  | .call none (some target) arguments none => do
+  | .call none (some target) arguments _handler => do
       let argumentMoves ← wordStackMovesToPhysical config arguments config.abiBase
       let callCode := .call none (.label target) none
       let freeCount := wordStackCallFreeCount config arguments.length
@@ -3505,16 +3505,6 @@ def wordToStackProgNat [BEq Nat] (config : WordStackConfig) :
         (wordStackCallFrameOffset config) config.scratch (wordStackReturnStackSuffix config destinations)
         returnCode
         returnLabel entryLabel
-      pure (wordStackJoin argumentMoves callCode)
-  | .call none (some target) arguments
-      (some (exception, body, handlerLabel, handlerEntryLabel)) => do
-      let argumentMoves ← wordStackMovesToPhysical config arguments config.abiBase
-      let handlerCode ← wordToStackProgNat config body
-      let callCode := wordToStackCallWithHandlerInSection config.perf target arguments.length
-        (wordStackCallFrameOffset config) config.scratch .skip handlerCode
-        config.returnLabel config.entryLabel
-        (wordStackHandlerLabel config handlerLabel)
-        (wordStackHandlerEntryLabel config handlerEntryLabel) exception
       pure (wordStackJoin argumentMoves callCode)
   | .call (some (_destinations, _cutsets, returnProgram, returnLabel, entryLabel))
       (some target) arguments
@@ -3530,24 +3520,13 @@ def wordToStackProgNat [BEq Nat] (config : WordStackConfig) :
         (wordStackHandlerLabel config handlerLabel)
         (wordStackHandlerEntryLabel config handlerEntryLabel) exception
       pure (wordStackJoin argumentMoves callCode)
-  | .call none none arguments none => do
+  | .call none none arguments _handler => do
       let (direct, target, targetLoad) ← wordStackIndirectCallNat config arguments
       let argumentMoves ← wordStackMovesToPhysical config direct config.abiBase
       let callCode := .call none target none
       let freeCount := wordStackCallFreeCount config (arguments.length - 1)
       pure (wordStackJoin argumentMoves
         (wordStackJoin targetLoad (stackFreeIfNonzero freeCount callCode)))
-  | .call none none arguments
-      (some (exception, body, handlerLabel, handlerEntryLabel)) => do
-      let (direct, target, targetLoad) ← wordStackIndirectCallNat config arguments
-      let argumentMoves ← wordStackMovesToPhysical config direct config.abiBase
-      let handlerCode ← wordToStackProgNat config body
-      let callCode := wordToStackCallWithHandlerInSectionTarget config.perf target
-        (arguments.length - 1) (wordStackCallFrameOffset config) config.scratch .skip handlerCode
-        config.returnLabel config.entryLabel
-        (wordStackHandlerLabel config handlerLabel)
-        (wordStackHandlerEntryLabel config handlerEntryLabel) exception
-      pure (wordStackJoin argumentMoves (wordStackJoin targetLoad callCode))
   | .call (some (_destinations, _cutsets, returnProgram, returnLabel, entryLabel))
       none arguments none => do
       let (direct, target, targetLoad) ← wordStackIndirectCallNat config arguments
@@ -3680,6 +3659,10 @@ def wordToStackProgNatWithBitmapBuilder [BEq Nat]
         wordBits storeConstsStub state body
   | .assign destination value =>
       (wordStackCompileExpNat config destination value).map
+        (fun program => (program, state))
+  -- HOL comp ignores the entire handler on tail calls, including bitmap writes.
+  | .call none target arguments _handler =>
+      (wordToStackProgNat config (.call none target arguments none)).map
         (fun program => (program, state))
   | .call returns (some target) arguments
       (some (exception, body, handlerLabel, handlerEntryLabel)) => do
@@ -3896,9 +3879,9 @@ theorem wordToStackProgNatWithBitmapBuilder_preserves_length
   case call returns target arguments handler =>
       cases target with
       | none =>
-          simp [wordToStackProgNatWithBitmapBuilder] at hresult
-          rcases hresult with ⟨_, _, rfl, rfl⟩
-          exact hstate
+          cases returns <;> simp [wordToStackProgNatWithBitmapBuilder] at hresult
+          all_goals rcases hresult with ⟨_, _, rfl, rfl⟩
+          all_goals exact hstate
       | some target =>
           cases handler with
           | none =>
@@ -3946,38 +3929,13 @@ theorem wordToStackProgNatWithBitmapBuilder_preserves_length
                               exact hreturnInv
           | some handlerData =>
               rcases handlerData with ⟨exception, body, handlerLabel, entryLabel⟩
-              simp only [wordToStackProgNatWithBitmapBuilder] at hresult
               cases returns with
               | none =>
-                      cases hlive : wordStackCallLiveBitmap config bitmapBuilder
-                        bitmapRegister frameSlots state none with
-                      | mk liveCode liveState =>
-                          simp [hlive] at hresult
-                          cases hhandler : wordToStackProgNatWithBitmapBuilder
-                            config bitmapBuilder registerCount bitmapRegister frameSlots wordBits
-                            storeConstsStub liveState body with
-                          | none =>
-                              rw [hhandler] at hresult
-                              simp at hresult
-                          | some handlerPair =>
-                              cases handlerPair with
-                              | mk handlerCode finalResult =>
-                                  have hliveInv : liveState.length = liveState.data.length := by
-                                    have hlive0 := wordStackCallLiveBitmap_length config bitmapBuilder
-                                      bitmapRegister frameSlots state none hstate
-                                    have hliveState : (wordStackCallLiveBitmap config bitmapBuilder
-                                      bitmapRegister frameSlots state none).snd = liveState := by
-                                      simpa using congrArg Prod.snd hlive
-                                    rw [← hliveState]
-                                    exact hlive0
-                                  have hhandlerInv := wordToStackProgNatWithBitmapBuilder_preserves_length
-                                    config bitmapBuilder registerCount bitmapRegister frameSlots wordBits
-                                    storeConstsStub liveState body hliveInv handlerCode finalResult
-                                    hhandler
-                                  simp [hhandler] at hresult
-                                  rcases hresult with ⟨_, rfl, rfl⟩
-                                  exact hhandlerInv
+                  simp [wordToStackProgNatWithBitmapBuilder] at hresult
+                  rcases hresult with ⟨_, _, rfl, rfl⟩
+                  exact hstate
               | some returnData =>
+                      simp only [wordToStackProgNatWithBitmapBuilder] at hresult
                       rcases returnData with
                         ⟨destinations, cutsets, returnProgram, returnLabel, entryLabel⟩
                       cases hlive : wordStackCallLiveBitmap config bitmapBuilder
@@ -4325,36 +4283,15 @@ def wordToStackProgWordWithBitmapBuilder [BEq Nat] [NeZero width]
         (wordStackCallFrameOffset config) config.scratch (wordStackReturnStackSuffix config destinations)
         returnCode returnLabel entryLabel
       pure (wordStackJoin liveCode callCode, state)
-  | .call none (some target) arguments none => do
+  | .call none (some target) arguments _handler => do
       let callCode := .call none (.label target) none
       let freeCount := wordStackSourceTailCallFreeCount config arguments.length
       pure (stackFreeIfNonzero freeCount callCode, state)
-  | .call none (some target) arguments
-      (some (exception, body, handlerLabel, handlerEntryLabel)) => do
-      let (handlerCode, state) ← wordToStackProgWordWithBitmapBuilder config bitmapBuilder
-        registerCount bitmapRegister frameSlots wordBits storeConstsStub state body
-      let callCode := wordToStackCallWithHandlerInSection config.perf target arguments.length
-        (wordStackCallFrameOffset config) config.scratch .skip handlerCode
-        config.returnLabel config.entryLabel
-        (wordStackHandlerLabel config handlerLabel)
-        (wordStackHandlerEntryLabel config handlerEntryLabel) exception
-      pure (callCode, state)
-  | .call none none arguments none => do
+  | .call none none arguments _handler => do
       let (_direct, target, targetLoad) ← wordStackIndirectCallNat config arguments
       let callCode := .call none target none
       let freeCount := wordStackCallFreeCount config (arguments.length - 1)
       pure (wordStackJoin targetLoad (stackFreeIfNonzero freeCount callCode), state)
-  | .call none none arguments
-      (some (exception, body, handlerLabel, handlerEntryLabel)) => do
-      let (_direct, target, targetLoad) ← wordStackIndirectCallNat config arguments
-      let (handlerCode, state) ← wordToStackProgWordWithBitmapBuilder config bitmapBuilder
-        registerCount bitmapRegister frameSlots wordBits storeConstsStub state body
-      let callCode := wordToStackCallWithHandlerInSectionTarget config.perf target
-        (arguments.length - 1) (wordStackCallFrameOffset config) config.scratch .skip handlerCode
-        config.returnLabel config.entryLabel
-        (wordStackHandlerLabel config handlerLabel)
-        (wordStackHandlerEntryLabel config handlerEntryLabel) exception
-      pure (wordStackJoin targetLoad callCode, state)
   | .call (some (destinations, cutsets, returnProgram, returnLabel, entryLabel)) none
       arguments none => do
       let (_direct, target, targetLoad) ← wordStackIndirectCallNat config arguments
