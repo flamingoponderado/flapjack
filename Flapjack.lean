@@ -574,6 +574,7 @@ import Flapjack.Compiler.Backend.Semantics.TargetSem.State
 import Flapjack.Compiler.Encoders.AsmProps.Target
 import Flapjack.Compiler.Encoders.AsmSem.State
 import Flapjack.Compiler.Encoders.AsmProps.Memory
+import Flapjack.Compiler.Encoders.AsmSem.MemOps
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
 import Flapjack.Misc.AsmWriteBytearray
 import Flapjack.Misc.BytesInMemory
@@ -1517,6 +1518,7 @@ import Flapjack.Misc.Logroot
 import Flapjack.Misc.Bit
 import Flapjack.Misc.Alignment
 import Flapjack.Misc.Alignment.Production
+import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
 
 
 

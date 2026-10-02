@@ -15,7 +15,7 @@ namespace Flapjack
 noncomputable def holLOG2 : Nat → Nat := holLOG 2
 
 /-- On positive arguments HOL `LOG2` is Lean's `Nat.log2` (Flapjack infrastructure, from
-`LOG_UNIQUE`); at `0` nothing is determined, as in HOL. -/
+`LOG_UNIQUE`); at `0` the specification does not constrain it, as in HOL. -/
 theorem holLOG2_eq_log2 {n : Nat} (hn : 0 < n) : holLOG2 n = Nat.log2 n :=
   holLOG_UNIQUE 2 n (Nat.log2 n) ⟨Nat.log2_self_le (by omega), Nat.lt_log2_self⟩
 

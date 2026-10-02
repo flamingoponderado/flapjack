@@ -3279,6 +3279,14 @@ run_probe alignment_align_probeScript.sml alignment_align_probe.out \
   al_align_type al_byte_align_type al_slice_7_4 al_slice_20_4 al_slice_3_9 al_align_3 al_align_0 al_align_40 al_aligned_t al_aligned_f al_byte_align_64 al_byte_aligned_64 \
   "$hol_dir/src/n-bit/alignmentScript.sml" "$cake_dir/compiler/backend"
 
+run_probe lab_to_target_share_mem_domain_probeScript.sml lab_to_target_share_mem_domain_probe.out \
+  smd_def smd_nil smd_univ smd_singleton \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe asm_sem_mem_ops_probeScript.sml asm_sem_mem_ops_probe.out \
+  mo_ld2_le_reg mo_ld2_le_ok mo_ld2_be_reg mo_ld2_misaligned mo_ld2_dom mo_ld0_reg mo_ld0_failed mo_st1_mem mo_st1_ok mo_st2_misaligned mo_op_load mo_op_load32_failed mo_op_store8_mem mo_op_load16_reg \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
+
 
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
   sc_store sc_store8 sc_store16 sc_store32 sc_load sc_load8 sc_load16 sc_load32 \

@@ -943,6 +943,8 @@ import Flapjack.Test.WordAllocSSAHelpersParity
 import Flapjack.Test.WordAllocSSACcTransParity
 import Flapjack.Test.WordAllocFullSSAParity
 import Flapjack.Test.SSAMergeMovesRouteParity
+import Flapjack.Test.LabToTargetShareMemDomainParity
+import Flapjack.Test.AsmSemMemOpsParity
 
 
 

@@ -1,0 +1,14 @@
+mo_ld2_le_reg=17w
+mo_ld2_le_ok=F
+mo_ld2_be_reg=34w
+mo_ld2_misaligned=T
+mo_ld2_dom=T
+mo_ld0_reg=0w
+mo_ld0_failed=(mem_load 0 5 (Addr 0 1w) <|regs := (λr. if r = 3 then 171w else 0w); fp_regs := (λr. 0w); mem := (λx. if x = 0w then 17w else if x = 1w then 34w else 51w); mem_domain := {0w; 1w; 2w; 3w}; pc := 0w; lr := 0; align := 0; be := F; failed := F|>).failed ⇔ ¬aligned (LOG2 0) 1w
+mo_st1_mem=171w
+mo_st1_ok=F
+mo_st2_misaligned=T
+mo_op_load=34w
+mo_op_load32_failed=F
+mo_op_store8_mem=171w
+mo_op_load16_reg=51w
