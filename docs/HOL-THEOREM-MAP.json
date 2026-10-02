@@ -63646,5 +63646,95 @@
   "hol_name": "round_def",
   "statement_status": "pending_statement_review",
   "reviewer": "flapjack-sol-c: literal rounding constructor carrier and original static/dynamic case review; pending coordinator acceptance. No real-valued FP operation is used by this declaration."
+},
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "\u00abdfn'FMIN_S\u00bb",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "dfn'FMIN_S_def",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:8755 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRS reads, original destination write and all branches. LT/EQ choose first input; GT chooses second; UN preserves signaling/canonical-both, canonical-first, and fallback-first branches. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+},
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "\u00abdfn'FMIN_D\u00bb",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "dfn'FMIN_D_def",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:9645 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRD reads, original destination write and all branches. LT/EQ choose first input; GT chooses second; UN preserves signaling/canonical-both, canonical-first, and fallback-first branches. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+},
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "\u00abdfn'FMAX_S\u00bb",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "dfn'FMAX_S_def",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:8794 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRS reads, original destination write and all branches. LT/EQ choose second input; GT chooses first; UN preserves signaling/canonical-both, canonical-first, and fallback-first branches. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+},
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "\u00abdfn'FMAX_D\u00bb",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "dfn'FMAX_D_def",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:9684 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRD reads, original destination write and all branches. LT/EQ choose second input; GT chooses first; UN preserves signaling/canonical-both, canonical-first, and fallback-first branches. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+},
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "\u00abdfn'FLT_S\u00bb",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "dfn'FLT_S_def",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:9323 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRS reads, original destination write and all branches. Any NaN writes integer zero then sets NV; otherwise only LT writes one. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+},
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "\u00abdfn'FLT_D\u00bb",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "dfn'FLT_D_def",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:10255 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRD reads, original destination write and all branches. Any NaN writes integer zero then sets NV; otherwise only LT writes one. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+},
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "\u00abdfn'FLE_S\u00bb",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "dfn'FLE_S_def",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:9350 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRS reads, original destination write and all branches. Any NaN writes integer zero then sets NV; otherwise LT/EQ write one. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+},
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "\u00abdfn'FLE_D\u00bb",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "dfn'FLE_D_def",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:10282 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRD reads, original destination write and all branches. Any NaN writes integer zero then sets NV; otherwise LT/EQ write one. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+},
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "\u00abdfn'FEQ_S\u00bb",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "dfn'FEQ_S_def",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:9296 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRS reads, original destination write and all branches. Only signaling NaNs write integer zero then set NV; otherwise EQ writes one and all other comparisons write zero. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+},
+{
+  "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+  "lean_name": "\u00abdfn'FEQ_D\u00bb",
+  "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+  "hol_name": "dfn'FEQ_D_def",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:10228 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRD reads, original destination write and all branches. Only signaling NaNs write integer zero then set NV; otherwise EQ writes one and all other comparisons write zero. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
 }
 ]

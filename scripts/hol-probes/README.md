@@ -5571,8 +5571,9 @@ invalid page-table entries at levels0/2, compressed/full instruction Fetch
 and Skip, LD and a cross-word store. `L3RiscvMmuFetchParity` kernel replays
 those observations on the actual native state. The numeric greater-than
 rendering unlocks41 full original definitions; walk64 terminates on its
-original page-table level. The 242 emitted definitions remain pending full
-source/body acceptance; 50 FP-dependent declarations including whole Run and
+original page-table level. Of the 252 emitted definitions, ten FP transition equations have declaration-level
+source review with the real representation assumption; older model bodies still
+need review. Forty FP-dependent declarations including whole Run and
 NextRISCV are still omitted and tracked separately. No reduced ISA is substituted.
 
 ## Native L3 rounding-mode conversion
@@ -5587,3 +5588,19 @@ both NONE branches. The imported HolRounding datatype matches
 binary_ieeeScript.sml:245-250 constructor for constructor. These conversions
 use no real-valued FP operations; full IEEE operations and Run/NextRISCV remain
 open. This evidence does not establish HOL-to-Lean equivalence.
+
+## Native L3 binary32/binary64 comparisons
+
+`l3_riscv_fp_compare_probeScript.sml` directly evaluates the ten original
+FMIN/FMAX/FLT/FLE/FEQ state transitions on ordinary values, signed zeros,
+canonical/noncanonical/signaling NaNs, infinities and subnormals at both
+precisions. Eighty original tuples observe the integer destination, entire
+64-bit FP destination and NV flag, including binary32 high-bit preservation.
+Three additional rows check the two infinity constants and both NaN classifiers.
+The wrappers use the literal machine_ieeeLib codecs: sign at23+8/52+11,
+exponent8/11bits, significand23/52bits. Comparison uses the complete original
+float_compare case split through the existing generic IEEE real-to-Rat rendering;
+new transition tags retain `(reals_as_rational_cuts)` and SOUNDNESS item8.
+The ten complete transition equations have declaration-level source comparison
+recorded in the theorem map. Full model dependency and Run/NextRISCV transition
+review remain separate open obligations; the probes are regression evidence.

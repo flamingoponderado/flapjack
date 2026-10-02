@@ -479,7 +479,7 @@ class Renderer:
         if key == ('list', 'list'):
             return '[]' if ctor == 'NIL' else f'{names[0]} :: {names[1]}'
         if key == ('binary_ieee', 'float_compare'):
-            return f'.{ctor}'
+            return f'.{ctor.lower()}'
         if key == ('min', 'bool'):
             return ctor
         raise Unrenderable(f'pattern {t}')
@@ -693,6 +693,25 @@ SPECIAL = {
     ('integer', 'int_of_num'): special_int_of_num,
 }
 
+def ieee_codec(x: str, t: int, w: int) -> str:
+    """Literal machine_ieeeLib.mk_fp_to_float fixed-width field extraction.
+
+    Generator arguments are (fp32,23,8) and (fp64,52,11); sign is at t+w,
+    exponent occupies w bits starting at t, significand occupies t low bits.
+    """
+    return (f"({{ sign := {x}.extractLsb' {t+w} 1, "
+            f"exponent := {x}.extractLsb' {t} {w}, "
+            f"significand := {x}.extractLsb' 0 {t} }} : HolFloat {t} {w})")
+
+
+def uses_ieee_real_rendering(text: str) -> bool:
+    # These generic original operations reach float_value/float_to_real.
+    # Their real carrier is the existing rational-cut translation; do not
+    # conceal it when mapping the generated machine_ieee wrappers.
+    return any(re.search(r'\b' + name + r'\b', text)
+               for name in ('holFloatCompare', 'holFloatIsNan'))
+
+
 CONSTANTS = {
     ('binary_ieee', 'roundTiesToEven'): (0, lambda r, c, xs, raw: 'HolRounding.roundTiesToEven'),
     ('binary_ieee', 'roundTowardPositive'): (0, lambda r, c, xs, raw: 'HolRounding.roundTowardPositive'),
@@ -763,6 +782,22 @@ CONSTANTS = {
     ('ASCIInumbers', 'num_to_dec_string'): (1, lambda r, c, xs, raw: f'(holNumToDecString {xs[0]})'),
     ('state_transformer', 'FOR'): (1, lambda r, c, xs, raw: f'(holFor {xs[0]})'),
 }
+
+
+for _width, _t, _w in ((32, 23, 8), (64, 52, 11)):
+    CONSTANTS['machine_ieee', f'fp{_width}_compare'] = (
+        2, lambda r, c, xs, raw, t=_t, w=_w:
+        f'(holFloatCompare {ieee_codec(xs[0], t, w)} {ieee_codec(xs[1], t, w)})')
+    CONSTANTS['machine_ieee', f'fp{_width}_isNan'] = (
+        1, lambda r, c, xs, raw, t=_t, w=_w:
+        f'(holFloatIsNan {ieee_codec(xs[0], t, w)})')
+    # float_plus_infinity has sign0, all-ones exponent, zero significand.
+    CONSTANTS['machine_ieee', f'fp{_width}_posInf'] = (
+        0, lambda r, c, xs, raw, width=_width, t=_t, w=_w:
+        f'(BitVec.ofNat {width} {((1 << w) - 1) << t})')
+for _name in ('LT', 'EQ', 'GT', 'UN'):
+    CONSTANTS['binary_ieee', _name] = (
+        0, lambda r, c, xs, raw, name=_name: f'HolFloatCompare.{name.lower()}')
 
 
 def render_def(r: Renderer, lean_name: str, term) -> tuple[str, bool]:
@@ -917,8 +952,13 @@ if __name__ == '__main__':
                   f'for an L3 `BL` call (no source declaration); mechanically rendered from the '
                   f'elaborated HOL definition. Flapjack infrastructure, untagged. -/')
         else:
-            print(f'/-- HOL `{thy}${name}` (`{defname}`), mechanically rendered from the elaborated HOL definition. -/')
-            print(f'@[hol "{paths[thy]}" "{defname}"]')
+            note = (' Uses the original fixed binary32/binary64 field codecs and generic IEEE '
+                    'value/comparison operations with `(reals_as_rational_cuts)` '
+                    '(docs/SOUNDNESS.md item 8). Existing model dependency/body acceptance '
+                    'remains open.' if uses_ieee_real_rendering(text) else '')
+            print(f'/-- HOL `{thy}${name}` (`{defname}`), mechanically rendered from the elaborated HOL definition.{note} -/')
+            qualifier = ' (reals_as_rational_cuts)' if uses_ieee_real_rendering(text) else ''
+            print(f'@[hol "{paths[thy]}" "{defname}"{qualifier}]')
         print(('noncomputable ' if nc else '') + text)
         if (thy, name) == ('riscv', 'walk64'):
             print('termination_by arg0.2.2.2.2.2')

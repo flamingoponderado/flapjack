@@ -33,6 +33,18 @@ class L3DefsToLeanTest(unittest.TestCase):
         finally:
             renderer.nat_literal = original
 
+    def test_ieee_comparison_closure_and_real_qualifiers(self):
+        body = (ROOT / 'Flapjack/RiscV/L3/Defs.lean').read_text()
+        for suffix in ['S', 'D']:
+            for op in ['FMIN', 'FMAX', 'FLT', 'FLE', 'FEQ']:
+                name = "dfn'" + op + '_' + suffix
+                self.assertIn('"' + name + '_def" (reals_as_rational_cuts)]', body)
+                self.assertIn('def «' + name + '»', body)
+        self.assertIn("exponent := v.extractLsb' 23 8", body)
+        self.assertIn("exponent := v.extractLsb' 52 11", body)
+        self.assertIn('| .lt =>', body)
+        self.assertNotIn('| .LT =>', body)
+
     def test_integer_memory_closure_is_present(self):
         body = (ROOT / 'Flapjack/RiscV/L3/Defs.lean').read_text()
         for name in ['walk64', 'translate64', 'translateAddr', 'Fetch',
