@@ -118,6 +118,7 @@ import Flapjack.Test.WordToStackInitializationParity
 import Flapjack.Test.ListLookupParity
 import Flapjack.Test.WordToStackListUpdateSlicesParity
 import Flapjack.Test.SptreeWfDefinitionParity
+import Flapjack.Test.WordToStackTopLabelSafetyParity
 import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.ParmoveAllDistinctPmovParity
 import Flapjack.Test.ParmoveTempPmovParity
