@@ -67082,5 +67082,95 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-02 .4.10 original121-132: arbitrary instruction, source/target/result states, result and frame info. Exactly source evaluate equality, result not Error and full literal state_rel are premises. Existential ck/t1/k1 retains post-state relation, actual evaluate of comp at ck+target.clock, original result and target stackSpace update, and nonTimeOut/nonHalt Word2 guard implies k1=t1.stackSpace. Positive native HolInst/HolProg/StackSemResult and full22field StackSemStateFiniteExact, configuration/FFI Type0; canonical regs/fpRegs/store qualifier covers full relation, code stays Spt. Same-module witness genuinely reexports actual owner broad/exact roundtrips. Native getVars/recursive wordExp/assign and all integer-memory/16FP operations derive code-only update transport; code preservation follows specializing unconditional transport to source.code. Postrelation derived using unchanged code/frame obligations, target primitive success derived from source success and transport. Actual evaluate Inst is clock-neutral; witness ck=0 and original stackSpace discharge existential without extra guard or target result premise. No callback or successful target execution assumption. Inherits SOUNDNESS item8 reals_as_rational_cuts through actual FP/evaluator constant closure; theorem introduces no real rendering itself and proves no HOL/Lean real equivalence. Full pass/production correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine Skip case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectHalt",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine Halt case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectGet",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine Get case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectSet",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine Set case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectOpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine OpCurrHeap case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectTick",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine Tick case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
   }
 ]
