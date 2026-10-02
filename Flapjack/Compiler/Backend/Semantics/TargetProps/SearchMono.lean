@@ -9,7 +9,7 @@ bounds hypothesis is added. -/
 @[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
   "find_next_interference_mono" (words_as_type_indexed_bitvec)]
 theorem findNextInterferenceMono {width : Nat} [NeZero width]
-    {S Q σ : Type} (k : Nat) (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
+    {S Q : Type} {σ : Type} (k : Nat) (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
     (ms : S) (res : InterferenceApp width S × MachineConfig width S Q × HolFfiState σ)
     (i : Nat) (h : findNextInterference mc ffi k ms = some res) :
     findNextInterference mc ffi (k + i) ms = some res := by
@@ -40,7 +40,7 @@ same whole application/configuration/FFI tuple. -/
 @[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
   "find_next_interference_unique" (words_as_type_indexed_bitvec)]
 theorem findNextInterferenceUnique {width : Nat} [NeZero width]
-    {S Q σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S)
+    {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S)
     (k1 k2 : Nat)
     (res1 res2 : InterferenceApp width S × MachineConfig width S Q × HolFfiState σ)
     (h : findNextInterference mc ffi k1 ms = some res1 ∧
