@@ -5198,3 +5198,7 @@ run_probe ssa_cutset_route_probeScript.sml ssa_cutset_route_probe.out \
 run_probe ssa_reconcile_route_probeScript.sml ssa_reconcile_route_probe.out \
   rec_empty rec_identity rec_missing_source rec_missing_target rec_duplicate rec_order rec_big \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_listmove_route_probeScript.sml ssa_listmove_route_probe.out \
+  lm_empty lm_missing lm_repeated lm_source_alias lm_order lm_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

@@ -446,9 +446,9 @@ def wordSsaForceRename (renamings : List (Nat × Nat)) (state : WordSsaState) : 
     the generated Move makes that refresh explicit in the Word program. -/
 def wordSsaListNextVarRenameMove (state : WordSsaState) (next : Nat)
     (names : List Nat) : WordSsaState × Nat × WordProg α :=
-  let sources := names.map (wordSsaRead state)
-  let (state, destinations) := wordSsaFreshList { state with next := next } names
-  (state, state.next, .move 0 (destinations.zip sources))
+  let (moves, current, next) :=
+    Compiler.Backend.WordAlloc.ssaListNextVarRenameMoveExecutable state.current next names
+  ({ state with current := current, next := next }, next, .move 0 moves)
 
 def wordSsaCallAbiRegisters (start count : Nat) : List Nat :=
   (List.range count).map (fun index => 2 * (start + index))

@@ -70,4 +70,29 @@ theorem wordSsaReconcileToCorresponds {width : Nat} [NeZero width] {α : Type}
   | nil => simpa [wordSsaReconcileTo, moves] using native
   | cons move rest => simpa [wordSsaReconcileTo, moves] using native
 
+/-- The actual list-renaming Move0 caller retains the entire native output:
+ordered map, every lookup, both returned counters and complete program payload.
+This is a Flapjack codec/caller theorem for unrestricted lists and positive
+native word widths, with no assumed evaluation or output relation. -/
+theorem wordSsaListNextVarRenameMoveCorresponds {width : Nat} [NeZero width] {α : Type}
+    (state : WordSsaState) (next : Nat) (names : List Nat) :
+    let native := listNextVarRenameMove (width := width) (sptFromAList state.current) next names
+    let executed := wordSsaListNextVarRenameMove (α := α) state next names
+    executed.1.current = sptToAList native.2.1 ∧
+    executed.1.next = native.2.2 ∧ executed.2.1 = native.2.2 ∧
+    (∀ key, lookupNatInfo key executed.1.current = sptLookup key native.2.1) ∧
+    match executed.2.2 with
+    | .move priority moves => native.1 = .move priority moves
+    | _ => False := by
+  have correspondence := ssaListNextVarRenameMoveExecutableCorresponds (width := width)
+    state.current next names
+  unfold wordSsaListNextVarRenameMove
+  generalize result : ssaListNextVarRenameMoveExecutable state.current next names = executed at correspondence ⊢
+  rcases executed with ⟨moves, entries, counter⟩
+  simp only at correspondence ⊢
+  refine ⟨correspondence.2.2.1, correspondence.2.1, correspondence.2.1, ?_, correspondence.1⟩
+  intro key
+  rw [productionMergeMapLookup]
+  exact correspondence.2.2.2 key
+
 end Flapjack.Compiler.Backend.WordAlloc

@@ -113,4 +113,37 @@ theorem ssaReconcileMovesExecutableCorresponds {width : Nat} [NeZero width]
   dsimp only
   split <;> simp_all
 
+/-- Execute native list renaming and its complete Move0 producer in one map
+codec boundary. The word-free Move payload permits a width-one API instance;
+full reconstruction at every positive width is proved below. Original source
+reads occur before the sequential renaming, including repeated names.
+Flapjack production codec infrastructure, with no independent HOL declaration. -/
+def ssaListNextVarRenameMoveExecutable (entries : List (Nat × Nat)) (next : Nat)
+    (names : List Nat) : List (Nat × Nat) × List (Nat × Nat) × Nat :=
+  let (program, tree, next) :=
+    listNextVarRenameMove (width := 1) (sptFromAList entries) next names
+  let moves := match program with
+    | .move _ moves => moves
+    | _ => []
+  (moves, sptToAList tree, next)
+
+/-- Complete native list-renaming output reconstruction, independent of word
+width and unrestricted in keys, counters and duplicate input bindings. The
+full ordered decoder and every lookup are established without assumed output
+relations. This theorem is Flapjack codec infrastructure. -/
+theorem ssaListNextVarRenameMoveExecutableCorresponds {width : Nat} [NeZero width]
+    (entries : List (Nat × Nat)) (next : Nat) (names : List Nat) :
+    let native := listNextVarRenameMove (width := width) (sptFromAList entries) next names
+    let executed := ssaListNextVarRenameMoveExecutable entries next names
+    native.1 = .move 0 executed.1 ∧ executed.2.2 = native.2.2 ∧
+    executed.2.1 = sptToAList native.2.1 ∧
+    ∀ key, sptAListLookup key executed.2.1 = sptLookup key native.2.1 := by
+  unfold ssaListNextVarRenameMoveExecutable listNextVarRenameMove
+  obtain ⟨registers, tree, counter⟩ := listNextVarRename names (sptFromAList entries) next
+  simp only
+  refine ⟨True.intro, True.intro, True.intro, ?_⟩
+  intro key
+  simpa only [sptLookup_sptFromAList] using
+    sptLookup_sptFromAList_sptToAList key tree
+
 end Flapjack.Compiler.Backend.WordAlloc
