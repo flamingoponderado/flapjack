@@ -103,7 +103,9 @@ noncomputable def fpSemFpCmp : Opb → BitVec 64 → BitVec 64 → Bool
     each comparison against the real `sqrt r` by its rational cut
     (`BinaryIeeeSqrt`), the reviewed representation of that HOL real; its
     agreement with HOL is the external assumption of `docs/SOUNDNESS.md`
-    item 8.  The `abs`/`neg` clauses are real-free sign-bit operations. -/
+    item 8. The proof-only `FpSemHOL.RealSqrtAgreement` now proves this
+    executed sqrt clause equals the literal Mathlib-real rendering on every
+    input, without an external cut-criterion premise. The `abs`/`neg` clauses are real-free sign-bit operations. -/
 @[hol "cakeml/semantics/fpSemScript.sml" "fp_uop_comp_def" (reals_as_rational_cuts)]
 noncomputable def fpSemFpUopComp : FpUop → BitVec 64 → BitVec 64
   | .abs => holFp64Abs

@@ -1,0 +1,8 @@
+sr_moves_full=⊢ ∀L. FILTER (λ(a,b). a ≠ b) (FLAT (MAP (λv. case lookup v m of NONE => [] | SOME cv => [(f v,cv)]) L)) = MAP (λv. (f v,THE (lookup v m))) (FILTER (λv. case lookup v m of NONE => F | SOME cv => f v ≠ cv) L)
+sr_filtered_full=⊢ ALL_DISTINCT (FILTER (λv. case lookup v cur_ssa of NONE => F | SOME cv => option_lookup tgt_ssa v ≠ cv) (MAP FST (toAList ns)))
+sr_type_L=:num list
+sr_type_m=:α sptree$num_map
+sr_type_f=:num -> α
+sr_type_cur_ssa=:num sptree$num_map
+sr_type_tgt_ssa=:num sptree$num_map
+sr_type_ns=:α sptree$num_map

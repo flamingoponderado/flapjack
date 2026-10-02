@@ -1,3 +1,14 @@
+`ssa_reconcile_get_vars_probe.out` replays the literal original full theorem
+and list-induction proof, and records all universally quantified binder types.
+The Lean counterpart keeps distinctness, native get_vars result existence,
+length and every in-bounds EL/THE lookup; the replay is source-review evidence,
+not a cross-assistant equivalence proof.
+
+`riscv_jumpcmp_polarity_probe.out` records 32 fresh original encoder byte
+vectors: all eight JumpCmp predicates, register/immediate operands, and
+short/long ranges. RiscVBranchPolarity kernel-checks actual executed Lab
+emission against these complete bytes; no full compiler theorem is asserted.
+
 `lab_implicit_section_zero_probe.out` records six original ignored-zero,
 implicit-section-base and nonzero-label positions. Executed collectors replay
 matching pre-encoding lines using actual instruction counts. This pins the
@@ -2806,6 +2817,8 @@ the executed allocator. Regenerate read-only with
 
 `reg_alloc_colouring_probeScript.sml` captures eighteen original rows of `remove_colours` (empty colours taking priority, no nodes, fixed neighbours, duplicate colours, out-of-range nodes before and after the colours run out), `assign_Atemp_tag` (no-preference and last-colour oracles, no remaining colour, non-`Atemp` node unchanged, out-of-range node), `assign_Atemps` (heuristic order with an out-of-range entry, oracle choice, a single colour) and `first_match_col` (hit, colour outside `ks`, empty list, an index above 2^64). `Flapjack/Test/RegAllocColouringParity.lean` replays each row in the kernel.
 
+`word_alloc_select_reg_alloc_probeScript.sml` captures the original type of `select_reg_alloc` and seven runs for algorithms 0-5: Simple (0, 1), IRC without and with spill costs (2, 3), and linear scan (4, 5) including a spill and a forced pair under a branch cutset, each observed through `toAList` of the returned colouring; the linear-scan rows colour differently from the graph allocator. `Flapjack/Test/WordAllocSelectRegAllocParity.lean` replays each row in the kernel.
+
 `reg_alloc_allocator_probeScript.sml` captures twelve original rows of the complete `reg_alloc` allocator (Simple and IRC, a coalescing move and a move chain, spill choice by cost and by degree with `k = 1`, a forced pair under a branch cutset, physical registers, stack variables, a forced-stack set, high register pressure, and the empty tree), each observed through `toAList` of the returned colouring. `Flapjack/Test/RegAllocAllocatorParity.lean` replays each row in the kernel; it exercises every phase ported in `Flapjack/Compiler/Backend/RegAlloc/Allocator.lean`.
 
 `reg_alloc_exception_functions_probeScript.sml` captures eleven original rows of the generated `raise_Fail`/`raise_Subscript`/`handle_Fail`/`handle_Subscript`: both raises, success passing through, each handler catching its own constructor and passing the other, continuation from the failing state, and `handle_Subscript` around an out-of-range `node_tag_sub`. `Flapjack/Test/RegAllocExceptionFunctionsParity.lean` replays each row in the kernel.
@@ -4314,6 +4327,14 @@ fixtures replay them and apply the full theorem at arbitrary positive width and
 arbitrary accumulator; no full compiler or cross-language equivalence is claimed.
 
 ### SSA primitive program invariants
+`binary_ieee_real_carrier_source_probeScript.sml` captures all 14 original
+real-rounding/sqrt and fixed64 codec definitions, with their full quantified
+types (28 rows), for the source review of `BinaryIeeeSqrt.RealCarrier`.
+The seven original exact-square observations remain in
+`machine_ieee_fp64_sqrt_exact_probe.out`; these source/type captures and examples
+provide review/regression evidence, not cross-assistant equivalence.
+### SSA Call allocation/map invariant
+### SSA primitive program invariants
 
 `ssa_cc_trans_props_primitives_probe.out` captures the original 15 nonrecursive primitive invariant statements and actual constructor types. It replays the literal StoreConsts, instruction, expression tactic, CBW/DBW and ShareInst proofs after the original compiler simplification, including original instruction/extension/allocation prerequisites. The Lean cases derive all three invariants from only the original compiler equality and map/allocation premise.
 `ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
@@ -4370,9 +4391,118 @@ clocked WordSem evaluator, its reviewed finite-support state and its inherited
 IEEE rational-cut assumption (SOUNDNESS item 8). This is a CSE simulation
 prerequisite, not the entire CSE invariant/pass or compiler theorem.
 
+`stackprops_shared_memory_clock_probeScript.sml` replays all nine original
+StackProps shared-memory clock-commutation proofs verbatim and captures their
+full statements/types (18 rows), then checks fifteen native returned/final/error
+observations at clock 37. `StackPropsSharedMemoryClockParity.lean` kernel-replays
+those observations and applies the full arbitrary-state dispatch theorem.
+### Complete SSA program invariant
+
+`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
+
+### SSA reconciliation list prerequisites
+
+`ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
 ### SSA recursive control invariants
 
 `ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
 ### Complete SSA program invariant
 
 `ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
+### Full target machine evaluator
+
+`target_sem_evaluate_probeScript.sml` evaluates the original `targetSem`
+`evaluate_def` over 8-bit configurations, arbitrary untouched target fields,
+and natural-number machine/FFI host states. Twenty rows check clock exhaustion,
+branch priority, both halt outcomes, cache/FFI oracle shifts, normal success and
+post-interference rollback, missing/conflicting MMIO, mapped full/narrow reads
+and writes, returned host/event state, terminal-event rollback and guard errors.
+The normal-step rows first prove the exact encoded-memory existential with an
+`Inst Skip`/zero-drop witness, then use its normalized kernel theorem after
+bounded `EVAL`; they do not simplify with the recursive evaluator as an unbounded
+rewrite. Every captured row has a kernel example in
+`Flapjack.Test.TargetSemEvaluateParity`. These are regression checks, not a
+cross-assistant equivalence proof. The compiler executable is not rerouted.
+
+The same shared-memory source probe now replays original `sh_mem_op_const`,
+records its full twelve-field statement and types, and proves fifteen actual
+success/final/failure applications with no undischarged hypotheses. The Lean
+fixture applies the full twelve-conjunct theorem to the same native cases,
+preserving arbitrary GC/compiler/domain functions as equalities.
+## Full Word CSE load evaluation transports
+
+`word_cse_load_evaluation_probeScript.sml` literally replays all three original
+proofs at word_cseProofScript221-270, including the local address-substitution
+theorem, and captures their complete conclusions with no open hypotheses. Four
+original inferred types and 80 complete theorem applications cover word/byte/16/32
+loads at widths 1/32/64/80, both target/address aliasing and write/destination
+aliasing. Store cases are excluded only by the original guard; Load16 remains
+quantified with the same impossible source-success premise.
+`WordCseLoadEvaluationParity.lean` applies the full kernel theorems in all 80
+cases on arbitrary host/state/value inputs. The proofs use actual clocked WordSem
+evaluation and internally derive the loaded value from insertion equality;
+no target evaluation or memory-domain premise is added. Native finite-map/word
+translations and the evaluator's inherited IEEE rational-cut assumption
+(SOUNDNESS item 8) are retained. These are invariant-update prerequisites,
+not a completed CSE/compiler correctness proof.
+
+`ssa_reconcile_alookup_zip_probe.out` replays both original generic indexed-SOME and absent-key-NONE ALOOKUP ZIP proofs6551–6590, recording full statements and nine original argument types. Canonical opaque EL and all original domain/injection/index/length premises are retained.
+`target_sem_machine_sem_probeScript.sml` kernel-proves the full original
+Terminate/Diverge/Fail clauses for arbitrary machine and FFI carriers, checking
+exact conclusions and empty theorem hypotheses before capture. Divergence uses
+all clocks and the original IMAGE/UNIV lazy-list least upper bound. Generic Lean
+clause checks live in `Flapjack.Test.TargetSemMachineSemParity`; these check
+local definition shape and are not a cross-language equivalence theorem.
+### Complete SSA program invariant
+
+`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
+
+### SSA reconciliation list prerequisites
+
+`ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
+`ssa_reconcile_alookup_zip_probe.out` replays both original generic indexed-SOME and absent-key-NONE ALOOKUP ZIP proofs6551–6590, recording full statements and nine original argument types. Canonical opaque EL and all original domain/injection/index/length premises are retained.
+## Full Word CSE evaluation frames and state agreement
+
+`word_cse_evaluation_frames_probeScript.sml` literally replays all four original
+proofs: arithmetic register writes, arbitrary memory replacement, arithmetic
+locals agreement, and load locals/memory/domain/endianness agreement. It captures
+complete conclusions with no open hypotheses, four inferred types and 256 full
+theorem applications at widths 1/32/64/80. The applications cover all eligible
+arithmetic forms, both binop operand forms, every immediate shift, signed division,
+all four load variants, and writes to the destination or another unread register.
+The original `firstRegOfArith` expression is retained for HOL theorem matching.
+`WordCseEvaluationFramesParity.lean` applies the full kernel theorems on arbitrary
+values, states and memory functions. Eligibility/read guards and each exact set
+of input field equalities are preserved; target evaluation or global invariants
+are not assumed. The shared proof-only value factoring is checked against actual
+native Inst clauses; LoadEvaluation support was exposed without changing its
+implementation or old theorem statements. Existing finite-map/positive-word
+translations and inherited rational-cut assumption (SOUNDNESS item 8) remain.
+These are invariant-update prerequisites, not full CSE/compiler correctness.
+
+`target_props_clock_probeScript.sml` checks the original closed
+`evaluate_add_clock` theorem against its entire quantified statement and captures
+halt/error equality at clocks one and five. The Lean theorem and generic replay
+are in `TargetProps/EvaluateAddClock.lean` and `TargetPropsClockParity.lean`.
+The proof uses clock induction on the literal evaluator, with a local heartbeat
+budget for the complete constructor case analysis. No default target or gate is
+shortened. Source-reviewed total `holEl`/`holHd` behavior is retained at both
+clocks and explicitly recorded for the evaluator and machine semantics.
+
+`ssa_reconcile_empty_probe.out` replays the complete original local evaluator reconciliation proof and its literal prerequisites, then specializes the genuine empty-moves branch. Six native types are captured; this is regression evidence, and the Lean branch independently derives the evaluator/post-state conclusions. Full SSA simulation remains unfinished.
+`word_cse_deletion_frames_probeScript.sml` regenerates the two complete local
+`evaluate_arith_unset_var` / `evaluate_load_unset_var` proofs from original
+`word_cseProofScript.sml`, requiring closed hypotheses, plus four inferred types
+and 152 full theorem applications at widths 1/32/64/80. Fixtures cover all
+eligible arithmetic families and all non-store memory constructors, deletion
+of destination or an unrelated register, arbitrary full states and word-loc
+values. `WordCseDeletionFramesParity.lean` kernel-checks matching applications.
+The statements retain the original input guards and both evaluation directions.
+These regressions supplement source review; they do not prove cross-language
+equivalence or complete CSE correctness.

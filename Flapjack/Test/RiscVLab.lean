@@ -1086,10 +1086,12 @@ example :
         .jalr 0 31 (BitVec.ofInt 64 (-48))] := by
   decide
 
+/- Literal riscv_ast predicates: short branches retain c; far branches
+   use negate c to skip their following JAL. See fresh32-byte oracle fixture. -/
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 5000)] 0
       (.jumpCmp .equal 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchEq 4 5 (BitVec.ofNat 64 8),
+      some [.branchNe 4 5 (BitVec.ofNat 64 8),
         .jal 0 (BitVec.ofNat 64 4996)] := by
   decide
 
@@ -1099,13 +1101,13 @@ example :
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 4092)] 0
       (.jumpCmp .equal 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchNe 4 5 (BitVec.ofNat 64 4092)] := by
+      some [.branchEq 4 5 (BitVec.ofNat 64 4092)] := by
   decide
 
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 4096)] 0
       (.jumpCmp .equal 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchEq 4 5 (BitVec.ofNat 64 8),
+      some [.branchNe 4 5 (BitVec.ofNat 64 8),
         .jal 0 (BitVec.ofNat 64 4092)] := by
   decide
 
@@ -1114,65 +1116,65 @@ example :
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 4092)] 0
       (.jumpCmp .notEqual 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchEq 4 5 (BitVec.ofNat 64 4092)] := by
+      some [.branchNe 4 5 (BitVec.ofNat 64 4092)] := by
   decide
 
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 4096)] 0
       (.jumpCmp .notEqual 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchNe 4 5 (BitVec.ofNat 64 8),
+      some [.branchEq 4 5 (BitVec.ofNat 64 8),
         .jal 0 (BitVec.ofNat 64 4092)] := by
   decide
 
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 4092)] 0
       (.jumpCmp .less 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchGe 4 5 (BitVec.ofNat 64 4092)] := by
-  decide
-
-example :
-    labCompileAsm (width := 64) { services := [] } 1 [(0, 4096)] 0
-      (.jumpCmp .less 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchLt 4 5 (BitVec.ofNat 64 8),
-        .jal 0 (BitVec.ofNat 64 4092)] := by
-  decide
-
-example :
-    labCompileAsm (width := 64) { services := [] } 1 [(0, 4092)] 0
-      (.jumpCmp .lower 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchGeU 4 5 (BitVec.ofNat 64 4092)] := by
-  decide
-
-example :
-    labCompileAsm (width := 64) { services := [] } 1 [(0, 4096)] 0
-      (.jumpCmp .lower 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchLtU 4 5 (BitVec.ofNat 64 8),
-        .jal 0 (BitVec.ofNat 64 4092)] := by
-  decide
-
-example :
-    labCompileAsm (width := 64) { services := [] } 1 [(0, 4092)] 0
-      (.jumpCmp .notLess 4 (.reg 5) ⟨1, 0⟩) =
       some [.branchLt 4 5 (BitVec.ofNat 64 4092)] := by
   decide
 
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 4096)] 0
-      (.jumpCmp .notLess 4 (.reg 5) ⟨1, 0⟩) =
+      (.jumpCmp .less 4 (.reg 5) ⟨1, 0⟩) =
       some [.branchGe 4 5 (BitVec.ofNat 64 8),
         .jal 0 (BitVec.ofNat 64 4092)] := by
   decide
 
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 4092)] 0
-      (.jumpCmp .notLower 4 (.reg 5) ⟨1, 0⟩) =
+      (.jumpCmp .lower 4 (.reg 5) ⟨1, 0⟩) =
       some [.branchLtU 4 5 (BitVec.ofNat 64 4092)] := by
   decide
 
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 4096)] 0
-      (.jumpCmp .notLower 4 (.reg 5) ⟨1, 0⟩) =
+      (.jumpCmp .lower 4 (.reg 5) ⟨1, 0⟩) =
       some [.branchGeU 4 5 (BitVec.ofNat 64 8),
+        .jal 0 (BitVec.ofNat 64 4092)] := by
+  decide
+
+example :
+    labCompileAsm (width := 64) { services := [] } 1 [(0, 4092)] 0
+      (.jumpCmp .notLess 4 (.reg 5) ⟨1, 0⟩) =
+      some [.branchGe 4 5 (BitVec.ofNat 64 4092)] := by
+  decide
+
+example :
+    labCompileAsm (width := 64) { services := [] } 1 [(0, 4096)] 0
+      (.jumpCmp .notLess 4 (.reg 5) ⟨1, 0⟩) =
+      some [.branchLt 4 5 (BitVec.ofNat 64 8),
+        .jal 0 (BitVec.ofNat 64 4092)] := by
+  decide
+
+example :
+    labCompileAsm (width := 64) { services := [] } 1 [(0, 4092)] 0
+      (.jumpCmp .notLower 4 (.reg 5) ⟨1, 0⟩) =
+      some [.branchGeU 4 5 (BitVec.ofNat 64 4092)] := by
+  decide
+
+example :
+    labCompileAsm (width := 64) { services := [] } 1 [(0, 4096)] 0
+      (.jumpCmp .notLower 4 (.reg 5) ⟨1, 0⟩) =
+      some [.branchLtU 4 5 (BitVec.ofNat 64 8),
         .jal 0 (BitVec.ofNat 64 4092)] := by
   decide
 
@@ -1186,38 +1188,38 @@ private def jumpCmpImmBoundary (operator : Cmp) (target : Nat) :
 
 #guard jumpCmpImmBoundary .notEqual 4092 ==
   some [.ori 31 0 (BitVec.ofNat 64 3),
-    .branchEq 4 31 (BitVec.ofNat 64 4088)]
+    .branchNe 4 31 (BitVec.ofNat 64 4088)]
 #guard jumpCmpImmBoundary .notEqual 4096 ==
   some [.ori 31 0 (BitVec.ofNat 64 3),
-    .branchNe 4 31 (BitVec.ofNat 64 8),
+    .branchEq 4 31 (BitVec.ofNat 64 8),
     .jal 0 (BitVec.ofNat 64 4088)]
 #guard jumpCmpImmBoundary .less 4092 ==
   some [.ori 31 0 (BitVec.ofNat 64 3),
-    .branchGe 4 31 (BitVec.ofNat 64 4088)]
-#guard jumpCmpImmBoundary .less 4096 ==
-  some [.ori 31 0 (BitVec.ofNat 64 3),
-    .branchLt 4 31 (BitVec.ofNat 64 8),
-    .jal 0 (BitVec.ofNat 64 4088)]
-#guard jumpCmpImmBoundary .lower 4092 ==
-  some [.ori 31 0 (BitVec.ofNat 64 3),
-    .branchGeU 4 31 (BitVec.ofNat 64 4088)]
-#guard jumpCmpImmBoundary .lower 4096 ==
-  some [.ori 31 0 (BitVec.ofNat 64 3),
-    .branchLtU 4 31 (BitVec.ofNat 64 8),
-    .jal 0 (BitVec.ofNat 64 4088)]
-#guard jumpCmpImmBoundary .notLess 4092 ==
-  some [.ori 31 0 (BitVec.ofNat 64 3),
     .branchLt 4 31 (BitVec.ofNat 64 4088)]
-#guard jumpCmpImmBoundary .notLess 4096 ==
+#guard jumpCmpImmBoundary .less 4096 ==
   some [.ori 31 0 (BitVec.ofNat 64 3),
     .branchGe 4 31 (BitVec.ofNat 64 8),
     .jal 0 (BitVec.ofNat 64 4088)]
-#guard jumpCmpImmBoundary .notLower 4092 ==
+#guard jumpCmpImmBoundary .lower 4092 ==
   some [.ori 31 0 (BitVec.ofNat 64 3),
     .branchLtU 4 31 (BitVec.ofNat 64 4088)]
-#guard jumpCmpImmBoundary .notLower 4096 ==
+#guard jumpCmpImmBoundary .lower 4096 ==
   some [.ori 31 0 (BitVec.ofNat 64 3),
     .branchGeU 4 31 (BitVec.ofNat 64 8),
+    .jal 0 (BitVec.ofNat 64 4088)]
+#guard jumpCmpImmBoundary .notLess 4092 ==
+  some [.ori 31 0 (BitVec.ofNat 64 3),
+    .branchGe 4 31 (BitVec.ofNat 64 4088)]
+#guard jumpCmpImmBoundary .notLess 4096 ==
+  some [.ori 31 0 (BitVec.ofNat 64 3),
+    .branchLt 4 31 (BitVec.ofNat 64 8),
+    .jal 0 (BitVec.ofNat 64 4088)]
+#guard jumpCmpImmBoundary .notLower 4092 ==
+  some [.ori 31 0 (BitVec.ofNat 64 3),
+    .branchGeU 4 31 (BitVec.ofNat 64 4088)]
+#guard jumpCmpImmBoundary .notLower 4096 ==
+  some [.ori 31 0 (BitVec.ofNat 64 3),
+    .branchLtU 4 31 (BitVec.ofNat 64 8),
     .jal 0 (BitVec.ofNat 64 4088)]
 
 /- The corresponding negative signed-12 boundary is measured from the whole
@@ -1230,10 +1232,10 @@ private def jumpCmpImmNegativeBoundary (position : Nat) :
 
 #guard jumpCmpImmNegativeBoundary 4092 ==
   some [.ori 31 0 (BitVec.ofNat 64 3),
-    .branchEq 4 31 (0 - BitVec.ofNat 64 4096)]
+    .branchNe 4 31 (0 - BitVec.ofNat 64 4096)]
 #guard jumpCmpImmNegativeBoundary 4096 ==
   some [.ori 31 0 (BitVec.ofNat 64 3),
-    .branchNe 4 31 (BitVec.ofNat 64 8),
+    .branchEq 4 31 (BitVec.ofNat 64 8),
     .jal 0 (0 - BitVec.ofNat 64 4104)]
 
 example :
@@ -1264,20 +1266,20 @@ example :
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 0)] 4092
       (.jumpCmp .equal 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchNe 4 5 (0 - BitVec.ofNat 64 4092)] := by
+      some [.branchEq 4 5 (0 - BitVec.ofNat 64 4092)] := by
   decide
 
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 0)] 4096
       (.jumpCmp .equal 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchEq 4 5 (BitVec.ofNat 64 8),
+      some [.branchNe 4 5 (BitVec.ofNat 64 8),
         .jal 0 (0 - BitVec.ofNat 64 4100)] := by
   decide
 
 example :
     labCompileAsm (width := 64) { services := [] } 1 [(0, 1000)] 0
       (.jumpCmp .equal 4 (.reg 5) ⟨1, 0⟩) =
-      some [.branchNe 4 5 (BitVec.ofNat 64 1000)] := by
+      some [.branchEq 4 5 (BitVec.ofNat 64 1000)] := by
   decide
 
 /-! GH #1050: `Loc`/`LinkValue` must use Cake's PC-relative AUIPC+ADDI
