@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.LabToTarget.ZeroPreservation
+import Flapjack.Compiler.Backend.LabToTarget.UpdatePosition
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSetup
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
@@ -11,7 +13,6 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EncoderStepState
 import Flapjack.Compiler.Backend.Semantics.TargetProps.PostInterferenceState
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EncodingNonempty
-import Flapjack.Compiler.Backend.LabToTarget.UpdatePosition
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
 import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
 import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
