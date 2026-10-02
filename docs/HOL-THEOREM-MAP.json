@@ -53808,5 +53808,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c literal source comparison 2026-10-02, bead .10.31.2, original1112-1137: entire universal mc ffi k ms kprime and sole k<=kprime premise, final FFI io_events prefix between two actual full target evaluator runs. No oracle-validity, bounds, callback, successful-run or output premise. Natural clock induction pairs identical normal/cache/mapped/external guards and transitions; zero case uses accepted full input IO prefix. Positive BitVec width and universe0 FFI host translation only. Retains reviewed total holEl/holHd in-bounds selection and out-of-bounds shared holHdNil/holArb without bounds premise or concrete fallback. Fresh original theorem replay checks full quantified statement and null hypotheses; generic Lean full-statement application kernel checked. This evidence does not itself prove cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/InterferenceApp.lean",
+    "lean_name": "InterferenceApp",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_app",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source/type comparison 2026-10-02, native-target-interference-app: original95-106 exact two constructors FfiApp Nat fixed8bit byte List arbitrary pre/post state and CcApp two same-dimension words arbitrary pre/post state. FFI phantom word parameter retained. Bool classifier and post projection have both literal equations, no premise or altered payload. Positive word dimension translation only; state Type universe0. Fresh original four full inferred types and four unrestricted constructor equations T captured; Lean generic equations kernel checked. No EL/HD or real dependency and no completed oracle-search/simulation claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/InterferenceApp.lean",
+    "lean_name": "isFfiApp",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "is_ffi_app_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source/type comparison 2026-10-02, native-target-interference-app: original95-106 exact two constructors FfiApp Nat fixed8bit byte List arbitrary pre/post state and CcApp two same-dimension words arbitrary pre/post state. FFI phantom word parameter retained. Bool classifier and post projection have both literal equations, no premise or altered payload. Positive word dimension translation only; state Type universe0. Fresh original four full inferred types and four unrestricted constructor equations T captured; Lean generic equations kernel checked. No EL/HD or real dependency and no completed oracle-search/simulation claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/InterferenceApp.lean",
+    "lean_name": "appPost",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "app_post_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source/type comparison 2026-10-02, native-target-interference-app: original95-106 exact two constructors FfiApp Nat fixed8bit byte List arbitrary pre/post state and CcApp two same-dimension words arbitrary pre/post state. FFI phantom word parameter retained. Bool classifier and post projection have both literal equations, no premise or altered payload. Positive word dimension translation only; state Type universe0. Fresh original four full inferred types and four unrestricted constructor equations T captured; Lean generic equations kernel checked. No EL/HD or real dependency and no completed oracle-search/simulation claim."
   }
 ]

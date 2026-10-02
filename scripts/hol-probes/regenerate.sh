@@ -4111,3 +4111,7 @@ run_probe lab_to_target_ignore_clocks_probeScript.sml lab_to_target_ignore_clock
 run_probe target_props_clock_io_events_probeScript.sml target_props_clock_io_events_probe.out \
   tp_clock_io_full_statement tp_clock_io_type \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_props_interference_app_probeScript.sml target_props_interference_app_probe.out \
+  ia_ffi_type ia_cc_type ia_isffi_type ia_post_type ia_ffi_classifier ia_cc_classifier ia_ffi_post ia_cc_post \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

@@ -1,3 +1,4 @@
+import Flapjack.Test.TargetInterferenceAppParity
 import Flapjack.Test.TargetPropsClockIoEventsParity
 import Flapjack.Test.LabToTargetIgnoreClocksParity
 import Flapjack.Test.StackPropsOrderedLabelsParity

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
