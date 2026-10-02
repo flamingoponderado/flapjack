@@ -56,6 +56,7 @@ import Flapjack.Test.BalancedMapCore
 import Flapjack.Test.BalancedMapRotations
 import Flapjack.Test.BalancedMapInsert
 import Flapjack.Test.BalancedMapInvariants
+import Flapjack.Test.FiniteMapUnionExact
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
 import Flapjack.Test.WordCseListOrderRouting
@@ -1717,6 +1718,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.BalancedMapRotations.runChecks,
     Flapjack.Test.BalancedMapInsert.runChecks,
     Flapjack.Test.BalancedMapInvariants.runChecks,
+    Flapjack.Test.FiniteMapUnionExact.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.WordConvsPreAllocExactParity.runChecks,
     Flapjack.Test.WordRemoveMustTerminateParity.runChecks,

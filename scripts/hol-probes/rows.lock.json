@@ -183,6 +183,7 @@
     {"bytes": 320, "out": "find_index_append_probe.out", "rows": 10, "sha256": "9ae2c5fb160e3293cc611cc3275f2d89b664e7c11cb9cdb550e2a27b2456e285"},
     {"bytes": 193, "out": "find_index_bounds_probe.out", "rows": 8, "sha256": "036aa694867fc8a83358e80cc3332d3d1f7497264ea437bc840dd9baca3fb237"},
     {"bytes": 144, "out": "find_index_probe.out", "rows": 8, "sha256": "1f97680b6c19dfc24cbe2cf479bc0bef927388faf6358531c0a22afbe958d4f7"},
+    {"bytes": 228, "out": "finite_map_union_probe.out", "rows": 8, "sha256": "9df93e08f2137b5180c972581a77fa17b58b34a87053825d96ce587699361820"},
     {"bytes": 81, "out": "fm_empty_zip_alist_probe.out", "rows": 4, "sha256": "37c2430b9e311fcd750f7e841f55ff858ad624eff05232358404effeb9e42b06"},
     {"bytes": 124, "out": "fp_sem_fp_cmp_probe.out", "rows": 6, "sha256": "5542b7030041c2441ab4a7fef05d2ce6dcc257cfd2988d96348e5f419fc1b650"},
     {"bytes": 777, "out": "fupdate_list_append_commutes_probe.out", "rows": 11, "sha256": "414391710f746e6b4089f403ba4251f6ad21f361585d315925bda4f1e25b453b"},

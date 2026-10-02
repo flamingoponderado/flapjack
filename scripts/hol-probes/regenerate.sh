@@ -4111,3 +4111,7 @@ run_probe balanced_map_insert_probeScript.sml balanced_map_insert_probe.out \
 run_probe balanced_map_invariants_probeScript.sml balanced_map_invariants_probe.out \
   bmv_structure_size_0 bmv_invariant_0 bmv_key_ordered_0 bmv_structure_size_1 bmv_invariant_1 bmv_key_ordered_1 bmv_structure_size_2 bmv_invariant_2 bmv_key_ordered_2 bmv_structure_size_3 bmv_invariant_3 bmv_key_ordered_3 bmv_structure_size_4 bmv_invariant_4 bmv_key_ordered_4 bmv_structure_size_5 bmv_invariant_5 bmv_key_ordered_5 bmv_structure_size_6 bmv_invariant_6 bmv_key_ordered_6 bmv_structure_size_7 bmv_invariant_7 bmv_key_ordered_7 bmv_structure_size_8 bmv_invariant_8 bmv_key_ordered_8 bmv_structure_size_9 bmv_invariant_9 bmv_key_ordered_9 bmv_balance_0 bmv_balance_1 bmv_balance_2 bmv_balance_3 bmv_balance_4 bmv_balance_5 bmv_balance_6 bmv_full_invariant \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"
+
+run_probe finite_map_union_probeScript.sml finite_map_union_probe.out \
+  fmu_0 fmu_1 fmu_2 fmu_3 fmu_4 fmu_empty_left fmu_empty_right fmu_lookup_theorem \
+  "$repo_dir/HOL/src/finite_maps/finite_mapScript.sml" "$cake_dir/compiler/backend"

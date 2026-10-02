@@ -4569,3 +4569,7 @@ The production list-key comparator route is tracked separately.
 ## Literal balanced-map invariants
 
 `balanced_map_invariants_probe.out` records37 original size, key-order, invariant and balance observations plus the full invariant equation. Matching kernel predicates distinguish cached metadata from node count, reversed/equal keys, a descendant crossing the parent bound and balance threshold failures. These are full definition observations, not insertion correctness or production equivalence.
+
+## Canonical finite-support union prerequisite
+
+`finite_map_union_probe.out` records seven original lookup observations and the complete `FLOOKUP_FUNION` equation. The overlapping key selects the left value; absent left keys use the right map. Kernel fixtures replay these observations over the canonical finite-support carrier. The carrier extension is untagged infrastructure; this does not complete balanced-map `to_fmap` or production wiring.
