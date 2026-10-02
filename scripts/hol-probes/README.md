@@ -6124,3 +6124,5 @@ Returning trees retain original opaque instruction-builder macros. Actual fused
 production regressions replay the eight tail outputs with explicit leading
 Seq Skip removal and flattening of the original bitmap append tree to its
 production list; generic proofs cover arbitrary handlers and unchanged states.
+
+`l3_raise_exception_probe.out` captures the original polymorphic type and assumption-free full result equation, preserving ARB and every returned state field through the conditional exception update. Defs/MMU/Exception kernel-checks that complete generic equation under only HOL intrinsic Nonempty; no chosen-default binder.
