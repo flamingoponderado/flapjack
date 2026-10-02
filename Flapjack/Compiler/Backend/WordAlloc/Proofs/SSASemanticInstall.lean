@@ -21,7 +21,7 @@ rename Move. There is no independent HOL declaration. The source cut premise
 is the actual successful evaluator branch guard, not a premise to be added to
 the final pass correctness theorem. It derives the actual target run and both
 relations from the original SSA locals/map/frame inputs. Scratch-register,
-four-argument and mapped-cut preparation remain to be composed below. -/
+four-argument and mapped-cut preparation are composed in installPrepareArguments below. -/
 theorem installRefreshCutNames {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next : Nat) (first second : Spt Unit)

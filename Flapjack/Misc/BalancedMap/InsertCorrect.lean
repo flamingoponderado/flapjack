@@ -5,8 +5,8 @@ import Flapjack.Misc.BalancedMap.InsertCorrect.Greater
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison
 /-- Full original insertion correctness, retaining arbitrary comparator,
-key/payload/tree carriers and both original conclusions. Registration awaits
-coordinator acceptance. Original statement and complete closed replay were
+key/payload/tree carriers and both original conclusions. The original statement
+and complete closed replay were
 compared at HOL lines 1525–1578; the named canonical producer qualifier
 records only the finite-map representation translation. -/
 @[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "insert_thm"

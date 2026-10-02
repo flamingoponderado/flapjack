@@ -1,0 +1,9 @@
+mr_graph=∀m d p m1 d1 a. (memory m d * p) (fun2set (m1,d1)) ∧ a ∈ d ⇒ a ∈ d1 ∧ m1 a = m a
+mr_graph_types=m:α -> β;d:α -> bool;p:(α # β -> bool) -> bool;m1:α -> β;d1:α -> bool;a:α
+mr_graph_proved=T
+mr_read=∀jump off k s t a. state_rel jump off k s t ∧ a ∈ s.mdomain ⇒ a ∈ t.mdomain ∧ t.memory a = s.memory a
+mr_read_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;a:α word
+mr_read_proved=T
+mr_load=∀jump off k s t x w. state_rel jump off k s t ∧ mem_load x s = SOME w ⇒ mem_load x t = SOME w
+mr_load_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;x:α word;w:α word_loc
+mr_load_proved=T

@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
 
@@ -243,5 +245,282 @@ theorem returningRestoreRegisters {width : Nat} [NeZero width] {C F : Type}
       ssaMapOKMore counter _ (counter+2) ⟨ssaMapOKInter counter ssa names valid,by omega⟩,frame⟩
   dsimp only at restored ⊢
   exact ⟨restored.1,restored.2.1,restored.2.2.1⟩
+
+
+/-- Flapjack-specific original8477-8550 pop-environment lookup factoring.
+The key/value stack facts are produced by total callee stack-swap transport;
+actual successful pops, full frame, cut domains and all popped value lookups
+are derived. No popped-local relation or desired target run is assumed. -/
+theorem returningPopCutRelation {width : Nat} [NeZero width] {C F : Type}
+    (source target returned : WordSemStateFiniteExact width C F)
+    (first second targetFirst targetSecond : Spt (WordLocW width))
+    (handler targetHandler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (targetStack : List (WordSemStackFrame width)) (f : Nat → Nat)
+    (sourceRoots targetRoots : List (Nat × WordLocW width))
+    (sourcePerm targetPerm : Nat → Nat → Nat)
+    (sameStack : source.stack = target.stack)
+    (sourceRootRead : wordSemEnvToList second source.permute = (sourceRoots,sourcePerm))
+    (targetRootRead : wordSemEnvToList targetSecond target.permute = (targetRoots,targetPerm))
+    (rootMap : sourceRoots.map (fun (key,value) => (f key,value)) = targetRoots)
+    (firstRelated : Flapjack.WordAlloc.strongLocalsRel f (sptDomain first) first targetFirst)
+    (injective : ∀ a b, (sptDomain first a ∨ sptDomain second a) →
+      (sptDomain first b ∨ sptDomain second b) → f a = f b → a = b)
+    (sourceKeys : WordSemStackEq.sKeyEq
+      (WordSemStateFiniteExact.pushEnv (first,second) handler source).stack returned.stack)
+    (targetKeys : WordSemStackEq.sKeyEq
+      (WordSemStateFiniteExact.pushEnv (targetFirst,targetSecond) targetHandler target).stack targetStack)
+    (values : WordSemStackEq.sValEq returned.stack targetStack) :
+    ∃ popped targetPopped,
+      WordSemStateFiniteExact.popEnv returned = some popped ∧
+      WordSemStateFiniteExact.popEnv {returned with stack := targetStack} = some targetPopped ∧
+      Flapjack.WordAlloc.wordStateEqRel popped targetPopped ∧
+      sptDomain popped.locals = (fun key => sptDomain first key ∨ sptDomain second key) ∧
+      (∀ live, Flapjack.WordAlloc.strongLocalsRel f live popped.locals targetPopped.locals) := by
+  open WordSemStackEq in
+    obtain ⟨nS,lS,restS,optS,sourceShape,popped,sourcePop,sourceLocals,sourceDomain,sourceTail⟩ :=
+      pushEnvPopEnvSKeyEq (first,second) handler source returned sourceKeys
+  open WordSemStackEq in
+    obtain ⟨nT,lT,restT,optT,targetShape,targetPopped,targetPop,targetLocals,targetDomain,targetTail⟩ :=
+      pushEnvPopEnvSKeyEq (targetFirst,targetSecond) targetHandler target
+        {returned with stack := targetStack} targetKeys
+  have frame := Flapjack.WordAlloc.popEnvFrame returned popped targetPopped targetStack
+    ⟨values,WordSemStackEq.sKeyEqTrans _ _ _
+      ⟨(WordSemStackEq.sKeyEqSym _ _).mp sourceTail,by rw [sameStack]; exact targetTail⟩,
+      targetPop,sourcePop⟩
+  have sourceRootKeys := Flapjack.WordAlloc.sKeyEqPushEnvImpMapFst source first second handler
+    nS (sptToAList first) lS optS restS sourceRoots sourcePerm
+    ⟨by rw [←sourceShape]; exact sourceKeys,sourceRootRead⟩
+  have targetRootKeys := Flapjack.WordAlloc.sKeyEqPushEnvImpMapFst target targetFirst targetSecond targetHandler
+    nT (sptToAList targetFirst) lT optT restT targetRoots targetPerm
+    ⟨by rw [←targetShape]; exact targetKeys,targetRootRead⟩
+  change targetStack = WordSemStackFrame.stackFrame nT (sptToAList targetFirst) lT optT :: restT at targetShape
+  have rootValues : lS.map Prod.snd = lT.map Prod.snd := by
+    rw [sourceShape,targetShape] at values
+    exact ((WordSemStackEq.sFrameValEqDef2 _ _ _ _ _ _ _ _).mp values.2).1
+  have keyMap : lT.map Prod.fst = (lS.map Prod.fst).map f := by
+    rw [←targetRootKeys.1,←Flapjack.WordAlloc.keyMapImplies f sourceRoots targetRoots rootMap,
+      sourceRootKeys.1]
+  have keysDomain := Flapjack.WordAlloc.envToListKeys second source.permute
+  rw [sourceRootRead] at keysDomain
+  have inSecond : ∀ key ∈ lS.map Prod.fst, sptDomain second key := by
+    intro key member
+    rw [←sourceRootKeys.1] at member
+    rw [←keysDomain]
+    exact member
+  refine ⟨popped,targetPopped,sourcePop,targetPop,frame,?_,?_⟩
+  · funext key
+    apply propext
+    have equal := congrFun sourceDomain key
+    rw [←equal]
+    exact Or.comm
+  · intro live
+    rw [sourceLocals,targetLocals]
+    have zip : lS = (lS.map Prod.fst).zip (lT.map Prod.snd) := by
+      rw [←rootValues]
+      have pairs : ∀ entries : List (Nat × WordLocW width),
+          (entries.map Prod.fst).zip (entries.map Prod.snd) = entries := by
+        intro entries
+        induction entries with
+        | nil => rfl
+        | cons pair rest ih => simp [ih]
+      exact (pairs lS).symm
+    rw [zip]
+    apply Flapjack.WordAlloc.allocLocalsRel f first targetFirst (lS.map Prod.fst) lT keyMap
+      _ firstRelated live
+    intro a b inA inB equal
+    apply injective a b _ _ equal
+    · exact inA.elim (fun h => Or.inr (inSecond a h)) Or.inl
+    · exact inB.elim (fun h => Or.inr (inSecond b h)) Or.inl
+
+/-- Flapjack-specific original8477-8550 restricted SSA reconstruction.
+Actual popped cut domain and remapped lookup relation establish every conjunct
+of the restricted SSA map, including defined lookups and original source bounds.
+These internal lookup/domain facts are derived by returningPopCutRelation; no
+output SSA relation is assumed. No standalone HOL declaration or tag exists. -/
+theorem returningCutSSA {α : Type} (next : Nat) (ssa : Spt Nat)
+    (names : Spt Unit) (source target : Spt α)
+    (mapped : ∀ key, sptDomain names key → sptDomain ssa key)
+    (sourceDomain : sptDomain source = sptDomain names)
+    (matching : Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
+      (sptDomain names) source target)
+    (below : ∀ key, sptDomain names key → key < next) :
+    ssaLocalsRel next (sptInter ssa names) source target := by
+  have interRead : ∀ key register, sptLookup key (sptInter ssa names) = some register →
+      sptLookup key ssa = some register ∧ sptDomain names key := by
+    intro key register read
+    rw [sptLookup_sptInterCases] at read
+    cases left : sptLookup key ssa with
+    | none => simp [left] at read
+    | some value =>
+      cases right : sptLookup key names with
+      | none => simp [left,right] at read
+      | some payload =>
+        have equal : value = register := by simpa [left,right] using read
+        subst value
+        exact ⟨rfl,(sptMem_iff_lookup key names).mpr ⟨payload,right⟩⟩
+  refine ⟨?_,?_⟩
+  · intro key register read
+    obtain ⟨original,inNames⟩ := interRead key register read
+    have inSource : sptDomain source key := by rw [sourceDomain]; exact inNames
+    obtain ⟨value,sourceRead⟩ := (sptMem_iff_lookup key source).mp inSource
+    have targetRead := matching key value ⟨inNames,sourceRead⟩
+    apply (sptMem_iff_lookup register target).mpr
+    exact ⟨value,by simpa [optionLookup,original] using targetRead⟩
+  · intro key value read
+    have inNames : sptDomain names key := by
+      rw [←sourceDomain]
+      exact (sptMem_iff_lookup key source).mpr ⟨value,read⟩
+    obtain ⟨register,original⟩ := (sptMem_iff_lookup key ssa).mp (mapped key inNames)
+    obtain ⟨payload,nameRead⟩ := (sptMem_iff_lookup key names).mp inNames
+    have interLookup : sptLookup key (sptInter ssa names) = some register := by
+      simp [sptLookup_sptInterCases,original,nameRead]
+    refine ⟨(sptMem_iff_lookup key _).mpr ⟨register,interLookup⟩,?_,fun _ => below key inNames⟩
+    simpa only [interLookup,Option.getD_some,optionLookup,original] using
+      matching key value ⟨inNames,read⟩
+
+
+/-- Flapjack-specific original8575-8590 physical return reread factoring.
+The actual rename's physical lookup preservation and duplicate-free convention
+writes derive the getVars result after retMov; no successful target read is
+assumed. No standalone HOL declaration exists. -/
+theorem returningRestoreRegistersRead {width : Nat} [NeZero width] {C F : Type}
+    (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat)
+    (names : Spt Unit) (counter count : Nat) (values : List (WordLocW width))
+    (related : ssaLocalsRel counter (sptInter ssa names) source.locals target.locals)
+    (valid : ssaMapOK counter ssa)
+    (sourceDomain : sptDomain source.locals = sptDomain names)
+    (length : values.length = count) (nonphysical : ¬ isPhyVar (counter+2))
+    (frame : Flapjack.WordAlloc.wordStateEqRel source target) :
+    let registers := (List.range count).map (fun index => 2*(index+1))
+    let prepared := WordSemStateFiniteExact.setVars registers values target
+    let (move,mapOut,nextOut) := listNextVarRenameMove (width := width)
+      (sptInter ssa names) (counter+2) ((sptToAList names).map Prod.fst)
+    let (result,targetOut) := WordSemStateFiniteExact.evaluate move prepared
+    result = none ∧ ssaLocalsRel nextOut mapOut source.locals targetOut.locals ∧
+      Flapjack.WordAlloc.wordStateEqRel source targetOut ∧
+      WordSemStateFiniteExact.getVars registers targetOut = some values := by
+  let registers := (List.range count).map (fun index => 2*(index+1))
+  have physical : ∀ register ∈ registers, isPhyVar register := by
+    intro register member
+    obtain ⟨index,_,rfl⟩ := List.mem_map.mp member
+    simp [isPhyVar]
+  have distinct : registers.Nodup := by
+    apply List.Nodup.map _ List.nodup_range
+    intro x y equal
+    change 2*(x+1) = 2*(y+1) at equal
+    omega
+  have lengths : registers.length = values.length := by simp [registers,length]
+  have inserted := ssaLocalsRelIgnoreListInsert counter (sptInter ssa names)
+    source target registers values
+    ⟨ssaMapOKInter counter ssa names valid,related,physical,lengths⟩
+  have present : ∀ key ∈ (sptToAList names).map Prod.fst, sptDomain source.locals key := by
+    intro key member
+    rw [sourceDomain]
+    exact (sptMemMapFstToAList names key).mp member
+  have restored := listNextVarRenameMovePreserve source (sptInter ssa names) (counter+2)
+    ((sptToAList names).map Prod.fst) (WordSemStateFiniteExact.setVars registers values target)
+    ⟨ssaLocalsRelMore counter _ _ _ (counter+2) ⟨inserted,by omega⟩,
+      present,sptAllDistinctMapFstToAList _,
+      ssaMapOKMore counter _ (counter+2) ⟨ssaMapOKInter counter ssa names valid,by omega⟩,frame⟩
+  dsimp only at restored ⊢
+  refine ⟨restored.1,restored.2.1,restored.2.2.1,?_⟩
+  apply ssaGetVarsOfZip registers values _ lengths
+  intro register value member
+  rw [restored.2.2.2.1 nonphysical register (physical register (List.of_mem_zip member).1)]
+  exact ssaAlistInsertLookupMember registers values target.locals distinct lengths register value member
+
+/-- Flapjack-specific original8590-8610 actual continuation result binding.
+The internal return-register read and renamed cut SSA derive the generated
+copy Move and the source/target result-variable SSA relation. No target run or
+post-relation premise; the continuation IH is applied by the full case. -/
+theorem returningBindResults {width : Nat} [NeZero width] {C F : Type}
+    (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat) (next : Nat)
+    (names : List Nat) (values : List (WordLocW width))
+    (related : ssaLocalsRel next ssa source.locals target.locals)
+    (valid : ssaMapOK next ssa) (nonphysical : ¬ isPhyVar next)
+    (below : ∀ name ∈ names, name < next) (distinct : names.Nodup)
+    (lengths : names.length = values.length)
+    (read : WordSemStateFiniteExact.getVars
+      ((List.range names.length).map (fun index => 2*(index+1))) target = some values)
+    (frame : Flapjack.WordAlloc.wordStateEqRel source target) :
+    let (outputs,mapOut,nextOut) := listNextVarRename names ssa next
+    let registers := (List.range names.length).map (fun index => 2*(index+1))
+    WordSemStateFiniteExact.evaluate (.move 1 (outputs.zip registers)) target =
+      (none,WordSemStateFiniteExact.setVars outputs values target) ∧
+    ssaLocalsRel nextOut mapOut
+      (WordSemStateFiniteExact.setVars names values source).locals
+      (WordSemStateFiniteExact.setVars outputs values target).locals ∧
+    Flapjack.WordAlloc.wordStateEqRel (WordSemStateFiniteExact.setVars names values source)
+      (WordSemStateFiniteExact.setVars outputs values target) := by
+  generalize produced : listNextVarRename names ssa next = output
+  rcases output with ⟨outputs,mapOut,nextOut⟩
+  have arithmetic := listNextVarRenameLemma1 names ssa next outputs mapOut nextOut produced
+  have outputLength : outputs.length = names.length := by rw [arithmetic.2.1]; simp
+  have matching := ssaLocalsRelListNextVarRename names ssa next source.locals target.locals
+    outputs mapOut nextOut values ⟨produced,related,valid,lengths,below,distinct,nonphysical⟩
+  dsimp only
+  refine ⟨?_,matching,frame⟩
+  have zipLengths : outputs.length =
+      ((List.range names.length).map (fun index => 2*(index+1))).length := by
+    simpa using outputLength
+  simp only [WordSemStateFiniteExact.evaluate,
+    List.map_fst_zip (Nat.le_of_eq zipLengths),
+    List.map_snd_zip (Nat.le_of_eq zipLengths.symm),
+    arithmetic.1,if_true,read]
+
+
+/-- Flapjack-specific original8660-8692 no-handler exception transport.
+Internal callee-entry alignment comes from calleeSwap. Total stack-swap
+semantics proves an exception skips the newly pushed NONE handler frame;
+its original outer frame is identical on both sides, so the actual target run
+returns the complete original post-state. No target evaluation is assumed and
+no standalone HOL declaration/full returning Call tag is claimed. -/
+theorem returningNoHandlerException {width : Nat} [NeZero width] {C F : Type}
+    (body : WordLangProgHOL (BitVec width))
+    (callee targetCallee returned : WordSemStateFiniteExact width C F)
+    (original : List (WordSemStackFrame width))
+    (sourceSize targetSize : Option Nat)
+    (sourceFirst sourceRoots targetFirst targetRoots : List (Nat × WordLocW width))
+    (x y : WordLocW width)
+    (sourceShape : callee.stack =
+      .stackFrame sourceSize sourceFirst sourceRoots none :: original)
+    (targetShape : targetCallee.stack =
+      .stackFrame targetSize targetFirst targetRoots none :: original)
+    (entry : {callee with stack := targetCallee.stack} = targetCallee)
+    (values : WordSemStackEq.sValEq callee.stack targetCallee.stack)
+    (run : WordSemStateFiniteExact.evaluate body callee = (some (.exception x y),returned)) :
+    WordSemStateFiniteExact.evaluate body targetCallee = (some (.exception x y),returned) := by
+  have transport := WordSemStackEq.evaluateStackSwap body callee
+  unfold WordSemStackEq.stackSwapPost at transport
+  rw [run] at transport
+  obtain ⟨bounded,e0,e,n,tail,m,locals,handlerFrame,_,⟨keys,localShape⟩,
+    tailKeys,returnedHandler,swapped⟩ := transport
+  have inside : callee.handler + 1 ≤ original.length := by
+    rcases Nat.lt_or_ge callee.handler original.length with below | above
+    · exact below
+    · exfalso
+      have length : callee.handler + 1 = callee.stack.length := by
+        rw [sourceShape] at bounded ⊢
+        simp only [List.length_cons] at bounded ⊢
+        omega
+      rw [WordSemStackEq.lastNLengthCond _ _ length,sourceShape] at handlerFrame
+      simp at handlerFrame
+  have outer := handlerFrame
+  rw [sourceShape,WordSemStackEq.lastN_cons _ _ _ inside] at outer
+  have targetOuter : wordSemLastN (callee.handler+1) targetCallee.stack =
+      .stackFrame m e0 e (some n) :: tail := by
+    rw [targetShape,WordSemStackEq.lastN_cons _ _ _ inside]
+    exact outer
+  obtain ⟨stack,restored,actual,⟨newLocals,newKeys,newShape,sameValues⟩,stackValues,stackKeys⟩ :=
+    swapped targetCallee.stack e0 e tail ⟨targetOuter,values⟩
+  have sameLocals : locals = newLocals :=
+    WordSemStackEq.listEq_of_map_fst_snd _ _ (keys.symm.trans newKeys) sameValues
+  subst sameLocals
+  have restoredEqual : restored = returned.locals := newShape.trans localShape.symm
+  have stackEqual : stack = returned.stack :=
+    (WordSemStackEq.sValAndKeyEq _ _ ⟨stackValues,
+      WordSemStackEq.sKeyEqTrans _ _ _ ⟨tailKeys,stackKeys⟩⟩).symm
+  rw [entry,restoredEqual,stackEqual,←returnedHandler] at actual
+  exact actual
 
 end Flapjack.Compiler.Backend.WordAlloc

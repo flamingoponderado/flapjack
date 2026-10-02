@@ -5764,6 +5764,41 @@ arbitrary clocks, including zero. This does not prove `comp_correct`.
 
 ## Isolated native L3 floating-point section
 
+### Reproduce the original source export
+
+Build the committed HOL submodule revision and its original `riscv_step`
+theory first. A separate built HOL checkout is permitted only at the same
+revision; the export driver checks its Git HEAD against this checkout's HOL pin.
+Run from the Flapjack checkout:
+
+```bash
+HOL4=/path/to/built/pinned/HOL bash scripts/l3/regenerate-export.sh --update
+HOL4=/path/to/built/pinned/HOL bash scripts/l3/regenerate-export.sh --check
+```
+
+The driver loads the original HOL `riscv_stepTheory`, runs
+`scripts/l3/export_riscv_defs.sml` in a temporary directory, and traverses the
+complete original `NextRISCV` dependency closure in dependency order. The
+292 complete elaborated definition conclusions are serialized into
+`scripts/l3/riscv_defs.sexp.gz` with deterministic `gzip -9 -n`. No source or
+output is written into HOL/CakeML. `--check` independently reruns original HOL
+and compares its uncompressed terms byte for byte with the captured artifact.
+The ordinary probe regeneration driver also regenerates this export; selecting
+`HOL_PROBE_ONLY=export_riscv_defs.sml` runs only this source export.
+
+The Python generator/output tests are **self-consistency checks**, not an
+independent semantic oracle. The original export comparison establishes
+reproducibility of the captured HOL terms, not correctness of their Lean
+rendering. Literal source/carrier review and the four separately regenerated
+finite original HOL probes remain necessary; none proves cross-language
+equivalence or complete machine correctness.
+
+L3 ARB expressions name the canonical `Flapjack.holArb` directly. The former
+independent L3 opaque is absent; WordConvs' `holArbMemOp` is likewise a transparent
+alias of that same constant at its carrier. Kernel regressions check sharing
+with the canonical missing-list-head clause and arbitrary Nonempty witnesses, and normalize
+the complete trap update without assuming an arbitrary value.
+
 The selected roots are complete original FP comparison and float-to-integer
 state equations at both precisions, with their entire source dependency closure.
 The isolated module includes50 model declarations; full Run/NextRISCV and other
@@ -5786,6 +5821,58 @@ result-dependent FFI/state-relation conclusion. Full binder types are captured.
 Halt permits either Word or Loc payloads; Alloc is excluded by the original
 relation's allocation flag and original non-Error premise. No target run is
 assumed. The remaining constructor cases and assembly are still required.
+
+## Full original L3 FCLASS state observations
+
+`l3_riscv_fclass_probe.out` records28 complete original FCLASS_S/D state
+observations: all ten classes, noncanonical and negative quiet NaNs (original
+canonical-only bit9), negative signaling NaNs and zero destination. Kernel
+replays preserve source words, NV/NX, MFS, Delta.data1 and other-core GPRs.
+These fixtures are regression evidence, not whole-model equivalence.
+### Full StackRemove Tick and control-transfer simulation cases
+
+`stack_remove_comp_control_probeScript.sml` reproves the genuine Tick, Return,
+Raise, Break and Continue cases with the same complete original four premises
+and existential target evaluation/result condition. Each complete statement,
+quantified binder type and kernel proof is captured. Tick includes the zero
+clock TimeOut path and arbitrary nonzero decrement path; Return/Raise derive
+Loc-only success from the original run/non-Error premises. Break/Continue
+retain their actual successful results and unchanged state. No target run or
+extra successful lookup is supplied. Full remaining simulation is still open.
+
+### Native StackRemove register relation updates
+
+`stack_remove_stateupdates_probeScript.sml` reproves complete
+`state_rel_set_var`, `state_rel_get_fp_var` and `state_rel_set_fp_var`,
+recording the full statements, all quantified types and kernel proof rows.
+Integer updates take arbitrary Word/Loc values below the original bound and
+preserve reserved registers and the full relation. FP lookup/update retain
+the original fixed 64-bit payload and have no integer-register bound. The
+Lean proofs use the actual evaluator state's canonical maps; no FP execution
+equation or rounding mode changes. These are instruction-simulation
+prerequisites, not the full `state_rel_inst` theorem.
+
+### Complete StackRemove separated memory read/load preservation
+
+`stack_remove_memoryreads_probeScript.sml` independently reproves
+`memory_fun2set_IMP_read`, `state_rel_read` and `state_rel_mem_load_imp` from
+the pinned full separation/memory/state definitions. Complete statements,
+all binder types and kernel proof rows are captured. The generic frame lemma
+retains independent arbitrary address/payload types and permits infinite
+domains. Native read/load use the actual full state relation and derive target
+domain/value facts through all five separated heap assertions. No target
+read/load or partial representation is supplied as a premise.
+
+### Complete native StackRemove expression simulation
+
+`stack_remove_wordexp_simulation_probeScript.sml` captures the exported original
+`state_rel_word_exp`, then kernel-replays its complete explicitly quantified
+statement using that original theorem. Full binder types are recorded. The
+Lean theorem independently proves all six constructors and uses a genuine
+nested-list induction for every Op operand, exact native domain-checked Loads
+and both Shift children. No successful target expression or callback is a
+premise. Instruction simulation and full pass assembly remain separate work.
+`ssa_call_returning_none_probe.out` captures the full original no-handler returning Call specialization of `ssa_cc_trans_correct`, retaining all six premises and its complete existential source-permutation/Error-exempt result, frame and result-sensitive locals. The native case adds only the genuine smaller continuation induction hypothesis and derives guards, argument prefix, callee stack transport, return restoration and oracle suffix internally. Handler SOME and full SSA assembly remain open. This capture supports source review, not cross-language equivalence.
 
 ### Generational GC move-loop simulation
 

@@ -1,0 +1,25 @@
+lines_enc_with_nop_pad_section01=∀(nop :word8 list) (code :α line list) (aux :α line list) (pos :num).
+  nop = (enc :α asm -> word8 list) (Inst (Skip :α inst) :α asm) ∧
+  (0 :num) < LENGTH nop ∧
+  EVERY (line_aligned (LENGTH nop) :α line -> bool) code ∧
+  lines_encd enc (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list)
+    (pos + (SUM (MAP (line_len :α line -> num) aux) :num)) code ∧
+  lines_enc_with_nop enc labs ffis pos (REVERSE aux) ∧
+  ¬EVERY (is_Label :α line -> bool) aux ∧
+  EVERY (label_zero :α line -> bool) code ⇒
+  lines_enc_with_nop enc labs ffis pos (pad_section nop code aux)
+lines_enc_with_nop_pad_section01_types=(nop :word8 list)::word8 list;(code :α line list)::α line list;(aux :α line list)::α line list;(pos :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(enc :α asm -> word8 list)::α asm -> word8 list;
+multibyte_full_guards=T
+multibyte_padded_encoding=T
+multibyte_full_tuple=T
+empty_code=T
+physical_alignment_guard_required=T
+annotation_alignment_guard_required=T
+jump_actual_guard_and_result=T
+jumpcmp_actual_guard_and_result=T
+locvalue_actual_guard_and_result=T
+call_actual_guard_and_result=T
+ffi_actual_guard_and_result=T
+install_actual_guard_and_result=T
+halt_actual_guard_and_result=T
