@@ -278,9 +278,24 @@ theorem isWord_thm {width : Nat} [NeZero width] :
 theorem lower_2w_eq {width : Nat} [NeZero width] :
     ∀ w : BitVec width, goodDimindex width → (w < 2 ↔ w = 0 ∨ w = 1) := by
   intro w hg
-  rcases hg with rfl | rfl <;> bv_decide
+  rcases hg with rfl | rfl
+  all_goals
+    constructor
+    · intro h
+      change w.toNat < 2 at h
+      have cases : w.toNat = 0 ∨ w.toNat = 1 := by omega
+      rcases cases with zero | one
+      · left
+        apply BitVec.eq_of_toNat_eq
+        simpa using zero
+      · right
+        apply BitVec.eq_of_toNat_eq
+        simpa using one
+    · rintro (rfl | rfl) <;> decide
 
-/-- Exact HOL `EL_LENGTH_ADD_LEMMA` (`stack_allocProofScript.sml:307-312`). -/
+/-- Exact HOL `EL_LENGTH_ADD_LEMMA` (`stack_allocProofScript.sml:307-312`).
+`Nonempty α` renders HOL's inhabited type variables and makes the total
+opaque out-of-range holEl value available; it adds no list-bound premise. -/
 @[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "EL_LENGTH_ADD_LEMMA" 307]
 theorem EL_LENGTH_ADD_LEMMA {α : Type} [Nonempty α] {init old st1 : List α} {x : α} :
     holEl (init.length + old.length) (init ++ old ++ [x] ++ st1) = x := by
@@ -289,7 +304,8 @@ theorem EL_LENGTH_ADD_LEMMA {α : Type} [Nonempty α] {init old st1 : List α} {
   · simp
 
 /-- Exact HOL `EL_LENGTH_ADD_LEMMA` (second declaration,
-`stack_allocProofScript.sml:347-351`). -/
+`stack_allocProofScript.sml:347-351`). `Nonempty α` renders HOL type
+inhabitance for total holEl; the conclusion's index is derived in range. -/
 @[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "EL_LENGTH_ADD_LEMMA" 347]
 theorem EL_LENGTH_ADD_LEMMA' {α : Type} [Nonempty α] :
     ∀ (n : Nat) (xs : List α) (y : α) (ys : List α), xs.length = n → holEl n (xs ++ y :: ys) = y := by
@@ -350,24 +366,28 @@ theorem word_sub_0_eq {width : Nat} [NeZero width] {w v : BitVec width} :
   exact ⟨key, key⟩
 
 /-- Exact HOL `good_dimindex_byte_aligned_eq` (`stack_allocProofScript.sml:4544-4551`);
-HOL `byte_aligned` is `gcByteAligned`. -/
+HOL `byte_aligned` is `holByteAligned`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "good_dimindex_byte_aligned_eq"
   (words_as_type_indexed_bitvec)]
 theorem good_dimindex_byte_aligned_eq {width : Nat} [NeZero width] {w : BitVec width} :
     goodDimindex width →
-      (gcByteAligned w = true ↔ (w &&& (if width = 32 then 3 else 7)) = 0) := by
+      (holByteAligned w = true ↔ (w &&& (if width = 32 then 3 else 7)) = 0) := by
   intro hg
   rcases hg with rfl | rfl
-  · have he : Nat.log2 (32 / 8) = 2 := Nat.log2_two_pow (n := 2)
-    simp only [gcByteAligned, decide_eq_true_eq, show (32 / 8 = 0) = False by decide, if_false,
+  · have he : holLOG2 (32 / 8) = 2 := by
+      rw [holLOG2_eq_log2 (by decide)]
+      exact Nat.log2_two_pow (n := 2)
+    simp only [holByteAligned, holAligned, holAlign_eq_div, decide_eq_true_eq,
       he, if_true, BitVec.toNat_eq, BitVec.toNat_and]
     have := w.isLt
     have hm : w.toNat &&& 3 = w.toNat % 4 := by
       simpa using Nat.and_two_pow_sub_one_eq_mod w.toNat 2
     simp at this ⊢
     omega
-  · have he : Nat.log2 (64 / 8) = 3 := Nat.log2_two_pow (n := 3)
-    simp only [gcByteAligned, decide_eq_true_eq, show (64 / 8 = 0) = False by decide, if_false,
+  · have he : holLOG2 (64 / 8) = 3 := by
+      rw [holLOG2_eq_log2 (by decide)]
+      exact Nat.log2_two_pow (n := 3)
+    simp only [holByteAligned, holAligned, holAlign_eq_div, decide_eq_true_eq,
       he, show (64 = 32) = False by decide, BitVec.toNat_eq, BitVec.toNat_and]
     have := w.isLt
     have hm : w.toNat &&& 7 = w.toNat % 8 := by

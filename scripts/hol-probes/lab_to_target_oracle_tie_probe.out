@@ -1,0 +1,220 @@
+oracle_tie_def_full=∀mc_conf ms s1.
+  oracle_tie mc_conf ms s1 ⇔
+  s1.io_regs = target_io_regs mc_conf s1.ffi ms ∧
+  s1.io_fp_regs = target_io_fp_regs mc_conf s1.ffi ms ∧
+  s1.cc_regs = target_cc_regs mc_conf s1.ffi ms ∧
+  s1.cc_fp_regs = target_cc_fp_regs mc_conf s1.ffi ms
+oracle_tie_def_types=∀(mc_conf :(α, 'state, β) machine_config) (ms :'state)
+    (s1 :(α, γ, 'ffi) labSem$state).
+  oracle_tie mc_conf ms s1 ⇔
+  s1.io_regs = target_io_regs mc_conf s1.ffi ms ∧
+  s1.io_fp_regs = target_io_fp_regs mc_conf s1.ffi ms ∧
+  s1.cc_regs = target_cc_regs mc_conf s1.ffi ms ∧
+  s1.cc_fp_regs = target_cc_fp_regs mc_conf s1.ffi ms
+oracle_tie_shift_interfer_full=oracle_tie mc_conf ms1 s1 ∧
+(∀k. find_next_interference mc_conf s1.ffi (k + l) ms1 =
+     find_next_interference (shift_interfer l mc_conf) s1.ffi k ms2) ⇒
+oracle_tie (shift_interfer l mc_conf) ms2 s1
+oracle_tie_shift_interfer_types=oracle_tie (mc_conf :(α, β, γ) machine_config) (ms1 :β)
+  (s1 :(α, δ, ε) labSem$state) ∧
+(∀(k :num).
+   find_next_interference mc_conf s1.ffi (k + (l :num)) ms1 =
+   find_next_interference (shift_interfer l mc_conf) s1.ffi k (ms2 :β)) ⇒
+oracle_tie (shift_interfer l mc_conf) ms2 s1
+oracle_tie_step_full=oracle_tie mc_conf ms1 s1 ∧
+(∀k. find_next_interference mc_conf s1.ffi (k + l) ms1 =
+     find_next_interference (shift_interfer l mc_conf) s1.ffi k ms2) ∧
+s2.io_regs = s1.io_regs ∧ s2.io_fp_regs = s1.io_fp_regs ∧
+s2.cc_regs = s1.cc_regs ∧ s2.cc_fp_regs = s1.cc_fp_regs ∧ s2.ffi = s1.ffi ⇒
+oracle_tie (shift_interfer l mc_conf) ms2 s2
+oracle_tie_step_types=oracle_tie (mc_conf :(α, β, δ) machine_config) (ms1 :β)
+  (s1 :(α, γ, 'ffi) labSem$state) ∧
+(∀(k :num).
+   find_next_interference mc_conf s1.ffi (k + (l :num)) ms1 =
+   find_next_interference (shift_interfer l mc_conf) s1.ffi k (ms2 :β)) ∧
+(s2 :(α, γ, 'ffi) labSem$state).io_regs = s1.io_regs ∧
+s2.io_fp_regs = s1.io_fp_regs ∧ s2.cc_regs = s1.cc_regs ∧
+s2.cc_fp_regs = s1.cc_fp_regs ∧ s2.ffi = s1.ffi ⇒
+oracle_tie (shift_interfer l mc_conf) ms2 s2
+oracle_tie_ffi_step_full=oracle_tie mc_conf ms1 s1 ∧
+next_interference mc_conf s1.ffi ms1 =
+SOME (FfiApp index new_bytes ms_pre ms_post,mc',ffi') ⇒
+(∀name r.
+   s1.io_regs 0 name r =
+   if
+     MEM r mc_conf.callee_saved_regs ∨
+     ¬(r < mc_conf.target.config.reg_count) ∨
+     MEM r mc_conf.target.config.avoid_regs
+   then
+     NONE
+   else SOME (mc_conf.target.get_reg ms_post r)) ∧
+(∀i. s1.io_fp_regs 0 i = mc_conf.target.get_fp_reg ms_post i) ∧
+target_io_regs mc' ffi' ms_post = shift_seq 1 s1.io_regs ∧
+target_io_fp_regs mc' ffi' ms_post = shift_seq 1 s1.io_fp_regs ∧
+target_cc_regs mc' ffi' ms_post = s1.cc_regs ∧
+target_cc_fp_regs mc' ffi' ms_post = s1.cc_fp_regs
+oracle_tie_ffi_step_types=oracle_tie (mc_conf :(α, β, γ) machine_config) (ms1 :β)
+  (s1 :(α, δ, ε) labSem$state) ∧
+next_interference mc_conf s1.ffi ms1 =
+SOME
+  ((FfiApp (index :num) (new_bytes :word8 list) (ms_pre :β) (ms_post :β) :
+    (α, β) interference_app),(mc' :(α, β, γ) machine_config),
+   (ffi' :ε ffi_state)) ⇒
+(∀(name :ffiname) (r :num).
+   s1.io_regs (0 :num) name r =
+   if
+     MEM r mc_conf.callee_saved_regs ∨
+     ¬(r < mc_conf.target.config.reg_count) ∨
+     MEM r mc_conf.target.config.avoid_regs
+   then
+     (NONE :α word option)
+   else SOME (mc_conf.target.get_reg ms_post r)) ∧
+(∀(i :num). s1.io_fp_regs (0 :num) i = mc_conf.target.get_fp_reg ms_post i) ∧
+target_io_regs mc' ffi' ms_post = shift_seq (1 :num) s1.io_regs ∧
+target_io_fp_regs mc' ffi' ms_post = shift_seq (1 :num) s1.io_fp_regs ∧
+target_cc_regs mc' ffi' ms_post = s1.cc_regs ∧
+target_cc_fp_regs mc' ffi' ms_post = s1.cc_fp_regs
+oracle_tie_ccache_step_full=oracle_tie mc_conf ms1 s1 ∧
+next_interference mc_conf s1.ffi ms1 =
+SOME (CcApp a1 a2 ms_pre ms_post,mc',ffi') ⇒
+(∀r. s1.cc_regs 0 r =
+     if
+       MEM r mc_conf.callee_saved_regs ∨ r = mc_conf.ptr_reg ∨
+       ¬(r < mc_conf.target.config.reg_count) ∨
+       MEM r mc_conf.target.config.avoid_regs
+     then
+       NONE
+     else SOME (mc_conf.target.get_reg ms_post r)) ∧
+(∀i. s1.cc_fp_regs 0 i = mc_conf.target.get_fp_reg ms_post i) ∧
+target_cc_regs mc' ffi' ms_post = shift_seq 1 s1.cc_regs ∧
+target_cc_fp_regs mc' ffi' ms_post = shift_seq 1 s1.cc_fp_regs ∧
+target_io_regs mc' ffi' ms_post = s1.io_regs ∧
+target_io_fp_regs mc' ffi' ms_post = s1.io_fp_regs
+oracle_tie_ccache_step_types=oracle_tie (mc_conf :(α, β, γ) machine_config) (ms1 :β)
+  (s1 :(α, δ, ε) labSem$state) ∧
+next_interference mc_conf s1.ffi ms1 =
+SOME
+  (CcApp (a1 :α word) (a2 :α word) (ms_pre :β) (ms_post :β),
+   (mc' :(α, β, γ) machine_config),(ffi' :ε ffi_state)) ⇒
+(∀(r :num).
+   s1.cc_regs (0 :num) r =
+   if
+     MEM r mc_conf.callee_saved_regs ∨ r = mc_conf.ptr_reg ∨
+     ¬(r < mc_conf.target.config.reg_count) ∨
+     MEM r mc_conf.target.config.avoid_regs
+   then
+     (NONE :α word option)
+   else SOME (mc_conf.target.get_reg ms_post r)) ∧
+(∀(i :num). s1.cc_fp_regs (0 :num) i = mc_conf.target.get_fp_reg ms_post i) ∧
+target_cc_regs mc' ffi' ms_post = shift_seq (1 :num) s1.cc_regs ∧
+target_cc_fp_regs mc' ffi' ms_post = shift_seq (1 :num) s1.cc_fp_regs ∧
+target_io_regs mc' ffi' ms_post = s1.io_regs ∧
+target_io_fp_regs mc' ffi' ms_post = s1.io_fp_regs
+oracle_tie_ffi_next_full=oracle_tie mc_conf ms1 s1 ∧
+next_interference mc_conf s1.ffi ms1 =
+SOME (FfiApp index new_bytes ms_pre ms_post,mc',ffi') ∧
+s2.io_regs = shift_seq 1 s1.io_regs ∧
+s2.io_fp_regs = shift_seq 1 s1.io_fp_regs ∧ s2.cc_regs = s1.cc_regs ∧
+s2.cc_fp_regs = s1.cc_fp_regs ∧ s2.ffi = ffi' ⇒
+oracle_tie mc' ms_post s2
+oracle_tie_ffi_next_types=oracle_tie (mc_conf :(α, β, δ) machine_config) (ms1 :β)
+  (s1 :(α, γ, 'ffi) labSem$state) ∧
+next_interference mc_conf s1.ffi ms1 =
+SOME
+  ((FfiApp (index :num) (new_bytes :word8 list) (ms_pre :β) (ms_post :β) :
+    (α, β) interference_app),(mc' :(α, β, δ) machine_config),
+   (ffi' :'ffi ffi_state)) ∧
+(s2 :(α, γ, 'ffi) labSem$state).io_regs = shift_seq (1 :num) s1.io_regs ∧
+s2.io_fp_regs = shift_seq (1 :num) s1.io_fp_regs ∧ s2.cc_regs = s1.cc_regs ∧
+s2.cc_fp_regs = s1.cc_fp_regs ∧ s2.ffi = ffi' ⇒
+oracle_tie mc' ms_post s2
+oracle_tie_ccache_next_full=oracle_tie mc_conf ms1 s1 ∧
+next_interference mc_conf s1.ffi ms1 =
+SOME (CcApp a1 a2 ms_pre ms_post,mc',ffi') ∧
+s2.cc_regs = shift_seq 1 s1.cc_regs ∧
+s2.cc_fp_regs = shift_seq 1 s1.cc_fp_regs ∧ s2.io_regs = s1.io_regs ∧
+s2.io_fp_regs = s1.io_fp_regs ∧ s2.ffi = ffi' ⇒
+oracle_tie mc' ms_post s2
+oracle_tie_ccache_next_types=oracle_tie (mc_conf :(α, β, δ) machine_config) (ms1 :β)
+  (s1 :(α, γ, 'ffi) labSem$state) ∧
+next_interference mc_conf s1.ffi ms1 =
+SOME
+  (CcApp (a1 :α word) (a2 :α word) (ms_pre :β) (ms_post :β),
+   (mc' :(α, β, δ) machine_config),(ffi' :'ffi ffi_state)) ∧
+(s2 :(α, γ, 'ffi) labSem$state).cc_regs = shift_seq (1 :num) s1.cc_regs ∧
+s2.cc_fp_regs = shift_seq (1 :num) s1.cc_fp_regs ∧ s2.io_regs = s1.io_regs ∧
+s2.io_fp_regs = s1.io_fp_regs ∧ s2.ffi = ffi' ⇒
+oracle_tie mc' ms_post s2
+oracle_tie_ExtCall_residues_full=∀mc_conf ms1 s1 ms2 l index name bytes bytes2 new_ffi new_bytes t1.
+  oracle_tie mc_conf ms1 s1 ∧
+  (∀k. find_next_interference mc_conf s1.ffi (k + l) ms1 =
+       find_next_interference
+         (mc_conf with next_interfer := shift_seq l mc_conf.next_interfer)
+         s1.ffi k ms2) ∧
+  mc_conf.target.get_pc ms2 ∉
+  mc_conf.prog_addresses DIFF set mc_conf.ffi_entry_pcs ∧
+  mc_conf.target.get_pc ms2 ≠ mc_conf.halt_pc ∧
+  mc_conf.target.get_pc ms2 ≠ mc_conf.ccache_pc ∧
+  find_index (mc_conf.target.get_pc ms2) mc_conf.ffi_entry_pcs 0 = SOME index ∧
+  mc_conf.ffi_names❲index❳ = ExtCall name ∧
+  ALOOKUP mc_conf.mmio_info index = NONE ∧
+  read_ffi_bytearrays mc_conf ms2 = (SOME bytes,SOME bytes2) ∧
+  call_FFI s1.ffi (ExtCall name) bytes bytes2 = FFI_return new_ffi new_bytes ⇒
+  (λa. get_reg_value (s1.io_regs 0 (ExtCall name) a) (t1.regs a) I) =
+  (λa.
+       if
+         MEM a mc_conf.callee_saved_regs ∨
+         ¬(a < mc_conf.target.config.reg_count) ∨
+         MEM a mc_conf.target.config.avoid_regs
+       then
+         t1.regs a
+       else
+         mc_conf.target.get_reg
+           (mc_conf.ffi_interfer 0 (index,new_bytes,ms2)) a) ∧
+  (λn. s1.io_fp_regs 0 n) =
+  (λn.
+       mc_conf.target.get_fp_reg
+         (mc_conf.ffi_interfer 0 (index,new_bytes,ms2)) n)
+oracle_tie_ExtCall_residues_types=∀(mc_conf :(α, β, δ) machine_config) (ms1 :β) (s1 :(α, γ, 'ffi) labSem$state)
+    (ms2 :β) (l :num) (index :num) (name :mlstring) (bytes :word8 list)
+    (bytes2 :word8 list) (new_ffi :'ffi ffi_state) (new_bytes :word8 list)
+    (t1 :α asm_state).
+  oracle_tie mc_conf ms1 s1 ∧
+  (∀(k :num).
+     find_next_interference mc_conf s1.ffi (k + l) ms1 =
+     find_next_interference
+       (mc_conf with next_interfer := shift_seq l mc_conf.next_interfer)
+       s1.ffi k ms2) ∧
+  mc_conf.target.get_pc ms2 ∉
+  mc_conf.prog_addresses DIFF set mc_conf.ffi_entry_pcs ∧
+  mc_conf.target.get_pc ms2 ≠ mc_conf.halt_pc ∧
+  mc_conf.target.get_pc ms2 ≠ mc_conf.ccache_pc ∧
+  find_index (mc_conf.target.get_pc ms2) mc_conf.ffi_entry_pcs (0 :num) =
+  SOME index ∧ mc_conf.ffi_names❲index❳ = ExtCall name ∧
+  ALOOKUP mc_conf.mmio_info index =
+  (NONE :(word8 # α addr # num # α word) option) ∧
+  read_ffi_bytearrays mc_conf ms2 = (SOME bytes,SOME bytes2) ∧
+  call_FFI s1.ffi (ExtCall name) bytes bytes2 = FFI_return new_ffi new_bytes ⇒
+  (λ(a :num).
+       get_reg_value (s1.io_regs (0 :num) (ExtCall name) a)
+         (t1.regs a :α word) (I :α word -> α word)) =
+  (λ(a :num).
+       if
+         MEM a mc_conf.callee_saved_regs ∨
+         ¬(a < mc_conf.target.config.reg_count) ∨
+         MEM a mc_conf.target.config.avoid_regs
+       then
+         (t1.regs a :α word)
+       else
+         mc_conf.target.get_reg
+           (mc_conf.ffi_interfer (0 :num) (index,new_bytes,ms2)) a) ∧
+  (λ(n :num). s1.io_fp_regs (0 :num) n) =
+  (λ(n :num).
+       mc_conf.target.get_fp_reg
+         (mc_conf.ffi_interfer (0 :num) (index,new_bytes,ms2)) n)
+oracle_tie_install=oracle_tie mc ms
+  (s with
+   <|io_regs := target_io_regs mc s.ffi ms;
+     io_fp_regs := target_io_fp_regs mc s.ffi ms;
+     cc_regs := target_cc_regs mc s.ffi ms;
+     cc_fp_regs := target_cc_fp_regs mc s.ffi ms|>)

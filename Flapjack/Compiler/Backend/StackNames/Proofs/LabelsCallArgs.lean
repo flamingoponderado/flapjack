@@ -5,8 +5,8 @@ import Flapjack.Compiler.Backend.StackProps.CallArgs
 /-!
 # stack_namesProof: `stack_names_lab_pres` and `stack_names_call_args`
 
-Ports of `cakeml/compiler/backend/proofs/stack_namesProofScript.sml` lines 587-594 and
-690-709: renaming registers preserves the ordered continuation labels, and maps the fixed
+Ports of `cakeml/compiler/backend/proofs/stack_namesProofScript.sml` lines 589-596 and
+668-685: renaming registers preserves the ordered continuation labels, and maps the fixed
 `call_args` registers through `find_name`.
 -/
 
@@ -15,7 +15,7 @@ namespace Flapjack.Compiler.Backend.StackNames
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps
 open Flapjack.StackPropsCodeLabels
 
-/-- Exact HOL `stack_names_lab_pres` (`stack_namesProofScript.sml:587-594`). -/
+/-- Exact HOL `stack_names_lab_pres` (`stack_namesProofScript.sml:589-596`). -/
 @[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "stack_names_lab_pres"
   (words_as_type_indexed_bitvec)]
 theorem stackNamesLabPres {width : Nat} [NeZero width] :
@@ -39,7 +39,7 @@ theorem callArgs_progCompHOL {width : Nat} [NeZero width] (f : Spt Nat) (p : Hol
   rcases rh with _ | ⟨rp, lr, l1, l2⟩ <;> rcases hd with _ | ⟨hp, h1, h2⟩ <;>
     simp_all [progCompHOL, callArgs]
 
-/-- Exact HOL `stack_names_call_args` (`stack_namesProofScript.sml:690-709`). HOL's free `f`,
+/-- Exact HOL `stack_names_call_args` (`stack_namesProofScript.sml:668-685`). HOL's free `f`,
 `p` and `p'` are the implicit binders; `EVERY P l` is `∀ q ∈ l, P q`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "stack_names_call_args"
   (words_as_type_indexed_bitvec)]

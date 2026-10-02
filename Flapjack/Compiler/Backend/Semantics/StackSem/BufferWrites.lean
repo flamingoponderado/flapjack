@@ -8,8 +8,8 @@ constructor, so it never substitutes Error for an unported clause. The
 CodeBufferWrite clause reads two Word registers and calls the exact
 `wordSemScript.sml` `buffer_write_def` port `wordSemBufferWrite`, truncating the
 byte with `w2w`; the DataBufferWrite clause additionally enforces `use_stack`.
-No HOL tag applies to this extra Option-shaped fragment; full assembly is
-tracked by flapjack-y19g (bead flapjack-y19g.14.1). -/
+No HOL tag applies to this extra Option-shaped fragment; the total evaluator is
+assembled in Evaluate.lean. -/
 
 namespace Flapjack.StackSemBufferWrites
 open StackSemStateOps

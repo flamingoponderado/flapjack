@@ -147,10 +147,10 @@ example : newTrig (100 : BitVec 64) 200 [1] = 100 := by
   simp [newTrig, getGenSize, wordSemBytesInWord]
 -- gc_new_trig_aligned=200w
 example : newTrig (1000 : BitVec 64) 200 [1] = 200 := by
-  simp [newTrig, getGenSize, wordSemBytesInWord, gcByteAligned]
+  simp [newTrig, getGenSize, wordSemBytesInWord, holByteAligned, holAligned, holAlign_eq_div, show holLOG2 8 = 3 from holLOG_UNIQUE 2 8 3 ⟨by decide, by decide⟩]
 -- gc_new_trig_unaligned=1000w
 example : newTrig (1000 : BitVec 64) 201 [1] = 1000 := by
-  simp [newTrig, getGenSize, wordSemBytesInWord, gcByteAligned]
+  simp [newTrig, getGenSize, wordSemBytesInWord, holByteAligned, holAligned, holAlign_eq_div, show holLOG2 8 = 3 from holLOG_UNIQUE 2 8 3 ⟨by decide, by decide⟩]
 -- gc_is_gc_const_even=T
 example : isGcConst (6 : BitVec 64) = true := by decide
 -- gc_is_gc_const_odd=F
@@ -165,3 +165,12 @@ def runChecks : IO Bool := do
   pure true
 
 end Flapjack.Test.WordGcFunctionsParity
+
+namespace Flapjack.Test.WordGcCanonicalAlignmentRepair
+open Flapjack Flapjack.Compiler.Backend.WordGcFunctions Flapjack.Compiler.Backend.DataToWord
+/-- The sub-byte path depends on the one specified HOL LOG2 0; no concrete
+value or separately opaque zero-logarithm is assumed. -/
+example : newTrig (7 : BitVec 3) 1 [] =
+    (if holAligned (holLOG2 0) (1 : BitVec 3) then 1 else 7) := by
+  simp [newTrig, getGenSize, holByteAligned, wordSemBytesInWord]
+end Flapjack.Test.WordGcCanonicalAlignmentRepair

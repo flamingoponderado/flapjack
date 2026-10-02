@@ -2,8 +2,8 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
 
 /-! A source-shaped `evaluate_def` Alloc case fragment over the exact
 StackSem state/result carriers. It is deliberately untagged: this partial case
-helper is not the total HOL `evaluate_def` definition. The assembled evaluator
-route is tracked by `flapjack-y19g`. -/
+helper is not the total HOL `evaluate_def` definition. The total evaluator is assembled in Evaluate.lean; this fragment
+retains its separate, nonrecursive interface. -/
 
 namespace Flapjack.StackSemEvaluateAlloc
 
