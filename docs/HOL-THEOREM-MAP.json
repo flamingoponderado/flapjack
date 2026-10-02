@@ -63866,5 +63866,21 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-a author source comparison2026-10-02 original full theorem7666-7702 and returning Call handlerNONE8298-8692: all six premises retained plus only the genuine smaller return-body universal induction hypothesis. Full ssaSimulation source-permutation existential/Error exemption, actual target result/frame and result-sensitive locals retained. Native arbitrary Nat/List/Spt cutsets, program/code/stack/GC/FFI and result carriers; only canonical fpRegs/store finite-map relation and positive type-indexed words qualified, no tree-map translation. Actual source guards, convention moves, callee entry stack replacement, total callee result transport, native pop/domain/cut SSA, retMove and result binder, continuation IH premises, no-handler exception unchanged poststate, clock-zero flush and oracle suffix hot-swap derived internally. No successful guard, targetrun/result, postrelation or oracle suffix premise. Original full specialization captured freshly in ssa_call_returning_none_probe.out; regression/source evidence is not cross-language equivalence. Inherits evaluator reals_as_rational_cuts SOUNDNESS item8. HandlerSOME/full returningCall constructor/fullSSA/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryWrites.lean",
+    "lean_name": "memoryWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "memory_write",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-10-02 bead .6.8.4.4.1: original674-686 complete memory_write. Independent arbitrary address alpha and payload beta; source/target total memories, predicate domains, arbitrary heap frame, both original address-domain premises. Equality-based point updates at the same address/value leave domains and frame unchanged. Original memory/STAR/fun2set carriers are reviewed generic predicate sets. No finite/injective/wf/domain-equality assumption, DecidableEq/BEq premise, or assumed frame preservation. Scoped Classical implements total HOL equality. Functional target graph plus original disjoint split derives absence of every frame pair at the address; off-address split unchanged. Fresh original full statement/type/kernel replay and native full generic proof checked."
+  },
+  {
+    "lean_path": "Flapjack/Misc/SetSep.lean",
+    "lean_name": "starAssoc",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+    "hol_name": "STAR_ASSOC",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-10-02 bead .6.7.6.1: literal set_sepScript77-81 complete arbitrary heap predicate equality p STAR(q STAR r)=(p STAR q) STAR r. Independent arbitrary heap-element alpha and three arbitrary predicates over sets, represented by reviewed characteristic predicates. Both full directions derive union equality and all disjointness conditions from original existential splits, retain every assertion unchanged, with no finite/domain/wf/frame assumption. Fresh original full statement/types/kernel replay confirms complete shape; native full theorem kernel checked."
   }
 ]

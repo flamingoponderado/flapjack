@@ -5094,3 +5094,10 @@ run_probe word_to_stack_reg_flat_probeScript.sml word_to_stack_reg_flat_probe.ou
 run_probe ssa_call_returning_none_probeScript.sml ssa_call_returning_none_probe.out \
   returning_none_case_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_memorywrite_probeScript.sml stack_remove_memorywrite_probe.out \
+  mw_source mw_statement mw_types mw_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe set_sep_assoc_probeScript.sml set_sep_assoc_probe.out \
+  sa_source sa_statement sa_types sa_proved \
+  "$hol_dir/examples/machine-code/hoare-triple/set_sepScript.sml" "$cake_dir/compiler/backend/proofs"
