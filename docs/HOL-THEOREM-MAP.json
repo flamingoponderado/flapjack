@@ -56309,5 +56309,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 source399: full original statement freshly captured in target_sequence_laws_probe.out compared literally. Arbitrary predicate count at m is at most count at m+i for all i,m; no presence or success assumption. Complete native MachineConfig/InterferenceApp/HolFfiState retained, independent state/projection/FFIhostσ Type and positive width NeZero. Native kernel checked79jobs0warnings; proofs use literal sequence recurrence or successor count and nonnegative Nat addition as original. EL provenance via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and sharedopaque holHdNil/holArb out of range, no concrete fallback/indexbounds premise. No executed compiler body change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PositionUnique.lean",
+    "lean_name": "interferenceCountLt",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_count_lt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:411: fresh full original theorem statement in target_position_unique_probe.out; exact three conjuncts: sequence n is SOME(app,mc′,ffi′), P app, n<n2; conclusion count n<count n2. Proof follows original successor increment and monotonicity with n2-(n+1). Full generic MachineConfig/InterferenceApp/HolFfiState state/projection/host carriers, independent σ : Type, positive width NeZero, no bounds or added premises. Kernel checked80jobs zero warnings. EL provenance via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and shared opaque holHdNil/holArb out of range, no concrete fallback/indexbounds premise. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PositionUnique.lean",
+    "lean_name": "interferencePosUnique",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_pos_unique",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:425: fresh full original theorem statement in target_position_unique_probe.out; exact five conjuncts: both sequence results present, both applications selected, counts equal; conclusion n1=n2. Proof uses Nat order and strict count law in either direction. Full generic MachineConfig/InterferenceApp/HolFfiState state/projection/host carriers, independent σ : Type, positive width NeZero, no bounds or added premises. Kernel checked80jobs zero warnings. EL provenance via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and shared opaque holHdNil/holArb out of range, no concrete fallback/indexbounds premise. No executed compiler change."
   }
 ]

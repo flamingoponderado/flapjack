@@ -4756,3 +4756,8 @@ continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a 
 observation in `WordUnreachDefParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`target_position_unique_probeScript.sml` captures the complete original
+`interference_count_lt` and `interference_pos_unique` theorem statements,
+checking that both compiled original theorems have no undischarged hypotheses.
+The native Lean counterparts are in `TargetProps/PositionUnique.lean`.
