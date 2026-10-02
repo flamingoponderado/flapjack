@@ -64457,5 +64457,20 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.13: complete original local store_write_lemma1177-1244. Original membership AND full five-factor heap premise imply same complete heap factors with only reverse word_store canonical source-store update and exact target-memory equality point update at base+store_offset. Original arbitrary source state/native WordLoc value/base/memory/domain retained, independent C/F Type0 and positive wordwidth NeZero/BitVec. Source memory/domain, shifted original BitmapBase/bitmaps/buffer/spaceLeft and stack factors are unchanged even for BitmapBase name; no nonBitmapBase premise added (that belongs to later Set case original reg_bound). MAP Word over concatenation equivalent by List.map_append; source buffer.length+bitmaps.length offset unchanged. Actual imported canonicalstate.store owns qualified field and same-module genuine codec roundtrip witness; raw target-memory function/domain are original ordinary function/set carriers, not finite maps. No supplied output heap/frame preservation/domain/targetsuccess/heap finiteness/goodDimindex assumption. Untagged factoring proves all48store-list keys distinct, codec equality and exact one-slot map update; reverse-list surgery exposes same frame for all replacementvalues at modular addresses; generic original write_fun2set derives the complete updated graph; concrete/generic equality decision updates are proved extensionally equal. Native full kernelproof and fresh literal original local proof/types replay checked. This completes only the local store write lemma, not Set/Get/full compiler theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StoreTransfers.lean",
+    "lean_name": "compCorrectGet",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.7: genuine full Get constructor case comp_correct1481-1493/1578-1597. Exactly original4premises actual source total evaluate/result/poststate, nonError, complete stateRelHOL, original regBound. EXISTS target extra clock/poststate, actual compiled total evaluate same result and original fullrelation versus Halt/TimeOut/FinalFFI ffi result branch. Source store lookup success derived from originalnonError; sourceuseStore from fullrelation. CurrHeap uses actual canonical moveHOL Or same-register copy, preserving arbitrary Word/Loc payload through reserved-reg lookup derived from fullrelation. All other names use complete native name_cases/mem_load_lemma; actual base-register Word case and original five-factor heap derived from fullrelation, target address expression/load execution established, no targetsuccess/domain/heap-frame assumption. Extra clock0 and fullpostrelation derived through original bounded setVar. Actual native canonical regs/fpRegs/store with same-module genuine codec witness; Spt code excluded. Positive BitVec/NeZero width, independent C/F Type0; phantom Get program bound pinned at same width. Total native evaluator inherits reals_as_rational_cuts explicitly flagged; no unqualified real or wholecompiler equivalence claim. Fresh original complete case proof/types and native fullkernel proof checked; Set/remainingcases/fullassembly remain separate."
   }
 ]
