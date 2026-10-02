@@ -66236,5 +66236,22 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-stack-size): genuine full original comp_correct StackSetSize2339-2377. Exact original source evaluation/nonError/full state relation/regBound premises and existential clock/native target/usual result branch conclusion. Actual native move/sub/rightshift GetSize and leftshift/move/add SetSize evaluated with clock0. GetSize inverse shift no-wrap derived from original heap upper bound and source stackSpace bound; SetSize preserves original strict count<stack length guard and shifted register write, derives exact pointer reconstruction and all26 relation conjuncts. Source disabled/missing/Loc/out-of-bounds errors handled. No target-success, shift/no-wrap, pointer result or postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains Spt, stack List. Inherited reals_as_rational_cuts from faithful total evaluator, with no local real operation in either case. Fresh literal original HOL constructor replays PASS."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PaddingLabels.lean",
+    "lean_name": "padCode_computeLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pad_code_compute_labels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: complete original pad_code_compute_labels5774-5805, full original type/null-hypothesis capture. Retains arbitrary Nat position, native positive-width section list, arbitrary Spt(Spt Nat) accumulator, full nested-map equality and all four source guards: EVERY sec_label_one, conditional LENGTH nop not1 implies EVERY sec_label_zero, EVERY sec_label_prefix_zero, all_lab_len_pos_ok. Source free nop binder retained explicitly as arbitrary word8 byte list. words_as_type_indexed_bitvec only translates actual native word dimension; exact source payloads and canonical source sptree carriers unchanged, no fmap qualifier. Uses checked full section pair equality and actual compute_labels_alt recursion including section fromAList and insert overwrite, deriving recursive position transport; no returned-map equality/success/callback/distinctness/freshness premise. No held total HD/EL introduced. Fresh original11 observations and identical native kernel replays cover empty/nonempty arbitrary maps, non-single-byte and empty NOPs with zero labels, successive sections, duplicate section overwrite, zero label ID, false prefix guard changing the result, false conditional-zero guard, widths1/8/80 and >64-bit positions; full generic consumer plus genuine arbitrary-accumulator theorem application discharge original guards. Local support theorem only; full remove_labels_loop and end-to-end correctness remain open, no HOL-to-Lean equivalence proof."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Exception.lean",
+    "lean_name": "«raise'exception»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "raise'exception_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: riscvScript366-375 original Def parameter e:exception, Close state, tuple LX(VTy a) and conditional update only when state.exception=NoException. Lean retains generic return carrier and whole native state, canonical per-carrier holArb, exact first-exception conditional and full record update. Nonempty Ta represents intrinsic HOL type-kind nonemptiness, following already reviewed generic LINV/HD/EL/THE ports; no chosen Lean default or extra source hypothesis. Native exception/riscv_state carriers are reviewed source Types counterparts; derived BEq against payload-free NoException agrees with HOL equality. Fresh original full type and assumption-free full tuple equation are captured in l3_raise_exception probe, with matching generic Lean whole-result regression."
   }
 ]

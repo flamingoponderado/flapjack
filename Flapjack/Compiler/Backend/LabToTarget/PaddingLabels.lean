@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.LabToTarget.PrefixZero
+import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
 import Flapjack.Compiler.Backend.LabToTarget.LabelPosition
 import Flapjack.Compiler.Backend.LabToTarget.AddNopProps
 import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
@@ -139,4 +141,54 @@ theorem padSection_labels {width : Nat} [NeZero width]
             have hr := ih (.label k1 k2 0::.labAsm a word (bytes++nop) (n+1)::rest)
               ⟨ht,hp,by simpa [labelZero] using hz,fun h => False.elim (hn h)⟩
             simpa [padSection,addNop,List.reverse_cons,List.append_assoc,sectionLabelsAppend,sectionLabels,lineLen,Nat.add_assoc] using hr
+
+/-- Full original code-level label-map equality, with all four original
+predicates retained and arbitrary initial nested-map accumulator. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "pad_code_compute_labels"
+  (words_as_type_indexed_bitvec)]
+theorem padCode_computeLabels {width : Nat} [NeZero width]
+    (nop : List (BitVec 8)) (pos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
+    (acc : Spt (Spt Nat)) :
+    (∀ sec ∈ code, secLabelOne sec) ∧
+    (nop.length ≠ 1 → ∀ sec ∈ code, secLabelZero sec) ∧
+    (∀ sec ∈ code, secLabelPrefixZero sec) ∧ allLabLenPosOk pos code →
+    computeLabelsAlt pos (padCode nop code) acc = computeLabelsAlt pos code acc := by
+  induction code generalizing pos acc with
+  | nil => simp [padCode,computeLabelsAlt]
+  | cons sec code ih =>
+    rintro ⟨hone,hzero,hprefix,hpos⟩
+    have htone : ∀ sec ∈ code,secLabelOne sec := fun s hm => hone s (by simp [hm])
+    have htzero : nop.length ≠ 1 → ∀ sec ∈ code,secLabelZero sec :=
+      fun hn s hm => hzero hn s (by simp [hm])
+    have htprefix : ∀ sec ∈ code,secLabelPrefixZero sec :=
+      fun s hm => hprefix s (by simp [hm])
+    have hp : labelPrefixZero sec.lines := hprefix sec (by simp)
+    have hb : (match sec.lines with
+      | [] => False
+      | line :: _ => isLabelHOL line = true ∧ lineLen line = 1) → False := by
+      cases heq : sec.lines with
+      | nil => simp
+      | cons line lines =>
+        have hh : isLabelHOL line = true → lineLen line = 0 ∧ labelPrefixZero lines := by
+          simpa [heq] using hp
+        rintro ⟨hl,hlen⟩
+        have := (hh hl).1
+        omega
+    have heq := padSection_labels nop sec.lines [] pos []
+      ⟨by simpa [allLabLenPosOk] using hpos.1,by simp [labLenPosOk],by simp,hb⟩
+    simp only [List.reverse_nil,List.nil_append] at heq
+    have hnew : (sectionLabels pos sec.lines []).1 = pos + secLength sec.lines 0 := by
+      rw [sectionLabelsSecLength,secLengthSumLineLen,secLengthSumLineLen]
+      omega
+    have htpos : allLabLenPosOk (sectionLabels pos sec.lines []).1 code := by
+      rw [hnew]
+      exact hpos.2
+    cases sec with
+    | mk id lines =>
+      simp only [padCode,computeLabelsAlt]
+      rw [heq]
+      exact ih (sectionLabels pos lines []).1
+        (sptInsert id (sptFromAList ((0,pos) :: (sectionLabels pos lines []).2)) acc)
+        ⟨htone,htzero,htprefix,htpos⟩
+
 end Flapjack.Compiler.Backend.LabToTarget
