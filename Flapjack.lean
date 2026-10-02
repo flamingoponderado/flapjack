@@ -1532,6 +1532,7 @@ import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
 import Flapjack.Misc.BalancedMap.NullSemantics
 import Flapjack.Misc.BalancedMap.InvariantSemantics
 import Flapjack.Misc.BalancedMap.LookupSemantics
+import Flapjack.Misc.BalancedMap.RotationAux
 import Flapjack.Misc.BalancedMap.Membership
 import Flapjack.Misc.BalancedMap.BalanceArithmetic
 

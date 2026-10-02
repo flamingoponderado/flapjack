@@ -4504,7 +4504,7 @@ run_probe balanced_map_null_probeScript.sml balanced_map_null_probe.out \
   bmn_full bmn_typed bmn_tip bmn_bin_badsize \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
 run_probe balanced_map_rotation_aux_probeScript.sml balanced_map_rotation_aux_probe.out \
-  bmra_singleL bmra_singleR bmra_doubleL bmra_doubleR bmra_rotateL bmra_rotateR bmra_bal bmra_balL bmra_balR bmra_single_right bmra_single_left bmra_unspecified_unreduced bmra_completed_singleR bmra_completion_hyp \
+  bmra_singleL bmra_singleR bmra_doubleL bmra_doubleR bmra_rotateL bmra_rotateR bmra_bal bmra_balL bmra_balR bmra_single_right bmra_single_left bmra_double_right bmra_double_left bmra_rotate_right_single bmra_rotate_left_single bmra_rotate_right_double bmra_rotate_left_double bmra_bal_nil bmra_balL_nil bmra_balR_nil bmra_unspecified_unreduced bmra_completed_singleR bmra_completion_hyp \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
 run_probe balanced_map_invariant_eq_probeScript.sml balanced_map_invariant_eq_probe.out \
   bmi_full bmi_typed bmi_replay bmi_props_typed bmi_lookup_typed bmi_lookup_left bmi_lookup_root bmi_lookup_right bmi_lookup_missing bmi_lookup_child_missing bmi_lookup_equivalent bmi_children bmi_singleton bmi_badsize bmi_equal_child \
