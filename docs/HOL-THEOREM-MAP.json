@@ -52030,7 +52030,7 @@
     "lean_name": "newTrig",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (234-243): w2n/n2w as toNat/ofNat, MIN as min, the four branches in order; byte_aligned rendered by gcByteAligned (aligned (LOG2 (dimindex DIV 8)), with HOL's unspecified LOG2 0 as the opaque gcLog2Zero). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean. Source-review repair 2026-10-02: byte_aligned now directly uses reviewed holByteAligned and global specified holLOG2, including unconstrained LOG2 0 below byte width; independent gcLog2Zero/gcByteAligned deleted."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (234-243): w2n/n2w as toNat/ofNat, MIN as min, the four branches in order; byte_aligned uses the canonical holByteAligned (aligned (holLOG2 (dimindex DIV 8))), with the one specified HOL LOG2 0 retained below byte width. HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean. Source-review repair 2026-10-02: byte_aligned now directly uses reviewed holByteAligned and global specified holLOG2, including unconstrained LOG2 0 below byte width; independent gcLog2Zero/gcByteAligned deleted."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -53698,7 +53698,7 @@
     "lean_name": "good_dimindex_byte_aligned_eq",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:4544-4551 good_dimindex_byte_aligned_eq: good_dimindex ==> (byte_aligned w <=> (w && (if dimindex = 32 then 3w else 7w)) = 0w), byte_aligned as the untagged gcByteAligned rendering (aligned (LOG2 (dimindex DIV 8)); the unspecified LOG2 0 case is excluded by good_dimindex). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change. Source-review repair 2026-10-02: statement now observes canonical holByteAligned; width32/64 proof rewrites specified holLOG2 at positive byte dimensions and holAlign_eq_div, retaining original mask conclusion."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:4544-4551 good_dimindex_byte_aligned_eq: good_dimindex ==> (byte_aligned w <=> (w && (if dimindex = 32 then 3w else 7w)) = 0w), byte_aligned as canonical holByteAligned (aligned (holLOG2 (dimindex DIV 8)); positive byte dimensions follow from good_dimindex). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change. Source-review repair 2026-10-02: statement now observes canonical holByteAligned; width32/64 proof rewrites specified holLOG2 at positive byte dimensions and holAlign_eq_div, retaining original mask conclusion."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackProps/RegisterBounds.lean",
