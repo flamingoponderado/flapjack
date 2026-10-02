@@ -16,3 +16,5 @@ fmc_hit=M_success (SOME 0)
 fmc_not_in_ks=M_success NONE
 fmc_empty=M_success NONE
 fmc_oob=M_failure Subscript
+fmc_oob_before_match=M_failure Subscript
+fmc_handled_oob_before_match=M_success NONE

@@ -1,0 +1,20 @@
+pos_val_0_aux=∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (p :num) (xs :α sec list) (pos :num).
+  all_enc_ok c labs ffis p xs ⇒ pos_val (0 :num) pos xs = pos
+pos_val_0_aux_types=(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(p :num)::num;(xs :α sec list)::α sec list;(pos :num)::num;
+pos_val_0_aux_hypotheses=0
+asm_fetch_aux_pos_val_SUC=∀(pc :num) (p :num) (code2 :α sec list) (p' :num).
+  all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffi :ffiname list) p' code2 ∧
+  asm_fetch_aux pc code2 = SOME (line :α line) ⇒
+  LENGTH (line_bytes line) + pos_val pc p code2 =
+  pos_val (pc + (1 :num)) p code2
+asm_fetch_aux_pos_val_SUC_types=(pc :num)::num;(p :num)::num;(code2 :α sec list)::α sec list;(p' :num)::num;(line :α line)::α line;(ffi :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+asm_fetch_aux_pos_val_SUC_hypotheses=0
+independent_zero=T
+first_successor=T
+last_successor=T
+missing_fetch=T
+labels_only=T
+invalid_suffix=T
+empty_code=T

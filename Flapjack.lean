@@ -1,14 +1,29 @@
-import Flapjack.RiscV.L3.Defs.Fetch
+import Flapjack.Misc.Sptree.Subspt
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.RawCall
+import Flapjack.Compiler.Backend.StackRemove.Proofs.BytearrayReads
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.ControlLeaves
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.If
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.BasicLeaves
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.InstructionSimulation
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateRelation
 import Flapjack.RiscV.L3.Step.Fetch
 import Flapjack.RiscV.L3.Defs.ReadInst
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CodeBufferWrite
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.JumpLower
+import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
 import Flapjack.RiscV.L3.Defs.MMU.Translate
 import Flapjack.RiscV.L3.Defs.MMU.Walk
 import Flapjack.RiscV.L3.Defs.MMU.Insert
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
+import Flapjack.Compiler.Backend.LabToTarget.EncodingValidityClosure
+import Flapjack.Compiler.Backend.LabToTarget.ProgramByteLengths
+import Flapjack.Compiler.Backend.LabToTarget.PositionExtension
+import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
+import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateRelation
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.Labels
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompLn
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
@@ -171,6 +186,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.ClockControl
 import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Seq
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.If
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Loop
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
@@ -380,6 +396,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.MapBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdate
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdateSlices
+import Flapjack.Compiler.Backend.WordToStack.Proofs.TopLabelSafety
+import Flapjack.Compiler.Backend.WordToStack.Proofs.WordExtraction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.WordListLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
@@ -631,6 +649,15 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionInitAlloc
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAllocLoop
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourReads
 import Flapjack.Compiler.Backend.RegAlloc.ProductionStempReads
+import Flapjack.Compiler.Backend.RegAlloc.ProductionHandledColourReads
+import Flapjack.Compiler.Backend.RegAlloc.ProductionPreferences
+import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveTable
+import Flapjack.Compiler.Backend.RegAlloc.ProductionColouring
+import Flapjack.Compiler.Backend.RegAlloc.ProductionExtraction
+import Flapjack.Compiler.Backend.RegAlloc.ProductionInitTags
+import Flapjack.Compiler.Backend.RegAlloc.ProductionNumSet
+import Flapjack.Compiler.Backend.RegAlloc.ProductionBijection
+import Flapjack.Compiler.Backend.RegAlloc.ProductionInputCodec
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
@@ -1844,3 +1871,4 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
+import Flapjack.RiscV.L3.Defs.Fetch

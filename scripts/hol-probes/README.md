@@ -1,4 +1,16 @@
+`stack_rawcall_if_case_probe.out` captures complete generic comp_correct, zero open assumptions and its genuine If specialization. Native recursive case uses only the two subprogram comp-component induction hypotheses; actual guard transport derives branch selection/target evaluation and full paired existential conclusions. Full theorem assembly and runtime correctness remain open.
+
+`stack_rawcall_basic_cases_probe.out` captures the full original comp_correct theorem, zero open assumptions and all six Skip/Halt/Get/Set/OpCurrHeap/Tick specialized paired conclusions. Native positive-width kernel cases keep every source premise and derive complete target execution/postrelation, including Tick timeout. This is a six-case slice; recursive/pass/production correctness remains open.
+
+`stack_rawcall_inst_simulation_probe.out` captures the full original arbitrary-instruction existential simulation and zero theorem assumptions. Native kernel proof derives complete primitive transport, target evaluation and postrelation for every integer/memory/FP constructor. Inherited FP real-carrier limits remain; this is not full pass or executed compiler correctness.
+
 `stack_rawcall_state_rel_probe.out` captures the complete original full-state relation type/equation and generic reflexivity under state_ok and exact compile-oracle preservation. Native kernel consequences retain arbitrary whole states and independent per-entry frame-info witnesses; this establishes no evaluator simulation or production replacement.
+
+`reg_alloc_colouring_probe.out` includes a fresh original observation of an
+out-of-range partner before a later matching colour: the raw scan fails with
+Subscript and its handler immediately returns NONE. CakeRegAlloc kernel-replays
+the identical S0 state and the repaired executed scan; generic handled-query
+correspondence additionally covers arbitrary partner lists.
 
 `target_sequence_laws_probe.out` captures complete original sequence equality, exact tail and count monotonicity statements. Native generic proofs keep all initial and returned configurations/FFI states, arbitrary predicates and universal sequence/count indices.
 
@@ -6173,6 +6185,22 @@ The `l3_fetch_primitives_probeScript.sml` family also captures the complete orig
 type and unconditional generic equation. It preserves THE NONE and does not
 claim to cover the separate model Fetch declaration. Its Lean replay is a generic
 kernel equality over the full native state.
+sptree_wf_definition_probeScript.sml captures the full original wf_def and254 complete wf/isEmpty outputs: all depth-two constructor combinations,24-level valid/malformed chains, and function payloads. Existing approved hol4 snapshot and pinned HOL source hashes agree; no provenance expansion. Kernel/runtime replay is SptreeWfDefinitionParity.lean.
+`stack_remove_find_code_probeScript.sml` replays both complete original local callee lookup proofs (231–255), retaining arbitrary erased register and the full destination family. Its four rows record both original statements and kernel proof success.
+`stack_rawcall_control_cases_probe` captures the original full `comp_correct`, zero external hypotheses, and Return/Raise/Break/Continue specializations at width64. Native proofs quantify arbitrary positive width; these are statement-shape evidence, not runtime parity or full theorem assembly.
+
+`stack_remove_comp_jump_lower_probeScript.sml` replays the literal original complete JumpLower case with actual source-guarded callee IH and original local register/dec-clock helpers, without assuming full `comp_correct`. Two rows record the scoped statement and proof success.
+
+`stack_remove_comp_code_buffer_probeScript.sml` proves the full original four-premise CodeBufferWrite case using the literal original case body and local getVar helper, without assuming full `comp_correct`. Two rows record its scoped statement and proof success.
+
+`word_to_stack_top_label_safety_probe` replays both literal full original top-level code/handler safety proofs, recording closed statements, and checks 12 independent actual `compile ... F` predicate triples. Empty external sets, source references to compiler-owned stubs, missing/external/self labels, duplicates, returning owned/wrong-owner handlers, dropped tail handlers, bitmap updates and width-one words are covered. `WordToStackTopLabelSafetyParity` kernel-checks the identical triples and applies both full theorems to constructed output at arbitrary positive width/configuration/external sets. The existing 24 complete native top-level tuple observations were independently regenerated unchanged alongside this delivery. Probes are regression evidence, not cross-language equivalence proofs.
+`stack_rawcall_loop_case_probe` captures the original full `comp_correct`, its zero external hypotheses, and the Loop specialization at width64. The native case retains arbitrary positive width and genuine body/smaller-clock re-entry induction hypotheses. Statement-shape evidence only; no runtime parity or full theorem assembly claim.
+`stack_remove_bytearray_read_probeScript.sml` replays the complete original bytearray-read preservation proof and its original local memory/read/load prerequisites. Two rows capture the full arbitrary-length/address statement and kernel proof success.
+
+`sptree_subspt_union_probe` captures the full original HOL subspt_def, subspt_lookup, subspt_trans, subspt_union and subspt_FOLDL_union statements with their zero external-hypothesis counts (10 rows). Generic native tree/List carrier statements are reviewed without executable compiler changes; statement evidence is not runtime parity.
+
+`word_to_stack_word_extraction_probe` replays all three full original successful `the_words` proofs (4068–4087), then captures 136 complete extraction outputs at widths 1/8/64/80: every zero/one/two-element combination of NONE, Word0, Word1, Loc3/5 and a 70-bit word literal, plus long successful and late/early failing lists. Lean expected results are decoded only from original outputs and checked in the kernel and compiled runtime. The full mapped-source theorem is applied with function-valued inputs without an equality instance. Anonymous projection defaults are unreachable under the original success guard, as proved by the membership theorem; the existing approved option THE is reused without a new default. The subsequent legacy expression consumers are commented in HOL, so this inventory section is not claimed as an active comp_correct dependency.
+`stack_remove_comp_raw_call_probeScript.sml` replays the complete original RawCall case with actual Seq-code/nonzero-clock guarded body IH and original local lookup/dec-clock helpers. It assumes no full `comp_correct`; two rows record the scoped statement and proof success.
 
 `l3_model_fetch_probe.out` captures the full original riscv model Fetch
 definition/type, an arbitrary-state odd-PC equation, and eighteen fully reduced
