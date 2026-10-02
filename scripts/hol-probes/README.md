@@ -4758,3 +4758,9 @@ Shift opcode proof (7881–7919), local getVar/setVar/physical insertion helpers
 and setup tactic. Only fixed-constructor selection and discarded primitive
 induction bookkeeping are omitted. The full six-premise simulation and native
 state/operator/register/immediate/SSA/table carrier types are captured.
+
+`ssa_cc_trans_correct_inst_div_probeScript.sml` captures `Q.SPEC` of the
+original kernel-checked `ssa_cc_trans_correct` at native Div, including its
+full six-premise simulation and all state/register/SSA/table carriers. The
+opcode proof at 7919–7944 is manually compared; this probe does not claim a
+standalone replay of that tactic fragment.

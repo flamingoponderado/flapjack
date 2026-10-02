@@ -12,6 +12,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticReturn
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstConst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstBinop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstShift
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstDiv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
 import Flapjack.Compiler.Encoders.AsmProps.Encoding
