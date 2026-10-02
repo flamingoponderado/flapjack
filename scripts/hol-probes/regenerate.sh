@@ -5810,6 +5810,20 @@ run_probe lab_to_target_byte_interval_distinct_probeScript.sml lab_to_target_byt
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_remove_write_bytearray_probeScript.sml stack_remove_write_bytearray_probe.out \
+  write_full_write_bytearray_IGNORE_non_aligned write_full_write_bytearray_IGNORE write_full_write_bytearray_EQ write_w1_be0_0 write_w1_be1_0 write_w8_be0_0 write_w8_be0_1 write_w8_be0_2 write_w8_be0_3 write_w8_be0_4 write_w8_be0_5 write_w8_be0_6 write_w8_be0_7 write_w8_be1_0 write_w8_be1_1 write_w8_be1_2 write_w8_be1_3 write_w8_be1_4 write_w8_be1_5 write_w8_be1_6 write_w8_be1_7 write_w64_be0_0 write_w64_be0_1 write_w64_be0_2 write_w64_be0_3 write_w64_be0_4 write_w64_be0_5 write_w64_be0_6 write_w64_be0_7 write_w64_be1_0 write_w64_be1_1 write_w64_be1_2 write_w64_be1_3 write_w64_be1_4 write_w64_be1_5 write_w64_be1_6 write_w64_be1_7 write_w80_be0_0 write_w80_be0_1 write_w80_be0_2 write_w80_be0_3 write_w80_be0_4 write_w80_be0_5 write_w80_be0_6 write_w80_be0_7 write_w80_be1_0 write_w80_be1_1 write_w80_be1_2 write_w80_be1_3 write_w80_be1_4 write_w80_be1_5 write_w80_be1_6 write_w80_be1_7 write_LOG_original_spec write_LOG2_zero_residual \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_shmem_extraction_probeScript.sml lab_to_target_shmem_extraction_probe.out \
+  get_shmem_info_thm get_shmem_info_thm_types get_shmem_info_thm_hypotheses \
+  independent_validity full_prefix_output full_extraction empty_preserves_prefixes zero_labels wide_unsigned nonzero_label_guard \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_shmem_distinct_probeScript.sml lab_to_target_shmem_distinct_probe.out \
+  get_shmem_info_ALL_DISTINCT get_shmem_info_ALL_DISTINCT_types get_shmem_info_ALL_DISTINCT_hypotheses \
+  full_guards entry_values distinct independent_query empty zero_validity encoding_guard zero_duplicate \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
 run_probe l3_address_exception_probeScript.sml l3_address_exception_probe.out \
   address_exception_definition address_exception_type load_zero store_max misaligned arbitrary_exception \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
@@ -5822,6 +5836,21 @@ run_probe l3_reservation_probeScript.sml l3_reservation_probe.out \
   reserve_read_definition reserve_read_type reserve_write_definition reserve_write_type reserve_match_definition reserve_match_type none_none none_zero clear_zero replace_match max_mismatch present_mismatch core_zero core_wrap \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
 
-run_probe l3_integer_load_probeScript.sml l3_integer_load_probe.out \
-  lw_definition lw_type lwu_definition lwu_type lh_definition lh_type lhu_definition lhu_type lb_definition lb_type lbu_definition lbu_type ld_definition ld_type lw_negative lw_positive lw_rd_zero lw_unaligned lw_offset_wrap lw_core_wrap lw_fault_sv32 lw_rv32_mode lw_rv128_mode lw_walk_returned_state lwu_negative lwu_positive lwu_rd_zero lwu_unaligned lwu_offset_wrap lwu_core_wrap lwu_fault_sv32 lwu_rv32_mode lwu_rv128_mode lwu_walk_returned_state lh_negative lh_positive lh_rd_zero lh_unaligned lh_offset_wrap lh_core_wrap lh_fault_sv32 lh_rv32_mode lh_rv128_mode lh_walk_returned_state lhu_negative lhu_positive lhu_rd_zero lhu_unaligned lhu_offset_wrap lhu_core_wrap lhu_fault_sv32 lhu_rv32_mode lhu_rv128_mode lhu_walk_returned_state lb_negative lb_positive lb_rd_zero lb_unaligned lb_offset_wrap lb_core_wrap lb_fault_sv32 lb_rv32_mode lb_rv128_mode lb_walk_returned_state lbu_negative lbu_positive lbu_rd_zero lbu_unaligned lbu_offset_wrap lbu_core_wrap lbu_fault_sv32 lbu_rv32_mode lbu_rv128_mode lbu_walk_returned_state ld_negative ld_positive ld_rd_zero ld_unaligned ld_offset_wrap ld_core_wrap ld_fault_sv32 ld_rv32_mode ld_rv128_mode ld_walk_returned_state \
-  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe lab_to_target_shmem_prefix_probeScript.sml lab_to_target_shmem_prefix_probe.out \
+  get_shmem_info_APPEND get_shmem_info_APPEND_types get_shmem_info_APPEND_hypotheses \
+  get_shmem_info_PREPEND get_shmem_info_PREPEND_types get_shmem_info_PREPEND_hypotheses \
+  invalid_code_output prepend_names prepend_info append_split empty wide_offsets one_offsets \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_shmem_membership_probeScript.sml lab_to_target_shmem_membership_probe.out \
+  MEM_get_shmem_info MEM_get_shmem_info_types MEM_get_shmem_info_hypotheses \
+  get_shmem_info_EMPTY_LENGTH_EQ get_shmem_info_EMPTY_LENGTH_EQ_types get_shmem_info_EMPTY_LENGTH_EQ_hypotheses \
+  load_membership store_membership load_fetch exit_expression paired_lengths empty_lengths wrong_pair \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_bitmap_frame_updates_probeScript.sml word_to_stack_bitmap_frame_updates_probe.out \
+  bf_full_drop bf_full_not_nil bf_full_append bf_not_nil_types bf_overwrite_8_0_0 bf_overwrite_8_0_1 bf_overwrite_8_0_2 bf_overwrite_8_6_0 bf_overwrite_8_6_1 bf_overwrite_8_6_2 bf_overwrite_8_7_0 bf_overwrite_8_7_1 bf_overwrite_8_7_2 bf_overwrite_8_8_0 bf_overwrite_8_8_1 bf_overwrite_8_8_2 bf_overwrite_8_63_0 bf_overwrite_8_63_1 bf_overwrite_8_63_2 bf_overwrite_8_64_0 bf_overwrite_8_64_1 bf_overwrite_8_64_2 bf_overwrite_8_80_0 bf_overwrite_8_80_1 bf_overwrite_8_80_2 bf_overwrite_64_0_0 bf_overwrite_64_0_1 bf_overwrite_64_0_2 bf_overwrite_64_6_0 bf_overwrite_64_6_1 bf_overwrite_64_6_2 bf_overwrite_64_7_0 bf_overwrite_64_7_1 bf_overwrite_64_7_2 bf_overwrite_64_8_0 bf_overwrite_64_8_1 bf_overwrite_64_8_2 bf_overwrite_64_63_0 bf_overwrite_64_63_1 bf_overwrite_64_63_2 bf_overwrite_64_64_0 bf_overwrite_64_64_1 bf_overwrite_64_64_2 bf_overwrite_64_80_0 bf_overwrite_64_80_1 bf_overwrite_64_80_2 bf_overwrite_80_0_0 bf_overwrite_80_0_1 bf_overwrite_80_0_2 bf_overwrite_80_6_0 bf_overwrite_80_6_1 bf_overwrite_80_6_2 bf_overwrite_80_7_0 bf_overwrite_80_7_1 bf_overwrite_80_7_2 bf_overwrite_80_8_0 bf_overwrite_80_8_1 bf_overwrite_80_8_2 bf_overwrite_80_63_0 bf_overwrite_80_63_1 bf_overwrite_80_63_2 bf_overwrite_80_64_0 bf_overwrite_80_64_1 bf_overwrite_80_64_2 bf_overwrite_80_80_0 bf_overwrite_80_80_1 bf_overwrite_80_80_2 \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

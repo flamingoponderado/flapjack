@@ -3,14 +3,18 @@ import Flapjack.Test.L3ReservationParity
 import Flapjack.Test.L3IntegerLoadModeParity
 import Flapjack.Test.L3AddressExceptionParity
 import Flapjack.Test.L3ModelFetchParity
+import Flapjack.Test.LabToTargetByteIntervalDistinctParity
+import Flapjack.Test.LabToTargetLineInfoParity
+import Flapjack.Test.LabToTargetShmemExtractionParity
+import Flapjack.Test.LabToTargetShmemDistinctParity
+import Flapjack.Test.LabToTargetShmemPrefixParity
+import Flapjack.Test.LabToTargetShmemMembershipParity
 import Flapjack.Test.LabToTargetEncodingValidityClosureParity
 import Flapjack.Test.LabToTargetProgramByteLengthsParity
 import Flapjack.Test.LabToTargetPositionExtensionParity
 import Flapjack.Test.LabToTargetFetchSuccessorParity
 import Flapjack.Test.LabToTargetPositionOrderParity
 import Flapjack.Test.LabToTargetMemoryTransportParity
-import Flapjack.Test.LabToTargetLineInfoParity
-import Flapjack.Test.LabToTargetByteIntervalDistinctParity
 import Flapjack.Test.LabToTargetRemoveLabelsCorrectnessParity
 import Flapjack.Test.L3FetchPrimitivesParity
 import Flapjack.Test.L3MmuTranslateAddrParity
@@ -344,6 +348,9 @@ import Flapjack.Test.WordToStackListUpdateSlicesParity
 import Flapjack.Test.SptreeWfDefinitionParity
 import Flapjack.Test.WordToStackTopLabelSafetyParity
 import Flapjack.Test.WordToStackWordExtractionParity
+import Flapjack.Test.StackRemoveWriteBytearrayParity
+import Flapjack.Test.WordDiagnosticLeaves
+import Flapjack.Test.WordToStackBitmapFrameUpdatesParity
 import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.ParmoveAllDistinctPmovParity
 import Flapjack.Test.ParmoveTempPmovParity
@@ -1924,6 +1931,9 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordToStackListUpdateSlicesParity.runChecks,
     Flapjack.Test.SptreeWfDefinitionParity.runChecks,
     Flapjack.Test.WordToStackWordExtractionParity.run,
+    Flapjack.Test.StackRemoveWriteBytearrayParity.run,
+    Flapjack.Test.WordDiagnosticLeaves.run,
+    Flapjack.Test.WordToStackBitmapFrameUpdatesParity.run,
     Flapjack.Test.WordToStackIndexListParity.runChecks,
     Flapjack.Test.WordToStackAbsStackLengthsParity.runChecks,
     Flapjack.Test.WordToStackAbsStackPrefixParity.runChecks,

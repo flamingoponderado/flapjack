@@ -6217,6 +6217,7 @@ The original walk clears the low PPN bits at a superpage level and sets PTE_R
 This is the full model Fetch, distinct from riscv_step Fetch; probes are
 regression evidence, not cross-assistant equivalence or full modelRun coverage.
 
+`stack_remove_write_bytearray_probe` replays the three full original IGNORE_non_aligned/IGNORE/EQ proofs (324–370), captures 50 complete original reads and paired writes at seven observed keys, and records the original LOG specification plus its symbolic `LOG2 0` boundary. Widths 8/64/80 cover both endiannesses, empty writes, wraparound, Loc/domain failures and differing memories; width 1 has empty writes only. Nonempty width-one observations remain symbolic and are not assigned invented numeric expectations. Kernel/runtime checks compare only values decoded from the original outputs. Native support drafts remain untagged: their imported alignment chooses `Nat.log2 0 = 0`, whereas the source specification does not constrain `LOG2 0`. Exact acceptance remains open on `flapjack-wordsem-byte-align-total`, which must reuse the already reviewed canonical total alignment model. Numeric fixtures do not establish generic cross-language correspondence or compiler correctness.
 `l3_address_exception_probe.out` captures the complete original native
 `signalAddressException` definition/type and four fault-kind/address/current-core
 observations. The corresponding Lean guard proves an unconditional full-state
@@ -6238,15 +6239,5 @@ update. Lean guards retain arbitrary unrelated state; unconditional full-state,
 indexed-frame, read-after-write and match-shape lemmas preserve original THE
 NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 
-`l3_integer_load_probe.out` captures the complete original definitions/types for
-all seven integer loads LW/LWU/LH/LHU/LB/LBU/LD and 70 fully reduced route tuples.
-Each family covers positive/negative extension, register-zero suppression,
-unaligned negative offsets, wrapping address addition, core255 with totalCore1,
-Sv32 faults, RV32/RV128 mode behavior, and a successful Sv39 walk. The walk
-writes PTE3079 ->3111 before rawReadData; the expected loaded value is derived
-from3111, exercising the returned translation state. All TLB/PTE fields and an
-entire-state frame outside MEM8/GPR/TLB/NextFetch/exception are observed.
-Lean guards retain arbitrary unrelated native fields, and unconditional normal
-forms retain every branch/complete returned state without success/alignment/core
-premises. This is the complete seven-definition load section, not full Run/Next
-or compiler/runtime correctness. No unspecified architecture/VM is defaulted.
+
+`word_to_stack_bitmap_frame_updates_probe.out` replays the three complete original bitmap/frame-list proofs and captures the independently polymorphic Spt/word-location binder types. Its 63 original overwrite observations cover empty, truncated and location-valued stacks across widths 8/64/80 and terminal/continuation boundaries. The Lean generic proofs retain every original guard; the parity module checks the same concrete native operations. No evaluator simulation, source pipeline unreachability or provenance hold release is claimed.

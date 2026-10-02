@@ -28,6 +28,10 @@ import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
 import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
 import Flapjack.Compiler.Backend.LabToTarget.MemoryTransport
 import Flapjack.Compiler.Backend.LabToTarget.LineInfo
+import Flapjack.Compiler.Backend.LabToTarget.ShmemExtraction
+import Flapjack.Compiler.Backend.LabToTarget.ShmemDistinct
+import Flapjack.Compiler.Backend.LabToTarget.ShmemPrefix
+import Flapjack.Compiler.Backend.LabToTarget.ShmemMembership
 import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
@@ -411,6 +415,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapFrameUpdates
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapDecode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
@@ -667,6 +672,10 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionNumSet
 import Flapjack.Compiler.Backend.RegAlloc.ProductionBijection
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInputCodec
 import Flapjack.Compiler.Backend.RegAlloc.ProductionGraphRows
+import Flapjack.Compiler.Backend.RegAlloc.ProductionCliqueBatch
+import Flapjack.Compiler.Backend.RegAlloc.ProductionForcedGraph
+import Flapjack.Compiler.Backend.RegAlloc.ProductionMkGraph
+import Flapjack.Compiler.Backend.RegAlloc.ProductionInitDomain
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
@@ -1761,6 +1770,7 @@ import Flapjack.Compiler.Backend.StackNames.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.StackNames.Proofs.MakeInit
 import Flapjack.Compiler.Backend.StackNames.Proofs.LabelsCallArgs
 import Flapjack.Compiler.Backend.StackRemove
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
 import Flapjack.Compiler.Backend.WordToStackRegFormat
