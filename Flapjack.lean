@@ -882,6 +882,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEvent
 import Flapjack.Misc.ShiftSeq
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
+import Flapjack.Misc.MachineIeee.Convert
 import Flapjack.Misc.BinaryIeeeRound
 import Flapjack.Misc.BinaryIeeeArith
 import Flapjack.Misc.BinaryIeeeRoundFp64

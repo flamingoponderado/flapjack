@@ -5279,3 +5279,7 @@ run_probe lab_to_target_label_existence_domain_probeScript.sml lab_to_target_lab
 run_probe lab_to_target_section_label_extraction_probeScript.sml lab_to_target_section_label_extraction_probe.out \
   section_labels_line_get_code_labels section_labels_line_get_code_labels_types mixed_full_tuple mixed_full_set_equality duplicate_zero_accumulator_retained all_label_zero_skipped_nonzero_kept both_zero_insertions_needed empty_accumulator_retained zero_accumulator_value_unconstrained nonlabel_bytes_not_annotation all_seven_opcodes_no_definitions width1_empty width80_large_position \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe machine_ieee_cross_format_probeScript.sml machine_ieee_cross_format_probe.out \
+  source_convert widen_pinf widen_ninf widen_qnan widen_snan narrow_pinf narrow_ninf narrow_qnan narrow_snan widen_zero widen_one widen_min_subnormal narrow_zero narrow_one narrow_tie_even \
+  "$hol_dir/src/floating-point/machine_ieeeScript.sml" "$hol_dir/src/floating-point"

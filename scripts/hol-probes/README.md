@@ -6032,3 +6032,12 @@ not a cross-language equivalence proof.
 `word_to_stack_asm_name_helpers_probe` captures the original shared config/program word type, freshly replays five exact local proofs at10958-11005 with their original local simp registrations, and records230 naming observations at widths1/2/8/64/80. Both performance/handler flags, empty/direct/indirect/spilled destinations, arbitrary-continuation movement, return-copy counts and zero/nonzero live bitmaps are tested. Count-underflow cases show five nonzero live failures while unconditional helpers still succeed (225T/5F). Lean fixtures replay captured expectations; original proof/kernel validity and regression observations do not establish HOL-to-Lean equivalence.
 
 `word_convs_full_inst_native_probe` captures the complete original predicate/type and828 literal validity observations at widths1/2/8/32/64/80 and both two_reg_arith flags. It covers all26 source constructor families, all16 FP forms, immediate validity, all8 ShareInst offset classes, recursive bad bodies and the ignored NONE-return handler. Address/halfword/byte policies have distinct ranges, while non-policy config fields remain arbitrary. Exact native Lean fixtures replay every original expectation. Broad original output/fixture behavior is retained through one shared recursive traversal; broad encoder and width carriers remain explicitly untagged. Regression evidence does not establish HOL-to-Lean equivalence.
+
+`machine_ieee_cross_format_probe.out` captures the complete original generic
+convert definition and fourteen original binary32/binary64 conversion observations.
+Infinity rows retain full flags and output bits; NaN rows observe all six flags
+without fixing the arbitrary NaN payload. Exact finite tuples and tie-to-even
+result/Precision are kernel-replayed by MachineIeeeCrossFormatParity; its tie
+checks do not claim full underflow-flag replay. The complete choice-shaped helper
+family retains every original finite/NaN/infinity branch and the SOUNDNESS item 8
+rational rendering assumption. Original reference submodules remain read-only.
