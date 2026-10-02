@@ -1,3 +1,4 @@
+import Flapjack.Test.TargetInterferenceSequenceParity
 import Flapjack.Test.TargetFindNextInterferenceParity
 import Flapjack.Test.LabCodeSafetyParity
 import Flapjack.Test.AsmPropsEncodingParity

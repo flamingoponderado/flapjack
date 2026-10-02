@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence
 import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
 import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
 import Flapjack.Compiler.Backend.LabToTarget.PositionAppend

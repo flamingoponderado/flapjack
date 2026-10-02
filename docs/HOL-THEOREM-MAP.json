@@ -56156,5 +56156,41 @@
     "hol_name": "filter_bitmap_MEM",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original424-523 nine bitmap-filter laws on reviewed native StackSem.filterBitmap/WordToStackProofs.indexList. Arbitrary payload lists and both arbitrary pair field types; HOL List/Bool/Nat and Option/pair carriers constructor-for-constructor. Native filter clauses preserve unconsumed suffix, reject insufficient input even for allfalse mask, and select true positions. Every original length/output/zero-suffix/membership guard retained; equal-length reconstruction takes exactly original zs definition; pair reconstruction assumes only original two projection successes, no full pair target success. Take/index reconstruction derives native suffix rather than assuming it. Private formula/map/take/rest/pair-extensionality helpers are untagged Flapjack induction infrastructure, no external totalHD/EL tags or sourceallowance change. Fresh nine literal full original proofs hyp=[] and155 matching closed kernel/oracle boundary cases: actual scalar/pair full outputs, insufficient input, true/false/allfalse masks, unused suffix, selected/input length/membership, indexed prefixes at0/7 and exact equal-length zip/filter. Full evaluate_wLive/pass/compiler theorem remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/InterferenceSequence.lean",
+    "lean_name": "nextInterference",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "next_interference_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02, native-target-interference-sequence: literal source215-218 compared with full original type/equation captured in target_interference_sequence_probe.out. All machine state/projection and FFI host parameters remain independent Type; positive word dimension uses NeZero width and exact native MachineConfig/InterferenceApp. HOL some is reviewed holOptionSome, with unspecified witness choice and no extra existence/uniqueness or clock bound. Sequence zero/successor retain returned config/FFI/application post state; count uses preceding n plus presence/predicate contribution; position retains count equality and existential present matching application. No executable compiler route change. Generic kernel regressions cover recurrence branches and choice witness specifications."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/InterferenceSequence.lean",
+    "lean_name": "interferenceAppSeq",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_app_seq_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02, native-target-interference-sequence: literal source221-228 compared with full original type/equation captured in target_interference_sequence_probe.out. All machine state/projection and FFI host parameters remain independent Type; positive word dimension uses NeZero width and exact native MachineConfig/InterferenceApp. HOL some is reviewed holOptionSome, with unspecified witness choice and no extra existence/uniqueness or clock bound. Sequence zero/successor retain returned config/FFI/application post state; count uses preceding n plus presence/predicate contribution; position retains count equality and existential present matching application. No executable compiler route change. Generic kernel regressions cover recurrence branches and choice witness specifications."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/InterferenceSequence.lean",
+    "lean_name": "interferenceCount",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_count_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02, native-target-interference-sequence: literal source230-238 compared with full original type/equation captured in target_interference_sequence_probe.out. All machine state/projection and FFI host parameters remain independent Type; positive word dimension uses NeZero width and exact native MachineConfig/InterferenceApp. HOL some is reviewed holOptionSome, with unspecified witness choice and no extra existence/uniqueness or clock bound. Sequence zero/successor retain returned config/FFI/application post state; count uses preceding n plus presence/predicate contribution; position retains count equality and existential present matching application. No executable compiler route change. Generic kernel regressions cover recurrence branches and choice witness specifications."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/InterferenceSequence.lean",
+    "lean_name": "interferencePos",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_pos_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02, native-target-interference-sequence: literal source241-249 compared with full original type/equation captured in target_interference_sequence_probe.out. All machine state/projection and FFI host parameters remain independent Type; positive word dimension uses NeZero width and exact native MachineConfig/InterferenceApp. HOL some is reviewed holOptionSome, with unspecified witness choice and no extra existence/uniqueness or clock bound. Sequence zero/successor retain returned config/FFI/application post state; count uses preceding n plus presence/predicate contribution; position retains count equality and existential present matching application. No executable compiler route change. Generic kernel regressions cover recurrence branches and choice witness specifications."
   }
 ]
