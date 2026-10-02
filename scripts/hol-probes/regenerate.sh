@@ -4855,3 +4855,7 @@ run_probe set_sep_elementary_probeScript.sml set_sep_elementary_probe.out \
 run_probe stack_remove_word_selector_probeScript.sml stack_remove_word_selector_probe.out \
   sw_type sw_def sw_primitive sw_full sw_word_generic sw_none_generic sw_loc_generic sw_none_loc sw_all_loc sw_word1 sw_word8 sw_word64 sw_word80 \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_memory_probeScript.sml stack_remove_memory_probe.out \
+  sm_def sm_type sm_full_generic sm_unique sm_empty sm_infinite sm_independent sm_product sm_missing sm_extra sm_wrong_value sm_wrong_address sm_noninjective \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

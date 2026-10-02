@@ -5602,3 +5602,13 @@ independence, and widths 1/8/64/80. Invalid inputs remain the same symbolic
 replays nine kernel fixtures using the existing shared opaque `holArb`.
 Pinned `boolScript.sml:245` declares ARB as an uninterpreted constant; it is not
 a HOL definition by Hilbert choice. The full state relation remains open.
+
+`stack_remove_memory_probe.out` records full `memory_def` and its independently
+generic address/value/heap type, plus eleven freshly kernel-proved original
+fixtures. These exercise full equality and uniqueness, empty and infinite
+domains, Bool-to-Nat and product-valued memories, missing/extra/wrong-value/
+wrong-address heap failures, and noninjective memory. Eleven corresponding
+Lean kernel fixtures live in `Flapjack.Test.StackRemoveMemory`. The assertion
+uses the reviewed full `fun2Set` graph, without finite heaps or word-specific
+carriers. This is a prerequisite of full StackRemove `state_rel`, which remains
+open separately.

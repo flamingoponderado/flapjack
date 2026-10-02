@@ -43,6 +43,7 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateEq
 import Flapjack.Test.LabToTargetGoodCodeParity
 import Flapjack.Misc.SetSep
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
 import Flapjack.Compiler.Backend.StackToLab.InitializedProduction
 import Flapjack.Compiler.Backend.StackRemove.InitCode
