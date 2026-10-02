@@ -67247,5 +67247,45 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.14 genuine Loop case original307-356 of comp_correct134ff. Original source evaluation equality/nonError/literalstateRel retained. Only genuine body-program IH and recursive same-Loop IH restricted to strictly smaller source clocks are added; no current-run/wholepass/target-result simulation premise. BranchIH/SimulationResult expand to original comp component hypothesis and existential clock,targetstate,stackspace, actual evaluation at target.clock+clock, fullpostrelation and original nonTimeOut/nonHalt Word2 guard. Both compTop/comp conclusions retained. Actual full evaluator loop dispatch uses existing unconditional fix_clock_evaluate identity, no assumed clocklaw. Source body nonError derived from original Loop run. Exit uses actual exit_loop, preserves guard, target execution derived from bodyIH. Continuing forces bodyResult NONE or Continue0 via faithful cont_loop_IMP, discharging body stackspace guard. Zero-clock case derives targetclock0 and emptyEnv postrelation and timeout. Nonzero case derives strict sourceclock decrease via evaluate_clock, uses recursiveIH only there, extends actual target body with evaluate_add_clock, derives arithmetic reentry state and sums extra clocks; no target execution/postrelation supplied as new premise. Positive-width native HolProg/full22field state/configuration/FFI preserved; actual imported canonical regs/fpRegs/store owner and same-module genuine broadcodec roundtrips, code Spt/list List unchanged. Full evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced. Genuine Loop case only, not assembled comp_correct/compile_semantics/runtime correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptSubsptDef",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "subspt_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Full domain-membership and lookup agreement iff. Original is a theorem; untagged predicate sptSubspt implements its literal characteristic-set equation, not a tagged substitute definition. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptSubsptLookup",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "subspt_lookup",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Full arbitrary key/value lookup iff, both directions, no membership or equality premise added. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptSubsptTrans",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "subspt_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Original conjunction of the two relations implies relation of first/third; all three arbitrary same-payload native trees. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptSubsptUnion",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "subspt_union",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Unconditional subspt of first into actual left-biased sptUnion first second; original accumulator/order preserved. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptSubsptFoldlUnion",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "subspt_FOLDL_union",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Full forall list and initial tree, subspt initial into List.foldl sptUnion initial. All arbitrary generic-payload native trees; left fold and union argument order unchanged. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
   }
 ]

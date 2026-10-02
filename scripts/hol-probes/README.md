@@ -6176,3 +6176,5 @@ word_to_stack_list_update_slices_probeScript.sml replays nine complete original 
 `stack_rawcall_control_cases_probe` captures the original full `comp_correct`, zero external hypotheses, and Return/Raise/Break/Continue specializations at width64. Native proofs quantify arbitrary positive width; these are statement-shape evidence, not runtime parity or full theorem assembly.
 
 `stack_rawcall_loop_case_probe` captures the original full `comp_correct`, its zero external hypotheses, and the Loop specialization at width64. The native case retains arbitrary positive width and genuine body/smaller-clock re-entry induction hypotheses. Statement-shape evidence only; no runtime parity or full theorem assembly claim.
+
+`sptree_subspt_union_probe` captures the full original HOL subspt_def, subspt_lookup, subspt_trans, subspt_union and subspt_FOLDL_union statements with their zero external-hypothesis counts (10 rows). Generic native tree/List carrier statements are reviewed without executable compiler changes; statement evidence is not runtime parity.

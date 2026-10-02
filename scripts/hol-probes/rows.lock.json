@@ -4688,6 +4688,12 @@
       "sha256": "b9997b14d8aa5eff0556183a9843de3a65ef2c968c5d8be262358beebf800841"
     },
     {
+      "bytes": 554,
+      "out": "sptree_subspt_union_probe.out",
+      "rows": 10,
+      "sha256": "9ae94a24392be58fac59bc7e14c1c11f96ed858741736f2137647041b708bce9"
+    },
+    {
       "bytes": 809,
       "out": "sptree_to_alist_probe.out",
       "rows": 4,
