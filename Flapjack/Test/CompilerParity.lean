@@ -1,3 +1,8 @@
+import Flapjack.Test.MiscTakeFlatReplicateParity
+import Flapjack.Test.LabToTargetValidityNopParity
+import Flapjack.Test.LabToTargetNopInvariantParity
+import Flapjack.Test.LabToTargetLengthCorrectnessParity
+import Flapjack.Test.LabToTargetPaddingLengthPropsParity
 import Flapjack.Test.LabToTargetAddNopPropsParity
 import Flapjack.Test.LabToTargetPrefixPreservationParity
 import Flapjack.Test.LabToTargetPrefixZeroParity
@@ -18,6 +23,8 @@ import Flapjack.Test.SetSepFun2Set
 import Flapjack.Test.SetSepElementary
 import Flapjack.Test.StackRemoveWordSelector
 import Flapjack.Test.StackRemoveMemory
+import Flapjack.Test.StackRemoveWordListRev
+import Flapjack.Test.StackRemoveWordStore
 import Flapjack.Test.StackRemoveCodeRelation
 import Flapjack.Test.DataMaxHeapLimit
 import Flapjack.Test.InitializedProduction
@@ -1836,6 +1843,11 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetAlignmentParity.runChecks,
     Flapjack.Test.LabToTargetPrefixZeroParity.runChecks,
     Flapjack.Test.LabToTargetPrefixPreservationParity.runChecks,
+    Flapjack.Test.MiscTakeFlatReplicateParity.runChecks,
+    Flapjack.Test.LabToTargetValidityNopParity.runChecks,
+    Flapjack.Test.LabToTargetNopInvariantParity.runChecks,
+    Flapjack.Test.LabToTargetLengthCorrectnessParity.runChecks,
+    Flapjack.Test.LabToTargetPaddingLengthPropsParity.runChecks,
     Flapjack.Test.LabToTargetAddNopPropsParity.runChecks,
     Flapjack.Test.LabToTargetEncd0Parity.runChecks,
     Flapjack.Test.LabToTargetLabelValidityParity.runChecks,

@@ -1,0 +1,17 @@
+line_length_ok_def=∀(l :α line). line_length_ok l ⇔ LENGTH (line_bytes l) = line_len l
+line_length_ok_def_types=(l :α line)::α line;
+sec_length_ok_def=∀(v0 :num) (ls :α line list).
+  sec_length_ok (Section v0 ls) ⇔ EVERY (line_length_ok :α line -> bool) ls
+sec_length_ok_def_types=(v0 :num)::num;(ls :α line list)::α line list;
+sec_length_sum_line_length=∀(ls :α line list) (n :num).
+  EVERY (line_length_ok :α line -> bool) ls ⇒
+  sec_length ls n = (SUM (MAP (line_length :α line -> num) ls) :num) + n
+sec_length_sum_line_length_types=(ls :α line list)::α line list;(n :num)::num;
+zero_label_ok=T
+nonzero_label_rejected=T
+asm_exact_ok=T
+asm_mismatch_rejected=T
+labasm_exact_ok=T
+section_full_ok=T
+section_sum_position=T
+guard_required=T

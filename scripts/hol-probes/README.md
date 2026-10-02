@@ -5684,3 +5684,37 @@ open separately.
 `stack_remove_stub_names_probeScript.sml` captures the entire original `stub_names_def`, both generic inferred types, and a closed literal `EVAL_TAC` replay of `check_init_stubs_length`. Exact ordered symbol pairs, character bytes and table length match native ML string fixtures; initializer lengths at widths 1/8/64 and arbitrary-parameter kernel consumption retain the actual initializer. Artifact symbol formatting remains a separately tracked executed route; these observations establish no compiler simulation.
 
 `ssa_alloc_case_probe.out` captures the full original `ssa_cc_trans_correct` Alloc specialization with all six premises, source permutation/Error exemption, actual target result/frame and result-sensitive locals. Native SSA Alloc derives rename/count preparation, GC transport, normal restoration and exhausted-space stopping; full SSA assembly remains open.
+Allocation-argument instruction probes capture two entire generic Inst/ShareInst cases of original word_to_stack_alloc_arg and660 direct actual compiler predicate observations. Matching kernel fixtures cover all asm constructors, ordinary16bit fallback, width64FP splitting, all eight shared operations, address extraction success/failure, zero/spilled frames and70bit registers at widths1/2/8/64/80. The two case theorem statements retain every original input and only perf=F; full compiler assembly remains open. These are regression observations and original theorem applications, not a replay of the full compiler proof or cross-language equivalence. Selector: HOL_PROBE_ONLY=word_to_stack_alloc_instructions_probeScript.sml.
+
+Flat allocation-argument probes capture all nineteen entire generic original nonrecursive cases apart from Inst/ShareInst and Call, plus360 direct compiler EVAL predicates and30 Alloc-case theorem applications at the same concrete inputs. The Alloc rows use the captured full original theorem to avoid eager construction of an irrelevant70bit bitmap; no input or conclusion is changed. All390 matching kernel fixtures cover widths1/2/8/64/80, all flat constructors, arbitrary generic source theorem inputs, malformed cutsets, move cycles/self/repeated sources, rejected Set expressions, and zero/70bit frame fields. Original theorem applications have no open hypotheses. These are regression evidence, not a replay of the entire original compiler proof or cross-language equivalence. Recursive/Call cases and full assembly remain open. Selector: HOL_PROBE_ONLY=word_to_stack_alloc_flat_probeScript.sml.
+`stack_remove_wordlistrev_probe.out` records the full independently generic
+address-word/payload type and both recursive equations, plus eleven fresh
+original kernel-proved fixtures. They cover generic empty/singleton heaps,
+modular subtraction at widths 8/32/64/80, product payloads, two cells, zero
+byte stride at widths 1/7, and wrong addresses. Separation acts on pairs: two
+different payloads at one address remain distinct heap elements; identical
+pairs cannot be separated. `Flapjack.Test.StackRemoveWordListRev` replays eleven
+fixtures through kernel-proved generic one/two-cell regression helpers. No
+functional-heap, distinct-address, nonwrapping or width-at-least-eight premise
+is added. Logical separation reasoning handles symbolic heaps before word
+arithmetic decisions. The original statements and definitions are unchanged.
+
+`stack_remove_wordstore_probe.out` records the full independently indexed
+address/store-word type, `word_store_def`, complete original `store_list`,
+and seven full 48-slot vectors. Empty and mixed stores exercise missing keys,
+Word/Loc preservation, Temp0/Temp31, and populated unlisted CurrHeap. Word
+projections retain dimension evidence: 255w projects to1 at width1 and255 at
+widths8/80. Six original kernel proofs establish generic empty-store behavior,
+independent address/value dimensions64/8,1/80,80/1, unlisted-key irrelevance and
+length48. Twelve Lean kernel fixtures in `Flapjack.Test.StackRemoveWordStore`
+use an actual canonical finite-support map and the existing complete store-name
+codec, with generic payload/width proofs and lookup extensionality. Assertion
+proofs compare complete lists before heap separation is expanded.
+
+### WordToStack and StackAlloc runtime symbol tables
+
+`backend_runtime_stub_names_probeScript.sml` captures both full original `stub_names_def` equations and generic types. Original ordered label/name pairs, exact character bytes and table lengths match six native kernel fixtures. Reviewed label constants are used directly, rather than handwritten numeric labels. Artifact dispatch remains a separately tracked executed route; these source tables do not establish compiler simulation.
+
+Recursive allocation-argument probe captures seven full generic original source theorem case applications: MustTerminate, Loop, Seq, If, tail Call, returning Call, and handler Call. All retain arbitrary source inputs and perf=F, with no open hypotheses. Lean recursive case ports use only the genuine proper-subprogram induction hypotheses at actual threaded bitmap outputs. Final induction assembly remains open. These source theorem applications are regression evidence, not a replay of the whole original proof or cross-language equivalence. Selector: HOL_PROBE_ONLY=word_to_stack_alloc_recursive_probeScript.sml.
+
+Full allocation-argument compiler probe captures the complete original generic theorem application and35 nested-program theorem applications, matched in Lean across widths1/2/8/64/80. Includes allocations nested under MustTerminate/Loop/Seq/If/Call return/handler and arbitrary ignored tail handlers, with arbitrary configurations. These are original theorem applications, not direct EVAL or full original proof replay. The Lean arbitrary-program theorem discharges all case induction hypotheses internally and retains only perf=F. Full pass simulation/compiler composition remain unfinished. Selector: HOL_PROBE_ONLY=word_to_stack_alloc_compiler_probeScript.sml.
