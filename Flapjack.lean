@@ -1583,6 +1583,7 @@ import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
 import Flapjack.Compiler.Backend.LabToTarget.SecondPass
 import Flapjack.Compiler.Backend.LabToTarget.Padding
 import Flapjack.Compiler.Backend.WordUnreach
+import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
