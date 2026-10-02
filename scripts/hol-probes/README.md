@@ -5804,3 +5804,5 @@ clock TimeOut path and arbitrary nonzero decrement path; Return/Raise derive
 Loc-only success from the original run/non-Error premises. Break/Continue
 retain their actual successful results and unchanged state. No target run or
 extra successful lookup is supplied. Full remaining simulation is still open.
+
+`ssa_call_returning_none_probe.out` captures the full original no-handler returning Call specialization of `ssa_cc_trans_correct`, retaining all six premises and its complete existential source-permutation/Error-exempt result, frame and result-sensitive locals. The native case adds only the genuine smaller continuation induction hypothesis and derives guards, argument prefix, callee stack transport, return restoration and oracle suffix internally. Handler SOME and full SSA assembly remain open. This capture supports source review, not cross-language equivalence.

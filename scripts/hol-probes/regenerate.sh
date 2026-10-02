@@ -5054,3 +5054,7 @@ run_probe l3_riscv_fclass_probeScript.sml l3_riscv_fclass_probe.out \
 run_probe stack_remove_comp_control_probeScript.sml stack_remove_comp_control_probe.out \
   cc_tick cc_tick_types cc_tick_proved cc_return cc_return_types cc_return_proved cc_raise cc_raise_types cc_raise_proved cc_break cc_break_types cc_break_proved cc_continue cc_continue_types cc_continue_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_call_returning_none_probeScript.sml ssa_call_returning_none_probe.out \
+  returning_none_case_full \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
