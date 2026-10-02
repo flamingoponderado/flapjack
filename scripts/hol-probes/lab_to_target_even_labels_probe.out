@@ -1,0 +1,40 @@
+even_labels_def=(∀(pos :num). even_labels pos ([] :α sec list) ⇔ T) ∧
+(∀(v0 :num) (pos :num) (ls :α sec list).
+   even_labels pos (Section v0 ([] :α line list)::ls) ⇔ even_labels pos ls) ∧
+∀(ys :α line list) (y :α line) (pos :num) (ls :α sec list) (k :num).
+  even_labels pos (Section k (y::ys)::ls) ⇔
+  (is_Label y ⇒ EVEN pos) ∧ even_labels (pos + line_len y) (Section k ys::ls)
+even_labels_def_types=
+lines_even_labels_def=(∀(pos :num). lines_even_labels pos ([] :α line list) ⇔ T) ∧
+∀(pos :num) (y :α line) (ys :α line list).
+  lines_even_labels pos (y::ys) ⇔
+  (is_Label y ⇒ EVEN pos) ∧ lines_even_labels (pos + line_len y) ys
+lines_even_labels_def_types=
+even_labels_alt=(even_labels (pos :num) ([] :α sec list) ⇔ T) ∧
+(even_labels pos (Section (_0 :num) (ls :β line list)::(ss :β sec list)) ⇔
+ lines_even_labels pos ls ∧
+ even_labels (pos + (SUM (MAP (line_len :β line -> num) ls) :num)) ss)
+even_labels_alt_types=(ss :β sec list)::β sec list;(ls :β line list)::β line list;(_0 :num)::num;(pos :num)::num;
+even_labels_strong_def=(∀(pos :num). even_labels_strong pos ([] :α sec list) ⇔ T) ∧
+(∀(v0 :num) (pos :num) (ls :α sec list).
+   even_labels_strong pos (Section v0 ([] :α line list)::ls) ⇔
+   EVEN pos ∧ even_labels_strong pos ls) ∧
+∀(ys :α line list) (y :α line) (pos :num) (ls :α sec list) (k :num).
+  even_labels_strong pos (Section k (y::ys)::ls) ⇔
+  (is_Label y ⇒ EVEN pos) ∧
+  even_labels_strong (pos + line_len y) (Section k ys::ls)
+even_labels_strong_def_types=
+lines_even_labels_append=∀(l1 :α line list) (l2 :α line list) (pos :num).
+  lines_even_labels pos (l1 ++ l2) ⇔
+  lines_even_labels pos l1 ∧
+  lines_even_labels (pos + (SUM (MAP (line_len :α line -> num) l1) :num)) l2
+lines_even_labels_append_types=(l1 :α line list)::α line list;(l2 :α line list)::α line list;(pos :num)::num;
+odd_empty_weak_not_strong=T
+even_empty_duplicates_strong=T
+annotation_advances_to_even=T
+physical_bytes_do_not_advance=T
+nonlabel_unrestricted=T
+odd_section_end_weak_not_strong=T
+zero_label_still_requires_even=T
+width1_empty_code=T
+width80_large_position=T
