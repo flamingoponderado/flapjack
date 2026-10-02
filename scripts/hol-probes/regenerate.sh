@@ -3263,6 +3263,9 @@ run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out 
 run_probe word_alloc_def_probeScript.sml word_alloc_def_probe.out \
   wa_type wa_simple wa_irc wa_linear wa_oracle_ok wa_oracle_clash wa_stack_irc wa_stack_linear wa_phys \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_unreach_def_probeScript.sml word_unreach_def_probe.out \
+  wu_ru_type wu_mm_type wu_dsm_move wu_dsm_seq wu_dsm_other wu_mm_basic wu_mm_dup wu_ss_skip_r wu_ss_skip_l wu_ss_raise wu_ss_move_move wu_ss_move_rest wu_ss_move_other wu_ss_default wu_test wu_after_return wu_call_none wu_call_ret wu_if wu_loop \
+  "$cake_dir/compiler/backend/word_unreachScript.sml" "$cake_dir/compiler/backend"
 
 
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
@@ -4190,6 +4193,10 @@ run_probe lab_code_safety_probeScript.sml lab_code_safety_probe.out \
   no_install_empty no_share_mem_empty install_excluded shared_excluded \
   safety_empty_any_names safety_install_extcall safety_install_shared_rejected safety_shared_any_names \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_encoding_validity_probeScript.sml lab_to_target_encoding_validity_probe.out \
+  lab_lookup_def lab_lookup_def_types lab_lookup_IMP lab_lookup_IMP_types line_ok_def line_ok_def_types lines_ok_def lines_ok_def_types all_enc_ok_def all_enc_ok_def_types all_enc_ok_cons all_enc_ok_cons_types all_enc_ok_imp_sec_label_zero all_enc_ok_imp_sec_label_zero_types pos_val_0 pos_val_0_types pos_val_bound pos_val_bound_types lookup_generic_bool lookup_outer_missing lookup_inner_missing label_even label_odd label_nonzero asm_skip asm_padding asm_bad_length asm_bad_bytes asm_bad_reg asm_cbw lab_halt lab_install lab_ffi_index lab_ffi_missing_default lab_call_unsupported lab_jump lab_jump_cmp lab_loc lab_missing_label all_empty all_empty_section_even all_empty_section_odd all_code_valid all_code_bytes all_zero_position independent_bound_position \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_navigation_bounds_probeScript.sml lab_to_target_navigation_bounds_probe.out \
   sec_loc_to_pc_bound sec_loc_to_pc_bound_types loc_to_pc_bound loc_to_pc_bound_types zero_empty local_last_bound local_last_count code_empty_tail_bound code_total_count wide_zero_empty \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4264,3 +4271,7 @@ run_probe ssa_locals_rel_get_vars_probeScript.sml ssa_locals_rel_get_vars_probe.
 run_probe store_list_code_probeScript.sml store_list_code_probe.out \
   store_list_code_full_def store_list_code_type store_list_code_1_0 store_list_code_1_1 store_list_code_1_2 store_list_code_1_3 store_list_code_1_4 store_list_code_1_5 store_list_code_8_0 store_list_code_8_1 store_list_code_8_2 store_list_code_8_3 store_list_code_8_4 store_list_code_8_5 store_list_code_64_0 store_list_code_64_1 store_list_code_64_2 store_list_code_64_3 store_list_code_64_4 store_list_code_64_5 store_list_code_80_0 store_list_code_80_1 store_list_code_80_2 store_list_code_80_3 store_list_code_80_4 store_list_code_80_5 \
   "$cake_dir/compiler/backend/stack_removeScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_cc_trans_correct_return_probeScript.sml ssa_cc_trans_correct_return_probe.out \
+  return_full return_type_st return_type_cst return_type_label_reg return_type_value_regs return_type_ssa return_type_next return_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
