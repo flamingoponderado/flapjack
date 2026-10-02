@@ -1,7 +1,9 @@
+import Flapjack.Misc.StateTransformer
 import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness
 import Flapjack.Compiler.Backend.LabToTarget.StrongEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
+import Flapjack.Compiler.Backend.LabToTarget.OddInstructionAlignment
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
 import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
@@ -114,6 +116,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackAllocSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ShiftSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapWrites
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordAddressArithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
@@ -130,6 +133,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Locations
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSpace
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers

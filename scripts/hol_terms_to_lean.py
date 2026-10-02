@@ -677,6 +677,14 @@ def special_binary_fp(operation):
     return render
 
 
+def special_negate_fp(r, c, args, env):
+    width = width_of_result(c)
+    if width not in (32, 64):
+        raise Unrenderable('FP negation requires fixed binary32/binary64')
+    return r.eta(c, args, env, 1, lambda xs, raw:
+        f'(holFloatToFp{width} (holFloatNegate (holFp{width}ToFloat {xs[0]})))')
+
+
 def special_sqrt_fp(r, c, args, env):
     r.noncomputable = True
     width = width_of_result(c)
@@ -727,6 +735,8 @@ def special_int_of_num(r, c, args, env):
 
 
 SPECIAL = {
+    ('machine_ieee', 'fp32_negate'): special_negate_fp,
+    ('machine_ieee', 'fp64_negate'): special_negate_fp,
     ('machine_ieee', 'fp32_sqrt'): special_sqrt_fp,
     ('machine_ieee', 'fp64_sqrt'): special_sqrt_fp,
     ('machine_ieee', 'fp32_add'): special_binary_fp('Add'),
