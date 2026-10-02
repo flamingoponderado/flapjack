@@ -6228,3 +6228,12 @@ update for arbitrary native states, with no core bound or address-validity premi
 and the original UNDEFINED message. Lean regressions preserve arbitrary unrelated
 state and the first-exception rule; no default selector result is inferred.
 These are integer-load prerequisites, not full instruction/Run/Next assembly.
+
+`l3_reservation_probe.out` captures the complete original `ReserveLoad`,
+`write'ReserveLoad`, and `matchLoadReservation` equations/types. Eight fully
+reduced observations cover absent/present reservations, clearing/replacement,
+match/mismatch, maximum addresses, and wrapping core indices with `totalCore=1`.
+Each observes equality of the entire returned state to the literal single-field
+update. Lean guards retain arbitrary unrelated state; unconditional full-state,
+indexed-frame, read-after-write and match-shape lemmas preserve original THE
+NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.

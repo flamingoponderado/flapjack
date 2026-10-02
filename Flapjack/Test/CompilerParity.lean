@@ -1,3 +1,4 @@
+import Flapjack.Test.L3ReservationParity
 import Flapjack.Test.L3IntegerLoadModeParity
 import Flapjack.Test.L3AddressExceptionParity
 import Flapjack.Test.L3ModelFetchParity

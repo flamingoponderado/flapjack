@@ -5817,3 +5817,7 @@ run_probe l3_address_exception_probeScript.sml l3_address_exception_probe.out \
 run_probe l3_integer_load_mode_probeScript.sml l3_integer_load_mode_probe.out \
   architecture_definition architecture_type curArch_definition curArch_type in32BitMode_definition in32BitMode_type selector_0 selector_1 selector_2 selector_3 \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_reservation_probeScript.sml l3_reservation_probe.out \
+  reserve_read_definition reserve_read_type reserve_write_definition reserve_write_type reserve_match_definition reserve_match_type none_none none_zero clear_zero replace_match max_mismatch present_mismatch core_zero core_wrap \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
