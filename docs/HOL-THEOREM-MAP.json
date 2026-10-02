@@ -51124,5 +51124,18 @@
     "hol_name": "APPEND_LEMMA",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison: Original1150-1163 full n1+n2+n3 <= LENGTH xs guard and two existential lists with drop decomposition and n2=LENGTH xs2 retained. Arbitrary List payload and all three Nat sizes; choose take/drop on original suffix. Third size remains in guard, no stronger prefix/length premises. Literal original proof replay is captured in word_to_stack_bitmap_frame_updates_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/GcFunOk.lean",
+    "lean_name": "wordGcFunOk",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "gc_fun_ok_def",
+    "statement_status": "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_function": [
+      "argument_4",
+      "result_3"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, beads .29.1/.31: original wordPropsScript3869-3878 preserves f and all seven universal wl/m/d/s/wl1/m1/s1 binders, Handler domain and successful erased-store callback antecedent, and all three consequent conjuncts: root lengths, no returned Handler, same callback on original store returning outputstore updated with original Handler. Existing reviewed WordSemGcFun from WordSem.State matches original gc_fun_type193-197, canonical store at argument_4/result_3, Lists remain Lists, memory total, domain reviewed Bool-predicate word set, positive width. Narrow approved function qualifier inherits exactly that alias translation and words qualifier, not a new callback or predicate policy. FDOM is lookup nonabsence, FDOMSUB eraseEq and FUPDATE updateEq use HOL equality. Original FAPPLY occurs only under Handler in FDOM; wordGcHandlerValue derives unique SOME value and wordGcHandlerFallback proves arbitrary fallback independence under that original guard, so getD Loc0 0 introduces no out-of-domain semantics or premise. Fresh original probe captures complete definition with zero hypotheses, HOL FLOOKUP/FAPPLY correspondence under original domain guard, and always-fail contract theorem. Generic kernel examples include rejecting successful callbacks that keep Handler and location-valued Handler fallback. This ports the predicate only, not initialization/state_rel/full pass simulation."
   }
 ]

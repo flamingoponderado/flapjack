@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcFunOk
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmConventions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameFlat
