@@ -5,6 +5,9 @@ import Flapjack.Test.LabToTargetEncodingSimilarityParity
 import Flapjack.Test.LabToTargetPaddingSimilarityParity
 import Flapjack.Test.AsmPropsArithmeticPreservationParity
 import Flapjack.Test.TargetPropsClockParity
+import Flapjack.Test.StackRemoveStoreAddress
+import Flapjack.Test.StackRemoveStackAlloc
+import Flapjack.Test.StackRemoveStackAddress
 import Flapjack.Test.StackRemoveStackFree
 import Flapjack.Test.SSAReconcileGetVars
 import Flapjack.Test.RiscVBranchPolarity
