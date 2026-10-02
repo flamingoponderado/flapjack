@@ -1481,6 +1481,13 @@ private theorem cakeSortN_eq_literal {α : Type} (negate : Bool)
       cakeSort2Tail, cakeSort3Tail, Basis.Pure.MlList.sort2Tail,
       Basis.Pure.MlList.sort3Tail, cakeMergeTail_eq_literal] <;> rfl
 
+/-- The executed generic sort equals the reviewed library rendering for
+every comparator and list. This implementation equality has no HOL original. -/
+theorem cakeSort_eq_literal {α : Type} (ord : α → α → Bool) (items : List α) :
+    cakeSort ord items = Basis.Pure.MlList.sort ord items := by
+  simp only [cakeSort, cakeSortN_eq_literal, Basis.Pure.MlList.sort,
+    Basis.Pure.MlList.mergesortTail]
+
 /-! `sort_moves` (`reg_allocScript.sml:343-346`) uses Cake's generic `sort`
     with a strict priority comparison. -/
 def cakeSortMoves (moves : List (Nat × (Nat × Nat))) :
