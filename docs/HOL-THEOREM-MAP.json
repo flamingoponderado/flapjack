@@ -50919,5 +50919,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10803-10943 ordered-label chain. All comp constructor cases, both performance flags, exact return/handler order, duplicate labels and ignored NONE-return handlers retained. Recursion follows actual compNative induction and exact threaded bitmap states, no public IH/target predicate/result premise. List compilation retains original output alias including full residual frames/bitmaps and original EVERY owner/nonzero/nonone/ALL_DISTINCT source guard, rendered equivalent List membership quantification/Nodup; top false-perf compile proves exact stub-prefixed keys and guard for both complete native stubs plus all bodies. Stronger private projection equations are untagged Flapjack organization. Fresh original three theorem statements hyp=[] and312 independent complete label projections of comp/list/top at widths1/8/64/80, both flags, duplicate IDs/labels, nested/ignored handlers,70bit metadata and bitmap threading kernel-replayed separately from generic theorem applications. All three use only standard propext/Classical.choice/Quot.sound axioms. No semantic compiler simulation/cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Initialization.lean",
+    "lean_name": "makeInit",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "make_init_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store",
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10398-10427 all23 fields, original positive word width/ffi host and Nat-counter paired target configuration retained. Imported canonical owners have local non-vacuous codec roundtrips; only traversed fp/store finite maps qualified, source locals/code/stack_size remain exact Spt trees. Handler deletion, empty stack and its stack_size, identity permutation, indexed frame mapping via full native compile_prog false (Nil,0), complete native list compiler false threads original counter and flattened bitmap with target callback NONE/SOME and returned configuration. Original complete definition printed and124 fresh ground observations at widths1/8/64/80 include malformed trees, inherited fields, callback failure and full success outputs; Lean kernel replays independent outputs. No init_state_ok/state_rel/GC correctness or cross-language equivalence claim."
   }
 ]
