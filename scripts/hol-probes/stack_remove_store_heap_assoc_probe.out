@@ -1,0 +1,3 @@
+sa_statement=∀A B C. A * B * C = B * C * A
+sa_types=A:(α -> bool) -> bool;B:(α -> bool) -> bool;C:(α -> bool) -> bool
+sa_proved=T

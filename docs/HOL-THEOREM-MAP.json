@@ -64437,5 +64437,13 @@
     "hol_name": "write_fun2set",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.13.1: Full original arbitrary address beta/payload alpha, new/old payload/address/frame/function/domain. Original singleton-left frame premise on function graph implies same frame and new singleton-right on exact equality point-update graph, domain unchanged. No finite-domain, functional-frame, address-uniqueness, new-value equality or supplied targetheap/success premise. Original graph membership plus original disjointness derives absence of every other payload at the updated address, allowing original frame heap unchanged. Full generic function/predicate graph, not HOL finite map, so no fmap qualifier. Classical equality decision stays proof-local, no DecidableEq/BEq/LawfulBEq hypothesis or executable decision/trust shortcut. Literal original statement/types/proof fresh replay and native kernel proof checked. These are generic HOL separation laws required by original store_write_lemma; no fullcase or compiler correctness completion claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StoreHeapWrites.lean",
+    "lean_name": "assocLem",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "assoc_lem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.13.2: literal original local assoc_lem1170-1175 full generic predicate equality (A*B)*C=(B*C)*A. Arbitrary HOL heap-element type translated to Type0 and set predicates; no finite heap, concrete state, separation validity, original targetheap or other premise. Genuine complete equality follows from full canonical STAR_ASSOC and STAR_COMM, both actual kernel checked original-shaped predicate laws. Fresh original exact quantified equality/types/kernel proof3rows and native kernel proof pass. Supplies only original store_write_lemma regrouping dependency; full store update/Get/Set/compiler proof remains separate."
   }
 ]
