@@ -1,4 +1,6 @@
 import Flapjack.Test.StackRawCallShapeParity
+import Flapjack.Test.L3MmuTlbParity
+import Flapjack.Test.L3MmuAccessParity
 import Flapjack.Test.StackRawCallCompileParity
 import Flapjack.Test.StackRawCallStateOkParity
 import Flapjack.Test.StackRawCallCollectParity

@@ -6141,8 +6141,13 @@ Complete ordered-label compiler probe prints three original full statements with
 `stack_rawcall_compile_probe.out` captures five complete original program lists: empty, forward frame reference, recognized duplicate last-wins with ignored bare entry, bare-only fallback, and zero-frame preserved top Seq. Matching kernel fixtures use the native whole-list wrapper. This is definition evidence; executed replacement remains open.
 WordToStack make_init probe captures the complete original definition and124 ground projections at widths1/8/64/80: reset fields, inherited fields and Handler deletion, full indexed frame trees including malformed normalization, oracle and callback failure/success with bitmap/counter/configuration threading. Abstract target states are projected only into closed observations; no ARB fixture state. Independent kernel equalities provide regression evidence, not HOL-to-Lean equivalence or initialization simulation. Selector: HOL_PROBE_ONLY=word_to_stack_make_init_probeScript.sml.
 
-`stack_rawcall_native_probe.out` captures seven complete original trees: three frame comparison branches, missing lookup, preserved top Seq, untouched NONE-return handler, and both compiled SOME-return continuations. Matching native kernel fixtures compare full trees. This is definition evidence, not production-path replacement or compiler correctness.
 
 `stack_rawcall_collect_probe.out` captures bare and nested allocation rejection, zero-sized entry acceptance, and all four queried map results for duplicate entries with an existing map. Native replay retains last-wins insertion; broad production frame collection remains a separate obligation.
 
 `stack_rawcall_shape_probe.out` captures the full original comp_seq_neq_IMP statement with zero hypotheses and five independent complete branch truth values. Kernel replay separates the generic theorem application from equal/smaller/larger changes and missing/handler fallback observations; no full simulation is claimed.
+`stack_sem_evaluate_clock_probeScript.sml` replays the full original
+`evaluate_clock` and `fix_clock_evaluate` proof bodies, recreating their local
+atomic clock and `fix_clock_IMP` helpers. It uses the exported HOL evaluator
+rules after `allow_rebind`, and resolves `state_component_equality` with
+`DB.fetch` rather than a current-theory lookup. The Lean proof independently
+uses the faithful evaluator clauses before the clock-identity rewrite.
