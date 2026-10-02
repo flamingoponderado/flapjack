@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPositions
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingNavigation
 import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPreservation
 import Flapjack.Compiler.Backend.LabProps.LabelExtractionValidity

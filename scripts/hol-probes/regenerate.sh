@@ -5536,3 +5536,9 @@ run_probe lab_to_target_initial_encoding_navigation_probeScript.sml lab_to_targe
   empty section_zero mixed_index wrong_section_owner duplicate_labels absent zero_label_ignored width1 width80_large_ids \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_section_lookup_positions_probeScript.sml lab_to_target_section_lookup_positions_probe.out \
+  ALOOKUP_section_labels ALOOKUP_section_labels_types ALOOKUP_section_labels_hypotheses \
+  empty boundary_duplicate_acc head_success asm_prefix labasm_boundary missing distinct_guard_needed owner_guard_false length_guard_needed width1_large_pos width80_large_pos \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
