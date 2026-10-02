@@ -51,7 +51,6 @@ theorem allocatorMemorySupported_wordSsaRenameInstProgram {α : Type u} [OfNat �
     (source target : WordSsaState) (names : List Nat) :
     allocatorMemorySupported (wordSsaReconcileTo (α := α) source target names) = true := by
   unfold wordSsaReconcileTo
-  dsimp only
   split <;> simp [allocatorMemorySupported]
 
 /-- Flapjack-only: initialization of one-sided SSA names uses constants only. -/

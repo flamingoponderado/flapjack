@@ -195,7 +195,7 @@ theorem removeDeadConventions {width : Nat} [NeZero width]
     all_goals (try unfold rdSeq)
     all_goals (try unfold rdIte)
     all_goals (repeat' split)
-    all_goals simp_all [fullInstOkLess]
+    all_goals simp_all [fullInstOkLess, fullInstOkLessWith]
   · intro h
     simp only [preAllocConventionsHOL, Bool.and_eq_true] at h ⊢
     refine ⟨?_, ?_⟩
