@@ -426,6 +426,8 @@ import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
+import Flapjack.Compiler.Backend.WordGcFunctions.Roots
+import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
 import Flapjack.Misc.FiniteMapApply
 import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
@@ -1206,6 +1208,7 @@ import Flapjack.Word
 import Flapjack.Stack
 import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog
+import Flapjack.Compiler.Backend.StackLang.Overloads
 import Flapjack.Compiler.Backend.StackLang.ProductionCodec
 import Flapjack.Compiler.Backend.StackLang.WordPayloads.InstructionBoundary
 import Flapjack.Compiler.Backend.StackLang.MacroLeaves
@@ -1259,6 +1262,9 @@ import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
+import Flapjack.Compiler.Backend.StackAlloc.GcCode
+import Flapjack.Compiler.Backend.StackAlloc.Compile
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize

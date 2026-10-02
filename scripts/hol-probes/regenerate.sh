@@ -3233,8 +3233,18 @@ run_probe word_alloc_nlive_store_probeScript.sml word_alloc_nlive_store_probe.ou
   ns_lookup_dead ns_lookup_live ns_var ns_const ns_op_dead ns_op_live ns_op_empty ns_load ns_load_dead ns_shift_left_dead ns_shift_right_dead ns_shift_live \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_gc_functions_probeScript.sml word_gc_functions_probe.out \
-  gc_ptr_to_addr gc_new_trig_unaligned \
+  gc_ptr_to_addr gc_is_gc_word_const_odd \
   "$cake_dir/compiler/backend/proofs/word_gcFunctionsScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_alloc_gc_code_probeScript.sml stack_alloc_gc_code_probe.out \
+  sa_memcpy_code sa_compile_none \
+  "$cake_dir/compiler/backend/stack_allocScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe stack_alloc_get_bits_probeScript.sml stack_alloc_get_bits_probe.out \
+  get_bits_11 get_bits_msb_64 \
+  "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
