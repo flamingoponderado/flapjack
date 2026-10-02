@@ -5,6 +5,9 @@ import Flapjack.Test.StackRawCallCollectParity
 import Flapjack.Test.StackRawCallNativeParity
 import Flapjack.Test.WordToStackTailHandlerParity
 import Flapjack.Test.L3MmuPrimitivesParity
+import Flapjack.Test.LabToTargetSectionLookupPositionsParity
+import Flapjack.Test.LabToTargetInitialEncodingNavigationParity
+import Flapjack.Test.LabToTargetLookupPrerequisitesParity
 import Flapjack.Test.NumericFormattingParity
 import Flapjack.Test.WordReplicateParity
 import Flapjack.Test.L3RiscvMaddParity

@@ -5553,3 +5553,27 @@ run_probe stack_sem_clock_control_probeScript.sml stack_sem_clock_control_probe.
 run_probe word_to_stack_make_init_probeScript.sml word_to_stack_make_init_probe.out \
   mi_definition mi_1_0_reset mi_1_0_sizes mi_1_0_inherit mi_1_0_store mi_1_0_oracle mi_1_1_reset mi_1_1_sizes mi_1_1_inherit mi_1_1_store mi_1_1_oracle mi_1_2_reset mi_1_2_sizes mi_1_2_inherit mi_1_2_store mi_1_2_oracle mi_1_3_reset mi_1_3_sizes mi_1_3_inherit mi_1_3_store mi_1_3_oracle mi_1_4_reset mi_1_4_sizes mi_1_4_inherit mi_1_4_store mi_1_4_oracle mi_1_0_0_compile mi_1_0_99_compile mi_1_17_0_compile mi_1_17_99_compile mi_1_300_0_compile mi_1_300_99_compile mi_8_0_reset mi_8_0_sizes mi_8_0_inherit mi_8_0_store mi_8_0_oracle mi_8_1_reset mi_8_1_sizes mi_8_1_inherit mi_8_1_store mi_8_1_oracle mi_8_2_reset mi_8_2_sizes mi_8_2_inherit mi_8_2_store mi_8_2_oracle mi_8_3_reset mi_8_3_sizes mi_8_3_inherit mi_8_3_store mi_8_3_oracle mi_8_4_reset mi_8_4_sizes mi_8_4_inherit mi_8_4_store mi_8_4_oracle mi_8_0_0_compile mi_8_0_99_compile mi_8_17_0_compile mi_8_17_99_compile mi_8_300_0_compile mi_8_300_99_compile mi_64_0_reset mi_64_0_sizes mi_64_0_inherit mi_64_0_store mi_64_0_oracle mi_64_1_reset mi_64_1_sizes mi_64_1_inherit mi_64_1_store mi_64_1_oracle mi_64_2_reset mi_64_2_sizes mi_64_2_inherit mi_64_2_store mi_64_2_oracle mi_64_3_reset mi_64_3_sizes mi_64_3_inherit mi_64_3_store mi_64_3_oracle mi_64_4_reset mi_64_4_sizes mi_64_4_inherit mi_64_4_store mi_64_4_oracle mi_64_0_0_compile mi_64_0_99_compile mi_64_17_0_compile mi_64_17_99_compile mi_64_300_0_compile mi_64_300_99_compile mi_80_0_reset mi_80_0_sizes mi_80_0_inherit mi_80_0_store mi_80_0_oracle mi_80_1_reset mi_80_1_sizes mi_80_1_inherit mi_80_1_store mi_80_1_oracle mi_80_2_reset mi_80_2_sizes mi_80_2_inherit mi_80_2_store mi_80_2_oracle mi_80_3_reset mi_80_3_sizes mi_80_3_inherit mi_80_3_store mi_80_3_oracle mi_80_4_reset mi_80_4_sizes mi_80_4_inherit mi_80_4_store mi_80_4_oracle mi_80_0_0_compile mi_80_0_99_compile mi_80_17_0_compile mi_80_17_99_compile mi_80_300_0_compile mi_80_300_99_compile \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_section_lookup_ignore_probeScript.sml lab_to_target_section_lookup_ignore_probe.out \
+  ALOOKUP_section_labels_ignore ALOOKUP_section_labels_ignore_types ALOOKUP_section_labels_ignore_hypotheses \
+  empty_duplicate_acc missing_key arbitrary_annotations guard_needed zero_query width1 width80 \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe labprops_extraction_validity_probeScript.sml labprops_extraction_validity_probe.out \
+  sec_label_ok_extract_labels sec_label_ok_extract_labels_types sec_label_ok_extract_labels_hypotheses \
+  empty mixed wrong_owner zero_rejected width1 width80 \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+run_probe lab_to_target_initial_encoding_navigation_probeScript.sml lab_to_target_initial_encoding_navigation_probe.out \
+  loc_to_pc_enc_sec_list loc_to_pc_enc_sec_list_types loc_to_pc_enc_sec_list_hypotheses \
+  empty section_zero mixed_index wrong_section_owner duplicate_labels absent zero_label_ignored width1 width80_large_ids \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_section_lookup_positions_probeScript.sml lab_to_target_section_lookup_positions_probe.out \
+  ALOOKUP_section_labels ALOOKUP_section_labels_types ALOOKUP_section_labels_hypotheses \
+  empty boundary_duplicate_acc head_success asm_prefix labasm_boundary missing distinct_guard_needed owner_guard_false length_guard_needed width1_large_pos width80_large_pos \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
