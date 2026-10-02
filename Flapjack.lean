@@ -1,4 +1,10 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
+import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
+import Flapjack.Compiler.Backend.Semantics.TargetProps.EncodingNonempty
+import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
+import Flapjack.Test.LabToTargetSimpleEncoderParity
+import Flapjack.Misc.BalancedMap.RotationCorrect.SingleR
+import Flapjack.Test.LabToTargetEncd0Parity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStoreConsts
@@ -6,13 +12,12 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsDelete
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticBufferWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMove
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsForceRename
-import Flapjack.Test.LabToTargetEncd0Parity
 import Flapjack.Test.LabToTargetLabelValidityParity
 import Flapjack.Test.LabToTargetSimilarLabelsParity
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsForceRename
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateEq
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMove
 import Flapjack.Test.LabToTargetGoodCodeParity
+import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
+import Flapjack.Compiler.Backend.StackToLab.InitializedProduction
 import Flapjack.Compiler.Backend.StackRemove.InitCode
 import Flapjack.Compiler.Backend.StackRemove.InitStubs
 import Flapjack.Compiler.Backend.StackRemove.Compile
@@ -160,6 +165,8 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstMemoryAppend
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSuffix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
@@ -599,6 +606,7 @@ import Flapjack.Compiler.Encoders.AsmSem.State
 import Flapjack.Compiler.Encoders.AsmProps.Memory
 import Flapjack.Compiler.Encoders.AsmSem.MemOps
 import Flapjack.Compiler.Encoders.AsmSem.Step
+import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
 import Flapjack.Misc.AsmWriteBytearray
 import Flapjack.Misc.BytesInMemory
@@ -1432,6 +1440,9 @@ import Flapjack.Compiler.Backend.StackAlloc.Compile
 import Flapjack.Compiler.Backend.StackAlloc.GcCode
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcSimple
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocSimple
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocNone
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveList
@@ -1452,6 +1463,8 @@ import Flapjack.Compiler.Backend.LabToTarget.Labels
 import Flapjack.Compiler.Backend.StackNames
 import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
+import Flapjack.FiniteMap.MapKeys
+import Flapjack.Compiler.Backend.StackNames.Proofs.RenameState
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
@@ -1548,6 +1561,7 @@ import Flapjack.Compiler.Backend.LabToTarget.ShareMemState
 import Flapjack.Misc.BalancedMap.NullSemantics
 import Flapjack.Misc.BalancedMap.InvariantSemantics
 import Flapjack.Misc.BalancedMap.LookupSemantics
+import Flapjack.Misc.BalancedMap.RotationAux
 import Flapjack.Misc.BalancedMap.Membership
 import Flapjack.Misc.BalancedMap.BalanceArithmetic
 

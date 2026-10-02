@@ -9,6 +9,15 @@ bmra_balL=⊢ ∀(k :α) (x :β) (l :(α, β) balanced_map) (r :(α, β) balance
 bmra_balR=⊢ ∀(k :α) (x :β) (l :(α, β) balanced_map) (r :(α, β) balanced_map). balR k x l r = if size l + size r ≤ (1 :num) then Bin (size l + size r + (1 :num)) k x l r else if size r > delta * size l then rotateL k x l r else Bin (size l + size r + (1 :num)) k x l r
 bmra_single_right=Bin 2 1 10 Tip (Bin 1 2 20 Tip Tip)
 bmra_single_left=Bin 2 2 20 (Bin 1 1 10 Tip Tip) Tip
+bmra_double_right=Bin 3 1 10 (Bin 1 0 0 Tip Tip) (Bin 1 2 20 Tip Tip)
+bmra_double_left=Bin 3 1 10 (Bin 1 0 0 Tip Tip) (Bin 1 2 20 Tip Tip)
+bmra_rotate_right_single=Bin 3 1 10 (Bin 1 0 0 Tip Tip) (Bin 1 2 20 Tip Tip)
+bmra_rotate_left_single=Bin 3 1 10 (Bin 1 0 0 Tip Tip) (Bin 1 2 20 Tip Tip)
+bmra_rotate_right_double=Bin 3 1 10 (Bin 1 0 0 Tip Tip) (Bin 1 2 20 Tip Tip)
+bmra_rotate_left_double=Bin 3 1 10 (Bin 1 0 0 Tip Tip) (Bin 1 2 20 Tip Tip)
+bmra_bal_nil=Bin 1 1 10 Tip Tip
+bmra_balL_nil=Bin 1 1 10 Tip Tip
+bmra_balR_nil=Bin 1 1 10 Tip Tip
 bmra_unspecified_unreduced=singleR 1 10 Tip Tip = doubleL 2 20 Tip Tip
 bmra_completed_singleR= [.] ⊢ singleR k1 x1 v t3 = case v of Tip => ARB | Bin v0 k2 x2 t1 t2 => bin k2 x2 t1 (bin k1 x1 t2 t3)
 bmra_completion_hyp=∃t2 t1 x2 k2 v0. v = Bin v0 k2 x2 t1 t2
