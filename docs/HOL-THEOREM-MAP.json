@@ -63644,5 +63644,35 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.6: genuine Skip/Const constructor case of complete state_rel_inst767-870, same three premises fullstateRel, regBoundInst, actual native source instHOL successful execution; same existential target successful execution and fullpoststateRel conclusion. Only constructor specialization, no targetrun/preservation/frame premise. Actual imported canonical StackSemStateFiniteExact with finite support regs/fpRegs/store and local genuine broad/exact codec witness; Spt code not named. Positive width NeZero/BitVec and independent C/F Type0 match original. Skip unchanged actual target; Const evaluates original expression and updates same bounded register via accepted fullstateRelSetVar. Whole instHOL closure conservatively inherits the reals_as_rational_cuts assumption even though these cases execute no FP operations; inherited flag retained. Fresh original fulltheorem/type and full constructor case kernel replays plus native generic kernel proofs checked. Fullparent still needs all other constructors and assembly."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InstructionSimulation/Binary.lean",
+    "lean_name": "stateRelInstBinop",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.7: genuine complete Binop/Shift arithmetic cases original state_rel_inst767-870. Same original three hypotheses fullstateRel, regBoundInst, actual native inst source success; same EXISTS actual native target success/fullpostrelation. All operators/shifts and Reg/Imm right operands arbitrary. Native special Or same-register path copies Word OR Loc, handled via derived lower-register equality; general assignments use accepted full expression theorem and bounded register update. Bounds derived only from regBoundInst, no extra expression/lookup/run/frame premise. Actual imported StackSemStateFiniteExact canonical regs/fpRegs/store with local genuine roundtrip witness, codeSpt not named; NeZero/BitVec width and independent C/F Type0 match source. Wholeinst closure inherits reals_as_rational_cuts assumption, conservatively flagged though these cases execute no FP. Original full theorem specializations/statements/types fresh kernel checked; complete native generic proofs. Fullparent retains otherarithmetic/memory/allFP and assembly obligation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InstructionSimulation/Binary.lean",
+    "lean_name": "stateRelInstShift",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.7: genuine complete Binop/Shift arithmetic cases original state_rel_inst767-870. Same original three hypotheses fullstateRel, regBoundInst, actual native inst source success; same EXISTS actual native target success/fullpostrelation. All operators/shifts and Reg/Imm right operands arbitrary. Native special Or same-register path copies Word OR Loc, handled via derived lower-register equality; general assignments use accepted full expression theorem and bounded register update. Bounds derived only from regBoundInst, no extra expression/lookup/run/frame premise. Actual imported StackSemStateFiniteExact canonical regs/fpRegs/store with local genuine roundtrip witness, codeSpt not named; NeZero/BitVec width and independent C/F Type0 match source. Wholeinst closure inherits reals_as_rational_cuts assumption, conservatively flagged though these cases execute no FP. Original full theorem specializations/statements/types fresh kernel checked; complete native generic proofs. Fullparent retains otherarithmetic/memory/allFP and assembly obligation."
   }
 ]

@@ -5083,3 +5083,7 @@ run_probe stack_remove_memoryloads_probeScript.sml stack_remove_memoryloads_prob
 run_probe stack_remove_inst_atoms_probeScript.sml stack_remove_inst_atoms_probe.out \
   ia_full ia_full_types ia_skip ia_skip_types ia_skip_proved ia_const ia_const_types ia_const_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_inst_binary_probeScript.sml stack_remove_inst_binary_probe.out \
+  ib_binop ib_binop_types ib_binop_proved ib_shift ib_shift_types ib_shift_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
