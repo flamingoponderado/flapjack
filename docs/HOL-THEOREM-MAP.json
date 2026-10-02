@@ -52324,5 +52324,59 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.2), original37-53: same native StoreName including fixed BitVec5 Temp payload and reviewed ordered48-element store_list. Private structural search reproduces INDEX_FIND0 first matching constructor/payload equality, NONE maps0 and SOME(index,payload) index+1; derived executable DecidableEq adds no hypothesis or changed equality. store_offset is literal modular0-word_offset(store_pos name), including absentCurrHeap0 and every Temp. No membership/wordfit/register or target-result assumptions. For offset only, standard positive BitVec width/NeZero translation qualified, byte stride DIV8 retained. Production replacement stays dependency-linked36ez.3; no compiler simulation asserted.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/InstBuilders.lean",
+    "lean_name": "whileProg",
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "While",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.3), original68-87: full native HolProg with faithful same-word payloads/MlString; arbitrary registers/cmp/reg_imm/body/list preserved. While is Loop(If cmp r ri body(Break0)); move Or has source in left and right positions, add/sub destination repeated, add_bytes uses n2w(dimindex DIV8); list_Seq empty Skip/singleton identity/right-associated Seq uses reviewed generic recursion at native single-word specialization. Only positive BitVec width/NeZero dimension translation; no register ranges, successful evaluation, safety, targetrun or extra hypotheses. Production route remains dependency-linked36ez.3; no semantic compiler correctness claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/InstBuilders.lean",
+    "lean_name": "moveInst",
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "move",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.3), original68-87: full native HolProg with faithful same-word payloads/MlString; arbitrary registers/cmp/reg_imm/body/list preserved. While is Loop(If cmp r ri body(Break0)); move Or has source in left and right positions, add/sub destination repeated, add_bytes uses n2w(dimindex DIV8); list_Seq empty Skip/singleton identity/right-associated Seq uses reviewed generic recursion at native single-word specialization. Only positive BitVec width/NeZero dimension translation; no register ranges, successful evaluation, safety, targetrun or extra hypotheses. Production route remains dependency-linked36ez.3; no semantic compiler correctness claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/InstBuilders.lean",
+    "lean_name": "subInst",
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "sub_inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.3), original68-87: full native HolProg with faithful same-word payloads/MlString; arbitrary registers/cmp/reg_imm/body/list preserved. While is Loop(If cmp r ri body(Break0)); move Or has source in left and right positions, add/sub destination repeated, add_bytes uses n2w(dimindex DIV8); list_Seq empty Skip/singleton identity/right-associated Seq uses reviewed generic recursion at native single-word specialization. Only positive BitVec width/NeZero dimension translation; no register ranges, successful evaluation, safety, targetrun or extra hypotheses. Production route remains dependency-linked36ez.3; no semantic compiler correctness claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/InstBuilders.lean",
+    "lean_name": "addInst",
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "add_inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.3), original68-87: full native HolProg with faithful same-word payloads/MlString; arbitrary registers/cmp/reg_imm/body/list preserved. While is Loop(If cmp r ri body(Break0)); move Or has source in left and right positions, add/sub destination repeated, add_bytes uses n2w(dimindex DIV8); list_Seq empty Skip/singleton identity/right-associated Seq uses reviewed generic recursion at native single-word specialization. Only positive BitVec width/NeZero dimension translation; no register ranges, successful evaluation, safety, targetrun or extra hypotheses. Production route remains dependency-linked36ez.3; no semantic compiler correctness claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/InstBuilders.lean",
+    "lean_name": "addBytesInWordInst",
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "add_bytes_in_word_inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.3), original68-87: full native HolProg with faithful same-word payloads/MlString; arbitrary registers/cmp/reg_imm/body/list preserved. While is Loop(If cmp r ri body(Break0)); move Or has source in left and right positions, add/sub destination repeated, add_bytes uses n2w(dimindex DIV8); list_Seq empty Skip/singleton identity/right-associated Seq uses reviewed generic recursion at native single-word specialization. Only positive BitVec width/NeZero dimension translation; no register ranges, successful evaluation, safety, targetrun or extra hypotheses. Production route remains dependency-linked36ez.3; no semantic compiler correctness claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/InstBuilders.lean",
+    "lean_name": "listSeqHOL",
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "list_Seq_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.3.3), original68-87: full native HolProg with faithful same-word payloads/MlString; arbitrary registers/cmp/reg_imm/body/list preserved. While is Loop(If cmp r ri body(Break0)); move Or has source in left and right positions, add/sub destination repeated, add_bytes uses n2w(dimindex DIV8); list_Seq empty Skip/singleton identity/right-associated Seq uses reviewed generic recursion at native single-word specialization. Only positive BitVec width/NeZero dimension translation; no register ranges, successful evaluation, safety, targetrun or extra hypotheses. Production route remains dependency-linked36ez.3; no semantic compiler correctness claimed."
   }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Test.StackLangInstBuilders
 import Flapjack.Test.StackRemoveStoreAddress
 import Flapjack.Test.StackRemoveStackAlloc
 import Flapjack.Test.StackRemoveStackAddress
