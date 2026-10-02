@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.LabelExistence
 import Flapjack.Compiler.Backend.LabToTarget.CodeOffsetPadding
 import Flapjack.Compiler.Backend.LabToTarget.OffsetPadding
 import Flapjack.Compiler.Backend.LabToTarget.OffsetEstablishment
