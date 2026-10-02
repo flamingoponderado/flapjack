@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe target_evaluate_eq_probeScript.sml target_evaluate_eq_probe.out \
+  evaluate_eq_base_statement evaluate_eq_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe misc_memory_regions_probeScript.sml misc_memory_regions_probe.out \
   memory_append_full_statement memory_change_full_statement \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
@@ -3287,8 +3291,16 @@ run_probe lab_to_target_share_mem_domain_probeScript.sml lab_to_target_share_mem
   smd_def smd_nil smd_univ smd_singleton \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_share_mem_state_probeScript.sml lab_to_target_share_mem_state_probe.out \
+  smsr_def smsr_nil smsr_halt \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe asm_sem_mem_ops_probeScript.sml asm_sem_mem_ops_probe.out \
   mo_ld2_le_reg mo_ld2_le_ok mo_ld2_be_reg mo_ld2_misaligned mo_ld2_dom mo_ld0_reg mo_ld0_failed mo_st1_mem mo_st1_ok mo_st2_misaligned mo_op_load mo_op_load32_failed mo_op_store8_mem mo_op_load16_reg \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
+
+run_probe asm_sem_step_probeScript.sml asm_sem_step_probe.out \
+  as_skip_pc as_const as_arith as_mem as_jump as_jcmp_t as_jcmp_f as_call as_jumpreg_ok as_jumpreg_bad as_loc as_step_proj \
   "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
 
 
@@ -4560,6 +4572,7 @@ run_probe ssa_cc_trans_correct_inst_store8_probeScript.sml ssa_cc_trans_correct_
 run_probe ssa_cc_trans_correct_inst_store32_probeScript.sml ssa_cc_trans_correct_inst_store32_probe.out \
   inst_store32_full inst_store32_type_st inst_store32_type_cst inst_store32_type_dst inst_store32_type_src inst_store32_type_offset inst_store32_type_ssa inst_store32_type_next inst_store32_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe evaluate_props_ffi_relation_probeScript.sml evaluate_props_ffi_relation_probe.out \
   ffi_rel_full_def ffi_rel_type ffi_rel_identity \
   "$cake_dir/semantics/proofs/evaluatePropsScript.sml" "$cake_dir/semantics/proofs"
@@ -4646,3 +4659,20 @@ run_probe word_to_stack_call_local_recovery_probeScript.sml word_to_stack_call_l
 run_probe balanced_map_singleR_probeScript.sml balanced_map_singleR_probe.out \
   bmsr_full bmsr_tree bmsr_invariant bmsr_lookup0 bmsr_lookup1 bmsr_lookup2 bmsr_badsize \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+run_probe init_code_probeScript.sml init_code_probe.out \
+  init_code_full_def init_code_type init_code_0 init_code_0_eq init_code_1 init_code_1_eq init_code_2 init_code_2_eq init_code_3 init_code_3_eq init_code_4 init_code_4_eq init_code_5 init_code_5_eq init_code_6 init_code_6_eq init_code_7 init_code_7_eq init_code_8 init_code_8_eq init_code_9 init_code_9_eq init_code_10 init_code_10_eq init_code_11 init_code_11_eq init_code_12 init_code_12_eq init_code_13 init_code_13_eq init_code_14 init_code_14_eq init_code_15 init_code_15_eq init_code_16 init_code_16_eq init_code_17 init_code_17_eq init_code_18 init_code_18_eq init_code_19 init_code_19_eq init_code_20 init_code_20_eq init_code_21 init_code_21_eq init_code_22 init_code_22_eq init_code_23 init_code_23_eq init_code_24 init_code_24_eq init_code_25 init_code_25_eq init_code_26 init_code_26_eq init_code_27 init_code_27_eq init_code_28 init_code_28_eq init_code_29 init_code_29_eq init_code_30 init_code_30_eq init_code_31 init_code_31_eq init_code_32 init_code_32_eq init_code_33 init_code_33_eq init_code_34 init_code_34_eq init_code_35 init_code_35_eq init_code_36 init_code_36_eq init_code_37 init_code_37_eq init_code_38 init_code_38_eq init_code_39 init_code_39_eq init_code_40 init_code_40_eq init_code_41 init_code_41_eq init_code_42 init_code_42_eq init_code_43 init_code_43_eq init_code_44 init_code_44_eq init_code_45 init_code_45_eq init_code_46 init_code_46_eq init_code_47 init_code_47_eq init_code_48 init_code_48_eq init_code_49 init_code_49_eq init_code_50 init_code_50_eq init_code_51 init_code_51_eq init_code_52 init_code_52_eq init_code_53 init_code_53_eq init_code_54 init_code_54_eq init_code_55 init_code_55_eq init_code_56 init_code_56_eq init_code_57 init_code_57_eq init_code_58 init_code_58_eq init_code_59 init_code_59_eq init_code_60 init_code_60_eq init_code_61 init_code_61_eq init_code_62 init_code_62_eq init_code_63 init_code_63_eq init_code_64 init_code_64_eq init_code_65 init_code_65_eq init_code_66 init_code_66_eq init_code_67 init_code_67_eq init_code_68 init_code_68_eq init_code_69 init_code_69_eq init_code_70 init_code_70_eq init_code_71 init_code_71_eq init_code_72 init_code_72_eq init_code_73 init_code_73_eq init_code_74 init_code_74_eq init_code_75 init_code_75_eq init_code_76 init_code_76_eq init_code_77 init_code_77_eq init_code_78 init_code_78_eq init_code_79 init_code_79_eq init_code_80 init_code_80_eq init_code_81 init_code_81_eq init_code_82 init_code_82_eq init_code_83 init_code_83_eq init_code_84 init_code_84_eq init_code_85 init_code_85_eq init_code_86 init_code_86_eq init_code_87 init_code_87_eq init_code_88 init_code_88_eq init_code_89 init_code_89_eq init_code_90 init_code_90_eq init_code_91 init_code_91_eq init_code_92 init_code_92_eq init_code_93 init_code_93_eq init_code_94 init_code_94_eq init_code_95 init_code_95_eq init_code_96 init_code_96_eq init_code_97 init_code_97_eq init_code_98 init_code_98_eq init_code_99 init_code_99_eq init_code_100 init_code_100_eq init_code_101 init_code_101_eq init_code_102 init_code_102_eq init_code_103 init_code_103_eq init_code_104 init_code_104_eq init_code_105 init_code_105_eq init_code_106 init_code_106_eq init_code_107 init_code_107_eq init_code_108 init_code_108_eq init_code_109 init_code_109_eq init_code_110 init_code_110_eq init_code_111 init_code_111_eq init_code_112 init_code_112_eq init_code_113 init_code_113_eq init_code_114 init_code_114_eq init_code_115 init_code_115_eq init_code_116 init_code_116_eq init_code_117 init_code_117_eq init_code_118 init_code_118_eq init_code_119 init_code_119_eq \
+  "$cake_dir/compiler/backend/stack_removeScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_remove_compile_native_probeScript.sml stack_remove_compile_native_probe.out \
+  init_stubs_full_def init_stubs_type compile_full_def compile_type init_stubs_0 init_stubs_0_eq compile_0 compile_0_eq compile_1 compile_1_eq compile_2 compile_2_eq compile_3 compile_3_eq init_stubs_1 init_stubs_1_eq compile_4 compile_4_eq compile_5 compile_5_eq compile_6 compile_6_eq compile_7 compile_7_eq init_stubs_2 init_stubs_2_eq compile_8 compile_8_eq compile_9 compile_9_eq compile_10 compile_10_eq compile_11 compile_11_eq init_stubs_3 init_stubs_3_eq compile_12 compile_12_eq compile_13 compile_13_eq compile_14 compile_14_eq compile_15 compile_15_eq init_stubs_4 init_stubs_4_eq compile_16 compile_16_eq compile_17 compile_17_eq compile_18 compile_18_eq compile_19 compile_19_eq init_stubs_5 init_stubs_5_eq compile_20 compile_20_eq compile_21 compile_21_eq compile_22 compile_22_eq compile_23 compile_23_eq init_stubs_6 init_stubs_6_eq compile_24 compile_24_eq compile_25 compile_25_eq compile_26 compile_26_eq compile_27 compile_27_eq init_stubs_7 init_stubs_7_eq compile_28 compile_28_eq compile_29 compile_29_eq compile_30 compile_30_eq compile_31 compile_31_eq init_stubs_8 init_stubs_8_eq compile_32 compile_32_eq compile_33 compile_33_eq compile_34 compile_34_eq compile_35 compile_35_eq init_stubs_9 init_stubs_9_eq compile_36 compile_36_eq compile_37 compile_37_eq compile_38 compile_38_eq compile_39 compile_39_eq \
+  "$cake_dir/compiler/backend/stack_removeScript.sml" "$cake_dir/compiler/backend"
+run_probe ssa_locals_force_rename_probeScript.sml ssa_locals_force_rename_probe.out \
+  force_locals_full force_locals_type_source force_locals_type_target force_locals_type_ssa force_locals_type_pairs force_locals_type_next \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe ssa_locals_force_rename_probeScript.sml ssa_locals_force_rename_probe.out \
+  force_locals_full force_locals_type_source force_locals_type_target force_locals_type_ssa force_locals_type_pairs force_locals_type_next \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_move_probeScript.sml ssa_cc_trans_correct_move_probe.out \
+  move_full move_type_priority move_type_moves move_type_st move_type_cst move_type_ssa move_type_next move_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

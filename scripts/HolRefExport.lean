@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMove
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsForceRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
