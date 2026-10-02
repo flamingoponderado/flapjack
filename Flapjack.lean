@@ -23,6 +23,7 @@ import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
 import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
 import Flapjack.Compiler.Backend.LabToTarget.MemoryTransport
 import Flapjack.Compiler.Backend.LabToTarget.LineInfo
+import Flapjack.Compiler.Backend.LabToTarget.ShmemExtraction
 import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop

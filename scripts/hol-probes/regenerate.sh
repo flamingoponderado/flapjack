@@ -5805,3 +5805,9 @@ run_probe lab_to_target_byte_interval_distinct_probeScript.sml lab_to_target_byt
   interval0 interval1 interval2 interval3 interval4 interval5 same_pc_guard byte_bound_guard dimensional_bound_guard \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_shmem_extraction_probeScript.sml lab_to_target_shmem_extraction_probe.out \
+  get_shmem_info_thm get_shmem_info_thm_types get_shmem_info_thm_hypotheses \
+  independent_validity full_prefix_output full_extraction empty_preserves_prefixes zero_labels wide_unsigned nonzero_label_guard \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
