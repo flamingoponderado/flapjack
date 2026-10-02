@@ -48823,5 +48823,33 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-cse-evaluation-frames, original179-218/272-285/521-550: Complete local original op/r/address/offset/w/s1/s2, source evaluation then not-store and only locals/memory/domain/be equalities, derives target evaluation. No target state/frame/simulation premise; Load16 and all8memops retained. Actual faithful clocked evaluate Inst and native set_var retained. Internal arithValue/instArithMap factor/prove exact native clauses under original eligibility, all8arithmetic constructors audited and no simplified tagged evaluator; typed signed division, both binop operands and Shift immediate match original. Value extraction uses unrestricted insert_eq through shared AssignmentResults, not an extra public hypothesis. LoadValue implementation unchanged while exposing checked proof-only support namespace for reuse; all prior load theorem signatures/manifest rows preserved. fmap_as_finite_support_relation names reviewed imported owner WordSemStateFiniteExact.fpRegs/store, not duplicated; same-module EvaluationFramesWitness genuine broad/exact roundtrip, original locals/code Spt not qualified. words_as_type_indexed_bitvec records only positive word dimensions/NeZero and arbitrary universe-0 config/FFI hosts. Inherits reals_as_rational_cuts through actual evaluate/inst, SOUNDNESS item8, no added IEEE assumption. Four literal complete original proof replays hyp=[] including three local declarations, four original inferred types and256whole theorem applications at1/32/64/80; matching256full kernel applications include write/destination alias and independent memory/state functions. Initial original harness prematurely reduced firstReg to99 and failed syntactic match; corrected original destination expression before successful complete regeneration. Whole CSE invariant/pass/compiler goal remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DeletionFrames.lean",
+    "lean_name": "evaluateArithUnsetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_arith_unset_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-cse-deletion-frames, original local341-405: Full original arbitrary arithmetic/register/value/state or memop/destination/address/offset/deletion/value/state binders and evaluation iff, not merely forward transport. Arithmetic original can_mem_arith and notMEM reads; load original non-store and address-distinct only. Destination/deletion alias permitted, no output evaluation/wf/clock/value-range premise. Native unset_var uses exact Spt delete; unconditional native lookup_delete proves input-value independence for arbitrary Spt shapes. Untagged arithmetic value factoring checked against actual faithful inst; native load support reused unchanged, including original Load16 impossible success. fmap_as_finite_support_relation names only imported reviewed WordSemStateFiniteExact.fpRegs/store with same-module DeletionFramesWitness genuine broad/exact roundtrip; locals/code stay native Spt. words_as_type_indexed_bitvec records positive width and universe-0 hosts only. Actual evaluate/inst inherits existing reals_as_rational_cuts SOUNDNESS item8. Two literal original complete proof replays hyp=[] and four original inferred types,152full original/kernel applications at1/32/64/80 including destination alias. Initial generated fixture incorrectly rewrote an outer set_var; repaired update generation and freshly regenerated before delivery. No complete data_inv/knowledge/pass/compiler claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DeletionFrames.lean",
+    "lean_name": "evaluateLoadUnsetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_unset_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-cse-deletion-frames, original local341-405: Full original arbitrary arithmetic/register/value/state or memop/destination/address/offset/deletion/value/state binders and evaluation iff, not merely forward transport. Arithmetic original can_mem_arith and notMEM reads; load original non-store and address-distinct only. Destination/deletion alias permitted, no output evaluation/wf/clock/value-range premise. Native unset_var uses exact Spt delete; unconditional native lookup_delete proves input-value independence for arbitrary Spt shapes. Untagged arithmetic value factoring checked against actual faithful inst; native load support reused unchanged, including original Load16 impossible success. fmap_as_finite_support_relation names only imported reviewed WordSemStateFiniteExact.fpRegs/store with same-module DeletionFramesWitness genuine broad/exact roundtrip; locals/code stay native Spt. words_as_type_indexed_bitvec records positive width and universe-0 hosts only. Actual evaluate/inst inherits existing reals_as_rational_cuts SOUNDNESS item8. Two literal original complete proof replays hyp=[] and four original inferred types,152full original/kernel applications at1/32/64/80 including destination alias. Initial generated fixture incorrectly rewrote an outer set_var; repaired update generation and freshly regenerated before delivery. No complete data_inv/knowledge/pass/compiler claim."
   }
 ]

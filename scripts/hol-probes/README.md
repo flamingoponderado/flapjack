@@ -4147,3 +4147,14 @@ native Inst clauses; LoadEvaluation support was exposed without changing its
 implementation or old theorem statements. Existing finite-map/positive-word
 translations and inherited rational-cut assumption (SOUNDNESS item 8) remain.
 These are invariant-update prerequisites, not full CSE/compiler correctness.
+
+`word_cse_deletion_frames_probeScript.sml` regenerates the two complete local
+`evaluate_arith_unset_var` / `evaluate_load_unset_var` proofs from original
+`word_cseProofScript.sml`, requiring closed hypotheses, plus four inferred types
+and 152 full theorem applications at widths 1/32/64/80. Fixtures cover all
+eligible arithmetic families and all non-store memory constructors, deletion
+of destination or an unrelated register, arbitrary full states and word-loc
+values. `WordCseDeletionFramesParity.lean` kernel-checks matching applications.
+The statements retain the original input guards and both evaluation directions.
+These regressions supplement source review; they do not prove cross-language
+equivalence or complete CSE correctness.
