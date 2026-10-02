@@ -5700,3 +5700,7 @@ run_probe stack_remove_comp_jump_lower_probeScript.sml stack_remove_comp_jump_lo
 run_probe stack_remove_comp_code_buffer_probeScript.sml stack_remove_comp_code_buffer_probe.out \
   cc_code_buffer_statement cc_code_buffer_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_bytearray_read_probeScript.sml stack_remove_bytearray_read_probe.out \
+  read_bytearray_IMP_read_bytearray_statement read_bytearray_IMP_read_bytearray_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

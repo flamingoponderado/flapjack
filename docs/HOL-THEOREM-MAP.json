@@ -67125,5 +67125,19 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead flapjack-sol-remove-codebuffer: genuine original comp_correct CodeBufferWrite2023-2034/full1481-1493. Original four source evaluation/nonError/full26stateRel/regBound premises, arbitrary native operands and all original result alternatives, actual target existential at clock+target.clock. Original source nonError eliminates invalid operands/failed buffer write only; target register lookups follow bounded getVar laws, target buffer equality follows original codeBuffer conjunct. Both execute identical native wordSemBufferWrite (same width address and setWidth8 value), clock0 proves actual target run. Full26postrelation established by identical buffer replacement, no supplied targetrun/write success/postrelation or stronger guard. Actual imported owning carrier/canonical regs-fpRegs-store codec roundtrip reexport; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts. Inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh original scoped HOL theorem literal case-body replay plus standalone strip prefix and original local getVar lemma; no full comp_correct assumed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/BytearrayReads.lean",
+    "lean_name": "readBytearrayImp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "read_bytearray_IMP_read_bytearray",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original313-321 source comparison2026-10-02: full original arbitrary count/address/source-target state/byte-list, free jump/off retained as universal parameters, full stateRel and actual source bytearray success imply exact target success. Native memLoadByteAuxExact outputs word8, so List(BitVec8) is the original result; native readBytearrayWordHOL instantiated at byteWidth8 has identical zero/successor and failure equations, word address+1 wraps modulo2^width without a count/nowrap/alignment premise. Count induction transports each actual successful source byte through accepted full memLoadByteAuxImp and preserves list ordering. Only canonical owning regs/fpRegs/store and positive type-indexed word qualifiers; genuine same-module state codec roundtrip reexport, Spt code/List stack unchanged, Type0 hosts. No target read assumed or memory correspondence added beyond full original relation. Original proof/local memory-read prerequisites independently replayed in readonly HOL."
   }
 ]
