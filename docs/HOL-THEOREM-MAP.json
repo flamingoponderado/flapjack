@@ -63361,5 +63361,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-02 original stack_allocProofScript.sml:4243-4345: full quantified binder order, free conf implicit, unused c1 Boolean retained, all four curried premise groups in original order including Temp0/1 domain, Temp2/3/4 values, register0 bound and registers1..8. No good_dimindex extra premise. Exact evaluate conclusion existential clock, six register witnesses and two store witnesses, memory m2, Temp0..3 updates, register0 Word r1a1 and register8 Word r2a2, all other fields preserved. Source complete induction follows original empty interval/fuel contradiction/header-load+length/native word_gen_gc_move_list_code_thm/Get0 Temp4/IH/evaluate_add_clock; proves Temp4 survives four-temp updates and clocks/threaded finite-map equalities directly, no supplied target result. Native positive-width BitVec NeZero and actual canonical StackSemStateFiniteExact regs/fpRegs/store with codec witness. Fresh original full typed statement and five determinate EVAL observations, kernel replays; no unspecified nonword oracle claim. Exact evaluator Inst closure inherits SOUNDNESS item8 reals_as_rational_cuts, not source acceptance of arbitrary dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_loop_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenGcMoveLoop.lean",
+    "lean_name": "word_gen_gc_move_loop_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 original stack_allocProofScript.sml:4347-4540 and fresh fully typed local statement: exact explicit binder order, original free conf and c1 implicit universals, all original conjuncts including unused len_size+2 and c1 retained. Twelve existential word_loc witnesses, added clock, exact memory output, seven Temp updates and nine register updates in original order; all other state fields preserved. Complete fuel induction covers stop/data/refs; derives collector flags, strict decrease and recursive entry facts from actual collector equations, then full data/refs code theorems and native evaluate_add_clock. No good_dimindex, target evaluation, output relation or simulation premise added. Canonical actual StackSemStateFiniteExact regs/fpRegs/store and nonvacuous same-module codec witness; positive-width BitVec NeZero translation. Kernel theorem audit only propext Classical.choice Quot.sound. Exact evaluator Inst closure inherits SOUNDNESS item8 reals_as_rational_cuts; this does not certify arbitrary dependency source acceptance."
   }
 ]

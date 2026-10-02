@@ -5048,3 +5048,8 @@ run_probe stack_remove_comp_atoms_probeScript.sml stack_remove_comp_atoms_probe.
 run_probe lab_to_target_section_prefix_nop_probeScript.sml lab_to_target_section_prefix_nop_probe.out \
   lines_enc_with_nop_pad_section lines_enc_with_nop_pad_section_types mixed_full_guards mixed_padded_encoding mixed_full_tuple prefix_guard_required empty_accumulator only_zero_labels empty_code call_first \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_alloc_gen_loop_statement_probeScript.sml stack_alloc_gen_loop_statement_probe.out \
+  gen_loop_full_typed_statement gen_loop_free_vars gen_loop_stop gen_loop_data_fuel_zero \
+  gen_loop_data_one gen_loop_refs_fuel_zero gen_loop_refs_one \
+  "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

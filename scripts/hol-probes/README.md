@@ -5786,3 +5786,13 @@ result-dependent FFI/state-relation conclusion. Full binder types are captured.
 Halt permits either Word or Loc payloads; Alloc is excluded by the original
 relation's allocation flag and original non-Error premise. No target run is
 assumed. The remaining constructor cases and assembly are still required.
+
+### Generational GC move-loop simulation
+
+`stack_alloc_gen_loop_statement_probeScript.sml` elaborates the full original local
+`word_gen_gc_move_loop_code_thm` statement (including free `c1` and `conf`) and
+captures five determinate original `word_gen_gc_move_loop` evaluations: immediate
+stop, data branch with zero/one fuel, and reference branch with zero/one fuel.
+`Flapjack/Test/GenGcMoveLoopParity.lean` replays these collector observations in
+the kernel. This capture does not replay the original simulation proof or claim
+coverage of unspecified nonword headers.
