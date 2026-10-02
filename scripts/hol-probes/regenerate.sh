@@ -4302,3 +4302,9 @@ run_probe balanced_map_core_types_probeScript.sml balanced_map_core_types_probe.
 run_probe balanced_map_key_ordered_types_probeScript.sml balanced_map_key_ordered_types_probe.out \
   bmkt_ordered bmkt_invariant \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_balance_arithmetic_probeScript.sml balanced_map_balance_arithmetic_probe.out \
+  bma_left bma_right bma_lem1 bma_lem2 bma_lem3 bma_lem4 bma_lem5 bma_lem6 bma_lem7 \
+  bma_left00 bma_left40 bma_left50 bma_left71 bma_left81 bma_left92 bma_left102 \
+  bma_right00 bma_right04 bma_right05 bma_right17 bma_right18 bma_right29 bma_right210 \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

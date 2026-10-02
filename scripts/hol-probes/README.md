@@ -4780,3 +4780,13 @@ payload String; existing homogeneous observations remain unchanged.
 independent query/key/result/payload types; the latter forces a homogeneous
 Ordering comparator. `BalancedMapKeyOrderedTypes` checks generic constructors
 and Bool-query/Nat-key/String-result/Bool-payload examples, including malformed sizes.
+
+### Full balanced-map rotation arithmetic
+
+`balanced_map_balance_arithmetic_probeScript.sml` captures both typed
+`almost_balancedL/R_def` equations and replays all seven local `balanced_lem`
+proofs with their original statements and tactic bodies. It recreates local
+`TIMES_MIN` using the original proof. Every replay has no open hypotheses.
+The fourteen predicate observations cover left/right zero, one, two and strict
+boundary cases, matched by kernel fixtures in `BalancedMapBalanceArithmeticParity`.
+Lemma7 retains the original unused, independently typed first binder.

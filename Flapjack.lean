@@ -1,3 +1,4 @@
+import Flapjack.Misc.BalancedMap.BalanceArithmetic
 import Flapjack.Misc.BalancedMap.Domain
 import Flapjack.Misc.BalancedMap.KeyOrderedSemantics
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMove

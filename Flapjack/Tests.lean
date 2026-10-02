@@ -1,3 +1,4 @@
+import Flapjack.Test.BalancedMapBalanceArithmeticParity
 import Flapjack.Test.BalancedMapKeyOrderedTypes
 import Flapjack.Test.BalancedMapHeterogeneousParity
 import Flapjack.Test.LabToTargetLabsDomainParity
