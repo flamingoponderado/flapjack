@@ -1,0 +1,11 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "state_ok_type="; print_type(type_of ``state_ok``); print "\n");
+val _ = (print "state_ok_definition="; print_term(concl state_ok_def));
+fun emit label tm = (print(label ^ "="); print_term(concl(prove(tm, simp[state_ok_def,sptreeTheory.lookup_insert]))));
+val _ = emit "state_ok_empty" ``state_ok LN (code:64 stackLang$prog num_map)``;
+val _ = emit "state_ok_entry" ``state_ok (insert 7 4 LN) (insert 7 (Seq (StackAlloc 4) Skip:64 stackLang$prog) LN)``;
+val _ = emit "state_ok_zero" ``state_ok (insert 7 0 LN) (insert 7 (Seq (StackAlloc 0) Skip:64 stackLang$prog) LN)``;
+val _ = emit "state_ok_bare_rejected" ``~state_ok (insert 7 4 LN) (insert 7 (StackAlloc 4:64 stackLang$prog) LN)``;
+val _ = emit "state_ok_wrong_size" ``~state_ok (insert 7 4 LN) (insert 7 (Seq (StackAlloc 6) Skip:64 stackLang$prog) LN)``;
