@@ -94,6 +94,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
+import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreNames
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapWrites

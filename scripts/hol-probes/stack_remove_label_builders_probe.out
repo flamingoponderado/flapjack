@@ -1,0 +1,8 @@
+lf_statement=∀k n. get_labels (stack_free k n) = ∅
+lf_proved=T
+la_statement=∀jump k n. get_labels (stack_alloc jump k n) = ∅
+la_proved=T
+lu_statement=∀n n0. get_labels (upshift n n0) = ∅
+lu_proved=T
+ld_statement=∀n n0. get_labels (downshift n n0) = ∅
+ld_proved=T
