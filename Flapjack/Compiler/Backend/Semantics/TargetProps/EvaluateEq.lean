@@ -26,6 +26,52 @@ private theorem encodedRegion {width : Nat} [NeZero width] (c : AsmConfigExact w
   rw [hlen] at hsplit
   exact ⟨i, k, hk, bytesInMemory_subset _ _ _ _ _ ⟨hsub, hsplit.2⟩⟩
 
+/-- Extract the remaining assertion trajectory after fixing its first oracle.
+This is local proof infrastructure for the original successor argument, not a
+separately claimed HOL declaration. -/
+private theorem assertsAfterFirst {S Q : Type} (n : Nat) (next : S → S)
+    (proj : S → Q) (first : S → S) (s : S) (P R : S → Prop)
+    (hfirst : ∀ ms, proj (first ms) = proj ms)
+    (h : ∀ env, interferenceOk env proj →
+      asserts (n + 1) (fun k ms => env k (next ms)) s P R)
+    (env : Nat → S → S) (henv : interferenceOk env proj) :
+    asserts n (fun k ms => env k (next ms)) (first (next s)) P R := by
+  let patched := fun k ms => if k = n + 1 then first ms else env k ms
+  have hp : interferenceOk patched proj := by
+    intro k ms
+    by_cases hk : k = n + 1
+    · simpa [patched, hk] using hfirst ms
+    · simpa [patched, hk] using henv k ms
+  have ha := h patched hp
+  have ht : asserts n (fun k ms => patched k (next ms)) (first (next s)) P R := by
+    simpa only [asserts, patched, if_pos rfl] using ha.2
+  apply asserts_weaken n (fun k ms => patched k (next ms))
+    (fun k ms => env k (next ms)) (first (next s)) P P R _ ht
+  intro k hk
+  constructor
+  · funext ms
+    have hne : k ≠ n + 1 := by omega
+    simp [patched, hne]
+  · exact fun hx => hx
+
+/-- Transport the original reversed-index frame assertion after its first
+step. This extracts the source successor proof's asserts2_change_interfer use;
+it is local infrastructure with no independent HOL original claimed. -/
+private theorem frameAfterFirst {S : Type} (n : Nat) (oracle : Nat → S → S)
+    (next : S → S) (s : S) (P : S → S → Prop)
+    (h : asserts2 (n + 2) (fun k => oracle (n + 2 - k)) next s P) :
+    asserts2 (n + 1) (fun k => holShiftSeq 1 oracle (n + 1 - k))
+      next (oracle 0 (next s)) P := by
+  have ht : asserts2 (n + 1) (fun k => oracle (n + 2 - k))
+      next (oracle 0 (next s)) P := by
+    simpa only [asserts2, Nat.sub_self] using h.2
+  apply asserts2_changeInterfer (n + 1) (fun k => oracle (n + 2 - k))
+    (fun k => holShiftSeq 1 oracle (n + 1 - k)) next (oracle 0 (next s)) P
+  refine ⟨ht, ?_⟩
+  intro k hk
+  have he : n + 2 - k = (n + 1 - k) + 1 := by omega
+  simp only [holShiftSeq, he]
+
 /-- Original evaluate_EQ_evaluate_lemma base case. All original hypotheses are
 retained, including the universal environment assertion and full frame condition.
 Inherited total holEl/holHd semantics are unchanged: out-of-range names remain
