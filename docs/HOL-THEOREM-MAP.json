@@ -59821,5 +59821,32 @@
     "lean_name": "holLinv",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02: pred_setScript.sml:2776-2778: LINV f s y = THE (LINV_OPT f s y), with THE the reviewed holThe (THE NONE unspecified). The [Nonempty α] binder is HOL's type inhabitedness, as for holThe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "call_args_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/CallArgs.lean",
+    "lean_name": "callArgs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): stackPropsScript.sml:1107-1128, clause for clause. Seq and If conjoin both branches; Loop recurses; Halt n <=> n = ptr; FFI fixes all five registers. Call x1 _ x2 is T for NONE; for SOME (y,r,_,_) it requires call_args y, r = ret, and call_args of the SOME handler body (else T). Install fixes ptr, len and ret; every other constructor is T. The HOL <=> clauses are Prop-valued. Width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "stack_names_lab_pres",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/LabelsCallArgs.lean",
+    "lean_name": "stackNamesLabPres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): stack_namesProofScript.sml:587-594: ∀f p. extract_labels p = extract_labels (comp f p), same binders, same equation direction, over the tagged stackProps extract_labels (extractLabels) and comp_def (progCompHOL); proved by comp_ind-style induction (progCompHOL.induct). Width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "stack_names_call_args",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/LabelsCallArgs.lean",
+    "lean_name": "stackNamesCallArgs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): stack_namesProofScript.sml:690-709. Same premise conjunction: compile f p = p' (compileHOL) ∧ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND p). Same conclusion: EVERY (λp. call_args p (find_name f 1) (find_name f 2) (find_name f 3) (find_name f 4) (find_name f 0)) (MAP SND p'). EVERY P l is ∀ q ∈ l, P q; find_name is findNameSpt. Free f, p, p' are implicit binders. Width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width]."
   }
 ]
