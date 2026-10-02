@@ -49470,5 +49470,49 @@
     "hol_name": "ALL_DISTINCT_MEM_toAList_fromAList",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-sorted-alist), source2633-2680/5576-5584: same arbitrary list and entry, original distinct key map guard and native Spt roundtrip membership equivalence; no wf, sortedness, payload equality, observer, output lookup or reconstruction premise. Spt native tree carrier, Nat keys, arbitrary payloads, HOL lists/products and adjacent strict sorting retained; no word or representation qualifier needed. Literal complete original theorem replay and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SourceFrameSize.lean",
+    "lean_name": "pushEnvSetStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "push_env_set_store",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-source-frame-size): source231-236: arbitrary environment/state/allocation word, actual native pushEnv NONE and setStore AllocSize Word update, full state equality with no premise. Original typed nn is NONE of the actual native handler tuple/prog type. Both functions use the imported reviewed WordSemStateFiniteExact; same canonical fpRegs/store field translation and genuine toBroad/ofBroad roundtrip witness, no duplicate carrier. Source word dimension is positive BitVec width with NeZero, FFI host type is arbitrary universe-zero Type; all source guard/conclusion clauses compared. Fresh literal complete original proof and native fixtures.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SourceFrameSize.lean",
+    "lean_name": "sourceKeyEqStackSize",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "s_key_eq_stack_size",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-source-frame-size): source2107-2117: arbitrary positive-width source stack pair, sole exact sKeyEq premise and complete optional stack_size equality, identical full statement to reviewed native WordProps s_key_eq_stack_size. Reuses that kernel proof, including absent size predictions and handlers. Source word dimension is positive BitVec width with NeZero, FFI host type is arbitrary universe-zero Type; all source guard/conclusion clauses compared. Fresh literal complete original proof and native fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SourceFrameSize.lean",
+    "lean_name": "decStackStackSize",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "dec_stack_stack_size",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-source-frame-size): source2033-2043: arbitrary roots/source/output stacks, only actual successful native wordSemDecStack premise, complete optional stack-size equality. Derives actual decoder key preservation and applies full native size theorem; no desired size/evaluation/relation assumption. Source word dimension is positive BitVec width with NeZero, FFI host type is arbitrary universe-zero Type; all source guard/conclusion clauses compared. Fresh literal complete original proof and native fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SourceFrameSize.lean",
+    "lean_name": "sourceKeyEqPushEnvLocalsSize",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "s_key_eq_push_env_locals_size",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-source-frame-size): source2119-2131: arbitrary native environment/handler option/state/head predicted size/nonGC/GC lists/handler/tail, sole exact key relation on actual native push output. Both original conclusions n=s.locals_size and stack_size s.stack=stack_size tail retained and derived; no size definedness or post-state premise. SOME handler retains full Nat/prog/Nat/Nat tuple even ignored values, and opt2 is arbitrary Nat/Nat/Nat. Existing canonical imported state fpRegs/store translation with native roundtrip witness, no duplicate carrier. Source word dimension is positive BitVec width with NeZero, FFI host type is arbitrary universe-zero Type; all source guard/conclusion clauses compared. Fresh literal complete original proof and native fixtures.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ]
   }
 ]
