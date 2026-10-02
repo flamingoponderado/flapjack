@@ -64954,5 +64954,20 @@
     "statement_status": "reviewed_reals_as_rational_cuts",
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .18.5.13.8.2.6.3.2: literal full riscvScript.sml:10008 equation, rd/rs fixedBitVec5, fprnd fixedBitVec3, whole native riscv_state -> riscv_state. Input is zero-prefixed full64 (65bits) then Int; preserves original ordered round NONE->signalException Illegal_Instr and SOME mode->writeFPRS/writeFPRD with no extra premise or restricted modes. machine_ieeeLib68-78/100-108/128-134 defines fieldconcat codec and int_to_fp=real_to_fp mode(real_of_int); integer arguments are rational, binary_ieeeScript539-541 zero sign is mode=roundTowardNegative. Full generic choice-shaped holRealToFloat/holIntToFp64 retained; all-mode numerical agreement proved separately by holFloatRound_fp32/fp64. reals_as_rational_cuts records only this rational real rendering and docs/SOUNDNESS.md item8, not cross-HOL equality. Native dependency fields/carriers/state access/write bodies are the previously reviewed original64/32bit model closure; function fields remain original ATy functions, not finite maps. writeFPRS preserves upper32 FP bits, marks MFS Dirty/MSDtrue and records zero-extended payload Delta.data1; writeFPRD replaces64bits with matching status/delta effects. No invented NV/NX changes. Fresh original144 tuples and all144 kernel replays observe destination/source, MFS/MSD, Delta.data1, NV/NX, othercore FP and Illegal_Instr trap across18scenarios, all4supportedmodes/dynamic/zero/invalid. This review covers these8complete equations and their specific dependencies, not full Run/NextRISCV or unrelated model clauses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "alloc_correct_lemma_Generational",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/AllocGenerational/Partial.lean",
+    "lean_name": "alloc_correct_lemma_Generational_partial",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02, bead .5.8.5.1: original partial collector case 4592-4832 only; full Generational case remains open. Fresh literal typed HOL capture confirms c is stack_alloc config. Original allocation, non-error, gcFun/kind, bitmap/stack bounds and initial register premises retained; only original partial branch selector added. Actual wordGcCode evaluation, existential clock/register map, full final state, halt-only result, register submap and return register conclusion retained. Source collector success derives every move/roots/ref-list/data/memcpy premise; no target evaluation or successful pass assumed. Original store updates, root order, stack prefix, memory/domain and clock compared. Imported actual StackSemStateFiniteExact owner uses canonical regs/fpRegs/store maps, same-module genuine codec roundtrip; positive-width BitVec and Type host translation only. Exact instruction closure inherits SOUNDNESS item 8 reals_as_rational_cuts assumption; this source comparison does not certify arbitrary untagged dependencies."
   }
 ]
