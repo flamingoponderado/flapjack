@@ -5377,3 +5377,12 @@ children, nonempty single/double rotations, left Tip, nonempty-right fallback,
 and both heavy branches. Kernel fixtures check their input invariants and
 consume the full equality. Small-child constructors and impossible malformed
 heavy branches are derived from invariants; no stronger premises are added.
+
+### Full original left-balancing correctness
+
+`balanced_map_balanceL_correct_probeScript.sml` replays the entire original
+local `balanceL_thm` proof and full prerequisite proof chain, checking its
+typed theorem is closed. Six actual branches capture output trees, invariants
+and inserted-key lookups. `BalancedMapBalanceLCorrectParity` checks all original
+input premises, consumes both native invariant/map conclusions, and derives
+the actual canonical inserted-key observations. No compiler caller changes.

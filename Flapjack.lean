@@ -1,3 +1,4 @@
+import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceLCorrect
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceL
 import Flapjack.Misc.BalancedMap.RotationCorrect.RotateR
 import Flapjack.Misc.BalancedMap.RotationCorrect.DoubleR

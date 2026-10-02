@@ -4737,3 +4737,7 @@ run_probe balanced_map_rotateR_probeScript.sml balanced_map_rotateR_probe.out \
 run_probe balanced_map_balanceL_eq_probeScript.sml balanced_map_balanceL_eq_probe.out \
   bmbl_full bmbl_empty bmbl_singleton bmbl_lr_only bmbl_ll_only bmbl_single_tip bmbl_double_tip bmbl_left_tip bmbl_fallback bmbl_heavy_single bmbl_heavy_double \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_balanceL_correct_probeScript.sml balanced_map_balanceL_correct_probe.out \
+  bmlc_full bmlc_empty_tree bmlc_empty_invariant bmlc_empty_lookup5 bmlc_fallback_tree bmlc_fallback_invariant bmlc_fallback_lookup5 bmlc_single_tip_tree bmlc_single_tip_invariant bmlc_single_tip_lookup5 bmlc_double_tip_tree bmlc_double_tip_invariant bmlc_double_tip_lookup5 bmlc_heavy_single_tree bmlc_heavy_single_invariant bmlc_heavy_single_lookup5 bmlc_heavy_double_tree bmlc_heavy_double_invariant bmlc_heavy_double_lookup5 \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
