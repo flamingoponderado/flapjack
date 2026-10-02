@@ -1,0 +1,217 @@
+extract_labels=(∀(ret :(α stackLang$prog # num # num # num) option)
+     (h :(α stackLang$prog # num # num) option) (dest :num + num).
+   extract_labels (Call ret dest h :α stackLang$prog) =
+   case ret of
+     (NONE :(α stackLang$prog # num # num # num) option) =>
+       ([] :(num # num) list)
+   | SOME (ret_handler,v5,l1,l2) =>
+     (let
+        (ret_rest :(num # num) list) = extract_labels ret_handler
+      in
+        case h of
+          (NONE :(α stackLang$prog # num # num) option) =>
+            [(l1,l2)] ++ ret_rest
+        | SOME (prog,l1',l2') =>
+          (let
+             (h_rest :(num # num) list) = extract_labels prog
+           in
+             [(l1,l2); (l1',l2')] ++ ret_rest ++ h_rest))) ∧
+(∀(s1 :α stackLang$prog).
+   extract_labels (Loop s1 :α stackLang$prog) = extract_labels s1) ∧
+(∀(s2 :α stackLang$prog) (s1 :α stackLang$prog).
+   extract_labels (Seq s1 s2) = extract_labels s1 ++ extract_labels s2) ∧
+(∀(ri :α reg_imm) (r1 :num) (e3 :α stackLang$prog) (e2 :α stackLang$prog)
+     (cmp :cmp).
+   extract_labels (If cmp r1 ri e2 e3 :α stackLang$prog) =
+   extract_labels e2 ++ extract_labels e3) ∧
+extract_labels (Skip :α stackLang$prog) = ([] :(num # num) list) ∧
+(∀(v3 :α inst).
+   extract_labels (Inst v3 :α stackLang$prog) = ([] :(num # num) list)) ∧
+(∀(v8 :store_name) (v7 :num).
+   extract_labels (Get v7 v8 :α stackLang$prog) = ([] :(num # num) list)) ∧
+(∀(v9 :store_name) (v10 :num).
+   extract_labels (Set v9 v10 :α stackLang$prog) = ([] :(num # num) list)) ∧
+(∀(v13 :num) (v12 :num) (v11 :binop).
+   extract_labels (OpCurrHeap v11 v12 v13 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v27 :num) (v26 :num) (v25 :num).
+   extract_labels (JumpLower v25 v26 v27 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v28 :num).
+   extract_labels (Alloc v28 :α stackLang$prog) = ([] :(num # num) list)) ∧
+(∀(v31 :num option) (v30 :num) (v29 :num).
+   extract_labels (StoreConsts v29 v30 v31 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v32 :num).
+   extract_labels (Raise v32 :α stackLang$prog) = ([] :(num # num) list)) ∧
+(∀(v33 :num).
+   extract_labels (Return v33 :α stackLang$prog) = ([] :(num # num) list)) ∧
+(∀(v34 :num).
+   extract_labels (Break v34 :α stackLang$prog) = ([] :(num # num) list)) ∧
+(∀(v35 :num).
+   extract_labels (Continue v35 :α stackLang$prog) = ([] :(num # num) list)) ∧
+(∀(v41 :num) (v40 :num) (v39 :num) (v38 :num) (v37 :num) (v36 :mlstring).
+   extract_labels (FFI v36 v37 v38 v39 v40 v41 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+extract_labels (Tick :α stackLang$prog) = ([] :(num # num) list) ∧
+(∀(v44 :num) (v43 :num) (v42 :num).
+   extract_labels (LocValue v42 v43 v44 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v49 :num) (v48 :num) (v47 :num) (v46 :num) (v45 :num).
+   extract_labels (Install v45 v46 v47 v48 v49 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v52 :α addr) (v51 :num) (v50 :memop).
+   extract_labels (ShMemOp v50 v51 v52) = ([] :(num # num) list)) ∧
+(∀(v54 :num) (v53 :num).
+   extract_labels (CodeBufferWrite v53 v54 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v56 :num) (v55 :num).
+   extract_labels (DataBufferWrite v55 v56 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v57 :num).
+   extract_labels (RawCall v57 :α stackLang$prog) = ([] :(num # num) list)) ∧
+(∀(v58 :num).
+   extract_labels (StackAlloc v58 :α stackLang$prog) = ([] :(num # num) list)) ∧
+(∀(v59 :num).
+   extract_labels (StackFree v59 :α stackLang$prog) = ([] :(num # num) list)) ∧
+(∀(v61 :num) (v60 :num).
+   extract_labels (StackStore v60 v61 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v63 :num) (v62 :num).
+   extract_labels (StackStoreAny v62 v63 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v65 :num) (v64 :num).
+   extract_labels (StackLoad v64 v65 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v67 :num) (v66 :num).
+   extract_labels (StackLoadAny v66 v67 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v68 :num).
+   extract_labels (StackGetSize v68 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v69 :num).
+   extract_labels (StackSetSize v69 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+(∀(v71 :num) (v70 :num).
+   extract_labels (BitmapLoad v70 v71 :α stackLang$prog) =
+   ([] :(num # num) list)) ∧
+∀(v72 :num).
+  extract_labels (Halt v72 :α stackLang$prog) = ([] :(num # num) list)
+extract_labels_types=
+find_code_labels=(find_code (d :num + β) (r :β |-> γ word_loc)
+   (code :α stackLang$prog sptree$num_map) :α stackLang$prog option) =
+SOME (e :α stackLang$prog) ⇒
+get_labels e ⊆ loc_check code
+find_code_labels_types=(e :α stackLang$prog)::α stackLang$prog;(code :α stackLang$prog sptree$num_map)::α stackLang$prog sptree$num_map;(r :β |-> γ word_loc)::β |-> γ word_loc;(d :num + β)::num + β;
+find_code=(∀(p :num) (regs :β |-> γ word_loc) (code :α sptree$num_map).
+   (find_code (INL p :num + β) regs code :α option) = lookup p code) ∧
+∀(r :β) (regs :β |-> γ word_loc) (code :α sptree$num_map).
+  (find_code (INR r :num + β) regs code :α option) =
+  case FLOOKUP regs r of
+    (NONE :γ word_loc option) => (NONE :α option)
+  | SOME (Word v5) => (NONE :α option)
+  | SOME (Loc loc (0 :num) :γ word_loc) => lookup loc code
+  | SOME (Loc loc (SUC v9) :γ word_loc) => (NONE :α option)
+find_code_types=
+get_labels=(∀(p2 :α stackLang$prog) (p1 :α stackLang$prog).
+   get_labels (Seq p1 p2) = get_labels p1 ∪ get_labels p2) ∧
+(∀(v2 :α reg_imm) (v1 :num) (v0 :cmp) (p2 :α stackLang$prog)
+     (p1 :α stackLang$prog).
+   get_labels (If v0 v1 v2 p1 p2 :α stackLang$prog) =
+   get_labels p1 ∪ get_labels p2) ∧
+(∀(p :α stackLang$prog). get_labels (Loop p :α stackLang$prog) = get_labels p) ∧
+(∀(v3 :num + num) (ret :(α stackLang$prog # num # num # num) option)
+     (handler :(α stackLang$prog # num # num) option).
+   get_labels (Call ret v3 handler :α stackLang$prog) =
+   case ret of
+     (NONE :(α stackLang$prog # num # num # num) option) =>
+       (∅ :num # num -> bool)
+   | SOME (r,v5,l1,l2) =>
+     (l1,l2) INSERT
+     get_labels r ∪
+     case handler of
+       (NONE :(α stackLang$prog # num # num) option) =>
+         (∅ :num # num -> bool)
+     | SOME (r',l1',l2') => (l1',l2') INSERT get_labels r') ∧
+(∀(v4 :num). get_labels (Halt v4 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+get_labels (Skip :α stackLang$prog) = (∅ :num # num -> bool) ∧
+(∀(v7 :α inst).
+   get_labels (Inst v7 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v9 :store_name) (v8 :num).
+   get_labels (Get v8 v9 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v11 :num) (v10 :store_name).
+   get_labels (Set v10 v11 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v14 :num) (v13 :num) (v12 :binop).
+   get_labels (OpCurrHeap v12 v13 v14 :α stackLang$prog) =
+   (∅ :num # num -> bool)) ∧
+(∀(v28 :num) (v27 :num) (v26 :num).
+   get_labels (JumpLower v26 v27 v28 :α stackLang$prog) =
+   (∅ :num # num -> bool)) ∧
+(∀(v29 :num).
+   get_labels (Alloc v29 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v32 :num option) (v31 :num) (v30 :num).
+   get_labels (StoreConsts v30 v31 v32 :α stackLang$prog) =
+   (∅ :num # num -> bool)) ∧
+(∀(v33 :num).
+   get_labels (Raise v33 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v34 :num).
+   get_labels (Return v34 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v35 :num).
+   get_labels (Break v35 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v36 :num).
+   get_labels (Continue v36 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v42 :num) (v41 :num) (v40 :num) (v39 :num) (v38 :num) (v37 :mlstring).
+   get_labels (FFI v37 v38 v39 v40 v41 v42 :α stackLang$prog) =
+   (∅ :num # num -> bool)) ∧
+get_labels (Tick :α stackLang$prog) = (∅ :num # num -> bool) ∧
+(∀(v45 :num) (v44 :num) (v43 :num).
+   get_labels (LocValue v43 v44 v45 :α stackLang$prog) =
+   (∅ :num # num -> bool)) ∧
+(∀(v50 :num) (v49 :num) (v48 :num) (v47 :num) (v46 :num).
+   get_labels (Install v46 v47 v48 v49 v50 :α stackLang$prog) =
+   (∅ :num # num -> bool)) ∧
+(∀(v53 :α addr) (v52 :num) (v51 :memop).
+   get_labels (ShMemOp v51 v52 v53) = (∅ :num # num -> bool)) ∧
+(∀(v55 :num) (v54 :num).
+   get_labels (CodeBufferWrite v54 v55 :α stackLang$prog) =
+   (∅ :num # num -> bool)) ∧
+(∀(v57 :num) (v56 :num).
+   get_labels (DataBufferWrite v56 v57 :α stackLang$prog) =
+   (∅ :num # num -> bool)) ∧
+(∀(v58 :num).
+   get_labels (RawCall v58 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v59 :num).
+   get_labels (StackAlloc v59 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v60 :num).
+   get_labels (StackFree v60 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v62 :num) (v61 :num).
+   get_labels (StackStore v61 v62 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v64 :num) (v63 :num).
+   get_labels (StackStoreAny v63 v64 :α stackLang$prog) =
+   (∅ :num # num -> bool)) ∧
+(∀(v66 :num) (v65 :num).
+   get_labels (StackLoad v65 v66 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v68 :num) (v67 :num).
+   get_labels (StackLoadAny v67 v68 :α stackLang$prog) =
+   (∅ :num # num -> bool)) ∧
+(∀(v69 :num).
+   get_labels (StackGetSize v69 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+(∀(v70 :num).
+   get_labels (StackSetSize v70 :α stackLang$prog) = (∅ :num # num -> bool)) ∧
+∀(v72 :num) (v71 :num).
+  get_labels (BitmapLoad v71 v72 :α stackLang$prog) = (∅ :num # num -> bool)
+get_labels_types=
+loc_check=∀(code :α stackLang$prog sptree$num_map) (l1 :num) (l2 :num).
+  loc_check code (l1,l2) ⇔
+  l2 = (0 :num) ∧ l1 ∈ (domain code :num -> bool) ∨
+  ∃(n :num) (e :α stackLang$prog).
+    lookup n code = SOME e ∧ (l1,l2) ∈ get_labels e
+loc_check_types=(code :α stackLang$prog sptree$num_map)::α stackLang$prog sptree$num_map;(l1 :num)::num;(l2 :num)::num;
+key_bool_direct=SOME 41
+key_bool_indirect=SOME 41
+key_bool_missing=NONE
+key_bool_nonzero=NONE
+key_bool_word=NONE
+key_list_indirect=SOME 41
+key_list_missing_code=NONE
+key_nat_legacy=SOME 41

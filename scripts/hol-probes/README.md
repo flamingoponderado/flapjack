@@ -1,3 +1,15 @@
+`stack_remove_store_address_probe.out` captures both complete storage-address definitions/types, all48storedname positions, absentCurrHeap and30 modular offsets at widths1/8/32/64/80. Identical kernel fixtures check exact search equality, one-based positions and modular subtraction.
+
+`stack_remove_stack_alloc_probe.out` captures complete allocation definitions/types and 28 native constructors: both jump modes, zero and chunk boundaries, widths1/8/64/80, arbitrary pointer and single-builder word wrapping. Kernel fixtures retain every original overflow check.
+
+`stack_remove_stack_address_probe.out` captures all four complete native address-builder definitions/types and forty original constructors at zero, 255/chunk boundaries, widths1/8/64/80 and arbitrary registers. Kernel fixtures preserve immediate instructions, word wrapping and nested Seq.
+
+`stack_remove_stack_free_probe.out` records the two complete original
+builder definitions/types and exact native immediate constructors across
+zero/255/256/multiple chunks and widths1/8/64/80. Kernel parity preserves
+literal Seq association and word-offset wrapping; executable runtime-route
+replacement remains open on36ez.3, with no macro/peephole equivalence claim.
+
 `ssa_reconcile_get_vars_probe.out` replays the literal original full theorem
 and list-induction proof, and records all universally quantified binder types.
 The Lean counterpart keeps distinctness, native get_vars result existence,
@@ -4464,6 +4476,13 @@ local definition shape and are not a cross-language equivalence theorem.
 `ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
 
 `ssa_reconcile_empty_probe.out` replays the complete original local evaluator reconciliation proof and its literal prerequisites, then specializes the genuine empty-moves branch. Six native types are captured; this is regression evidence, and the Lean branch independently derives the evaluator/post-state conclusions. Full SSA simulation remains unfinished.
+`stackprops_stack_lengths_probeScript.sml` literally replays the complete
+original `map_bitmap_length` and `dec_stack_length` proofs, capturing full
+statements and quantified types (four rows), plus eighteen generic payload and
+independent bitmap/stack-width decoder observations.
+`StackPropsStackLengthsParity.lean` kernel-replays the observations and applies
+both full theorems, including an 80-bit multi-frame decoded-stack result.
+A one-bit bitmap continuation with no following word correctly returns NONE.
 `ssa_reconcile_alookup_zip_probe.out` replays both original generic indexed-SOME and absent-key-NONE ALOOKUP ZIP proofs6551–6590, recording full statements and nine original argument types. Canonical opaque EL and all original domain/injection/index/length premises are retained.
 ## Full Word CSE evaluation frames and state agreement
 
@@ -4490,6 +4509,13 @@ The same `ssa_reconcile_empty_probe.out` also backs full `evaluateSSAReconcile`:
 
 `ssa_cc_trans_correct_control_probe.out` replays both literal resumed Break/Continue semantic correctness proofs against their full original theorem specializations, including all six premises, existential permutation and complete result-sensitive postcondition. Six native carrier types are captured. Other native SSA correctness cases and compiler composition remain unfinished.
 
+`stackprops_ordered_code_labels_probeScript.sml` captures full original
+ordered label/lookup/set declarations and replays the complete original
+lookup-containment proof (ten source/type rows), then checks eight generic
+Bool/list/Nat register-key observations. It discovered and guards the
+register-key polymorphism of StackSem `find_code_def`;
+`StackSemGenericCodeLookupParity.lean` kernel-replays those observations.
+The full ordered extractor/containment ports remain separate work on qipb.
 `target_props_clock_probeScript.sml` checks the original closed
 `evaluate_add_clock` theorem against its entire quantified statement and captures
 halt/error equality at clocks one and five. The Lean theorem and generic replay
