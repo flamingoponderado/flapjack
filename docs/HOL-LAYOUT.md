@@ -148,3 +148,20 @@ The pinned external `HOL/src/sort/mergesortScript.sml` counterpart is
 `Flapjack/Misc/Mergesort.lean` (the non-tail `sort2`/`sort3`/`merge`/`mergesortN`, their
 sortedness, and the tail-recursive correctness lemmas over the untagged tail rendering in
 `Flapjack/Basis/Pure/MlList.lean`).
+
+
+### Computed finite-map result observations
+
+`(fmap_as_finite_support_result_observations := [Producer, ...])` records
+only the canonical finite-support representation of explicitly named imported
+map producers used in a tagged declaration's type. Each producer must return
+`HolFiniteMapExact`, carry the standalone result qualifier, have its checked
+same-module lookup witness, and have a source-reviewed result manifest record.
+The observer has its own `reviewed_fmap_as_finite_support_result_observations`
+record with exactly the same producer list and a complete source comparison.
+Producer acceptance does not establish observer acceptance. The checker rejects
+unused, ambiguous, shadowed, unqualified, unreviewed, non-map, and unwitnessed
+producers. This narrow qualifier cannot combine with other representations and
+permits no changed quantifiers, hypotheses, evaluator, or conclusion. The
+syntactic checks and kernel witnesses do not prove cross-language equivalence;
+the complete observer still requires manual HOL source comparison.
