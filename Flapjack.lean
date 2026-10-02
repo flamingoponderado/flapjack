@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.UpdateZero
 import Flapjack.Compiler.Backend.LabToTarget.ZeroPreservation
 import Flapjack.Compiler.Backend.LabToTarget.UpdatePosition
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSetup
