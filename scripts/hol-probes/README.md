@@ -4806,3 +4806,9 @@ theorem specialization at Mem Load8 and complete native state/register/offset/
 SSA/table carriers. Opcode8124–8132, domain/endianness byte-load branches and
 HOL w2w byte-to-word fresh update are manually compared; no standalone tactic
 replay is claimed.
+
+`ssa_cc_trans_correct_inst_load32_probeScript.sml` captures the original kernel
+theorem specialization at Mem Load32 and complete native state/register/offset/
+SSA/table carriers. Opcode8133–8142, alignment/domain/endianness errors and
+HOL w2w 32-bit-to-word fresh update are manually compared; no standalone tactic
+replay is claimed.
