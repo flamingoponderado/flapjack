@@ -56192,5 +56192,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.3), stack_allocProofScript.sml:963-1048 word_gc_move_list_code_thm: HOL binder order !l a s pa1 pa old m1 m i1 i dm conf a1 kept explicit; the three curried premise groups kept (word_gc_move_list conf (a,l,i,pa,old,m,dm) = (a1,i1,pa1,m1,T), the shift/dimindex/len_size bounds, !w. w << word_shift = w * bytes_in_word, FLOOKUP CurrHeap, use_store, memory/mdomain, 0,1,2 IN FDOM, get_var 3/4, 5 IN FDOM ==> 6 IN FDOM ==> get_var 7/8); conclusion ?ck r0 r1 r2 r5 r6 with the nine-register |++ and memory m1, over the exact StackSem evaluate. Proved as HOL does, by induction on the count, composing word_gc_move_code_thm with the IH through the tagged evaluate_add_clock. dimindex as width, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_move_loop_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GcMoveLoop.lean",
+    "lean_name": "word_gc_move_loop_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.5), stack_allocProofScript.sml:1050-1164 word_gc_move_loop_code_thm[local]: HOL binder order !k pb1 i1 pa1 old1 m1 dm1 c1 i2 pa2 m2 s explicit, free conf implicit; the four curried premise groups kept (word_gc_move_loop k conf (pb1,i1,pa1,old1,m1,dm1,c1) = (i2,pa2,m2,T), shift/dimindex/len_size bounds including the unused conf.len_size + 2 < dimindex, !w. w << word_shift = w * bytes_in_word, FLOOKUP CurrHeap, use_store, memory/mdomain, 0,1,2 IN FDOM, get_var 3/4, 5 IN FDOM ==> 6 IN FDOM ==> 7 IN FDOM ==> get_var 8 /\\ c1); conclusion ?ck r0 r1 r2 r5 r6 r7 with the nine-register |++ (8 := Word pa2) and memory m2, over the exact StackSem evaluate. Proved as HOL does, by complete induction on k: exit when pb1 = pa1, skip a data object (header bit 2), or move a pointer object's fields by word_gc_move_list_code_thm composed with the IH through the tagged evaluate_add_clock. dimindex as width, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
