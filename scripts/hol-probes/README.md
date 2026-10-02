@@ -5022,8 +5022,8 @@ and regression evidence, not a cross-language equivalence proof. Regenerate with
 
 ### Target evaluation induction base
 
-`target_evaluate_eq_probeScript.sml` specializes original
-`evaluate_EQ_evaluate_lemma` at zero and captures its full statement in
+`target_evaluate_eq_probeScript.sml` captures the full original
+`evaluate_EQ_evaluate_lemma` and its zero specialization in
 `target_evaluate_eq_probe.out`. This is source-review regression evidence,
-not proof of cross-language equivalence or of the pending successor case.
+not a proof of cross-language equivalence.
 Regenerate with `HOL_PROBE_ONLY=target_evaluate_eq_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
