@@ -1479,6 +1479,9 @@ import Flapjack.Misc.Logroot
 import Flapjack.Misc.Bit
 import Flapjack.Misc.Alignment
 import Flapjack.Misc.Alignment.Production
+import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+import Flapjack.Compiler.Backend.StackRemove.InitMemory
+import Flapjack.EvaluateProps
 
 
 
