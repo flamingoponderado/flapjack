@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstallCase
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAllocCase
+import Flapjack.Compiler.Backend.LabToTarget.NopPadding
 import Flapjack.Misc.TakeFlatReplicate
 import Flapjack.Compiler.Backend.LabToTarget.ValidityNop
 import Flapjack.Compiler.Backend.LabToTarget.NopInvariant

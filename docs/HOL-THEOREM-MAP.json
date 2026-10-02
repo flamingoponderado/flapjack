@@ -62604,20 +62604,38 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original miscScript3063, complete theorem and quantified j/k/alpha-list/len types freshly captured in misc_take_flat_replicate_probe.out. Full generic list carrier and independent original len binder retained, same conjunction len=LENGTH ls and k<=j, same TAKE(k*len)(FLAT(REPLICATE j ls))=FLAT(REPLICATE k ls). Ordinary List translation needs no qualifier; no fixed byte/word specialization, positivity or nonempty assumptions. Kernel induction on k preserves zero/empty chunks and equal counts. Seven original/native observations and full generic/actual empty-list consumers include both length and count guard counterexamples. Genuine dependency of full lab_to_targetProof enc_with_nop_pad_bytes4507; no other backend source change, no total HD/EL hold use, full padding-to-encoding/remove_labels_loop/end-to-end unfinished."
   },
-{
-  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
-  "hol_name": "ssa_cc_trans_correct",
-  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAllocCase.lean",
-  "lean_name": "ssaCcTransCorrectAlloc",
-  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "fmap_as_finite_support_relation": [
-    "WordSemStateFiniteExact.fpRegs",
-    "WordSemStateFiniteExact.store"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "flapjack-sol-a author source comparison2026-10-02 original resumed Alloc9333-9606 of full ssa_cc_trans_correct7666: all six original premises and complete ssaSimulation existential source permutation, Error exemption, actual target result/frame and full result-sensitive locals retained. Original arbitrary Nat cutset/tree/local/code/stack/GC/FFI carriers and positive word width; explicit canonical fpRegs/store finite-map relation qualifiers only. Actual rename/count Move, scoped cut injection, GC permutation transport, post-domain, restricted SSA map and final rename derived from premises and actual total evaluator branches. Exhaustive native allocation leaves NONE or NotEnoughSpace with flush-empty locals; original source errors exempt, no targetrun/success/post-relation premise or induction hypothesis added. Inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Full SSA/end-to-end remain open."
-},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAllocCase.lean",
+    "lean_name": "ssaCcTransCorrectAlloc",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a author source comparison2026-10-02 original resumed Alloc9333-9606 of full ssa_cc_trans_correct7666: all six original premises and complete ssaSimulation existential source permutation, Error exemption, actual target result/frame and full result-sensitive locals retained. Original arbitrary Nat cutset/tree/local/code/stack/GC/FFI carriers and positive word width; explicit canonical fpRegs/store finite-map relation qualifiers only. Actual rename/count Move, scoped cut injection, GC permutation transport, post-domain, restricted SSA map and final rename derived from premises and actual total evaluator branches. Exhaustive native allocation leaves NONE or NotEnoughSpace with flush-empty locals; original source errors exempt, no targetrun/success/post-relation premise or induction hypothesis added. Inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Full SSA/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NopPadding.lean",
+    "lean_name": "encWithNop_padBytes_length",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_with_nop_pad_bytes_length",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 complete original4473-4510, both complete statements and free-variable types freshly captured in lab_to_target_nop_padding_probe.out. Encoded element carrier is arbitrary HOL alpha/beta list and remains independent Value:Type, not fixed byte8; native HolAsm positive dimension is sole words_as_type_indexed_bitvec translation. Unconditional same-length padding theorem retains arbitrary encoder/instruction and supports empty NOP. General establishment retains all original five conjuncts: NOP identity with enc Skip, encoded length bound, encoded and target length MOD NOP length both zero, positive NOP length. Conclusion actual encWithNop of actual padBytes, not a desired-result premise or weaker length statement. Full arbitrary inputs, no BEq or DecidableEq instances added. Proof uses original enc_with_nop_thm, exact generic TAKE_FLAT_REPLICATE_LEQ prerequisite7fd9673306e1488429f15ed765a163d2a6eaecaa, ordinary Nat quotient equations and full list take/append semantics. Nine original/native observations and six actual theorem applications plus two full generic consumers cover Nat/Bool payloads, multibyte/empty NOP, exact/zero target and empty encoded input, and both modulo/NOP-identity guard counterexamples. Original numeric disequality normalized with source HOL simplifier after EVAL, not a hand-written result. No production body change or HD/EL hold dependency; full line/section padding invariants and remove_labels_loop/end-to-end remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NopPadding.lean",
+    "lean_name": "encWithNop_padBytes",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_with_nop_pad_bytes",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 complete original4473-4510, both complete statements and free-variable types freshly captured in lab_to_target_nop_padding_probe.out. Encoded element carrier is arbitrary HOL alpha/beta list and remains independent Value:Type, not fixed byte8; native HolAsm positive dimension is sole words_as_type_indexed_bitvec translation. Unconditional same-length padding theorem retains arbitrary encoder/instruction and supports empty NOP. General establishment retains all original five conjuncts: NOP identity with enc Skip, encoded length bound, encoded and target length MOD NOP length both zero, positive NOP length. Conclusion actual encWithNop of actual padBytes, not a desired-result premise or weaker length statement. Full arbitrary inputs, no BEq or DecidableEq instances added. Proof uses original enc_with_nop_thm, exact generic TAKE_FLAT_REPLICATE_LEQ prerequisite7fd9673306e1488429f15ed765a163d2a6eaecaa, ordinary Nat quotient equations and full list take/append semantics. Nine original/native observations and six actual theorem applications plus two full generic consumers cover Nat/Bool payloads, multibyte/empty NOP, exact/zero target and empty encoded input, and both modulo/NOP-identity guard counterexamples. Original numeric disequality normalized with source HOL simplifier after EVAL, not a hand-written result. No production body change or HD/EL hold dependency; full line/section padding invariants and remove_labels_loop/end-to-end remain unfinished."
+  },
 {
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "ssa_cc_trans_correct",
