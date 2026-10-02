@@ -861,6 +861,7 @@
     {"bytes": 1642, "out": "stack_remove_stack_free_probe.out", "rows": 19, "sha256": "a80f64b2e6aec5fd153da4de277af7f9cf92461f06076f6a91e4bdd15bd68e1a"},
     {"bytes": 1210, "out": "stack_remove_statelaws_probe.out", "rows": 12, "sha256": "b4c5f920519b60e1bb8c9688fe7e8171e515e8c44eee6eb85a84fac9a49f5f49"},
     {"bytes": 2139, "out": "stack_remove_staterel_probe.out", "rows": 17, "sha256": "477632440b8bcdb2fa9d5354c90156813ff683bca9a193480abcce5a3a0c8ac9"},
+    {"bytes": 772, "out": "stack_remove_stateupdates_probe.out", "rows": 9, "sha256": "9d5f5a70209b61298ce65dca14e55749a77e375e53d2dd5c1fa8386ee952404f"},
     {"bytes": 1711, "out": "stack_remove_store_address_probe.out", "rows": 83, "sha256": "312c3bdbffe9347766934f89e3c7c50cb25c2cf17ea3e8986f88010c464f2285"},
     {"bytes": 817, "out": "stack_remove_stub_names_probe.out", "rows": 10, "sha256": "cf236e429f5b19071e16dc855889eab67d501ceed4f47dd1b714a78ddb503a69"},
     {"bytes": 508, "out": "stack_remove_word_selector_probe.out", "rows": 13, "sha256": "987d06669158969ca82fbff586dd826daf0820f9302edf7c0ee59d0f804b2e5d"},
