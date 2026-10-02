@@ -64,6 +64,14 @@ import Flapjack.Test.RegAllocProductionColourLookup
 import Flapjack.Test.WordCseProductionScalarKeys
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordToStackSortedRelationsParity
+import Flapjack.Test.WordToStackSortedKeysParity
+import Flapjack.Test.WordToStackBitmapWriteParity
+import Flapjack.Test.WordToStackBitmapInsertParity
+import Flapjack.Test.WordToStackBitmapDecodeParity
+import Flapjack.Test.WordToStackKeyValueOrderParity
+import Flapjack.Test.WordToStackBitmapSentinelLengthParity
+import Flapjack.Test.WordToStackBitmapBitStructureParity
 import Flapjack.Test.WordToStackBitmapWordParity
 import Flapjack.Test.StackPropsRegisterBoundsParity
 import Flapjack.Test.WordCseListOrderRouting
