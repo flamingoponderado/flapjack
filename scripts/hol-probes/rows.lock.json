@@ -4712,6 +4712,12 @@
       "sha256": "567c10eaf56c07243856c191b60a982c5c554900a977305b11f33afbaf699349"
     },
     {
+      "bytes": 10044,
+      "out": "sptree_wf_definition_probe.out",
+      "rows": 255,
+      "sha256": "6906169dee769744ad1b21c5db3c934367ad835c2859d7c770c6d5e392403cdc"
+    },
+    {
       "bytes": 1189,
       "out": "ssa_alloc_case_probe.out",
       "rows": 1,

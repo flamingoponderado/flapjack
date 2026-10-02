@@ -6183,3 +6183,4 @@ The `l3_fetch_primitives_probeScript.sml` family also captures the complete orig
 type and unconditional generic equation. It preserves THE NONE and does not
 claim to cover the separate model Fetch declaration. Its Lean replay is a generic
 kernel equality over the full native state.
+sptree_wf_definition_probeScript.sml captures the full original wf_def and254 complete wf/isEmpty outputs: all depth-two constructor combinations,24-level valid/malformed chains, and function payloads. Existing approved hol4 snapshot and pinned HOL source hashes agree; no provenance expansion. Kernel/runtime replay is SptreeWfDefinitionParity.lean.

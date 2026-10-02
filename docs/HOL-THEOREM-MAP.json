@@ -67222,5 +67222,13 @@
     "hol_name": "Fetch_def",
     "statement_status": "reviewed_exact",
     "reviewer": "Source compared riscv_stepScript.sml:28-32: full native state; translateAddr (PC s, Instruction, Read); THE optional returned address; rawReadInst on returned state. No successful-translation premise and canonical unspecified THE NONE preserved. Separate step namespace does not claim the different model Fetch definition."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptWf",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-pxn.18.5.15.3.29.2: pinned original39-44 retains all four LN/LS/BN/BS clauses over exact arbitrary-payload Spt; both branch constructors recursively require both children wf and reject exactly two LN children, including a valued BS. Existing Boolean predicate unchanged: Bool true/and/not compute the HOL truth/connectives, with no payload equality or valid-tree premise. Existing approved hol4 snapshot SHA25697791ac7f3f7b0de823afb00f6f1fbd18cd158b9fe8a818a272b39daa0e49b71 agrees with pinned HOLa390cbabd and actual source installation. No provenance/allowlist/default change. Kernel complete four-clause proposition interface sptWfClauses has no assumptions; fresh original full wf_def closed statement and254 independent valid/malformed/deep-tree/function-payload complete observations replayed in kernel/runtime. Existing preservation theorems are reused, not duplicated."
   }
 ]
