@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetRemoveLabelsCorrectnessParity
 import Flapjack.Test.LabToTargetInitialEncodingPreconditionsParity
 import Flapjack.Test.LabToTargetRemoveLabelsLoopParity
 import Flapjack.Test.LabToTargetComputedLabelPositionsParity

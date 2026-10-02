@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions

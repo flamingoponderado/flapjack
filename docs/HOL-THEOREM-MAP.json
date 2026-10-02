@@ -66843,5 +66843,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison6159-6167: arbitrary code, encoder enc and independent configuration c retained; sole original all_enc_ok_pre premise and complete same-predicate result over actual enc_sec_list. Initial encoding changes only bytes/length/offset caches and retains the asm payload inspected by original precondition. Native original constructor carriers, opaque mlstring and positive-width word translation reviewed; no enc=configuration.encode or encoding-success premise. Literal original local full proof/type capture0openhyps, fresh original cases and native fullgeneric/actual arbitrary independent encoder consumer; kernel validity and probes do not establish cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabelsCorrectness.lean",
+    "lean_name": "removeLabels_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "remove_labels_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison6169-6215: complete original eleven guards and six conclusions retained over actual remove_labels success. Encoder validity, ending/valid/distinct labels, domain disjointness, restricted reference inclusion, original encoding precondition, initial parity and OPTION_ALL parity are the only source guards. Initial encoding establishes all genuine loop prerequisites, full remove_labels_loop theorem establishes output encoding validity/similarity/odd-instruction alignment/alllookup parity/initiallookup preservation and every source location-to-physical-position lookup. No callback, returned state validity or desired lookup premise. Native constructor carriers/opaque mlstring and positive-width word translation reviewed; canonical nested numeric sptree is not fmap-qualified. Full139 dependency retains independent arbitrary unused nop binder. Exported original complete theorem/fulltypes0openhyps; nine fresh original/native cases incl arbitrary accumulator preservation, both encoder alignments and1/80bit widths, plus fullgeneric fixture and actual discharged11guard theorem consumer. Kernel checking and oracle regressions do not establish cross-language equivalence or full machine/compiler simulation."
   }
 ]
