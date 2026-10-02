@@ -889,6 +889,7 @@
     {"bytes": 873, "out": "stack_remove_comp_get_probe.out", "rows": 3, "sha256": "65f1391c048abfa72e8226e8324a1f667a323563d1a858862ffd7bedf3491fd7"},
     {"bytes": 908, "out": "stack_remove_comp_heap_probe.out", "rows": 3, "sha256": "5443c4f98e885bc613457ec2e9eed67062dc8cf338ffd8f1330e820fd1b08f8d"},
     {"bytes": 834, "out": "stack_remove_comp_inst_probe.out", "rows": 3, "sha256": "762ffd3c2927f08374a27d6cc1a03343a5d9cad35ac80c7f420200be5bd58abc"},
+    {"bytes": 700, "out": "stack_remove_comp_locvalue_probe.out", "rows": 2, "sha256": "e7928095c70d0ef47cb264539ad75c9d9ad7a45b587e3122691e54b4b55df92a"},
     {"bytes": 10000, "out": "stack_remove_comp_probe.out", "rows": 106, "sha256": "2a39ae2aa52897d0875d7907738b558a6f50cb661f64e6da47b9e0887a5ab337"},
     {"bytes": 873, "out": "stack_remove_comp_set_probe.out", "rows": 3, "sha256": "6d1eae09334fc887603b5f25ebf3865f19d8738f204a6e97789176bf9aff8793"},
     {"bytes": 267881, "out": "stack_remove_compile_native_probe.out", "rows": 104, "sha256": "51b1b728038e585e87aed16778a487549712e6bf518394a36f9c68b401af85ab"},

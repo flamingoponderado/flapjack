@@ -5333,3 +5333,7 @@ run_probe stack_remove_label_builders_probeScript.sml stack_remove_label_builder
 run_probe stack_remove_label_comp_probeScript.sml stack_remove_label_comp_probe.out \
   lc_statement lc_proved ll_statement ll_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_locvalue_probeScript.sml stack_remove_comp_locvalue_probe.out \
+  cl_statement cl_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
