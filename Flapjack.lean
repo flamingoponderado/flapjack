@@ -226,6 +226,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionConfiguration
 import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoves
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
+import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
 import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorPrelude
 import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorDomain
