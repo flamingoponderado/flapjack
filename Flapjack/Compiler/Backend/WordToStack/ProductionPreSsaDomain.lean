@@ -198,4 +198,46 @@ theorem sourceAllocatorInput_usesNativeSSA
   CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA_native _ _ _
     (wordLangProgToHOL_sourceAllocatorInput_isSome name parameters body)
 
+
+/-- The exact Loop-to-Word function used by PipelineDiagnostics reaches the
+native input codec after executed pre-SSA preparation. Unlike the routed-source
+variants above, this equation names LoopToWord.loopToWordCompFunc itself.
+No successful compilation, encoding or allocation premise is supplied.
+Arbitrary externally supplied Word bodies retain the codec rejection boundary;
+this theorem asserts source provenance, not universal Word codec acceptance. -/
+theorem executedSourceAllocatorInput_isSome
+    {width : Nat} [NeZero width] (name : Nat) (parameters : List Nat)
+    (body : LoopProg (BitVec width)) :
+    (wordLangProgToHOL (wordBeforeSsaAllocatorBody
+      (LoopToWord.loopToWordCompFunc name parameters body))).isSome = true :=
+  wordLangProgToHOL_wordBeforeSsaAllocatorBody_isSome _
+    (wordLangProgToHOL_loopToWordCompFunc_isSome name parameters body)
+
+/-- Native full-program limit routing for the actual compatibility function
+body consumed by production diagnostics. This is routing infrastructure,
+without an independent HOL theorem, and makes no evaluation-correctness claim. -/
+theorem executedSourceAllocatorInput_usesNativeLimit
+    {width : Nat} [NeZero width] (name : Nat) (parameters : List Nat)
+    (body : LoopProg (BitVec width)) (wordParameters : List Nat) :
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedLimit name wordParameters
+        (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) =
+      CakeRegAlloc.cakeAllocateWordFunctionAfterDeadNativeLimit name wordParameters
+        (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) :=
+  CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedLimit_native _ _ _
+    (executedSourceAllocatorInput_isSome name parameters body)
+
+/-- The exact source function input at the actual allocator caller executes
+native SSA. Its input condition is proved from source syntax, not assumed;
+allocation may still fail. Arbitrary Word extensions remain governed by
+cakeAllocateWordFunctionAfterDeadRoutedSSA_rejected. Flapjack infrastructure. -/
+theorem executedSourceAllocatorInput_usesNativeSSA
+    {width : Nat} [NeZero width] (name : Nat) (parameters : List Nat)
+    (body : LoopProg (BitVec width)) (wordParameters : List Nat) :
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA name wordParameters
+        (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) =
+      CakeRegAlloc.cakeAllocateWordFunctionAfterDeadNativeSSA name wordParameters
+        (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) :=
+  CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA_native _ _ _
+    (executedSourceAllocatorInput_isSome name parameters body)
+
 end Flapjack
