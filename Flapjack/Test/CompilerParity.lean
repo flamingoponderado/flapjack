@@ -1,8 +1,10 @@
 import Flapjack.Test.LabToTargetPaddingLabelsParity
-import Flapjack.Test.LabToTargetUpdatePadEndingParity
+import Flapjack.Test.NumericFormattingParity
+import Flapjack.Test.WordReplicateParity
+import Flapjack.Test.L3RiscvMaddParity
 import Flapjack.Test.LabToTargetZeroLabelExistenceParity
 import Flapjack.Test.BackendRestrictZeroParity
-import Flapjack.Test.L3RiscvMaddParity
+import Flapjack.Test.LabToTargetUpdatePadEndingParity
 import Flapjack.Test.L3RiscvSqrtParity
 import Flapjack.Test.L3RiscvArithmeticParity
 import Flapjack.Test.SetNewTriggerParity
@@ -179,6 +181,7 @@ import Flapjack.Test.FiniteMapUnionExact
 import Flapjack.Test.ComparisonGoodCmp
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordToStackAsmConventionsParity
 import Flapjack.Test.WordToStackAsmNameCompilerParity
 import Flapjack.Test.WordToStackAsmNameFlatParity
 import Flapjack.Test.WordToStackAsmNameInstructionsParity

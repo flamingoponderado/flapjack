@@ -1,3 +1,6 @@
+import Flapjack.Misc.Words.Formatting
+import Flapjack.Misc.Words.Replicate
+import Flapjack.Misc.StateTransformer
 import Flapjack.RiscV.L3.Types
 import Flapjack.Misc.Option
 import Flapjack.Misc.Alignment
