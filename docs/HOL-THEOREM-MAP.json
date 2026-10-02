@@ -67484,46 +67484,6 @@
     "reviewer": "flapjack-sol3 source comparison: Source6871 complete pc/p/code/p-prime and free c/labs/ffi/line binders. Sole conjunction of full all_enc_ok at independent p-prime and literal successful asm_fetch_aux at pc; exact LENGTH(line_bytes line)+pos_val pc p code=pos_val(pc+1)p code result. No bounds/encoder validity/target-execution or assumed successor conclusion. Full last-instruction case derives zero position from valid tail. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Fresh original fulltypes zero hypotheses and seven closed original/native cases, full generic fixtures and actual arbitrary queried-start consumers that discharge full guards. Empty sections, zero-label tails, missing fetch and invalid nonzero labels retained. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler simulation."
   },
   {
-    "lean_path": "Flapjack/Misc/Sptree.lean",
-    "lean_name": "sptSubsptDef",
-    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
-    "hol_name": "subspt_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Full domain-membership and lookup agreement iff. Original is a theorem; untagged predicate sptSubspt implements its literal characteristic-set equation, not a tagged substitute definition. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
-  },
-  {
-    "lean_path": "Flapjack/Misc/Sptree.lean",
-    "lean_name": "sptSubsptLookup",
-    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
-    "hol_name": "subspt_lookup",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Full arbitrary key/value lookup iff, both directions, no membership or equality premise added. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
-  },
-  {
-    "lean_path": "Flapjack/Misc/Sptree.lean",
-    "lean_name": "sptSubsptTrans",
-    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
-    "hol_name": "subspt_trans",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Original conjunction of the two relations implies relation of first/third; all three arbitrary same-payload native trees. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
-  },
-  {
-    "lean_path": "Flapjack/Misc/Sptree.lean",
-    "lean_name": "sptSubsptUnion",
-    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
-    "hol_name": "subspt_union",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Unconditional subspt of first into actual left-biased sptUnion first second; original accumulator/order preserved. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
-  },
-  {
-    "lean_path": "Flapjack/Misc/Sptree.lean",
-    "lean_name": "sptSubsptFoldlUnion",
-    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
-    "hol_name": "subspt_FOLDL_union",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Full forall list and initial tree, subspt initial into List.foldl sptUnion initial. All arbitrary generic-payload native trees; left fold and union argument order unchanged. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
-  },
-  {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
     "hol_name": "the_words_EVERY_IS_SOME_Word",
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/WordExtraction.lean",
@@ -67636,5 +67596,45 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: Source6847: unrestricted pc/p/code with sole num_pcs≤pc guard; exact pos_val(num_pcs code)pcode=pos_valpcpcode. Invalid label annotations remain allowed. Original labLang sec/line constructors carry exactly native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec, fixed word8 bytes and canonical nested numeric Spt; word qualifier only, no arbitrary carrier specialization or fmap translation. Fresh original fulltypes with zero hypotheses and nine original/native closed cases plus full generic and actual arbitrary-query-position consumers. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler/initializer/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/Subspt.lean",
+    "lean_name": "sptSubsptDef",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "subspt_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Full domain-membership and lookup agreement iff. Original is a theorem; untagged predicate sptSubspt implements its literal characteristic-set equation, not a tagged substitute definition. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/Subspt.lean",
+    "lean_name": "sptSubsptLookup",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "subspt_lookup",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Full arbitrary key/value lookup iff, both directions, no membership or equality premise added. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/Subspt.lean",
+    "lean_name": "sptSubsptTrans",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "subspt_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Original conjunction of the two relations implies relation of first/third; all three arbitrary same-payload native trees. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/Subspt.lean",
+    "lean_name": "sptSubsptUnion",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "subspt_union",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Unconditional subspt of first into actual left-biased sptUnion first second; original accumulator/order preserved. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/Subspt.lean",
+    "lean_name": "sptSubsptFoldlUnion",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "subspt_FOLDL_union",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.18 original1687-1690/1737-1772. Full forall list and initial tree, subspt initial into List.foldl sptUnion initial. All arbitrary generic-payload native trees; left fold and union argument order unchanged. Constructor-for-constructor Spt payload and List are identity translations, Nat keys, characteristic sets via native domain isSome and lookup Option preserve all values including missing keys. No BEq, finite-map/array/word carrier substitution or target-result assumption. Actual lookup_union law derives union preservation; fold proof uses union and transitivity. Scope is this full Spt declaration, not evaluator or compiler correctness."
   }
 ]
