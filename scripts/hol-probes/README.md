@@ -1944,7 +1944,7 @@ scripts/hol-probes/regenerate.sh`. The `evaluateSeq`/`evaluateIf`/`evaluateLoop`
 fragments are untagged; the tagged ports of `fix_clock_def`, `cont_loop_def`,
 `exit_loop_def`, `get_var_imm_def`, `empty_env_def` and `dec_clock_def` live in
 `StackSem/Control.lean` and `StackSem/StateOps.lean`, and assembled full
-evaluation remains on `y19g`/`y19g.18`.
+evaluation remains on `y19g`/`y19g.18`. The same eleven rows are also replayed through the assembled total evaluator `evaluateHOL` (no stubbed sub-evaluations) in `Flapjack/Test/StackSemEvaluateParity.lean`.
 
 `stacksem_jumplower_probeScript.sml` records eight direct original
 `stackSem$evaluate` observations for the `JumpLower` clause
@@ -2826,6 +2826,8 @@ the executed allocator. Regenerate read-only with
 `stack_alloc_get_bits_probeScript.sml` captures four original `stack_allocProof` `get_bits` rows: an 8-bit word with three decoded bits, the words 1 and 0 (empty results) and a 64-bit word with its top bit set. `Flapjack/Test/StackAllocGetBitsParity.lean` replays every row in the kernel.
 
 `stack_alloc_gc_bitmaps_probeScript.sml` captures five original 64-bit `stack_allocProof` rows: `word_gc_move_bitmap` over a four-word stack (copying, constant and forwarded roots) and over a too-short stack, `word_gc_move_bitmaps` with a valid and a zero frame descriptor, and `word_gc_move_roots_bitmaps` over an encoded stack. `Flapjack/Test/StackAllocGcBitmapsParity.lean` replays every row in the kernel, comparing memories at the probed addresses.
+
+`stacksem_inst_probeScript.sml` captures six original StackSem `evaluate (Inst i, s)` rows at 64 bits: `Const`, an immediate `Add`, an `Add` from a missing register and from a `Loc` register (both `Error` with the original state), a `Load` outside the memory domain and `Skip`, each observed as result, register 1 and clock. `Flapjack/Test/StackSemInstParity.lean` replays every row in the kernel through `evaluateInst`.
 
 `word_remove_must_terminate_probeScript.sml` captures eight original `remove_must_terminate` rows: a `MustTerminate` over a `Seq`, nested `MustTerminate`, a `Seq` of two `MustTerminate`s, an `If` branch, a `Loop` body, a returning call with both a `MustTerminate` return handler and exception handler, a tail call with a `MustTerminate` handler, and the catchall `Tick`. `Flapjack/Test/WordRemoveMustTerminateParity.lean` replays every row in the kernel.
 
@@ -4576,6 +4578,9 @@ live in `Flapjack/Test/StackPropsOrderedLabelsParity.lean`.
 
 `ssa_locals_get_var_probe.out` replays the complete original SSA get_var lookup transport and captures six original types, including independently arbitrary source/target configuration and FFI hosts. It supports expression-producing SSA semantic cases without adding a target-read-success premise.
 
+Native SSA register-writing probe replays original Assign/Get/LocValue exp_tac2 and its local prerequisites, omitting only the discarded recursive-induction assumption for primitive cases. Captures full statements and source carrier types. This HOL evidence supplements source review and Lean kernel checks.
+
+SSA state-writing probe replays original Set/Store semantic cases and local prerequisites, captures full statements and six original carrier types. Primitive Set omits only discarded recursive IH bookkeeping; Store substitutes its expression binder. Source errors and successful native store/memory updates are preserved.
 `stackprops_allocation_constants_probe.out` replays the five complete original
 StackProps allocation/GC/constant-store field and clock proofs, their full types,
 and the original generic-result `store_const_sem_def`. Six allocation and five
@@ -4593,6 +4598,7 @@ all 208 values/applications. This group does not establish external
 The production list-key comparator route is tracked separately.
 `target_props_io_events_probeScript.sml` replays the full original `evaluate_io_events_mono` quantified theorem with no open hypotheses. `TargetPropsIoEventsParity.lean` checks the same unrestricted statement over the full literal evaluator. Clock induction composes exact returning FFI append with recursive prefix preservation; all failed/final paths retain the original trace.
 
+Native SSA MustTerminate probe replays original recursive case with its specialized smaller-body IH, omitting already-discharged prog_size bookkeeping. Captures full recursive/original statements and six carrier types; no desired target evaluation or frame is assumed.
 `stack_props_register_bounds_probeScript.sml` captures all three original
 register-bound definitions and evaluates 504 constructor/boundary cases across
 widths 1/64/80, including all expression/asm/program constructors, ignored FP
@@ -4620,3 +4626,40 @@ SSA state-writing probe replays original Set/Store semantic cases and local prer
 `lab_to_target_ignore_clocks_probeScript.sml` replays the complete original local proof18-27 and checks the full closed statement. `LabToTargetIgnoreClocksParity.lean` applies the corresponding unrestricted kernel theorem; both original non-TimeOut runs are retained.
 
 `target_props_clock_io_events_probeScript.sml` replays the full original `evaluate_add_clock_io_events_mono` theorem (targetPropsScript.sml:1112-1137), including only clock order and no open hypotheses. `TargetPropsClockIoEventsParity.lean` checks the same full statement over the literal evaluator. Paired clock induction retains every transition and uses full input-event prefix preservation at clock zero.
+
+`word_alloc_def_probe` captures the original HOL `word_alloc` type and eight EVAL results on
+small 64-bit programs: each allocator branch (Simple, IRC, linear scan), an accepted and a
+clashing oracle colouring (the latter falls back to the allocator), stack variables under
+IRC and linear scan, and a physical register. HOL's free `asm_config` is only read through
+`ISA`. Kernel-replayed through a structural observation in `WordAllocDefParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
+original missing-bit, SNOC and prefix-reconstruction proofs plus their local
+original bit-index context, each with no open hypotheses. It prints two
+original types and 187 cases across widths 1/2/8/64/80, including truncating
+long lists, empty prefixes, missing bits and true/false terminal bits.
+`WordToStackBitmapBitStructureParity.lean` checks matching observations and
+whole theorem applications. The HOL context replay uses original EL read-only;
+no new Lean total-EL port or provenance allowance is introduced.
+Native SSA Seq probe replays the original semantic case and local locals-more proof, with specialized legitimate first/second body IHs and already-discharged size bookkeeping omitted. Captures full recursive/original statements and seven carrier types; actual scheduler-swap and second-context validity are retained.
+
+### Native SSA semantic If case
+
+`ssa_cc_trans_correct_if_probeScript.sml` replays the literal resumed If
+proof with its complete two specialized smaller-branch IHs. It omits only
+structural size bookkeeping already discharged by specialization and selects
+the corresponding branch IH explicitly. Original non-exported getVar,
+map/locals bound, merge-move, and fix-inconsistencies local proofs are replayed.
+The capture records the recursive and original full statements and native
+state/program/map/fresh-bound/loop-table carriers. This is source evidence,
+not a cross-assistant equivalence proof; final assembly must discharge the IHs.
+
+### Native SSA OpCurrHeap semantic case
+
+`ssa_cc_trans_correct_heap_probeScript.sml` replays the literal resumed
+OpCurrHeap case and its original local variable/expression/fresh-update helpers.
+Only the discarded primitive induction bookkeeping is omitted. The capture
+records the complete original statement and native state/binop/register/table
+carriers; it is source evidence, not a cross-assistant equivalence proof.

@@ -1,0 +1,101 @@
+bi_full=⊢ ∀bs n bs' n' i cur. i < dimword (:α) ∧ IS_SOME (read_bitmap bm) ∧ n = LENGTH cur + LENGTH (append bs) ∧ insert_bitmap bm (bs,n) = ((bs',n'),i) ⇒ read_bitmap (DROP (i MOD dimword (:α)) (cur ++ append bs')) = read_bitmap bm
+bi_decode_0_0_0_1=⊢ read_bitmap (DROP (0 MOD dimword (:unit)) ([] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_0_1_1=⊢ read_bitmap (DROP (0 MOD dimword (:unit)) ([] ++ append (Append Nil (List [1w; 0w])))) = read_bitmap [1w; 0w] ⇔ T
+bi_decode_0_1_0_1=⊢ read_bitmap (DROP (1 MOD dimword (:unit)) ([0w] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_1_1_1=⊢ read_bitmap (DROP (1 MOD dimword (:unit)) ([0w] ++ append (Append Nil (List [1w; 0w])))) = read_bitmap [1w; 0w] ⇔ T
+bi_decode_1_0_0_1=⊢ read_bitmap (DROP (1 MOD dimword (:unit)) ([] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_0_1_1=⊢ read_bitmap (DROP (1 MOD dimword (:unit)) ([] ++ append (Append (List [0w]) (List [1w; 0w])))) = read_bitmap [1w; 0w] ⇔ T
+bi_decode_0_0_0_2=⊢ read_bitmap (DROP (0 MOD dimword (:2)) ([] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_0_1_2=⊢ read_bitmap (DROP (0 MOD dimword (:2)) ([] ++ append (Append Nil (List [2w; 0w])))) = read_bitmap [2w; 0w] ⇔ T
+bi_decode_0_1_0_2=⊢ read_bitmap (DROP (1 MOD dimword (:2)) ([0w] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_1_1_2=⊢ read_bitmap (DROP (1 MOD dimword (:2)) ([0w] ++ append (Append Nil (List [2w; 0w])))) = read_bitmap [2w; 0w] ⇔ T
+bi_decode_0_2_0_2=⊢ read_bitmap (DROP (2 MOD dimword (:2)) ([3w; 0w] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_2_1_2=⊢ read_bitmap (DROP (2 MOD dimword (:2)) ([3w; 0w] ++ append (Append Nil (List [2w; 0w])))) = read_bitmap [2w; 0w] ⇔ T
+bi_decode_1_0_0_2=⊢ read_bitmap (DROP (1 MOD dimword (:2)) ([] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_0_1_2=⊢ read_bitmap (DROP (1 MOD dimword (:2)) ([] ++ append (Append (List [0w]) (List [2w; 0w])))) = read_bitmap [2w; 0w] ⇔ T
+bi_decode_1_1_0_2=⊢ read_bitmap (DROP (2 MOD dimword (:2)) ([0w] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_1_1_2=⊢ read_bitmap (DROP (2 MOD dimword (:2)) ([0w] ++ append (Append (List [0w]) (List [2w; 0w])))) = read_bitmap [2w; 0w] ⇔ T
+bi_decode_1_2_0_2=⊢ read_bitmap (DROP (3 MOD dimword (:2)) ([3w; 0w] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_2_1_2=⊢ read_bitmap (DROP (3 MOD dimword (:2)) ([3w; 0w] ++ append (Append (List [0w]) (List [2w; 0w])))) = read_bitmap [2w; 0w] ⇔ T
+bi_decode_2_0_0_2=⊢ read_bitmap (DROP (2 MOD dimword (:2)) ([] ++ append (Append (Append (List [0w]) (List [1w])) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_2_0_1_2=⊢ read_bitmap (DROP (2 MOD dimword (:2)) ([] ++ append (Append (Append (List [0w]) (List [1w])) (List [2w; 0w])))) = read_bitmap [2w; 0w] ⇔ T
+bi_decode_2_1_0_2=⊢ read_bitmap (DROP (3 MOD dimword (:2)) ([0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_2_1_1_2=⊢ read_bitmap (DROP (3 MOD dimword (:2)) ([0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [2w; 0w])))) = read_bitmap [2w; 0w] ⇔ T
+bi_decode_3_0_0_2=⊢ read_bitmap (DROP (2 MOD dimword (:2)) ([] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_3_0_1_2=⊢ read_bitmap (DROP (2 MOD dimword (:2)) ([] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [2w; 0w])))) = read_bitmap [2w; 0w] ⇔ T
+bi_decode_3_1_0_2=⊢ read_bitmap (DROP (3 MOD dimword (:2)) ([0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_3_1_1_2=⊢ read_bitmap (DROP (3 MOD dimword (:2)) ([0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [2w; 0w])))) = read_bitmap [2w; 0w] ⇔ T
+bi_decode_0_0_0_8=⊢ read_bitmap (DROP (0 MOD dimword (:8)) ([] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_0_1_8=⊢ read_bitmap (DROP (0 MOD dimword (:8)) ([] ++ append (Append Nil (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_0_1_0_8=⊢ read_bitmap (DROP (1 MOD dimword (:8)) ([0w] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_1_1_8=⊢ read_bitmap (DROP (1 MOD dimword (:8)) ([0w] ++ append (Append Nil (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_0_2_0_8=⊢ read_bitmap (DROP (2 MOD dimword (:8)) ([255w; 0w] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_2_1_8=⊢ read_bitmap (DROP (2 MOD dimword (:8)) ([255w; 0w] ++ append (Append Nil (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_1_0_0_8=⊢ read_bitmap (DROP (1 MOD dimword (:8)) ([] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_0_1_8=⊢ read_bitmap (DROP (1 MOD dimword (:8)) ([] ++ append (Append (List [0w]) (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_1_1_0_8=⊢ read_bitmap (DROP (2 MOD dimword (:8)) ([0w] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_1_1_8=⊢ read_bitmap (DROP (2 MOD dimword (:8)) ([0w] ++ append (Append (List [0w]) (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_1_2_0_8=⊢ read_bitmap (DROP (3 MOD dimword (:8)) ([255w; 0w] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_2_1_8=⊢ read_bitmap (DROP (3 MOD dimword (:8)) ([255w; 0w] ++ append (Append (List [0w]) (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_2_0_0_8=⊢ read_bitmap (DROP (2 MOD dimword (:8)) ([] ++ append (Append (Append (List [0w]) (List [1w])) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_2_0_1_8=⊢ read_bitmap (DROP (2 MOD dimword (:8)) ([] ++ append (Append (Append (List [0w]) (List [1w])) (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_2_1_0_8=⊢ read_bitmap (DROP (3 MOD dimword (:8)) ([0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_2_1_1_8=⊢ read_bitmap (DROP (3 MOD dimword (:8)) ([0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_2_2_0_8=⊢ read_bitmap (DROP (4 MOD dimword (:8)) ([255w; 0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_2_2_1_8=⊢ read_bitmap (DROP (4 MOD dimword (:8)) ([255w; 0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_3_0_0_8=⊢ read_bitmap (DROP (2 MOD dimword (:8)) ([] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_3_0_1_8=⊢ read_bitmap (DROP (2 MOD dimword (:8)) ([] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_3_1_0_8=⊢ read_bitmap (DROP (3 MOD dimword (:8)) ([0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_3_1_1_8=⊢ read_bitmap (DROP (3 MOD dimword (:8)) ([0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_3_2_0_8=⊢ read_bitmap (DROP (4 MOD dimword (:8)) ([255w; 0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_3_2_1_8=⊢ read_bitmap (DROP (4 MOD dimword (:8)) ([255w; 0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [128w; 0w])))) = read_bitmap [128w; 0w] ⇔ T
+bi_decode_0_0_0_64=⊢ read_bitmap (DROP (0 MOD dimword (:64)) ([] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_0_1_64=⊢ read_bitmap (DROP (0 MOD dimword (:64)) ([] ++ append (Append Nil (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_0_1_0_64=⊢ read_bitmap (DROP (1 MOD dimword (:64)) ([0w] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_1_1_64=⊢ read_bitmap (DROP (1 MOD dimword (:64)) ([0w] ++ append (Append Nil (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_0_2_0_64=⊢ read_bitmap (DROP (2 MOD dimword (:64)) ([0xFFFFFFFFFFFFFFFFw; 0w] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_2_1_64=⊢ read_bitmap (DROP (2 MOD dimword (:64)) ([0xFFFFFFFFFFFFFFFFw; 0w] ++ append (Append Nil (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_1_0_0_64=⊢ read_bitmap (DROP (1 MOD dimword (:64)) ([] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_0_1_64=⊢ read_bitmap (DROP (1 MOD dimword (:64)) ([] ++ append (Append (List [0w]) (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_1_1_0_64=⊢ read_bitmap (DROP (2 MOD dimword (:64)) ([0w] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_1_1_64=⊢ read_bitmap (DROP (2 MOD dimword (:64)) ([0w] ++ append (Append (List [0w]) (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_1_2_0_64=⊢ read_bitmap (DROP (3 MOD dimword (:64)) ([0xFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_2_1_64=⊢ read_bitmap (DROP (3 MOD dimword (:64)) ([0xFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (List [0w]) (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_2_0_0_64=⊢ read_bitmap (DROP (2 MOD dimword (:64)) ([] ++ append (Append (Append (List [0w]) (List [1w])) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_2_0_1_64=⊢ read_bitmap (DROP (2 MOD dimword (:64)) ([] ++ append (Append (Append (List [0w]) (List [1w])) (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_2_1_0_64=⊢ read_bitmap (DROP (3 MOD dimword (:64)) ([0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_2_1_1_64=⊢ read_bitmap (DROP (3 MOD dimword (:64)) ([0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_2_2_0_64=⊢ read_bitmap (DROP (4 MOD dimword (:64)) ([0xFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_2_2_1_64=⊢ read_bitmap (DROP (4 MOD dimword (:64)) ([0xFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_3_0_0_64=⊢ read_bitmap (DROP (2 MOD dimword (:64)) ([] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_3_0_1_64=⊢ read_bitmap (DROP (2 MOD dimword (:64)) ([] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_3_1_0_64=⊢ read_bitmap (DROP (3 MOD dimword (:64)) ([0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_3_1_1_64=⊢ read_bitmap (DROP (3 MOD dimword (:64)) ([0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_3_2_0_64=⊢ read_bitmap (DROP (4 MOD dimword (:64)) ([0xFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_3_2_1_64=⊢ read_bitmap (DROP (4 MOD dimword (:64)) ([0xFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0x8000000000000000w; 0w])))) = read_bitmap [0x8000000000000000w; 0w] ⇔ T
+bi_decode_0_0_0_80=⊢ read_bitmap (DROP (0 MOD dimword (:80)) ([] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_0_1_80=⊢ read_bitmap (DROP (0 MOD dimword (:80)) ([] ++ append (Append Nil (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_decode_0_1_0_80=⊢ read_bitmap (DROP (1 MOD dimword (:80)) ([0w] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_1_1_80=⊢ read_bitmap (DROP (1 MOD dimword (:80)) ([0w] ++ append (Append Nil (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_decode_0_2_0_80=⊢ read_bitmap (DROP (2 MOD dimword (:80)) ([0xFFFFFFFFFFFFFFFFFFFFw; 0w] ++ append (Append Nil (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_0_2_1_80=⊢ read_bitmap (DROP (2 MOD dimword (:80)) ([0xFFFFFFFFFFFFFFFFFFFFw; 0w] ++ append (Append Nil (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_decode_1_0_0_80=⊢ read_bitmap (DROP (1 MOD dimword (:80)) ([] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_0_1_80=⊢ read_bitmap (DROP (1 MOD dimword (:80)) ([] ++ append (Append (List [0w]) (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_decode_1_1_0_80=⊢ read_bitmap (DROP (2 MOD dimword (:80)) ([0w] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_1_1_80=⊢ read_bitmap (DROP (2 MOD dimword (:80)) ([0w] ++ append (Append (List [0w]) (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_decode_1_2_0_80=⊢ read_bitmap (DROP (3 MOD dimword (:80)) ([0xFFFFFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (List [0w]) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_1_2_1_80=⊢ read_bitmap (DROP (3 MOD dimword (:80)) ([0xFFFFFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (List [0w]) (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_decode_2_0_0_80=⊢ read_bitmap (DROP (2 MOD dimword (:80)) ([] ++ append (Append (Append (List [0w]) (List [1w])) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_2_0_1_80=⊢ read_bitmap (DROP (2 MOD dimword (:80)) ([] ++ append (Append (Append (List [0w]) (List [1w])) (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_decode_2_1_0_80=⊢ read_bitmap (DROP (3 MOD dimword (:80)) ([0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_2_1_1_80=⊢ read_bitmap (DROP (3 MOD dimword (:80)) ([0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_decode_2_2_0_80=⊢ read_bitmap (DROP (4 MOD dimword (:80)) ([0xFFFFFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_2_2_1_80=⊢ read_bitmap (DROP (4 MOD dimword (:80)) ([0xFFFFFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (Append (List [0w]) (List [1w])) (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_decode_3_0_0_80=⊢ read_bitmap (DROP (2 MOD dimword (:80)) ([] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_3_0_1_80=⊢ read_bitmap (DROP (2 MOD dimword (:80)) ([] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_decode_3_1_0_80=⊢ read_bitmap (DROP (3 MOD dimword (:80)) ([0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_3_1_1_80=⊢ read_bitmap (DROP (3 MOD dimword (:80)) ([0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_decode_3_2_0_80=⊢ read_bitmap (DROP (4 MOD dimword (:80)) ([0xFFFFFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0w])))) = read_bitmap [0w] ⇔ T
+bi_decode_3_2_1_80=⊢ read_bitmap (DROP (4 MOD dimword (:80)) ([0xFFFFFFFFFFFFFFFFFFFFw; 0w] ++ append (Append (Append (Append Nil (List [1w])) (Append (List [0w]) Nil)) (List [0x80000000000000000000w; 0w])))) = read_bitmap [0x80000000000000000000w; 0w] ⇔ T
+bi_type_insert=:(80 word app_list # num) # num
+bi_type_decode=:bool list option

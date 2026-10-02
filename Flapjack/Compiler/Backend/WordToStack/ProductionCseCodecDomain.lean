@@ -31,10 +31,14 @@ private theorem cseInstructionDomain {width : Nat} [WordCseHash (BitVec width)] 
     supportsCodec (wordCseInst data instruction).1 = supportsCodec (.inst instruction) := by
   cases instruction with
   | arith operation =>
-    cases operation <;>
-      simp [wordCseInst, wordCseCanonicalArith, wordCseCanMemArith,
-        wordCseAddToData, supportsCodec]
-    all_goals repeat' (split <;> simp_all [supportsCodec, factDomain])
+    cases operation <;> simp only [wordCseInst]
+    all_goals try dsimp only
+    -- Split the actual outer sharing decision before unfolding its dispatch.
+    -- This works for arbitrary diagnostic instances; the five-register case
+    -- still reduces to the literal false branch.
+    all_goals first | rfl | skip
+    all_goals split <;>
+      simp_all [supportsCodec, wordCseAddToData, wordCseCanonicalArith, factDomain]
   | const register value =>
     simp [wordCseInst, supportsCodec]
     split <;> simp_all [supportsCodec, constantDomain]
