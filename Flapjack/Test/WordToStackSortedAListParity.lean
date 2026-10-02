@@ -690,4 +690,3 @@ example : (decide ((99,22) ∈ sptToAList (sptFromAList ([(0,11), (0,11), (1,22)
 
 -- sa_member_11_99_33
 example : (decide ((99,33) ∈ sptToAList (sptFromAList ([(0,11), (0,11), (1,22)] : List (Nat × Nat)))), decide ((99,33) ∈ ([(0,11), (0,11), (1,22)] : List (Nat × Nat))), decide (([(0,11), (0,11), (1,22)] : List (Nat × Nat)).map Prod.fst).Nodup, decide (descendingKeys ([(0,11), (0,11), (1,22)] : List (Nat × Nat)))) = (false, false, false, false) := by decide +kernel
-
