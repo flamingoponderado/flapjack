@@ -4490,6 +4490,22 @@ run_probe lab_to_target_similar_labels_probeScript.sml lab_to_target_similar_lab
   code_similar_MAP_Section_num code_similar_MAP_Section_num_types code_similar_extract_labels code_similar_extract_labels_types line_similar_line_get_code_labels line_similar_line_get_code_labels_types code_similar_get_code_labels code_similar_get_code_labels_types line_similar_line_get_labels line_similar_line_get_labels_types code_similar_get_labels code_similar_get_labels_types \
   changed_encoding_similar section_numbers ordered_extraction reference_hit call_ignored code_section_owner code_wrong_owner empty_section_zero numbers_preserved extraction_preserved code_labels_preserved references_preserved label_names_preserved line_refs_preserved changed_reference_rejected \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe balanced_map_balance_arithmetic_probeScript.sml balanced_map_balance_arithmetic_probe.out \
+  bma_left bma_right bma_lem1 bma_lem2 bma_lem3 bma_lem4 bma_lem5 bma_lem6 bma_lem7 \
+  bma_left00 bma_left40 bma_left50 bma_left71 bma_left81 bma_left92 bma_left102 \
+  bma_right00 bma_right04 bma_right05 bma_right17 bma_right18 bma_right29 bma_right210 \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_membership_probeScript.sml balanced_map_membership_probe.out \
+  bmm_theorem bmm_nil bmm_root bmm_left_absent bmm_right_absent bmm_left_present bmm_right_present \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_null_probeScript.sml balanced_map_null_probe.out \
+  bmn_full bmn_typed bmn_tip bmn_bin_badsize \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+run_probe balanced_map_invariant_eq_probeScript.sml balanced_map_invariant_eq_probe.out \
+  bmi_full bmi_typed bmi_replay bmi_props_typed bmi_children bmi_singleton bmi_badsize bmi_equal_child \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
 run_probe target_search_const_probeScript.sml target_search_const_probe.out \
   search_const_full_statement next_const_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

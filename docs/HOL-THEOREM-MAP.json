@@ -58819,5 +58819,118 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.2): asmSemScript.sml:214-223, all eight clauses: Load/Store at dimindex (:'a) DIV 8 (width / 8, 0 below width 8), Load8/Store8 at 1, Load16/Store16 at 2, Load32/Store32 at 4. Sole carrier translation words_as_type_indexed_bitvec ('a word/'a addr/'a asm_state to BitVec width/HolAddr width/AsmState width with [NeZero width]). Original HOL probe asm_sem_mem_ops_probe (14 rows on an 8-bit state, including big-endian, misalignment, domain failure and the zero count) kernel-replayed in Flapjack/Test/AsmSemMemOpsParity.lean."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/BalanceArithmetic.lean",
+    "lean_name": "almostBalancedL",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "almost_balancedL_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02: full literal original Nat size arithmetic, ratio=2 and delta=3, no word/map representation difference or qualifier. Full typed original and exact local proof replay captured with no hypotheses; kernel arithmetic proof normalizes min/max via independently proved equivalent predicate. No extra assumptions, omitted branch, target relation or rotation-success premise. HOL1078-1088 complete left predicate: first sum<=1 OR l<=delta*r guard returns balanced; otherwise r=0 yields l<5,r=1 yields l<8,else strict2*l<(2*delta+3)*r+2."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/BalanceArithmetic.lean",
+    "lean_name": "almostBalancedR",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "almost_balancedR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02: full literal original Nat size arithmetic, ratio=2 and delta=3, no word/map representation difference or qualifier. Full typed original and exact local proof replay captured with no hypotheses; kernel arithmetic proof normalizes min/max via independently proved equivalent predicate. No extra assumptions, omitted branch, target relation or rotation-success premise. HOL1090-1100 symmetric guard and l=0/1 cases with original strict bound on r."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/BalanceArithmetic.lean",
+    "lean_name": "balancedLem1",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_lem1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02: full literal original Nat size arithmetic, ratio=2 and delta=3, no word/map representation difference or qualifier. Full typed original and exact local proof replay captured with no hypotheses; kernel arithmetic proof normalizes min/max via independently proved equivalent predicate. No extra assumptions, omitted branch, target relation or rotation-success premise. HOL balanced_lem1: original full quantified sizes, original antecedent conjunction and consequent conjunction in exact order; no premise added. "
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/BalanceArithmetic.lean",
+    "lean_name": "balancedLem2",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_lem2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02: full literal original Nat size arithmetic, ratio=2 and delta=3, no word/map representation difference or qualifier. Full typed original and exact local proof replay captured with no hypotheses; kernel arithmetic proof normalizes min/max via independently proved equivalent predicate. No extra assumptions, omitted branch, target relation or rotation-success premise. HOL balanced_lem2: original full quantified sizes, original antecedent conjunction and consequent conjunction in exact order; no premise added. "
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/BalanceArithmetic.lean",
+    "lean_name": "balancedLem3",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_lem3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02: full literal original Nat size arithmetic, ratio=2 and delta=3, no word/map representation difference or qualifier. Full typed original and exact local proof replay captured with no hypotheses; kernel arithmetic proof normalizes min/max via independently proved equivalent predicate. No extra assumptions, omitted branch, target relation or rotation-success premise. HOL balanced_lem3: original full quantified sizes, original antecedent conjunction and consequent conjunction in exact order; no premise added. "
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/BalanceArithmetic.lean",
+    "lean_name": "balancedLem4",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_lem4",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02: full literal original Nat size arithmetic, ratio=2 and delta=3, no word/map representation difference or qualifier. Full typed original and exact local proof replay captured with no hypotheses; kernel arithmetic proof normalizes min/max via independently proved equivalent predicate. No extra assumptions, omitted branch, target relation or rotation-success premise. HOL balanced_lem4: original full quantified sizes, original antecedent conjunction and consequent conjunction in exact order; no premise added. "
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/BalanceArithmetic.lean",
+    "lean_name": "balancedLem5",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_lem5",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02: full literal original Nat size arithmetic, ratio=2 and delta=3, no word/map representation difference or qualifier. Full typed original and exact local proof replay captured with no hypotheses; kernel arithmetic proof normalizes min/max via independently proved equivalent predicate. No extra assumptions, omitted branch, target relation or rotation-success premise. HOL balanced_lem5: original full quantified sizes, original antecedent conjunction and consequent conjunction in exact order; no premise added. "
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/BalanceArithmetic.lean",
+    "lean_name": "balancedLem6",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_lem6",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02: full literal original Nat size arithmetic, ratio=2 and delta=3, no word/map representation difference or qualifier. Full typed original and exact local proof replay captured with no hypotheses; kernel arithmetic proof normalizes min/max via independently proved equivalent predicate. No extra assumptions, omitted branch, target relation or rotation-success premise. HOL balanced_lem6: original full quantified sizes, original antecedent conjunction and consequent conjunction in exact order; no premise added. "
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/BalanceArithmetic.lean",
+    "lean_name": "balancedLem7",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_lem7",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02: full literal original Nat size arithmetic, ratio=2 and delta=3, no word/map representation difference or qualifier. Full typed original and exact local proof replay captured with no hypotheses; kernel arithmetic proof normalizes min/max via independently proved equivalent predicate. No extra assumptions, omitted branch, target relation or rotation-success premise. HOL balanced_lem7: original full quantified sizes, original antecedent conjunction and consequent conjunction in exact order; no premise added. Original first binder b is unused and independently typed alpha; retained at arbitrary Type rather than fixed Nat."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Membership.lean",
+    "lean_name": "memberEqLookup",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "member_eq_lookup",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL967-972: full member cmp query tree = IS_SOME(lookup cmp query tree), independently inferred query iota/tree-key kappa/payload nu, comparator iota->kappa->Ordering. Exact native corrected Core definitions with arbitrary malformed cached sizes, no goodCmp/invariant/payload inhabitation or successful lookup premise. Constructor induction and all Less/Equal/Greater branches, Option.isSome is literal IS_SOME constructor translation. Original complete typed local theorem replay hyp=[] and six actual heterogeneous recursive observations; generic kernel full-statement consumer. No representation qualifier or executed compiler-route replacement."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/NullSemantics.lean",
+    "lean_name": "nullThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "null_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 HOL940-945: full null iff to_fmap empty, independent tree-key kappa/query iota/payload nu and arbitrary comparator kappa->iota->Ordering; no goodCmp/invariant or target map premise. Bool null truth translates as =true. Only canonical qualified toFmap producer representation observed, imported unconditional independent lookup witness remains reviewed. Bin root update at keySet has some value, impossible for empty map even with malformed sizes or empty/universal key sets; Tip literal empty. No bounds, finite-domain or inhabited query assumption. Fresh complete typed original theorem hyp=[] and actual null observations; generic kernel consumer and Bool/Nat/String malformed nonempty fixture."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/InvariantSemantics.lean",
+    "lean_name": "invariantEq",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "invariant_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL880-902: entire original Tip/Bin conjunction. Fresh typed exported theorem hyp=[] confirms independent Tip payload beta and Bin payload nu, homogeneous comparator kappa->kappa->Ordering. All three goodCmp implications remain inside Bin equivalence; original six structural clauses retained. Semantic FDOM is defined canonical lookup of reviewed toFmap producer, Disjoint is actual set disjointness. No assumed invariant, target domain facts, ordering law, inhabited carrier, or target result outside original equation. Domain representative plus original keyOrderedToFmap/keySetCmpThm derive disjointness and root exclusion, converse retains structural invariant. Original full typed capture and singleton/bad-size/equal-child observations replayed in Lean. Proof-side only; no executed-path replacement."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/InvariantSemantics.lean",
+    "lean_name": "invProps",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "inv_props",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL904-917: entire original conjunction under precisely goodCmp and Bin invariant. Generic homogeneous key/comparator and independent payload, arbitrary cached size/children; all original binders. Actual semantic domain disjointness and both universal keySet lookup-to-Greater/Less clauses retained. FDOM membership is defined canonical lookup of reviewed toFmap producer; no assumed target domain facts. Full invariantEq supplies disjointness, reviewed keyOrderedToFmap/keySetCmpThm supply ordering. Complete unchanged original local statement and literal proof replay hyp=[] with typed capture. Nonempty two-child invariant observed in HOL and kernel; finite-three-key fixtures instantiate all three theorem conclusions using actual nonempty canonical child lookup. Proof-only executable unchanged."
   }
 ]

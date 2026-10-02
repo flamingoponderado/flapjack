@@ -1,3 +1,7 @@
+import Flapjack.Test.BalancedMapNullParity
+import Flapjack.Test.BalancedMapInvariantEqParity
+import Flapjack.Test.BalancedMapMembershipParity
+import Flapjack.Test.BalancedMapBalanceArithmeticParity
 import Flapjack.Test.BalancedMapKeyOrderedTypes
 import Flapjack.Test.BalancedMapHeterogeneousParity
 import Flapjack.Test.LabToTargetLabsDomainParity

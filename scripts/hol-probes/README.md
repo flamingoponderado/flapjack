@@ -5039,6 +5039,31 @@ with no open hypotheses. Native ports are in `TargetProps/CalleeSaved.lean`.
 `target_next_cases_probeScript.sml` captures complete original
 `next_interference_ExtCall` and `next_interference_ccache` statements and
 checks no undischarged hypotheses. Native ports are in `TargetProps/NextCases.lean`.
+### Full balanced-map rotation arithmetic
+
+`balanced_map_balance_arithmetic_probeScript.sml` captures both typed
+`almost_balancedL/R_def` equations and replays all seven local `balanced_lem`
+proofs with their original statements and tactic bodies. It recreates local
+`TIMES_MIN` using the original proof. Every replay has no open hypotheses.
+The fourteen predicate observations cover left/right zero, one, two and strict
+boundary cases, matched by kernel fixtures in `BalancedMapBalanceArithmeticParity`.
+Lemma7 retains the original unused, independently typed first binder.
+
+### Balanced-map recursive membership law
+
+`balanced_map_membership_probeScript.sml` replays the full original local
+`member_eq_lookup` proof and prints its complete inferred types with no hypotheses.
+The original `gen_tac` script alias is spelled `Tactic.GEN_TAC` in standalone batch mode.
+Six actual member observations use Bool queries, Nat stored keys/payloads, arbitrary
+comparators and malformed cached sizes. Kernel fixtures cover nil, root equality,
+absent left/right branches and successful left/right recursive searches.
+
+### Balanced-map null characterization
+
+`balanced_map_null_probeScript.sml` captures the complete exported `null_thm`
+with and without full types, checks no open hypotheses and observes Tip and
+malformed cached-size Bin. `BalancedMapNullParity` checks the full independent
+key/query theorem and a Bool/Nat/String nonempty root, without comparator laws.
 `target_position_unique_probeScript.sml` captures the complete original
 `interference_count_lt` and `interference_pos_unique` theorem statements,
 checking that both compiled original theorems have no undischarged hypotheses.
@@ -5065,3 +5090,16 @@ aliases are manually reviewed; no standalone tactic replay is claimed.
 `target_next_mapped_probeScript.sml` captures the complete original
 `next_interference_MappedRead` and `next_interference_MappedWrite` statements
 with no open hypotheses. Native ports are in `TargetProps/NextMapped.lean`.
+`balanced_map_invariant_eq_probeScript.sml` captures the entire exported
+`invariant_eq`, including its typed independent Tip payload and all three
+comparator-guarded semantic clauses, with no open HOL hypotheses. It also
+captures a valid singleton, an invalid cached size, and an equal-key child.
+`BalancedMapInvariantEqParity` kernel-checks the corresponding observations.
+The capture also replays the original private `key_ordered_to_fmap` proof
+and the complete original `invariant_eq` proof body, checking the replay has
+no open hypotheses. Batch tactics use their equivalent qualified HOL names.
+The same probe now replays the complete private `inv_props` statement and
+literal original proof, prints its fully typed closed theorem, and evaluates
+a valid tree with two nonempty children. The Lean fixtures also instantiate
+all three `invProps` conclusions for a checked three-key comparator, using
+actual nonempty canonical child lookups rather than assumed domain facts.

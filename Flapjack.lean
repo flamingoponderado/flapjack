@@ -1506,7 +1506,6 @@ import Flapjack.Compiler.Backend.LabToTarget.SecondPass
 import Flapjack.Compiler.Backend.LabToTarget.Padding
 import Flapjack.Compiler.Backend.WordUnreach
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
-
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Models
@@ -1521,6 +1520,10 @@ import Flapjack.Misc.Alignment.Production
 import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
 
 
+import Flapjack.Misc.BalancedMap.NullSemantics
+import Flapjack.Misc.BalancedMap.InvariantSemantics
+import Flapjack.Misc.BalancedMap.Membership
+import Flapjack.Misc.BalancedMap.BalanceArithmetic
 
 -- Tagged modules required by the HOL reference coverage gate.
 
