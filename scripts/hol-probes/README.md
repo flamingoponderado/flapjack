@@ -5351,3 +5351,11 @@ invariant and map equality conclusions. Actual defined rotation, invariant,
 three recursive lookup values, and invalid cached-size rejection are captured.
 `BalancedMapSingleRParity` consumes both full native conclusions and derives
 all three canonical semantic lookups; missing constructor outputs are unused.
+
+### Native LabToTarget word/location byte conversion
+
+`lab_to_target_word_loc_byte_probeScript.sml` captures the complete original
+`word_loc_val_byte_def` and word32 endian/aligned-memory/label hit and miss
+observations. Word1 constant-memory observations and address-dependent symbolic
+alignment retain the original unconstrained `LOG2(0)`; they assert no chosen zero
+completion. Matching kernel checks are in `LabToTargetWordLocValByteParity.lean`.

@@ -23,6 +23,7 @@ import Flapjack.Test.RiscVOverflowTargetParity
 import Flapjack.Test.LabToTargetByteLengthsParity
 import Flapjack.Test.LabPropsLabelSetsParity
 import Flapjack.Test.LabToTargetWordLocationParity
+import Flapjack.Test.LabToTargetWordLocValByteParity
 import Flapjack.Test.WordCseProductionRegisterClassifiers
 import Flapjack.Test.WordCseProductionInstructionKeys
 import Flapjack.Test.WordCseProductionLoadHeapKeys

@@ -4734,3 +4734,7 @@ run_probe word_to_stack_const_memory_append_probeScript.sml word_to_stack_const_
 run_probe balanced_map_singleR_probeScript.sml balanced_map_singleR_probe.out \
   bmsr_full bmsr_tree bmsr_invariant bmsr_lookup0 bmsr_lookup1 bmsr_lookup2 bmsr_badsize \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe lab_to_target_word_loc_byte_probeScript.sml lab_to_target_word_loc_byte_probe.out \
+  word_loc_byte_full_definition word_loc_byte_full_definition_types word_loc_byte_word32_le word_loc_byte_word32_aligned_read word_loc_byte_word32_be word_loc_byte_loc32_hit word_loc_byte_loc32_outer_miss word_loc_byte_loc32_inner_miss word_loc_byte_word1_le word_loc_byte_word1_be word_loc_byte_word1_symbolic_alignment \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
