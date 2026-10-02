@@ -51570,5 +51570,131 @@
     "statement_status": "reviewed_reals_as_rational_cuts",
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (dshl): pinned machine_ieeeScript.sml factory line 16, machine_ieeeLib lift1 and mk_fp_encoding instantiate binary_ieee float_sqrt at significand 52/exponent 11 and pack its SND as word64. holFp64SqrtR preserves every rounding mode, flags projection, negative-zero, infinity and unspecified NaN branch. The literal Mathlib Real.sqrt carrier preserves binary_ieee float_to_real, float_value, is_closest/closest_such/closest, largest/threshold, all-mode round, signed-zero float_round and flags clauses. holFp64Sqrt_eq_holFp64SqrtR proves unconditional kernel equality for every mode and word64; no external cut-criterion premise. Generic t/w helpers remain untagged because their zero-width domain exceeds HOL's positive type dimensions. Fixed BitVec 64 matches HOL word64 directly; no generic word-dimension qualifier applies. reals_as_rational_cuts is conservatively retained for reviewed legacy IEEE helper dependencies, as required by the current checker; SOUNDNESS item 8 still records external HOL-to-Lean real correspondence, distinct from the kernel-proven cut-to-Mathlib-real equality. No whole-inst qualifier removal or formal cross-assistant equivalence is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/SharedMemoryClock.lean",
+    "lean_name": "shMemLoadWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "sh_mem_load_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (1vyf): full original239-301 equation, arbitrary native positive word dimension/configuration/FFI host. Actual helper called on clock-updated state equals the full original result/state pair with only its resulting clock changed. No success/domain/FFI oracle/callback/frame premise. All eight operators retain domain/alignment checks, word/location register guards, actual call_FFI config/payload, terminal unchanged-state and returned register/FFI updates. The dispatcher is the full eight-case source equation. Source types and literal complete proofs captured; kernel full-state proofs and meaningful returned/final/failure observations. fmap_as_finite_support names actual canonical imported StackSemStateFiniteExact regs/fpRegs/store with same-module genuine roundtrip; words_as_type_indexed_bitvec records only positive source dimension and Type0 FFI host. No whole evaluator or production-path completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/SharedMemoryClock.lean",
+    "lean_name": "shMemStoreWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "sh_mem_store_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (1vyf): full original239-301 equation, arbitrary native positive word dimension/configuration/FFI host. Actual helper called on clock-updated state equals the full original result/state pair with only its resulting clock changed. No success/domain/FFI oracle/callback/frame premise. All eight operators retain domain/alignment checks, word/location register guards, actual call_FFI config/payload, terminal unchanged-state and returned register/FFI updates. The dispatcher is the full eight-case source equation. Source types and literal complete proofs captured; kernel full-state proofs and meaningful returned/final/failure observations. fmap_as_finite_support names actual canonical imported StackSemStateFiniteExact regs/fpRegs/store with same-module genuine roundtrip; words_as_type_indexed_bitvec records only positive source dimension and Type0 FFI host. No whole evaluator or production-path completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/SharedMemoryClock.lean",
+    "lean_name": "shMemLoad32WithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "sh_mem_load32_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (1vyf): full original239-301 equation, arbitrary native positive word dimension/configuration/FFI host. Actual helper called on clock-updated state equals the full original result/state pair with only its resulting clock changed. No success/domain/FFI oracle/callback/frame premise. All eight operators retain domain/alignment checks, word/location register guards, actual call_FFI config/payload, terminal unchanged-state and returned register/FFI updates. The dispatcher is the full eight-case source equation. Source types and literal complete proofs captured; kernel full-state proofs and meaningful returned/final/failure observations. fmap_as_finite_support names actual canonical imported StackSemStateFiniteExact regs/fpRegs/store with same-module genuine roundtrip; words_as_type_indexed_bitvec records only positive source dimension and Type0 FFI host. No whole evaluator or production-path completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/SharedMemoryClock.lean",
+    "lean_name": "shMemStore32WithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "sh_mem_store32_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (1vyf): full original239-301 equation, arbitrary native positive word dimension/configuration/FFI host. Actual helper called on clock-updated state equals the full original result/state pair with only its resulting clock changed. No success/domain/FFI oracle/callback/frame premise. All eight operators retain domain/alignment checks, word/location register guards, actual call_FFI config/payload, terminal unchanged-state and returned register/FFI updates. The dispatcher is the full eight-case source equation. Source types and literal complete proofs captured; kernel full-state proofs and meaningful returned/final/failure observations. fmap_as_finite_support names actual canonical imported StackSemStateFiniteExact regs/fpRegs/store with same-module genuine roundtrip; words_as_type_indexed_bitvec records only positive source dimension and Type0 FFI host. No whole evaluator or production-path completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/SharedMemoryClock.lean",
+    "lean_name": "shMemLoad16WithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "sh_mem_load16_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (1vyf): full original239-301 equation, arbitrary native positive word dimension/configuration/FFI host. Actual helper called on clock-updated state equals the full original result/state pair with only its resulting clock changed. No success/domain/FFI oracle/callback/frame premise. All eight operators retain domain/alignment checks, word/location register guards, actual call_FFI config/payload, terminal unchanged-state and returned register/FFI updates. The dispatcher is the full eight-case source equation. Source types and literal complete proofs captured; kernel full-state proofs and meaningful returned/final/failure observations. fmap_as_finite_support names actual canonical imported StackSemStateFiniteExact regs/fpRegs/store with same-module genuine roundtrip; words_as_type_indexed_bitvec records only positive source dimension and Type0 FFI host. No whole evaluator or production-path completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/SharedMemoryClock.lean",
+    "lean_name": "shMemStore16WithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "sh_mem_store16_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (1vyf): full original239-301 equation, arbitrary native positive word dimension/configuration/FFI host. Actual helper called on clock-updated state equals the full original result/state pair with only its resulting clock changed. No success/domain/FFI oracle/callback/frame premise. All eight operators retain domain/alignment checks, word/location register guards, actual call_FFI config/payload, terminal unchanged-state and returned register/FFI updates. The dispatcher is the full eight-case source equation. Source types and literal complete proofs captured; kernel full-state proofs and meaningful returned/final/failure observations. fmap_as_finite_support names actual canonical imported StackSemStateFiniteExact regs/fpRegs/store with same-module genuine roundtrip; words_as_type_indexed_bitvec records only positive source dimension and Type0 FFI host. No whole evaluator or production-path completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/SharedMemoryClock.lean",
+    "lean_name": "shMemLoadByteWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "sh_mem_load_byte_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (1vyf): full original239-301 equation, arbitrary native positive word dimension/configuration/FFI host. Actual helper called on clock-updated state equals the full original result/state pair with only its resulting clock changed. No success/domain/FFI oracle/callback/frame premise. All eight operators retain domain/alignment checks, word/location register guards, actual call_FFI config/payload, terminal unchanged-state and returned register/FFI updates. The dispatcher is the full eight-case source equation. Source types and literal complete proofs captured; kernel full-state proofs and meaningful returned/final/failure observations. fmap_as_finite_support names actual canonical imported StackSemStateFiniteExact regs/fpRegs/store with same-module genuine roundtrip; words_as_type_indexed_bitvec records only positive source dimension and Type0 FFI host. No whole evaluator or production-path completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/SharedMemoryClock.lean",
+    "lean_name": "shMemStoreByteWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "sh_mem_store_byte_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (1vyf): full original239-301 equation, arbitrary native positive word dimension/configuration/FFI host. Actual helper called on clock-updated state equals the full original result/state pair with only its resulting clock changed. No success/domain/FFI oracle/callback/frame premise. All eight operators retain domain/alignment checks, word/location register guards, actual call_FFI config/payload, terminal unchanged-state and returned register/FFI updates. The dispatcher is the full eight-case source equation. Source types and literal complete proofs captured; kernel full-state proofs and meaningful returned/final/failure observations. fmap_as_finite_support names actual canonical imported StackSemStateFiniteExact regs/fpRegs/store with same-module genuine roundtrip; words_as_type_indexed_bitvec records only positive source dimension and Type0 FFI host. No whole evaluator or production-path completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/SharedMemoryClock.lean",
+    "lean_name": "shMemOpWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "sh_mem_op_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (1vyf): full original239-301 equation, arbitrary native positive word dimension/configuration/FFI host. Actual helper called on clock-updated state equals the full original result/state pair with only its resulting clock changed. No success/domain/FFI oracle/callback/frame premise. All eight operators retain domain/alignment checks, word/location register guards, actual call_FFI config/payload, terminal unchanged-state and returned register/FFI updates. The dispatcher is the full eight-case source equation. Source types and literal complete proofs captured; kernel full-state proofs and meaningful returned/final/failure observations. fmap_as_finite_support names actual canonical imported StackSemStateFiniteExact regs/fpRegs/store with same-module genuine roundtrip; words_as_type_indexed_bitvec records only positive source dimension and Type0 FFI host. No whole evaluator or production-path completion."
   }
 ]

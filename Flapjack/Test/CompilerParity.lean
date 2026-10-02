@@ -1,3 +1,4 @@
+import Flapjack.Test.StackPropsSharedMemoryClockParity
 import Flapjack.Test.LabToTargetEncodingSimilarityParity
 import Flapjack.Test.LabToTargetPaddingSimilarityParity
 import Flapjack.Test.AsmPropsArithmeticPreservationParity
@@ -1500,6 +1501,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackSemCallIndirectParity.runChecks,
     Flapjack.Test.StackSemLoopRecursiveParity.runChecks,
     Flapjack.Test.StackSemBufferWriteParity.runChecks,
+    Flapjack.Test.StackPropsSharedMemoryClockParity.runChecks,
     Flapjack.Test.StackSemShMemParity.runChecks,
     Flapjack.Test.StackSemShMemOpParity.runChecks,
     Flapjack.Test.StackSemFfiParity.runChecks,

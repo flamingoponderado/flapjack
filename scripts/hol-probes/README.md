@@ -4354,3 +4354,9 @@ implication, plus both read/eligibility conclusions.
 clocked WordSem evaluator, its reviewed finite-support state and its inherited
 IEEE rational-cut assumption (SOUNDNESS item 8). This is a CSE simulation
 prerequisite, not the entire CSE invariant/pass or compiler theorem.
+
+`stackprops_shared_memory_clock_probeScript.sml` replays all nine original
+StackProps shared-memory clock-commutation proofs verbatim and captures their
+full statements/types (18 rows), then checks fifteen native returned/final/error
+observations at clock 37. `StackPropsSharedMemoryClockParity.lean` kernel-replays
+those observations and applies the full arbitrary-state dispatch theorem.
