@@ -64377,5 +64377,17 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.6: genuine complete OpCurrHeap comp_correct1481-1493/1626-1638 constructor with exactly original4premises actual source evaluate/nonError/fullstateRel/regBound. EXISTS native targetclock/poststate, actual compiled instruction evaluate and original result branch. Target source-register lookup and CurrHeap reserved register lookup derived from fullstateRel. Source-success expression derived from original nonError; native target expression equality proved without operand/success/simulation premises; pointer+2 differs from source input by original bound, excluding special Or-copy guard. Same native word operation and fullpostrelation via bounded setVar; clock0 derived. Positive width NeZero/BitVec independent C/F Type0; actual imported canonical regs/fpRegs/store and genuine same-module codec witness, Spt code excluded. Entire evaluator inherits reals_as_rational_cuts assumption explicitly retained. Source case independent of missing Get/Set heap helpers. Fullparent other cases and assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordStoreLaws.lean",
+    "lean_name": "wordStoreCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_store_CurrHeap",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.9: original local word_store_CurrHeap266-270 unconditional equality of full heap predicates. Fresh original quantified types confirm base alpha word, state(beta,gamma,delta), value beta word_loc; Lean retains independent addressWidth/valueWidth each positive NeZero BitVec and independent C/F Type0. All original ordered48store_list slots, including Temp5bit0..31, exclude CurrHeap; lookup update at CurrHeap therefore leaves every slot unchanged, including missing-key Word0 fallback and arbitrary Word/Loc values. Actual imported StackSemStateFiniteExact.store uses canonical finite support with same-module genuine broad/exact roundtrip witness. No extra input/heap/success/finite-domain hypothesis, no fixed width restriction or weaker extensional pointwise result; exact whole predicate equality. Fresh original source proof/statement/types/kernel replay and native kernel proof checked. This lemma supplies only Set CurrHeap dependency; other cases and full compiler theorem remain separate obligations."
   }
 ]

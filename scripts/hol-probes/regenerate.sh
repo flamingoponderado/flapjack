@@ -5174,3 +5174,7 @@ run_probe stack_remove_comp_inst_probeScript.sml stack_remove_comp_inst_probe.ou
 run_probe stack_remove_comp_heap_probeScript.sml stack_remove_comp_heap_probe.out \
   ch_statement ch_types ch_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_store_curr_heap_probeScript.sml stack_remove_word_store_curr_heap_probe.out \
+  wc_statement wc_types wc_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
