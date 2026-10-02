@@ -5442,3 +5442,6 @@ run_probe lab_to_target_odd_alignment_probeScript.sml lab_to_target_odd_alignmen
   contract_one_byte contract_two_byte contract_bad_alignment odd_padded_line odd_valid_code even_padded_line validity_guard_needed encoder_guard_needed physical_not_annotation empty_zero_label width1_odd_line width80_odd_code \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_stack_write_probeScript.sml stack_remove_stack_write_probe.out \
+  sw_statement sw_proved srw_statement srw_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
