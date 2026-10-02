@@ -4514,3 +4514,7 @@ equivalence or complete CSE correctness.
 ## Literal balanced-map insertion
 
 `balanced_map_insert_probe.out` captures16 full original insertion trees and the defining equation. Matching kernel fixtures include malformed cached sizes and a comparator equating distinct keys; the latter replaces key and value while retaining size and subtrees. The universal Equal clause is kernel checked. No insertion invariant or production map correspondence is claimed.
+
+## Literal balanced-map invariants
+
+`balanced_map_invariants_probe.out` records37 original size, key-order, invariant and balance observations plus the full invariant equation. Matching kernel predicates distinguish cached metadata from node count, reversed/equal keys, a descendant crossing the parent bound and balance threshold failures. These are full definition observations, not insertion correctness or production equivalence.

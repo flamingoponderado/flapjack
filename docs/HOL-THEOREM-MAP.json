@@ -52628,5 +52628,37 @@
     "hol_name": "insert_def",
     "statement_status": "pending_statement_review",
     "reviewer": "flapjack-sol-b local source comparison2026-10-02 balanced-map.3 HOL542-549: Tip singleton, Less recursive left then literal balanceL, Greater recursive right then literal balanceR, Equal replaces stored key/value with inserted key/value while retaining original cached size and children. Arbitrary comparator and malformed trees, no invariant/success premise.16 original complete outputs kernel checked plus universal Equal clause. Independent coordinator source acceptance pending, no insertion invariant or executed carrier claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "balanced",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanced_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source comparison2026-10-02 balanced-map.4.1 HOL838-879: balanced uses original sum<=1 OR MAX<=3*MIN; structureSize ignores cachedsizes; keyOrdered recursively compares parent key against every subtree key at supplied ordering; invariant preserves six conjuncts cachedsize/leftGreater/rightLess/balanced/leftInvariant/rightInvariant. Arbitrary comparator, no good_cmp or result premise.37 original size/order/invariant/balance predicates kernel replayed, incl malformed metadata/equal/reversed/descendant keys and thresholds. Independent source acceptance pending; no insertion correctness or runtime carrier claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "structureSize",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "structure_size_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source comparison2026-10-02 balanced-map.4.1 HOL838-879: balanced uses original sum<=1 OR MAX<=3*MIN; structureSize ignores cachedsizes; keyOrdered recursively compares parent key against every subtree key at supplied ordering; invariant preserves six conjuncts cachedsize/leftGreater/rightLess/balanced/leftInvariant/rightInvariant. Arbitrary comparator, no good_cmp or result premise.37 original size/order/invariant/balance predicates kernel replayed, incl malformed metadata/equal/reversed/descendant keys and thresholds. Independent source acceptance pending; no insertion correctness or runtime carrier claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "keyOrdered",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "key_ordered_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source comparison2026-10-02 balanced-map.4.1 HOL838-879: balanced uses original sum<=1 OR MAX<=3*MIN; structureSize ignores cachedsizes; keyOrdered recursively compares parent key against every subtree key at supplied ordering; invariant preserves six conjuncts cachedsize/leftGreater/rightLess/balanced/leftInvariant/rightInvariant. Arbitrary comparator, no good_cmp or result premise.37 original size/order/invariant/balance predicates kernel replayed, incl malformed metadata/equal/reversed/descendant keys and thresholds. Independent source acceptance pending; no insertion correctness or runtime carrier claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Invariants.lean",
+    "lean_name": "invariant",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "invariant_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-b local source comparison2026-10-02 balanced-map.4.1 HOL838-879: balanced uses original sum<=1 OR MAX<=3*MIN; structureSize ignores cachedsizes; keyOrdered recursively compares parent key against every subtree key at supplied ordering; invariant preserves six conjuncts cachedsize/leftGreater/rightLess/balanced/leftInvariant/rightInvariant. Arbitrary comparator, no good_cmp or result premise.37 original size/order/invariant/balance predicates kernel replayed, incl malformed metadata/equal/reversed/descendant keys and thresholds. Independent source acceptance pending; no insertion correctness or runtime carrier claim."
   }
 ]
