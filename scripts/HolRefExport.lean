@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MapBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
