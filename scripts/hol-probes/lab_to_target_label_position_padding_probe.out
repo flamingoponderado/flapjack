@@ -1,0 +1,18 @@
+pad_section_pos_ok=∀(nop :word8 list) (lines :α line list) (aux :α line list) (pos :num).
+  lab_len_pos_ok (pos + (SUM (MAP (line_len :α line -> num) aux) :num)) lines ∧
+  lab_len_pos_ok pos (REVERSE aux) ∧ EVERY (label_zero :α line -> bool) aux ∧
+  (NULL aux ∨ is_Label (HD aux) ⇒ label_prefix_zero lines) ⇒
+  lab_len_pos_ok pos (pad_section nop lines aux)
+pad_section_pos_ok_types=(nop :word8 list)::word8 list;(lines :α line list)::α line list;(aux :α line list)::α line list;(pos :num)::num;
+mixed_original_four_guards=T
+mixed_full_tuple=T
+mixed_output_parity=T
+empty_nop_allowed=T
+multibyte_nop_allowed=T
+empty_aux_masked_guard=T
+label_head_guard=T
+prefix_guard_necessary=T
+input_parity_guard_necessary=T
+acc_parity_guard_necessary=T
+empty_width1=T
+large_width80=T
