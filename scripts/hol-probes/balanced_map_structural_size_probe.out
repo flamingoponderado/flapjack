@@ -1,0 +1,1 @@
+bmss_full_theorem=⊢ ∀cmp t. invariant cmp t ⇒ size t = structure_size t

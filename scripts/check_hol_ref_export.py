@@ -34,6 +34,7 @@ ALLOWED_QUALIFIERS = {
     "fmap_as_finite_support", "fmap_as_finite_support_result",
     "fmap_as_finite_support_function",
     "fmap_as_finite_support_heterogeneous_function",
+    "fmap_as_finite_support_result_observations",
     "fmap_as_finite_support_parameters",
     "fmap_as_finite_support_existentials",
     "fmap_as_finite_support_relation", "fmap_as_finite_support_equalities",
@@ -122,6 +123,7 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
         "fmap_as_finite_support_relation",
         "fmap_as_finite_support_function",
         "fmap_as_finite_support_heterogeneous_function",
+        "fmap_as_finite_support_result_observations",
         "fmap_as_finite_support_parameters",
         "fmap_as_finite_support_existentials",
     ):

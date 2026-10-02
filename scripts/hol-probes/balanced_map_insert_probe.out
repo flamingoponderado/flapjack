@@ -1,0 +1,33 @@
+bmi_0_3=Bin 1 3 777 Tip Tip
+
+bmi_0_10=Bin 1 10 777 Tip Tip
+
+bmi_0_17=Bin 1 17 777 Tip Tip
+
+bmi_1_3=Bin 2 10 100 (Bin 1 3 777 Tip Tip) Tip
+
+bmi_1_10=Bin 99 10 777 Tip Tip
+
+bmi_1_17=Bin 2 10 100 Tip (Bin 1 17 777 Tip Tip)
+
+bmi_2_3=Bin 83 10 100 (Bin 2 20 200 (Bin 1 3 777 Tip Tip) Tip) (Bin 80 5 50 Tip Tip)
+
+bmi_2_10=Bin 0 10 777 (Bin 90 20 200 Tip Tip) (Bin 80 5 50 Tip Tip)
+
+bmi_2_17=Bin 93 10 100 (Bin 90 20 200 Tip Tip) (Bin 2 5 50 Tip (Bin 1 17 777 Tip Tip))
+
+bmi_3_3=Bin 4 10 100 (Bin 2 5 50 (Bin 1 3 777 Tip Tip) Tip) (Bin 1 15 150 Tip Tip)
+
+bmi_3_10=Bin 3 10 777 (Bin 1 5 50 Tip Tip) (Bin 1 15 150 Tip Tip)
+
+bmi_3_17=Bin 4 10 100 (Bin 1 5 50 Tip Tip) (Bin 2 15 150 Tip (Bin 1 17 777 Tip Tip))
+
+bmi_4_3=Bin 4 10 100 (Bin 2 5 50 (Bin 7 3 777 Tip Tip) Tip) (Bin 1 15 150 Tip Tip)
+
+bmi_4_10=Bin 9 10 777 (Bin 8 5 50 (Bin 7 3 30 Tip Tip) Tip) (Bin 1 15 150 Tip Tip)
+
+bmi_4_17=Bin 11 10 100 (Bin 8 5 50 (Bin 7 3 30 Tip Tip) Tip) (Bin 2 15 150 Tip (Bin 1 17 777 Tip Tip))
+
+bmi_equal_distinct=Bin 0 999 888 (Bin 90 20 200 Tip Tip) (Bin 80 5 50 Tip Tip)
+
+bmi_definition=⊢ (∀cmp k v. insert cmp k v Tip = singleton k v) ∧ ∀cmp k v s k' v' l r. insert cmp k v (Bin s k' v' l r) = case cmp k k' of Less => balanceL k' v' (insert cmp k v l) r | Equal => Bin s k v l r | Greater => balanceR k' v' l (insert cmp k v r)

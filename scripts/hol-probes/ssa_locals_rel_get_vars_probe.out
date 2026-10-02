@@ -1,0 +1,7 @@
+get_vars_full=⊢ ∀ls y na ssa st cst. ssa_locals_rel na ssa st.locals cst.locals ∧ get_vars ls st = SOME y ⇒ get_vars (MAP (option_lookup ssa) ls) cst = SOME y
+get_vars_type_source=:(α, β, γ) state
+get_vars_type_target=:(α, δ, ε) state
+get_vars_type_names=:num list
+get_vars_type_values=:α word_loc list
+get_vars_type_ssa=:num sptree$num_map
+get_vars_type_next=:num

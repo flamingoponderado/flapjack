@@ -440,12 +440,18 @@ def find_lean_decl(lines: list[str], start: int) -> str:
     return "?"
 
 
+FMAP_RESULT_OBSERVATIONS_RE = re.compile(
+    r"\(\s*fmap_as_finite_support_result_observations\s*:=\s*\[([^]]*)\]\s*\)"
+)
+
+
 def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False,
                         include_word_dimension_width: bool = False,
                         include_fmap_function: bool = False,
                         include_fmap_heterogeneous_function: bool = False,
                         include_reals_as_rational_cuts: bool = False,
-                        include_fmap_as_finite_support_equality: bool = False):
+                        include_fmap_as_finite_support_equality: bool = False,
+                        include_result_observations: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -525,6 +531,11 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     site += (bool(REALS_AS_RATIONAL_CUTS_RE.search(attribute)),)
                 if include_fmap_as_finite_support_equality:
                     site += (bool(FMAP_AS_FINITE_SUPPORT_EQUALITY_RE.search(attribute)),)
+                if include_result_observations:
+                    observations = fields_for(FMAP_RESULT_OBSERVATIONS_RE)
+                    if FMAP_RESULT_OBSERVATIONS_RE.search(attribute) and not observations:
+                        observations = ("",)
+                    site += (observations,)
                 yield site
         start = None
         chunks = []
@@ -1652,6 +1663,97 @@ def fmap_as_finite_support_result_errors(
     ok, message = has_fmap_result_witness(lines, decl_name, module)
     if not ok:
         errors.append(f"fmap_as_finite_support_result {message}")
+    return errors
+
+
+def fmap_result_observation_errors(
+    lines: list[str], module: str, declaration_text: str,
+    producers: tuple[str, ...], records: list[dict], root: Path = ROOT,
+) -> list[str]:
+    """Resolve explicitly named imported, reviewed map-result producers.
+
+    This checks representation evidence only. Source comparison of the entire
+    observer remains mandatory; a producer review is not an observer review.
+    """
+    errors: list[str] = []
+    if not producers or len(set(producers)) != len(producers):
+        errors.append("result observations require distinct nonempty producer names")
+    stack = list(IMPORT_RE.findall(strip_lean_comments("\n".join(lines))))
+    seen: set[str] = set()
+    candidates: dict[str, list[tuple[str, str, list[str], str, bool]]] = {}
+    imported_declarations: dict[str, set[str]] = {}
+    while stack:
+        imported = stack.pop()
+        if imported in seen:
+            continue
+        seen.add(imported)
+        info = _lean_file_info(module_source_file(imported, root))
+        if info is None:
+            continue
+        clean = strip_lean_comments(info.text)
+        stack.extend(IMPORT_RE.findall(clean))
+        for declared in re.findall(r"^\s*(?:noncomputable\s+)?(?:private\s+|protected\s+)?(?:def|abbrev|opaque|theorem|lemma)\s+([A-Za-z0-9_'.]+)", clean, re.M):
+            imported_declarations.setdefault(declared.rsplit(".", 1)[-1], set()).add(imported)
+        for site in hol_attribute_sites(info.lines):
+            number = site[0]
+            name = find_lean_decl(info.lines, number - 1)
+            # Resolve namespace ownership from source, never from a producer's
+            # spelling alone. Ambiguous imported short names are rejected.
+            namespaces: list[str | None] = []
+            for line in strip_lean_comments("\n".join(info.lines[:number])).splitlines():
+                ns = re.match(r"^\s*namespace\s+([A-Za-z0-9_'.]+)\s*$", line)
+                end = re.match(r"^\s*end(?:\s+([A-Za-z0-9_'.]+))?\s*$", line)
+                if ns:
+                    namespaces.append(ns.group(1))
+                elif re.match(r"^\s*section(?:\s+\S+)?\s*$", line):
+                    namespaces.append(None)
+                elif end and namespaces:
+                    namespaces.pop()
+            full_name = ".".join([part for part in namespaces if part is not None] + [name])
+            candidate = (imported, name, info.lines,
+                         tagged_declaration_source(info.lines, number), bool(site[8]))
+            for alias in set((name, full_name)):
+                candidates.setdefault(alias, []).append(candidate)
+    signature = re.sub(r'"(?:\\.|[^"\\])*"', '""', strip_lean_comments(declaration_text))
+    for producer in producers:
+        short_name = producer.rsplit(".", 1)[-1]
+        local_source = strip_lean_comments("\n".join(lines))
+        if re.search(r"\b(?:def|abbrev|opaque|theorem|lemma)\s+" + re.escape(short_name) + r"\b", local_source):
+            errors.append(f"result observation producer {producer} is shadowed by a local declaration")
+        if re.search(r"[({]\s*" + re.escape(producer) + r"\s*:", signature):
+            errors.append(f"result observation producer {producer} is shadowed by an observer binder")
+        if not re.search(r"(?<![A-Za-z0-9_'.])" + re.escape(producer) +
+                         r"(?![A-Za-z0-9_'.])", signature):
+            errors.append(f"result observation producer {producer} is unused in observer type")
+        if "." not in producer and len(imported_declarations.get(short_name, set())) > 1:
+            errors.append(f"result observation producer {producer} is ambiguous among imported declarations")
+        matches = candidates.get(producer, [])
+        if len(matches) != 1:
+            errors.append(f"result observation producer {producer} must resolve uniquely to an imported tagged declaration")
+            continue
+        owner, name, source_lines, source, qualified = matches[0]
+        clean_source = strip_lean_comments(source)
+        # Equation-style recursive definitions omit :=; parse their header only.
+        clean_source = re.split(r"\n\s*\|", clean_source, maxsplit=1)[0] + " :="
+        parsed = _function_declaration_signature(clean_source, name)
+        result = _split_type_top_level(parsed[1], ("→",))[-1].strip() if parsed else ""
+        if not qualified:
+            errors.append(f"result observation producer {producer} lacks canonical result qualification")
+        if parsed is None or not re.match(r"(?:Flapjack\.)?HolFiniteMapExact\b", result):
+            errors.append(f"result observation producer {producer} must return HolFiniteMapExact")
+        errors.extend(f"producer {producer}: {error}" for error in
+                      fmap_as_finite_support_result_errors(source_lines, owner,
+                          tagged_declaration_text(source_lines, next(site[0] for site in
+                              hol_attribute_sites(source_lines) if find_lean_decl(source_lines, site[0]-1) == name)), name))
+        matching_records = [record for record in records
+                            if record.get("lean_path") == owner.replace(".", "/") + ".lean"
+                            and record.get("lean_name") == name]
+        if len(matching_records) != 1 or not (
+            matching_records[0].get("statement_status") == "reviewed_fmap_as_finite_support_result"
+            and matching_records[0].get("fmap_as_finite_support_result") is True
+            and str(matching_records[0].get("reviewer", "")).strip()
+        ):
+            errors.append(f"result observation producer {producer} lacks reviewed canonical result manifest record")
     return errors
 
 
@@ -3807,6 +3909,8 @@ def main(argv: list[str]) -> int:
         )
         return 1
 
+    observation_manifest = ROOT / "docs/HOL-THEOREM-MAP.json"
+    observation_records = json.loads(observation_manifest.read_text()) if observation_manifest.is_file() else []
     reals_names = reals_rendering_names(ROOT)
     for lean_path in lean_files():
         rel = lean_path.relative_to(ROOT).as_posix()
@@ -3818,15 +3922,25 @@ def main(argv: list[str]) -> int:
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality) in hol_attribute_sites(
+             fmap_equality, result_observations) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
                 include_fmap_heterogeneous_function=True,
                 include_reals_as_rational_cuts=True,
                 include_fmap_as_finite_support_equality=True,
+                include_result_observations=True,
              ):
             where = f"{rel}:{number}"
+            if result_observations:
+                if (list_fields or names_fields or fmap_fields or fmap_result or fmap_relation or
+                    fmap_equalities or words_bitvec or fmap_parameters or fmap_existentials or
+                    dimension_width or fmap_function_positions or fmap_heterogeneous_function_positions or
+                    reals_cuts or fmap_equality):
+                    errors.append(f"{where}: result observations cannot combine with other representation qualifiers")
+                errors.extend(f"{where}: {error}" for error in fmap_result_observation_errors(
+                    lines, module, tagged_declaration_text(lines, number),
+                    result_observations, observation_records))
             errors.extend(
                 f"{where}: {error}"
                 for error in reals_as_rational_cuts_errors(
