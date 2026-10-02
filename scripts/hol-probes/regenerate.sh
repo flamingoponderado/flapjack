@@ -3962,3 +3962,7 @@ run_probe lab_implicit_section_zero_probeScript.sml lab_implicit_section_zero_pr
 run_probe target_sem_evaluate_probeScript.sml target_sem_evaluate_probe.out \
   te_zero te_unknown te_halt_success te_halt_resource te_cache te_shared_missing te_external_mmio te_cache_shift te_empty_external te_empty_external_shift te_normal_priority_encoding_fail te_normal_success te_normal_shift te_normal_guard_rollback te_mm_read_return te_mm_write_return te_mm_write_narrow te_mm_read_final te_mm_unshared te_mm_invalid_size \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_sem_machine_sem_probeScript.sml target_sem_machine_sem_probe.out \
+  ts_terminate_clause ts_diverge_clause ts_fail_clause \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"

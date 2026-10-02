@@ -51443,5 +51443,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.5): Compared the entire original targetSemScript.sml:118-219. Retains machine_config and universe-0 FFI host, arbitrary positive word width, clock-only recursion, program-domain minus FFI-entry priority before halt/cache, encoded-memory existential, all three state_ok guards and frame only on ms1, failure rollback to original machine/FFI, separate shifted next/cache/FFI oracles, first-match find_index and ALOOKUP, total EL using shared HOL ARB without a length premise, both mapped templates and full-word alignment, canonical little-endian arbitrary-count bytes, external MMIO rejection and two optional reads, original FFI_final event and old FFI state, and FFI_return new host/events. words_as_type_indexed_bitvec records only the standard positive word/FFI carrier translation. No callback, successful-run premise, concrete unspecified FFI name, or executable compiler routing change. Original target_sem_evaluate probes and matching kernel examples provide regressions, not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/MachineSem.lean",
+    "lean_name": "machineSemHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "machine_sem_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.6): Literal entire targetSemScript221-234 three constructor clauses over actual evaluateTargetHOL. Terminate retains existential clock/machine/FFI witnesses, Halt outcome and exact event equality. Diverge retains every natural clock with TimeOut witnesses and genuine canonical HolLList.lprefixLub over IMAGE(fromList of evaluator final io_events) UNIV; set membership is existential k with image equality, without finite bound, callback, trace approximation or simulation premise. Fail retains existential clock and Error first projection. Uses canonical MachineConfig, HolFfiState universe-0 host, HolBehaviour/HolLList and existing source-reviewed prefix LUB. words_as_type_indexed_bitvec records only positive HOL word dimensions and FFI host translation. Consumes own delivered evaluator a2d0f139e/388b74af3 under coordinator delivered-dependency authorization; acceptance remains on its open bead. Three fresh original HOL kernel-proved full-clause rows correspond to generic Lean Iff.rfl examples; neither is cross-language equivalence evidence."
   }
 ]

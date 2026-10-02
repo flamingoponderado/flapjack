@@ -4361,3 +4361,10 @@ bounded `EVAL`; they do not simplify with the recursive evaluator as an unbounde
 rewrite. Every captured row has a kernel example in
 `Flapjack.Test.TargetSemEvaluateParity`. These are regression checks, not a
 cross-assistant equivalence proof. The compiler executable is not rerouted.
+
+`target_sem_machine_sem_probeScript.sml` kernel-proves the full original
+Terminate/Diverge/Fail clauses for arbitrary machine and FFI carriers, checking
+exact conclusions and empty theorem hypotheses before capture. Divergence uses
+all clocks and the original IMAGE/UNIV lazy-list least upper bound. Generic Lean
+clause checks live in `Flapjack.Test.TargetSemMachineSemParity`; these check
+local definition shape and are not a cross-language equivalence theorem.
