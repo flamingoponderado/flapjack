@@ -5460,3 +5460,12 @@ heavy branches are derived from invariants; no stronger premises are added.
 five-premise/ten-conclusion statement and nine native carriers. The pinned
 original HOL kernel replay and Lean kernel check are regression/source-review
 evidence, not a cross-language equivalence proof. Full Loop simulation remains open.
+
+### Full original left-balancing correctness
+
+`balanced_map_balanceL_correct_probeScript.sml` replays the entire original
+local `balanceL_thm` proof and full prerequisite proof chain, checking its
+typed theorem is closed. Six actual branches capture output trees, invariants
+and inserted-key lookups. `BalancedMapBalanceLCorrectParity` checks all original
+input premises, consumes both native invariant/map conclusions, and derives
+the actual canonical inserted-key observations. No compiler caller changes.

@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
+import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceLCorrect
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceL
 import Flapjack.Misc.BalancedMap.RotationCorrect.RotateR
 import Flapjack.Misc.BalancedMap.RotationCorrect.DoubleR
