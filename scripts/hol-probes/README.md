@@ -5465,3 +5465,12 @@ typed theorem, actual tree, invariant, three lookups and bad cached-size
 rejection. Native consumers establish every original premise and consume both
 invariant and map conclusions and all three canonical lookups. These fixtures
 are regression observations, not a cross-language equivalence theorem.
+
+## Full left-rotation assembly
+
+`balanced_map_rotateL_probeScript.sml` literally replays both original full
+constructor proofs and full `rotateL_thm`, checking the assembly has no open
+hypotheses. Eleven rows capture its full type and both actual dispatch trees,
+invariants and six lookups. Native fixtures establish every original premise
+and consume both invariant/map conclusions. Observations are regression
+evidence, not a cross-language equivalence theorem.
