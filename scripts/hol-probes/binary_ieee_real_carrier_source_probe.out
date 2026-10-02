@@ -1,0 +1,141 @@
+float_to_real_def_statement=∀(x :(τ, χ) float).
+  float_to_real x =
+  if x.Exponent = (0w :χ word) then
+    fsign x * ((2 :real) / (2 :real) pow INT_MAX (:χ)) *
+    (((&w2n x.Significand) :real) / (2 :real) pow dimindex (:τ))
+  else
+    fsign x * ((2 :real) pow w2n x.Exponent / (2 :real) pow INT_MAX (:χ)) *
+    ((1 :real) + ((&w2n x.Significand) :real) / (2 :real) pow dimindex (:τ))
+float_to_real_def_types=(x :(τ, χ) float)
+ : :(τ, χ) float; 
+float_value_def_statement=∀(x :(τ, χ) float).
+  float_value x =
+  if x.Exponent = (UINT_MAXw :χ word) then
+    if x.Significand = (0w :τ word) then Infinity else NaN
+  else Float (float_to_real x)
+float_value_def_types=(x :(τ, χ) float)
+ : :(τ, χ) float; 
+is_closest_def_statement=∀(s :(α, β) float -> bool) (x :real) (a :(α, β) float).
+  is_closest s x a ⇔
+  a ∈ s ∧
+  ∀(b :(α, β) float).
+    b ∈ s ⇒ abs (float_to_real a − x) ≤ abs (float_to_real b − x)
+is_closest_def_types=(s :(α, β) float -> bool)
+ : :(α, β) float -> bool; (x :real)
+ : :real; (a :(α, β) float)
+ : :(α, β) float; 
+closest_such_def_statement=∀(p :(α, β) float -> bool) (s :(α, β) float -> bool) (x :real).
+  closest_such p s x =
+  @(a :(α, β) float).
+    is_closest s x a ∧ ∀(b :(α, β) float). is_closest s x b ∧ p b ⇒ p a
+closest_such_def_types=(p :(α, β) float -> bool)
+ : :(α, β) float -> bool; (s :(α, β) float -> bool)
+ : :(α, β) float -> bool; (x :real)
+ : :real; 
+closest_def_statement=(closest :((α, β) float -> bool) -> real -> (α, β) float) =
+closest_such (K T :(α, β) float -> bool)
+closest_def_types=
+largest_def_statement=largest (:τ # χ) =
+(2 :real) pow (UINT_MAX (:χ) − (1 :num)) / (2 :real) pow INT_MAX (:χ) *
+((2 :real) − ((2 :real) pow dimindex (:τ))⁻¹)
+largest_def_types=
+threshold_def_statement=threshold (:τ # χ) =
+(2 :real) pow (UINT_MAX (:χ) − (1 :num)) / (2 :real) pow INT_MAX (:χ) *
+((2 :real) − ((2 :real) pow SUC (dimindex (:τ)))⁻¹)
+threshold_def_types=
+round_def_statement=∀(mode :rounding) (x :real).
+  (round mode x :(τ, χ) float) =
+  case mode of
+    roundTiesToEven =>
+      (let
+         (t :real) = threshold (:τ # χ)
+       in
+         if x ≤ -t then float_minus_infinity (:τ # χ)
+         else if x ≥ t then float_plus_infinity (:τ # χ)
+         else
+           closest_such (λ(a :(τ, χ) float). ¬word_lsb a.Significand)
+             (float_is_finite :(τ, χ) float -> bool) x)
+  | roundTowardPositive =>
+    (let
+       (t :real) = largest (:τ # χ)
+     in
+       if x < -t then float_bottom (:τ # χ)
+       else if x > t then float_plus_infinity (:τ # χ)
+       else closest {a | float_is_finite a ∧ float_to_real a ≥ x} x)
+  | roundTowardNegative =>
+    (let
+       (t :real) = largest (:τ # χ)
+     in
+       if x < -t then float_minus_infinity (:τ # χ)
+       else if x > t then FLT_MAX
+       else closest {a | float_is_finite a ∧ float_to_real a ≤ x} x)
+  | roundTowardZero =>
+    (let
+       (t :real) = largest (:τ # χ)
+     in
+       if x < -t then float_bottom (:τ # χ)
+       else if x > t then FLT_MAX
+       else closest {a | float_is_finite a ∧ abs (float_to_real a) ≤ abs x} x)
+round_def_types=(mode :rounding)
+ : :rounding; (x :real)
+ : :real; 
+float_round_def_statement=∀(mode :rounding) (toneg :bool) (r :real).
+  (float_round mode toneg r :(τ, χ) float) =
+  (let
+     (x :(τ, χ) float) = (round mode r :(τ, χ) float)
+   in
+     if float_is_zero x then if toneg then NEG0 else POS0 else x)
+float_round_def_types=(mode :rounding)
+ : :rounding; (toneg :bool)
+ : :bool; (r :real)
+ : :real; 
+float_round_with_flags_def_statement=∀(mode :rounding) (to_neg :bool) (r :real).
+  (float_round_with_flags mode to_neg r :flags # (τ, χ) float) =
+  (let
+     (x :(τ, χ) float) = (float_round mode to_neg r :(τ, χ) float) and
+     (a :real) = abs r;
+     (inexact :bool) = (float_value x ≠ Float r)
+   in
+     (clear_flags with
+      <|Overflow := (float_is_infinite x ∨ (2 :real) pow INT_MIN (:χ) ≤ a);
+        Underflow_BeforeRounding :=
+          (inexact ∧ a < (2 :real) / (2 :real) pow INT_MAX (:χ));
+        Underflow_AfterRounding :=
+          (inexact ∧
+           (float_round mode to_neg r :(τ, χ + unit) float).Exponent ≤₊
+           (n2w (INT_MIN (:χ)) :(χ + unit) word)); Precision := inexact|>,x))
+float_round_with_flags_def_types=(mode :rounding)
+ : :rounding; (to_neg :bool)
+ : :bool; (r :real)
+ : :real; 
+float_sqrt_def_statement=∀(mode :rounding) (x :(τ, χ) float).
+  float_sqrt mode x =
+  if x.Sign = (0w :word1) then
+    case float_value x of
+      Float r =>
+        (float_round_with_flags mode F (sqrt r) :flags # (τ, χ) float)
+    | Infinity => (clear_flags,float_plus_infinity (:τ # χ))
+    | NaN => (check_for_signalling [x],float_some_qnan (FP_Sqrt mode x))
+  else if x = NEG0 then (clear_flags,NEG0)
+  else (invalidop_flags,float_some_qnan (FP_Sqrt mode x))
+float_sqrt_def_types=(mode :rounding)
+ : :rounding; (x :(τ, χ) float)
+ : :(τ, χ) float; 
+fp64_sqrt_def_statement=∀(mode :rounding).
+  fp64_sqrt mode =
+  float_to_fp64 ∘ (SND :flags # (52, 11) float -> (52, 11) float) ∘
+  (float_sqrt mode :(52, 11) float -> flags # (52, 11) float) ∘ fp64_to_float
+fp64_sqrt_def_types=(mode :rounding)
+ : :rounding; 
+fp64_to_float_def_statement=∀(w :word64).
+  fp64_to_float w =
+  <|Sign := (((63 :num) >< (63 :num)) w :word1);
+    Exponent := (((62 :num) >< (52 :num)) w :word11);
+    Significand := (((51 :num) >< (0 :num)) w :52 word)|>
+fp64_to_float_def_types=(w :word64)
+ : :word64; 
+float_to_fp64_def_statement=∀(x :(52, 11) float).
+  float_to_fp64 x =
+  ((x.Sign @@ ((x.Exponent @@ x.Significand) :63 word)) :word64)
+float_to_fp64_def_types=(x :(52, 11) float)
+ : :(52, 11) float; 

@@ -46,10 +46,10 @@ private def jumpCmpTestZeroAt (a : Int) : Option (List (Instruction 64)) :=
 
 #guard jumpCmpTestZeroAt 4092 ==
   some [.andi 31 5 (BitVec.ofNat 64 0),
-    .branchNe 31 0 (BitVec.ofNat 64 4088)]
+    .branchEq 31 0 (BitVec.ofNat 64 4088)]
 
 #guard jumpCmpTestZeroAt 4096 ==
-  some [.andi 31 5 (BitVec.ofNat 64 0), .branchEq 31 0 (BitVec.ofNat 64 8),
+  some [.andi 31 5 (BitVec.ofNat 64 0), .branchNe 31 0 (BitVec.ofNat 64 8),
     .jal 0 (BitVec.ofNat 64 4088)]
 
 private def jumpCmpNotTestZeroAt (a : Int) : Option (List (Instruction 64)) :=
@@ -59,10 +59,10 @@ private def jumpCmpNotTestZeroAt (a : Int) : Option (List (Instruction 64)) :=
 
 #guard jumpCmpNotTestZeroAt 4092 ==
   some [.andi 31 5 (BitVec.ofNat 64 0),
-    .branchEq 31 0 (BitVec.ofNat 64 4088)]
+    .branchNe 31 0 (BitVec.ofNat 64 4088)]
 
 #guard jumpCmpNotTestZeroAt 4096 ==
-  some [.andi 31 5 (BitVec.ofNat 64 0), .branchNe 31 0 (BitVec.ofNat 64 8),
+  some [.andi 31 5 (BitVec.ofNat 64 0), .branchEq 31 0 (BitVec.ofNat 64 8),
     .jal 0 (BitVec.ofNat 64 4088)]
 
 /- The same Cake `ANDI` lowering applies to a nonzero immediate.  Pin both
@@ -75,10 +75,10 @@ private def jumpCmpTestImmAt (a : Int) : Option (List (Instruction 64)) :=
 
 #guard jumpCmpTestImmAt 4092 ==
   some [.andi 31 5 (BitVec.ofNat 64 3),
-    .branchNe 31 0 (BitVec.ofNat 64 4088)]
+    .branchEq 31 0 (BitVec.ofNat 64 4088)]
 
 #guard jumpCmpTestImmAt 4096 ==
-  some [.andi 31 5 (BitVec.ofNat 64 3), .branchEq 31 0 (BitVec.ofNat 64 8),
+  some [.andi 31 5 (BitVec.ofNat 64 3), .branchNe 31 0 (BitVec.ofNat 64 8),
     .jal 0 (BitVec.ofNat 64 4088)]
 
 private def jumpCmpNotTestImmAt (a : Int) : Option (List (Instruction 64)) :=
@@ -88,31 +88,31 @@ private def jumpCmpNotTestImmAt (a : Int) : Option (List (Instruction 64)) :=
 
 #guard jumpCmpNotTestImmAt 4092 ==
   some [.andi 31 5 (BitVec.ofNat 64 3),
-    .branchEq 31 0 (BitVec.ofNat 64 4088)]
+    .branchNe 31 0 (BitVec.ofNat 64 4088)]
 
 #guard jumpCmpNotTestImmAt 4096 ==
-  some [.andi 31 5 (BitVec.ofNat 64 3), .branchNe 31 0 (BitVec.ofNat 64 8),
+  some [.andi 31 5 (BitVec.ofNat 64 3), .branchEq 31 0 (BitVec.ofNat 64 8),
     .jal 0 (BitVec.ofNat 64 4088)]
 
 /-! `a = 4092`: the largest offset Cake still encodes short.  `off12` is
     `a - 4`, the distance from the branch. -/
 #guard jumpCmpAt 4092 ==
-  some [.ori 31 0 (BitVec.ofNat 64 3), .branchNe 5 31 (BitVec.ofNat 64 4088)]
+  some [.ori 31 0 (BitVec.ofNat 64 3), .branchEq 5 31 (BitVec.ofNat 64 4088)]
 
 /-! `a = 4096`: one instruction past the limit, so Cake inverts the branch
     over a `JAL` whose offset is `a - 8`. -/
 #guard jumpCmpAt 4096 ==
-  some [.ori 31 0 (BitVec.ofNat 64 3), .branchEq 5 31 (BitVec.ofNat 64 8),
+  some [.ori 31 0 (BitVec.ofNat 64 3), .branchNe 5 31 (BitVec.ofNat 64 8),
     .jal 0 (BitVec.ofNat 64 4088)]
 
 /-! `a = -4092` is `-0xFFC`, which Cake still encodes short. -/
 #guard jumpCmpAt (-4092) ==
   some [.ori 31 0 (BitVec.ofNat 64 3),
-    .branchNe 5 31 (0 - BitVec.ofNat 64 4096)]
+    .branchEq 5 31 (0 - BitVec.ofNat 64 4096)]
 
 /-! `a = -4096` is past it. -/
 #guard jumpCmpAt (-4096) ==
-  some [.ori 31 0 (BitVec.ofNat 64 3), .branchEq 5 31 (BitVec.ofNat 64 8),
+  some [.ori 31 0 (BitVec.ofNat 64 3), .branchNe 5 31 (BitVec.ofNat 64 8),
     .jal 0 (0 - BitVec.ofNat 64 4104)]
 
 /-- A register operand has no prelude, so line and branch coincide and the
@@ -122,9 +122,9 @@ private def jumpCmpRegAt (a : Int) : Option (List (Instruction 64)) :=
   labCompileAsm (width := 64) ctx 0 [(7, (Int.ofNat position + a).toNat)] position
     (.jumpCmp .equal 5 (.reg 6) ⟨0, 7⟩)
 
-#guard jumpCmpRegAt 4092 == some [.branchNe 5 6 (BitVec.ofNat 64 4092)]
+#guard jumpCmpRegAt 4092 == some [.branchEq 5 6 (BitVec.ofNat 64 4092)]
 #guard jumpCmpRegAt 4096 ==
-  some [.branchEq 5 6 (BitVec.ofNat 64 8), .jal 0 (BitVec.ofNat 64 4092)]
+  some [.branchNe 5 6 (BitVec.ofNat 64 8), .jal 0 (BitVec.ofNat 64 4092)]
 
 /-! ## `CallFFI` and `Install` take the `Jump` fallback
 

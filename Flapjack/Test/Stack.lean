@@ -39,19 +39,17 @@ example :
           : StackProg Nat)] := by
   rfl
 
-/- Cake's `comp` uses the same handler `(h1,h2)` metadata for direct and
-   computed call targets.  StackLang stores that pair as `(entry,section)`
-   before Lab converts it back to `(section,entry)`; keep the two labels
-   distinct so the computed-target carrier cannot silently swap them. -/
+/- Cake's `comp` preserves handler `(h1,h2)` as (section,local label)
+   in both PushHandler and Call, independently of the exception variable. -/
 example :
     wordToStackCallWithHandlerInSectionTarget false (.register 17) 2 6 9
       (.skip) (.raise 1) 20 21 30 31 32 =
       stackSeq [
-        stackPushHandler false 31 30 9,
+        stackPushHandler false 30 31 9,
         stackHandlerArgs false 3 6 9,
         (.call (some ((stackPopHandler false 9 (.skip : StackProg Nat)), 0, 20, 21))
           (.register 17)
-          (some ((.raise 1 : StackProg Nat), 32, 31)) : StackProg Nat)] := by
+          (some ((.raise 1 : StackProg Nat), 30, 31)) : StackProg Nat)] := by
   rfl
 
 end Flapjack

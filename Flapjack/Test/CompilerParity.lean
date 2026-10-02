@@ -1,14 +1,26 @@
+import Flapjack.Test.StackPropsSharedMemoryClockParity
+import Flapjack.Test.LabToTargetEncodingSimilarityParity
+import Flapjack.Test.LabToTargetPaddingSimilarityParity
+import Flapjack.Test.AsmPropsArithmeticPreservationParity
+import Flapjack.Test.TargetPropsClockParity
 import Flapjack.Test.TargetSemMachineSemParity
 import Flapjack.Test.TargetSemEvaluateParity
+import Flapjack.Test.WordAllocLiveExpressionParity
+import Flapjack.Test.WordCompileExpExactParity
+import Flapjack.Test.StackSemLoopControlParity
+import Flapjack.Test.StackSemJumpLowerParity
+import Flapjack.Test.PanGlobalsFpermCodeParity
+import Flapjack.Test.CrepToLoopCompFuncParity
+import Flapjack.Test.WordAllocGetDeltaInstParity
+import Flapjack.Test.WordAllocGetClashTreeParity
+import Flapjack.Test.RiscVBranchPolarity
+import Flapjack.Test.LabImplicitSectionZero
+import Flapjack.Test.SSAReconcileGetVars
 import Flapjack.Test.LabToTargetLineLenParity
 import Flapjack.Test.LabToTargetSectionLengthParity
 import Flapjack.Test.ByteWordToBytesAuxParity
-import Flapjack.Test.LabToTargetPaddingSimilarityParity
-import Flapjack.Test.AsmPropsArithmeticPreservationParity
-import Flapjack.Test.LabToTargetEncodingSimilarityParity
 import Flapjack.Test.StackPropsInstructionConstantsParity
 import Flapjack.Test.LabToTargetPaddingLengthParity
-import Flapjack.Test.LabImplicitSectionZero
 import Flapjack.Test.StackToLabExecutedInput
 import Flapjack.Test.ProductionMacros
 import Flapjack.Test.StackWordBoundary
@@ -31,8 +43,11 @@ import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.ProductionScheduler
 import Flapjack.Test.ProductionMoves
 import Flapjack.Test.RegAllocProductionFixedTags
+import Flapjack.Test.RegAllocProductionColourLookup
+import Flapjack.Test.WordCseProductionScalarKeys
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordCseEvaluationFramesParity
 import Flapjack.Test.WordCseLoadEvaluationParity
 import Flapjack.Test.WordCseArithmeticKeysParity
 import Flapjack.Test.WordCseInsertEqualityParity
@@ -790,14 +805,6 @@ import Flapjack.Test.CakeSsaControlParity
 import Flapjack.Test.CakeSsaCallParity
 import Flapjack.Test.CakeSsaInstParity
 import Flapjack.Test.CakeWordAllocParity
-import Flapjack.Test.WordAllocLiveExpressionParity
-import Flapjack.Test.WordCompileExpExactParity
-import Flapjack.Test.StackSemLoopControlParity
-import Flapjack.Test.StackSemJumpLowerParity
-import Flapjack.Test.PanGlobalsFpermCodeParity
-import Flapjack.Test.CrepToLoopCompFuncParity
-import Flapjack.Test.WordAllocGetDeltaInstParity
-import Flapjack.Test.WordAllocGetClashTreeParity
 import Flapjack.Test.WordAllocCutEnvLemmaParity
 import Flapjack.Test.CakeSsaSharedParity
 import Flapjack.Test.CakeSsaMemoryParity
@@ -1507,6 +1514,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackSemCallIndirectParity.runChecks,
     Flapjack.Test.StackSemLoopRecursiveParity.runChecks,
     Flapjack.Test.StackSemBufferWriteParity.runChecks,
+    Flapjack.Test.StackPropsSharedMemoryClockParity.runChecks,
     Flapjack.Test.StackSemShMemParity.runChecks,
     Flapjack.Test.StackSemShMemOpParity.runChecks,
     Flapjack.Test.StackSemFfiParity.runChecks,
@@ -1685,6 +1693,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.ProductionScheduler.runChecks,
     Flapjack.Test.ProductionMoves.runChecks,
     Flapjack.Test.RegAllocProductionFixedTags.runChecks,
+    Flapjack.Test.RegAllocProductionColourLookup.runChecks,
+    Flapjack.Test.WordCseProductionScalarKeys.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.WordConvsPreAllocExactParity.runChecks,
     Flapjack.Test.WordRemoveMustTerminateParity.runChecks,

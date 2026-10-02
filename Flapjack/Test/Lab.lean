@@ -95,21 +95,18 @@ example :
     labFlatten true 7 1 [] []
       (.ite .less 1 (.imm 10) (.return 2) (.return 3) : StackProg Nat) =
       { lines := [
-          labJumpCmp .less 1 (.imm 10) 7 1,
+          labJumpCmp .notLess 1 (.imm 10) 7 1,
         .labAsm (.return 2) [] 0,
           labLabel 7 1,
           .labAsm (.return 3) [] 0],
         terminal := true,
         nextLabel := 2 } := by
-  simp [labFlatten, labLabel, labJumpCmp, labIsSkip]
+  simp [labFlatten, labLabel, labJumpCmp, labIsSkip, labNegateCmp]
 
-/-! GH #1093 (bead flapjack-lhj): the `ite` cases of `labFlatten` must match
-   `stack_to_labScript.sml`'s `flatten` (under the port's jump-if-false
-   `labBranch` polarity, so `labJumpCmp op` jumps when `op` does *not*
-   hold).  The general case must send a true condition to the *then* label
-   (previously it targeted the join label, leaving the then-branch dead),
-   and the skip-then case must use the negated condition (previously the
-   else-branch ran when the condition was true). -/
+/-! HOL flatten uses literal JumpCmp predicates: the general case jumps
+   to the then branch when the condition holds; skip-then also uses the
+   condition itself, and skip-else/terminal-then use its negation. These
+   source-reviewed expectations do not rely on an inverse emitter convention. -/
 
 -- CakeML general case (`p1 ≠ Skip`, `p2 ≠ Skip`, neither terminal):
 -- `JumpCmp c → then; ys; Jump join; Label then; xs; Label join`.
@@ -118,7 +115,7 @@ example :
       (.ite .equal 4 (.imm 0) (.arith .add 1 2 3) (.arith .sub 1 2 3) :
         StackProg Nat) =
       { lines := [
-          labJumpCmp .notEqual 4 (.imm 0) 7 1,
+          labJumpCmp .equal 4 (.imm 0) 7 1,
           .asm (.arith .sub 1 2 3) [] 0,
           labJump 7 2,
           labLabel 7 1,
@@ -126,26 +123,13 @@ example :
           labLabel 7 2],
         terminal := false,
         nextLabel := 3 } := by
-  simp [labFlatten, labLabel, labJump, labJumpCmp, labIsSkip, labNegateCmp]
+  simp [labFlatten, labLabel, labJump, labJumpCmp, labIsSkip]
 
 -- CakeML `p1 = Skip` case: jump over the else-branch when the condition
--- holds; here `labJumpCmp (negate op)` jumps exactly when `op` holds.
+-- holds; `labJumpCmp op` retains the HOL predicate.
 example :
     labFlatten false 7 1 [] []
       (.ite .equal 4 (.imm 0) .skip (.arith .add 1 2 3) : StackProg Nat) =
-      { lines := [
-          labJumpCmp .notEqual 4 (.imm 0) 7 1,
-          .asm (.arith .add 1 2 3) [] 0,
-          labLabel 7 1],
-        terminal := false,
-        nextLabel := 2 } := by
-  simp [labFlatten, labLabel, labJumpCmp, labIsSkip, labNegateCmp]
-
--- CakeML `p2 = Skip` case: jump over the then-branch when the condition
--- does not hold; here `labJumpCmp op` jumps exactly when `op` does not hold.
-example :
-    labFlatten false 7 1 [] []
-      (.ite .equal 4 (.imm 0) (.arith .add 1 2 3) .skip : StackProg Nat) =
       { lines := [
           labJumpCmp .equal 4 (.imm 0) 7 1,
           .asm (.arith .add 1 2 3) [] 0,
@@ -153,6 +137,19 @@ example :
         terminal := false,
         nextLabel := 2 } := by
   simp [labFlatten, labLabel, labJumpCmp, labIsSkip]
+
+-- CakeML `p2 = Skip` case: jump over the then-branch when the condition
+-- does not hold; `labJumpCmp (negate op)` retains the HOL predicate.
+example :
+    labFlatten false 7 1 [] []
+      (.ite .equal 4 (.imm 0) (.arith .add 1 2 3) .skip : StackProg Nat) =
+      { lines := [
+          labJumpCmp .notEqual 4 (.imm 0) 7 1,
+          .asm (.arith .add 1 2 3) [] 0,
+          labLabel 7 1],
+        terminal := false,
+        nextLabel := 2 } := by
+  simp [labFlatten, labLabel, labJumpCmp, labIsSkip, labNegateCmp]
 
 -- CakeML `p1 = Skip`, `p2 = Skip` case: no code at all.
 example :

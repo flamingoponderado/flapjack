@@ -19,6 +19,11 @@ theorem setVarValueEqIff {width : Nat} [NeZero width] {C : Type} {F : Type}
     cases h
     rfl
 
+theorem assignMap {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (d : Nat) (exp : WordLangExpHOL (BitVec width)) (s : WordSemStateFiniteExact width C F) :
+    assign d exp s = (wordExp s exp).map (fun v => setVar d v s) := by
+  cases h : wordExp s exp <;> simp [assign, h]
+
 theorem evaluationAssignmentIff {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : WordLangInst (BitVec width)) (d : Nat) (value : Option (WordLocW width))
     (s : WordSemStateFiniteExact width C F) (w : WordLocW width)
