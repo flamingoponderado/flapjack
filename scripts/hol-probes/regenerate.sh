@@ -5859,3 +5859,10 @@ run_probe lab_to_target_shmem_names_probeScript.sml lab_to_target_shmem_names_pr
   word8_names narrow_names wide_names extcall_prefix all_ops ffi_only empty \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_mmio_shmem_probeScript.sml lab_to_target_mmio_shmem_probe.out \
+  mmio_pcs_min_index_APPEND_thm mmio_pcs_min_index_APPEND_thm_types mmio_pcs_min_index_APPEND_thm_hypotheses \
+  mmio_pcs_min_index_get_shmem_info_ok mmio_pcs_min_index_get_shmem_info_ok_types mmio_pcs_min_index_get_shmem_info_ok_hypotheses \
+  empty_boundary external_boundary shared_boundary mixed_boundary suffix_guard prefix_guard extraction_boundary \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

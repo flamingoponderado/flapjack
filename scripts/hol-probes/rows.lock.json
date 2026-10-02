@@ -1916,6 +1916,12 @@
       "sha256": "3d1d29d006980b3ffb68ba73105bac352f29987d0fb7f240f73d633d801dc7eb"
     },
     {
+      "bytes": 1409,
+      "out": "lab_to_target_mmio_shmem_probe.out",
+      "rows": 13,
+      "sha256": "eea179bf2a97f4a84f74d41fa2edc97899c47ae6675c0480a82bdf3e592b778f"
+    },
+    {
       "bytes": 807,
       "out": "lab_to_target_navigation_bounds_probe.out",
       "rows": 10,
