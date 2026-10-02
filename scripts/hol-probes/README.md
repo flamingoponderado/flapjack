@@ -4548,6 +4548,11 @@ The statements retain the original input guards and both evaluation directions.
 These regressions supplement source review; they do not prove cross-language
 equivalence or complete CSE correctness.
 
+The `stackprops_ordered_code_labels_probe.out` capture additionally records ten
+original ordered `extract_labels` observations: tail-call ignored handler,
+return and handler labels, nested outer-before-inner order, duplicates,
+sequence, loop, If and non-continuation label leaves. Native kernel fixtures
+live in `Flapjack/Test/StackPropsOrderedLabelsParity.lean`.
 `ssa_cc_trans_correct_primitives_probe.out` replays the literal original Skip/Tick semantic correctness proofs and original exists_tac against their complete original theorem specializations. All six premises, full existential postconditions and five native carrier types are captured; Tick retains both zero/positive-clock paths in Lean.
 
 `ssa_locals_get_var_probe.out` replays the complete original SSA get_var lookup transport and captures six original types, including independently arbitrary source/target configuration and FFI hosts. It supports expression-producing SSA semantic cases without adding a target-read-success premise.
@@ -4566,3 +4571,23 @@ The production list-key comparator route is tracked separately.
 `target_props_io_events_probeScript.sml` replays the full original `evaluate_io_events_mono` quantified theorem with no open hypotheses. `TargetPropsIoEventsParity.lean` checks the same unrestricted statement over the full literal evaluator. Clock induction composes exact returning FFI append with recursive prefix preservation; all failed/final paths retain the original trace.
 
 Native SSA MustTerminate probe replays original recursive case with its specialized smaller-body IH, omitting already-discharged prog_size bookkeeping. Captures full recursive/original statements and six carrier types; no desired target evaluation or frame is assumed.
+`stack_props_register_bounds_probeScript.sml` captures all three original
+register-bound definitions and evaluates 504 constructor/boundary cases across
+widths 1/64/80, including all expression/asm/program constructors, ignored FP
+fields, missing-return Call handlers, Set BitmapBase, StoreConsts minimum bound,
+and first-slot StackLoad/StackStore bounds. `StackPropsRegisterBoundsParity.lean`
+checks matching cases and additional arbitrary-width equations. These predicates
+are prerequisites of StackRemove correctness, not its semantic simulation.
+
+`word_to_stack_bitmap_word_lemmas_probeScript.sml` replays five complete
+original WordToStack proof bodies (two even-register maxima and three bitmap
+OR/shift primitives), requiring no open hypotheses, plus three original inferred
+types. Its 267 further cases
+cover empty/singleton register sequences, widths 1/2/32/64/80, zero/all-ones,
+MSB values and discarded top bits. `WordToStackBitmapWordParity.lean` checks
+matching observations/full applications plus arbitrary width/count instances.
+These are full original helper theorems, not a bitmap decoder simulation.
+
+`lab_to_target_ignore_clocks_probeScript.sml` replays the complete original local proof18-27 and checks the full closed statement. `LabToTargetIgnoreClocksParity.lean` applies the corresponding unrestricted kernel theorem; both original non-TimeOut runs are retained.
+
+`target_props_clock_io_events_probeScript.sml` replays the full original `evaluate_add_clock_io_events_mono` theorem (targetPropsScript.sml:1112-1137), including only clock order and no open hypotheses. `TargetPropsClockIoEventsParity.lean` checks the same full statement over the literal evaluator. Paired clock induction retains every transition and uses full input-event prefix preservation at clock zero.

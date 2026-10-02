@@ -215,3 +215,17 @@ key_bool_word=NONE
 key_list_indirect=SOME 41
 key_list_missing_code=NONE
 key_nat_legacy=SOME 41
+ordered_skip=[]
+ordered_ignore_handler=[]
+ordered_return=[(1,2)]
+ordered_both=[(1,2); (3,4)]
+ordered_nested=[(1,2); (3,4); (5,6); (7,8)]
+ordered_duplicate=[(1,2); (1,2); (1,2)]
+ordered_sequence=[(3,4); (1,2)]
+ordered_loop=[(1,2)]
+ordered_if=[(3,4); (1,2)]
+ordered_leaf_labels=[]
+containment_bool_direct=get_labels (Call (SOME (Skip,0,1,2)) (INL 0) NONE) ⊆
+loc_check (fromAList [(7,Call (SOME (Skip,0,1,2)) (INL 0) NONE)])
+containment_list_indirect=get_labels (Call (SOME (Skip,0,1,2)) (INL 0) NONE) ⊆
+loc_check (fromAList [(7,Call (SOME (Skip,0,1,2)) (INL 0) NONE)])
