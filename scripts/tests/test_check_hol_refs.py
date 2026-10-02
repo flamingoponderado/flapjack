@@ -3539,8 +3539,7 @@ class MachineIeeeGeneratedDeclarationsTest(unittest.TestCase):
                 self.assertIn("52/11/64", fn(root))
 
 
-if __name__ == "__main__":
-    unittest.main()
+
 
 
 
@@ -3640,3 +3639,7 @@ class FmapResultObservationAmbiguityTest(unittest.TestCase):
                 "Fixture", "theorem observer : (toFmap cmp tree).lookup keys ≠ none → True",
                 ("toFmap",), records, temporary)
             self.assertTrue(any("ambiguous" in error for error in errors))
+
+
+if __name__ == "__main__":
+    unittest.main()

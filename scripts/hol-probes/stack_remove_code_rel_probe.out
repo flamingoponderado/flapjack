@@ -1,0 +1,14 @@
+cr_full_def=∀jump off k code1 code2. code_rel jump off k code1 code2 ⇔ (∀n prog. lookup n code1 = SOME prog ⇒ reg_bound prog k ∧ lookup n code2 = SOME (comp jump off k prog)) ∧ domain code2 = domain code1 ∪ {0; 1; 2}
+cr_full_type=:bool -> α word # α word -> num -> α stackLang$prog sptree$num_map -> α stackLang$prog sptree$num_map -> bool
+cr_empty_1=T
+cr_empty_8=T
+cr_empty_32=T
+cr_empty_64=T
+cr_empty_80=T
+cr_missing_stub=F
+cr_extra_target=F
+cr_tick=T
+cr_wrong_body=F
+cr_bad_register=F
+cr_reserved_source=T
+cr_malformed_source=T

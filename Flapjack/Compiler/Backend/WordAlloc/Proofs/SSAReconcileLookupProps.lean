@@ -5,7 +5,9 @@ import Flapjack.Misc.ListEl
 namespace Flapjack.Compiler.Backend.WordAlloc
 
 /-- Generic indexed lookup in a zipped mapped list. Preserves the original
-inhabited element types and opaque HOL EL outside its bound. -/
+inhabited element types and opaque HOL EL outside its bound. Nonempty alpha
+and beta render HOL inhabitance; DecidableEq gamma supplies lawful classical
+equality for association-list lookup, not a key restriction. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "alookup_zip_map_some"]
 theorem alookupZipMapSome {α β γ : Type} [Nonempty α] [Nonempty β]
     [DecidableEq γ] (ls : List α) (vs : List β) (i : Nat) (f : α → γ)

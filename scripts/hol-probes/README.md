@@ -5461,146 +5461,66 @@ ALookupMap probes replay three complete original lookup mapping proofs and
 and payload carriers, repeated/absent/large keys and noninjective sentinels
 retain the original injection boundary. Regression evidence does not establish
 cross-language equivalence.
-`ssa_loop_semantic_helpers_probe` replays the two original local HOL statements
-and literal source proof scripts at word_allocProof7018–7034: successful-first
-sequence collapse and empty-list cut identity. Six inferred carrier types are
-captured; `SSALoopSemanticHelpers.lean` keeps the sole original run premise and
-unconditional generic cut identity respectively. This original local-proof
-replay and source comparison is not a cross-language equivalence proof.
-Regenerate with `HOL_PROBE_ONLY=ssa_loop_semantic_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`stack_remove_code_rel_probe.out` captures the complete original StackRemove
+code relation definition/type and12 HOL-kernel-proved whole-relation results:
+empty source at widths1/8/32/64/80, missing/extra target names, a nonempty Tick
+source, wrong compiled body, register-bound violation, reserved source name0
+and malformed BN LN LN source. Native generic kernel fixtures check all lookup
+keys and full domain equality, rather than finite membership sampling. Probe
+simplification unfolds recursive comp/reg_bound only after concrete branch
+selection; globally unfolding either at a symbolic program grows indefinitely.
+The full state relation and semantic preservation remain separate prerequisites.
 
-`ssa_fake_const_chain_probe` replays the three original local statements and
-literal source proof scripts at word_allocProof6715–6761. Five inferred types
-confirm native register lists, word_loc trees and full WordSem states.
-`SSAFakeConstChain.lean` retains unconditional constant-insertion commutation,
-actual fake-Move chain evaluation, and all four original locals/frame conclusions.
-Duplicate registers remain allowed. Original local HOL proof replay and manual
-source comparison are not a cross-language equivalence proof. Regenerate with
-`HOL_PROBE_ONLY=ssa_fake_const_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`set_sep_fun2set_probe.out` captures pinned HOL's full paired `fun2set` type,
+function graph and membership theorem, plus the full generic StackRemove
+memory prerequisite type/equation and9 original graph proofs. The graph keeps
+independent address/value carriers; kernel counterparts include wrong value,
+outside/empty domain, Bool/Nat and Bool/product values, noninjective functions
+and an infinite-domain application. No finite-heap premise is introduced.
 
-## Full single-left rotation correctness
+## Full right balancing correctness
 
-`balanced_map_balanceL_eq_probeScript.sml` replays the complete original
-local `balanceL_balL` proof and prints its typed closed generic equality.
-Ten actual original executable equalities cover empty/singleton, both one-sided
-children, nonempty single/double rotations, left Tip, nonempty-right fallback,
-and both heavy branches. Kernel fixtures check their input invariants and
-consume the full equality. Small-child constructors and impossible malformed
-heavy branches are derived from invariants; no stronger premises are added.
-### Native SSA Loop setup
+`balanced_map_balanceR_correct_probeScript.sml` replays the literal original
+full correctness theorem and its balancing/rotation/arithmetic prerequisites,
+checking no open hypotheses. Nineteen rows capture the full type and six actual
+small/fallback/rotation trees, invariants and inserted-key lookups. Native
+consumers prove all original premises and use both conclusions. Observations
+are regression evidence, not a cross-language equivalence theorem.
 
-`ssa_loop_setup_correct_probeScript.sml` replays the literal original local
-`loop_setup_correct` proof, with its local prerequisites, and captures the full
-five-premise/ten-conclusion statement and nine native carriers. The pinned
-original HOL kernel replay and Lean kernel check are regression/source-review
-evidence, not a cross-language equivalence proof. Full Loop simulation remains open.
-`balanced_map_singleL_probeScript.sml` replays the literal original full
-`singleL_thm`1343-1372 with all nine premises and both conclusions, checking
-that its hypotheses are closed. Seven rows capture its typed statement, actual
-rotated tree, invariant, three lookups and invalid cached-size rejection.
-Native fixtures establish every premise and consume both conclusions and
-canonical map lookups. These observations are regression evidence, not a
-cross-language equivalence theorem.
+## Full almost-balance growth/decrement laws
 
-## Full double-left rotation correctness
+`balanced_map_almost_balance_correct_probeScript.sml` literally replays both
+full original arithmetic proofs with no open hypotheses. Twenty-six rows
+capture both complete types and twelve zero/singleton/delta-boundary pairs
+in both directions. Native consumers use all three conclusions, retaining
+truncated subtraction at zero. Observations are regression evidence, not
+a cross-language equivalence theorem.
 
-`balanced_map_balanceL_correct_probeScript.sml` replays the entire original
-local `balanceL_thm` proof and full prerequisite proof chain, checking its
-typed theorem is closed. Six actual branches capture output trees, invariants
-and inserted-key lookups. `BalancedMapBalanceLCorrectParity` checks all original
-input premises, consumes both native invariant/map conclusions, and derives
-the actual canonical inserted-key observations. No compiler caller changes.
+### Balanced map full cardinality laws
 
-Move reconstruction probes replay the complete original theorem and four
-original prerequisites. 560 matching packets compare full native reads,
-optional pairs of whole Spt trees and all six source guard observations.
-Widths1/2/8/64/80 retain word truncation; duplicate/missing/70bit keys, swaps,
-omitted self/nonself moves and malformed trees are included. Failed reads
-produce NONE rather than evaluating THE NONE. Regression evidence is not a
+`balanced_map_cardinality_correct_probeScript.sml` replays the literal original local disjoint-union and three size/cardinality proofs, checking empty hypotheses. Typed statements retain generic comparator/tree carriers and original premises. Five valid numeric tree shapes capture size and invariant observations; the equivalent-key singleton checks a constant Equal comparator. Native consumers apply both full generic theorems. These rows support source review; they do not prove cross-assistant equivalence.
+`set_sep_elementary_probe.out` freshly records the six canonical `set_sep`
+heap predicates (`one`, `emp`, `cond`, `SPLIT`, `STAR`, `SEP_EXISTS`), their full
+independently generic types, and fourteen original kernel-proved fixtures. The
+fixtures include overlapping/extra partitions, empty heaps, true/false pure
+conditions, distinct/overlapping singleton assertions, independent witness
+types, and an infinite domain. `Flapjack.Test.SetSepElementary` supplies sixteen
+Lean kernel fixtures. The port adds no finite-heap, word-width or validity
+restriction.
+Load-continuation probes replay the complete original `wStackLoad_append` and
+`get_labels_wStackLoad` proofs. 410 matching packets retain whole native ASTs
+and label observations across all 34 continuation constructors, widths
+1/2/8/64/80, repeated and 70-bit load indices, and nested return/handler cases.
+The handler-without-return case preserves its AST while contributing no labels,
+as in the original semantics. These checks are regression evidence, not a
 HOL-to-Lean equivalence proof.
-Fifteen extra packets isolate the subset guard failure while all other guards
-succeed; they inspect absent lookup directly and never compute THE NONE.
 
-### Full native LabToTarget state relation
+Return-copy label probes replay the complete original `copy_ret_aux_thm` and
+`get_labels_copy_ret` proofs. 460 matching native/original packets compare whole
+recursive return-copy ASTs and continuation labels, including saturated natural
+subtraction, independent Nat/Bool value and frame metadata carriers, all four
+performance/handler modes, 70-bit indices, and widths 1/2/8/64/80.
+They retain the descending load/store sequence and zero-count continuation.
+These observations provide regression evidence, not cross-language equivalence.
 
-`lab_to_target_state_rel_probeScript.sml` captures the full original relation
-and all inferred carriers, generic target/compiler/memory consequences, whole
-clock-update equivalence, and rejection at the one-element word index. Native
-kernel consumers in `LabToTarget/StateRel.lean` use the complete relation. Lab
-Boolean memory domains are read by equality to true; both Boolean values have
-a checked truth roundtrip. Every FFI/cache/oracle/code-buffer condition remains.
-`balanced_map_doubleL_probeScript.sml` replays the literal original full
-`doubleL_thm` and checks its hypotheses are closed. Seven rows capture the full
-typed theorem, actual tree, invariant, three lookups and bad cached-size
-rejection. Native consumers establish every original premise and consume both
-invariant and map conclusions and all three canonical lookups. These fixtures
-are regression observations, not a cross-language equivalence theorem.
-
-## Full left-rotation assembly
-
-`balanced_map_rotateL_probeScript.sml` literally replays both original full
-constructor proofs and full `rotateL_thm`, checking the assembly has no open
-hypotheses. Eleven rows capture its full type and both actual dispatch trees,
-invariants and six lookups. Native fixtures establish every original premise
-and consume both invariant/map conclusions. Observations are regression
-evidence, not a cross-language equivalence theorem.
-
-## Full right balancing equality
-
-`balanced_map_balanceR_eq_probeScript.sml` literally replays the full original
-`balanceR_balR` induction proof with no open hypotheses. Eleven rows capture
-its full type and ten invariant-valid constructor/guard/ratio equality cases.
-Native consumers prove both input invariants. The generic theorem retains only
-original comparator validity and those invariants; observations are regression
-evidence, not a cross-language equivalence theorem.
-
-## Complete native LabToTarget clock and state shift group
-
-`lab_to_target_state_transport_probeScript.sml` captures all five original
-clock/shift laws1098–1153 and their complete inferred HOL types. Independent
-Lab/machine word dimensions and unused outer shared-memory carrier types are
-retained. Lean `StateTransport` derives the actual shifted interference
-condition at index i+l and preserves every conjunct of the full state relation.
-These proof-side laws do not change the executed compiler.
-
-## Native L3 MMU, Fetch and integer memory closure
-
-`l3_riscv_mmu_fetch_probeScript.sml` captures twelve original model EVAL
-observations: nonconstant aligned/unaligned/cross-word bytes, bare translation,
-invalid page-table entries at levels0/2, compressed/full instruction Fetch
-and Skip, LD and a cross-word store. `L3RiscvMmuFetchParity` kernel replays
-those observations on the actual native state. The numeric greater-than
-rendering unlocks41 full original definitions; walk64 terminates on its
-original page-table level. Of the 252 emitted definitions, ten FP transition equations have declaration-level
-source review with the real representation assumption; older model bodies still
-need review. Forty FP-dependent declarations including whole Run and
-NextRISCV are still omitted and tracked separately. No reduced ISA is substituted.
-
-## Native L3 rounding-mode conversion
-
-`l3_riscv_rounding_probeScript.sml` captures all six original L3 rounding
-constructors, all eight static 3-bit encodings, and all eight dynamic FRM
-encodings. `L3RiscvRoundingParity` kernel replays the same lists and native
-state fields. `l3round_def` (riscvScript.sml:1533) maps RNE/RTZ/RDN/RUP to the
-four original binary_ieee constructors; RMM/RDYN return NONE. `round_def`
-(:1546) uses static decoding first, reads fcsr.FRM only for RDYN, and preserves
-both NONE branches. The imported HolRounding datatype matches
-binary_ieeeScript.sml:245-250 constructor for constructor. These conversions
-use no real-valued FP operations; full IEEE operations and Run/NextRISCV remain
-open. This evidence does not establish HOL-to-Lean equivalence.
-
-## Native L3 binary32/binary64 comparisons
-
-`l3_riscv_fp_compare_probeScript.sml` directly evaluates the ten original
-FMIN/FMAX/FLT/FLE/FEQ state transitions on ordinary values, signed zeros,
-canonical/noncanonical/signaling NaNs, infinities and subnormals at both
-precisions. Eighty original tuples observe the integer destination, entire
-64-bit FP destination and NV flag, including binary32 high-bit preservation.
-Three additional rows check the two infinity constants and both NaN classifiers.
-The wrappers use the literal machine_ieeeLib codecs: sign at23+8/52+11,
-exponent8/11bits, significand23/52bits. Comparison uses the complete original
-float_compare case split through the existing generic IEEE real-to-Rat rendering;
-new transition tags retain `(reals_as_rational_cuts)` and SOUNDNESS item8.
-The ten complete transition equations have declaration-level source comparison
-recorded in the theorem map. Full model dependency and Run/NextRISCV transition
-review remain separate open obligations; the probes are regression evidence.
+Return allocation-argument probes replay all three complete original stack-move, recursive return-copy and wrapper proofs, with no open hypotheses. The210 predicate pairs cover widths1/2/8/64/80, zero/nonzero/saturated return counts, all four Boolean modes,70-bit slot/register/frame numbers, valid and invalid allocations, and independent optional Call return/handler checks. WordToStackReturnAllocArgsParity kernel-checks identical predicates and arbitrary-carrier theorem applications. These are original regression observations, not cross-language equivalence or full compiler correctness. Regenerate with HOL_PROBE_ONLY=word_to_stack_return_alloc_args_probeScript.sml.

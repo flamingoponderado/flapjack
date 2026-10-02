@@ -4,7 +4,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
 /-!
 # stack_namesProof: `compile_semantics` and `compile_semantics_alt`
 
-Ports of `cakeml/compiler/backend/proofs/stack_namesProofScript.sml` lines 526-555: the
+Ports of `cakeml/compiler/backend/proofs/stack_namesProofScript.sml` lines 527-555: the
 observational StackSem `semantics` is unchanged by `rename_state`, from `comp_correct` at the
 entry call `Call NONE (INL start) NONE` (which `comp` leaves unchanged).
 -/
@@ -38,7 +38,7 @@ theorem evaluate_entry_renameState {width : Nat} [NeZero width] {C F : Type}
 
 end CompileSemantics
 
-/-- Exact HOL `compile_semantics` (`stack_namesProofScript.sml:526-543`). HOL's free `f`, `c`,
+/-- Exact HOL `compile_semantics` (`stack_namesProofScript.sml:527-545`). HOL's free `f`, `c`,
 `s` and `start` are the implicit binders. -/
 @[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "compile_semantics"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
