@@ -58039,5 +58039,14 @@
     "hol_name": "mmio_pcs_min_index_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.62.2): targetSemScript268-276 optional some x is if exists boundary then SOME Hilbert-selected witness else NONE, matching HOL optionTheory.some_def794-796. Exact x<=LENGTH bound, all prefix ExtCall and all suffix SharedMem clauses retained through mmioIndexBoundary; guarded EL is reviewed faithful holEl, full HolFfiName exact MlString carrier and List retained. No first-MMIO shortcut: external calls after shared memory reject every boundary. Generic kernel uniqueness theorem proves selected index independent of choice operators, using disjoint constructors at an in-range index. Generic kernel some/none elimination equations and40 concrete choice consumers cover every three-kind name list of length0..3. Fresh original42-row capture records full definition/type and40 assumption-free proved optional-choice equations, matching all kernel fixture expectations. Full shared-memory/pass correctness remains open. Source comparison and oracle evidence recorded above; integrated by flapjack-main on 2026-10-02. External PR review is separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/GoodCode.lean",
+    "lean_name": "goodCode",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "good_code_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 HOL669-685: all seven original conjuncts retained in original order: label-ending sections, section label validity, distinct section numbers, distinct extracted label pairs, domain disjointness, restricted reference inclusion in defined or cached labels, and actual all_enc_ok_pre. Fresh original full type confirms independent arbitrary beta nested Spt label values, preserved without Nat or word specialization or equality-class assumptions. Native arbitrary positive-width assembly/configuration/section carriers and fixed byte words retained; sole word representation qualifier. EVERY and ALL_DISTINCT translate to universal list membership and List.Nodup; actual set disjointness uses explicit Set.ofPred on the imported domain predicate, with identical membership. Fifteen original observations and corresponding kernel checks cover every rejection guard, Bool-valued cache lookup, empty-inner domain collision, zero references, ignored Call references and deliberately unchecked encoding caches. Generic consumer exposes the full conjunction for arbitrary width and beta. No successful compilation, callback or desired evaluation premise; full state relation and end-to-end correctness remain open."
   }
 ]
