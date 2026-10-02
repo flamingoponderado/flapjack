@@ -1,0 +1,103 @@
+import Flapjack.Misc.BinaryIeeeRoundFp32
+
+/-!
+# Binary32 directed rounding infrastructure
+
+These computable bracket lemmas support agreement with the existing rational
+rendering of the three directed HOL rounding clauses. HOL does not name this
+algorithm, so these infrastructure declarations are untagged. They do not prove
+cross-assistant agreement with HOL reals; SOUNDNESS item 8 still applies.
+-/
+
+namespace Flapjack.Binary32Rounding
+
+/-- Largest finite magnitude in subnormal units. -/
+theorem fp32_largest_scaled :
+    holFloatLargest 23 8 * 2 ^ 149 = ((fp32N fp32MaxPat : Nat) : Rat) := by
+  decide +kernel
+
+/-- Lower adjacent magnitude pattern for a nonnegative scaled rational. -/
+def fp32Lower (X : Rat) : Nat := fp32Bracket X.floor.toNat
+
+/-- Upper adjacent pattern, retaining an exactly representable input. -/
+def fp32Upper (X : Rat) : Nat :=
+  if ((fp32N (fp32Lower X) : Nat) : Rat) = X then fp32Lower X
+  else fp32Lower X + 1
+
+/-- Both adjacent patterns enclose the scaled input, including exact inputs. -/
+theorem fp32Directed_bracket {X : Rat} (hX : 0 ≤ X) :
+    ((fp32N (fp32Lower X) : Nat) : Rat) ≤ X ∧
+    X ≤ ((fp32N (fp32Upper X) : Nat) : Rat) := by
+  have ⟨hlo, hhi⟩ := fp32Bracket_rat hX
+  constructor
+  · exact hlo
+  · unfold fp32Upper
+    split
+    · next h => rw [h]; exact Rat.le_refl
+    · exact Rat.le_of_lt hhi
+
+/-- In the finite range, the lower bracket never exceeds the largest pattern. -/
+theorem fp32Lower_le_max {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) :
+    fp32Lower X ≤ fp32MaxPat := by
+  have hlo := (fp32Directed_bracket hX).1
+  apply Nat.le_of_not_lt
+  intro h
+  have hn : fp32N fp32MaxPat < fp32N (fp32Lower X) := fp32N_strictMono h
+  have hc : ((fp32N fp32MaxPat : Nat) : Rat) <
+      ((fp32N (fp32Lower X) : Nat) : Rat) := by exact_mod_cast hn
+  grind
+
+/-- The upper bracket also remains finite at the largest endpoint. -/
+theorem fp32Upper_le_max {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) :
+    fp32Upper X ≤ fp32MaxPat := by
+  have hp := fp32Lower_le_max hX hmax
+  have hlo := (fp32Directed_bracket hX).1
+  unfold fp32Upper
+  split
+  · exact hp
+  · next hne =>
+      by_cases heq : fp32Lower X = fp32MaxPat
+      · rw [heq] at hlo hne
+        have : ((fp32N fp32MaxPat : Nat) : Rat) = X := by grind
+        exact False.elim (hne this)
+      · omega
+
+/-- Value of a nonnegative magnitude pattern, without modular wraparound. -/
+theorem fp32OfPat_positive_value {q : Nat} (hq : q < 2 ^ 31) :
+    holFloatToReal (fp32OfPat false q) = ((fp32N q : Nat) : Rat) / 2 ^ 149 := by
+  rw [holFloatToReal_fp32, fp32Pat_ofPat false hq, fp32OfPat_sign_false]
+  simp
+
+/-- The two finite floats bracketing any nonnegative in-range scaled value. -/
+theorem fp32Directed_finite_bracket {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) :
+    holFloatIsFinite (fp32OfPat false (fp32Lower X)) = true ∧
+    holFloatIsFinite (fp32OfPat false (fp32Upper X)) = true ∧
+    holFloatToReal (fp32OfPat false (fp32Lower X)) ≤ X / 2 ^ 149 ∧
+    X / 2 ^ 149 ≤ holFloatToReal (fp32OfPat false (fp32Upper X)) := by
+  have hl := fp32Lower_le_max hX hmax
+  have hu := fp32Upper_le_max hX hmax
+  have hmax31 : fp32MaxPat < 2 ^ 31 := by decide
+  have hlf : fp32Lower X < 2 ^ 31 := by omega
+  have huf : fp32Upper X < 2 ^ 31 := by omega
+  have hb := fp32Directed_bracket hX
+  constructor
+  · apply (fp32_isFinite_iff _).2
+    rw [fp32Pat_ofPat false hlf]
+    unfold fp32MaxPat at hl
+    omega
+  constructor
+  · apply (fp32_isFinite_iff _).2
+    rw [fp32Pat_ofPat false huf]
+    unfold fp32MaxPat at hu
+    omega
+  rw [fp32OfPat_positive_value hlf, fp32OfPat_positive_value huf]
+  constructor
+  · have hD := fp32_D_pos
+    grind
+  · have hD := fp32_D_pos
+    grind
+
+end Flapjack.Binary32Rounding
