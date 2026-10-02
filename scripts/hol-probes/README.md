@@ -4937,3 +4937,13 @@ and Bool-query/Nat-key/String-result/Bool-payload examples, including malformed 
 `stack_initialized_boundary_probeScript.sml` captures40 original post-allocation compositions: stack_remove.compile ->stack_names.compile with riscv_names ->MAPprog_to_section. Positive dimensions1/8/32/64/80, both GC/jump settings, zero/huge heap bounds and start labels, zero/23 register pointers, empty/mixed input lists, duplicate section9 and reserved section0 are retained. The native executed list boundary checks each concrete section name/line count; its universal kernel recovery theorem recovers all decoded native section fields. Numeric projections use an explicit constructor case, not a symbolic pattern-lambda capture. Actual artifact prefix replacement remains on the parent production bead.
 
 `data_max_heap_limit_probeScript.sml` records the full original numeric heap-limit definition/type and64 configurations across dimensions1/7/8/31/32/33/64/80, varied native config fields and GC carriers, exact default RV64layout4/4/2/32, and shifts above dimension. Independent integer MIN/division expectations are checked in the kernel and agree with every original numeric output. Original wordLang329 shift overload is backend_common.word_shift; both denominator exponent groupings are preserved. Actual initializer route must use this reviewed helper to compute2*limit-1 rather than freeze a captured heap word.
+
+`stack_remove_code_rel_probe.out` captures the complete original StackRemove
+code relation definition/type and12 HOL-kernel-proved whole-relation results:
+empty source at widths1/8/32/64/80, missing/extra target names, a nonempty Tick
+source, wrong compiled body, register-bound violation, reserved source name0
+and malformed BN LN LN source. Native generic kernel fixtures check all lookup
+keys and full domain equality, rather than finite membership sampling. Probe
+simplification unfolds recursive comp/reg_bound only after concrete branch
+selection; globally unfolding either at a symbolic program grows indefinitely.
+The full state relation and semantic preservation remain separate prerequisites.

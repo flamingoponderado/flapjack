@@ -746,6 +746,7 @@
     {"bytes": 374, "out": "stack_props_program_validity_probe.out", "rows": 24, "sha256": "a946f80f626d6bd1a3532af3c01f7acb1c8562bf2df7fac97f4a92ef76212f5c"},
     {"bytes": 36856, "out": "stack_props_register_bounds_probe.out", "rows": 507, "sha256": "4183a57a92328f3d98beebc7d7e13a5d862e4b1d4dd0ee77d53c51dc933c376e"},
     {"bytes": 322, "out": "stack_props_remove_name_probe.out", "rows": 22, "sha256": "6a12b22c110cb82870cdb808f94ca89e433e533ad08042cd17d5af1fd083991e"},
+    {"bytes": 549, "out": "stack_remove_code_rel_probe.out", "rows": 14, "sha256": "018ac7cd73d3ccec11fd9c771cf3bff127785e7b506c6dc4b38a3de611a7b2af"},
     {"bytes": 10000, "out": "stack_remove_comp_probe.out", "rows": 106, "sha256": "2a39ae2aa52897d0875d7907738b558a6f50cb661f64e6da47b9e0887a5ab337"},
     {"bytes": 267881, "out": "stack_remove_compile_native_probe.out", "rows": 104, "sha256": "51b1b728038e585e87aed16778a487549712e6bf518394a36f9c68b401af85ab"},
     {"bytes": 18738, "out": "stack_remove_copy_loop_probe.out", "rows": 34, "sha256": "d764338d63b66cdf65bea28a0e2ae7991b1683e0172bc305ba4a1d7d0d3bc16a"},
