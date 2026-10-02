@@ -5117,6 +5117,10 @@ run_probe stack_alloc_gen_loop_statement_probeScript.sml stack_alloc_gen_loop_st
 run_probe lab_to_target_label_position_encoding_probeScript.sml lab_to_target_label_position_encoding_probe.out \
   enc_lines_again_simp_pos_ok enc_lines_again_simp_pos_ok_types enc_secs_again_pos_ok enc_secs_again_pos_ok_types changed_full_tuple changed_parity growth_flag_false growth_breaks_parity unchanged_full_tuple invalid_input_not_repaired sections_full_tuple sections_parity empty_list_width1 empty_sections large_width80 large_width80_parity \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_label_position_prefix_probeScript.sml lab_to_target_label_position_prefix_probe.out \
+  lab_len_pos_ok_even_prefix_zero lab_len_pos_ok_even_prefix_zero_types zero_label_chain odd_guard_necessary parity_guard_necessary empty_width1 malformed_nonlabel large_width80 \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_remove_memorystores_probeScript.sml stack_remove_memorystores_probe.out \
   ms_scalar ms_scalar_types ms_scalar_proved ms_32 ms_32_types ms_32_proved ms_byte ms_byte_types ms_byte_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
