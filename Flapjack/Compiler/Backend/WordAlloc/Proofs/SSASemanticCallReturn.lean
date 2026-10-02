@@ -204,4 +204,44 @@ theorem returningCalleeTransport {width : Nat} [NeZero width] {C F : Type}
   refine ⟨perm,permutation,entry,values,?_⟩
   exact WordSemStackEq.evaluateStackSwap body _
 
+
+/-- Flapjack-specific returning Call continuation preparation (original8550-8575).
+The restored cut SSA is an internal pop-environment fact. Physical return
+register insertion preserves it and the actual generated retMov executes with
+NONE and derives new SSA/frame. No standalone HOL tag or target run premise. -/
+theorem returningRestoreRegisters {width : Nat} [NeZero width] {C F : Type}
+    (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat)
+    (names : Spt Unit) (counter count : Nat) (values : List (WordLocW width))
+    (related : ssaLocalsRel counter (sptInter ssa names) source.locals target.locals)
+    (valid : ssaMapOK counter ssa)
+    (sourceDomain : sptDomain source.locals = sptDomain names)
+    (length : values.length = count)
+    (frame : Flapjack.WordAlloc.wordStateEqRel source target) :
+    let registers := (List.range count).map (fun index => 2*(index+1))
+    let prepared := WordSemStateFiniteExact.setVars registers values target
+    let (move,mapOut,nextOut) := listNextVarRenameMove (width := width)
+      (sptInter ssa names) (counter+2) ((sptToAList names).map Prod.fst)
+    let (result,targetOut) := WordSemStateFiniteExact.evaluate move prepared
+    result = none ∧ ssaLocalsRel nextOut mapOut source.locals targetOut.locals ∧
+      Flapjack.WordAlloc.wordStateEqRel source targetOut := by
+  let registers := (List.range count).map (fun index => 2*(index+1))
+  have physical : ∀ register ∈ registers, isPhyVar register := by
+    intro register member
+    obtain ⟨index,_,rfl⟩ := List.mem_map.mp member
+    simp [isPhyVar]
+  have inserted := ssaLocalsRelIgnoreListInsert counter (sptInter ssa names)
+    source target registers values
+    ⟨ssaMapOKInter counter ssa names valid,related,physical,by simp [registers,length]⟩
+  have present : ∀ key ∈ (sptToAList names).map Prod.fst, sptDomain source.locals key := by
+    intro key member
+    rw [sourceDomain]
+    exact (sptMemMapFstToAList names key).mp member
+  have restored := listNextVarRenameMovePreserve source (sptInter ssa names) (counter+2)
+    ((sptToAList names).map Prod.fst) (WordSemStateFiniteExact.setVars registers values target)
+    ⟨ssaLocalsRelMore counter _ _ _ (counter+2) ⟨inserted,by omega⟩,
+      present,sptAllDistinctMapFstToAList _,
+      ssaMapOKMore counter _ (counter+2) ⟨ssaMapOKInter counter ssa names valid,by omega⟩,frame⟩
+  dsimp only at restored ⊢
+  exact ⟨restored.1,restored.2.1,restored.2.2.1⟩
+
 end Flapjack.Compiler.Backend.WordAlloc
