@@ -13,6 +13,7 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.PostInterferenceState
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EncodingNonempty
 import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
 import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
 import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
 import Flapjack.Test.LabToTargetSimpleEncoderParity
 import Flapjack.Misc.BalancedMap.RotationCorrect.SingleR
