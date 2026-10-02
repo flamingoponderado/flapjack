@@ -4726,3 +4726,12 @@ proof and its original getVar/getVars, physical list-write, and set/read local
 helpers, without added target-run or success premises. The capture records the
 complete original statement and native state/register/list/map/table carriers.
 It is source evidence, not a cross-assistant equivalence proof.
+
+### Native SSA Inst.Const semantic case
+
+`ssa_cc_trans_correct_inst_const_probeScript.sml` replays the literal original
+Const opcode proof and its original fresh-update locals helper. Fixed-constructor
+selection and discarded primitive induction bookkeeping are omitted. The capture
+records the full original pass statement and native register/word/state/map/table
+carriers. It is source evidence, not a cross-assistant equivalence proof; the
+whole Inst semantic assembly remains open.

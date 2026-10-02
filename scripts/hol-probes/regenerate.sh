@@ -4260,3 +4260,7 @@ run_probe ssa_locals_rel_get_vars_probeScript.sml ssa_locals_rel_get_vars_probe.
 run_probe ssa_cc_trans_correct_return_probeScript.sml ssa_cc_trans_correct_return_probe.out \
   return_full return_type_st return_type_cst return_type_label_reg return_type_value_regs return_type_ssa return_type_next return_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_inst_const_probeScript.sml ssa_cc_trans_correct_inst_const_probe.out \
+  inst_const_full inst_const_type_st inst_const_type_cst inst_const_type_reg inst_const_type_word inst_const_type_ssa inst_const_type_next inst_const_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

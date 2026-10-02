@@ -55592,5 +55592,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Source comparison: original resumed Return9656-9687, all six original premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no added target-run/success/post-state/IH premise. Actual source getVar word-vs-location/getVars error and success branches; native target Move0 into original GENLIST(2*(x+1)) physical return registers represented by List.range.map. Original getVars transport, physical list-insert locals relation, getVar label transport after update, and set/read theorem derive actual target Return result and flushState false. Generated list lengths/Nodup/physical bounds derived, not assumed. Full state/result/native Nat/List/Spt carriers reviewed with shared arbitrary code/FFI hosts, canonical fpRegs/store finite-support and positive-width BitVec/Type0 translations. Inherits reals_as_rational_cuts evaluator boundary SOUNDNESS8. Fresh literal original resumed Return and original local helper proofs/carrier captures PASS; Lean kernel checked."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstConst.lean",
+  "lean_name": "ssaCcTransCorrectInstConst",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: genuine original resumedInst Const opcode7867-7873 case of ssa_cc_trans_correct. Same six original premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no extra targetrun/success/poststate/IH. Native instruction Const registerNat/positive-widthBitVec carrier matches original num/alpha word. Native inst/assign/wordExp Const and nextVarRename exact branches; original setVar locals relation proves fresh update and frame. Full native state/map/table carriers shared arbitrary Type0 code/FFI hosts, canonical fpRegs/store finite-support and positive-widthBitVec translations reviewed. Inherits reals_as_rational_cuts evaluator/Inst boundary SOUNDNESS8. Fresh literal original opcode proof with original local setVar helper and complete carrier captures PASS; only fixed-constructor selection and discarded primitive induction bookkeeping omitted. Lean kernel checked; fullInst assembly remains open."
 }
 ]
