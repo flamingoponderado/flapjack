@@ -1,0 +1,4 @@
+for_ascending=((),[1; 2; 3])
+for_descending=((),[3; 2; 1])
+for_equal_zero=((),[0])
+for_descending_zero=((),[9; 2; 1; 0])
