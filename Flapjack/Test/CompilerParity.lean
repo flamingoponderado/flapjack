@@ -1,3 +1,4 @@
+import Flapjack.Test.StackRemoveProgComp
 import Flapjack.Test.StackRemoveComp
 import Flapjack.Test.StackRemoveCopyLoop
 import Flapjack.Test.StackLangInstBuilders

@@ -1,3 +1,5 @@
+`stack_remove_prog_comp_probe.out` captures full original section-wrapper definition/type and15 native outputs at widths1/8/32/64/80 with independent Bool/ListBool/Nat section names. Kernel fixtures retain generic Name/configuration and unconditional name preservation; actual runtime replacement remains36ez.3.
+
 `stack_remove_comp_probe.out` captures full native comp definition/type and52 compiled trees plus52 original clause equations (allT). Kernel fixtures cover all34 input constructors, every wildcard, both CurrHeap/store arms, zero/wrapped/signed-offset/direct/fallback paths, both alloc modes, widths1/8/32/64/80 and all four Call optional-continuation combinations. Actual runtime activation remains separate.
 
 `stack_remove_copy_loop_probe.out` captures complete copy_each/copy_loop definitions/types and30 fully expanded native constructor trees at widths1/8/32/64/80, zero/ordinary/aliased arbitrary registers. Kernel trees preserve exact Loop/If/Break0, signed Less vs zero, Test branch, all address operands and right-associated sequences.

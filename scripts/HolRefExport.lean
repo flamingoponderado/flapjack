@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp
 import Flapjack.Compiler.Backend.StackRemove.CopyLoop
 import Flapjack.Compiler.Backend.StackLang.InstBuilders

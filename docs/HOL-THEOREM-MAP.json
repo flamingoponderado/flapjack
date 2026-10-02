@@ -53726,5 +53726,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol full source comparison 2026-10-02 (36ez.3.3), original161-222: arbitrary Boolean jump, signed word-pair bounds, Nat pointer and complete faithful HolProg. All34 constructors covered: Get/Set CurrHeap vs exact store_offset, OpCurrHeap register operands, exact free/alloc, StackStore/Load word_offset and signed offset_ok0 then native fallbacks, Load fallback first moves destination from pointer, arbitrary-access and size sequences exact parenthesization, Bitmap/StoreConsts complete lists/copy_loop and ignored optionalstub. Seq/If/Loop recurse on original subprograms, Call maps both option tuples preserving link register/labels/target; all16 wildcard constructors retained unchanged incl faithful MlString FFI and all native Inst payloads. Reuses canonical StackLang Overloads as sole tagged owner; aliases add no ports. Only positive BitVec width/NeZero dimension translation; no successful-pass/run, safety, result, postrelation or performance assumptions. sizeOf termination checked including nestedOption/tupleCall. Fresh original fulltype/definition and52 literal clause equations/native trees plus52kernel fixtures include signednegative/reversed bounds and wrapped offsets. Productionreplacement remains dependency-linked36ez.3; definition port alone is not pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/ProgComp.lean",
+    "lean_name": "progComp",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "prog_comp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source/fulltype comparison 2026-10-02 (36ez.3.4), original224-226: bool -> alpha word pair -> num -> beta # alpha prog -> beta # alpha prog. Independent beta remains generic Name:Type, not specialized to Nat sectionlabels. Literal pair output preserves name and calls full reviewed native comp on program with unchanged jump/bounds/pointer; no source safety/success/targetrun/result premises. Only positive BitVec width/NeZero dimension translation qualified; faithful HolProg and MlString/asm payloads unchanged. Generic kernel pair/name-preservation fixtures plus fresh original Bool/ListBool/Nat names at five word widths. Actual production route remains dependency-linked36ez.3, no pass simulation or end-to-end correctness asserted."
   }
 ]
