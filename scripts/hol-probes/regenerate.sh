@@ -5624,3 +5624,6 @@ run_probe l3_mmu_write_frame_probeScript.sml l3_mmu_write_frame_probe.out \
 run_probe l3_mmu_insert_probeScript.sml l3_mmu_insert_probe.out \
   insert_empty insert_holes insert_last_hole insert_full_ascending insert_full_tie insert_full_max insert_last_oldest insert_early_oldest \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe stack_remove_comp_if_probeScript.sml stack_remove_comp_if_probe.out \
+  cc_if_statement cc_if_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

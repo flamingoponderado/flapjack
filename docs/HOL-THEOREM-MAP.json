@@ -66833,5 +66833,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.7: original74-83 full comp_seq_neq_IMP. Arbitrary native first/second/default programs and actual Spt Nat info; sole original comp_seq inequality implies exists natural k,dest with first StackFree k and second Call NONE(INL dest)NONE. No successful lookup, frame bound, target evaluation or extra shape premise. Direct matcher proof uses literal compSeq/destCase. Sole positive type-indexed word carrier translation, native tree maps unchanged. Fresh original full statement hypcount0 and five independent branch observations matched kernel fixtures; generic theorem application separates proof from observations. Axiom audit only propext/Quot.sound. Full label/simulation parents remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/If.lean",
+    "lean_name": "compCorrectIf",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-remove-if: genuine original comp_correct If1687-1702/full theorem1481-1490. Same four actual source evaluation/nonError/full26state relation/register bound premises; same existential native target run at ck+target.clock and Halt/TimeOut/FinalFFI ffi equality versus full stateRelHOL result split. Only original branch IHs guarded by actual source get_var/get_var_imm lookups and word_cmp SOME true/false; both retain arbitrary result/poststate/target/pointer/bounds/jump quantifiers. Target register/immediate lookups derived from full relation and original operand register bound, unchanged under added clock; comparison follows same native wordSemWordCmp on identical full WordLocW values. Native comp preserves condition and compiles actual branches. No target-evaluation, target lookup/comparison, unconditional simulation or successful-pass premise added. Invalid source lookup/comparison errors eliminated only by original nonError premise. Imported owning native finite-support regs/fpRegs/store codec witness reexported; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scopedHOL statement proved with literal original If case body, only standalone rpt strip_tac prefix and recreated original local state_rel_get_var helper."
   }
 ]
