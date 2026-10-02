@@ -1,0 +1,3 @@
+ifp_statement=∀jump off k s t s1 op. state_rel jump off k s t ∧ reg_bound_inst (FP op) k ∧ inst (FP op) s = SOME s1 ⇒ ∃t1. inst (FP op) t = SOME t1 ∧ state_rel jump off k s1 t1
+ifp_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;s1:(α, β, γ) stackSem$state;op:fp
+ifp_proved=T

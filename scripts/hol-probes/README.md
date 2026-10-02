@@ -5904,6 +5904,16 @@ Whole native compiled-stack-conventions probes capture the complete original the
 
 `full_ssa_cc_trans_correct_probe.out` captures the entire original full SSA wrapper theorem and conclusion term. The native proof retains only the original initial locals-domain premise and derives the successful setup, full body simulation and actual sequential target run. Executed SSA migration and end-to-end correctness remain open; this is source regression evidence only.
 
+### Native trigger-update simulation
+
+`stack_alloc_trigger_statement_probeScript.sml` captures the literal full local
+`evaluate_SetNewTrigger` statement and all free/quantified carrier types, seven
+original `new_trig` results and seven actual StackSem `SetNewTrigger` runs.
+The run tuples include result, registers1/7/4, TriggerGC, clock, untouched
+registers0/3/8 and CurrHeap. Both32/64-bit alignment branches are covered; the
+remaining state fields are arbitrary. `Flapjack/Test/SetNewTriggerParity.lean`
+replays all14 observations in the kernel. The capture elaborates the original
+simulation statement; it does not replay its original proof.
 ## Complete binary32 nearest-even rounding agreement
 
 `binary_ieee_round_fp32_probeScript.sml` evaluates the original choice-based

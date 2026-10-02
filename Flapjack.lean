@@ -1,4 +1,8 @@
+import Flapjack.Compiler.Backend.LabToTarget.OffsetInvariant
+import Flapjack.Compiler.Backend.LabToTarget.CodeLabelPositionPadding
+import Flapjack.Compiler.Backend.LabToTarget.PrefixPaddingLength
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionPadding
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.SetNewTrigger
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionPrefix
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionUpdates
@@ -88,6 +92,11 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryWrites
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryStores
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ExpressionSimulation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Atoms
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Binary
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Arithmetic
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Memory
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.FloatingPoint
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
