@@ -695,6 +695,7 @@
     {"bytes": 1557, "out": "ssa_cc_trans_correct_inst_store8_probe.out", "rows": 9, "sha256": "899210b601a4091a9c1282ff57b6c37c0ff114da1b4639928ddbb3539fd3a1e5"},
     {"bytes": 1545, "out": "ssa_cc_trans_correct_inst_store_probe.out", "rows": 9, "sha256": "0932716945f2be829f6d7debbd5b2b83bbb7159e66c2e615fc64428ec0a85b60"},
     {"bytes": 1653, "out": "ssa_cc_trans_correct_inst_suboverflow_probe.out", "rows": 10, "sha256": "b56c064bfc5ef7813c06da3af0c2d8fceb78aea0244edad4b6c455ad1195b885"},
+    {"bytes": 1428, "out": "ssa_cc_trans_correct_move_probe.out", "rows": 8, "sha256": "61168b1996ba7deda29627d230d60d7445604f14ec9c0df90a229b21085dcd1f"},
     {"bytes": 3746, "out": "ssa_cc_trans_correct_must_terminate_probe.out", "rows": 8, "sha256": "aa3ba3614ca303ee3c9d43be850815402019b9618309d4663a9acfcd94b0cce7"},
     {"bytes": 2481, "out": "ssa_cc_trans_correct_primitives_probe.out", "rows": 7, "sha256": "3196bc3548955f60426f28588e9031b0c637c906519470975ebcd1a25b7494cc"},
     {"bytes": 1378, "out": "ssa_cc_trans_correct_raise_probe.out", "rows": 7, "sha256": "3cf6ac3aa83b2a74558245d61f42817cb49bbea392676773de2b67c162d7729f"},

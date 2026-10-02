@@ -59315,6 +59315,20 @@
     "reviewer": "flapjack-sol-c source comparison 2026-10-02: exact n=0 induction case of source781, proof812-843. All original normal-PC/state/domain/interference/valid-state/projection-observer/universal-env asserts/asserts2/encoded-region hypotheses retained, existential state and both evaluator/search equalities plus target_state_rel under every k retained. Original n+1 specializes to1; no extra premise. Positive word dimensions use BitVec width under NeZero, host sigma Type, original lists and predicate domains. Inherited total holEl/holHd remain unbounded: holHdNil/shared opaque holArb past end, no fallback or extra length/bounds hypothesis. Full assembling theorem and successor case remain tracked on parent flapjack-native-target-evaluate-eq-lemma."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticMove.lean",
+    "lean_name": "ssaCcTransCorrectMove",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02: original full resumed Move7740-7858, same six premises and complete source permutation/Error exemption/result/full frame/result-sensitive locals conclusion. Native Move duplicate destinations/missing source reads exempt only actual Error; successful source values transported by ssaLocalsRelGetVars to actual renamed target Move. Fresh outputs/listNextVarRename/native parallel setVars preserve provisional relation via original generic locals theorem, filtered force pairs original source keys outside destination list and generated output registers. Pair agreement and target domain derived from bounded source reads and distinct generated-output zip lookup; original ssa_locals_rel_force_rename then proves final map relation. No targetrun/postlocals/success premise or IH. Nat priority/pair list, native Spt SSA/table/state, positive indexed word and Type0 code/FFI confirmed by original kernel specialization/carrier capture. fpRegs/store canonical finite-support and word qualifiers explicit; inherits reals_as_rational_cuts evaluator SOUNDNESS8. Indexed holEl calls are all bounded by actual zip membership; holEl_eq_getElem converts same bounds, no total out-of-range observation. Original proof manually compared; HOL theorem capture and Lean kernel PASS, no isolated tactic replay claimed. Overall fullSSA remains open."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
     "hol_name": "evaluate_EQ_evaluate_lemma",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/EvaluateEq.lean",

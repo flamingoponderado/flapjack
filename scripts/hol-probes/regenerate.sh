@@ -4669,3 +4669,10 @@ run_probe stack_remove_compile_native_probeScript.sml stack_remove_compile_nativ
 run_probe ssa_locals_force_rename_probeScript.sml ssa_locals_force_rename_probe.out \
   force_locals_full force_locals_type_source force_locals_type_target force_locals_type_ssa force_locals_type_pairs force_locals_type_next \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe ssa_locals_force_rename_probeScript.sml ssa_locals_force_rename_probe.out \
+  force_locals_full force_locals_type_source force_locals_type_target force_locals_type_ssa force_locals_type_pairs force_locals_type_next \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_move_probeScript.sml ssa_cc_trans_correct_move_probe.out \
+  move_full move_type_priority move_type_moves move_type_st move_type_cst move_type_ssa move_type_next move_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
