@@ -5231,3 +5231,6 @@ run_probe ssa_reconcile_route_probeScript.sml ssa_reconcile_route_probe.out \
 run_probe ssa_listmove_route_probeScript.sml ssa_listmove_route_probe.out \
   lm_empty lm_missing lm_repeated lm_source_alias lm_order lm_big \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_section_label_extraction_probeScript.sml lab_to_target_section_label_extraction_probe.out \
+  section_labels_line_get_code_labels section_labels_line_get_code_labels_types mixed_full_tuple mixed_full_set_equality duplicate_zero_accumulator_retained all_label_zero_skipped_nonzero_kept both_zero_insertions_needed empty_accumulator_retained zero_accumulator_value_unconstrained nonlabel_bytes_not_annotation all_seven_opcodes_no_definitions width1_empty width80_large_position \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
