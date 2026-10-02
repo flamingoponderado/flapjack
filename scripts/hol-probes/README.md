@@ -4230,3 +4230,5 @@ subtraction, independent Nat/Bool value and frame metadata carriers, all four
 performance/handler modes, 70-bit indices, and widths 1/2/8/64/80.
 They retain the descending load/store sequence and zero-count continuation.
 These observations provide regression evidence, not cross-language equivalence.
+
+Return allocation-argument probes replay all three complete original stack-move, recursive return-copy and wrapper proofs, with no open hypotheses. The210 predicate pairs cover widths1/2/8/64/80, zero/nonzero/saturated return counts, all four Boolean modes,70-bit slot/register/frame numbers, valid and invalid allocations, and independent optional Call return/handler checks. WordToStackReturnAllocArgsParity kernel-checks identical predicates and arbitrary-carrier theorem applications. These are original regression observations, not cross-language equivalence or full compiler correctness. Regenerate with HOL_PROBE_ONLY=word_to_stack_return_alloc_args_probeScript.sml.

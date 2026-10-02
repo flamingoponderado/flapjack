@@ -49883,5 +49883,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-return-labels): full original7602-7609 conjunction of zero/successor copy_ret_aux equations and7633-7641 whole get_labels(copy_ret)=get_labels continuation. Actual native copyRetAuxNative descending original list_Seq AST and copyRetNative length+1-k Nat subtraction, all perf/is_handle flags, optional handler-slot3/5 offset, SeqStackFree clauses; no register/frame/success/count/label premise. Return-value List beta and unused frame-tail gamma remain independent arbitrary Type0 carriers, faithful native HolProg at arbitrary positive BitVec width with MlString byte names. HOL set to predicate equality, original optional return/handler label clauses intact. Two literal unchanged whole original proofs hyp=[] and460 matching native complete AST/label packets at widths1/2/8/64/80, Nat/Bool independent list/metadata carriers, counts0/1/2/8/10,70bit frame/register indices and all Boolean wrapper branches including handler-without-return. Existing total HD/EL hold and trust policy unchanged; no full call simulation or compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnAllocArgs.lean",
+    "lean_name": "stackMoveAllocArg",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original stack_move_alloc_arg at11292, actual native HolProg/stackMoveNative/copyRetAuxNative/copyRetNative and accepted allocArg. Same quantified natural arguments, implication/equivalence/closed predicate conclusion and original guard (only movement requires allocArg p); arbitrary positive word width via words_as_type_indexed_bitvec and NeZero, independent beta/gamma Type0 in wrapper, all Bool modes and arbitrary continuation. No extra count/frame/bound/success premise; source proof replay and210 original predicate pairs with matching kernel fixtures. No HD/EL/GC qualifier dependency; full compiler allocation-argument theorem and correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnAllocArgs.lean",
+    "lean_name": "allocArgCopyRetAux",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "alloc_arg_copy_ret_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original alloc_arg_copy_ret_aux at11300, actual native HolProg/stackMoveNative/copyRetAuxNative/copyRetNative and accepted allocArg. Same quantified natural arguments, implication/equivalence/closed predicate conclusion and original guard (only movement requires allocArg p); arbitrary positive word width via words_as_type_indexed_bitvec and NeZero, independent beta/gamma Type0 in wrapper, all Bool modes and arbitrary continuation. No extra count/frame/bound/success premise; source proof replay and210 original predicate pairs with matching kernel fixtures. No HD/EL/GC qualifier dependency; full compiler allocation-argument theorem and correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnAllocArgs.lean",
+    "lean_name": "allocArgCopyRet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "alloc_arg_copy_ret",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original alloc_arg_copy_ret at11309, actual native HolProg/stackMoveNative/copyRetAuxNative/copyRetNative and accepted allocArg. Same quantified natural arguments, implication/equivalence/closed predicate conclusion and original guard (only movement requires allocArg p); arbitrary positive word width via words_as_type_indexed_bitvec and NeZero, independent beta/gamma Type0 in wrapper, all Bool modes and arbitrary continuation. No extra count/frame/bound/success premise; source proof replay and210 original predicate pairs with matching kernel fixtures. No HD/EL/GC qualifier dependency; full compiler allocation-argument theorem and correctness remain open."
   }
 ]
