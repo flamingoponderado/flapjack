@@ -52390,5 +52390,19 @@
     "lean_name": "alookupZipMapOptionLookupNone",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source comparison flapjack-04ze: Full original6551-6590 generic statement, original conjuncts/order and result. List/Nat/Spt carriers unchanged; indexedSome input/value/key types independently generic, absentKey native Nat domain with arbitrary tree payload, value and key types. HOL inhabited EL types represented by Nonempty; canonical opaque holEl retained. INJ domain UNIV is precisely domain-restricted equality implication (range UNIV tautological). DecidableEq implements lawful HOL key equality. No stronger map invariant, lookup success, output frame or target evaluation premise. Literal original proofs and complete inferred types replayed successfully. Lean list induction kernel checked; evaluator simulation remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/SharedMemoryClock.lean",
+    "lean_name": "shMemOpConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "sh_mem_op_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (m3za): full original stackProps376-398 input sh_mem_op equality implies twelve preserved fields: clock/use_alloc/use_store/use_stack/code/be/gc_fun/mdomain/sh_mdomain/bitmaps/compile/compile_oracle. All arbitrary native state/configuration/FFI types and positive word dimension retained, arbitrary function-valued domains/GC/compiler fields preserved as full equalities. No domain/success/WF/FFI callback premise or target evaluation assumed. Actual eight native helpers inspected for returned/final/error register and FFI changes; every changed field is excluded exactly as in original. Literal complete original proof/full quantified type captured; kernel case proof full conclusion. fmap_as_finite_support covers actual imported StackSemStateFiniteExact canonical regs/fpRegs/store and same-module roundtrip, words_as_type_indexed_bitvec only positive dimension/Type0 host. Actual prerequisite of evaluate_consts400 and evaluate_add_clock495; no full evaluator or compiler theorem claimed."
   }
 ]

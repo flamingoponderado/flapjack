@@ -92,6 +92,306 @@ private theorem store_final : observe (shMemOp .store 3 8 ({ s0 with ffi := divF
 private theorem store_loc : observe (shMemOp .store 4 8 (s0)) = (1, 37, 0, 0, 0) := by
   decide +kernel
 
+private theorem store_frame :
+    let s := s0
+    let t := (shMemOp .store 3 8 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .store 3 8 (s0)
+    (shMemOp .store 3 8 (s0)).2
+    (shMemOp .store 3 8 (s0)).1 rfl
+
+private theorem load_frame :
+    let s := s0
+    let t := (shMemOp .load 5 8 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .load 5 8 (s0)
+    (shMemOp .load 5 8 (s0)).2
+    (shMemOp .load 5 8 (s0)).1 rfl
+
+private theorem store8_frame :
+    let s := s0
+    let t := (shMemOp .store8 3 9 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .store8 3 9 (s0)
+    (shMemOp .store8 3 9 (s0)).2
+    (shMemOp .store8 3 9 (s0)).1 rfl
+
+private theorem load8_frame :
+    let s := s0
+    let t := (shMemOp .load8 5 9 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .load8 5 9 (s0)
+    (shMemOp .load8 5 9 (s0)).2
+    (shMemOp .load8 5 9 (s0)).1 rfl
+
+private theorem store16_frame :
+    let s := s0
+    let t := (shMemOp .store16 3 10 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .store16 3 10 (s0)
+    (shMemOp .store16 3 10 (s0)).2
+    (shMemOp .store16 3 10 (s0)).1 rfl
+
+private theorem load16_frame :
+    let s := s0
+    let t := (shMemOp .load16 5 10 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .load16 5 10 (s0)
+    (shMemOp .load16 5 10 (s0)).2
+    (shMemOp .load16 5 10 (s0)).1 rfl
+
+private theorem store32_frame :
+    let s := s0
+    let t := (shMemOp .store32 3 12 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .store32 3 12 (s0)
+    (shMemOp .store32 3 12 (s0)).2
+    (shMemOp .store32 3 12 (s0)).1 rfl
+
+private theorem load32_frame :
+    let s := s0
+    let t := (shMemOp .load32 5 12 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .load32 5 12 (s0)
+    (shMemOp .load32 5 12 (s0)).2
+    (shMemOp .load32 5 12 (s0)).1 rfl
+
+private theorem load_outside_frame :
+    let s := s0
+    let t := (shMemOp .load 5 16 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .load 5 16 (s0)
+    (shMemOp .load 5 16 (s0)).2
+    (shMemOp .load 5 16 (s0)).1 rfl
+
+private theorem store8_outside_frame :
+    let s := s0
+    let t := (shMemOp .store8 3 17 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .store8 3 17 (s0)
+    (shMemOp .store8 3 17 (s0)).2
+    (shMemOp .store8 3 17 (s0)).1 rfl
+
+private theorem load_word_unaligned_frame :
+    let s := s0
+    let t := (shMemOp .load 5 9 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .load 5 9 (s0)
+    (shMemOp .load 5 9 (s0)).2
+    (shMemOp .load 5 9 (s0)).1 rfl
+
+private theorem store_word_unaligned_frame :
+    let s := s0
+    let t := (shMemOp .store 3 9 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .store 3 9 (s0)
+    (shMemOp .store 3 9 (s0)).2
+    (shMemOp .store 3 9 (s0)).1 rfl
+
+private theorem load_final_frame :
+    let s := { s0 with ffi := divFfi }
+    let t := (shMemOp .load 5 8 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .load 5 8 ({ s0 with ffi := divFfi })
+    (shMemOp .load 5 8 ({ s0 with ffi := divFfi })).2
+    (shMemOp .load 5 8 ({ s0 with ffi := divFfi })).1 rfl
+
+private theorem store_final_frame :
+    let s := { s0 with ffi := divFfi }
+    let t := (shMemOp .store 3 8 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .store 3 8 ({ s0 with ffi := divFfi })
+    (shMemOp .store 3 8 ({ s0 with ffi := divFfi })).2
+    (shMemOp .store 3 8 ({ s0 with ffi := divFfi })).1 rfl
+
+private theorem store_loc_frame :
+    let s := s0
+    let t := (shMemOp .store 4 8 s).2
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  dsimp only
+  exact shMemOpConst .store 4 8 (s0)
+    (shMemOp .store 4 8 (s0)).2
+    (shMemOp .store 4 8 (s0)).1 rfl
+
 /-- Actual full dispatch theorem application over arbitrary words and states. -/
 example {width : Nat} [NeZero width] {C F : Type}
     (op : WordMemOp) (r : Nat) (a : BitVec width)

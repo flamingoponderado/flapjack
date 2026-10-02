@@ -106,4 +106,30 @@ theorem shMemOpWithClock {width : Nat} [NeZero width] {C F : Type}
     shMemLoadByteWithClock, shMemStoreByteWithClock, shMemLoad16WithClock,
     shMemStore16WithClock, shMemLoad32WithClock, shMemStore32WithClock]
 
+/-- Full original sh_mem_op_const: all twelve preserved fields, including
+arbitrary memory-domain/compile/GC functions. The only premise is the original
+input helper evaluation, and every success, final or error result is allowed. -/
+@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "sh_mem_op_const"
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem shMemOpConst {width : Nat} [NeZero width] {C F : Type}
+    (op : WordMemOp) (r : Nat) (a : BitVec width)
+    (s t : StackSemStateFiniteExact width C F) (res : Option (StackSemResult width))
+    (h : shMemOp op r a s = (res, t)) :
+    t.clock = s.clock ∧
+    t.useAlloc = s.useAlloc ∧
+    t.useStore = s.useStore ∧
+    t.useStack = s.useStack ∧
+    t.code = s.code ∧
+    t.be = s.be ∧
+    t.gcFun = s.gcFun ∧
+    t.mdomain = s.mdomain ∧
+    t.shMdomain = s.shMdomain ∧
+    t.bitmaps = s.bitmaps ∧
+    t.compile = s.compile ∧
+    t.compileOracle = s.compileOracle := by
+  cases op <;> simp only [shMemOp, shMemLoad, shMemStore, shMemLoadByte,
+    shMemStoreByte, shMemLoad16, shMemStore16, shMemLoad32, shMemStore32, getVar] at h
+  all_goals repeat' first | split at h | simp_all
+  all_goals rcases h with ⟨_, rfl⟩ <;> simp
+
 end Flapjack.StackPropsSharedMemoryClock
