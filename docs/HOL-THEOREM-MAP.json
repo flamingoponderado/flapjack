@@ -62636,21 +62636,638 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 author source comparison 2026-10-02 complete original4473-4510, both complete statements and free-variable types freshly captured in lab_to_target_nop_padding_probe.out. Encoded element carrier is arbitrary HOL alpha/beta list and remains independent Value:Type, not fixed byte8; native HolAsm positive dimension is sole words_as_type_indexed_bitvec translation. Unconditional same-length padding theorem retains arbitrary encoder/instruction and supports empty NOP. General establishment retains all original five conjuncts: NOP identity with enc Skip, encoded length bound, encoded and target length MOD NOP length both zero, positive NOP length. Conclusion actual encWithNop of actual padBytes, not a desired-result premise or weaker length statement. Full arbitrary inputs, no BEq or DecidableEq instances added. Proof uses original enc_with_nop_thm, exact generic TAKE_FLAT_REPLICATE_LEQ prerequisite7fd9673306e1488429f15ed765a163d2a6eaecaa, ordinary Nat quotient equations and full list take/append semantics. Nine original/native observations and six actual theorem applications plus two full generic consumers cover Nat/Bool payloads, multibyte/empty NOP, exact/zero target and empty encoded input, and both modulo/NOP-identity guard counterexamples. Original numeric disequality normalized with source HOL simplifier after EVAL, not a hand-written result. No production body change or HD/EL hold dependency; full line/section padding invariants and remove_labels_loop/end-to-end remain unfinished."
   },
-{
-  "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
-  "hol_name": "word_gen_gc_partial_move_data_code_thm",
-  "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenPartialMoveData.lean",
-  "lean_name": "word_gen_gc_partial_move_data_code_thm",
-  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-  "fmap_as_finite_support": [
-    "regs",
-    "fpRegs",
-    "store"
-  ],
-  "words_as_type_indexed_bitvec": true,
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "flapjack-sol-b source comparison 2026-10-02, original stack_allocProofScript.sml:4124-4241: full binder order and four curried premise groups, free conf/gs/rs implicit; all shift/width/lenSize/goodDimindex, store, memory/domain and register hypotheses preserved. Exact StackSem evaluate existential clock, memory m2 and nine-register update (register8 Word pa2); store unchanged. Complete fuel induction follows original empty/data-bit/pointer-list cases using native partial-list theorem and evaluateAddClock, no supplied target evaluation. Fresh original HOL typed capture confirms unused existential t0:delta,t1:epsilon, retained as independently arbitrary D/E with Nonempty instances; main source-review policy agmsg2026-10-02T10:04:33Z confirms standard HOL inhabited-type interpretation, not additional operational premise/qualifier. Canonical actual StackSemStateFiniteExact regs/fpRegs/store codec witness; positive-width BitVec NeZero. Seven original concrete EVAL observations; no claimed concrete oracle for unspecified theWord(Loc). Inst evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts, not an independent review of all dependencies."
-},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstallCase.lean",
+    "lean_name": "ssaCcTransCorrectInstall",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a author source comparison2026-10-02 original resumed Install9700-9858 of full ssa_cc_trans_correct7666: all six original premises and complete ssaSimulation source-permutation/Error-exempt actual target result/frame/result-sensitive locals conclusion. Source permutation is original target.permute. Actual non-Error source Install derives successful cut/four word reads/normal result; native compiler rename and scratch moves, mapped cut relation, identical actual compile/buffer/oracle/config/code branches, fresh pointer copy and final rename are proved internally. No targetrun/successful callback/final SSA or post-frame premise, no induction hypothesis. Native arbitrary Nat/Spt/cutsets/program/code/stack/GC/FFI carriers retained, canonical fpRegs/store relation and positive word qualifiers only; inherits reals_as_rational_cuts evaluator SOUNDNESS item8. Full SSA/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnRegisterBounds.lean",
+    "lean_name": "stackMoveRegBound",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_reg_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of full stack_move_reg_bound11384-11408: actual native helpers and reviewed regBound retain original quantified counts/indices/offsets/continuations and exactly original temporary-register bound and continuation-bound premises. All Boolean modes and independent return-value/frame-tail Type0 carriers retained. Positive-width BitVec translation is the only qualifier, no count/bounds/width>=8/success restriction added. Fresh three literal complete original proof replays hyp=[] and330 same-input direct original EVAL/kernel whole-predicate observations, widths1/2/8/64/80, zero/nonzero/saturated returns, good and violated register bounds,70bit offsets. No hold release. Full word_to_stack_reg_bound and semantic compiler correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnRegisterBounds.lean",
+    "lean_name": "copyRetAuxRegBound",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_aux_reg_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of full copy_ret_aux_reg_bound11384-11408: actual native helpers and reviewed regBound retain original quantified counts/indices/offsets/continuations and exactly original temporary-register bound and continuation-bound premises. All Boolean modes and independent return-value/frame-tail Type0 carriers retained. Positive-width BitVec translation is the only qualifier, no count/bounds/width>=8/success restriction added. Fresh three literal complete original proof replays hyp=[] and330 same-input direct original EVAL/kernel whole-predicate observations, widths1/2/8/64/80, zero/nonzero/saturated returns, good and violated register bounds,70bit offsets. No hold release. Full word_to_stack_reg_bound and semantic compiler correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnRegisterBounds.lean",
+    "lean_name": "copyRetRegBound",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_reg_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of full copy_ret_reg_bound11384-11408: actual native helpers and reviewed regBound retain original quantified counts/indices/offsets/continuations and exactly original temporary-register bound and continuation-bound premises. All Boolean modes and independent return-value/frame-tail Type0 carriers retained. Positive-width BitVec translation is the only qualifier, no count/bounds/width>=8/success restriction added. Fresh three literal complete original proof replays hyp=[] and330 same-input direct original EVAL/kernel whole-predicate observations, widths1/2/8/64/80, zero/nonzero/saturated returns, good and violated register bounds,70bit offsets. No hold release. Full word_to_stack_reg_bound and semantic compiler correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Misc/WordList.lean",
+    "lean_name": "wordList",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "word_list_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.7: Original1859-1862: empty=emp; cons=one(address,value) STAR word_list(address+bytes_in_word,tail). Current address is used for the head, modular addition only for the recursive tail; payload type beta remains independent of the positive address-word dimension. Full original address/payload polymorphic types reviewed. The only representation qualifier records address BitVec width/[NeZero width]; payloads and lists remain generic and heap sets are predicates. Canonical emp/one/STAR/cond/sepExists reused. No width>=8, nonwrapping-address, distinct-address, functional-heap or finite-domain side condition. Fresh original full equations/types and positive/negative wrap, zero-stride and existential-length probes compare the same inputs; fifteen Lean kernel fixtures and four regression helpers derive pure length from the partition. This is miscScript heap separation, distinct from the WordToStack bitmap word_list helper."
+  },
+  {
+    "lean_path": "Flapjack/Misc/WordList.lean",
+    "lean_name": "wordListExists",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "word_list_exists_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.7: Original1864-1867: SEP_EXISTS values. word_list address values STAR cond(LENGTH values=length). Lean preserves the existential Listbeta, exact length equality, original STAR ordering and empty-heap cond, rather than accepting a list/representation/length premise. Full original address/payload polymorphic types reviewed. The only representation qualifier records address BitVec width/[NeZero width]; payloads and lists remain generic and heap sets are predicates. Canonical emp/one/STAR/cond/sepExists reused. No width>=8, nonwrapping-address, distinct-address, functional-heap or finite-domain side condition. Fresh original full equations/types and positive/negative wrap, zero-stride and existential-length probes compare the same inputs; fifteen Lean kernel fixtures and four regression helpers derive pure length from the partition. This is miscScript heap separation, distinct from the WordToStack bitmap word_list helper."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_data_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenPartialMoveData.lean",
+    "lean_name": "word_gen_gc_partial_move_data_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02, original stack_allocProofScript.sml:4124-4241: full binder order and four curried premise groups, free conf/gs/rs implicit; all shift/width/lenSize/goodDimindex, store, memory/domain and register hypotheses preserved. Exact StackSem evaluate existential clock, memory m2 and nine-register update (register8 Word pa2); store unchanged. Complete fuel induction follows original empty/data-bit/pointer-list cases using native partial-list theorem and evaluateAddClock, no supplied target evaluation. Fresh original HOL typed capture confirms unused existential t0:delta,t1:epsilon, retained as independently arbitrary D/E with Nonempty instances; main source-review policy agmsg2026-10-02T10:04:33Z confirms standard HOL inhabited-type interpretation, not additional operational premise/qualifier. Canonical actual StackSemStateFiniteExact regs/fpRegs/store codec witness; positive-width BitVec NeZero. Seven original concrete EVAL observations; no claimed concrete oracle for unspecified theWord(Loc). Inst evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts, not an independent review of all dependencies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterBoundMono.lean",
+    "lean_name": "regBoundMono",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "reg_bound_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of complete reg_bound_mono11589-11603: arbitrary actual native program and bounds, exactly original regBound p k and k<=kprime imply regBound p kprime. All34 program and all native instruction constructors, original return-dependent optional handler branch retained. All recursive hypotheses internal, no target/success/output/extra guard premise. Native HolProg carrier reviewed, positive-width BitVec translation only. Fresh literal complete original proof replay hyp=[] plus456 direct original EVAL whole-predicate pairs at k/k+1, same-input kernel expectations read from new captured output using already reviewed source/Lean fixture carriers. Includes all program constructors/instruction variants, valid/invalid bounds, forbidden bitmap store, ignored handlers and active return/handler branches. No cross-language equivalence or full compiler theorem claim. No held imports/policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NopInsertEncoding.lean",
+    "lean_name": "linesEncWithNop_addNop",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lines_enc_with_nop_add_nop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original4505-4537; full quantified theorem and carrier types freshly captured in lab_to_target_nop_insert_encoding_probe.out. Arbitrary native enc/labs/ffis/pos/Line list and positive word dimension retained; sole original one-byte enc Skip guard plus actual reverse-source NOP predicate. Conclusion actual reverse(addNop encSkip ls), no extra label/nonlabel, alignment, sum, length-correctness or result premise. Original HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/native Spt and fixed word8 bytes retained, sole words_as_type_indexed_bitvec translation. Kernel source-list induction uses actual reverse append law and constructive NOP witness count successor, all constructors including Call length-only clause. Nine fresh original/native observations, four actual theorem premise instances and full arbitrary-width consumer include mixed label/Asm and label/LabAsm first-nonlabel updates with untouched stored words/later lines, empty/all-label cases, Halt and Call, and necessary one-byte guard counterexample. No production body changes or trusted-user HD/EL hold use; full section padding/remove_labels_loop/end-to-end correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StateRelation.lean",
+    "lean_name": "stateRelHOL",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.7: complete original153-198 type bool->alpha word#alpha word->num->(alpha,beta,gamma)stackSemstate->same state->bool. Width has NeZero; independently quantified configuration C and FFI host F remain Type0. Imports actual evaluator StackSemStateFiniteExact with regs/fpRegs/store HolFiniteMapExact; code remains Spt, domain/save registers remain sets, lists stay lists. Same-module witness reexports genuine broad/exact codec roundtrips, no duplicate owner. All six mode flags, be/gc/clock/ffi/save-regs/fp-regs/code-buffer/shared-domain equalities preserved. Source compile transforms input list by exact progComp; target oracle transports only middle list while preserving config and data words. Oracle membership retains both full regBound and stackNumStubs<=name+1, source local num_stubs explicitly resolves to stackNumStubs. Dimension remains goodDimindex32or64 inside relation, not an added premise; lower-register lookup, full codeRel, stackErrLab exact halt2, CurrHeap alias, three FFI save registers, bitmap Word test, stack-space length, exact shifted bitmap base/data-buffer position all preserved. Existing unconditional WordLocW/generic constructor codecs and both inverse laws adapt native selector inputs without changing NONE/Loc shared ARB behavior. Base register rejects NONE/Loc, reserve-size and nonwrapping-stack arithmetic are numeric full-width bounds, top pointer uses modular word arithmetic. Five heap assertions retain original left-associative STAR grouping, complete memory graph, mapped Word bitmaps, existential free-space list, full48slot wordStore, source stack, and exact target whole memory graph. Boolean domain=true renders source predicate sets. No finite-memory, wf, output-success, run-result, equality-of-states or supplied separation premise, and no hidden extra hypothesis. Complete original type/equation and syntax-tree grouping plus same-input kernel exclusions provide source evidence; this definition alone does not establish comp_correct or compile_semantics."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+    "lean_name": "returningRefreshArguments",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific returning Call preparation factoring of original8298-8410, no standalone HOL declaration. Actual source getVars/paired-cut guards and original SSA/map/frame derive first native rename NONE/new SSA/frame plus argument reads through original SSA map (the actual compiler uses original map), then convention Move2*(i+1), rereads, preserved new stack SSA/frame and mapped paired-cut image domains/scoped relations/injections. No target-run or desired post-relation premise. Existing original-lookup preservation, physical ignore updates, get/set and cut lemmas discharge obligations. Full returning Call/callee/stack/return/exception-handler and fullSSA remain open on flapjack-sola-callreturn."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean",
+    "lean_name": "returningPrepareArguments",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific returning Call preparation factoring of original8298-8410, no standalone HOL declaration. Actual source getVars/paired-cut guards and original SSA/map/frame derive first native rename NONE/new SSA/frame plus argument reads through original SSA map (the actual compiler uses original map), then convention Move2*(i+1), rereads, preserved new stack SSA/frame and mapped paired-cut image domains/scoped relations/injections. No target-run or desired post-relation premise. Existing original-lookup preservation, physical ignore updates, get/set and cut lemmas discharge obligations. Full returning Call/callee/stack/return/exception-handler and fullSSA remain open on flapjack-sola-callreturn."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnCallArgs.lean",
+    "lean_name": "stackMoveCallArgs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_call_args",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison: stack_move_call_args retains all native HolProg constructors and original quantifiers/premises/conclusion. Predicate arbitrary five natural convention arguments, exact FFI equalities, Install ignores two data-buffer fields, Call traverses handler only inside SOME return. Three helpers specialize exactly original1 2 3 4 0, arbitrary counts/offsets/Boolean modes/continuations and independent return-list/frame-tail types; final wrapper is iff with no continuation premise. Positive-width BitVec translation only; no default or held dependency. Fresh entire predicate capture and three literal complete original proofs hyp=[] plus786 same-input direct original EVAL/kernel predicate observations (627true159false), full constructor/instruction families and330helper observations, widths1/2/8/64/80 and70bit offsets. Expected values read from fresh original capture. Regression evidence, not cross-language equivalence. Full compiler call/register convention assembly remains open; no held imports/policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnCallArgs.lean",
+    "lean_name": "copyRetAuxCallArgs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_aux_call_args",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison: copy_ret_aux_call_args retains all native HolProg constructors and original quantifiers/premises/conclusion. Predicate arbitrary five natural convention arguments, exact FFI equalities, Install ignores two data-buffer fields, Call traverses handler only inside SOME return. Three helpers specialize exactly original1 2 3 4 0, arbitrary counts/offsets/Boolean modes/continuations and independent return-list/frame-tail types; final wrapper is iff with no continuation premise. Positive-width BitVec translation only; no default or held dependency. Fresh entire predicate capture and three literal complete original proofs hyp=[] plus786 same-input direct original EVAL/kernel predicate observations (627true159false), full constructor/instruction families and330helper observations, widths1/2/8/64/80 and70bit offsets. Expected values read from fresh original capture. Regression evidence, not cross-language equivalence. Full compiler call/register convention assembly remains open; no held imports/policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnCallArgs.lean",
+    "lean_name": "copyRetCallArgs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_call_args",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison: copy_ret_call_args retains all native HolProg constructors and original quantifiers/premises/conclusion. Predicate arbitrary five natural convention arguments, exact FFI equalities, Install ignores two data-buffer fields, Call traverses handler only inside SOME return. Three helpers specialize exactly original1 2 3 4 0, arbitrary counts/offsets/Boolean modes/continuations and independent return-list/frame-tail types; final wrapper is iff with no continuation premise. Positive-width BitVec translation only; no default or held dependency. Fresh entire predicate capture and three literal complete original proofs hyp=[] plus786 same-input direct original EVAL/kernel predicate observations (627true159false), full constructor/instruction families and330helper observations, widths1/2/8/64/80 and70bit offsets. Expected values read from fresh original capture. Regression evidence, not cross-language equivalence. Full compiler call/register convention assembly remains open; no held imports/policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/RelationLaws.lean",
+    "lean_name": "stateRelGetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_get_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.1: actual StackSemStateFiniteExact evaluator state imported with canonical regs/fpRegs/store and Spt code, independent C/F Type0 and positive word width. Qualified relation fields cover exactly those three maps; same-module nested RelationLaws witness reexports genuine raw/exact codec roundtrips without duplicate/shadow state. Full stateRelHOL retains all original conjuncts, supported constructor codec for generic word selectors and no additional hypothesis. Original full statement/binder-type and kernel replay, Lean kernel theorem proof and full gates provide evidence. Original199-203 source state_rel AND register<k implies get_var source=get_var target. Proof projects original lower-register lookup conjunct and reverses its equality; original getVar evaluator operation used. No stronger bound or required lookup success."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/RelationLaws.lean",
+    "lean_name": "stateRelDecClock",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.1: actual StackSemStateFiniteExact evaluator state imported with canonical regs/fpRegs/store and Spt code, independent C/F Type0 and positive word width. Qualified relation fields cover exactly those three maps; same-module nested RelationLaws witness reexports genuine raw/exact codec roundtrips without duplicate/shadow state. Full stateRelHOL retains all original conjuncts, supported constructor codec for generic word selectors and no additional hypothesis. Original full statement/binder-type and kernel replay, Lean kernel theorem proof and full gates provide evidence. Original205-211 implication preserves state_rel through both actual StackSemStateOps.decClock truncating Nat subtraction1. Proof first projects equal clocks, then uses proved arbitrary common-clock transport, including clock0; no nonzero-clock premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/RelationLaws.lean",
+    "lean_name": "stateRelWithClock",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_with_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.1: actual StackSemStateFiniteExact evaluator state imported with canonical regs/fpRegs/store and Spt code, independent C/F Type0 and positive word width. Qualified relation fields cover exactly those three maps; same-module nested RelationLaws witness reexports genuine raw/exact codec roundtrips without duplicate/shadow state. Full stateRelHOL retains all original conjuncts, supported constructor codec for generic word selectors and no additional hypothesis. Original full statement/binder-type and kernel replay, Lean kernel theorem proof and full gates provide evidence. Original213-219 implication replaces both states clocks with any Nat c and preserves complete relation. Explicit full26conjunct decomposition retains every field/compile/oracle/separation conjunct while replacing only clock equality by reflexivity. No hidden clock monotonicity or evaluation premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/RelationLaws.lean",
+    "lean_name": "stateRelConst",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_const",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.1: actual StackSemStateFiniteExact evaluator state imported with canonical regs/fpRegs/store and Spt code, independent C/F Type0 and positive word width. Qualified relation fields cover exactly those three maps; same-module nested RelationLaws witness reexports genuine raw/exact codec roundtrips without duplicate/shadow state. Full stateRelHOL retains all original conjuncts, supported constructor codec for generic word selectors and no additional hypothesis. Original full statement/binder-type and kernel replay, Lean kernel theorem proof and full gates provide evidence. Original221-232 complete7conjunct conclusion: codeBuffer equality, shMdomain equality, target useStack false, source useStack true, ffi equality, target oracle mapped only middle list, and source compile transport. All quantifiers and directions retained; no dropped transport conjunct. Proof exact projections from full stateRel."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionNopEncoding.lean",
+    "lean_name": "linesEncWithNop_padSection1",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lines_enc_with_nop_pad_section1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 complete original4533-4570 and full quantified/free-variable types freshly captured in lab_to_target_section_nop_encoding_probe.out. All original enc/labs/ffis/nop/code/aux/pos binders and six guards retained: NOP identity, one-byte length, actual linesEncd at pos+SUM annotation aux, actual reverse-aux linesEncWithNop, nonlabel accumulator, EVERY labelOne code. Conclusion full actual padSection NOP invariant; no added physical/annotation sum, length-correctness, alignment, target result or callback premise. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/Spt and fixed word8 bytes retained; sole positive word dimension words_as_type_indexed_bitvec translation. Kernel induction over original code cases derives physical/annotation sum from original reverse-aux invariant through full lengthOk/section-sum laws, uses full reverse addNOP theorem and full generic byte-padding laws; Call retains original length-only NOP clause. Thirteen fresh original/native observations cover offset-sensitive mixed code/stored words/annotation padding, repeated one-label insertions, zero-label/empty cases and all seven LabAsm constructor successful source guards. Native consumer universally covers constructor payloads, plus full arbitrary-width original statement consumer. Real checked .98/.100/.101/.103/.105 dependencies retained, no production body or HD/EL hold change. Remaining positive-width aligned section groups/full remove_labels_loop/end-to-end remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "MCSR",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "MCSR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1345, literal MCSR_def. Full original state selector applied at current8-bit procID, including the original5-bit register argument where present; no extra premise, observation-only replacement or narrowed state. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«write'NextFetch»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'NextFetch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1368, literal write'NextFetch_def. Full original record field replacement with UPDATE at current8-bit procID; register maps preserve nested5-bit key/update ordering, no other state fields replaced. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "setTrap",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "setTrap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:3433, literal setTrap_def. Construct SOME(Trap) with original ARB record then overwrite both trap and badaddr fields, update current-core NextFetch only; no invented field values. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "signalException",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "signalException_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:3451, literal signalException_def. Call full setTrap with (e,NONE), not an evaluator shortcut or direct exception-field write. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "gpr",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "gpr_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1143, literal gpr_def. Full original state selector applied at current8-bit procID, including the original5-bit register argument where present; no extra premise, observation-only replacement or narrowed state. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "GPR",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "GPR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:4133, literal GPR_def. Original5-bit zero guard returns64-bit zero, every other register reads full gpr at current8-bit procID. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«write'MCSR»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'MCSR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1351, literal write'MCSR_def. Full original record field replacement with UPDATE at current8-bit procID; register maps preserve nested5-bit key/update ordering, no other state fields replaced. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "ext_status",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "ext_status_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:499, literal ext_status_def. All four constructors Off/Initial/Clean/Dirty map to exact2-bit0/1/2/3. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "Delta",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Delta_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:3265, literal Delta_def. Full original state selector applied at current8-bit procID, including the original5-bit register argument where present; no extra premise, observation-only replacement or narrowed state. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«write'Delta»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'Delta_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:3271, literal write'Delta_def. Full original record field replacement with UPDATE at current8-bit procID; register maps preserve nested5-bit key/update ordering, no other state fields replaced. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«write'gpr»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'gpr_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1152, literal write'gpr_def. Full original record field replacement with UPDATE at current8-bit procID; register maps preserve nested5-bit key/update ordering, no other state fields replaced. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«write'GPR»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'GPR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:4140, literal write'GPR_def. Registerzero leaves whole state unchanged; otherwise nested full current-core/register write'gpr. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "fpr",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "fpr_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1235, literal fpr_def. Full original state selector applied at current8-bit procID, including the original5-bit register argument where present; no extra premise, observation-only replacement or narrowed state. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FPRS",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FPRS_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:4151, literal FPRS_def. Read full fpr/current8-bit procID and extract bits31:0 to exact32-bit result. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FPRD",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FPRD_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:4170, literal FPRD_def. Original full64-bit fpr read without normalization. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«write'fpr»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'fpr_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1244, literal write'fpr_def. Full original record field replacement with UPDATE at current8-bit procID; register maps preserve nested5-bit key/update ordering, no other state fields replaced. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«write'FPRS»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'FPRS_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:4158, literal write'FPRS_def. Original bit_field_insert31:0 from32-bit input into current64-bit register; input bound31<32 ensures every queried FCP index is in range; high32 retained. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«write'FPRD»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'FPRD_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:4176, literal write'FPRD_def. Original full64-bit register overwrite via write'fpr. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "writeFPRS",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "writeFPRS_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:4185, literal writeFPRS_def. Write low32 FP bits preserving high32, then sequentially read updated MCSR/set MFS Dirty/read updated MCSR/set MSD true/read updated Delta/set data1 SOME zero-extended32value, preserving all other fields and cores. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "writeFPRD",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "writeFPRD_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:4243, literal writeFPRD_def. Write entire64-bit FP register, then updated MCSR MFS Dirty/MSD true and updated Delta.data1 SOME64value; all other fields and cores retained. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "l3round",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "l3round_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1533, literal l3round_def. All six original Rounding constructors, four IEEE modes SOME and RMM/RDYN NONE; imported pure HolRounding source245-250 exactfourconstructors, not a real operation. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "fcsr",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "fcsr_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1168, literal fcsr_def. Full original state selector applied at current8-bit procID, including the original5-bit register argument where present; no extra premise, observation-only replacement or narrowed state. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "rnd_mode_dynamic",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rnd_mode_dynamic_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1523, literal rnd_mode_dynamic_def. Full3-bit dispatch0/1/2/3/4 to RNE/RTZ/RDN/RUP/RMM;5/6/7 NONE. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "rnd_mode_static",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rnd_mode_static_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1512, literal rnd_mode_static_def. Full3-bit dispatch0/1/2/3/4/7 to RNE/RTZ/RDN/RUP/RMM/RDYN;5/6 NONE. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "round",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "round_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1546, literal round_def. Original static match then dynamic FRM only for RDYN, preserving both NONE branches and l3round rejection of RMM; no added successful-rounding premise. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCVT_W_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCVT_W_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02, bead .18.5.13.8.2.3: literal riscvScript.sml:9024 complete FCVT_W_S equation, rd/rs BitVec5 and fprnd BitVec3, whole native riscv_state->riscv_state. round reads dynamic FRM only for RDYN and rejects invalid/RMM by original signalException Illegal_Instr with no added success premise. FPRS32 feeds fixed machine_ieee codec (23,8)/(52,11) and complete float_to_int modes. Original ordered guards: NaN or positiveInfinity selects upper endpoint, negativeInfinity selects lower endpoint, integer overflow/underflow selects endpoints, otherwise original integer-to-word64 modulo cast; signed saturation [-2^31,2^31-1]. No invented NV/NX flag updates or signed32 sign-extension beyond literal source. VALOF remains original choice-shaped holThe; its NONE value is irrelevant on NaN/infinity branches because their earlier guards determine the result. Generic float_to_int source binary_ieeeScript555-572 preserves finite float_value, ties floor/ceiling with absolute half-distance and even floor magnitude, upward ceiling/downward floor, sign-directed towardZero; exceptional values NONE. machine_ieeeLib136-145 composes this with fixed codecs; negativeInfinity is sign1/all-ones exponent/zero significand, matching original float_minus_infinity. reals_as_rational_cuts records finite real-to-Rat comparisons under docs/SOUNDNESS.md item 8. Fresh original96 numeric state tuples and kernel replays cover all eight equations, ties/sign/four modes/dynamic/invalid/NaN/infinity/overflow, GPR destination/preserved FP source/NV/Illegal_Instr. This declaration-level comparison does not establish full model Run/NextRISCV correspondence or review older model bodies; those remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCVT_W_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCVT_W_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02, bead .18.5.13.8.2.3: literal riscvScript.sml:9914 complete FCVT_W_D equation, rd/rs BitVec5 and fprnd BitVec3, whole native riscv_state->riscv_state. round reads dynamic FRM only for RDYN and rejects invalid/RMM by original signalException Illegal_Instr with no added success premise. FPRD64 feeds fixed machine_ieee codec (23,8)/(52,11) and complete float_to_int modes. Original ordered guards: NaN or positiveInfinity selects upper endpoint, negativeInfinity selects lower endpoint, integer overflow/underflow selects endpoints, otherwise original integer-to-word64 modulo cast; signed saturation [-2^31,2^31-1]. No invented NV/NX flag updates or signed32 sign-extension beyond literal source. VALOF remains original choice-shaped holThe; its NONE value is irrelevant on NaN/infinity branches because their earlier guards determine the result. Generic float_to_int source binary_ieeeScript555-572 preserves finite float_value, ties floor/ceiling with absolute half-distance and even floor magnitude, upward ceiling/downward floor, sign-directed towardZero; exceptional values NONE. machine_ieeeLib136-145 composes this with fixed codecs; negativeInfinity is sign1/all-ones exponent/zero significand, matching original float_minus_infinity. reals_as_rational_cuts records finite real-to-Rat comparisons under docs/SOUNDNESS.md item 8. Fresh original96 numeric state tuples and kernel replays cover all eight equations, ties/sign/four modes/dynamic/invalid/NaN/infinity/overflow, GPR destination/preserved FP source/NV/Illegal_Instr. This declaration-level comparison does not establish full model Run/NextRISCV correspondence or review older model bodies; those remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCVT_WU_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCVT_WU_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02, bead .18.5.13.8.2.3: literal riscvScript.sml:9062 complete FCVT_WU_S equation, rd/rs BitVec5 and fprnd BitVec3, whole native riscv_state->riscv_state. round reads dynamic FRM only for RDYN and rejects invalid/RMM by original signalException Illegal_Instr with no added success premise. FPRS32 feeds fixed machine_ieee codec (23,8)/(52,11) and complete float_to_int modes. Original ordered guards: NaN or positiveInfinity selects upper endpoint, negativeInfinity selects lower endpoint, integer overflow/underflow selects endpoints, otherwise original integer-to-word64 modulo cast; unsigned saturation [0,2^32-1]. No invented NV/NX flag updates or signed32 sign-extension beyond literal source. VALOF remains original choice-shaped holThe; its NONE value is irrelevant on NaN/infinity branches because their earlier guards determine the result. Generic float_to_int source binary_ieeeScript555-572 preserves finite float_value, ties floor/ceiling with absolute half-distance and even floor magnitude, upward ceiling/downward floor, sign-directed towardZero; exceptional values NONE. machine_ieeeLib136-145 composes this with fixed codecs; negativeInfinity is sign1/all-ones exponent/zero significand, matching original float_minus_infinity. reals_as_rational_cuts records finite real-to-Rat comparisons under docs/SOUNDNESS.md item 8. Fresh original96 numeric state tuples and kernel replays cover all eight equations, ties/sign/four modes/dynamic/invalid/NaN/infinity/overflow, GPR destination/preserved FP source/NV/Illegal_Instr. This declaration-level comparison does not establish full model Run/NextRISCV correspondence or review older model bodies; those remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCVT_WU_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCVT_WU_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02, bead .18.5.13.8.2.3: literal riscvScript.sml:9952 complete FCVT_WU_D equation, rd/rs BitVec5 and fprnd BitVec3, whole native riscv_state->riscv_state. round reads dynamic FRM only for RDYN and rejects invalid/RMM by original signalException Illegal_Instr with no added success premise. FPRD64 feeds fixed machine_ieee codec (23,8)/(52,11) and complete float_to_int modes. Original ordered guards: NaN or positiveInfinity selects upper endpoint, negativeInfinity selects lower endpoint, integer overflow/underflow selects endpoints, otherwise original integer-to-word64 modulo cast; unsigned saturation [0,2^32-1]. No invented NV/NX flag updates or signed32 sign-extension beyond literal source. VALOF remains original choice-shaped holThe; its NONE value is irrelevant on NaN/infinity branches because their earlier guards determine the result. Generic float_to_int source binary_ieeeScript555-572 preserves finite float_value, ties floor/ceiling with absolute half-distance and even floor magnitude, upward ceiling/downward floor, sign-directed towardZero; exceptional values NONE. machine_ieeeLib136-145 composes this with fixed codecs; negativeInfinity is sign1/all-ones exponent/zero significand, matching original float_minus_infinity. reals_as_rational_cuts records finite real-to-Rat comparisons under docs/SOUNDNESS.md item 8. Fresh original96 numeric state tuples and kernel replays cover all eight equations, ties/sign/four modes/dynamic/invalid/NaN/infinity/overflow, GPR destination/preserved FP source/NV/Illegal_Instr. This declaration-level comparison does not establish full model Run/NextRISCV correspondence or review older model bodies; those remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCVT_L_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCVT_L_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02, bead .18.5.13.8.2.3: literal riscvScript.sml:9143 complete FCVT_L_S equation, rd/rs BitVec5 and fprnd BitVec3, whole native riscv_state->riscv_state. round reads dynamic FRM only for RDYN and rejects invalid/RMM by original signalException Illegal_Instr with no added success premise. FPRS32 feeds fixed machine_ieee codec (23,8)/(52,11) and complete float_to_int modes. Original ordered guards: NaN or positiveInfinity selects upper endpoint, negativeInfinity selects lower endpoint, integer overflow/underflow selects endpoints, otherwise original integer-to-word64 modulo cast; signed saturation [-2^63,2^63-1]. No invented NV/NX flag updates or signed32 sign-extension beyond literal source. VALOF remains original choice-shaped holThe; its NONE value is irrelevant on NaN/infinity branches because their earlier guards determine the result. Generic float_to_int source binary_ieeeScript555-572 preserves finite float_value, ties floor/ceiling with absolute half-distance and even floor magnitude, upward ceiling/downward floor, sign-directed towardZero; exceptional values NONE. machine_ieeeLib136-145 composes this with fixed codecs; negativeInfinity is sign1/all-ones exponent/zero significand, matching original float_minus_infinity. reals_as_rational_cuts records finite real-to-Rat comparisons under docs/SOUNDNESS.md item 8. Fresh original96 numeric state tuples and kernel replays cover all eight equations, ties/sign/four modes/dynamic/invalid/NaN/infinity/overflow, GPR destination/preserved FP source/NV/Illegal_Instr. This declaration-level comparison does not establish full model Run/NextRISCV correspondence or review older model bodies; those remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCVT_L_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCVT_L_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02, bead .18.5.13.8.2.3: literal riscvScript.sml:10033 complete FCVT_L_D equation, rd/rs BitVec5 and fprnd BitVec3, whole native riscv_state->riscv_state. round reads dynamic FRM only for RDYN and rejects invalid/RMM by original signalException Illegal_Instr with no added success premise. FPRD64 feeds fixed machine_ieee codec (23,8)/(52,11) and complete float_to_int modes. Original ordered guards: NaN or positiveInfinity selects upper endpoint, negativeInfinity selects lower endpoint, integer overflow/underflow selects endpoints, otherwise original integer-to-word64 modulo cast; signed saturation [-2^63,2^63-1]. No invented NV/NX flag updates or signed32 sign-extension beyond literal source. VALOF remains original choice-shaped holThe; its NONE value is irrelevant on NaN/infinity branches because their earlier guards determine the result. Generic float_to_int source binary_ieeeScript555-572 preserves finite float_value, ties floor/ceiling with absolute half-distance and even floor magnitude, upward ceiling/downward floor, sign-directed towardZero; exceptional values NONE. machine_ieeeLib136-145 composes this with fixed codecs; negativeInfinity is sign1/all-ones exponent/zero significand, matching original float_minus_infinity. reals_as_rational_cuts records finite real-to-Rat comparisons under docs/SOUNDNESS.md item 8. Fresh original96 numeric state tuples and kernel replays cover all eight equations, ties/sign/four modes/dynamic/invalid/NaN/infinity/overflow, GPR destination/preserved FP source/NV/Illegal_Instr. This declaration-level comparison does not establish full model Run/NextRISCV correspondence or review older model bodies; those remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCVT_LU_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCVT_LU_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02, bead .18.5.13.8.2.3: literal riscvScript.sml:9181 complete FCVT_LU_S equation, rd/rs BitVec5 and fprnd BitVec3, whole native riscv_state->riscv_state. round reads dynamic FRM only for RDYN and rejects invalid/RMM by original signalException Illegal_Instr with no added success premise. FPRS32 feeds fixed machine_ieee codec (23,8)/(52,11) and complete float_to_int modes. Original ordered guards: NaN or positiveInfinity selects upper endpoint, negativeInfinity selects lower endpoint, integer overflow/underflow selects endpoints, otherwise original integer-to-word64 modulo cast; unsigned saturation [0,2^64-1]. No invented NV/NX flag updates or signed32 sign-extension beyond literal source. VALOF remains original choice-shaped holThe; its NONE value is irrelevant on NaN/infinity branches because their earlier guards determine the result. Generic float_to_int source binary_ieeeScript555-572 preserves finite float_value, ties floor/ceiling with absolute half-distance and even floor magnitude, upward ceiling/downward floor, sign-directed towardZero; exceptional values NONE. machine_ieeeLib136-145 composes this with fixed codecs; negativeInfinity is sign1/all-ones exponent/zero significand, matching original float_minus_infinity. reals_as_rational_cuts records finite real-to-Rat comparisons under docs/SOUNDNESS.md item 8. Fresh original96 numeric state tuples and kernel replays cover all eight equations, ties/sign/four modes/dynamic/invalid/NaN/infinity/overflow, GPR destination/preserved FP source/NV/Illegal_Instr. This declaration-level comparison does not establish full model Run/NextRISCV correspondence or review older model bodies; those remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FCVT_LU_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FCVT_LU_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02, bead .18.5.13.8.2.3: literal riscvScript.sml:10071 complete FCVT_LU_D equation, rd/rs BitVec5 and fprnd BitVec3, whole native riscv_state->riscv_state. round reads dynamic FRM only for RDYN and rejects invalid/RMM by original signalException Illegal_Instr with no added success premise. FPRD64 feeds fixed machine_ieee codec (23,8)/(52,11) and complete float_to_int modes. Original ordered guards: NaN or positiveInfinity selects upper endpoint, negativeInfinity selects lower endpoint, integer overflow/underflow selects endpoints, otherwise original integer-to-word64 modulo cast; unsigned saturation [0,2^64-1]. No invented NV/NX flag updates or signed32 sign-extension beyond literal source. VALOF remains original choice-shaped holThe; its NONE value is irrelevant on NaN/infinity branches because their earlier guards determine the result. Generic float_to_int source binary_ieeeScript555-572 preserves finite float_value, ties floor/ceiling with absolute half-distance and even floor magnitude, upward ceiling/downward floor, sign-directed towardZero; exceptional values NONE. machine_ieeeLib136-145 composes this with fixed codecs; negativeInfinity is sign1/all-ones exponent/zero significand, matching original float_minus_infinity. reals_as_rational_cuts records finite real-to-Rat comparisons under docs/SOUNDNESS.md item 8. Fresh original96 numeric state tuples and kernel replays cover all eight equations, ties/sign/four modes/dynamic/invalid/NaN/infinity/overflow, GPR destination/preserved FP source/NV/Illegal_Instr. This declaration-level comparison does not establish full model Run/NextRISCV correspondence or review older model bodies; those remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FP32_IsSignalingNan",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FP32_IsSignalingNan_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1569, literal FP32_IsSignalingNan_def. Exact exponent30:23=255, quiet bit22 false and payload21:0 nonzero, no real-valued classification. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "RV32_CanonicalNan",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "RV32_CanonicalNan_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1564, literal RV32_CanonicalNan_def. Exact fixed32 word2143289344 (0x7fc00000). Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "FP64_IsSignalingNan",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "FP64_IsSignalingNan_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1575, literal FP64_IsSignalingNan_def. Exact exponent62:52=2047, quiet bit51 false and payload50:0 nonzero, no real-valued classification. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "RV64_CanonicalNan",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "RV64_CanonicalNan_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1566, literal RV64_CanonicalNan_def. Exact fixed64 word9221120237041090560 (0x7ff8000000000000). Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FMIN_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMIN_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:8755 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRS reads, original destination write and all branches. LT/EQ choose first input; GT chooses second; UN preserves signaling/canonical-both, canonical-first, and fallback-first branches. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FMIN_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMIN_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:9645 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRD reads, original destination write and all branches. LT/EQ choose first input; GT chooses second; UN preserves signaling/canonical-both, canonical-first, and fallback-first branches. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FMAX_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMAX_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:8794 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRS reads, original destination write and all branches. LT/EQ choose second input; GT chooses first; UN preserves signaling/canonical-both, canonical-first, and fallback-first branches. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FMAX_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMAX_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:9684 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRD reads, original destination write and all branches. LT/EQ choose second input; GT chooses first; UN preserves signaling/canonical-both, canonical-first, and fallback-first branches. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«write'fcsr»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'fcsr_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1176, literal write'fcsr_def. Nested current-core UserCSR.fpcsr replacement, then sequential updated MCSR.mstatus MFS Dirty and MSD true; all other UserCSR/MCSR/mstatus fields remain. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "setFP_Invalid",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "setFP_Invalid_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1587, literal setFP_Invalid_def. Read current fcsr, set only NV true, invoke complete write'fcsr including Dirty/MSD side effects; no clearing other flags. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FLT_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FLT_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:9323 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRS reads, original destination write and all branches. Any NaN writes integer zero then sets NV; otherwise only LT writes one. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FLT_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FLT_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:10255 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRD reads, original destination write and all branches. Any NaN writes integer zero then sets NV; otherwise only LT writes one. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FLE_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FLE_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:9350 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRS reads, original destination write and all branches. Any NaN writes integer zero then sets NV; otherwise LT/EQ write one. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FLE_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FLE_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:10282 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRD reads, original destination write and all branches. Any NaN writes integer zero then sets NV; otherwise LT/EQ write one. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FEQ_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FEQ_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:9296 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRS reads, original destination write and all branches. Only signaling NaNs write integer zero then set NV; otherwise EQ writes one and all other comparisons write zero. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FEQ_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FEQ_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c declaration source comparison2026-10-02, bead .18.5.13.8.2.2: literal riscvScript.sml:10228 preserves three5-bit register arguments, complete native riscv_state -> riscv_state equation, FPRD reads, original destination write and all branches. Only signaling NaNs write integer zero then set NV; otherwise EQ writes one and all other comparisons write zero. Binary32 uses sign31/exponent30:23/significand22:0, binary64 sign63/exponent62:52/significand51:0, matching machine_ieeeScript.sml13-16 and machine_ieeeLib codec/lift2b definitions. Generic BinaryIeee.holFloatCompare and holFloatIsNan were compared with original binary_ieee float_compare758-777/float_is_nan88-93/float_value58-63: same NaN/infinity/sign/finite-value cases; the finite real carrier is Rat, so reals_as_rational_cuts records docs/SOUNDNESS.md item 8. No added successful-evaluation premise, narrowed ISA, or dropped flag branch. Fresh original80 state tuples/kernel replays cover both precisions, NaN classes, signed zeros, infinities, subnormals, full FP destination and NV. This declaration-level source comparison covers the complete equation with the stated representation assumption. It does not review the other239 model bodies or establish full Run/NextRISCV transition correspondence; those obligations are tracked separately by .18.5.13.8 and its dependencies."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "NextFetch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "NextFetch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/body comparison2026-10-02 (.18.5.13.8.2.4): riscvScript.sml:1362, literal NextFetch_def. Full original state selector applied at current8-bit procID, including the original5-bit register argument where present; no extra premise, observation-only replacement or narrowed state. Fixed word widths, Option/List/product/Unit payloads and full riscv_state carrier compared against source declarations6-362; raw function fields are original ATy functions, not finite-map substitutes. UPDATE uses decidable BitVec equality; guarded word-extract/insert library operations source-compared, no default for original ARB/OptionTHE. This review is only the complete named equation and its isolated dependency closure, not full Run/NextRISCV correspondence or unrelated missing model bodies."
+  },
 {
   "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
   "hol_name": "word_gen_gc_move_refs_code_thm",
