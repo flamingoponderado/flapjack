@@ -448,6 +448,12 @@ def ofSize {α : Type u} (n : Nat) : CakeNodeMap α :=
 def ofList {α : Type u} (values : List α) : CakeNodeMap α :=
   { slots := values.toArray.map some, outside := [] }
 
+/-- Dense present slots for a constant native node list. This avoids building
+an intermediate list while preserving the entire `REPLICATE` representation.
+Flapjack executable infrastructure, not an independent HOL definition. -/
+def filled {α : Type u} (count : Nat) (value : α) : CakeNodeMap α :=
+  { slots := Array.replicate count (some value), outside := [] }
+
 /-- HOL `EL` reads agree with the dense list embedding at every valid index. -/
 theorem get_ofList_of_lt {α : Type u} (values : List α) (i : Nat)
     (hi : i < values.length) :
@@ -1337,7 +1343,12 @@ def cakeInitRaStateFromBij (bij : CakeNodeBijection) (tree : WordClashTree)
   { (CakeRaState.empty bij.nextNode) with
     adjLists := adj,
     adjSets := some adjSets,
-    nodeTag := tags }
+    nodeTag := tags,
+    /- Native reg_alloc_aux/run_ira_state starts with present zero/false slots.
+       The heuristic initializer subsequently overwrites every in-range slot. -/
+    degrees := CakeNodeMap.filled bij.nextNode 0,
+    coalesced := CakeNodeMap.filled bij.nextNode 0,
+    moveRelated := CakeNodeMap.filled bij.nextNode false }
 
 def cakeInitRaState (tree : WordClashTree) (forced : List (Nat × Nat))
     (fs : List Nat) : CakeRaState :=
