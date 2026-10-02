@@ -5790,3 +5790,9 @@ run_probe lab_to_target_line_info_probeScript.sml lab_to_target_line_info_probe.
   cross_width_first cross_width_boundary load load32 load16 load8 store store32 store16 store8 none label asmi cbw labasm empty_section zero_label four_dimensions enumeration_past_end \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_byte_interval_distinct_probeScript.sml lab_to_target_byte_interval_distinct_probe.out \
+  pos_val_asm_fetch_aux_distinct pos_val_asm_fetch_aux_distinct_types pos_val_asm_fetch_aux_distinct_hypotheses \
+  interval0 interval1 interval2 interval3 interval4 interval5 same_pc_guard byte_bound_guard dimensional_bound_guard \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
