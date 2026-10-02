@@ -5789,3 +5789,19 @@ run_probe lab_to_target_memory_transport_probeScript.sml lab_to_target_memory_tr
   wrap8 wrap1 wrap64 wrap80 outside_diff empty_domain missing_domain \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_line_info_probeScript.sml lab_to_target_line_info_probe.out \
+  line_to_info_def line_to_info_def_types line_to_info_def_hypotheses \
+  line_to_info_next line_to_info_next_types line_to_info_next_hypotheses \
+  line_to_info_hd_empty line_to_info_hd_empty_types line_to_info_hd_empty_hypotheses \
+  line_to_info_hd_Label line_to_info_hd_Label_types line_to_info_hd_Label_hypotheses \
+  GENLIST_asm_fetch_aux_next GENLIST_asm_fetch_aux_next_types GENLIST_asm_fetch_aux_next_hypotheses \
+  cross_width_first cross_width_boundary load load32 load16 load8 store store32 store16 store8 none label asmi cbw labasm empty_section zero_label four_dimensions enumeration_past_end \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_byte_interval_distinct_probeScript.sml lab_to_target_byte_interval_distinct_probe.out \
+  pos_val_asm_fetch_aux_distinct pos_val_asm_fetch_aux_distinct_types pos_val_asm_fetch_aux_distinct_hypotheses \
+  interval0 interval1 interval2 interval3 interval4 interval5 same_pc_guard byte_bound_guard dimensional_bound_guard \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

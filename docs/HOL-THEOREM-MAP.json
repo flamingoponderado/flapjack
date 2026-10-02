@@ -67645,5 +67645,59 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 full original source6948-6959 comparison: forall pc/bytes and free t1/mc_conf/ms1 retained. HOL alpha word addresses and alpha AsmState translate to the same positive BitVec width; beta machine state and gamma projection remain independent universe0 Type parameters on original MachineConfig. Fixed word8 bytes and word64 FP fields preserved. Exact domain-restricted target get_byte equality and source bytes_in_memory conjunction imply same region in target get_byte with unchanged source domain. No global-memory equality, target-evaluation premise, fixed machine/projection specialization or bytes-domain approximation. Original misc bytes_in_memory recursive byte-value/domain/wrapped-address clauses reviewed. Fresh original complete exported fulltype0hyp, seven original/native cases at widths1/8/64/80 including wrap, empty domain, missing domain and distinct outside memories; full generic kernel statement and actual arbitrary machine/projection consumer discharge source guards. No duplicate byte APPEND/UPDATE port. Kernel/oracle evidence supplements source review, not cross-language equivalence or full machine/compiler proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LineInfo.lean",
+    "lean_name": "lineToInfo",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_to_info_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source comparison: Original definition line_to_info retains INDEPENDENT alpha code and beta fetched-line dimensions, arbitrary pc/p and all constructors; only SOME Asm(ShareMem) emits singleton, exact get_memop_info pair, pos_val entry, unsigned w2n address offset, literal fetched bytes length exit. Source-local proof definition, not production get_shmem_info replacement. Full exported source types0hyp audited, constructor-complete native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/BitVec carriers, fixed word8 bytes and Nat record fields. Each independent word dimension has its own Nat width and NeZero; no arbitrary specialization or fmap/name representation. Fresh registered original nineteen closed cases allT and native kernels cover all eight memops, unsupported/missing constructors, invalid nonzero label positions, unsigned80bit max offset, cross-width1/80 and actual FOUR dimensions1/80/64/8 full theorem application. Generic full theorem consumers retained. Kernel/oracle evidence supplements source review, not cross-language equivalence or full extraction/initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LineInfo.lean",
+    "lean_name": "lineToInfo_next",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_to_info_next",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source comparison: Original two-conjunct theorem retains FOUR independent alpha/beta/gamma/delta code/fetched dimensions. All k/a/b/bytes/len/xs/rest/p/i/l inputs preserved in each conjunct; unconditional LabAsm and Asm instruction successor transport, no validity/success/byte-length annotation guard. Full exported source types0hyp audited, constructor-complete native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/BitVec carriers, fixed word8 bytes and Nat record fields. Each independent word dimension has its own Nat width and NeZero; no arbitrary specialization or fmap/name representation. Fresh registered original nineteen closed cases allT and native kernels cover all eight memops, unsupported/missing constructors, invalid nonzero label positions, unsigned80bit max offset, cross-width1/80 and actual FOUR dimensions1/80/64/8 full theorem application. Generic full theorem consumers retained. Kernel/oracle evidence supplements source review, not cross-language equivalence or full extraction/initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LineInfo.lean",
+    "lean_name": "lineToInfo_hdEmpty",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_to_info_hd_empty",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source comparison: Original arbitrary empty leading section equation preserves independent code alpha/fetched beta dimensions, k/rest/p and full arbitrary (Nat,Option Line) t, without encoding guard. Full exported source types0hyp audited, constructor-complete native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/BitVec carriers, fixed word8 bytes and Nat record fields. Each independent word dimension has its own Nat width and NeZero; no arbitrary specialization or fmap/name representation. Fresh registered original nineteen closed cases allT and native kernels cover all eight memops, unsupported/missing constructors, invalid nonzero label positions, unsigned80bit max offset, cross-width1/80 and actual FOUR dimensions1/80/64/8 full theorem application. Generic full theorem consumers retained. Kernel/oracle evidence supplements source review, not cross-language equivalence or full extraction/initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LineInfo.lean",
+    "lean_name": "lineToInfo_hdLabel",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_to_info_hd_Label",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source comparison: Original literal zero-label leading-section equation retains all k/a/b/xs/rest/p/t binders and independent code/fetched dimensions. Zero annotation remains literal; no positive label generalization or validity guard. Full exported source types0hyp audited, constructor-complete native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/BitVec carriers, fixed word8 bytes and Nat record fields. Each independent word dimension has its own Nat width and NeZero; no arbitrary specialization or fmap/name representation. Fresh registered original nineteen closed cases allT and native kernels cover all eight memops, unsupported/missing constructors, invalid nonzero label positions, unsigned80bit max offset, cross-width1/80 and actual FOUR dimensions1/80/64/8 full theorem application. Generic full theorem consumers retained. Kernel/oracle evidence supplements source review, not cross-language equivalence or full extraction/initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LineInfo.lean",
+    "lean_name": "genlist_asmFetchAux_next",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "GENLIST_asm_fetch_aux_next",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source comparison: Original full enumeration successor retains x/k/xs/rest/n and sole not-is_Label x guard. HOL GENLIST canonical ordered list rendered as List.range.map, no array representation. Exact (0,SOME x)::n shifted source fetches, including NONE past code end; no n instruction-count bound. Full exported source types0hyp audited, constructor-complete native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/BitVec carriers, fixed word8 bytes and Nat record fields. Each independent word dimension has its own Nat width and NeZero; no arbitrary specialization or fmap/name representation. Fresh registered original nineteen closed cases allT and native kernels cover all eight memops, unsupported/missing constructors, invalid nonzero label positions, unsigned80bit max offset, cross-width1/80 and actual FOUR dimensions1/80/64/8 full theorem application. Generic full theorem consumers retained. Kernel/oracle evidence supplements source review, not cross-language equivalence or full extraction/initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ByteIntervalDistinct.lean",
+    "lean_name": "posVal_asmFetchAux_distinct",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_asm_fetch_aux_distinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source6889-6946 comparison: all free c/labs/ffis/p-prime/code/pc/line/a/pc-prime/p binders preserved. All SIX literal original conjuncts retained: complete all_enc_ok at independent start, complete enc_ok, actual successful asm_fetch_aux, a<LENGTH(line_bytes line), LENGTH(prog_to_bytes code)<dimword alpha rendered 2^width, pc-prime≠pc. Exact NAT a+pos_valpcpcode≠pos_valpc-primepcode conclusion; not a word equality reinterpretation. Source original native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/BitVec positive-width carriers and canonical nested numeric Spt reviewed. Kernel proof uses unbounded natural-position order and fetched-successor; retained dimensional size guard need not enter this alternative natural-order argument and is not omitted from the statement. Actual checked147 fc311 and accepted146 are consumed directly, not an assumed simulation callback or desired target execution. Fresh registered original fulltype0hyp and nine original/native cases covering earlier/later/past-end PCs, same-PC and byte-bound guard counterexamples, exact256-byte word-size guard boundary; full generic and arbitrary queried-position actual consumer discharges all six guards. Kernel/oracle evidence supplements source review, not cross-language equivalence or full shared-memory/initializer/compiler/machine correctness."
   }
 ]

@@ -1652,6 +1652,12 @@
       "sha256": "7e80236a95d4634e7a2bee8780c56a05e73f18bc59acb31feb50e1f31ab74393"
     },
     {
+      "bytes": 890,
+      "out": "lab_to_target_byte_interval_distinct_probe.out",
+      "rows": 12,
+      "sha256": "d00b8906f95dcb3e9d3bdd06985eba0f8427ae9ce5d5f573515684063dc39f58"
+    },
+    {
       "bytes": 1771,
       "out": "lab_to_target_byte_lengths_probe.out",
       "rows": 18,
@@ -1860,6 +1866,12 @@
       "out": "lab_to_target_length_correctness_probe.out",
       "rows": 14,
       "sha256": "50de4064644d67108652074e4e5ec595ede47ccd0a96e0975da2c5c8d793e7e5"
+    },
+    {
+      "bytes": 3702,
+      "out": "lab_to_target_line_info_probe.out",
+      "rows": 34,
+      "sha256": "854e96173d0237b9ec5956cf22bdfdb7c2a74c4c62ba780616ba225cdd8e3d18"
     },
     {
       "bytes": 89,
