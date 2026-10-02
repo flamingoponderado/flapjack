@@ -49514,5 +49514,37 @@
       "fpRegs",
       "store"
     ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexReconstruction.lean",
+    "lean_name": "indexListEqZip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "index_list_eq_ZIP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-index-reconstruction): source379-383: arbitrary list/base, full native reverse/map/range zip reconstruction with exact key sequence and original values; existing full projection laws establish full tuple-list equality. HOL lists/products/natural arithmetic retained; generic arbitrary payloads need no equality or word qualifier. Fresh literal full original statements/proofs and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexReconstruction.lean",
+    "lean_name": "memIndexListLim",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MEM_index_list_LIM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-index-reconstruction): source386-396: arbitrary list/key/value/base with exact sole membership premise; complete n-k<length result derived from original indexed entry, no lower-key or nonempty assumption added. HOL lists/products/natural arithmetic retained; generic arbitrary payloads need no equality or word qualifier. Fresh literal full original statements/proofs and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexReconstruction.lean",
+    "lean_name": "memIndexListEl",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MEM_index_list_EL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-index-reconstruction): source399-411: arbitrary list/key/value/base with exact sole membership premise and original length-(n-k+1) element recovery result. Bound for native getElem is derived solely from original membership via full MEM_index_list_LIM, not an extra hypothesis/default/Inhabited instance; actual position identity derived from original indexed entry. HOL lists/products/natural arithmetic retained; generic arbitrary payloads need no equality or word qualifier. Fresh literal full original statements/proofs and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexReconstruction.lean",
+    "lean_name": "aLookupIndexList",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "ALOOKUP_index_list",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-index-reconstruction): source414-422: arbitrary list/key/base, exactly original upper guard n<length+k retained with no lower-key guard; native first-match numeric sptAListLookup equals native optional getElem? at (length+k)-(n+1). Includes below-base keys yielding NONE; no lookup success or desired correspondence premise. HOL lists/products/natural arithmetic retained; generic arbitrary payloads need no equality or word qualifier. Fresh literal full original statements/proofs and native boundary fixtures."
   }
 ]
