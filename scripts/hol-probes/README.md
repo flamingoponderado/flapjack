@@ -5893,3 +5893,5 @@ the kernel. This capture does not replay the original simulation proof or claim
 coverage of unspecified nonword headers.
 
 `ssa_call_returning_some_probe.out` captures the full arbitrary handler-present specialization of original `ssa_cc_trans_correct`, all six premises and complete existential source-permutation/Error-exempt result, frame and result-sensitive locals. The native case adds only the two genuine smaller continuation IHs, derives exception-frame/root restoration and both native reconciliation paths, and retains the exception binder counter after compiling the return continuation. This is source-review regression evidence, not cross-language equivalence; full returning Call/SSA assembly remains open.
+
+`ssa_call_returning_probe.out` captures the original arbitrary optional-handler returning Call specialization with all six premises and full simulation conclusion. The native assembly adds only genuine smaller continuation IHs and splits the handler Option. Full all-program SSA correctness remains open; this capture is source regression evidence, not cross-language equivalence.

@@ -5121,3 +5121,7 @@ run_probe lab_to_target_label_position_encoding_probeScript.sml lab_to_target_la
 run_probe ssa_call_returning_some_probeScript.sml ssa_call_returning_some_probe.out \
   returning_some_case_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_call_returning_probeScript.sml ssa_call_returning_probe.out \
+  returning_case_full \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -63992,5 +63992,19 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-a author source comparison2026-10-02 original full theorem7666-7702 and resumed handlerSOME8688-9226: full six original premises plus only genuine universal IHs for the smaller return and exception bodies. Complete ssaSimulation existential source permutation, actual target result/frame and result-sensitive locals; Error exemption unchanged. Actual source guards, native convention prefix, pushed root key/value permutation and callee entry, total callee branches, normal native pop/return binder, selected new SOME exception frame with restored first/root domains and lookup remapping, physical2 preservation and later exception binder (counter after return compilation), both handler IH premises, actual mkPrio/fixInconsistencies correctL/R and oracle suffix hot-swap are proved internally. Every intermediate map/counter validity and increase follows actual producer equations; no targetrun/result, source guard success, desired postrelation, or reconciliation spec in the public premises. Original arbitrary Nat/List/Spt cutsets/program/code/stack/GC/FFI/result carriers retained; canonical fpRegs/store finite-map relation and positive type-indexed words only, same owning carrier/witness as handlerNONE, tree maps unqualified. Fresh original full specialization in ssa_call_returning_some_probe.out is regression/source evidence, not cross-language equivalence. Inherits evaluator reals_as_rational_cuts SOUNDNESS item8. Whole returningCall constructor/fullSSA/end-to-end still require assembly."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallCase.lean",
+    "lean_name": "ssaCcTransCorrectCallReturning",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02 original7666-7702 and Call_returning8298-9226: complete arbitrary optional-handler returning Call case, exactly six original premises plus genuine smaller return-body and optional exception-body IHs. Case split on native Option invokes checked NONE/SOME proofs; no source-success, target evaluation, postrelation or oracle premises. Full existential source permutation and Error-exempt result/frame/result-sensitive locals unchanged. Same canonical fpRegs/store owning carrier and witness, positive type-indexed words, tree maps unchanged; inherits reals_as_rational_cuts SOUNDNESS8. Original arbitrary-handler specialization captured in ssa_call_returning_probe.out; regression evidence only. Full all-program SSA theorem remains open."
   }
 ]
