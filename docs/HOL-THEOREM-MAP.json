@@ -58959,5 +58959,75 @@
     "hol_path": "HOL/src/n-bit/byteScript.sml",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstFPMovFromReg.lean",
+    "lean_name": "ssaCcTransCorrectInstFPMovFromReg",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: genuine FPMovFromReg constructor and special Move subcase in original Inst FP8174-8209. Original six premises/full Error-exempt permutation/result/frame/result-sensitive locals, no targetrun/success/poststate/IH assumption. Width64 maps source word read and copies to fixed64 FP, otherwidth reads high/low words and concatenates at result64. If mapped inputs equal, compiler emits real fresh inputMove then FP opcode and extends right SSA/next. Original SSA getVar derives targetreads; map bound derives old input unequal fresh register, so Move preserves old read and supplies fresh read. Source-read reinsert lookup unchanged transports original fresh setVar locals relation back to unchanged source locals. Original fix_clock_evaluate derives exact Seq execution and final complete frame, including FP update and same clock. Missing/nonword reads Error-exempt. Native Nat register indices, fixed64 FP/positive indexed word/sharedType0 code-FFI/native state/Spt/table carriers compared to original Q.SPEC capture; capture first=n is FP destination, second=n0 left source, fp=n1 right source. Canonical fpRegs/store finite-support and word translation explicit; inherits reals_as_rational_cuts Inst/evaluator SOUNDNESS8, transfer is bit-only. Source proof manually compared; kernel/Q.SPEC PASS, no isolated tactic replay claim. Full Inst open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstCommon.lean",
+    "lean_name": "ssaCcTransCorrectInstSkip",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: genuine native Inst Skip constructor covered by original initial constructor split7860-7865 before remaining opcode tactics. All six original premises/full Error-exempt permutation/result/frame/result-sensitive locals retained, no targetrun/success/poststate/IH assumption. Skip compiler and evaluator leave state/SSA/next unchanged; original frame/locals give conclusion. Load16/Store16 original and native inst return NONE unconditionally, evaluator returns Error and exact sourceError exemption proves original conclusion. Nat registers/positive indexed word offset/native state/Spt/table/sharedType0 code-FFI compared against original Q.SPEC specialization; Skip width remains inferred from state carrier. Canonical fpRegs/store finite-support and word translation explicit, inherits reals_as_rational_cuts Inst/evaluator SOUNDNESS8. Original source case manually reviewed; kernel specialization/carrier capture and Lean kernel PASS, no isolated tactic replay claimed. FullInst assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstCommon.lean",
+    "lean_name": "ssaCcTransCorrectInstLoad16",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: genuine native Inst Load16 constructor covered by original initial constructor split7860-7865 before remaining opcode tactics. All six original premises/full Error-exempt permutation/result/frame/result-sensitive locals retained, no targetrun/success/poststate/IH assumption. Skip compiler and evaluator leave state/SSA/next unchanged; original frame/locals give conclusion. Load16/Store16 original and native inst return NONE unconditionally, evaluator returns Error and exact sourceError exemption proves original conclusion. Nat registers/positive indexed word offset/native state/Spt/table/sharedType0 code-FFI compared against original Q.SPEC specialization; Skip width remains inferred from state carrier. Canonical fpRegs/store finite-support and word translation explicit, inherits reals_as_rational_cuts Inst/evaluator SOUNDNESS8. Original source case manually reviewed; kernel specialization/carrier capture and Lean kernel PASS, no isolated tactic replay claimed. FullInst assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstCommon.lean",
+    "lean_name": "ssaCcTransCorrectInstStore16",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: genuine native Inst Store16 constructor covered by original initial constructor split7860-7865 before remaining opcode tactics. All six original premises/full Error-exempt permutation/result/frame/result-sensitive locals retained, no targetrun/success/poststate/IH assumption. Skip compiler and evaluator leave state/SSA/next unchanged; original frame/locals give conclusion. Load16/Store16 original and native inst return NONE unconditionally, evaluator returns Error and exact sourceError exemption proves original conclusion. Nat registers/positive indexed word offset/native state/Spt/table/sharedType0 code-FFI compared against original Q.SPEC specialization; Skip width remains inferred from state carrier. Canonical fpRegs/store finite-support and word translation explicit, inherits reals_as_rational_cuts Inst/evaluator SOUNDNESS8. Original source case manually reviewed; kernel specialization/carrier capture and Lean kernel PASS, no isolated tactic replay claimed. FullInst assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInst.lean",
+    "lean_name": "ssaCcTransCorrectInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: full arbitrary Inst case original resumed Inst7860-8222, same six original premises and complete Error-exempt source-permutation/result/fullframe/result-sensitive locals, no targetrun/success/poststate/IH premise. Exhaustive native WordLangInst fixed word carrier: Skip/Const, eightArith, eightMem, sixteenFP, all34 source-reviewed case proofs give the same simulation. Native Nat registers, positivewidth BitVec and fixed64FP/native state/Spt/table/sharedType0 code-FFI match original genericInst Q.SPEC capture. Canonical fpRegs/store finite-support and indexedword qualifiers explicit. Inherits reals_as_rational_cuts evaluator/FP proofs including directqualified ToInt, SOUNDNESS8 rational/choice/quietNaN boundary; no stronger numerical agreement claimed. Original source case structure manually compared; kernel/capture PASS, no isolated tactic replay claim. FullSSA program theorem remainsopen."
   }
 ]

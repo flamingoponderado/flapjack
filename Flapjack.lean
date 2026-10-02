@@ -83,6 +83,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPUnary
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPArith
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPInt
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovToReg
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovFromReg
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstCommon
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
 import Flapjack.Compiler.Encoders.AsmProps.Encoding
