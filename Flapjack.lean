@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.LabToTarget.EncodingValidityClosure
 import Flapjack.Compiler.Backend.LabToTarget.ProgramByteLengths
+import Flapjack.Compiler.Backend.LabToTarget.PositionExtension
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
 import Flapjack.RiscV.L3.Defs.MMU.Translate
 import Flapjack.RiscV.L3.Defs.MMU.Walk

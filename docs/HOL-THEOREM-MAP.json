@@ -67088,5 +67088,41 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: Source6288 preserves complete all_enc_ok guard and exact physical prog_to_bytes length equals section line-length sum. Source fulltype confirms unused n:beta; retained explicitly as generic independent binder with no specialization or omission. No successful output or byte-consistency hypothesis added. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or carrier specialization. Fresh original full statements/types with zero open hypotheses and six original/native cases; full generic binders and actual arbitrary-start consumer. Kernel/oracle evidence supplements source review and does not establish cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionExtension.lean",
+    "lean_name": "posVal_accSum",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_acc_sum",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6657 complete i,pos,secs,x,y binders and x+y=pos guard, exact x+pos_val i y secs=pos_val i pos secs result. Unrestricted code, annotations and positions; no all_enc_ok or bound premise. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Source pos_val uses line_length nonzero-label one-step marker whereas prog_to_bytes drops labels; validity is needed only in the original suffix law to relate those quantities. Fresh original fulltypes zero hypotheses and eight closed original/native cases, full generic fixtures and actual arbitrary-suffix/PC/start consumers. Kernel checking and original regressions supplement source review, not cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionExtension.lean",
+    "lean_name": "posVal_accZero",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_acc_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6671 complete i,pos,secs binders and unconditional pos+pos_val i 0 secs=pos_val i pos secs result, preserving arbitrary annotations. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Source pos_val uses line_length nonzero-label one-step marker whereas prog_to_bytes drops labels; validity is needed only in the original suffix law to relate those quantities. Fresh original fulltypes zero hypotheses and eight closed original/native cases, full generic fixtures and actual arbitrary-suffix/PC/start consumers. Kernel checking and original regressions supplement source review, not cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionExtension.lean",
+    "lean_name": "posVal_appendPrefix",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_APPEND1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source7270 complete pc/code plus free suffix binders; sole strict pc<num_pcs code guard and exact zero-start prefix position equality. Suffix is unrestricted including nonzero labels; no zero-label or validity guard added. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Source pos_val uses line_length nonzero-label one-step marker whereas prog_to_bytes drops labels; validity is needed only in the original suffix law to relate those quantities. Fresh original fulltypes zero hypotheses and eight closed original/native cases, full generic fixtures and actual arbitrary-suffix/PC/start consumers. Kernel checking and original regressions supplement source review, not cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionExtension.lean",
+    "lean_name": "posVal_appendSuffix",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_APPEND2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source7302 complete c/labs/ffis/p/code plus independent free pc/suffix binders. Sole complete prefix all_enc_ok at independent p guard; exact shifted logical PC and LENGTH(prog_to_bytes code) physical byte result. Arbitrary suffix including malformed labels preserved. Actual full byte-length law derives physical length, not assumed. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Source pos_val uses line_length nonzero-label one-step marker whereas prog_to_bytes drops labels; validity is needed only in the original suffix law to relate those quantities. Fresh original fulltypes zero hypotheses and eight closed original/native cases, full generic fixtures and actual arbitrary-suffix/PC/start consumers. Kernel checking and original regressions supplement source review, not cross-language equivalence or full compiler simulation."
   }
 ]
