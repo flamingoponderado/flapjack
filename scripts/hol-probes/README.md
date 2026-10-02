@@ -4719,6 +4719,12 @@ It captures the full statement and native list/value/map/bound carriers;
 source and target state captures establish their independent code/FFI hosts.
 The capture is source evidence, not a cross-assistant equivalence proof.
 
+### Balanced-map ordering/domain equivalence
+
+`balanced_map_keyordered_probeScript.sml` replays the original local
+`key_ordered_to_fmap` proof with its full statement and no open hypotheses.
+It retains arbitrary trees and only the original good comparator premise.
+This source capture does not assert cross-assistant equivalence or production wiring.
 ### Native SSA Return semantic case
 
 `ssa_cc_trans_correct_return_probeScript.sml` replays the literal resumed Return
@@ -4734,3 +4740,12 @@ continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a 
 observation in `WordUnreachDefParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Generic label-tree domain
+
+`lab_to_target_labs_domain_probeScript.sml` captures all three full original
+`labs_domain` declarations and its polymorphic nested-tree type. Six original
+EVAL observations of its literal defining `lab_lookup ≠ NONE` condition cover
+empty/hit/two-level misses and fresh insertion preserving old and adding new
+keys; Lean checks the corresponding actual domain memberships. Finite fixtures
+are not a cross-assistant proof.

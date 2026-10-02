@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetLabsDomainParity
 import Flapjack.Test.LabImplicitSectionZero
 import Flapjack.Test.StackToLabExecutedInput
 import Flapjack.Test.ProductionMacros

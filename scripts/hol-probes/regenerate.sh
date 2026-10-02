@@ -4267,6 +4267,9 @@ run_probe ssa_locals_rel_get_vars_probeScript.sml ssa_locals_rel_get_vars_probe.
   get_vars_full get_vars_type_source get_vars_type_target get_vars_type_names get_vars_type_values get_vars_type_ssa get_vars_type_next \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe balanced_map_keyordered_probeScript.sml balanced_map_keyordered_probe.out \
+  bmko_full_theorem \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
 run_probe ssa_cc_trans_correct_return_probeScript.sml ssa_cc_trans_correct_return_probe.out \
   return_full return_type_st return_type_cst return_type_label_reg return_type_value_regs return_type_ssa return_type_next return_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4294,4 +4297,6 @@ run_probe labprops_label_sets_probeScript.sml labprops_label_sets_probe.out \
 run_probe lab_to_target_byte_lengths_probeScript.sml lab_to_target_byte_lengths_probe.out \
   prog_to_bytes_APPEND prog_to_bytes_APPEND_types line_ok_line_byte_length line_ok_line_byte_length_types lines_ok_MAP_line_byte_length lines_ok_MAP_line_byte_length_types all_enc_ok_prog_to_bytes_EVEN all_enc_ok_prog_to_bytes_EVEN_types \
   append_bytes label_bytes asm_bytes labasm_bytes map_lengths even_output invalid_label odd_start_valid odd_start_output even_start_rejects \
+run_probe lab_to_target_labs_domain_probeScript.sml lab_to_target_labs_domain_probe.out \
+  ld_definition ld_empty_theorem ld_insert_theorem ld_type ld_empty ld_hit ld_inner_miss ld_outer_miss ld_insert_preserves ld_insert_new \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

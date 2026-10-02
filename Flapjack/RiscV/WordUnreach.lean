@@ -27,10 +27,10 @@ def wordUnreachAnub : List (Nat × Nat) → List Nat → List (Nat × Nat)
 termination_by moves _ => sizeOf moves
 decreasing_by all_goals decreasing_trivial
 
+/-- Executed diagnostic move merging uses the same reviewed native definition
+as the allocator prepass; this does not claim native program traversal. -/
 def wordUnreachMergeMoves (first second : List (Nat × Nat)) : List (Nat × Nat) :=
-  let rewritten := second.map (fun move =>
-    (move.1, wordUnreachLookup first move.2))
-  wordUnreachAnub (rewritten ++ first) []
+  Compiler.Backend.WordUnreach.mergeMoves first second
 
 def wordUnreachSimpSeq (first second : WordProg α) : WordProg α :=
   match first with
