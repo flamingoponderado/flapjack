@@ -67842,5 +67842,76 @@
     "hol_name": "APPEND_LEMMA",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison: Original1150-1163 full n1+n2+n3 <= LENGTH xs guard and two existential lists with drop decomposition and n2=LENGTH xs2 retained. Arbitrary List payload and all three Nat sizes; choose take/drop on original suffix. Third size remains in guard, no stronger prefix/length premises. Literal original proof replay is captured in word_to_stack_bitmap_frame_updates_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/CallTail.lean",
+    "lean_name": "compCorrectCallTail",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original comp_correct retNONE Call branch1785-1804/full1481-1493 source comparison2026-10-03. Genuine original AST-option case: arbitrary destination and handler option, same four actual source run/nonError/full26stateRel/regBound premises. HandlerSOME and missing source code errors excluded by original nonError only, no global handlerNONE premise. Callee IH only actual source findCode success/handlerNONE/nonzero-clock guarded, retaining all original body simulation quantifiers and premises. Native unconditional fixClockEvaluate eliminates both faithful source/target clamps without a target-clock-success assumption. Full findCodeLemma proves target compiled callee lookup/body bound; stateRelDecClock plus original clock equality proves target boosted clock subtraction. Clock0 gives original timeout FFI equality; all original result alternatives and native target existential/full postrelation retained. Canonical owning state roundtrip reexport, qualified regs/fpRegs/store only, Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh original scoped statement with same source-guarded IH and literal original retNONE case body/local lookup-decClock proofs; no full comp_correct assumed. This is tail AST case only, not full Call constructor or pass assembly."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/CallReturnNone.lean",
+    "lean_name": "compCorrectCallReturnNone",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original comp_correct returning Call1805-1931/full1481-1493 source comparison2026-10-03. Original ret=SOME(body,link,l1,l2), handler=NONE AST case, same four source evaluation/nonError/full26stateRel/regBound premises. Only actual erased-link source code lookup/nonzero-clock guarded callee IH and actual successful returnLoc guarded continuation IH; all simulation quantifiers and original result alternatives retained. Missing code, invalid callee NONE/Break/Continue/Error and wrong returnLoc errors excluded using original nonError, no successful-return or targetrun premise. Source/target clamp elimination uses unconditional fixClockEvaluate. Accepted erased lookup proves target compiled callee and bound; stateRelSetVar/decClock establish entry relation. evaluateAddClock on actual successful return result derives summed callee/continuation allowances and target existential. Propagated Exception retains full relation; Halt/TimeOut/FinalFFI preserve FFI. Canonical actual owning state roundtrip reexport, only qualified regs/fpRegs/store, Spt code/List stack unchanged, positive-width words/Type0 hosts; inherits reals_as_rational_cuts. Native evaluator generic byte-selector fidelity retains separate flapjack-wordsem-byte-align-total frontier; case proves genuine guarded-IH control simulation, not whole evaluator independence. Fresh scoped original HOL proof replay PASS with same actual source-guarded IHs: original returning prefix and handlerNONE exception branch tactics unchanged, specializing handlerNONE omits handlerSOME branch and its selector combinator. Original local erased-lookup/clock helpers recreated; full comp_correct not assumed. no full Call or pass assembly claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/CallReturnHandler.lean",
+    "lean_name": "compCorrectCallReturnHandler",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original comp_correct returning Call1805-1931/full1481-1493 source comparison2026-10-03. Full original retSOME and handlerSOME AST case, arbitrary bodies/link/labels/destination and original4premises. Actual source erasedlookup/nonzero-clock guarded calleeIH and actual successful returnLoc/exceptionLoc guarded respective continuationIHs only, retaining full original simulation quantifiers. Missing code, invalid callee NONE/Break/Continue/Error and wrong return/exceptionLoc errors excluded by original nonError; no supplied targetrun/postrelation or successful-return assumption. Full targetexistential and every result alternative retained. Accepted erasedlookup proves compiled callee and bound; original regBound supplies both continuation bounds and link bound. stateRelSetVar/decClock and unconditional fixClock establish native entry; evaluateAddClock derives summed allowances for each actual successful continuation. Full26relation postcondition or original Halt/TimeOut/FinalFFI FFI equality. Canonical actual owning state roundtrip reexport, qualified regs/fpRegs/store only, Spt code/List stack unchanged, positive-width words/Type0 hosts; inherits reals_as_rational_cuts. Native genericbyte selector frontier flapjack-wordsem-byte-align-total retained; genuine guardedIH control simulation does not assert whole evaluator independence. Fresh original scoped replay PASS, original returning prefix and handlerSOME proof tactics unchanged, handlerNONE branch and selector omitted for fixed AST option; same actual source-guarded IHs, original local erasedlookup/clock helpers recreated, no full comp_correct assumed. full Call/pass assembly not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/ProgCompEta.lean",
+    "lean_name": "progCompEta",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "prog_comp_eta",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison original1244-1248 and prog_comp_def224-226: complete unconditional function equality over all jump/off/k and name/program pairs. Independent arbitrary section name beta preserved by Name:Type, no numeric-label specialization. Same native HolProg constructors and comp, identical pair projection/constructor equation; positive type-indexed words is the only qualifier. No evaluator, state relation, finite-map or reals carrier appears. Fresh original literal proof replay PASS, two rows capture the full original function equality and proof success; Install/fullpass assembly not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemorySubset.lean",
+    "lean_name": "memoryFun2SetSubset",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "memory_fun2set_SUBSET",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison original1473-1478 and full generic STAR/memory_def/fun2set_def/SPLIT_def. Same arbitrary independent address/value carriers, source and target functions/domain sets and arbitrary frame predicate. Full separated source graph assertion on target graph proves entire source domain subset target domain; predicate-set inclusion is forall address/domain implies targetDomain. No extra finite-domain, word-width, alignment, nonempty, target-value-equality or evaluator premise. Original local memoryHOL and actual full generic SetSep definitions retained, no representation qualifiers/reals dependencies. Fresh complete literal original proof replay PASS, two rows capture the full generic domain-inclusion statement and proof success; StoreConsts/fullpass assembly not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListExists.lean",
+    "lean_name": "wordListExistsThm",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_exists_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison original21-36 and native full Misc.wordListExists/SetSep sepExists/star/cond/emp/one/wordList definitions. Complete original zero and successor conjunction as heap-predicate equalities, arbitrary address/count/payload carrier and every heap retained. Source pure length condition remains a separated empty heap; local starCond proves its elimination without assuming a length or concrete list. Forward successor destructs actual existential list and reverse reconstructs value::values; full partition/frame retained, modular bytesInWord address increment unchanged. Positive-width BitVec translation only, no extra width/domain/alignment/nonempty/noalias/success assumption, no finite-map/evaluator/reals carrier. Fresh complete literal original proof replay PASS, two rows capture both original heap-predicate equalities and proof success; DataBuffer/fullpass assembly remains open."
   }
 ]

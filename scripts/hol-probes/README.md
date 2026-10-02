@@ -6240,3 +6240,14 @@ indexed-frame, read-after-write and match-shape lemmas preserve original THE
 NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 
 `word_to_stack_bitmap_frame_updates_probe.out` replays the three complete original bitmap/frame-list proofs and captures the independently polymorphic Spt/word-location binder types. Its 63 original overwrite observations cover empty, truncated and location-valued stacks across widths 8/64/80 and terminal/continuation boundaries. The Lean generic proofs retain every original guard; the parity module checks the same concrete native operations. No evaluator simulation, source pipeline unreachability or provenance hold release is claimed.
+`stack_remove_comp_call_tail_probeScript.sml` replays the literal original ret=NONE Call case with arbitrary handlers and actual source lookup/handler-NONE/nonzero-clock guarded callee IH. Original local lookup/dec-clock proofs are recreated; no full `comp_correct` assumed. Two rows capture the scoped statement and proof success.
+
+`stack_remove_comp_call_return_none_probeScript.sml` replays the original returning Call prefix and handler-NONE exception branch, with actual source guarded callee and successful-return continuation IHs. Specializing the AST option omits the handler-SOME branch and its selector combinator; branch proof tactics remain unchanged. Original local erased lookup/clock relation helpers are recreated, full `comp_correct` is not assumed. Two rows capture the scoped statement and proof success.
+
+`stack_remove_comp_call_return_handler_probeScript.sml` replays the original returning prefix and handler-SOME branch tactics, omitting the handler-NONE branch and its selector for the fixed AST option. Full source-guarded callee/return/exception-body IHs retained; original local erased lookup/clock helpers recreated, no full `comp_correct` assumed. Two rows record the scoped statement and proof success.
+
+`stack_remove_prog_comp_eta_probeScript.sml` replays the complete literal original function-equality proof, retaining arbitrary section names and all compiler parameters. Two rows capture its full statement and proof success; no full pass correctness theorem is assumed.
+
+`stack_remove_memory_subset_probeScript.sml` replays the complete literal original generic separated-graph domain inclusion proof. Arbitrary address/value types, functions/domains and frame retained. Two rows capture the full statement and proof success.
+
+`stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.

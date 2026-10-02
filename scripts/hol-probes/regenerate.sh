@@ -5853,3 +5853,27 @@ run_probe lab_to_target_shmem_membership_probeScript.sml lab_to_target_shmem_mem
 run_probe word_to_stack_bitmap_frame_updates_probeScript.sml word_to_stack_bitmap_frame_updates_probe.out \
   bf_full_drop bf_full_not_nil bf_full_append bf_not_nil_types bf_overwrite_8_0_0 bf_overwrite_8_0_1 bf_overwrite_8_0_2 bf_overwrite_8_6_0 bf_overwrite_8_6_1 bf_overwrite_8_6_2 bf_overwrite_8_7_0 bf_overwrite_8_7_1 bf_overwrite_8_7_2 bf_overwrite_8_8_0 bf_overwrite_8_8_1 bf_overwrite_8_8_2 bf_overwrite_8_63_0 bf_overwrite_8_63_1 bf_overwrite_8_63_2 bf_overwrite_8_64_0 bf_overwrite_8_64_1 bf_overwrite_8_64_2 bf_overwrite_8_80_0 bf_overwrite_8_80_1 bf_overwrite_8_80_2 bf_overwrite_64_0_0 bf_overwrite_64_0_1 bf_overwrite_64_0_2 bf_overwrite_64_6_0 bf_overwrite_64_6_1 bf_overwrite_64_6_2 bf_overwrite_64_7_0 bf_overwrite_64_7_1 bf_overwrite_64_7_2 bf_overwrite_64_8_0 bf_overwrite_64_8_1 bf_overwrite_64_8_2 bf_overwrite_64_63_0 bf_overwrite_64_63_1 bf_overwrite_64_63_2 bf_overwrite_64_64_0 bf_overwrite_64_64_1 bf_overwrite_64_64_2 bf_overwrite_64_80_0 bf_overwrite_64_80_1 bf_overwrite_64_80_2 bf_overwrite_80_0_0 bf_overwrite_80_0_1 bf_overwrite_80_0_2 bf_overwrite_80_6_0 bf_overwrite_80_6_1 bf_overwrite_80_6_2 bf_overwrite_80_7_0 bf_overwrite_80_7_1 bf_overwrite_80_7_2 bf_overwrite_80_8_0 bf_overwrite_80_8_1 bf_overwrite_80_8_2 bf_overwrite_80_63_0 bf_overwrite_80_63_1 bf_overwrite_80_63_2 bf_overwrite_80_64_0 bf_overwrite_80_64_1 bf_overwrite_80_64_2 bf_overwrite_80_80_0 bf_overwrite_80_80_1 bf_overwrite_80_80_2 \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_call_tail_probeScript.sml stack_remove_comp_call_tail_probe.out \
+  cc_call_tail_statement cc_call_tail_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_call_return_none_probeScript.sml stack_remove_comp_call_return_none_probe.out \
+  cc_call_return_none_statement cc_call_return_none_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_call_return_handler_probeScript.sml stack_remove_comp_call_return_handler_probe.out \
+  cc_call_return_handler_statement cc_call_return_handler_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_prog_comp_eta_probeScript.sml stack_remove_prog_comp_eta_probe.out \
+  prog_comp_eta_statement prog_comp_eta_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_memory_subset_probeScript.sml stack_remove_memory_subset_probe.out \
+  memory_subset_statement memory_subset_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_list_exists_probeScript.sml stack_remove_word_list_exists_probe.out \
+  word_list_exists_statement word_list_exists_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
