@@ -66268,5 +66268,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-bitmap-load): genuine full original comp_correct BitmapLoad2374-2419, exact original source evaluation/nonError/full state relation/regBound premises and existential clock/native target/usual result branch conclusion. Actual compiled native store-slot load/add/leftshift/bitmap load evaluated with clock0. Original source register alias, missing/Loc, strict bitmap bound and useStack guards preserved. Full relation supplies Word BitmapBase and target base lookup; original mem_load_lemma derives first read, bounded bitmap factor extraction through all separated heaps derives final target domain/read. Forward shift equality uses original goodDimindex, no invented no-wrap requirement. Full26 postrelation derives from original bounded register update. No target-success/read/domain/postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width words only; code Spt and bitmaps/stack List unchanged. Inherited reals_as_rational_cuts from faithful total evaluator with no local real operation. Literal original case plus local mem_load_lemma reproof replay PASS."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "alloc_correct_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/AllocCorrect.lean",
+    "lean_name": "alloc_correct_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02, bead .5.8.6: original stack_allocProofScript.sml5078-5105. Retains allocation equality, nonerror, word_gc_fun equality, bitmap length and stack byte bound, register0 return and register1 word premises. Exhausts original None/Simple/Generational gc_kind internally using their reviewed full statements; no kind-selection or successful target evaluation premise. Retains existential clock/register map, actual wordGcCode evaluate equation and complete compiled-code/state overrides, non-none Halt Word1, SUBMAP and normal-return register0 conclusions. Canonical regs/fpRegs/store use same imported owning StackSemStateFiniteExact and local genuine broad/canonical roundtrip witness; positive BitVec width with NeZero and universe0 host types only. Inherits the reals_as_rational_cuts assumption through evaluate Inst closure (SOUNDNESS item8), not a claim to review arbitrary untagged dependencies. Overall allocation/pass correctness remains open."
   }
 ]
