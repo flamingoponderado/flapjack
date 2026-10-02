@@ -1,0 +1,2 @@
+sa_statement=∀xs ys a. word_list a (xs ++ ys) = word_list a xs * word_list (a + bytes_in_word * n2w (LENGTH xs)) ys
+sa_proved=T
