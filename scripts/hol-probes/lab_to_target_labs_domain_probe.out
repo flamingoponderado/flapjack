@@ -1,0 +1,10 @@
+ld_definition=⊢ ∀labs. labs_domain labs = {(n1,n2) | lab_lookup n1 n2 labs ≠ NONE}
+ld_empty_theorem=⊢ labs_domain LN = ∅
+ld_insert_theorem=⊢ k ∉ domain labs ⇒ labs_domain (insert k s labs) = IMAGE (λn2. (k,n2)) (domain s) ∪ labs_domain labs
+ld_type=:α sptree$num_map sptree$num_map -> num # num -> bool
+ld_empty=F
+ld_hit=T
+ld_inner_miss=F
+ld_outer_miss=F
+ld_insert_preserves=T
+ld_insert_new=T
