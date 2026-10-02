@@ -4994,3 +4994,8 @@ checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTa
 FPToInt/FPFromInt specializations and native carriers. Original FP proof8174–8222,
 width branches, signed range/rounding failures and half-register writes are
 manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fpmovtoreg_probeScript.sml` captures original kernel
+FPMovToReg specialization and native carriers. Original FP proof8174–8222,
+width64 one-write and otherwidth two-write low/high extraction and destination
+aliases are manually reviewed; no standalone tactic replay is claimed.

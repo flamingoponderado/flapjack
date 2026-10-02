@@ -4500,3 +4500,7 @@ run_probe ssa_cc_trans_correct_inst_fparith_probeScript.sml ssa_cc_trans_correct
 run_probe ssa_cc_trans_correct_inst_fpint_probeScript.sml ssa_cc_trans_correct_inst_fpint_probe.out \
   fp_to_int_full fp_to_int_type_st fp_to_int_type_cst fp_to_int_type_dst fp_to_int_type_arg fp_to_int_type_ssa fp_to_int_type_next fp_to_int_type_tables fp_from_int_full fp_from_int_type_st fp_from_int_type_cst fp_from_int_type_dst fp_from_int_type_arg fp_from_int_type_ssa fp_from_int_type_next fp_from_int_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_inst_fpmovtoreg_probeScript.sml ssa_cc_trans_correct_inst_fpmovtoreg_probe.out \
+  fp_mov_to_reg_full fp_mov_to_reg_type_st fp_mov_to_reg_type_cst fp_mov_to_reg_type_first fp_mov_to_reg_type_second fp_mov_to_reg_type_fp fp_mov_to_reg_type_ssa fp_mov_to_reg_type_next fp_mov_to_reg_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

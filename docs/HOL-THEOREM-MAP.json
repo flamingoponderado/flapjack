@@ -58244,5 +58244,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Source comparison: genuine FPFromInt constructor in original Inst FP proof8174-8222, original six premises/full Error-exempt source permutation/result/frame/result-sensitive locals and no targetrun/success/poststate/IH assumptions. Compiler default leaves opcode/SSA/next; frame derives identical fixed64 FP maps and all reads/outcomes, including divide-by2 register selection. ToInt retains roundTiesToEven Option conversion, signed32 i2w/w2i range equality, width64 word conversion or ODD-index upper/lower bit-field insert into destination/2, with all failures Error-exempt. FromInt retains width64 signed low32 extraction versus otherwidth ODD half extraction at width, int_to_fp64 roundTiesToEven and exact setFpVar. General locals unchanged; final frame derived. Nat indices/fixed64 FP/positive indexed word/sharedType0 state/Spt/table carriers compared to HOL specialization. Canonical fpRegs/store finite-support and word translation explicit. Inherited reals_as_rational_cuts conversion/evaluator boundary SOUNDNESS8 retained; general real_to_float rendering restricted to rationals is only used at real_of_int, so inputs are in covered domain. Original opcode proof manually reviewed; Q.SPEC capture/carriers and Lean kernel PASS, no isolated tactic replay claimed. Full Inst open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstFPMovToReg.lean",
+  "lean_name": "ssaCcTransCorrectInstFPMovToReg",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: genuine FPMovToReg constructor in original Inst FP proof8174-8222, all six original premises/full Error-exempt source-permutation/result/frame/result-sensitive locals and no targetrun/success/poststate/IH assumption. Fixed64 FP read derived from original frame. Width64 compiler/evaluator use one fresh destination and w2w; otherwidth compiler sequentially nextVarRenames both destinations, evaluator writes low31:0 then high63:32 at native word width. Original localsSetVar and mapOKExtend derive both relations including destination aliases; complete postframe follows. Missingread retains sourceError exemption. Nat FP/general registers, positivewidth words/fixed64 FP/state/Spt/table/sharedType0 code-FFI compared with original kernel specialization. Canonical fpRegs/store finite-support and word translation explicit, inherits reals_as_rational_cuts Inst/evaluator SOUNDNESS8, transfer itself bit-only. Source proof manually reviewed; Q.SPEC capture/carriers and Lean kernelPASS, no isolatedtactic replay claim. FullInst remainsopen."
 }
 ]
