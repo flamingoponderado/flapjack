@@ -55989,5 +55989,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Source comparison: genuine original resumedInst Binop7874-7880 opcode case of ssa_cc_trans_correct, both register/immediate branches. Same six original premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no added targeteval/success/poststate/IH. Native BinOp, Nat register and WordRegImm(BitVec width) carriers match original binop/num/alpha reg_imm. Actual native inst/assign/op expressions and SSA compiler branches use original operand map before nextVarRename; original expression and setVar locals helpers derive target success/fresh update from source success internally. Full state/map/table carriers shared arbitrary Type0 code/FFI hosts, canonical fpRegs/store finite-support and positive-widthBitVec translations reviewed. Inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Fresh literal original opcode/setup_tac/expression/setVar helpers and complete carrier captures PASS; fixed-constructor selection and discarded primitive induction bookkeeping omitted. Lean kernel checked; fullInst assembly remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstShift.lean",
+  "lean_name": "ssaCcTransCorrectInstShift",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: full original resumedInst Shift7881-7919 opcode case, both register/immediate branches. Original six premises and full Error-exempt source permutation/result/frame/result-sensitive locals conclusion, no extra targeteval/success/poststate/IH. Native Shift, Nat registers and WordRegImm(BitVec width) match ast shift/num/alpha reg_imm. Actual compiler Move1 into physical8 then Shift is evaluated; physical insertion/getVar relation preserves source read and fresh setVar proves destination relation. Failed reads/wordShiftHOL NONE retain original Error exemption, without extra count bound. Shared arbitrary Type0 code/FFI carriers, canonical fpRegs/store finite-support and positive-widthBitVec translations reviewed. Inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Literal original opcode proof/setup/local helpers and complete native carrier replay PASS; only fixed-constructor selection and discarded primitive induction bookkeeping omitted. Lean kernel checked; full Inst assembly remains open."
 }
 ]

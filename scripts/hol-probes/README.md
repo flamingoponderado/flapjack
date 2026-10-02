@@ -4752,3 +4752,9 @@ continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a 
 observation in `WordUnreachDefParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cc_trans_correct_inst_shift_probeScript.sml` replays the literal original
+Shift opcode proof (7881–7919), local getVar/setVar/physical insertion helpers
+and setup tactic. Only fixed-constructor selection and discarded primitive
+induction bookkeeping are omitted. The full six-premise simulation and native
+state/operator/register/immediate/SSA/table carrier types are captured.
