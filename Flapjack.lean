@@ -1431,6 +1431,9 @@ import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordUnreach
 import Flapjack.Compiler.Backend.WordCopy
+import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
+import Flapjack.Compiler.Backend.WordCopy.Proofs.Models
+import Flapjack.Compiler.Backend.WordCopy.Proofs.Move
 import Flapjack.Misc.Anub
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 
