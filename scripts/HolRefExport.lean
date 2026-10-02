@@ -1,3 +1,9 @@
+import Flapjack.Compiler.Backend.StackRemove.ProgComp
+import Flapjack.Compiler.Backend.StackRemove.Comp
+import Flapjack.Compiler.Backend.StackRemove.CopyLoop
+import Flapjack.Compiler.Backend.StackLang.InstBuilders
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStateWrites
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRegisterWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileListProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileLookupProps
