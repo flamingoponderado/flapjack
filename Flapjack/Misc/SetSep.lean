@@ -107,4 +107,78 @@ theorem starAssoc {α : Type} (p q r : (α → Prop) → Prop) :
       rw [← inner.1]
       exact Or.inr member.1
 
+/-- Full generic commutativity, reconstructing the disjoint partition for
+arbitrary predicate heaps. -/
+@[hol "HOL/examples/machine-code/hoare-triple/set_sepScript.sml" "STAR_COMM"]
+theorem starComm {α : Type} (p q : (α → Prop) → Prop) :
+    star p q = star q p := by
+  funext heap
+  apply propext
+  constructor <;> rintro ⟨left, right, partition, first, second⟩
+  all_goals refine ⟨right, left, ⟨?_, ?_⟩, second, first⟩
+  all_goals first
+    | (funext entry; simpa only [or_comm] using congrFun partition.1 entry)
+    | (intro entry both; exact partition.2 entry ⟨both.2, both.1⟩)
+
+open Classical in
+/-- Full generic singleton heap write. Functional graph membership derives
+absence of every other payload at the written address from the original
+partition; no functional-frame, finite-domain or unique-address premise is
+added. The frame is preserved while the singleton payload is replaced. -/
+@[hol "HOL/examples/machine-code/hoare-triple/set_sepScript.sml" "write_fun2set"]
+theorem writeFun2Set {α β : Type} (newValue : α) (address : β) (oldValue : α)
+    (frame : ((β × α) → Prop) → Prop) (function : β → α) (domain : β → Prop)
+    (hypothesis : star (one (address, oldValue)) frame (fun2Set (function, domain))) :
+    star frame (one (address, newValue))
+      (fun2Set ((fun key => if key = address then newValue else function key), domain)) := by
+  rcases hypothesis with ⟨head, rest, partition, singleton, frameHeap⟩
+  have inHead : head (address, oldValue) := by rw [singleton]
+  have oldGraph : fun2Set (function, domain) (address, oldValue) := by
+    rw [← partition.1]
+    exact Or.inl inHead
+  have oldFacts := (fun2SetThm function domain address oldValue).mp oldGraph
+  have restGraph : ∀ entry, rest entry → fun2Set (function, domain) entry := by
+    intro entry member
+    rw [← partition.1]
+    exact Or.inr member
+  have absent : ∀ value, ¬rest (address, value) := by
+    intro value member
+    have facts := (fun2SetThm function domain address value).mp (restGraph _ member)
+    have equal : value = oldValue := facts.1.symm.trans oldFacts.1
+    subst value
+    exact partition.2 (address, oldValue) ⟨inHead, member⟩
+  refine ⟨rest, (fun entry => entry = (address, newValue)), ⟨?_, ?_⟩, frameHeap, rfl⟩
+  · funext entry
+    rcases entry with ⟨key, value⟩
+    apply propext
+    constructor
+    · rintro (member | equal)
+      · have different : key ≠ address := by
+          intro same
+          subst key
+          exact absent value member
+        have facts := (fun2SetThm function domain key value).mp (restGraph _ member)
+        apply (fun2SetThm _ domain key value).mpr
+        exact ⟨by simpa only [different, ite_false] using facts.1, facts.2⟩
+      · cases equal
+        apply (fun2SetThm _ domain address newValue).mpr
+        exact ⟨by simp only [ite_true], oldFacts.2⟩
+    · intro member
+      have facts := (fun2SetThm _ domain key value).mp member
+      by_cases same : key = address
+      · subst key
+        have equal : newValue = value := by simpa only [ite_true] using facts.1
+        exact Or.inr (congrArg (Prod.mk address) equal.symm)
+      · have oldMember : fun2Set (function, domain) (key, value) :=
+          (fun2SetThm function domain key value).mpr
+            ⟨by simpa only [same, ite_false] using facts.1, facts.2⟩
+        rw [← partition.1] at oldMember
+        rcases oldMember with headMember | restMember
+        · rw [singleton] at headMember
+          exact (same (congrArg Prod.fst headMember)).elim
+        · exact Or.inl restMember
+  · rintro ⟨key, value⟩ ⟨member, equal⟩
+    cases equal
+    exact absent newValue member
+
 end Flapjack.SetSep

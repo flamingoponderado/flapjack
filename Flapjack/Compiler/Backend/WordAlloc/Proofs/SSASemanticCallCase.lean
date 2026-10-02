@@ -851,7 +851,8 @@ end SemanticCallReturningWitnesses
 All six original premises and only the return-body IH are retained. The source
 permutation, all successful guard branches, target runs and post-state facts
 are derived internally. The imported evaluator inherits reals_as_rational_cuts
-(SOUNDNESS item 8). Handler SOME and the whole constructor remain open. -/
+(SOUNDNESS item 8). The handler-SOME case and full SSA assembly are also
+ported; production migration and end-to-end correctness remain open. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
@@ -1126,7 +1127,8 @@ All guards, stack/root transport, exception frame restoration, physical result
 binding, handler IH premises and correctL/R reconciliation are derived internally.
 The actual exception binder starts after the return compiler's output counter,
 as in the original producer. Inherits reals_as_rational_cuts (SOUNDNESS item 8).
-The whole returning Call constructor and full SSA assembly remain open. -/
+The whole returning Call constructor and full SSA assembly are also ported;
+production migration and end-to-end correctness remain open. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
