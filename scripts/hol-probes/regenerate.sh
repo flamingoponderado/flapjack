@@ -5279,3 +5279,38 @@ run_probe lab_to_target_label_existence_domain_probeScript.sml lab_to_target_lab
 run_probe lab_to_target_section_label_extraction_probeScript.sml lab_to_target_section_label_extraction_probe.out \
   section_labels_line_get_code_labels section_labels_line_get_code_labels_types mixed_full_tuple mixed_full_set_equality duplicate_zero_accumulator_retained all_label_zero_skipped_nonzero_kept both_zero_insertions_needed empty_accumulator_retained zero_accumulator_value_unconstrained nonlabel_bytes_not_annotation all_seven_opcodes_no_definitions width1_empty width80_large_position \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_comp_heap_probeScript.sml stack_remove_comp_heap_probe.out \
+  ch_statement ch_types ch_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_store_curr_heap_probeScript.sml stack_remove_word_store_curr_heap_probe.out \
+  wc_statement wc_types wc_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_name_cases_probeScript.sml stack_remove_name_cases_probe.out \
+  nc_statement nc_types nc_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_store_heap_read_probeScript.sml stack_remove_store_heap_read_probe.out \
+  sr_statement sr_types sr_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_store_heap_domain_probeScript.sml stack_remove_store_heap_domain_probe.out \
+  sd_statement sd_types sd_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe set_sep_heap_write_probeScript.sml set_sep_heap_write_probe.out \
+  sc_statement sc_types sc_proved sw_statement sw_types sw_proved \
+  "$hol_dir/examples/machine-code/hoare-triple/set_sepScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_store_heap_assoc_probeScript.sml stack_remove_store_heap_assoc_probe.out \
+  sa_statement sa_types sa_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_store_heap_write_probeScript.sml stack_remove_store_heap_write_probe.out \
+  st_statement st_types st_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_get_probeScript.sml stack_remove_comp_get_probe.out \
+  cg_statement cg_types cg_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

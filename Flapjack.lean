@@ -92,6 +92,10 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreNames
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapReads
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapWrites
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
@@ -108,6 +112,8 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Floati
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
 import Flapjack.Compiler.Backend.StackToLab.InitializedProduction
