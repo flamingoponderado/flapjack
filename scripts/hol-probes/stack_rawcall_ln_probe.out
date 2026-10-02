@@ -1,0 +1,6 @@
+ln_statement=∀i b. comp_top LN b = b ∧ comp LN b = b
+ln_hypotheses=0
+ln_seq=(Seq (StackFree 4) (Call NONE (INL 7) NONE),Seq (StackFree 4) (Call NONE (INL 7) NONE))
+ln_loop=(Loop (Seq (StackFree 0) (Call NONE (INL 9) NONE)),Loop (Seq (StackFree 0) (Call NONE (INL 9) NONE)))
+ln_return_handler=(Call (SOME (Seq (StackFree 4) (Call NONE (INL 7) NONE),2,3,4)) (INR 9) (SOME (Loop (Seq (StackFree 4) (Call NONE (INL 7) NONE)),31,37)),Call (SOME (Seq (StackFree 4) (Call NONE (INL 7) NONE),2,3,4)) (INR 9) (SOME (Loop (Seq (StackFree 4) (Call NONE (INL 7) NONE)),31,37)))
+ln_tail_handler=(Call NONE (INL 9) (SOME (Seq (StackFree 4) (Call NONE (INL 7) NONE),31,37)),Call NONE (INL 9) (SOME (Seq (StackFree 4) (Call NONE (INL 7) NONE),31,37)))

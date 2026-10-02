@@ -6146,6 +6146,8 @@ WordToStack make_init probe captures the complete original definition and124 gro
 `l3_mmu_insert_probe.out` records all sixteen TLB slots for eight complete original insertion runs: empty, multiple holes, last hole, full ascending ages, tied ages, all maximum ages, last oldest and early oldest. Native kernel fixtures replay the same inputs and `(asid, age)` observations, including current core 7 with totalCore 1. Strict age comparison, first-empty behavior and the all-max slot-zero sentinel are preserved. Other old-entry fields are arbitrary and unobserved in both probes. These regression observations do not establish cross-language equivalence.
 
 `l3_mmu_walk_probe.out` records fifteen complete original page-walk observations: invalid PTE, both pointer types at level zero, permitted reads/writes, unchanged R/D, permission denial, global leaf, superpage mixing, both recursive pointer types, levels4/1000, 38-bit PPN-shift truncation and wrapped PTE address. Native kernel fixtures replay the full optional payload (physical address, whole packed PTE, level, global flag, PTE address) and both memory PTE words. Probes retain original arbitrary unobserved state fields. Source widths and decreasing-level recursion are unchanged; there is no alignment guard or fuel restriction. Regression evidence is distinct from cross-language equivalence.
+
+`stack_rawcall_shape_probe.out` captures the full original comp_seq_neq_IMP statement with zero hypotheses and five independent complete branch truth values. Kernel replay separates the generic theorem application from equal/smaller/larger changes and missing/handler fallback observations; no full simulation is claimed.
 `stack_sem_evaluate_clock_probeScript.sml` replays the full original
 `evaluate_clock` and `fix_clock_evaluate` proof bodies, recreating their local
 atomic clock and `fix_clock_IMP` helpers. It uses the exported HOL evaluator
@@ -6154,4 +6156,4 @@ rules after `allow_rebind`, and resolves `state_component_equality` with
 uses the faithful evaluator clauses before the clock-identity rewrite.
 
 
-`stack_rawcall_shape_probe.out` captures the full original comp_seq_neq_IMP statement with zero hypotheses and five independent complete branch truth values. Kernel replay separates the generic theorem application from equal/smaller/larger changes and missing/handler fallback observations; no full simulation is claimed.
+`stack_rawcall_ln_probe.out` captures the full universally quantified comp_LN conjunction with no hypotheses and four complete paired comp_top/comp output trees. Generic identity application and kernel tree fixtures retain Seq, Loop, returning handler and ignored tail-handler cases; this is a proof helper, not full compiler simulation.
