@@ -67542,5 +67542,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol original comp_correct returning Call1805-1931/full1481-1493 source comparison2026-10-03. Full original retSOME and handlerSOME AST case, arbitrary bodies/link/labels/destination and original4premises. Actual source erasedlookup/nonzero-clock guarded calleeIH and actual successful returnLoc/exceptionLoc guarded respective continuationIHs only, retaining full original simulation quantifiers. Missing code, invalid callee NONE/Break/Continue/Error and wrong return/exceptionLoc errors excluded by original nonError; no supplied targetrun/postrelation or successful-return assumption. Full targetexistential and every result alternative retained. Accepted erasedlookup proves compiled callee and bound; original regBound supplies both continuation bounds and link bound. stateRelSetVar/decClock and unconditional fixClock establish native entry; evaluateAddClock derives summed allowances for each actual successful continuation. Full26relation postcondition or original Halt/TimeOut/FinalFFI FFI equality. Canonical actual owning state roundtrip reexport, qualified regs/fpRegs/store only, Spt code/List stack unchanged, positive-width words/Type0 hosts; inherits reals_as_rational_cuts. Native genericbyte selector frontier flapjack-wordsem-byte-align-total retained; genuine guardedIH control simulation does not assert whole evaluator independence. Fresh original scoped replay PASS, original returning prefix and handlerSOME proof tactics unchanged, handlerNONE branch and selector omitted for fixed AST option; same actual source-guarded IHs, original local erasedlookup/clock helpers recreated, no full comp_correct assumed. full Call/pass assembly not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/ProgCompEta.lean",
+    "lean_name": "progCompEta",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "prog_comp_eta",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison original1244-1248 and prog_comp_def224-226: complete unconditional function equality over all jump/off/k and name/program pairs. Independent arbitrary section name beta preserved by Name:Type, no numeric-label specialization. Same native HolProg constructors and comp, identical pair projection/constructor equation; positive type-indexed words is the only qualifier. No evaluator, state relation, finite-map or reals carrier appears. Fresh original literal proof replay PASS, two rows capture the full original function equality and proof success; Install/fullpass assembly not claimed."
   }
 ]

@@ -5942,6 +5942,12 @@
       "sha256": "be8bad0e63d1a7a6ea02f781a88010f489268e277c4e6a69eb8b54d32b90d486"
     },
     {
+      "bytes": 103,
+      "out": "stack_remove_prog_comp_eta_probe.out",
+      "rows": 2,
+      "sha256": "07a47c8b4f71645377112da7456fac339cdc228e0201d41df22549f2d786bd19"
+    },
+    {
       "bytes": 1777,
       "out": "stack_remove_prog_comp_probe.out",
       "rows": 17,
