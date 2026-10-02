@@ -1484,6 +1484,12 @@
       "sha256": "95504f40249189b9e583ccef958d4bba570b1cae1a408fc1a27ff9c4997749a7"
     },
     {
+      "bytes": 1589,
+      "out": "l3_mmu_primitives_probe.out",
+      "rows": 62,
+      "sha256": "3e5ebeb4e54b5c4d40d27df7caf21bf269d243c37fc1eaffadfe0b3e5b5b5d8b"
+    },
+    {
       "bytes": 187,
       "out": "l3_raise_exception_probe.out",
       "rows": 2,

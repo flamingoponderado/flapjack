@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.MMU.Primitives
 import Flapjack.RiscV.L3.Defs.MMU.Exception
 import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
 import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
