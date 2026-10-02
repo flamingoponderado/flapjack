@@ -4398,3 +4398,10 @@ no target evaluation or memory-domain premise is added. Native finite-map/word
 translations and the evaluator's inherited IEEE rational-cut assumption
 (SOUNDNESS item 8) are retained. These are invariant-update prerequisites,
 not a completed CSE/compiler correctness proof.
+
+`target_sem_machine_sem_probeScript.sml` kernel-proves the full original
+Terminate/Diverge/Fail clauses for arbitrary machine and FFI carriers, checking
+exact conclusions and empty theorem hypotheses before capture. Divergence uses
+all clocks and the original IMAGE/UNIV lazy-list least upper bound. Generic Lean
+clause checks live in `Flapjack.Test.TargetSemMachineSemParity`; these check
+local definition shape and are not a cross-language equivalence theorem.
