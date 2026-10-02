@@ -769,6 +769,7 @@
     {"bytes": 144, "out": "word_alloc_colour_exp_probe.out", "rows": 3, "sha256": "e0d9bccea5bebc80abc17758510c9b69580f2a797e7983e5e6df64bcbbaab71a"},
     {"bytes": 203, "out": "word_alloc_colour_inst_probe.out", "rows": 6, "sha256": "5f584dc5ece50a575ea6cec35845a1f3ae223742aac222124105abc803530d58"},
     {"bytes": 212, "out": "word_alloc_cost_probe.out", "rows": 13, "sha256": "6ab4c47335fb4ddb29dae93285ff8d0616dce3c61c6e2f71b35f5adaf8a57e4f"},
+    {"bytes": 742, "out": "word_alloc_def_probe.out", "rows": 9, "sha256": "562ceb88968e9fcc43ae3ed33eef344ff54732b051c9f5e11911b908ec739ba6"},
     {"bytes": 535, "out": "word_alloc_even_colour_probe.out", "rows": 20, "sha256": "0daebb237490dfdc6403f21c913afac0b0d9add7df9166cc4427df6db24b164e"},
     {"bytes": 102, "out": "word_alloc_even_locals_probe.out", "rows": 6, "sha256": "f94ce0ea3b2fabd57fee2ffa3b233a0c34cd3cfd5de5c60ccf61b718dffcacd2"},
     {"bytes": 773, "out": "word_alloc_fix_inconsistencies_probe.out", "rows": 12, "sha256": "e30a07f5a7e27894d1c36915f6c06d4aa87bf04409558ce08c2a5f42b42087a5"},

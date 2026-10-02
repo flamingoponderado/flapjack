@@ -138,6 +138,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
 import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.WordAlloc.SelectRegAlloc
+import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstall
