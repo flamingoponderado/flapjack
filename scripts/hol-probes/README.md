@@ -5483,3 +5483,12 @@ its full type and ten invariant-valid constructor/guard/ratio equality cases.
 Native consumers prove both input invariants. The generic theorem retains only
 original comparator validity and those invariants; observations are regression
 evidence, not a cross-language equivalence theorem.
+
+## Full right balancing correctness
+
+`balanced_map_balanceR_correct_probeScript.sml` replays the literal original
+full correctness theorem and its balancing/rotation/arithmetic prerequisites,
+checking no open hypotheses. Nineteen rows capture the full type and six actual
+small/fallback/rotation trees, invariants and inserted-key lookups. Native
+consumers prove all original premises and use both conclusions. Observations
+are regression evidence, not a cross-language equivalence theorem.
