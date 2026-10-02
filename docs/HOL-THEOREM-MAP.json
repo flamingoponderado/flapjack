@@ -65047,5 +65047,19 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol original2099-2106 full LocValue case: exactly original four premises, faithful total evaluate and existential target clock/state with original result branch. Source nonError establishes source loc_check; full stateRel code conjunct and source-reviewed codeRelLocCheck derive target check. Native bounded setVar preserves all26 fullstateRel conjuncts, clock0. No additional success/location/post-state/simulation premise, no altered evaluator. Positive width NeZero native BitVec/HolProg and Type0 C/F; actual canonical regs/fpRegs/store with same-module genuine codec witness; Spt code excluded. Total evaluator inherits reals_as_rational_cuts assumption explicitly; no new trust decision."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackPointer.lean",
+    "lean_name": "stateRelGetVarK",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_get_var_k",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original395-418 comparison: original full state_rel alone implies existential base alpha word, lookup k+1 Word base, lower address reserve widthDIV8*maxStackAlloc, nonwrapping stack upper bound, lookup k Word(base+bytes*stackSpace), complete original five-factor separated heap. Native source/target share same positive width and Type0 configuration/FFI carriers. Canonical imported finite-map state and genuine same-module broad/exact witness; code remains Spt. Native bitmaps++buffer followed by map Word equals original MAP Word bitmaps++MAP Word buffer, combined list length equals original length sum. Bool domains rendered as true predicates, ordinary HOL lists use List. No extra base/bitmap/lookup/safety/success/heap premise; all facts extracted from final fullstateRel conjunct, invalid lookup constructors contradicted. Literal original proof replay and native kernel proof checked; neither new evaluator nor real arithmetic involved."
   }
 ]
