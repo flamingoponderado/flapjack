@@ -209,7 +209,11 @@ def wordToStackProgNatChecked [BEq Nat]
     bitmap-aware lowering path.  That API predates checked errors and returns
     only `none`; this walk retains the sequence path for a failed nested
     expression without changing executable lowering.  Stateful failures that
-    are not expression-related intentionally fall back to an empty path. -/
+    are not expression-related intentionally fall back to an empty path.
+    Assignment and shared-memory leaves check their actual executed producer,
+    including its optimizations. This is still not a complete locator for
+    moves, instructions, calls, FFI or the whole source pipeline; that remaining
+    obligation is tracked by `flapjack-pxn.2.11`. -/
 def wordProgFirstExpressionLoweringFailure (config : WordStackConfig) :
     WordProg Nat → Option (List Nat)
   | .seq first second =>
@@ -231,7 +235,7 @@ def wordProgFirstExpressionLoweringFailure (config : WordStackConfig) :
       (wordProgFirstExpressionLoweringFailure config body).map
         (fun path => 0 :: path)
   | .assign destination value =>
-      match wordStackCompileExpToPhysicalNat config destination value with
+      match wordStackCompileExpNat config destination value with
       | some _ => none
       | none => some []
   | .store address value =>
@@ -247,13 +251,9 @@ def wordProgFirstExpressionLoweringFailure (config : WordStackConfig) :
       | some _ => none
       | none => some []
   | .shareInst operator name address =>
-      match address with
-      | .var address =>
-          match (wordStackSharedMemoryInst config operator name address :
-              Option (StackProg Nat)) with
-          | some _ => none
-          | none => some []
-      | _ => some []
+      match wordStackCompileSharedNat config operator name address with
+      | some _ => none
+      | none => some []
   | .call returns _ _ handler =>
       match returns with
       | some (_, _, returnCode, _, _) =>
@@ -275,6 +275,34 @@ def wordProgFirstExpressionLoweringFailure (config : WordStackConfig) :
 termination_by program => sizeOf program
 decreasing_by
   all_goals decreasing_trivial
+
+/-- Flapjack diagnostic infrastructure: the assignment leaf reports exactly
+the failure of its executed lowering operation. There is no HOL declaration
+for this diagnostic relation; no allocator coverage or successful lowering
+is assumed. This leaf fact does not prove source-facing fallback unreachable. -/
+theorem wordProgFirstExpressionLoweringFailure_assign
+    (config : WordStackConfig) (destination : Nat) (value : WordExp Nat) :
+    (wordProgFirstExpressionLoweringFailure config (.assign destination value) = some [] ↔
+      wordToStackProgNat config (.assign destination value) = none) ∧
+    (wordProgFirstExpressionLoweringFailure config (.assign destination value) = none ↔
+      ∃ lowered, wordToStackProgNat config (.assign destination value) = some lowered) := by
+  simp only [wordProgFirstExpressionLoweringFailure,wordToStackProgNat]
+  cases wordStackCompileExpNat config destination value <;> simp
+
+/-- Flapjack diagnostic infrastructure for every shared-memory operator and
+address expression, including constants, stores, nested expressions and
+offset forms. Both directions use the actual executed compiler. There is no
+independently named HOL original, and this is not a whole-program or
+source-facing unreachability theorem. -/
+theorem wordProgFirstExpressionLoweringFailure_shareInst
+    (config : WordStackConfig) (operator : WordMemOp) (name : Nat)
+    (address : WordExp Nat) :
+    (wordProgFirstExpressionLoweringFailure config (.shareInst operator name address) = some [] ↔
+      wordToStackProgNat config (.shareInst operator name address) = none) ∧
+    (wordProgFirstExpressionLoweringFailure config (.shareInst operator name address) = none ↔
+      ∃ lowered, wordToStackProgNat config (.shareInst operator name address) = some lowered) := by
+  simp only [wordProgFirstExpressionLoweringFailure,wordToStackProgNat]
+  cases wordStackCompileSharedNat config operator name address <;> simp
 
 def wordToStackProgWordChecked [NeZero width]
     (config : WordStackConfig) (program : WordProg (Word width)) :

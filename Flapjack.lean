@@ -1758,6 +1758,7 @@ import Flapjack.Compiler.Backend.StackNames.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.StackNames.Proofs.MakeInit
 import Flapjack.Compiler.Backend.StackNames.Proofs.LabelsCallArgs
 import Flapjack.Compiler.Backend.StackRemove
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
 import Flapjack.Compiler.Backend.WordToStackRegFormat

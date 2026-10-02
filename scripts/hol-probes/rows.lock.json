@@ -6110,6 +6110,12 @@
       "sha256": "ce1469356760239739d4f68eb0b1a71104710ee16424d716df287fca79509c46"
     },
     {
+      "bytes": 32471,
+      "out": "stack_remove_write_bytearray_probe.out",
+      "rows": 55,
+      "sha256": "3cee9546d0af6c619746598e337c0152ca8fae9e34351933b406e559b842c103"
+    },
+    {
       "bytes": 560,
       "out": "stack_sem_atomic_clocks_probe.out",
       "rows": 10,
