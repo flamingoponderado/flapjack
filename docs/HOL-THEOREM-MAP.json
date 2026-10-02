@@ -61735,5 +61735,14 @@
     "hol_name": "memory_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.2: original118-120 memory m dm=lambda s.s=fun2set(m,dm), full original type (alpha->beta)->(alpha->bool)->(alpha#beta->bool)->bool. Lean preserves independently generic alpha and beta, curried function/domain arguments and whole heap equality to the exact paired fun2Set graph. Sets remain predicates, with no word specialization, finiteness/injectivity/reachability restriction, state carrier or successful-run premise. Accepted graph primitive is reused directly, not duplicated; whole equality excludes missing/extra/wrong-value/wrong-address entries. Fresh original source/type and eleven kernel-proved fixtures cover generic equality/uniqueness, empty/infinite domains, independent Bool/Nat/product carriers, negative heap mismatches and noninjective memory. Eleven Lean kernel fixtures preserve those obligations; no executable compiler code is changed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListRev.lean",
+    "lean_name": "wordListRev",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_rev_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, bead .6.7.3: original122-126 full type alpha word->beta list->(alpha word#beta->bool)->bool retains independent generic payload beta. Empty list is exact emp; cons is one(address-bytes_in_word,value) STAR word_list_rev(address-bytes_in_word,tail), with modular subtraction before both singleton and recursive address. Native bytesInWord is BitVec.ofNat width(width/8); the only qualifier is positive BitVec width/[NeZero width] for original address-word dimension. Canonical one/emp/STAR used directly. No fixed word_loc payload, width>=8, nonwrapping address, distinct-address, functional-heap or finiteness premise. Zero stride at widths1/7 means equal pair cells overlap and fail but distinct payloads at one address remain allowed by literal HOL set separation. Full original type/equation and generic/wrap/product/overlap probes, plus generic Lean one/two-cell kernel regressions, verify this precise behavior. Compiler state_rel later imposes its separate full-memory obligations; none are silently added to this predicate."
   }
 ]

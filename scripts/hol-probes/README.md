@@ -5612,3 +5612,15 @@ Lean kernel fixtures live in `Flapjack.Test.StackRemoveMemory`. The assertion
 uses the reviewed full `fun2Set` graph, without finite heaps or word-specific
 carriers. This is a prerequisite of full StackRemove `state_rel`, which remains
 open separately.
+
+`stack_remove_wordlistrev_probe.out` records the full independently generic
+address-word/payload type and both recursive equations, plus eleven fresh
+original kernel-proved fixtures. They cover generic empty/singleton heaps,
+modular subtraction at widths 8/32/64/80, product payloads, two cells, zero
+byte stride at widths 1/7, and wrong addresses. Separation acts on pairs: two
+different payloads at one address remain distinct heap elements; identical
+pairs cannot be separated. `Flapjack.Test.StackRemoveWordListRev` replays eleven
+fixtures through kernel-proved generic one/two-cell regression helpers. No
+functional-heap, distinct-address, nonwrapping or width-at-least-eight premise
+is added. Logical separation reasoning handles symbolic heaps before word
+arithmetic decisions. The original statements and definitions are unchanged.

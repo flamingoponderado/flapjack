@@ -4859,3 +4859,7 @@ run_probe stack_remove_word_selector_probeScript.sml stack_remove_word_selector_
 run_probe stack_remove_memory_probeScript.sml stack_remove_memory_probe.out \
   sm_def sm_type sm_full_generic sm_unique sm_empty sm_infinite sm_independent sm_product sm_missing sm_extra sm_wrong_value sm_wrong_address sm_noninjective \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_wordlistrev_probeScript.sml stack_remove_wordlistrev_probe.out \
+  wr_def wr_type wr_empty_generic wr_single_generic wr_wrap8 wr_wrap32 wr_product64 wr_wrap80 wr_two64 wr_zero_stride_distinct wr_zero_stride_same1 wr_zero_stride_same7 wr_wrong_address \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
