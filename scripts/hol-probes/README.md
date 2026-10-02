@@ -5696,3 +5696,15 @@ fixtures through kernel-proved generic one/two-cell regression helpers. No
 functional-heap, distinct-address, nonwrapping or width-at-least-eight premise
 is added. Logical separation reasoning handles symbolic heaps before word
 arithmetic decisions. The original statements and definitions are unchanged.
+
+`stack_remove_wordstore_probe.out` records the full independently indexed
+address/store-word type, `word_store_def`, complete original `store_list`,
+and seven full 48-slot vectors. Empty and mixed stores exercise missing keys,
+Word/Loc preservation, Temp0/Temp31, and populated unlisted CurrHeap. Word
+projections retain dimension evidence: 255w projects to1 at width1 and255 at
+widths8/80. Six original kernel proofs establish generic empty-store behavior,
+independent address/value dimensions64/8,1/80,80/1, unlisted-key irrelevance and
+length48. Twelve Lean kernel fixtures in `Flapjack.Test.StackRemoveWordStore`
+use an actual canonical finite-support map and the existing complete store-name
+codec, with generic payload/width proofs and lookup extensionality. Assertion
+proofs compare complete lists before heap separation is expanded.

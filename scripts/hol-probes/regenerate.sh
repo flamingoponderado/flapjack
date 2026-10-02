@@ -4944,3 +4944,7 @@ run_probe word_to_stack_alloc_flat_probeScript.sml word_to_stack_alloc_flat_prob
 run_probe stack_remove_wordlistrev_probeScript.sml stack_remove_wordlistrev_probe.out \
   wr_def wr_type wr_empty_generic wr_single_generic wr_wrap8 wr_wrap32 wr_product64 wr_wrap80 wr_two64 wr_zero_stride_distinct wr_zero_stride_same1 wr_zero_stride_same7 wr_wrong_address \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_wordstore_probeScript.sml stack_remove_wordstore_probe.out \
+  ws_def ws_type ws_store_list ws_empty8 ws_mixed8 ws_mixed1 ws_mixed80 ws_generic_empty ws_independent64_8 ws_independent1_80 ws_independent80_1 ws_unlisted ws_length ws_values8 ws_values1 ws_values80 \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
