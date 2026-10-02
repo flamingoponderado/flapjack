@@ -4298,3 +4298,6 @@ run_probe ssa_cc_trans_correct_inst_const_probeScript.sml ssa_cc_trans_correct_i
 run_probe ssa_cc_trans_correct_inst_binop_probeScript.sml ssa_cc_trans_correct_inst_binop_probe.out \
   inst_binop_full inst_binop_type_st inst_binop_type_cst inst_binop_type_operator inst_binop_type_dst inst_binop_type_src inst_binop_type_imm inst_binop_type_ssa inst_binop_type_next inst_binop_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe balanced_map_keyordered_probeScript.sml balanced_map_keyordered_probe.out \
+  bmko_full_theorem \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

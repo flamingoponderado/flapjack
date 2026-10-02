@@ -4745,7 +4745,7 @@ observation in `WordUnreachDefParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-### Full balanced-map semantic domain theorem
+### Balanced-map ordering/domain equivalence
 
 `balanced_map_domain_probe.out` captures the complete original `to_fmap_key_set`
 with no open hypotheses. The Lean theorem retains arbitrary comparators and
@@ -4771,3 +4771,7 @@ expression setup and local helpers. Fixed-constructor selection and discarded
 primitive induction bookkeeping are omitted. It captures the complete pass
 statement and native operand/operator/state/map/table carriers. This is source
 evidence, not a cross-assistant equivalence proof; whole Inst assembly remains open.
+`balanced_map_keyordered_probeScript.sml` replays the original local
+`key_ordered_to_fmap` proof with its full statement and no open hypotheses.
+It retains arbitrary trees and only the original good comparator premise.
+This source capture does not assert cross-assistant equivalence or production wiring.

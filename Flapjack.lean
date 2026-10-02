@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
 import Flapjack.Misc.BalancedMap.Domain
+import Flapjack.Misc.BalancedMap.KeyOrderedSemantics
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.Memcpy
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Submap
@@ -169,7 +170,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
 import Flapjack.Compiler.Backend.WordAlloc.SSASetup
 import Flapjack.Compiler.Encoders.AsmProps.Assertions
@@ -1429,6 +1429,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsLoopControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
