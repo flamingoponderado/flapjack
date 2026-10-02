@@ -1,0 +1,6 @@
+l3_round_modes=[SOME roundTiesToEven; SOME roundTowardZero; SOME roundTowardNegative;
+ SOME roundTowardPositive; NONE; NONE]
+round_static_modes=[SOME roundTiesToEven; SOME roundTowardZero; SOME roundTowardNegative;
+ SOME roundTowardPositive; NONE; NONE; NONE; SOME roundTiesToEven]
+round_dynamic_modes=[SOME roundTiesToEven; SOME roundTowardZero; SOME roundTowardNegative;
+ SOME roundTowardPositive; NONE; NONE; NONE; NONE]

@@ -5718,3 +5718,17 @@ Recursive allocation-argument probe captures seven full generic original source 
 Full allocation-argument compiler probe captures the complete original generic theorem application and35 nested-program theorem applications, matched in Lean across widths1/2/8/64/80. Includes allocations nested under MustTerminate/Loop/Seq/If/Call return/handler and arbitrary ignored tail handlers, with arbitrary configurations. These are original theorem applications, not direct EVAL or full original proof replay. The Lean arbitrary-program theorem discharges all case induction hypotheses internally and retains only perf=F. Full pass simulation/compiler composition remain unfinished. Selector: HOL_PROBE_ONLY=word_to_stack_alloc_compiler_probeScript.sml.
 
 `ssa_alloc_case_probe.out` captures the full original `ssa_cc_trans_correct` Alloc specialization with all six premises, source permutation/Error exemption, actual target result/frame and result-sensitive locals. Native SSA Alloc derives rename/count preparation, GC transport, normal restoration and exhausted-space stopping; full SSA assembly remains open.
+
+## Isolated native L3 floating-point section
+
+The selected roots are complete original FP comparison and float-to-integer
+state equations at both precisions, with their entire source dependency closure.
+The isolated module includes50 model declarations; full Run/NextRISCV and other
+instructions remain tracked elsewhere. The original comparison probe captures
+83 rows with80 transition kernel replays; the conversion probe captures96
+fully numeric tuples, all kernel replayed; the rounding probe covers22 inputs.
+The real rendering assumption is explicit as SOUNDNESS item8 and qualified
+at the18 declarations that directly use those operations. Remaining state
+access/update/rounding equations have individual complete source comparisons.
+The source-derived root selection validates dependencies; it does not prove
+HOL-to-Lean equivalence, and the broader pending model is not integrated here.
