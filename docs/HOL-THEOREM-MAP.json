@@ -54293,5 +54293,65 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5): word_allocProofScript.sml:3399-3477, ∀fc c alg prog k col_opt st in HOL binder order with exactly the two premises even_starting_locals st.locals ∧ wf_cutsets prog (no other premise); conclusion ∃perm'. let (res,rst) = evaluate (prog, st with permute := perm') in if res = SOME Error then T else let (res',rcst) = evaluate (word_alloc fc c alg k prog col_opt, st) in res = res' ∧ word_state_eq_rel rst rcst ∧ case res of NONE => T | SOME (Break _) => T | SOME (Continue _) => T | SOME _ => rst.locals = rcst.locals, rendered literally with Lean let-destructuring and a match with a wildcard last arm; the if on res = SOME Error is decided classically as in the accepted evaluate_apply_colour motive. evaluate, word_alloc, even_starting_locals, wf_cutsets and word_state_eq_rel are the exact tagged evaluate/wordAlloc/evenStartingLocals/wfCutsets/wordStateEqRel. Carrier translations exactly those of evaluate_apply_colour: fmap_as_finite_support [fpRegs, store] for the canonical WordSemStateFiniteExact state (same-module witness re-exported from WordSemStateExact) and words_as_type_indexed_bitvec for 'a word / 'a asm_config / 'a prog with [NeZero width]; C and F are the state's code/ffi type variables at Type. The proof follows HOL: oracle branch via clash_tree_colouring_ok then evaluate_apply_colour with strong_locals_rel from even_starting_locals and every_even_colour; allocator branch via get_forced_in_get_clash_tree, select_reg_alloc_correct, check_clash_tree_INJ with (λx. 2x) and total_colour_alt, then clash_tree_colouring_ok and evaluate_apply_colour. Axioms: propext, Classical.choice, Quot.sound. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path. Through word_alloc's select_reg_alloc (reg_alloc and linear_scan allocator states) and the WordSem evaluator, list subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "anub_def",
+    "lean_path": "Flapjack/Misc/Anub.lean",
+    "lean_name": "anub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): miscScript.sml:684-689, both clauses literal: anub [] acc = []; anub ((k,v)::ls) acc = if MEM k acc then anub ls acc else (k,v)::anub ls (k::acc); types ('a # 'b) list -> 'a list -> ('a # 'b) list with [DecidableEq α] deciding HOL MEM equality. Kernel-checked definition."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "anub_all_distinct_keys",
+    "lean_path": "Flapjack/Misc/Anub.lean",
+    "lean_name": "anubAllDistinctKeys",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): miscScript.sml:764-775, ∀ls acc. ALL_DISTINCT acc ⇒ ALL_DISTINCT (MAP FST (anub ls acc) ++ acc), ALL_DISTINCT as List.Nodup. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_unreachScript.sml",
+    "hol_name": "dest_Seq_Move_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach.lean",
+    "lean_name": "destSeqMove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachScript.sml:12-16, the three clauses literal (Move n l => SOME (n,l,Skip); Seq (Move n l) rest => SOME (n,l,rest); otherwise NONE). Sole carrier translation words_as_type_indexed_bitvec: HOL 'a prog to WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_unreach_def_probe kernel-replayed in Flapjack/Test/WordUnreachDefParity.lean. Proof-side definition; the executed RiscV/WordUnreach.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_unreachScript.sml",
+    "hol_name": "merge_moves_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach.lean",
+    "lean_name": "mergeMoves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachScript.sml:18-24, literal: l2' = MAP (λ(x,y). case ALOOKUP l1 y of NONE => (x,y) | SOME v => (x,v)) l2, result anub (l2' ++ l1) []; ALOOKUP on num keys as the untagged library rendering sptAListLookup (first match), anub the exact tagged anub. Original HOL probe word_unreach_def_probe kernel-replayed in Flapjack/Test/WordUnreachDefParity.lean. Proof-side definition; the executed RiscV/WordUnreach.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_unreachScript.sml",
+    "hol_name": "SimpSeq_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach.lean",
+    "lean_name": "simpSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachScript.sml:26-46, literal: default = Seq p1 p2; if p2 = Skip then p1 else case p1 of Skip => p2 | Raise/Return/Break/Continue => p1 | Move n1 l1 => case dest_Seq_Move p2 of NONE => default | SOME (n2,l2,rest) => let l = merge_moves l1 l2 in if rest = Skip then Move (MAX n1 n2) l else Seq (Move (MAX n1 n2) l) rest | _ => default (the commented-out n1 ≠ n2 guard is not code). HOL's p = Skip equality tests are decided by the Flapjack Decidable instance via isSkip (iff proved), equal to HOL equality with Skip. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a prog to WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_unreach_def_probe kernel-replayed in Flapjack/Test/WordUnreachDefParity.lean. Proof-side definition; the executed RiscV/WordUnreach.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_unreachScript.sml",
+    "hol_name": "Seq_assoc_right_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach.lean",
+    "lean_name": "seqAssocRight",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachScript.sml:48-68, clause by clause: Skip, Seq, If, MustTerminate, Call (NONE return continuation keeps the call and drops acc; SOME rewrites the return handler and optional exception handler with Seq_assoc_right _ Skip under SimpSeq), Loop, and the catchall SimpSeq p1 acc. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a prog to WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_unreach_def_probe kernel-replayed in Flapjack/Test/WordUnreachDefParity.lean. Proof-side definition; the executed RiscV/WordUnreach.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_unreachScript.sml",
+    "hol_name": "remove_unreach_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordUnreach.lean",
+    "lean_name": "removeUnreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachScript.sml:70-73, remove_unreach e = Seq_assoc_right e Skip. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a prog to WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_unreach_def_probe kernel-replayed in Flapjack/Test/WordUnreachDefParity.lean. Proof-side definition; the executed RiscV/WordUnreach.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
   }
 ]

@@ -3253,6 +3253,9 @@ run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out 
 run_probe word_alloc_def_probeScript.sml word_alloc_def_probe.out \
   wa_type wa_simple wa_irc wa_linear wa_oracle_ok wa_oracle_clash wa_stack_irc wa_stack_linear wa_phys \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_unreach_def_probeScript.sml word_unreach_def_probe.out \
+  wu_ru_type wu_mm_type wu_dsm_move wu_dsm_seq wu_dsm_other wu_mm_basic wu_mm_dup wu_ss_skip_r wu_ss_skip_l wu_ss_raise wu_ss_move_move wu_ss_move_rest wu_ss_move_other wu_ss_default wu_test wu_after_return wu_call_none wu_call_ret wu_if wu_loop \
+  "$cake_dir/compiler/backend/word_unreachScript.sml" "$cake_dir/compiler/backend"
 
 
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
