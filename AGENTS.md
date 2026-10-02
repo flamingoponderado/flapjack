@@ -159,7 +159,10 @@ not close its beads or certify its ports: coordinator acceptance and the usual
 source-comparison requirements still apply.
 
 Before reporting a port complete, build affected Lean modules, run `lake test`,
-`scripts/check-hol-refs.py`, and `scripts/check-warnings.sh`. For executable
+`scripts/check-hol-refs.py`, and `scripts/check-warnings.sh`. The warning gate
+excludes diagnostics from `Flapjack/Test/`, as requested by the maintainer;
+warnings from other modules and all build errors still fail the gate. Tests
+remain default build targets and must pass `lake test`. For executable
 compiler changes, compare the executed output with original Pancake where an
 oracle exists; see `docs/PARITY-TESTING.md`. State which checks actually ran and
 which remain pending (including CI).

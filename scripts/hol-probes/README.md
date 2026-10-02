@@ -5805,4 +5805,16 @@ Loc-only success from the original run/non-Error premises. Break/Continue
 retain their actual successful results and unchanged state. No target run or
 extra successful lookup is supplied. Full remaining simulation is still open.
 
+### Native StackRemove register relation updates
+
+`stack_remove_stateupdates_probeScript.sml` reproves complete
+`state_rel_set_var`, `state_rel_get_fp_var` and `state_rel_set_fp_var`,
+recording the full statements, all quantified types and kernel proof rows.
+Integer updates take arbitrary Word/Loc values below the original bound and
+preserve reserved registers and the full relation. FP lookup/update retain
+the original fixed 64-bit payload and have no integer-register bound. The
+Lean proofs use the actual evaluator state's canonical maps; no FP execution
+equation or rounding mode changes. These are instruction-simulation
+prerequisites, not the full `state_rel_inst` theorem.
+
 `ssa_call_returning_none_probe.out` captures the full original no-handler returning Call specialization of `ssa_cc_trans_correct`, retaining all six premises and its complete existential source-permutation/Error-exempt result, frame and result-sensitive locals. The native case adds only the genuine smaller continuation induction hypothesis and derives guards, argument prefix, callee stack transport, return restoration and oracle suffix internally. Handler SOME and full SSA assembly remain open. This capture supports source review, not cross-language equivalence.
