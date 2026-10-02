@@ -1,0 +1,25 @@
+line_ok_pre_light_imp_line_ok=∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (line :α line).
+  line_ok_pre c line ∧ line_enc_with_nop c.encode labs ffis pos line ∧
+  line_offset_ok labs ffis pos line ∧ line_labs_exist labs line ∧
+  line_ok_light c line ∧ (is_Label line ⇒ EVEN pos) ⇒
+  line_ok c labs ffis pos line
+line_ok_pre_light_imp_line_ok_types=(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(line :α line)::α line;
+all_enc_ok_pre_light_imp_all_enc_ok=∀(c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffis :ffiname list) (pos :num) (code :α sec list).
+  all_enc_with_nop c.encode labs ffis pos code ∧ all_enc_ok_pre c code ∧
+  all_enc_ok_light c code ∧ even_labels_strong pos code ∧
+  all_labs_exist labs code ∧ (offset_ok labs ffis pos code :bool) ⇒
+  all_enc_ok c labs ffis pos code
+all_enc_ok_pre_light_imp_all_enc_ok_types=(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(code :α sec list)::α sec list;
+label_six_guards=T
+asm_six_guards=T
+halt_six_guards=T
+install_six_guards=T
+ffi_six_guards=T
+jump_six_guards=T
+jumpcmp_six_guards=T
+loc_six_guards=T
+odd_empty_section=T
+call_light_guard=T
+code_six_guards=T
