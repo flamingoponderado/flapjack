@@ -5722,3 +5722,15 @@ Full allocation-argument compiler probe captures the complete original generic t
 `ssa_alloc_case_probe.out` captures the full original `ssa_cc_trans_correct` Alloc specialization with all six premises, source permutation/Error exemption, actual target result/frame and result-sensitive locals. Native SSA Alloc derives rename/count preparation, GC transport, normal restoration and exhausted-space stopping; full SSA assembly remains open.
 `ssa_install_case_probe.out` captures the full original `ssa_cc_trans_correct` Install specialization, all six premises and complete source-permutation/Error-exempt result/frame/locals conclusion. Native proof derives input guards, compiled preparation, actual callback execution, pointer copy and final rename. Full SSA/end-to-end assembly remain open.
 Return register-bound probe replays three complete original proofs (stack_move_reg_bound, copy_ret_aux_reg_bound, copy_ret_reg_bound), with no open hypotheses, and330 direct original EVAL whole-predicate observations matched by kernel fixtures. Widths1/2/8/64/80 cover zero/nonzero move and return counts, all Boolean modes,70bit frame offsets, and valid/violated continuation and temporary-register bounds. No full compiler register-bound theorem or cross-language equivalence is claimed. Selector: HOL_PROBE_ONLY=word_to_stack_return_reg_bound_probeScript.sml.
+`misc_wordlist_heap_probe.out` records full `word_list_def` and
+`word_list_exists_def` with independent generic payload types, plus fifteen
+fresh original kernel-proved fixtures. Forward lists use the current address
+for their singleton and modular addition for the tail. Existential lists retain
+the exact length cond inside STAR. Fixtures cover widths1/7/8/32/64/80, product
+payloads, overlapping/distinct pairs under zero stride, generic zero/singleton
+existentials, wrapping two-cell witnesses, wrong length and wrong address.
+`Flapjack.Test.MiscWordList` replays fifteen fixtures and derives the length
+condition from the empty separation partition; it adds no premise to the
+tagged definitions. Original existential proofs select bounded witnesses
+explicitly rather than searching through the recursive list definition. This
+is heap separation from miscScript, not WordToStack bitmap-word chunking.
