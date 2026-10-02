@@ -648,6 +648,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionColouring
 import Flapjack.Compiler.Backend.RegAlloc.ProductionExtraction
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInitTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionNumSet
+import Flapjack.Compiler.Backend.RegAlloc.ProductionBijection
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
