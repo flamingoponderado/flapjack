@@ -28,5 +28,7 @@
   "riscv$dfn'FCVT_D_W",
   "riscv$dfn'FCVT_D_WU",
   "riscv$dfn'FCVT_D_L",
-  "riscv$dfn'FCVT_D_LU"
+  "riscv$dfn'FCVT_D_LU",
+  "riscv$dfn'FCVT_S_D",
+  "riscv$dfn'FCVT_D_S"
 ]

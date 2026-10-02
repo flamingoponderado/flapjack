@@ -1022,6 +1022,7 @@ import Flapjack.Test.AsmSemMemOpsParity
 import Flapjack.Test.AsmSemStepParity
 import Flapjack.Test.AsmPropsEncoderCorrectParity
 import Flapjack.Test.MachineIeeeCrossFormatParity
+import Flapjack.Test.L3RiscvCrossFormatParity
 
 
 

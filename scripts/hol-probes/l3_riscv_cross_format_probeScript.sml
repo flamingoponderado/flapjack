@@ -1,0 +1,347 @@
+val _ = loadPath := (Globals.HOLDIR ^ "/examples/l3-machine-code/riscv/step") ::
+  (Globals.HOLDIR ^ "/examples/l3-machine-code/riscv/model") ::
+  (Globals.HOLDIR ^ "/examples/l3-machine-code/common") ::
+  (Globals.HOLDIR ^ "/examples/l3-machine-code/lib") :: !loadPath;
+load "riscv_stepTheory"; load "binary_ieeeLib"; load "wordsLib"; load "bitstringLib";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.max_print_depth := 1000;
+val _ = Parse.temp_remove_user_printer ("num.numeral_computations", mk_var("n", numSyntax.num));
+val () = computeLib.add_funs (map snd (DB.definitions "riscv"));
+val () = computeLib.add_funs (map snd (DB.definitions "riscv_step"));
+val () = computeLib.add_funs [machine_ieeeTheory.int_to_fp32_def,
+ machine_ieeeTheory.int_to_fp64_def, machine_ieeeTheory.real_to_fp32_def,
+ machine_ieeeTheory.real_to_fp64_def, machine_ieeeTheory.float_to_fp32_def,
+ machine_ieeeTheory.float_to_fp64_def];
+val probe_dir = case OS.Process.getEnv "FLAPJACK_HOL_PROBE_DIR" of
+ SOME p => p | NONE => raise Fail "FLAPJACK_HOL_PROBE_DIR is required";
+val _ = QUse.use (OS.Path.concat(probe_dir,"binary_ieee_directed_certificates.sml"));
+fun checked_float_round tm = let
+ val (mode,_,_,_,_) = binary_ieeeSyntax.dest_float_round tm
+ in if mode ~~ binary_ieeeSyntax.roundTowardPositive_tm orelse
+       mode ~~ binary_ieeeSyntax.roundTowardNegative_tm
+ then let
+ val (m,z,x,t,w) = binary_ieeeSyntax.dest_float_round tm
+ val up = m ~~ binary_ieeeSyntax.roundTowardPositive_tm
+ val found = FlapjackDirected.discover_directed_candidate up x (t,w)
+ (* Candidate discovery is untrusted. Rebuild its bits at the original HOL
+    result carrier, including compound dimensions such as (:8 + 1), before
+    the independent original kernel certificate checks the complete result. *)
+ val (_,(_,en,sn)) = binary_ieeeSyntax.triple_of_float found
+ val (pt,et) = binary_ieeeSyntax.dest_float_ty (type_of tm)
+ val a = binary_ieeeSyntax.mk_floating_point
+   (binary_ieeeSyntax.mk_float_sign found,
+    wordsSyntax.mk_n2w (numSyntax.mk_numeral en,et),
+    wordsSyntax.mk_n2w (numSyntax.mk_numeral sn,pt))
+ val th = FlapjackDirected.directed_candidate_certificate up z x a
+ in if aconv (lhs (concl th)) tm then th
+ else (TextIO.output(TextIO.stdErr, "INPUT " ^ term_to_string tm ^ "\nCERT " ^ term_to_string (lhs(concl th)) ^ "\n");
+       raise Fail "directed input mismatch") end
+ else binary_ieeeLib.float_round_CONV tm end
+ handle HOL_ERR err => raise Fail (Feedback.exn_to_string (HOL_ERR err));
+val () = computeLib.upd_compset (computeLib.add_conv
+  (binary_ieeeSyntax.float_round_tm, 3, checked_float_round));
+val conv = EVAL THENC DEPTH_CONV bitstringLib.v2w_n2w_CONV THENC EVAL;
+fun observe label tm = let val th = conv tm in
+ if null (hyp th) then (print(label ^ "="); print_term(rhs(concl th)); print "\n")
+ else raise Fail (label ^ " has undischarged assumptions") end;
+val () = computeLib.add_funs [machine_ieeeTheory.convert_def,
+ machine_ieeeTheory.fp32_to_fp64_def, machine_ieeeTheory.fp64_to_fp32_def,
+ machine_ieeeTheory.fp32_to_fp64_with_flags_def, machine_ieeeTheory.fp64_to_fp32_with_flags_def,
+ machine_ieeeTheory.real_to_fp32_with_flags_def, machine_ieeeTheory.real_to_fp64_with_flags_def];
+val _ = observe "fcvt_s_d_zero_rte" ``let r = dfn'FCVT_S_D (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x0w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_negative_zero_rte" ``let r = dfn'FCVT_S_D (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x8000000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_negative_zero_rtz" ``let r = dfn'FCVT_S_D (3w,1w,1w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x8000000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_negative_zero_down" ``let r = dfn'FCVT_S_D (3w,1w,2w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x8000000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_negative_zero_up" ``let r = dfn'FCVT_S_D (3w,1w,3w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x8000000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_one_rte" ``let r = dfn'FCVT_S_D (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3ff0000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_one_rtz" ``let r = dfn'FCVT_S_D (3w,1w,1w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3ff0000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_one_down" ``let r = dfn'FCVT_S_D (3w,1w,2w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3ff0000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_one_up" ``let r = dfn'FCVT_S_D (3w,1w,3w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3ff0000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_one_dynamic_up" ``let r = dfn'FCVT_S_D (3w,1w,7w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3ff0000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 3w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_one_invalid_static" ``let r = dfn'FCVT_S_D (3w,1w,4w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3ff0000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_one_invalid_dynamic" ``let r = dfn'FCVT_S_D (3w,1w,7w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3ff0000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 4w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_tie_rte" ``let r = dfn'FCVT_S_D (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3ff0000010000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_tie_rtz" ``let r = dfn'FCVT_S_D (3w,1w,1w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3ff0000010000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_tie_down" ``let r = dfn'FCVT_S_D (3w,1w,2w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3ff0000010000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_tie_up" ``let r = dfn'FCVT_S_D (3w,1w,3w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3ff0000010000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_pinf_rte" ``let r = dfn'FCVT_S_D (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x7ff0000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_s_d_ninf_rte" ``let r = dfn'FCVT_S_D (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0xfff0000000000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_zero_rte" ``let r = dfn'FCVT_D_S (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x0w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_negative_zero_rte" ``let r = dfn'FCVT_D_S (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x80000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_negative_zero_rtz" ``let r = dfn'FCVT_D_S (3w,1w,1w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x80000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_negative_zero_down" ``let r = dfn'FCVT_D_S (3w,1w,2w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x80000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_negative_zero_up" ``let r = dfn'FCVT_D_S (3w,1w,3w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x80000000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_one_rte" ``let r = dfn'FCVT_D_S (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3f800000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_one_rtz" ``let r = dfn'FCVT_D_S (3w,1w,1w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3f800000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_one_down" ``let r = dfn'FCVT_D_S (3w,1w,2w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3f800000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_one_up" ``let r = dfn'FCVT_D_S (3w,1w,3w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3f800000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_one_dynamic_up" ``let r = dfn'FCVT_D_S (3w,1w,7w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3f800000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 3w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_one_invalid_static" ``let r = dfn'FCVT_D_S (3w,1w,4w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3f800000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_one_invalid_dynamic" ``let r = dfn'FCVT_D_S (3w,1w,7w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x3f800000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 4w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_min_subnormal_rte" ``let r = dfn'FCVT_D_S (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x1w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_pinf_rte" ``let r = dfn'FCVT_D_S (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0x7f800000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
+val _ = observe "fcvt_d_s_ninf_rte" ``let r = dfn'FCVT_D_S (3w,1w,0w) ((ARB:riscv_state) with <| procID := 7w;
+ c_gpr := (\_ _. 99w); c_NextFetch := (\_. NONE);
+ c_fpr := (\c r. if c = 7w then if r = 1w then 0xff800000w else 0xcafe000000000000w else 0xbbbb000000000000w);
+ c_update := (\_. (ARB:StateDelta) with data1 := SOME 42w);
+ c_UCSR := (\_. (ARB:UserCSR) with fpcsr := (ARB:FPCSR) with <| NV := F; NX := T; FRM := 0w |>);
+ c_MCSR := (\_. (ARB:MachineCSR) with mstatus := (ARB:mstatus) with <| MFS := 0w; MSD := F |>) |>) in
+ (FPRD 3w r, FPRD 1w r, (MCSR r).mstatus.MFS, (MCSR r).mstatus.MSD,
+  (Delta r).data1, (fcsr r).NV, (fcsr r).NX, r.c_fpr 8w 3w,
+  case NextFetch r of SOME (Trap t) => t.trap = Illegal_Instr /\ t.badaddr = NONE | _ => F)``;
