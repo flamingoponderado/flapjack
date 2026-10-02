@@ -6064,3 +6064,17 @@ Assembler-naming Inst probe captures the original generic seven-guard case appli
 ### Generational allocator partial-case statement capture
 
 `stack_alloc_generational_alloc_statement_probeScript.sml` and its `.out` capture the literal original `alloc_correct_lemma_Generational` statement, explicitly resolving `stack_alloc$compile`. The typed free variables confirm that `c` is the compiler config. This is statement elaboration evidence, not an executable oracle or proof replay. The Lean partial case retains all original premises and conclusions with the original partial-selector case condition; the full collector case remains open.
+
+### Complete native L3 square-root equations
+
+`l3_riscv_sqrt_probeScript.sml` captures 56 original FSQRT_S/D cases over
+all four supported modes, dynamic rounding and invalid static/dynamic modes.
+Thirty-six numeric ten-field state tuples cover positive infinity, negative
+zero and traps. Twenty closed whole-state equations cover positive finite four
+and invalid negative one while retaining symbolic rounding and quiet-NaN
+choices. These equations preserve all flags before the machine lift takes SND;
+they do not claim numerical finite rounding or fix a NaN payload.
+`Flapjack.Test.L3RiscvSqrtParity` kernel-checks the same 56 cases. Both formats
+use the generic rational-cut square-root specification; existing all-mode
+Mathlib real agreement covers both carriers. The external HOL correspondence
+assumption in docs/SOUNDNESS.md item 8 and full-model obligations remain.

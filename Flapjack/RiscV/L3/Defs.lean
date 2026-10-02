@@ -2,6 +2,7 @@ import Flapjack.RiscV.L3.Support
 import Flapjack.Misc.BinaryIeeeRound
 import Flapjack.Misc.BinaryIeeeConvert
 import Flapjack.Misc.BinaryIeeeArith
+import Flapjack.Misc.BinaryIeeeSqrt
 import Flapjack.Misc.MachineIeee.Convert
 
 /-!
@@ -344,6 +345,20 @@ noncomputable def «dfn'FSUB_D» (arg0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 
   | (rd, (rs1, (rs2, fprnd))) =>
   (fun (state : riscv_state) => (match (round fprnd state) with | none => (signalException ExceptionType.Illegal_Instr state) | some r => (writeFPRD ((rd, ((holFloatToFp64 (holFloatSub r (holFp64ToFloat (FPRD rs1 state)) (holFp64ToFloat (FPRD rs2 state))).2)))) state)))
 
+/-- HOL `riscv$dfn'FSQRT_S` (`dfn'FSQRT_S_def`), mechanically rendered from the elaborated HOL definition. Uses the original fixed binary32/binary64 field codecs and generic IEEE value/comparison operations with `(reals_as_rational_cuts)` (docs/SOUNDNESS.md item 8). Existing model dependency/body acceptance remains open. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FSQRT_S_def" (reals_as_rational_cuts)]
+noncomputable def «dfn'FSQRT_S» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, (rs, fprnd)) =>
+  (fun (state : riscv_state) => (match (round fprnd state) with | none => (signalException ExceptionType.Illegal_Instr state) | some r => (writeFPRS ((rd, ((holFloatToFp32 (holFloatSqrt r (holFp32ToFloat (FPRS rs state))).2)))) state)))
+
+/-- HOL `riscv$dfn'FSQRT_D` (`dfn'FSQRT_D_def`), mechanically rendered from the elaborated HOL definition. Uses the original fixed binary32/binary64 field codecs and generic IEEE value/comparison operations with `(reals_as_rational_cuts)` (docs/SOUNDNESS.md item 8). Existing model dependency/body acceptance remains open. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FSQRT_D_def" (reals_as_rational_cuts)]
+noncomputable def «dfn'FSQRT_D» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, (rs, fprnd)) =>
+  (fun (state : riscv_state) => (match (round fprnd state) with | none => (signalException ExceptionType.Illegal_Instr state) | some r => (writeFPRD ((rd, ((holFloatToFp64 (holFloatSqrt r (holFp64ToFloat (FPRD rs state))).2)))) state)))
+
 /-- HOL `riscv$dfn'FMUL_S` (`dfn'FMUL_S_def`), mechanically rendered from the elaborated HOL definition. Uses the original fixed binary32/binary64 field codecs and generic IEEE value/comparison operations with `(reals_as_rational_cuts)` (docs/SOUNDNESS.md item 8). Existing model dependency/body acceptance remains open. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FMUL_S_def" (reals_as_rational_cuts)]
 noncomputable def «dfn'FMUL_S» (arg0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3))))) : (riscv_state → riscv_state) :=
@@ -470,6 +485,5 @@ noncomputable def «dfn'FADD_D» (arg0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "NextFetch_def"]
 def NextFetch (state : riscv_state) : (Option TransferControl) :=
   (state.c_NextFetch state.procID)
-
 
 end Flapjack.RiscV.L3

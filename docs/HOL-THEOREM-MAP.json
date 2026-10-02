@@ -65412,5 +65412,23 @@
     "statement_status": "reviewed_reals_as_rational_cuts",
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source/body comparison 2026-10-02, bead .13.8.2.8: literal original line 9597; fixed rd/rs1/rs2 word5, rounding word3, native whole state->state. Complete round NONE->Illegal_Instr and SOME->writeFPRS/FPRD with original operands and state. Full binary_ieee arithmetic preserves ordered NaN/signalling tests, quiet-NaN choice, infinities, signed zero and all six rounding flags; machine lift selects SND and does not update NV/NX. Canonical72-definition original dependency closure reproduced0fail. Fresh140original regressions:132numeric ten-field state tuples and8closed whole-state FDIV zero/zero NaN equations, matched by140Lean kernel checks; symbolic choice payload remains unspecified. Writes preserve upper32 for S, replace64 for D, and exact MFS/MSD/delta/other-core behavior. The reals_as_rational_cuts rendering retains docs/SOUNDNESS.md item 8 assumption, not cross-assistant equivalence or full model/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FSQRT_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSQRT_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.10: complete original line8733, fixed rd/rs word5 and rounding word3 with native state->state. Retains round NONE->Illegal_Instr and original SOME mode, exact FPRS/FPRD source and writeFPRS/FPRD destination. Full generic holFloatSqrt follows binary_ieeeScript574-585: positive-sign NaN signalling and quiet choice, positive infinity, finite sqrt rounding, negativezero identity and invalid other negative input. All six flags preserved by generic specification then original machine lift discards SND flags without NV/NX updates. Generic all-mode holFloatSqrt_agreement in BinaryIeeeSqrt/RoundAgreement covers both23/8 and52/11 carriers; binary64 numeric algorithm is not substituted for binary32. Canonical74definitionclosure0fail. Fresh56original state regressions:36numeric special/trap tuples +20complete symbolic finite/invalid equations, all matching Lean kernel checks. Finite choice equations retain the entire original round_with_flags result before SND; no finite numeric rounding claim or NaN payload choice. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external HOL carrier correspondence; internal Mathlib agreement is not HOL-to-Lean equivalence. Full Run/Next/model/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FSQRT_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSQRT_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.10: complete original line9623, fixed rd/rs word5 and rounding word3 with native state->state. Retains round NONE->Illegal_Instr and original SOME mode, exact FPRS/FPRD source and writeFPRS/FPRD destination. Full generic holFloatSqrt follows binary_ieeeScript574-585: positive-sign NaN signalling and quiet choice, positive infinity, finite sqrt rounding, negativezero identity and invalid other negative input. All six flags preserved by generic specification then original machine lift discards SND flags without NV/NX updates. Generic all-mode holFloatSqrt_agreement in BinaryIeeeSqrt/RoundAgreement covers both23/8 and52/11 carriers; binary64 numeric algorithm is not substituted for binary32. Canonical74definitionclosure0fail. Fresh56original state regressions:36numeric special/trap tuples +20complete symbolic finite/invalid equations, all matching Lean kernel checks. Finite choice equations retain the entire original round_with_flags result before SND; no finite numeric rounding claim or NaN payload choice. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external HOL carrier correspondence; internal Mathlib agreement is not HOL-to-Lean equivalence. Full Run/Next/model/compiler correctness remain open."
   }
 ]

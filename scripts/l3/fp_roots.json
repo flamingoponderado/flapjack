@@ -38,5 +38,7 @@
   "riscv$dfn'FADD_D",
   "riscv$dfn'FSUB_D",
   "riscv$dfn'FMUL_D",
-  "riscv$dfn'FDIV_D"
+  "riscv$dfn'FDIV_D",
+  "riscv$dfn'FSQRT_S",
+  "riscv$dfn'FSQRT_D"
 ]
