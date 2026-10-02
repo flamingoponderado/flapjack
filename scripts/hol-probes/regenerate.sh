@@ -4423,3 +4423,7 @@ run_probe balanced_map_balance_arithmetic_probeScript.sml balanced_map_balance_a
 run_probe balanced_map_membership_probeScript.sml balanced_map_membership_probe.out \
   bmm_theorem bmm_nil bmm_root bmm_left_absent bmm_right_absent bmm_left_present bmm_right_present \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_null_probeScript.sml balanced_map_null_probe.out \
+  bmn_full bmn_typed bmn_tip bmn_bin_badsize \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

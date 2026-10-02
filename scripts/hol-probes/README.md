@@ -4923,3 +4923,10 @@ The original `gen_tac` script alias is spelled `Tactic.GEN_TAC` in standalone ba
 Six actual member observations use Bool queries, Nat stored keys/payloads, arbitrary
 comparators and malformed cached sizes. Kernel fixtures cover nil, root equality,
 absent left/right branches and successful left/right recursive searches.
+
+### Balanced-map null characterization
+
+`balanced_map_null_probeScript.sml` captures the complete exported `null_thm`
+with and without full types, checks no open hypotheses and observes Tip and
+malformed cached-size Bin. `BalancedMapNullParity` checks the full independent
+key/query theorem and a Bool/Nat/String nonempty root, without comparator laws.
