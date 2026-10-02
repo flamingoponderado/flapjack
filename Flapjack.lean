@@ -165,6 +165,7 @@ import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
 import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
+import Flapjack.Compiler.Backend.StackProps.CallArgs
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
 import Flapjack.Compiler.Backend.StackLang.ProductionWordBoundary
@@ -764,6 +765,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
 import Flapjack.Compiler.Backend.Semantics.StackSem.InstCase
 import Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
@@ -1481,6 +1483,9 @@ import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.FiniteMap.MapKeys
 import Flapjack.Compiler.Backend.StackNames.Proofs.RenameState
 import Flapjack.Compiler.Backend.StackNames.Proofs.CompCorrect
+import Flapjack.Compiler.Backend.StackNames.Proofs.CompileSemantics
+import Flapjack.Compiler.Backend.StackNames.Proofs.MakeInit
+import Flapjack.Compiler.Backend.StackNames.Proofs.LabelsCallArgs
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
@@ -1567,6 +1572,7 @@ import Flapjack.Compiler.Backend.WordCopy.Proofs.Store
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Inst
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
 import Flapjack.Misc.Logroot
+import Flapjack.Misc.PredSet
 import Flapjack.Misc.Bit
 import Flapjack.Misc.Alignment
 import Flapjack.Misc.Alignment.Production
