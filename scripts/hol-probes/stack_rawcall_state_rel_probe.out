@@ -1,0 +1,4 @@
+state_rel_type=:num sptree$num_map -> (α, β, γ) state -> (α, β, γ) state -> bool
+state_rel_definition=∀i s t. state_rel i s t ⇔ ∃c. domain c = domain s.code ∧ t = s with code := c ∧ state_ok i s.code ∧ ∀n b. lookup n s.code = SOME b ⇒ ∃i. state_ok i s.code ∧ lookup n c = SOME (comp_top i b)
+state_rel_self=state_ok i s.code ⇒ state_rel i s s
+state_rel_oracle=state_rel i s t ⇒ t.compile_oracle = s.compile_oracle

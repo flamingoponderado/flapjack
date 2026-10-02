@@ -1,0 +1,36 @@
+remove_labels_thm=remove_labels (clock :num) (conf :α asm_config) (init_pos :num)
+  (init_labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (code :α sec list) =
+SOME ((code2 :α sec list),(labs :num sptree$num_map sptree$num_map)) ∧
+enc_ok conf ∧ EVERY (sec_ends_with_label :α sec -> bool) code ∧
+EVERY (sec_labels_ok :α sec -> bool) code ∧
+ALL_DISTINCT (MAP (Section_num :α sec -> num) code) ∧
+EVERY
+  ((ALL_DISTINCT :(num # num) list -> bool) ∘
+   (extract_labels :α line list -> (num # num) list) ∘
+   (Section_lines :α sec -> α line list)) code ∧
+DISJOINT (domain init_labs :num -> bool)
+  (set (MAP (Section_num :α sec -> num) code)) ∧
+restrict_nonzero (get_labels code) ⊆
+get_code_labels code ∪ labs_domain init_labs ∧ all_enc_ok_pre conf code ∧
+EVEN init_pos ∧
+(∀(l1 :num) (l2 :num). OPTION_ALL EVEN (lab_lookup l1 l2 init_labs)) ⇒
+all_enc_ok conf labs ffi_names init_pos code2 ∧ code_similar code code2 ∧
+(has_odd_inst code2 ⇒ conf.code_alignment = (0 :num)) ∧
+(∀(l1 :num) (l2 :num) (x :num). lab_lookup l1 l2 labs = SOME x ⇒ EVEN x) ∧
+(∀(l1 :num) (l2 :num) (x :num).
+   lab_lookup l1 l2 init_labs = SOME x ⇒ lab_lookup l1 l2 labs = SOME x) ∧
+∀(l1 :num) (l2 :num) (x2 :num).
+  loc_to_pc l1 l2 code = SOME x2 ⇒
+  lab_lookup l1 l2 labs = SOME (pos_val x2 init_pos code2)
+remove_labels_thm_types=(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(code2 :α sec list)::α sec list;(code :α sec list)::α sec list;(ffi_names :ffiname list)::ffiname list;(init_labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(init_pos :num)::num;(conf :α asm_config)::α asm_config;(clock :num)::num;
+hypotheses=0
+empty=T
+stale_asm=T
+labels_only=T
+halt=T
+call_reject=T
+acc_preserve=T
+two_byte=T
+width1_large=T
+width80_large=T

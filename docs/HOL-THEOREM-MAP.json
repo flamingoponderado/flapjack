@@ -66957,5 +66957,28 @@
     "hol_name": "translateAddr_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript5624-5691 complete wrapper. MMPRV selects MPRV1 only for Data; other cases use MPRV. The VM selector always calls vmType and retains its returned state. Mbare and any Machine pair return the original address; Sv39 and Sv48 call exact translate64 at levels two and three. Other pairs return None. Invalid VM selectors retain vmType's original exception and canonical unspecified VM result; no preferred mode or default is introduced. All native carriers, fixed word widths, arbitrary addresses and core maps remain unchanged, with no alignment, privilege or successful-translation premise. Full original definition/type captured;256 original observations and kernel replays cover all8specified VM modes,2fetch kinds,2access kinds,4privilege codes and MMPRV false/true with complementary MPRV1. Observe full optional physical address, all9entry fields×16current-core slots and PTE memory word. Other state fields remain unobserved in both languages; the regression scope does not replace full source comparison. Canonical unspecified invalid VM result is inherited from reviewed vmType; no concrete choice is asserted."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/StateRelation.lean",
+    "lean_name": "stateRel",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "state_rel_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 bead .4.9: literal source30-46 full relation. Arbitrary info Spt Nat and full imported 22-field StackSem state, positive width and independently quantified Type0 configuration/FFI. Existential Spt code has exact predicate-domain equality; target is whole source updated only at code. Therefore all other fields, including compile and compileOracle, remain equal; commented source transport clauses are inactive. Outer state_ok info source.code retained. Every successful source code lookup retains existential independent entryInfo, state_ok entryInfo source.code and exact compTop lookup. Inner source i shadows outer i; no equality between witnesses added. Native code uses actual Spt, not finite-support qualifier. Whole-state equality includes canonical regs/fpRegs/store; imported owner reused without shadowing and same-module genuine roundtrip witness reexported. Lists remain lists, widths and full word/program/FFI carriers unchanged under existing standard translation. Original HOL full type/equation capture and assumption-free generic self/oracle consequences terminal PASS, matching kernel generic proofs. No evaluation/validity/success premise or changed state field. This definition does not establish comp_correct, compile_semantics or executed compiler replacement."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabelsCorrectness.lean",
+    "lean_name": "removeLabels_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "remove_labels_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison6169-6215: complete original eleven guards and six conclusions retained over actual remove_labels success. Encoder validity, ending/valid/distinct labels, domain disjointness, restricted reference inclusion, original encoding precondition, initial parity and OPTION_ALL parity are the only source guards. Initial encoding establishes all genuine loop prerequisites, full remove_labels_loop theorem establishes output encoding validity/similarity/odd-instruction alignment/alllookup parity/initiallookup preservation and every source location-to-physical-position lookup. No callback, returned state validity or desired lookup premise. Native constructor carriers/opaque mlstring and positive-width word translation reviewed; canonical nested numeric sptree is not fmap-qualified. Full139 dependency retains independent arbitrary unused nop binder. Exported original complete theorem/fulltypes0openhyps; nine fresh original/native cases incl arbitrary accumulator preservation, both encoder alignments and1/80bit widths, plus fullgeneric fixture and actual discharged11guard theorem consumer. Kernel checking and oracle regressions do not establish cross-language equivalence or full machine/compiler simulation."
   }
 ]
