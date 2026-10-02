@@ -5748,3 +5748,7 @@ run_probe stack_remove_comp_code_buffer_probeScript.sml stack_remove_comp_code_b
 run_probe stack_remove_bytearray_read_probeScript.sml stack_remove_bytearray_read_probe.out \
   read_bytearray_IMP_read_bytearray_statement read_bytearray_IMP_read_bytearray_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_raw_call_probeScript.sml stack_remove_comp_raw_call_probe.out \
+  cc_raw_call_statement cc_raw_call_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

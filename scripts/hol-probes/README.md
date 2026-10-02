@@ -6194,3 +6194,5 @@ sptree_wf_definition_probeScript.sml captures the full original wf_def and254 co
 `stack_remove_comp_code_buffer_probeScript.sml` proves the full original four-premise CodeBufferWrite case using the literal original case body and local getVar helper, without assuming full `comp_correct`. Two rows record its scoped statement and proof success.
 
 `stack_remove_bytearray_read_probeScript.sml` replays the complete original bytearray-read preservation proof and its original local memory/read/load prerequisites. Two rows capture the full arbitrary-length/address statement and kernel proof success.
+
+`stack_remove_comp_raw_call_probeScript.sml` replays the complete original RawCall case with actual Seq-code/nonzero-clock guarded body IH and original local lookup/dec-clock helpers. It assumes no full `comp_correct`; two rows record the scoped statement and proof success.
