@@ -50576,5 +50576,50 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 full source comparison 2026-10-02, bead flapjack-word-stack-asm-remove: original11184-11255 quantifies same-dimension asm config/source WordLang program, arbitrary bitmap/frame pair, and perf, with only frame-first+1<reg_count-LENGTH avoid_regs and perf=F. Lean retains exactly those hypotheses and proves stack_asm_remove of actual comp first projection for all26 source constructors. Source proper-subprogram induction hypotheses discharged internally at actual threaded bitmap states, including returned and handler bodies. No post_alloc_conventions, minimum-frame, target-safety/result, or extra range premise. Instruction proof covers all arithmetic/memory/FP cases, source Move arbitrary formatted parmove output; original destination/live/movement/return helpers reused. words_as_type_indexed_bitvec records only standard positive word dimension translation. Fresh original full theorem with hyp=[] and280 full source theorem applications at widths1/2/8/64/80 and frames0/4, all source constructor families, nested bitmap updates, arbitrary70-bit fields and spill arguments; regression evidence only, not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameHelpers.lean",
+    "lean_name": "callDestStackAsmName",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "call_dest_stack_asm_name",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 10958-10971: actual destination output equality implies full setup naming plus INR <= frame-first+1, no room or reg_name premise. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameHelpers.lean",
+    "lean_name": "wLiveStackAsmName",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wLive_stack_asm_name",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 10973-10983: reduced-count room and actual live pair output equality imply setup naming. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameHelpers.lean",
+    "lean_name": "stackMoveStackAsmName",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_stack_asm_name",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 10985-10991: unconditional arbitrary continuation movement naming iff, no reg_name premise. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameHelpers.lean",
+    "lean_name": "copyRetAuxStackAsmName",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_aux_stack_asm_name",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 10993-10999: unconditional return auxiliary naming for all register/offset/count naturals. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameHelpers.lean",
+    "lean_name": "copyRetStackAsmName",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_stack_asm_name",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, bead flapjack-word-stack-asm-name-helpers: original 11001-11005: unconditional complete wrapper iff, both performance/handler flags and independent original list/frame-tail types. stack_asm_name checks inst_name and therefore shares config/program word dimension; words_as_type_indexed_bitvec records only standard positive-width translation. All exact native operations and arbitrary original scalar/list/frame/bitmap carriers retained. No target safety, post-allocation/minimum-frame, extra bounds or strengthened performance premise. Fresh five literal original source proof replays hyp=[] and naming predicate observations are regression evidence, not HOL-to-Lean equivalence."
   }
 ]

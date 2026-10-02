@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackAsmNameHelpersParity
 import Flapjack.Test.WordToStackAsmRemoveCompilerParity
 import Flapjack.Test.WordToStackAsmRemoveHelpersParity
 import Flapjack.Test.StackPropsRemoveIndependentParity
