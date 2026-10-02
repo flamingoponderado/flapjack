@@ -5345,3 +5345,33 @@ Native insertion-wf probes replay both complete original proofs and168 whole
 native Spt/input/output-wf fixtures. Matching kernel cases retain empty and
 unequal lists, repeated keys, Nat/Bool payloads and malformed trees.
 Regression evidence is not HOL-to-Lean equivalence.
+`target_next_shared_mem_probeScript.sml` captures the complete original
+`next_interference_SharedMem` statement with no open hypotheses; native
+assembly is in `TargetProps/NextSharedMem.lean`.
+The capture also replays the entire original `lookup_thm` statement and proof,
+with typed closed output, and evaluates left/root/right hits, whole-tree and
+child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
+consume the full generic theorem and derive actual semantic finite-map results
+for nonempty children and a distinct equivalent key with an independent payload.
+
+`ssa_cc_trans_correct_move_probe` captures the original proved theorem
+`ssa_cc_trans_correct` specialized to arbitrary `Move pri ls`, with seven
+original inferred carriers. Original resumed Move proof7740–7858 and all six
+premises/full simulation were manually compared with `SSASemanticMove.lean`.
+The port derives the provisional parallel-write locals relation and filtered
+force-rename premises from actual successful source reads; duplicate destination
+and missing-read errors retain the original exemption. Bounded list observations
+use the existing guarded holEl translation. This is a theorem specialization
+capture, not an isolated tactic replay or equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_move_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Full double-right rotation correctness
+
+`balanced_map_doubleR_probeScript.sml` replays the entire original local
+`doubleR_thm` proof and its literal local antisymmetry, balanced_lem4,
+structural-size and map prerequisites. Equivalent batch names are qualified;
+the closed typed result retains all nine premises and both conclusions.
+Defined double rotation, invariant, three key lookups and invalid cached-size
+rejection are original observations. `BalancedMapDoubleRParity` kernel-checks
+both full native conclusions and derives the three semantic lookups. The
+inner Bin is proved from original premises, with no missing-output assumption.

@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.EncoderStepState
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EncodingNonempty
 import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
 import Flapjack.Test.LabToTargetSimpleEncoderParity
+import Flapjack.Misc.BalancedMap.RotationCorrect.DoubleR
 import Flapjack.Misc.BalancedMap.RotationCorrect.SingleR
 import Flapjack.Test.LabToTargetEncd0Parity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct

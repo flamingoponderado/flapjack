@@ -60277,5 +60277,16 @@
     "hol_name": "wf_fromList2",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-insert-wf): full original3570-3574/3703-3709 arbitrary payload/list quantifiers, constructor-for-constructor native Spt and actual alist_insert/fromList2 operations. Sole original wf input premise retained for insertion; fromList2 unconditional. Bool wf=true translates the source proposition. Literal original full proofs hyp=[] and168 matching whole-tree/input/output-wf Nat/Bool fixtures retain unequal lengths, repeated keys, empties, malformed carriers. No held HD/EL or trust policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/DoubleR.lean",
+    "lean_name": "doubleRThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "doubleR_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL1213-1266: complete original nine premise conjuncts and BOTH invariant plus semantic finite-map union/update equality. Generic original keys/payload/comparator/cached sizes/children retained. Original premises themselves rule out inner Tip; specified chosen-function doubleR Bin/Bin clause only, no unspecified output, extra target premise, universal context assumption or cross-prover choice equivalence. Three distinct comparator equivalence classes and absent child lookups derived from goodCmp/keyOrdered, not assumed. Canonical to_fmap observation representation only, root update and left-biased union precedence retained. Entire literal original local theorem proof with antisymmetry/arithmetic/structural/map prerequisites replayed hyp=[]; complete generic kernel proof and both-conclusion/all-three-key fixtures."
   }
 ]

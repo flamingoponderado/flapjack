@@ -1,0 +1,7 @@
+bmdr_full=⊢ ∀(k :α) (v :β) (r :(α, β) balanced_map) (cmp :α -> α -> ordering) (n :num) (k' :α) (v' :β) (b :(α, β) balanced_map) (b0 :(α, β) balanced_map). good_cmp cmp ∧ key_ordered cmp k (Bin n k' v' b b0) Greater ∧ key_ordered cmp k r Less ∧ almost_balancedL n (size r) ∧ ¬(size r + n ≤ (1 :num)) ∧ n > delta * size r ∧ ¬(size b0 < ratio * size b) ∧ invariant cmp (Bin n k' v' b b0) ∧ invariant cmp r ⇒ invariant cmp (doubleR k v (Bin n k' v' b b0) r) ∧ to_fmap cmp (doubleR k v (Bin n k' v' b b0) r) = (to_fmap cmp (Bin n k' v' b b0) ⊌ to_fmap cmp r)⟨key_set cmp k ↦ v⟩
+bmdr_tree=Bin (3 :num) (1 :num) (10 :num) (Bin (1 :num) (0 :num) (0 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Bin (1 :num) (2 :num) (20 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map))
+bmdr_invariant=T
+bmdr_lookup0=SOME (0 :num)
+bmdr_lookup1=SOME (10 :num)
+bmdr_lookup2=SOME (20 :num)
+bmdr_badsize=F
