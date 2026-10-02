@@ -66715,5 +66715,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.5: originalcompile_def107-112 whole original list collect_info LN computed once then MAP name/body to name/comp_top shared info body. Native HolProg positive word dimension and actual Spt collection; keys, order, duplicates, empty list and top-level Seq preserved, no success/lookup/validity hypothesis. Sole conventional word translation. Five fresh complete original output lists independently kernel replayed (forward reference, last recognized duplicate with ignored bare entry, bare-only fallback, zero entry/top Seq, empty). Executed broad replacement remains OPEN .4.3; no full simulation or production claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_seq_neq_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompSeqShape.lean",
+    "lean_name": "compSeqNeqImp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.7: original74-83 full comp_seq_neq_IMP. Arbitrary native first/second/default programs and actual Spt Nat info; sole original comp_seq inequality implies exists natural k,dest with first StackFree k and second Call NONE(INL dest)NONE. No successful lookup, frame bound, target evaluation or extra shape premise. Direct matcher proof uses literal compSeq/destCase. Sole positive type-indexed word carrier translation, native tree maps unchanged. Fresh original full statement hypcount0 and five independent branch observations matched kernel fixtures; generic theorem application separates proof from observations. Axiom audit only propext/Quot.sound. Full label/simulation parents remain open."
   }
 ]

@@ -6144,3 +6144,5 @@ WordToStack make_init probe captures the complete original definition and124 gro
 `stack_rawcall_native_probe.out` captures seven complete original trees: three frame comparison branches, missing lookup, preserved top Seq, untouched NONE-return handler, and both compiled SOME-return continuations. Matching native kernel fixtures compare full trees. This is definition evidence, not production-path replacement or compiler correctness.
 
 `stack_rawcall_collect_probe.out` captures bare and nested allocation rejection, zero-sized entry acceptance, and all four queried map results for duplicate entries with an existing map. Native replay retains last-wins insertion; broad production frame collection remains a separate obligation.
+
+`stack_rawcall_shape_probe.out` captures the full original comp_seq_neq_IMP statement with zero hypotheses and five independent complete branch truth values. Kernel replay separates the generic theorem application from equal/smaller/larger changes and missing/handler fallback observations; no full simulation is claimed.
