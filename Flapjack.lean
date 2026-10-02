@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
 import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
 import Flapjack.Test.LabToTargetSimpleEncoderParity
 import Flapjack.Test.LabToTargetEncd0Parity
