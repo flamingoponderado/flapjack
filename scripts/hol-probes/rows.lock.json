@@ -718,6 +718,7 @@
     {"bytes": 571, "out": "ssa_force_rename_generic_probe.out", "rows": 5, "sha256": "0be6f47d0dc4ec2fe2a8ae8d39b878e946c03ced7620b336f4d6ecd4db04d8d7"},
     {"bytes": 621, "out": "ssa_get_set_vars_probe.out", "rows": 11, "sha256": "5f395e4e4f37488f60d14c536a2358a4f205766d28573856841b0e5f7e8ed6e9"},
     {"bytes": 144, "out": "ssa_locals_bounds_probe.out", "rows": 1, "sha256": "81725c70ac26603766c0d15b5a01ee9855854dc7caa6bca76f3d9c5481482e6b"},
+    {"bytes": 400, "out": "ssa_locals_force_rename_probe.out", "rows": 6, "sha256": "cb8b3f7e65bb79d15365c99822a76afa80fc3bd33daf2d771f32b146e23a12b1"},
     {"bytes": 277, "out": "ssa_locals_get_var_probe.out", "rows": 7, "sha256": "1f01de912e5108650ca9d9630952528c0d3f7f573bbab121d6e1938c67094b9b"},
     {"bytes": 656, "out": "ssa_locals_insert_probe.out", "rows": 7, "sha256": "c75d1d3a2d985422e65793b5220e6fcf8d9310e10b4717828cd913f5e77de48c"},
     {"bytes": 569, "out": "ssa_locals_list_rename_probe.out", "rows": 10, "sha256": "b574e002c3ba8b4fa6ecb0144a3b15a0634b89b4aa8e615e2979d9bf7d1e2d2e"},

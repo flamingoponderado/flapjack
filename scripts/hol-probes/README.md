@@ -5167,3 +5167,11 @@ from compiled `miscTheory`; `misc_memory_regions_probe.out` is statement review
 and regression evidence, not a cross-language equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=misc_memory_regions_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `init_code_probeScript.sml` captures the full original definition/type and120 complete native-tree equalities across positive widths1/8/32/64/80, heap-limit multiplication below/at/above overflow, GC modes, and zero/large/aliased register indices. The original word_shift is2 for32-bit words and3 otherwise; narrow immediate truncation is preserved. `stack_remove_compile_native_probeScript.sml` adds full init_stubs/compile definitions/types and50 outputs with50 equality checks for all three initializer labels, tail-call start, both jump modes, empty/nonempty section lists, repeated section labels, and huge natural labels. Matching Lean fixtures use kernel-checked literal trees/equations. These are proof-side definitions; production routing and compile_semantics remain separate obligations.
+`ssa_locals_force_rename_probe` captures the original proved generic
+`ssa_locals_rel_force_rename` (word_allocProof:6383–6403) and five inferred
+carriers: source/target alpha Spt, Nat SSA Spt, Nat pair list, and Nat bound.
+The original three premises and conclusion were manually compared with
+`SSALocalsForceRename.lean`; the Lean proof uses induction over the same
+force-rename updates. This is an original theorem capture, not a replay of
+the isolated source tactic or a cross-language equivalence proof. Regenerate
+with `HOL_PROBE_ONLY=ssa_locals_force_rename_probeScript.sml scripts/hol-probes/regenerate.sh`.
