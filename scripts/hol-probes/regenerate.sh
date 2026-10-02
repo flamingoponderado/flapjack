@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe stack_rawcall_if_case_probeScript.sml stack_rawcall_if_case_probe.out \
+  if_full_statement if_full_hypotheses if_case_statement \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_basic_cases_probeScript.sml stack_rawcall_basic_cases_probe.out \
   basic_full_statement basic_full_hypotheses basic_skip basic_halt basic_get basic_set basic_op_curr_heap basic_tick \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"

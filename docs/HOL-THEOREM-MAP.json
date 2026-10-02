@@ -67258,5 +67258,20 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol original231-255 source comparison: full stateRelHOL actual imported state carrier, canonical regs/fpRegs/store roundtrip reexport, arbitrary positive-width WordLocW, native Spt code unchanged. Same destination INL/INR guard and actual source findCode success; target lookup and regBound established conclusions. Arbitrary erasure register retained without alias/bound premise in lemma2. Native findCode matches only Loc(label,0); all word/none/nonzero-offset cases excluded by actual source success. Literal original proof replay and Lean kernel checks; no carrier duplicate or target-run hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/If.lean",
+    "lean_name": "compCorrectIf",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.12 genuine If case original292-305 of comp_correct134ff. Actual positive-width native HolProg.ite comparison/register/reg-or-imm/two branches and complete22field StackSem state/configuration/FFI. Original evaluate equality/nonError/literalstateRel are sole source premises; added firstIH/secondIH are ordinary comp-component induction hypotheses for exactly the two subprograms, universally over info/source/target/result/poststate, not a wholepass predicate or supplied targetresult. BranchIH unfolds exactly original simulation premise and comp existential component. SimulationResult unfolds literal existential clock/targetstate/stackspace, postrelation, actual native evaluation at target.clock+clock, same source result/target stackSpace update, original nonTimeOut/nonHalt Word2 guard. Both compTop/comp conclusion components retained; compTop equals comp for If. Full state relation derives target register and immediate reads at every clock; actual wordSemWordCmp determines source branch. Success comparison true/false uses corresponding branchIH; missing operands/comparison-none contradict original nonError. Returned targetexecution/postrelation/guard/extra clock are derived, not assumed as new source premises. Canonical regs/fpRegs/store relation qualifier, actual imported stateowner and same-module genuine codec roundtrips; code remains native Spt and lists remain lists. Full native evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; this word comparison proof introduces no real rendering. This is one genuine recursive case, not whole comp_correct/compile_semantics/runtime correctness."
   }
 ]
