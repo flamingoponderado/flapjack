@@ -88,8 +88,8 @@ theorem card_updateEq_existing [DecidableEq α] (map : HolFiniteMapExact α β)
   simp only [Set.Finite.mem_toFinset]
   rw [domain_updateEq, Set.insert_eq_of_mem h]
 
-/-- Full HOL-shaped hit-or-fresh update equation over the canonical finite
-lookup domain. Source/qualifier registration remains pending. -/
+/-- Flapjack carrier infrastructure: hit-or-fresh update equation over the
+canonical finite lookup domain, used by the tagged `fcardFupdate` below. -/
 theorem card_updateEq [DecidableEq α] (map : HolFiniteMapExact α β)
     (key : α) (value : β) :
     (map.updateEq (key, value)).card =
