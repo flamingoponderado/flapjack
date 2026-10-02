@@ -16,6 +16,7 @@ import Flapjack.Compiler.Backend.LabToTarget.EncodingValidityClosure
 import Flapjack.Compiler.Backend.LabToTarget.ProgramByteLengths
 import Flapjack.Compiler.Backend.LabToTarget.PositionExtension
 import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
+import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions

@@ -5751,3 +5751,16 @@ run_probe stack_remove_comp_jump_lower_probeScript.sml stack_remove_comp_jump_lo
 run_probe stack_remove_comp_code_buffer_probeScript.sml stack_remove_comp_code_buffer_probe.out \
   cc_code_buffer_statement cc_code_buffer_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_position_order_probeScript.sml lab_to_target_position_order_probe.out \
+  asm_fetch_SOME_IMP_LESS_num_pcs asm_fetch_SOME_IMP_LESS_num_pcs_types asm_fetch_SOME_IMP_LESS_num_pcs_hypotheses \
+  pos_val_GE_pc pos_val_GE_pc_types pos_val_GE_pc_hypotheses \
+  enc_ok_LENGTH_GT_0 enc_ok_LENGTH_GT_0_types enc_ok_LENGTH_GT_0_hypotheses \
+  pos_val_mono pos_val_mono_types pos_val_mono_hypotheses \
+  pos_val_mono_inv pos_val_mono_inv_types pos_val_mono_inv_hypotheses \
+  pos_val_inj pos_val_inj_types pos_val_inj_hypotheses \
+  pos_val_num_pcs pos_val_num_pcs_types pos_val_num_pcs_hypotheses \
+  pos_val_GE_num_pcs pos_val_GE_num_pcs_types pos_val_GE_num_pcs_hypotheses \
+  fetch_bound unrestricted_lower encoder_positive strict_order inverse_unbounded_second bounded_injective physical_boundary unrestricted_saturation empty \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
