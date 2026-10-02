@@ -834,6 +834,7 @@
     {"bytes": 2900, "out": "stack_alloc_gen_refs_statement_probe.out", "rows": 7, "sha256": "056627f727dacfa7135df8a355c190adecf70543a607af5b59ee7ff6e2c2fe6a"},
     {"bytes": 258, "out": "stack_alloc_get_bits_probe.out", "rows": 4, "sha256": "fd6f34db5f7ab17ad98ae0ffe1277e1b9e87b2c206c5a50e5489f5f6e4cec970"},
     {"bytes": 162, "out": "stack_alloc_next_lab_probe.out", "rows": 7, "sha256": "2dad09d4e127dcc00ab71b52e6618a378c119dd12e48f09864344c2bf7628a35"},
+    {"bytes": 3152, "out": "stack_alloc_trigger_statement_probe.out", "rows": 16, "sha256": "abc613099374333f77c99bb8010f4873ffb18996db38d5b6a6b99658d79cdee8"},
     {"bytes": 2330, "out": "stack_initialized_boundary_probe.out", "rows": 40, "sha256": "bb679afacded1d1e591b601bb4f1ca2b6c78686cd82036eb3db30824cbdbeb34"},
     {"bytes": 109, "out": "stack_lang_inst_overloads_probe.out", "rows": 6, "sha256": "0d91d8c445c0d8cf67aa58d2ba936598c3c282fda4c54b3a837483697d70c809"},
     {"bytes": 126, "out": "stack_lang_prog_carrier_probe.out", "rows": 9, "sha256": "3697f446c520a32625dab45bc1f97057ccf593e63166d76887e1cf995b788ae7"},
