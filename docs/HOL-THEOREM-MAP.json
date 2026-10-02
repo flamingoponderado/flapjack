@@ -62231,5 +62231,194 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 author source comparison 2026-10-02 complete original4332-4438 ten declarations and full elaborated HOL types freshly captured in lab_to_target_nop_invariant_probe.out. Native actual HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed byte8/sptree num maps retained; sole words_as_type_indexed_bitvec positive word dimension translation. Full nine line clauses retain exact cbw translation, Halt/Install/CallFFI negative offsets and FFI lookup, Jump/JumpCmp/LocValue label offsets, original Call byte-length-only clause and zero label annotation. Full recursive line and section definitions advance by physical lineLength, preserve empty sections and all original clauses. Full append iff and entire two-conjunct section alt theorem retained with all quantified inputs. Full lengthOk and labelZero implications retain original source encoding predicate as their only hypothesis, not a target evaluation or desired output. Seven kernel full arbitrary-width consumers plus fourteen original/native fixtures cover all nine constructors, nonzero position and word8 wrap, FFI and label lookup, arbitrary stored ignored word, padded NOP bytes, length/padding rejection, physical list positions and empty/intermediate sections. The .101 lineLengthOk prerequisite is checked pushed f929d8d281b1222aa2eb7358b78299912d51102a; real dependency retained. No production body edits or total HD/EL hold dependency; full padding-to-encoding and remove_labels_loop/end-to-end correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Instructions.lean",
+    "lean_name": "wordToStackAllocArgInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full genuine Inst case of word_to_stack_alloc_arg11316-11382. Same config/perf/actual bitmap/frame and instruction/expression inputs; only original perf=F guard, conclusion allocArg actual comp first projection. No output/success/address extraction assumption. Native carriers retain all arithmetic/memory/FP/shared forms, ordinary16bit memory catchall and width64FP split. Positive-width BitVec/NeZero recorded by words_as_type_indexed_bitvec, no other carrier difference; no HD/EL/GC policy dependency. Fresh two entire original generic case theorem applications from exported source theorem and660 direct predicate evaluations with matching kernel fixtures at widths1/2/8/64/80. Internal untagged helper calculations have no separate HOL declaration. Full assembled compiler theorem remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Instructions.lean",
+    "lean_name": "wordToStackAllocArgShareInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full genuine ShareInst case of word_to_stack_alloc_arg11316-11382. Same config/perf/actual bitmap/frame and instruction/expression inputs; only original perf=F guard, conclusion allocArg actual comp first projection. No output/success/address extraction assumption. Native carriers retain all arithmetic/memory/FP/shared forms, ordinary16bit memory catchall and width64FP split. Positive-width BitVec/NeZero recorded by words_as_type_indexed_bitvec, no other carrier difference; no HD/EL/GC policy dependency. Fresh two entire original generic case theorem applications from exported source theorem and660 direct predicate evaluations with matching kernel fixtures at widths1/2/8/64/80. Internal untagged helper calculations have no separate HOL declaration. Full assembled compiler theorem remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Skip case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgMove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Move case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgAssign",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Assign case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgGet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Get case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgSet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Set case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Store case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Alloc case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgStoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full StoreConsts case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Raise case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Return case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgBreak",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Break case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgContinue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Continue case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgTick",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Tick case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgOpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full OpCurrHeap case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgLocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full LocValue case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Install case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgCodeBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full CodeBufferWrite case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgDataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full DataBufferWrite case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Flat.lean",
+    "lean_name": "wordToStackAllocArgFfi",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: genuine full Ffi case of word_to_stack_alloc_arg11316-11382, all original conf/perf/bitmap/frame/constructor arguments and only perf=F guard. Conclusion allocArg of actual native comp first projection, no output/evaluation/success/predicate premise or carrier specialization. Native HolProg/WordLangProgHOL/asm config/store/cutset/mlstring carriers retained; positive-width BitVec/NeZero is the only words_as_type_indexed_bitvec representation translation. Untagged moveAux/live support is internal source case infrastructure with no separately named HOL original. Nineteen fresh complete generic original case theorem applications hyp=[] plus360 same-input direct EVAL compiler predicates and30 original Alloc case applications/kernel matches, widths1/2/8/64/80, arbitrary source generic statements, malformed cutsets, moves/cycles, ignored/rejected Set expressions,zero and70bit frame numbers. No HD/EL/GC policy expansion; recursive/Call and full compiler assembly remain open."
   }
 ]
