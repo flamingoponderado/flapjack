@@ -159,7 +159,10 @@ The pinned external `HOL/src/n-bit/alignmentScript.sml` counterpart is
 
 The pinned external `HOL/examples/l3-machine-code/riscv/model/riscvScript.sml` (the L3-generated
 RISC-V model) counterpart is `Flapjack/RiscV/L3/` (`Types.lean`: every `Construct`/`Record`
-datatype and the `riscv_state` record).
+datatype and the `riscv_state` record; `Defs.lean`: the definitions reached from
+`riscv_stepScript.sml`'s `NextRISCV`, with the step theory's own `Fetch`/`DecodeAny`/`NextRISCV`
+group, rendered from the HOL export `scripts/l3/riscv_defs.sexp.gz` by
+`scripts/hol_terms_to_lean.py`; `Support.lean`: the library renderings they use).
 
 The pinned external `HOL/src/pred_set/src/pred_setScript.sml` counterpart is
 `Flapjack/Misc/PredSet.lean` (the left inverse `LINV_OPT`/`LINV`, sets as predicates).

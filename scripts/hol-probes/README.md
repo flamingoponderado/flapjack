@@ -4777,6 +4777,14 @@ interference environment. `AsmPropsEncoderCorrectParity` replays both. Regenerat
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=asm_props_encoder_correct_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`l3_riscv_decode_probe` evaluates the L3 RISC-V model (`HOL/examples/l3-machine-code/riscv/
+model/riscvScript.sml`) with the riscv definitions added to the compset: HOL's own `Encode` of 62
+instructions across every class `riscv_enc` emits (integer, shift, branch, load/store,
+multiply/divide, the FP load/store/arith/move forms used, ECALL/EBREAK), `Decode` of each
+resulting word, and `Decode` of `0w` and `0xFFFFFFFFw`. `L3RiscvDecodeParity` checks the
+mechanically rendered `Flapjack.RiscV.L3.Decode` on each word by `decide`. Regenerate with
+`HOL_PROBE_ONLY=l3_riscv_decode_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 
 
 `word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
