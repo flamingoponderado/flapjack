@@ -5033,3 +5033,7 @@ run_probe l3_riscv_fp_to_int_probeScript.sml l3_riscv_fp_to_int_probe.out \
 run_probe l3_riscv_fp_state_updates_probeScript.sml l3_riscv_fp_state_updates_probe.out \
   write_fprs write_fprd set_invalid write_gpr_zero write_gpr_three \
   "$repo_dir/HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_riscv_fclass_probeScript.sml l3_riscv_fclass_probe.out \
+  fclass_s_neg_inf fclass_s_neg_normal fclass_s_neg_subnormal fclass_s_neg_zero fclass_s_pos_zero fclass_s_pos_subnormal fclass_s_pos_normal fclass_s_pos_inf fclass_s_snan fclass_s_canonical_nan fclass_s_payload_qnan fclass_s_neg_qnan fclass_s_neg_snan fclass_s_dest_zero fclass_d_neg_inf fclass_d_neg_normal fclass_d_neg_subnormal fclass_d_neg_zero fclass_d_pos_zero fclass_d_pos_subnormal fclass_d_pos_normal fclass_d_pos_inf fclass_d_snan fclass_d_canonical_nan fclass_d_payload_qnan fclass_d_neg_qnan fclass_d_neg_snan fclass_d_dest_zero \
+  "$repo_dir/HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"

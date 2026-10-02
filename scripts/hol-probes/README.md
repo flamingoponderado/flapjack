@@ -5775,3 +5775,11 @@ at the18 declarations that directly use those operations. Remaining state
 access/update/rounding equations have individual complete source comparisons.
 The source-derived root selection validates dependencies; it does not prove
 HOL-to-Lean equivalence, and the broader pending model is not integrated here.
+
+## Full original L3 FCLASS state observations
+
+`l3_riscv_fclass_probe.out` records28 complete original FCLASS_S/D state
+observations: all ten classes, noncanonical and negative quiet NaNs (original
+canonical-only bit9), negative signaling NaNs and zero destination. Kernel
+replays preserve source words, NV/NX, MFS, Delta.data1 and other-core GPRs.
+These fixtures are regression evidence, not whole-model equivalence.

@@ -1,3 +1,4 @@
+import Flapjack.Test.L3RiscvFclassParity
 import Flapjack.Test.LabToTargetSectionNopEncodingParity
 import Flapjack.Test.L3RiscvFpStateUpdatesParity
 import Flapjack.Test.L3RiscvFpCompareParity
