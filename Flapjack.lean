@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
 import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceDomain
 import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceEncoding
 import Flapjack.Compiler.Backend.LabToTarget.LabelExistence

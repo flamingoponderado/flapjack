@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetSectionLabelExtractionParity
 import Flapjack.Test.LabToTargetLabelExistenceDomainParity
 import Flapjack.Test.LabToTargetLabelExistenceEncodingParity
 import Flapjack.Test.LabToTargetLabelExistenceParity
@@ -1875,6 +1876,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetAlignmentParity.runChecks,
     Flapjack.Test.LabToTargetPrefixZeroParity.runChecks,
     Flapjack.Test.LabToTargetPrefixPreservationParity.runChecks,
+    Flapjack.Test.LabToTargetSectionLabelExtractionParity.runChecks,
     Flapjack.Test.LabToTargetLabelExistenceDomainParity.runChecks,
     Flapjack.Test.LabToTargetLabelExistenceEncodingParity.runChecks,
     Flapjack.Test.LabToTargetLabelExistenceParity.runChecks,
