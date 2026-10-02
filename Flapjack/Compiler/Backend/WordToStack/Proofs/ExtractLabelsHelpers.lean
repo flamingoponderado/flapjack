@@ -28,7 +28,7 @@ theorem stackMoveNoLabs {width : Nat} [NeZero width]
 theorem copyRetAuxLabels {width : Nat} [NeZero width] (k f n : Nat) :
     extractLabels (copyRetAuxNative k f n : HolProg width) = [] := by
   induction n with
-  | zero => rfl
+  | zero => simp [copyRetAuxNative, extractLabels]
   | succ n ih => simp [copyRetAuxNative, listSeq, extractLabels, ih]
 
 /-- The complete original return-copy wrapper preserves ordered continuation
@@ -57,7 +57,7 @@ theorem stackLoadLabels {width : Nat} [NeZero width]
   "extract_labels_wStackLoad_Skip" (words_as_type_indexed_bitvec)]
 theorem stackLoadSkipLabels {width : Nat} [NeZero width] (xs : List (Nat × Nat)) :
     extractLabels (wStackLoadNative xs (.skip : HolProg width)) = [] := by
-  rw [stackLoadLabels]; rfl
+  rw [stackLoadLabels]; simp [extractLabels]
 
 /-- The complete original stack-move allocation result for arbitrary counts. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
@@ -65,6 +65,6 @@ theorem stackLoadSkipLabels {width : Nat} [NeZero width] (xs : List (Nat × Nat)
 theorem stackMoveAllocLabels {width : Nat} [NeZero width]
     (n start offset i k : Nat) :
     extractLabels (stackMoveNative n start offset i (.stackAlloc k : HolProg width)) = [] := by
-  rw [stackMoveLabels]; rfl
+  rw [stackMoveLabels]; simp [extractLabels]
 
 end Flapjack.Compiler.Backend.WordToStack.Native.ExtractLabelsHelpers
