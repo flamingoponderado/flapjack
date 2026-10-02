@@ -337,3 +337,14 @@ subtraction, independent Nat/Bool value and frame metadata carriers, all four
 performance/handler modes, 70-bit indices, and widths 1/2/8/64/80.
 They retain the descending load/store sequence and zero-count continuation.
 These observations provide regression evidence, not cross-language equivalence.
+
+The `word_to_stack_reg_instructions_probeScript.sml` capture applies the full
+original register-bound theorem to arbitrary Inst and ShareInst cases, retaining
+post-allocation conventions, `4 <= FST frame`, and false performance. It also
+evaluates 660 source guards and 660 actual compiler-output register predicates
+directly in original HOL. Matched Lean fixtures cover every instruction family,
+all eight shared operations with successful and failed address extraction,
+widths 1/2/8/64/80, two frames, and 70-bit register names. All captured Boolean
+results are true. This is regression evidence, not a HOL-to-Lean equivalence
+proof or a replay of the complete original theorem proof. Full recursive
+register-bound assembly remains separate work.

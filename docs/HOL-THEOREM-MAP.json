@@ -50252,5 +50252,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 full source comparison of word_to_stack_call_args11522-11583: arbitrary config/perf/source program/bitmap/frame, complete original post_alloc_conventions(FST frame) andperf=F premises, actual native compiler first-projection call_args1 2 3 4 0. All26constructors/three Call branches; every recursive hypothesis discharged internally at actual threaded bitmap outputs. Internal untagged calculation uses only the original call-convention conjunct, documented as stronger Flapjack infrastructure without a separate HOL declaration; final tagged theorem retains entire original guard. Native carriers reviewed; positive-width BitVec only translation. Fresh complete generic original theorem application plus140direct source-guard EVALs and140same-input full original compiler theorem applications matched in kernel, all constructors/nested allocations/ignored malformed tail handler/returns/activehandlers/widths1 2 8 64 80. No direct target EVAL, entire source proof replay or cross-language equivalence claim. Full register bounds/compiled conventions/fullcompiler remain unfinished; no held imports or policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterBoundInstructions.lean",
+    "lean_name": "wordToStackRegBoundInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_reg_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of full word_to_stack_reg_bound11410 Inst/ShareInst cases: retain arbitrary config/perf/instruction or all eight shared operations/source expression/bitmap/frame and all original post_alloc_conventions(FST frame),4<=FST frame,perf=F premises; actual native compiler first projection bound FST frame+2. All arithmetic/memory/FP clauses, including 64-bit transfer split and ordinary16-bit memory catchalls; invalid shared address extraction retained. Internal calculation helpers have no separately named HOL originals. Positive-width BitVec translation only. No target evaluation, final predicate or successful extraction assumed. Fresh two complete generic original theorem applications with no open premises, plus660direct original source-guard EVALs and660direct original target-predicate EVALs on matched kernel fixtures, all True; widths1/2/8/64/80, two frames,70bit register names, all instruction constructors and shared-operation/address forms. Original source proof not replayed; regression evidence, not cross-language equivalence. Whole compiler register-bound assembly remains open. No held imports or policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterBoundInstructions.lean",
+    "lean_name": "wordToStackRegBoundShareInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_reg_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of full word_to_stack_reg_bound11410 Inst/ShareInst cases: retain arbitrary config/perf/instruction or all eight shared operations/source expression/bitmap/frame and all original post_alloc_conventions(FST frame),4<=FST frame,perf=F premises; actual native compiler first projection bound FST frame+2. All arithmetic/memory/FP clauses, including 64-bit transfer split and ordinary16-bit memory catchalls; invalid shared address extraction retained. Internal calculation helpers have no separately named HOL originals. Positive-width BitVec translation only. No target evaluation, final predicate or successful extraction assumed. Fresh two complete generic original theorem applications with no open premises, plus660direct original source-guard EVALs and660direct original target-predicate EVALs on matched kernel fixtures, all True; widths1/2/8/64/80, two frames,70bit register names, all instruction constructors and shared-operation/address forms. Original source proof not replayed; regression evidence, not cross-language equivalence. Whole compiler register-bound assembly remains open. No held imports or policy change."
   }
 ]
