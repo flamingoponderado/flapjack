@@ -4744,3 +4744,11 @@ expression setup and local helpers. Fixed-constructor selection and discarded
 primitive induction bookkeeping are omitted. It captures the complete pass
 statement and native operand/operator/state/map/table carriers. This is source
 evidence, not a cross-assistant equivalence proof; whole Inst assembly remains open.
+`word_unreach_def_probe` captures the original HOL `remove_unreach` and `merge_moves` types
+and 18 EVAL results of `dest_Seq_Move`, `merge_moves`, `SimpSeq` and `remove_unreach`
+(through `Seq_assoc_right`) on small 64-bit programs, including the source's
+`remove_unreach_test`, continuations dropped after `Return`/`Raise`, a `Call` without return
+continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a structural
+observation in `WordUnreachDefParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
