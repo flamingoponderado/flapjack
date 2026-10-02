@@ -1,0 +1,10 @@
+subspt_def_statement=∀sp1 sp2. subspt sp1 sp2 ⇔ ∀k. k ∈ domain sp1 ⇒ k ∈ domain sp2 ∧ lookup k sp2 = lookup k sp1
+subspt_def_hypotheses=0
+subspt_lookup_statement=∀t1 t2. subspt t1 t2 ⇔ ∀x y. lookup x t1 = SOME y ⇒ lookup x t2 = SOME y
+subspt_lookup_hypotheses=0
+subspt_trans_statement=subspt sp1 sp2 ∧ subspt sp2 sp3 ⇒ subspt sp1 sp3
+subspt_trans_hypotheses=0
+subspt_union_statement=subspt s (union s t)
+subspt_union_hypotheses=0
+subspt_foldl_union_statement=∀ls t. subspt t (FOLDL union t ls)
+subspt_foldl_union_hypotheses=0
