@@ -67070,5 +67070,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: Source6407 complete universally quantified preservation of successful old lookups and complete original input validity imply full validity under arbitrary extended map; failed-lookups and new entries unconstrained. Every original line constructor handled, including failed lookup and unsupported Call; no target validity premise, map-domain freshness or global invariant added. Native original constructors/opaque mlstring, positive-width type-indexed words and canonical nested numeric sptrees reviewed; no fmap qualifier or arbitrary carrier specialization. Original exported fulltypes0openhyps, fresh original/native byte-shift/map-lookup regressions and fullgeneric fixtures; genuine arbitrary fresh outer-map consumer discharges the full source lookup guard, and actual append consumer derives shifted validity. Kernel checking/oracle tests supplement source review without establishing cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ProgramByteLengths.lean",
+    "lean_name": "allEncOk_foldSecLength",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "LENGTH_prog_to_bytes",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6270 retains arbitrary Nat fold start n independently of encoding start pos and complete original all_enc_ok guard; physical byte length plus n conclusion. Section recorded-length/physical-byte agreement derived from head validity, no extra annotation consistency premise. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or carrier specialization. Fresh original full statements/types with zero open hypotheses and six original/native cases; full generic binders and actual arbitrary-start consumer. Kernel/oracle evidence supplements source review and does not establish cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ProgramByteLengths.lean",
+    "lean_name": "allEncOk_lengthProgToBytes",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "LENGTH_prog_to_bytes2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6288 preserves complete all_enc_ok guard and exact physical prog_to_bytes length equals section line-length sum. Source fulltype confirms unused n:beta; retained explicitly as generic independent binder with no specialization or omission. No successful output or byte-consistency hypothesis added. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or carrier specialization. Fresh original full statements/types with zero open hypotheses and six original/native cases; full generic binders and actual arbitrary-start consumer. Kernel/oracle evidence supplements source review and does not establish cross-language equivalence or full compiler simulation."
   }
 ]
