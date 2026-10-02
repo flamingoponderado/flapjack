@@ -56592,5 +56592,41 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.3), stack_allocProofScript.sml:963-1048 word_gc_move_list_code_thm: HOL binder order !l a s pa1 pa old m1 m i1 i dm conf a1 kept explicit; the three curried premise groups kept (word_gc_move_list conf (a,l,i,pa,old,m,dm) = (a1,i1,pa1,m1,T), the shift/dimindex/len_size bounds, !w. w << word_shift = w * bytes_in_word, FLOOKUP CurrHeap, use_store, memory/mdomain, 0,1,2 IN FDOM, get_var 3/4, 5 IN FDOM ==> 6 IN FDOM ==> get_var 7/8); conclusion ?ck r0 r1 r2 r5 r6 with the nine-register |++ and memory m1, over the exact StackSem evaluate. Proved as HOL does, by induction on the count, composing word_gc_move_code_thm with the IH through the tagged evaluate_add_clock. dimindex as width, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SearchMono.lean",
+    "lean_name": "findNextInterferenceMono",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "find_next_interference_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source305: full generic clock result statement compared against literal HOL. Whole exact application/config/FFI tuple preserved, independent S/Q/hostσ Type and positive word width NeZero retained; no extra validity/alignment/indexbounds or oracle premise. Mono uses original induction: normal branch guard and updated oracle/config recurse; remaining positive-clock branches independent of clock. Unique uses mono twice and addition commutativity exactly as original. EL provenance through findNextInterference: literal source112-211 EL index ffi_names is reviewed holEl with shared opaque holHdNil/holArb past end, no addedbounds/fallback assumption. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/SearchMono.lean",
+    "lean_name": "findNextInterferenceUnique",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "find_next_interference_unique",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source319: full generic clock result statement compared against literal HOL. Whole exact application/config/FFI tuple preserved, independent S/Q/hostσ Type and positive word width NeZero retained; no extra validity/alignment/indexbounds or oracle premise. Mono uses original induction: normal branch guard and updated oracle/config recurse; remaining positive-clock branches independent of clock. Unique uses mono twice and addition commutativity exactly as original. EL provenance through findNextInterference: literal source112-211 EL index ffi_names is reviewed holEl with shared opaque holHdNil/holArb past end, no addedbounds/fallback assumption. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/NextInterference.lean",
+    "lean_name": "nextInterferenceIntro",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "next_interference_intro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source333: full literal theorem over independent machine state/projection and universe-zero FFIhostσ with positive BitVec width NeZero, exact complete InterferenceApp/MachineConfig/HolFfiState tuple. Intro retains solely successful finite search premise and derives witness uniqueness from fullsearchunique; shift retains solely universal shiftedsearch equality and uses mono to equate existential predicates before congruence of reviewed holOptionSome. No boundedclock, machinevalidity, existence/uniqueness assumption or changedoracle/config. EL provenance through reviewed findNextInterference source112-211: total holEl ffi_names preserves in-range elements and sharedopaque holHdNil/holArb past end, no addedbounds/fallback assumption. Native whole generic theorem kernel checked; original fullstatement capture. Noexecutedcompilerbodychange."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/NextInterference.lean",
+    "lean_name": "nextInterferenceShift",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "next_interference_shift",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 source343: full literal theorem over independent machine state/projection and universe-zero FFIhostσ with positive BitVec width NeZero, exact complete InterferenceApp/MachineConfig/HolFfiState tuple. Intro retains solely successful finite search premise and derives witness uniqueness from fullsearchunique; shift retains solely universal shiftedsearch equality and uses mono to equate existential predicates before congruence of reviewed holOptionSome. No boundedclock, machinevalidity, existence/uniqueness assumption or changedoracle/config. EL provenance through reviewed findNextInterference source112-211: total holEl ffi_names preserves in-range elements and sharedopaque holHdNil/holArb past end, no addedbounds/fallback assumption. Native whole generic theorem kernel checked; original fullstatement capture. Noexecutedcompilerbodychange."
   }
 ]
