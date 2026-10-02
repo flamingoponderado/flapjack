@@ -6046,3 +6046,7 @@ register/status/delta/flag/other-core/trap observations retain original semantic
 These finite/infinity rows do not fix arbitrary NaN output payloads or establish
 full model/compiler correctness. SOUNDNESS item8 remains inherited.
 Assembler-naming Inst probe captures the original generic seven-guard case application with no open hypotheses and900 direct validity/guard/target observations (735T165F). Kernel fixtures include224 full seven-guard theorem applications and cover widths1/2/8/32/64/80, all arithmetic forms, eight memory operations and sixteen FP forms, both policy flags across families,70bit natural registers/frame slots, odd physical registers,32/64-bit FP pair behavior, ISA restrictions, underflow and strict frame minimum. This is regression evidence, not HOL-to-Lean equivalence or full naming/compiler correctness. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_inst_probeScript.sml.
+
+### Generational allocator partial-case statement capture
+
+`stack_alloc_generational_alloc_statement_probeScript.sml` and its `.out` capture the literal original `alloc_correct_lemma_Generational` statement, explicitly resolving `stack_alloc$compile`. The typed free variables confirm that `c` is the compiler config. This is statement elaboration evidence, not an executable oracle or proof replay. The Lean partial case retains all original premises and conclusions with the original partial-selector case condition; the full collector case remains open.
