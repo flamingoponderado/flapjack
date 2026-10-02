@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
