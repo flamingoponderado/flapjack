@@ -1,0 +1,6 @@
+count_tail_full_statement=next_interference mc ffi ms = SOME (app0,mcc,ffic) ⇒
+∀n. interference_count P mc ffi ms (SUC n) =
+    (if P app0 then 1 else 0) +
+    interference_count P mcc ffic (app_post app0) n
+pos_head_full_statement=next_interference mc ffi ms = SOME (app0,mcc,ffic) ∧ P app0 ⇒
+interference_pos P mc ffi ms 0 = SOME 0

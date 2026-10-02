@@ -1,3 +1,7 @@
+`target_sequence_laws_probe.out` captures complete original sequence equality, exact tail and count monotonicity statements. Native generic proofs keep all initial and returned configurations/FFI states, arbitrary predicates and universal sequence/count indices.
+
+`target_search_const_probe.out` captures the complete clocked and unbounded original configuration-preservation statements. Native generic proofs preserve the entire target plus exact callee-saved list and pointer register, without validity or bounds hypotheses.
+
 `target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
 
 `target_search_mono_probe.out` captures the complete original find_next_interference_mono and find_next_interference_unique statements. Native kernel proofs retain arbitrary clock limits, all machine/FFI parameters and equality of the entire returned tuple, with no added bounds or validity premise.
@@ -5,6 +9,24 @@
 `target_register_oracles_probe.out` captures all four full native targetProps register-oracle types/equations and ten generic IO/cache presence, absence, callee filtering and allowed register/FP branches, replayed by TargetRegisterOraclesParity. Fixed word64 FP fallback and unused FFI name remain literal.
 
 `target_interference_sequence_probe.out` captures the full original types and equations for next_interference, interference_app_seq, interference_count and interference_pos (source215-249), with generic recurrence replays. Native kernel regressions preserve all generic parameters and unspecified option choice.
+`mmio_index_probe.out` captures the full original optional-boundary definition
+and inferred type plus40 assumption-free proved choice equations for every
+external/read/write name list of length0..3. Matching kernel fixtures preserve
+all-external/end-of-list boundaries, all-shared/zero boundaries and mixed-order
+rejection. A generic kernel uniqueness proof justifies the choice translation.
+
+`init_memory_probe.out` records the full original initializer definition/type,
+64 complete output trees, and 64 true equalities to independently written
+constructor trees. Matching kernel fixtures cover widths1/8/64/80, zero/aliased/
+arbitrary-large pointer registers, empty/word/register/mixed stores and word
+truncation. The full executed initializer route remains a separate parent.
+
+`evaluate_props_ffi_relation_probe.out` captures the full original FFI-step
+definition and inferred state-relation type, and checks an assumption-free
+identity step using the empty external call. `Flapjack/EvaluateProps.lean`
+retains all four existential witnesses and kernel-checks the same generic
+identity step. The reflexive-transitive closure and full LabToTarget
+shared-memory relation remain separate obligations.
 
 `word_to_stack_native_addr_probe.out` records72 original wInst memory trees across Load/Store/Load8/Store8/Load32/Store32, register/spilled operands and zero/positive/negative64bit offsets; five selected Store trees include signed12 endpoints and out-of-range2048. Native kernel fixtures replay all72 source trees; production fixtures preserve Addr instead of macro address sequences, with unchanged original artifact/corpus goldens.
 
@@ -4954,3 +4976,16 @@ manually reviewed; no standalone tactic replay is claimed.
 FPSqrt/FPAdd/FPSub/FPMul/FPDiv/FPFma specializations and native carriers. Original
 FP proof8174–8222, unchanged-SSA FP writes and inherited rational/choice arithmetic
 operations are manually compared; no standalone tactic replay is claimed.
+`target_position_unique_probeScript.sml` captures the complete original
+`interference_count_lt` and `interference_pos_unique` theorem statements,
+checking that both compiled original theorems have no undischarged hypotheses.
+The native Lean counterparts are in `TargetProps/PositionUnique.lean`.
+
+`target_position_laws_probeScript.sml` prints the full original
+`interference_count_tail` and `interference_pos_head` statements and checks
+that the original compiled theorems have no undischarged hypotheses.
+Native counterparts are in `TargetProps/PositionLaws.lean`.
+
+`target_position_tail_probeScript.sml` captures complete original
+`interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
+checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.

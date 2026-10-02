@@ -1,0 +1,7 @@
+sequence_eq_full_statement=next_interference mc1 ffi1 ms1 = next_interference mc2 ffi2 ms2 ⇒
+∀n. interference_app_seq mc1 ffi1 ms1 n = interference_app_seq mc2 ffi2 ms2 n
+sequence_tail_full_statement=next_interference mc ffi ms = SOME (app,mc',ffi') ⇒
+∀n. interference_app_seq mc ffi ms (SUC n) =
+    interference_app_seq mc' ffi' (app_post app) n
+count_mono_full_statement=∀i m.
+  interference_count P mc ffi ms m ≤ interference_count P mc ffi ms (m + i)

@@ -1,12 +1,20 @@
+import Flapjack.Test.LabToTargetGoodCodeParity
 import Flapjack.Test.LabToTargetByteLengthsParity
 import Flapjack.Test.LabPropsLabelSetsParity
 import Flapjack.Test.LabToTargetWordLocationParity
 import Flapjack.Test.LabToTargetFetchValidityParity
+import Flapjack.Compiler.Backend.Semantics.TargetProps.SequenceLaws
+import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionUnique
+import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionLaws
+import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionTail
+import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchConst
 import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchMono
 import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence
 import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
+import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+import Flapjack.Compiler.Backend.StackRemove.InitMemory
 import Flapjack.Compiler.Backend.StackRemove.StoreInit
 import Flapjack.Compiler.Backend.StackRemove.StoreListCode
 import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
@@ -122,6 +130,8 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList
+import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
 import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MapBitmap
@@ -643,6 +653,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
 import Flapjack.HolRef
+import Flapjack.EvaluateProps
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem

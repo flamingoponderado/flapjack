@@ -1,0 +1,6 @@
+count_lt_full_statement=interference_app_seq mc ffi ms n = SOME (app,mc',ffi') ∧ P app ∧ n < n2 ⇒
+interference_count P mc ffi ms n < interference_count P mc ffi ms n2
+pos_unique_full_statement=interference_app_seq mc ffi ms n1 = SOME (app1,mc1',ffi1') ∧ P app1 ∧
+interference_app_seq mc ffi ms n2 = SOME (app2,mc2',ffi2') ∧ P app2 ∧
+interference_count P mc ffi ms n1 = interference_count P mc ffi ms n2 ⇒
+n1 = n2
