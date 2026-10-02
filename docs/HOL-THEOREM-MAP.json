@@ -49910,5 +49910,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison: full original alloc_arg_copy_ret at11309, actual native HolProg/stackMoveNative/copyRetAuxNative/copyRetNative and accepted allocArg. Same quantified natural arguments, implication/equivalence/closed predicate conclusion and original guard (only movement requires allocArg p); arbitrary positive word width via words_as_type_indexed_bitvec and NeZero, independent beta/gamma Type0 in wrapper, all Bool modes and arbitrary continuation. No extra count/frame/bound/success premise; source proof replay and210 original predicate pairs with matching kernel fixtures. No HD/EL/GC qualifier dependency; full compiler allocation-argument theorem and correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Instructions.lean",
+    "lean_name": "wordToStackAllocArgInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full genuine Inst case of word_to_stack_alloc_arg11316-11382. Same config/perf/actual bitmap/frame and instruction/expression inputs; only original perf=F guard, conclusion allocArg actual comp first projection. No output/success/address extraction assumption. Native carriers retain all arithmetic/memory/FP/shared forms, ordinary16bit memory catchall and width64FP split. Positive-width BitVec/NeZero recorded by words_as_type_indexed_bitvec, no other carrier difference; no HD/EL/GC policy dependency. Fresh two entire original generic case theorem applications from exported source theorem and660 direct predicate evaluations with matching kernel fixtures at widths1/2/8/64/80. Internal untagged helper calculations have no separate HOL declaration. Full assembled compiler theorem remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocArgs/Instructions.lean",
+    "lean_name": "wordToStackAllocArgShareInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_alloc_arg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full genuine ShareInst case of word_to_stack_alloc_arg11316-11382. Same config/perf/actual bitmap/frame and instruction/expression inputs; only original perf=F guard, conclusion allocArg actual comp first projection. No output/success/address extraction assumption. Native carriers retain all arithmetic/memory/FP/shared forms, ordinary16bit memory catchall and width64FP split. Positive-width BitVec/NeZero recorded by words_as_type_indexed_bitvec, no other carrier difference; no HD/EL/GC policy dependency. Fresh two entire original generic case theorem applications from exported source theorem and660 direct predicate evaluations with matching kernel fixtures at widths1/2/8/64/80. Internal untagged helper calculations have no separate HOL declaration. Full assembled compiler theorem remains open."
   }
 ]
