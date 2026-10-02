@@ -65,6 +65,7 @@ import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameInstructions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameShare
 import Flapjack.Pancake.WordConvs.FullInstOkLess
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameHelpers

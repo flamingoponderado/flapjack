@@ -1162,6 +1162,7 @@
     {"bytes": 194, "out": "word_to_stack_allocator_stages_probe.out", "rows": 4, "sha256": "2a0cde2e40423ec54a58d79a6004aa4209ad293a26adc27511fd6f877a6f77b1"},
     {"bytes": 89624, "out": "word_to_stack_alookup_map_probe.out", "rows": 305, "sha256": "f21240a0644bac9332eff8c0072e66988407989a6f0804808e66281ecc119681"},
     {"bytes": 6401, "out": "word_to_stack_asm_name_helpers_probe.out", "rows": 236, "sha256": "8b50bf06fd43ada8c3d694c45f49d03a355cf19d92fdb80b89e2f39cc5479ec6"},
+    {"bytes": 21734, "out": "word_to_stack_asm_name_inst_probe.out", "rows": 901, "sha256": "90f4c67db4ed9870b702c5255556dd9ce881456f67412434a76add592ad20990"},
     {"bytes": 21790, "out": "word_to_stack_asm_name_share_probe.out", "rows": 721, "sha256": "1264d3fed078164253ff638aefd910a3a062397910b90a257bf3fae18a99d7bb"},
     {"bytes": 12893, "out": "word_to_stack_asm_remove_compiler_probe.out", "rows": 561, "sha256": "493baddadd7f67cf9c87a5ababa42715e4364d8c15b60ca5108051864019d13b"},
     {"bytes": 2550, "out": "word_to_stack_asm_remove_helpers_probe.out", "rows": 100, "sha256": "33fda11511de9b84bc559c31b126d01b04acf0f4c3422855bcdae3396c83133d"},
