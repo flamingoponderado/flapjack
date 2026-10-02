@@ -38,7 +38,8 @@ private theorem good_dim_lt {s : State} (h : goodRaState s) :
     s.adj_ls.length = s.dim ∧ s.degrees.length = s.dim ∧ s.coalesced.length = s.dim ∧
       s.move_related.length = s.dim := ⟨h.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1⟩
 
-private theorem good_adj {s : State} (h : goodRaState s) {n : Nat} (hn : n < s.dim) :
+/-- Flapjack infrastructure: adjacency entries of a `good_ra_state` are in range. -/
+theorem good_adj {s : State} (h : goodRaState s) {n : Nat} (hn : n < s.dim) :
     ∀ v ∈ holEl n s.adj_ls, v < s.dim := by
   have hl := h.1
   have hmem : holEl n s.adj_ls ∈ s.adj_ls := by
@@ -166,7 +167,7 @@ theorem decDegreeSuccess :
         exact hrun
 
 /-- Membership of a HOL `PARTITION` bucket. -/
-private theorem mem_holPart {α : Type} (P : α → Bool) :
+theorem mem_holPart {α : Type} (P : α → Bool) :
     ∀ (l l1 l2 : List α) (x : α),
       (x ∈ (holPart P l l1 l2).1 → x ∈ l ∨ x ∈ l1) ∧ (x ∈ (holPart P l l1 l2).2 → x ∈ l ∨ x ∈ l2)
   | [], l1, l2, x => ⟨Or.inr, Or.inr⟩
