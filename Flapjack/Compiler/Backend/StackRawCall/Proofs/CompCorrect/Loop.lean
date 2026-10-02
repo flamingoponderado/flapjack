@@ -109,16 +109,17 @@ theorem exitLoopGuard {width : Nat} [NeZero width]
 non-continuation condition is discharged by the final case split; it is not
 an additional premise of a tagged comp_correct case. -/
 theorem compCorrectLoopExit {width : Nat} [NeZero width] {C F : Type}
-    (body : HolProg width) (bodyIH : IfCase.BranchIH C F body)
+    (body : HolProg width)
     (info : Spt Nat) (source target post : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width))
+    (bodyIH : IfCase.ProgramIH C F body source)
     (execution : StackSemEvaluate.evaluate (body, source) = (result, post))
     (nonerror : result ≠ some .error) (relation : stateRel info source target)
     (exit : contLoop result = false) :
     IfCase.SimulationResult (comp info (.loop body)) info target post
       (StackSemControl.exitLoop result) := by
   obtain ⟨clock, targetState, stackSpace, postRelation, targetExecution, guard⟩ :=
-    bodyIH info source target post result ⟨execution, nonerror, relation⟩
+    bodyIH info target post result ⟨execution, nonerror, relation⟩
   refine ⟨clock, targetState, stackSpace, postRelation, ?_, ?_⟩
   · rw [comp, evaluateLoopUnclamped, targetExecution]
     simp only [exit, Bool.false_eq_true, if_false]
@@ -135,16 +136,17 @@ theorem contLoopGuard {width : Nat} [NeZero width]
 /-- The zero-clock continuation branch, with target timeout and relation
 both derived from the actual body induction hypothesis. Untagged case support. -/
 theorem compCorrectLoopTimeout {width : Nat} [NeZero width] {C F : Type}
-    (body : HolProg width) (bodyIH : IfCase.BranchIH C F body)
+    (body : HolProg width)
     (info : Spt Nat) (source target post : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width))
+    (bodyIH : IfCase.ProgramIH C F body source)
     (execution : StackSemEvaluate.evaluate (body, source) = (result, post))
     (nonerror : result ≠ some .error) (relation : stateRel info source target)
     (continuing : contLoop result = true) (zero : post.clock = 0) :
     IfCase.SimulationResult (comp info (.loop body)) info target (emptyEnv post)
       (some .timeOut) := by
   obtain ⟨clock, targetState, stackSpace, postRelation, targetExecution, guard⟩ :=
-    bodyIH info source target post result ⟨execution, nonerror, relation⟩
+    bodyIH info target post result ⟨execution, nonerror, relation⟩
   have spaceEq := guard (contLoopGuard result continuing)
   subst stackSpace
   have stackSelf : { targetState with stackSpace := targetState.stackSpace } = targetState := by
@@ -161,24 +163,26 @@ theorem compCorrectLoopTimeout {width : Nat} [NeZero width] {C F : Type}
   · intro impossible
     exact False.elim (impossible.1 rfl)
 
-/-- Genuine recursive Loop IH restricted to smaller source clocks. It does
-not assume simulation of the current Loop run or arbitrary whole programs. -/
+/-- The original evaluate_ind Loop reentry IH at the actual body's post-state.
+The source body evaluation, continuation and nonzero post-clock guard the
+motive at decClock bodyPost; no arbitrary smaller-clock state is quantified. -/
 abbrev LoopReentryIH {width : Nat} [NeZero width] (C F : Type)
-    (body : HolProg width) (parentClock : Nat) : Prop :=
-  ∀ (info : Spt Nat) (source target post : StackSemStateFiniteExact width C F)
-    (result : Option (StackSemResult width)), source.clock < parentClock →
-    StackSemEvaluate.evaluate (.loop body, source) = (result, post) ∧
-      result ≠ some .error ∧ stateRel info source target →
-    IfCase.SimulationResult (comp info (.loop body)) info target post result
+    (body : HolProg width) (source : StackSemStateFiniteExact width C F) : Prop :=
+  ∀ (bodyResult : Option (StackSemResult width))
+    (bodyPost : StackSemStateFiniteExact width C F),
+    StackSemEvaluate.evaluate (body, source) = (bodyResult, bodyPost) →
+    contLoop bodyResult = true → bodyPost.clock ≠ 0 →
+    IfCase.ProgramIH C F (.loop body) (decClock bodyPost)
 
 /-- Nonzero continuation: extend the actual target body clock by the clock
 needed for the smaller recursive Loop execution. All target results are derived
 from the two genuine IHs. Untagged case-split infrastructure. -/
 theorem compCorrectLoopReentry {width : Nat} [NeZero width] {C F : Type}
-    (body : HolProg width) (bodyIH : IfCase.BranchIH C F body)
+    (body : HolProg width)
     (info : Spt Nat) (source target bodyPost post : StackSemStateFiniteExact width C F)
     (bodyResult result : Option (StackSemResult width))
-    (reentryIH : LoopReentryIH C F body source.clock)
+    (bodyIH : IfCase.ProgramIH C F body source)
+    (reentryIH : LoopReentryIH C F body source)
     (bodyExecution : StackSemEvaluate.evaluate (body, source) = (bodyResult, bodyPost))
     (bodyNonerror : bodyResult ≠ some .error) (relation : stateRel info source target)
     (continuing : contLoop bodyResult = true) (nonzero : bodyPost.clock ≠ 0)
@@ -186,7 +190,7 @@ theorem compCorrectLoopReentry {width : Nat} [NeZero width] {C F : Type}
     (nonerror : result ≠ some .error) :
     IfCase.SimulationResult (comp info (.loop body)) info target post result := by
   obtain ⟨clock, targetBody, stackSpace, bodyRelation, targetBodyExecution, bodyGuard⟩ :=
-    bodyIH info source target bodyPost bodyResult ⟨bodyExecution, bodyNonerror, relation⟩
+    bodyIH info target bodyPost bodyResult ⟨bodyExecution, bodyNonerror, relation⟩
   have continuationGuard := contLoopGuard bodyResult continuing
   have spaceEq := bodyGuard continuationGuard
   subst stackSpace
@@ -196,8 +200,8 @@ theorem compCorrectLoopReentry {width : Nat} [NeZero width] {C F : Type}
   rw [stackSelf] at targetBodyExecution
   have recursiveRelation := stateRel_decClock info bodyPost targetBody bodyRelation
   obtain ⟨recursiveClock, targetPost, finalSpace, postRelation, targetExecution, guard⟩ :=
-    reentryIH info (decClock bodyPost) (decClock targetBody) post result
-      (loopReentryClockLess body source bodyPost bodyResult bodyExecution nonzero)
+    reentryIH bodyResult bodyPost bodyExecution continuing nonzero
+      info (decClock targetBody) post result
       ⟨execution, nonerror, recursiveRelation⟩
   have targetClockEq := stateRel_clock info bodyPost targetBody bodyRelation
   have targetNonzero : targetBody.clock ≠ 0 := by
@@ -222,7 +226,7 @@ theorem compCorrectLoopReentry {width : Nat} [NeZero width] {C F : Type}
   exact targetExecution
 
 /-- Genuine recursive Loop case. The original three premises are retained;
-only the body and strictly smaller-clock recursive Loop induction hypotheses
+only the body IH at the fixed source and actual guarded body-post reentry IH
 are added. Both original compTop/comp existential conclusions remain intact.
 The full native evaluator inherits its documented real-carrier assurance limit;
 this proof introduces no real rendering. -/
@@ -231,10 +235,11 @@ this proof introduces no real rendering. -/
     StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
 theorem compCorrectLoop {width : Nat} [NeZero width] {C F : Type}
-    (body : HolProg width) (bodyIH : IfCase.BranchIH C F body)
+    (body : HolProg width)
     (info : Spt Nat) (source target post : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width))
-    (reentryIH : LoopReentryIH C F body source.clock)
+    (bodyIH : IfCase.ProgramIH C F body source)
+    (reentryIH : LoopReentryIH C F body source)
     (hypothesis : StackSemEvaluate.evaluate (.loop body, source) = (result, post) ∧
       result ≠ some .error ∧ stateRel info source target) :
     IfCase.SimulationResult (compTop info (.loop body)) info target post result ∧
@@ -254,16 +259,16 @@ theorem compCorrectLoop {width : Nat} [NeZero width] {C F : Type}
     by_cases zero : bodyPost.clock = 0
     · rw [if_pos zero] at execution
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
-      exact compCorrectLoopTimeout body bodyIH info source target bodyPost bodyResult
+      exact compCorrectLoopTimeout body info source target bodyPost bodyResult bodyIH
         bodyExecution bodyNonerror relation continuing zero
     · rw [if_neg zero] at execution
-      exact compCorrectLoopReentry body bodyIH info source target bodyPost post bodyResult result
-        reentryIH bodyExecution bodyNonerror relation continuing zero execution nonerror
+      exact compCorrectLoopReentry body info source target bodyPost post bodyResult result
+        bodyIH reentryIH bodyExecution bodyNonerror relation continuing zero execution nonerror
   · have exit : contLoop bodyResult = false := by
       cases h : contLoop bodyResult <;> simp_all
     simp only [exit, Bool.false_eq_true, if_false] at execution
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
-    exact compCorrectLoopExit body bodyIH info source target bodyPost bodyResult
+    exact compCorrectLoopExit body info source target bodyPost bodyResult bodyIH
       bodyExecution bodyNonerror relation exit
 
 end Flapjack.Compiler.Backend.StackRawCall.LoopCase
