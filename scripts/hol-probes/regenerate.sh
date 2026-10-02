@@ -4956,3 +4956,6 @@ run_probe backend_runtime_stub_names_probeScript.sml backend_runtime_stub_names_
 run_probe word_to_stack_alloc_recursive_probeScript.sml word_to_stack_alloc_recursive_probe.out \
   aar_full_MustTerminate aar_full_Loop aar_full_Seq aar_full_If aar_full_CallTail aar_full_CallReturn aar_full_CallHandler \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_validity_nop_probeScript.sml lab_to_target_validity_nop_probe.out \
+  line_ok_line_enc_with_nop line_ok_line_enc_with_nop_types lines_ok_lines_enc_with_nop lines_ok_lines_enc_with_nop_types label_full asm_padding_full halt_full install_full ffi_full jump_full jumpcmp_full loc_full list_actual_full \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
