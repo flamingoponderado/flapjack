@@ -66167,5 +66167,35 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-sol-c source comparison: Source114: exact partial application w2s16HEX at arbitrary positive word dimension. words_as_type_indexed_bitvec records width/NeZero. Original character-list result and leading-zero behavior retained. Original numeric_formatting probe and70matching kernel fixtures cover all six stages.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StackMemoryAny.lean",
+    "lean_name": "compCorrectStackLoadAny",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-memory-any): original comp_correct StackLoadAny source cases2169-2197/2256-2320. Exact original four source evaluation/nonError/full state relation/regBound hypotheses and existential clock/native target/usual result branch conclusion. Source byte-word alignment and index bound derive native offset equality, target functional heap read/write and complete26 postrelation. Actual compiled native instructions evaluated, arbitrary Word/Loc store payloads, destination/index alias allowed, exact reserved pointer restoration in StoreAny, clock0. No target-success/read/domain/postheap/restoration/postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains Spt, stack List. Inherited reals_as_rational_cuts assumption from faithful total evaluator; pure Any cases have no local real operation. Fresh literal original constructor and required local lookup proof replay recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StackMemoryAny.lean",
+    "lean_name": "compCorrectStackStoreAny",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-memory-any): original comp_correct StackStoreAny source cases2169-2197/2256-2320. Exact original four source evaluation/nonError/full state relation/regBound hypotheses and existential clock/native target/usual result branch conclusion. Source byte-word alignment and index bound derive native offset equality, target functional heap read/write and complete26 postrelation. Actual compiled native instructions evaluated, arbitrary Word/Loc store payloads, destination/index alias allowed, exact reserved pointer restoration in StoreAny, clock0. No target-success/read/domain/postheap/restoration/postrelation premise. Canonical finite-support regs/fpRegs/store and positive-width word translation only; code remains Spt, stack List. Inherited reals_as_rational_cuts assumption from faithful total evaluator; pure Any cases have no local real operation. Fresh literal original constructor and required local lookup proof replay recorded."
   }
 ]

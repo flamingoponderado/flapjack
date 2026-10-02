@@ -137,6 +137,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Locations
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSpace
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemory
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemoryAny
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
