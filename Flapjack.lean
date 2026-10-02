@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetLabelValidityParity
 import Flapjack.Test.LabToTargetSimilarLabelsParity
 import Flapjack.Test.LabToTargetGoodCodeParity
 import Flapjack.Test.LabToTargetByteLengthsParity
