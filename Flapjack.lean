@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.If
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Loop
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Seq
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Install

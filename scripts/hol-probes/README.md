@@ -6012,3 +6012,5 @@ sptree_wf_definition_probeScript.sml captures the full original wf_def and254 co
 `stack_code_bitmaps_seq_probe` captures full original evaluate_code_bitmaps, zero external hypotheses, and Seq specialization. The native case composes genuine subprogram IHs through actual clock clamping; statement evidence only, not fullassembly or runtime parity.
 
 `stack_code_bitmaps_loop_probe` captures full original evaluate_code_bitmaps, zero external hypotheses, and Loop specialization. Native proof uses genuine body/smaller-clock re-entry IHs through actual clamp/decrement; statement evidence only.
+
+`stack_code_bitmaps_if_probe` captures full original evaluate_code_bitmaps, zero external hypotheses, and If specialization. Native proof preserves all failed reads/comparisons and uses genuine selected-branch IHs; statement evidence only.

@@ -67567,5 +67567,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 original421-440 genuine Loop induction case: actual source evaluation equality plus genuine body IH and sameLoop IH strictly restricted to state.clock < original source.clock. CodeBitmaps unfolds all three original existential conjuncts without changed result or successful-run premise. Actual evaluator runs body, clamps clock by min, dispatches contLoop; exit preserves oracle/code/bitmaps, timeout emptyEnv modifies only regs/stack, nonzero reentry decrements clock. Strict descent follows min bound/nonzero, never assumes evaluator outcome or target simulation. Compose exact actual prefix through checked Seq composition, count addition and original union fold/bitmap order. Imported full native state canonical regs/fpRegs/store with same-module genuine codec witness, code Spt/lists List unchanged, positive words/Type0 hosts. Full evaluator closure inherits reals_as_rational_cuts assumption; no new real model. Original closed full/Loop statements are statement evidence, not runtime parity/fullassembly."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/If.lean",
+    "lean_name": "evaluateCodeBitmapsIf",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 original421-440 genuine If case: actual source execution and only genuine first/second branch IHs, each arbitrary state/result/output with full original CodeBitmaps existential. Actual evaluate_ite reads register and immediate and applies original comparison; all missing/noncomparable cases return original state and count0, true/false selected branch applies its actual IH. No successful condition/register read, count/prefix/target/postrelation assumption. CodeBitmaps definitionally retains complete shifted oracle, original left code union fold and bitmapappendflatten. Canonical native imported state regs/fpRegs/store with same-module genuine codec witness; code Spt/List unchanged, positive words/Type0 hosts retained. Full evaluator closure inherits reals_as_rational_cuts assumption; no new real model. One case only, no runtime parity or fullassembly claim."
   }
 ]
