@@ -1,5 +1,6 @@
 """The committed L3 RISC-V definitions are exactly the rendering of the committed HOL export."""
 import gzip
+import importlib.util
 import pathlib
 import subprocess
 import sys
@@ -10,6 +11,28 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 
 class L3DefsToLeanTest(unittest.TestCase):
+    def test_bit_field_insert_rejects_out_of_range_input(self):
+        spec = importlib.util.spec_from_file_location('l3_bound_renderer', ROOT / 'scripts/hol_terms_to_lean.py')
+        renderer = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = renderer
+        spec.loader.exec_module(renderer)
+        class Numeric:
+            @staticmethod
+            def nat_literal(x):
+                return x if isinstance(x, int) else None
+        original = renderer.nat_literal
+        renderer.nat_literal = Numeric.nat_literal
+        try:
+            bit = renderer.Ty('min', 'bool', ())
+            index = renderer.Ty('fcp', 'bit0', (renderer.Ty('one', 'one', ()),))
+            word = renderer.Var('w', renderer.Ty('fcp', 'cart', (bit, index)))
+            with self.assertRaisesRegex(renderer.Unrenderable, 'exceed word width'):
+                renderer.special_bit_field_insert(None, None, [2, 0, word, word], {})
+            with self.assertRaisesRegex(renderer.Unrenderable, 'checked literal bounds'):
+                renderer.special_bit_field_insert(None, None, [], {})
+        finally:
+            renderer.nat_literal = original
+
     def test_integer_memory_closure_is_present(self):
         body = (ROOT / 'Flapjack/RiscV/L3/Defs.lean').read_text()
         for name in ['walk64', 'translate64', 'translateAddr', 'Fetch',

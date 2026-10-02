@@ -46,7 +46,10 @@ def holUpdate {α β : Type} [DecidableEq α] (a : α) (b : β) (f : α → β) 
 def holWordExtract (b : Nat) {a : Nat} (h l : Nat) (w : BitVec a) : BitVec b :=
   BitVec.setWidth b (BitVec.ofNat a ((w.toNat >>> l) % 2 ^ (min h (a - 1) + 1 - l)))
 
-/-- HOL `words$bit_field_insert h l a w`. -/
+/-- Rendering of HOL `words$bit_field_insert h l a w` for calls whose selected
+input indices are in range (`h < l` or `h - l < m`). The translator checks this
+bound at every model call. Raw HOL FCP indexing is unspecified outside the
+input width; this helper's false result there is not an unconditional HOL port. -/
 def holBitFieldInsert {m n : Nat} (h l : Nat) (a : BitVec m) (w : BitVec n) : BitVec n :=
   Flapjack.holFcpWord fun i => if l ≤ i ∧ i ≤ h then a.getLsbD (i - l) else w.getLsbD i
 

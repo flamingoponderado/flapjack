@@ -635,6 +635,16 @@ def special_i2w(r, c, args, env):
 
 
 def special_bit_field_insert(r, c, args, env):
+    # HOL raw FCP indexing is unspecified outside the input width. Unlike
+    # word_bit, bit_field_insert does not add that bound itself. Every call
+    # in the pinned model has literal bounds; require their source-side
+    # guarantee before using the getLsbD-based helper.
+    if len(args) < 3:
+        raise Unrenderable('bit_field_insert requires checked literal bounds')
+    high, low = nat_literal(args[0]), nat_literal(args[1])
+    width = word_width(type_of(args[2]))
+    if high is None or low is None or width is None or (low <= high and high - low >= width):
+        raise Unrenderable('bit_field_insert input index may exceed word width')
     return r.eta(c, args, env, 4,
                  lambda xs, raw: f'(holBitFieldInsert {xs[0]} {xs[1]} {xs[2]} {xs[3]})')
 
