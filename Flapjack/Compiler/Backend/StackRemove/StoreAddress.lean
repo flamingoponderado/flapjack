@@ -1,7 +1,9 @@
 import Flapjack.Compiler.Backend.StackRemove
 
 /-! Native storage addressing from stack_removeScript.sml:37–53.
-Production replacement remains dependency-linked on 36ez.3.
+The default Pancake and assembly modes initializedRuntimeLab? executes these native
+definitions through StackRemove.compileHOL. hex and sections modes retain the legacy
+route; upstream StackAlloc replacement is a separate obligation.
 -/
 namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Compiler.Backend.StackLang
