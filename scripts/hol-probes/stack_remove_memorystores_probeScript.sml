@@ -1,0 +1,16 @@
+load "preamble";
+load "stack_removeProofTheory";
+open bossLib HolKernel Parse preamble stack_removeProofTheory stackSemTheory wordSemTheory;
+val _ = Globals.linewidth := 20000;
+val ms_scalar = prove(``!jump off k s t x y s1 t1. state_rel jump off k s t /\ mem_store x y s = SOME s1 /\ mem_store x y t = SOME t1 ==> state_rel jump off k s1 t1``, metis_tac [state_rel_mem_store]);
+val _ = print("ms_scalar=" ^ term_to_string(concl ms_scalar) ^ "\n");
+val _ = print("ms_scalar_types=" ^ String.concatWith ";" (map (fn v => fst(dest_var v) ^ type_to_string(type_of v)) (fst(strip_forall(concl ms_scalar)))) ^ "\n");
+val _ = print("ms_scalar_proved=" ^ term_to_string(rhs(concl(EQT_INTRO ms_scalar))) ^ "\n");
+val ms_32 = prove(``!jump off k s t a b z. state_rel jump off k s t /\ mem_store_32 s.memory s.mdomain s.be a b = SOME z ==> ?y. mem_store_32 t.memory t.mdomain t.be a b = SOME y /\ state_rel jump off k (s with memory := z) (t with memory := y)``, metis_tac [state_rel_mem_store_32]);
+val _ = print("ms_32=" ^ term_to_string(concl ms_32) ^ "\n");
+val _ = print("ms_32_types=" ^ String.concatWith ";" (map (fn v => fst(dest_var v) ^ type_to_string(type_of v)) (fst(strip_forall(concl ms_32)))) ^ "\n");
+val _ = print("ms_32_proved=" ^ term_to_string(rhs(concl(EQT_INTRO ms_32))) ^ "\n");
+val ms_byte = prove(``!jump off k s t a b z. state_rel jump off k s t /\ mem_store_byte_aux s.memory s.mdomain s.be a b = SOME z ==> ?y. mem_store_byte_aux t.memory t.mdomain t.be a b = SOME y /\ state_rel jump off k (s with memory := z) (t with memory := y)``, metis_tac [state_rel_mem_store_byte_aux]);
+val _ = print("ms_byte=" ^ term_to_string(concl ms_byte) ^ "\n");
+val _ = print("ms_byte_types=" ^ String.concatWith ";" (map (fn v => fst(dest_var v) ^ type_to_string(type_of v)) (fst(strip_forall(concl ms_byte)))) ^ "\n");
+val _ = print("ms_byte_proved=" ^ term_to_string(rhs(concl(EQT_INTRO ms_byte))) ^ "\n");
