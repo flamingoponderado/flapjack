@@ -350,24 +350,28 @@ theorem word_sub_0_eq {width : Nat} [NeZero width] {w v : BitVec width} :
   exact ⟨key, key⟩
 
 /-- Exact HOL `good_dimindex_byte_aligned_eq` (`stack_allocProofScript.sml:4544-4551`);
-HOL `byte_aligned` is `gcByteAligned`. -/
+HOL `byte_aligned` is `holByteAligned`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "good_dimindex_byte_aligned_eq"
   (words_as_type_indexed_bitvec)]
 theorem good_dimindex_byte_aligned_eq {width : Nat} [NeZero width] {w : BitVec width} :
     goodDimindex width →
-      (gcByteAligned w = true ↔ (w &&& (if width = 32 then 3 else 7)) = 0) := by
+      (holByteAligned w = true ↔ (w &&& (if width = 32 then 3 else 7)) = 0) := by
   intro hg
   rcases hg with rfl | rfl
-  · have he : Nat.log2 (32 / 8) = 2 := Nat.log2_two_pow (n := 2)
-    simp only [gcByteAligned, decide_eq_true_eq, show (32 / 8 = 0) = False by decide, if_false,
+  · have he : holLOG2 (32 / 8) = 2 := by
+      rw [holLOG2_eq_log2 (by decide)]
+      exact Nat.log2_two_pow (n := 2)
+    simp only [holByteAligned, holAligned, holAlign_eq_div, decide_eq_true_eq,
       he, if_true, BitVec.toNat_eq, BitVec.toNat_and]
     have := w.isLt
     have hm : w.toNat &&& 3 = w.toNat % 4 := by
       simpa using Nat.and_two_pow_sub_one_eq_mod w.toNat 2
     simp at this ⊢
     omega
-  · have he : Nat.log2 (64 / 8) = 3 := Nat.log2_two_pow (n := 3)
-    simp only [gcByteAligned, decide_eq_true_eq, show (64 / 8 = 0) = False by decide, if_false,
+  · have he : holLOG2 (64 / 8) = 3 := by
+      rw [holLOG2_eq_log2 (by decide)]
+      exact Nat.log2_two_pow (n := 3)
+    simp only [holByteAligned, holAligned, holAlign_eq_div, decide_eq_true_eq,
       he, show (64 = 32) = False by decide, BitVec.toNat_eq, BitVec.toNat_and]
     have := w.isLt
     have hm : w.toNat &&& 7 = w.toNat % 8 := by

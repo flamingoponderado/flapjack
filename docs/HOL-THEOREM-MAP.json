@@ -52030,7 +52030,7 @@
     "lean_name": "newTrig",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (234-243): w2n/n2w as toNat/ofNat, MIN as min, the four branches in order; byte_aligned rendered by gcByteAligned (aligned (LOG2 (dimindex DIV 8)), with HOL's unspecified LOG2 0 as the opaque gcLog2Zero). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2), word_gcFunctionsScript.sml (234-243): w2n/n2w as toNat/ofNat, MIN as min, the four branches in order; byte_aligned rendered by gcByteAligned (aligned (LOG2 (dimindex DIV 8)), with HOL's unspecified LOG2 0 as the opaque gcLog2Zero). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. Rows replayed from scripts/hol-probes/word_gc_functions_probe.out in Flapjack/Test/WordGcFunctionsParity.lean. Source-review repair 2026-10-02: byte_aligned now directly uses reviewed holByteAligned and global specified holLOG2, including unconstrained LOG2 0 below byte width; independent gcLog2Zero/gcByteAligned deleted."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -53698,7 +53698,7 @@
     "lean_name": "good_dimindex_byte_aligned_eq",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:4544-4551 good_dimindex_byte_aligned_eq: good_dimindex ==> (byte_aligned w <=> (w && (if dimindex = 32 then 3w else 7w)) = 0w), byte_aligned as the untagged gcByteAligned rendering (aligned (LOG2 (dimindex DIV 8)); the unspecified LOG2 0 case is excluded by good_dimindex). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change."
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.5), stack_allocProofScript.sml:4544-4551 good_dimindex_byte_aligned_eq: good_dimindex ==> (byte_aligned w <=> (w && (if dimindex = 32 then 3w else 7w)) = 0w), byte_aligned as the untagged gcByteAligned rendering (aligned (LOG2 (dimindex DIV 8)); the unspecified LOG2 0 case is excluded by good_dimindex). HOL 'a word as positive-width BitVec width with [NeZero width]; no hypothesis, side condition or conclusion change. Source-review repair 2026-10-02: statement now observes canonical holByteAligned; width32/64 proof rewrites specified holLOG2 at positive byte dimensions and holAlign_eq_div, retaining original mask conclusion."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackProps/RegisterBounds.lean",
@@ -53998,7 +53998,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/DoAlloc1Success.lean",
     "lean_name": "stExFilterFullConsistencyOk",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8): reg_allocProofScript.sml:2893-2916, k free in HOL (explicit parameter), ∀ls acc s over (num # num # num) lists with only good_ra_state s; the pattern lambda λ(_,x,y) is the projections m.2.1/m.2.2 and the disjunct MEM (p,(x,y)) acc is m ∈ acc; st_ex_FILTER the exact tagged stExFilter. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, M_success Exc.success, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8): reg_allocProofScript.sml:2893-2916, k free in HOL (explicit parameter), ∀ls acc s over (num # num # num) lists with only good_ra_state s; the pattern lambda λ(_,x,y) is the projections m.2.1/m.2.2 and the disjunct MEM (p,(x,y)) acc is m ∈ acc; st_ex_FILTER the exact tagged stExFilter. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, M_success Exc.success, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl. Source-review repair 2026-10-02: HOL unconstrained payload p restored as arbitrary α : Type in α × (Nat × Nat); original k, good_ra_state premise, existential successful FILTER/state preservation and full element-bound-or-acc conclusion retained."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
@@ -54788,7 +54788,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/ColourExtraction.lean",
     "lean_name": "extractColorStExMapLem",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.11): reg_allocProofScript.sml:2038-2046 [local], ∀ls s; EVERY (λ(k,v). v < LENGTH s.node_tag) ls as ∀ p ∈ ls, p.2 < length; st_ex_MAP over HOL's pattern lambda λ(k,v). do t <- node_tag_sub v; return (k, extract_tag t) od rendered as the Lean pattern lambda with bind/ret; result MAP (λ(k,v). (k, extract_tag (EL v s.node_tag))) ls. st_ex_MAP, node_tag_sub and extract_tag are the exact tagged stExMap/nodeTagSub/extractTag; node_tag subscripts read through HOL EL as the exact holEl. Kernel-checked; standard axioms; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.11): reg_allocProofScript.sml:2038-2046 [local], ∀ls s; EVERY (λ(k,v). v < LENGTH s.node_tag) ls as ∀ p ∈ ls, p.2 < length; st_ex_MAP over HOL's pattern lambda λ(k,v). do t <- node_tag_sub v; return (k, extract_tag t) od rendered as the Lean pattern lambda with bind/ret; result MAP (λ(k,v). (k, extract_tag (EL v s.node_tag))) ls. st_ex_MAP, node_tag_sub and extract_tag are the exact tagged stExMap/nodeTagSub/extractTag; node_tag subscripts read through HOL EL as the exact holEl. Kernel-checked; standard axioms; no extra premise. Source-review repair 2026-10-02: HOL unconstrained association-list key restored as arbitrary α : Type; node index remains Nat, original EVERY bound and state-preserving MAP conclusion unchanged."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
