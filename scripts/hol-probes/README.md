@@ -9,6 +9,15 @@
 `target_register_oracles_probe.out` captures all four full native targetProps register-oracle types/equations and ten generic IO/cache presence, absence, callee filtering and allowed register/FP branches, replayed by TargetRegisterOraclesParity. Fixed word64 FP fallback and unused FFI name remain literal.
 
 `target_interference_sequence_probe.out` captures the full original types and equations for next_interference, interference_app_seq, interference_count and interference_pos (source215-249), with generic recurrence replays. Native kernel regressions preserve all generic parameters and unspecified option choice.
+`byte_word_slice_alt_probe.out` records the full original alternate-slice
+definition/type and66 complete numeric boundary results.
+`byte_decoder_native_probe.out` records set_byte/word_of_bytes definitions/types
+and252 complete numeric outputs;318 matching kernel fixtures cover widths
+1/7/8/16/64/80, both endians, truncated/oversized/inverted/huge slice bounds,
+wrapped addresses, repeated byte lanes and empty/single/five/eleven-byte lists.
+Registering original MOD_0 before EVAL avoids exponential residual expression
+expansion at sub-byte dimensions; this changes only probe reduction order.
+
 `mmio_index_probe.out` captures the full original optional-boundary definition
 and inferred type plus40 assumption-free proved choice equations for every
 external/read/write name list of length0..3. Matching kernel fixtures preserve
@@ -27,6 +36,13 @@ identity step using the empty external call. `Flapjack/EvaluateProps.lean`
 retains all four existential witnesses and kernel-checks the same generic
 identity step. The reflexive-transitive closure and full LabToTarget
 shared-memory relation remain separate obligations.
+`target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
+
+`target_search_mono_probe.out` captures the complete original find_next_interference_mono and find_next_interference_unique statements. Native kernel proofs retain arbitrary clock limits, all machine/FFI parameters and equality of the entire returned tuple, with no added bounds or validity premise.
+
+`target_register_oracles_probe.out` captures all four full native targetProps register-oracle types/equations and ten generic IO/cache presence, absence, callee filtering and allowed register/FP branches, replayed by TargetRegisterOraclesParity. Fixed word64 FP fallback and unused FFI name remain literal.
+
+`target_interference_sequence_probe.out` captures the full original types and equations for next_interference, interference_app_seq, interference_count and interference_pos (source215-249), with generic recurrence replays. Native kernel regressions preserve all generic parameters and unspecified option choice.
 
 `word_to_stack_native_addr_probe.out` records72 original wInst memory trees across Load/Store/Load8/Store8/Load32/Store32, register/spilled operands and zero/positive/negative64bit offsets; five selected Store trees include signed12 endpoints and out-of-range2048. Native kernel fixtures replay all72 source trees; production fixtures preserve Addr instead of macro address sequences, with unchanged original artifact/corpus goldens.
 
