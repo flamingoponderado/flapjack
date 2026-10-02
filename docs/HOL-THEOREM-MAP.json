@@ -63614,5 +63614,35 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-02 bead .6.8.4.5: literal complete original288-312 fullstateRel plus successful source byte/32 native load implies identical target successful load. Actual imported StackSemStateFiniteExact canonical regs/fpRegs/store owner with same-module genuine broad/exact roundtrip witness; Spt code not named. Positive width BitVec/NeZero, independent C/F Type0, fixed BitVec32/8 result and native alignment/byte extraction order/endianness match HOL. Target aligned memory word and domain derived by accepted stateRelRead, endian derived from full relation. No target success/value/domain premise, finite heap restriction, extra word/carrier condition or changed native execution path. Fresh full original local theorem reproofs/types and complete native proofs kernel checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InstructionSimulation/Atoms.lean",
+    "lean_name": "stateRelInstSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.6: genuine Skip/Const constructor case of complete state_rel_inst767-870, same three premises fullstateRel, regBoundInst, actual native source instHOL successful execution; same existential target successful execution and fullpoststateRel conclusion. Only constructor specialization, no targetrun/preservation/frame premise. Actual imported canonical StackSemStateFiniteExact with finite support regs/fpRegs/store and local genuine broad/exact codec witness; Spt code not named. Positive width NeZero/BitVec and independent C/F Type0 match original. Skip unchanged actual target; Const evaluates original expression and updates same bounded register via accepted fullstateRelSetVar. Whole instHOL closure conservatively inherits the reals_as_rational_cuts assumption even though these cases execute no FP operations; inherited flag retained. Fresh original fulltheorem/type and full constructor case kernel replays plus native generic kernel proofs checked. Fullparent still needs all other constructors and assembly."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InstructionSimulation/Atoms.lean",
+    "lean_name": "stateRelInstConst",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "state_rel_inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.4.6: genuine Skip/Const constructor case of complete state_rel_inst767-870, same three premises fullstateRel, regBoundInst, actual native source instHOL successful execution; same existential target successful execution and fullpoststateRel conclusion. Only constructor specialization, no targetrun/preservation/frame premise. Actual imported canonical StackSemStateFiniteExact with finite support regs/fpRegs/store and local genuine broad/exact codec witness; Spt code not named. Positive width NeZero/BitVec and independent C/F Type0 match original. Skip unchanged actual target; Const evaluates original expression and updates same bounded register via accepted fullstateRelSetVar. Whole instHOL closure conservatively inherits the reals_as_rational_cuts assumption even though these cases execute no FP operations; inherited flag retained. Fresh original fulltheorem/type and full constructor case kernel replays plus native generic kernel proofs checked. Fullparent still needs all other constructors and assembly."
   }
 ]

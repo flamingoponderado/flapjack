@@ -5079,3 +5079,7 @@ run_probe stack_remove_memorystores_probeScript.sml stack_remove_memorystores_pr
 run_probe stack_remove_memoryloads_probeScript.sml stack_remove_memoryloads_probe.out \
   ml_32 ml_32_types ml_32_proved ml_byte ml_byte_types ml_byte_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_inst_atoms_probeScript.sml stack_remove_inst_atoms_probe.out \
+  ia_full ia_full_types ia_skip ia_skip_types ia_skip_proved ia_const ia_const_types ia_const_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

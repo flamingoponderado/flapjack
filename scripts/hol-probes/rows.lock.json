@@ -852,6 +852,7 @@
     {"bytes": 18738, "out": "stack_remove_copy_loop_probe.out", "rows": 34, "sha256": "d764338d63b66cdf65bea28a0e2ae7991b1683e0172bc305ba4a1d7d0d3bc16a"},
     {"bytes": 160, "out": "stack_remove_helpers_probe.out", "rows": 8, "sha256": "43d14b6bdd51f0dc6ac5cda03d88eecca0ecf4502f7d7242f5b634e969dae2e2"},
     {"bytes": 124, "out": "stack_remove_init_probe.out", "rows": 8, "sha256": "396eb1419d740f0a752665ebe836e06ac7c55f9a870f73fff9c764e1bcf6c5c2"},
+    {"bytes": 999, "out": "stack_remove_inst_atoms_probe.out", "rows": 8, "sha256": "d626a7ede27b381dc5223f49747ba535e0900d69afbd285f65c96d47908d0d8e"},
     {"bytes": 284, "out": "stack_remove_memory_probe.out", "rows": 13, "sha256": "7a0851c3acef65dd56c49168ea1f1a934d9257097ebbea7a2bfb0d9c364dc770"},
     {"bytes": 617, "out": "stack_remove_memoryloads_probe.out", "rows": 6, "sha256": "3c9cd4735da01033caaea378973c9f0d9ef201611da95a75400fee4f528a16d1"},
     {"bytes": 740, "out": "stack_remove_memoryreads_probe.out", "rows": 9, "sha256": "c2715fa2c0b61655d1c21a3a28cc527dfe4afc4045d6d5bf612cab28f83820f5"},
