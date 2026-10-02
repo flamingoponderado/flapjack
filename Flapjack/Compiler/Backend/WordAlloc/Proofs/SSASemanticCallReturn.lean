@@ -468,4 +468,59 @@ theorem returningBindResults {width : Nat} [NeZero width] {C F : Type}
     List.map_snd_zip (Nat.le_of_eq zipLengths.symm),
     arithmetic.1,if_true,read]
 
+
+/-- Flapjack-specific original8660-8692 no-handler exception transport.
+Internal callee-entry alignment comes from calleeSwap. Total stack-swap
+semantics proves an exception skips the newly pushed NONE handler frame;
+its original outer frame is identical on both sides, so the actual target run
+returns the complete original post-state. No target evaluation is assumed and
+no standalone HOL declaration/full returning Call tag is claimed. -/
+theorem returningNoHandlerException {width : Nat} [NeZero width] {C F : Type}
+    (body : WordLangProgHOL (BitVec width))
+    (callee targetCallee returned : WordSemStateFiniteExact width C F)
+    (original : List (WordSemStackFrame width))
+    (sourceSize targetSize : Option Nat)
+    (sourceFirst sourceRoots targetFirst targetRoots : List (Nat × WordLocW width))
+    (x y : WordLocW width)
+    (sourceShape : callee.stack =
+      .stackFrame sourceSize sourceFirst sourceRoots none :: original)
+    (targetShape : targetCallee.stack =
+      .stackFrame targetSize targetFirst targetRoots none :: original)
+    (entry : {callee with stack := targetCallee.stack} = targetCallee)
+    (values : WordSemStackEq.sValEq callee.stack targetCallee.stack)
+    (run : WordSemStateFiniteExact.evaluate body callee = (some (.exception x y),returned)) :
+    WordSemStateFiniteExact.evaluate body targetCallee = (some (.exception x y),returned) := by
+  have transport := WordSemStackEq.evaluateStackSwap body callee
+  unfold WordSemStackEq.stackSwapPost at transport
+  rw [run] at transport
+  obtain ⟨bounded,e0,e,n,tail,m,locals,handlerFrame,_,⟨keys,localShape⟩,
+    tailKeys,returnedHandler,swapped⟩ := transport
+  have inside : callee.handler + 1 ≤ original.length := by
+    rcases Nat.lt_or_ge callee.handler original.length with below | above
+    · exact below
+    · exfalso
+      have length : callee.handler + 1 = callee.stack.length := by
+        rw [sourceShape] at bounded ⊢
+        simp only [List.length_cons] at bounded ⊢
+        omega
+      rw [WordSemStackEq.lastNLengthCond _ _ length,sourceShape] at handlerFrame
+      simp at handlerFrame
+  have outer := handlerFrame
+  rw [sourceShape,WordSemStackEq.lastN_cons _ _ _ inside] at outer
+  have targetOuter : wordSemLastN (callee.handler+1) targetCallee.stack =
+      .stackFrame m e0 e (some n) :: tail := by
+    rw [targetShape,WordSemStackEq.lastN_cons _ _ _ inside]
+    exact outer
+  obtain ⟨stack,restored,actual,⟨newLocals,newKeys,newShape,sameValues⟩,stackValues,stackKeys⟩ :=
+    swapped targetCallee.stack e0 e tail ⟨targetOuter,values⟩
+  have sameLocals : locals = newLocals :=
+    WordSemStackEq.listEq_of_map_fst_snd _ _ (keys.symm.trans newKeys) sameValues
+  subst sameLocals
+  have restoredEqual : restored = returned.locals := newShape.trans localShape.symm
+  have stackEqual : stack = returned.stack :=
+    (WordSemStackEq.sValAndKeyEq _ _ ⟨stackValues,
+      WordSemStackEq.sKeyEqTrans _ _ _ ⟨tailKeys,stackKeys⟩⟩).symm
+  rw [entry,restoredEqual,stackEqual,←returnedHandler] at actual
+  exact actual
+
 end Flapjack.Compiler.Backend.WordAlloc
