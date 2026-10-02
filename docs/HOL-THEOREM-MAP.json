@@ -60261,5 +60261,21 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.6), stack_allocProofScript.sml:2526-2678 word_gen_gc_move_code_thm: all premises in HOL order as one conjunction (word_gen_gc_move conf (w,i,pa,ib,pb,old,m,dm) = (w1,i1,pa1,ib1,pb1,m1,T); the shift/dimindex/len_size bounds; !w. w << word_shift = w * bytes_in_word; FLOOKUP CurrHeap = Word old; use_store; memory/mdomain; 0,1,2 IN FDOM s.regs; get_var 3/4/5; Temp 0w/Temp 1w IN FDOM s.store; FLOOKUP Temp 2w = Word pb, Temp 3w = Word ib; HOL's duplicated 1,2 IN FDOM and 6 IN FDOM), free variables implicit, conclusion ?ck r0 r1 r2 r6 t0 t1 with memory m1, the four-slot Temp store |++ and the seven-register |++, over the exact StackSem evaluate. Covers Loc, untagged word, forwarding pointer, reference objects (copied below Temp 2w with Temp 3w decremented, via memcpy_code_thm) and other objects (copied as in word_gc_move_code_thm). Temp nw as WordStore.temp over its fixed five-bit address, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeInsertWf.lean",
+    "lean_name": "wfAlistInsert",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wf_alist_insert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-insert-wf): full original3570-3574/3703-3709 arbitrary payload/list quantifiers, constructor-for-constructor native Spt and actual alist_insert/fromList2 operations. Sole original wf input premise retained for insertion; fromList2 unconditional. Bool wf=true translates the source proposition. Literal original full proofs hyp=[] and168 matching whole-tree/input/output-wf Nat/Bool fixtures retain unequal lengths, repeated keys, empties, malformed carriers. No held HD/EL or trust policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NativeInsertWf.lean",
+    "lean_name": "wfFromList2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wf_fromList2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-native-insert-wf): full original3570-3574/3703-3709 arbitrary payload/list quantifiers, constructor-for-constructor native Spt and actual alist_insert/fromList2 operations. Sole original wf input premise retained for insertion; fromList2 unconditional. Bool wf=true translates the source proposition. Literal original full proofs hyp=[] and168 matching whole-tree/input/output-wf Nat/Bool fixtures retain unequal lengths, repeated keys, empties, malformed carriers. No held HD/EL or trust policy changes."
   }
 ]

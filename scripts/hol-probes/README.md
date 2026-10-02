@@ -5340,3 +5340,8 @@ The same assembly-step probe also captures the full original evaluator-only
 invariants and inclusive-prefix out-of-domain byte preservation. Lean proofs
 live in `TargetProps/EncoderStepState.lean`. These original full statements
 provide regression evidence, not cross-language equivalence.
+
+Native insertion-wf probes replay both complete original proofs and168 whole
+native Spt/input/output-wf fixtures. Matching kernel cases retain empty and
+unequal lists, repeated keys, Nat/Bool payloads and malformed trees.
+Regression evidence is not HOL-to-Lean equivalence.
