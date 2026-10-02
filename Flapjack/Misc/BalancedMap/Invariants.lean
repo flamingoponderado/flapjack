@@ -12,8 +12,8 @@ def structureSize {κ ν : Type} : Map κ ν → Nat
   | .bin _ _ _ left right => 1 + structureSize left + structureSize right
 
 @[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "key_ordered_def"]
-def keyOrdered {κ ν : Type} (cmp : κ → κ → Ordering) (key : κ) :
-    Map κ ν → Ordering → Prop
+def keyOrdered {ι κ ρ ν : Type} (cmp : ι → κ → ρ) (key : ι) :
+    Map κ ν → ρ → Prop
   | .tip, _ => True
   | .bin _ key' _ left right, result =>
     cmp key key' = result ∧ keyOrdered cmp key left result ∧ keyOrdered cmp key right result

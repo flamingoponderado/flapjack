@@ -1,0 +1,13 @@
+load "bossLib";
+load "balanced_mapTheory";
+open HolKernel Parse bossLib balanced_mapTheory;
+val _ = Globals.linewidth := 10000;
+val _ = Globals.show_types := true;
+val _ = (print "bmh_keyset="; print_thm key_set_def; print "\n");
+val _ = (print "bmh_map="; print_thm to_fmap_def; print "\n");
+val _ = (print "bmh_domain="; print_thm to_fmap_key_set; print "\n");
+val _ = (print "bmh_keyset_type="; print(type_to_string(type_of ``key_set``)); print "\n");
+val _ = (print "bmh_map_type="; print(type_to_string(type_of ``to_fmap``)); print "\n");
+val _ = if null(hyp key_set_def) andalso null(hyp to_fmap_def) andalso null(hyp to_fmap_key_set) then () else raise Fail "open HOL hypotheses";
+val _ = (print "bmh_cmp="; print_thm key_set_cmp_def; print "\n");
+val _ = (print "bmh_cmp2="; print_thm key_set_cmp2_def; print "\n");

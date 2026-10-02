@@ -22,6 +22,8 @@ def mapArithPayloads (map : α → β) : WordArith α → WordArith β
   | .longDiv a b c d e => .longDiv a b c d e
   | .addCarry a b c d e => .addCarry a b c d e
   | .cakeAddCarry a b c d => .cakeAddCarry a b c d
+  | .addOverflow a b c d => .addOverflow a b c d
+  | .subOverflow a b c d => .subOverflow a b c d
   | .div a b c => .div a b c
   | .binOp op a b right => .binOp op a b (mapRegImmPayloads map right)
   | .shift op a b right => .shift op a b (mapRegImmPayloads map right)

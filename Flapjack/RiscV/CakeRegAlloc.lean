@@ -218,6 +218,8 @@ def cakeForcedArith {α : Type u} : WordArith α → List (Nat × Nat)
       getForcedAddCarry destination sourceRight carryIn
   | .cakeAddCarry destination _ sourceRight carry =>
       getForcedAddCarry destination sourceRight carry
+  | .addOverflow d _ r _ | .subOverflow d _ r _ =>
+      if d = r then [] else [(d, r)]
   | .longMul destinationLeft _ sourceLeft sourceRight =>
       getForcedLongMul destinationLeft sourceLeft sourceRight
   | _ => []
