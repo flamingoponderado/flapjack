@@ -64558,5 +64558,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-stack-asm-remove-helpers: original 11177-11182: sole reg_name frame-first premise establishes full iff for false-performance wrapper, arbitrary handler flag, continuation, list and unused frame-tail types. Independent list/frame carriers preserved. Configuration and native program widths are independently positive, as confirmed by original inferred alpha asm_config/beta stackLang prog type; qualifier records only standard word dimension translation. No post-allocation, minimum frame, desired target safety/result or extra range hypothesis. All five literal original HOL local proofs replayed freshly, regression evidence only, not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Instructions.lean",
+    "lean_name": "compCorrectInst",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.5: complete genuine Inst constructor case comp_correct1481-1493/1564-1577. Same4premises actual total evaluate(sourceInst,source)=(result,postSource), original nonError, fullstateRel, fullregBound. Original EXISTS targetclock/posttarget samecompiled actualevaluate result AND original Halt/TimeOut/FinalFFI ffi branch versus fullstateRel branch. No extra successfulpass/targetrun/clock/input/frame assumption. Sourcefailure excluded by originalnonError; complete stateRelInst supplies targetprimitive/postrelation, witness extra clock0 proved with native evaluation clause and compileridentity case. Actual imported StackSemStateFiniteExact canonical regs/fpRegs/store with same-module genuine broad/exact roundtrip witness; Spt code not named. Positive widthNeZero/BitVec, independent C/F Type0 match original. Entire native evaluator/inst inherits reals_as_rational_cuts assumption, retained explicitly; no globalcompiler theorem claimed. Freshoriginal full local case proof/types and native complete kernelproof checked. Ordinary main0218e1317 merged beforechecks, preserveallincoming6733manifestrows plus13ownmissing. Fullparent remainingconstructor/IH/assembly remainsopen."
   }
 ]
