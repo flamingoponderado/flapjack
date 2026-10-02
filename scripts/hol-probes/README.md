@@ -4626,3 +4626,14 @@ SSA state-writing probe replays original Set/Store semantic cases and local prer
 `target_props_clock_io_events_probeScript.sml` replays the full original `evaluate_add_clock_io_events_mono` theorem (targetPropsScript.sml:1112-1137), including only clock order and no open hypotheses. `TargetPropsClockIoEventsParity.lean` checks the same full statement over the literal evaluator. Paired clock induction retains every transition and uses full input-event prefix preservation at clock zero.
 
 Native SSA Seq probe replays the original semantic case and local locals-more proof, with specialized legitimate first/second body IHs and already-discharged size bookkeeping omitted. Captures full recursive/original statements and seven carrier types; actual scheduler-swap and second-context validity are retained.
+
+### Native SSA semantic If case
+
+`ssa_cc_trans_correct_if_probeScript.sml` replays the literal resumed If
+proof with its complete two specialized smaller-branch IHs. It omits only
+structural size bookkeeping already discharged by specialization and selects
+the corresponding branch IH explicitly. Original non-exported getVar,
+map/locals bound, merge-move, and fix-inconsistencies local proofs are replayed.
+The capture records the recursive and original full statements and native
+state/program/map/fresh-bound/loop-table carriers. This is source evidence,
+not a cross-assistant equivalence proof; final assembly must discharge the IHs.

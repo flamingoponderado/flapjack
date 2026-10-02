@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp

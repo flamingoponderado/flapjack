@@ -54731,5 +54731,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a source comparison flapjack-dbck: full original resumed native semantic Seq9228-9263 case. Exactly original six premises/full Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion, plus only legitimate first/second smaller-body IHs specialized from completeInduct prog_size. Actual fullcompiler invariant derives second map/allocation/bound and everyVarMono increases source bounds; no target eval/post-frame/success assumption. Source Error and all early result constructors covered; first-run NONE derives scheduler-swap nonError guard, and original native permute_swap_lemma composes actual source evaluations. Native fix_clock_evaluate derives complete Seq equation. Fresh literal original Seq proof replay includes original local locals-more proof and original wordConvs bindings; specialized body IHs replace universal smaller-program IH, already-discharged structural size_tac2 omitted, no other premises. Full recursive/original statements7carrier types preserve shared positive width/code/FFI hosts, independent body programs, native SptNat/Unit sets. fmap qualifier translates only imported fpRegs/store with same-module roundtrip witness; conventional word translation. Inherits reals_as_rational_cuts SOUNDNESS8. Inherited holEl/holHd source review: accepted full SSA compiler-invariant and native scheduler-swap helper callchains retain canonical total opaque selectors and original guarded observations; original Seq requires no added bounds or concrete OOB defaults. Scheduler-swap applied only to derived first NONE, preserving its original nonError guard. All result/locals branches retain original table optional lookup semantics. Full native SSA remaining constructors/assembly unfinished."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticIf.lean",
+  "lean_name": "ssaCcTransCorrectIf",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: original resumed If case9263-9331, complete six hypotheses and existential source permutation/result/frame/result-sensitive locals; only legitimate two universal smaller-branch IHs. Literal getVar/getVarImm/wordCmp failure and true/false branches, second compilation uses original SSA map at first fresh bound. Native compiler invariants derive growing bounds; original fixL/R derive NONE reconciliation internally. Canonical fpRegs/store finite-support translation and positive-width BitVec/Type0 host carriers reviewed; Spt locals/code and optional loop-table lookup unchanged. Inherits reals_as_rational_cuts evaluator boundary SOUNDNESS8 and canonical holEl/holHd via native compiler/reconciliation helpers with original bounded selector guards intact, no new default. Literal HOL replay with original local helpers passes; Lean kernel checked. Final assembly must discharge branch IHs."
 }
 ]
