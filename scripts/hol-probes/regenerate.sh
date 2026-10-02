@@ -3233,8 +3233,18 @@ run_probe word_alloc_nlive_store_probeScript.sml word_alloc_nlive_store_probe.ou
   ns_lookup_dead ns_lookup_live ns_var ns_const ns_op_dead ns_op_live ns_op_empty ns_load ns_load_dead ns_shift_left_dead ns_shift_right_dead ns_shift_live \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_gc_functions_probeScript.sml word_gc_functions_probe.out \
-  gc_ptr_to_addr gc_new_trig_unaligned \
+  gc_ptr_to_addr gc_is_gc_word_const_odd \
   "$cake_dir/compiler/backend/proofs/word_gcFunctionsScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_alloc_gc_code_probeScript.sml stack_alloc_gc_code_probe.out \
+  sa_memcpy_code sa_compile_none \
+  "$cake_dir/compiler/backend/stack_allocScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe stack_alloc_get_bits_probeScript.sml stack_alloc_get_bits_probe.out \
+  get_bits_11 get_bits_msb_64 \
+  "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
 run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
@@ -4036,6 +4046,7 @@ run_probe ssa_reconcile_get_vars_probeScript.sml ssa_reconcile_get_vars_probe.ou
 run_probe stackprops_ordered_code_labels_probeScript.sml stackprops_ordered_code_labels_probe.out \
   extract_labels extract_labels_types find_code_labels find_code_labels_types find_code find_code_types get_labels get_labels_types loc_check loc_check_types key_bool_direct key_bool_indirect key_bool_missing key_bool_nonzero key_bool_word key_list_indirect key_list_missing_code key_nat_legacy \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe target_props_clock_probeScript.sml target_props_clock_probe.out \
   tp_clock_theorem_closed tp_clock_type tp_clock_statement tp_halt_stable tp_error_stable \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -4063,7 +4074,6 @@ run_probe stack_remove_stack_alloc_probeScript.sml stack_remove_stack_alloc_prob
 run_probe stack_remove_store_address_probeScript.sml stack_remove_store_address_probe.out \
   store_pos_full_def store_pos_type store_offset_full_def store_offset_type position_0 position_1 position_2 position_3 position_4 position_5 position_6 position_7 position_8 position_9 position_10 position_11 position_12 position_13 position_14 position_15 position_16 position_17 position_18 position_19 position_20 position_21 position_22 position_23 position_24 position_25 position_26 position_27 position_28 position_29 position_30 position_31 position_32 position_33 position_34 position_35 position_36 position_37 position_38 position_39 position_40 position_41 position_42 position_43 position_44 position_45 position_46 position_47 position_48 offset_1_0 offset_1_10 offset_1_15 offset_1_16 offset_1_47 offset_1_48 offset_8_0 offset_8_10 offset_8_15 offset_8_16 offset_8_47 offset_8_48 offset_32_0 offset_32_10 offset_32_15 offset_32_16 offset_32_47 offset_32_48 offset_64_0 offset_64_10 offset_64_15 offset_64_16 offset_64_47 offset_64_48 offset_80_0 offset_80_10 offset_80_15 offset_80_16 offset_80_47 offset_80_48 \
   "$cake_dir/compiler/backend/stack_removeScript.sml" "$cake_dir/compiler/backend"
-
 run_probe ssa_lt_ok_probeScript.sml ssa_lt_ok_probe.out \
   lt_ok_full lt_ok_type_lt \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4079,6 +4089,12 @@ run_probe ssa_cc_trans_correct_primitives_probeScript.sml ssa_cc_trans_correct_p
 run_probe ssa_locals_get_var_probeScript.sml ssa_locals_get_var_probe.out \
   lg_full lg_type_st lg_type_cst lg_type_ssa lg_type_na lg_type_n lg_type_x \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_list_order_probeScript.sml word_cse_list_order_probe.out \
+  lo_definition lo_full_eq lo_full_reverse lo_full_transit lo_value_0_0 lo_eq_0_0 lo_reverse_0_0 lo_value_0_1 lo_eq_0_1 lo_reverse_0_1 lo_value_0_2 lo_eq_0_2 lo_reverse_0_2 lo_value_0_3 lo_eq_0_3 lo_reverse_0_3 lo_value_0_4 lo_eq_0_4 lo_reverse_0_4 lo_value_0_5 lo_eq_0_5 lo_reverse_0_5 lo_value_0_6 lo_eq_0_6 lo_reverse_0_6 lo_value_0_7 lo_eq_0_7 lo_reverse_0_7 lo_value_1_0 lo_eq_1_0 lo_reverse_1_0 lo_value_1_1 lo_eq_1_1 lo_reverse_1_1 lo_value_1_2 lo_eq_1_2 lo_reverse_1_2 lo_value_1_3 lo_eq_1_3 lo_reverse_1_3 lo_value_1_4 lo_eq_1_4 lo_reverse_1_4 lo_value_1_5 lo_eq_1_5 lo_reverse_1_5 lo_value_1_6 lo_eq_1_6 lo_reverse_1_6 lo_value_1_7 lo_eq_1_7 lo_reverse_1_7 lo_value_2_0 lo_eq_2_0 lo_reverse_2_0 lo_value_2_1 lo_eq_2_1 lo_reverse_2_1 lo_value_2_2 lo_eq_2_2 lo_reverse_2_2 lo_value_2_3 lo_eq_2_3 lo_reverse_2_3 lo_value_2_4 lo_eq_2_4 lo_reverse_2_4 lo_value_2_5 lo_eq_2_5 lo_reverse_2_5 lo_value_2_6 lo_eq_2_6 lo_reverse_2_6 lo_value_2_7 lo_eq_2_7 lo_reverse_2_7 lo_value_3_0 lo_eq_3_0 lo_reverse_3_0 lo_value_3_1 lo_eq_3_1 lo_reverse_3_1 lo_value_3_2 lo_eq_3_2 lo_reverse_3_2 lo_value_3_3 lo_eq_3_3 lo_reverse_3_3 lo_value_3_4 lo_eq_3_4 lo_reverse_3_4 lo_value_3_5 lo_eq_3_5 lo_reverse_3_5 lo_value_3_6 lo_eq_3_6 lo_reverse_3_6 lo_value_3_7 lo_eq_3_7 lo_reverse_3_7 lo_value_4_0 lo_eq_4_0 lo_reverse_4_0 lo_value_4_1 lo_eq_4_1 lo_reverse_4_1 lo_value_4_2 lo_eq_4_2 lo_reverse_4_2 lo_value_4_3 lo_eq_4_3 lo_reverse_4_3 lo_value_4_4 lo_eq_4_4 lo_reverse_4_4 lo_value_4_5 lo_eq_4_5 lo_reverse_4_5 lo_value_4_6 lo_eq_4_6 lo_reverse_4_6 lo_value_4_7 lo_eq_4_7 lo_reverse_4_7 lo_value_5_0 lo_eq_5_0 lo_reverse_5_0 lo_value_5_1 lo_eq_5_1 lo_reverse_5_1 lo_value_5_2 lo_eq_5_2 lo_reverse_5_2 lo_value_5_3 lo_eq_5_3 lo_reverse_5_3 lo_value_5_4 lo_eq_5_4 lo_reverse_5_4 lo_value_5_5 lo_eq_5_5 lo_reverse_5_5 lo_value_5_6 lo_eq_5_6 lo_reverse_5_6 lo_value_5_7 lo_eq_5_7 lo_reverse_5_7 lo_value_6_0 lo_eq_6_0 lo_reverse_6_0 lo_value_6_1 lo_eq_6_1 lo_reverse_6_1 lo_value_6_2 lo_eq_6_2 lo_reverse_6_2 lo_value_6_3 lo_eq_6_3 lo_reverse_6_3 lo_value_6_4 lo_eq_6_4 lo_reverse_6_4 lo_value_6_5 lo_eq_6_5 lo_reverse_6_5 lo_value_6_6 lo_eq_6_6 lo_reverse_6_6 lo_value_6_7 lo_eq_6_7 lo_reverse_6_7 lo_value_7_0 lo_eq_7_0 lo_reverse_7_0 lo_value_7_1 lo_eq_7_1 lo_reverse_7_1 lo_value_7_2 lo_eq_7_2 lo_reverse_7_2 lo_value_7_3 lo_eq_7_3 lo_reverse_7_3 lo_value_7_4 lo_eq_7_4 lo_reverse_7_4 lo_value_7_5 lo_eq_7_5 lo_reverse_7_5 lo_value_7_6 lo_eq_7_6 lo_reverse_7_6 lo_value_7_7 lo_eq_7_7 lo_reverse_7_7 lo_transit_0 lo_transit_1 lo_transit_2 lo_transit_3 lo_transit_4 lo_transit_5 lo_transit_6 lo_transit_7 lo_transit_8 lo_transit_9 lo_transit_10 lo_transit_11 lo_transit_12 lo_transit_13 lo_transit_14 lo_transit_15 \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe target_props_io_events_probeScript.sml target_props_io_events_probe.out \
+  tp_io_full_statement tp_io_type \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe ssa_cc_trans_correct_register_writes_probeScript.sml ssa_cc_trans_correct_register_writes_probe.out \
   sw_assign_full sw_get_full sw_loc_full sw_type_st sw_type_cst sw_type_expr sw_type_store sw_type_label sw_type_lt \

@@ -22,3 +22,7 @@ gc_new_trig_small=80w
 gc_new_trig_big=100w
 gc_new_trig_aligned=200w
 gc_new_trig_unaligned=1000w
+gc_is_gc_const_even=T
+gc_is_gc_const_odd=F
+gc_is_gc_word_const_loc=T
+gc_is_gc_word_const_odd=F
