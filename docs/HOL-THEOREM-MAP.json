@@ -53892,5 +53892,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol-a source review flapjack-ifwu: genuine original resumed MustTerminate semantic case8252. All original6premises/full Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion via transparent ssaSimulation; only legitimate universal smaller-body induction hypothesis specialized from completeInduct prog_size. No target execution/success/post-frame premise, full assembly will discharge IH. Actual termdepzero and body Error/timeOut exemption, bounded-clock/decreased-depth body call, caller clock/depth restoration. Fresh literal original case replay substitutes body binder and specialized IH, removes only already-discharged structural size_tac2; full recursive/original statements and6types match native positive width/shared C F hosts/SptNat/name sets. Imported fpRegs/store canonical translation with local roundtrip witness; standard words translation; inherits reals_as_rational_cuts SOUNDNESS8. FullSSA other cases/assembly unfinished."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticSeq.lean",
+  "lean_name": "ssaCcTransCorrectSeq",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol-a source comparison flapjack-dbck: full original resumed native semantic Seq9228-9263 case. Exactly original six premises/full Error-exempt existential source scheduler/result/frame/result-sensitive locals conclusion, plus only legitimate first/second smaller-body IHs specialized from completeInduct prog_size. Actual fullcompiler invariant derives second map/allocation/bound and everyVarMono increases source bounds; no target eval/post-frame/success assumption. Source Error and all early result constructors covered; first-run NONE derives scheduler-swap nonError guard, and original native permute_swap_lemma composes actual source evaluations. Native fix_clock_evaluate derives complete Seq equation. Fresh literal original Seq proof replay includes original local locals-more proof and original wordConvs bindings; specialized body IHs replace universal smaller-program IH, already-discharged structural size_tac2 omitted, no other premises. Full recursive/original statements7carrier types preserve shared positive width/code/FFI hosts, independent body programs, native SptNat/Unit sets. fmap qualifier translates only imported fpRegs/store with same-module roundtrip witness; conventional word translation. Inherits reals_as_rational_cuts SOUNDNESS8. Inherited holEl/holHd source review: accepted full SSA compiler-invariant and native scheduler-swap helper callchains retain canonical total opaque selectors and original guarded observations; original Seq requires no added bounds or concrete OOB defaults. Scheduler-swap applied only to derived first NONE, preserving its original nonError guard. All result/locals branches retain original table optional lookup semantics. Full native SSA remaining constructors/assembly unfinished."
 }
 ]

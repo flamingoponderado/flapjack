@@ -4123,3 +4123,7 @@ run_probe ssa_cc_trans_correct_state_writes_probeScript.sml ssa_cc_trans_correct
 run_probe ssa_cc_trans_correct_must_terminate_probeScript.sml ssa_cc_trans_correct_must_terminate_probe.out \
   sm_recursive_full sm_original_full sm_type_st sm_type_cst sm_type_body sm_type_ssa sm_type_na sm_type_lt \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_seq_probeScript.sml ssa_cc_trans_correct_seq_probe.out \
+  sq_recursive_full sq_original_full sq_type_st sq_type_cst sq_type_first sq_type_second sq_type_ssa sq_type_na sq_type_lt \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

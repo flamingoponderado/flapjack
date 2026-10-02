@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStateWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRegisterWrites
