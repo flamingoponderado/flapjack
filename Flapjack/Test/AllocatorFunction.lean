@@ -12,7 +12,7 @@ example :
         [5, 9], .seq (.move 0 [(2, 5), (4, 9)])
           (.return 0 [2, 4])) := by
   have hAbi : wordSsaCallAbiRegisters 1 2 = [2, 4] := by rfl
-  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameFunction, wordSsaSetupParameters, wordSsaLimitVar,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename,    sptToAList, sptFromAList, sptFoldi, sptInsert,  lrNext, wordSsaRenameFunction, wordSsaSetupParameters, wordSsaLimitVar,
     wordProgCakeMaxVar,
     wordSsaRenameProgram, wordSsaRenameProgramWithLoops, wordSsaRead,
     wordSsaFreshList, wordSsaFresh, wordSsaSeq, hAbi, lookupNatInfo]

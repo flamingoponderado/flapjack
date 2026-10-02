@@ -1,0 +1,22 @@
+load "preamble"; load "word_to_stackTheory";
+open HolKernel Parse bossLib preamble word_to_stackTheory;
+val _ = Globals.linewidth := 1000000;
+fun emit label tm = (print(label ^ "="); print_term(rconc (SIMP_CONV (srw_ss()) [comp_def] tm)); print "\n");
+val _ = emit "tail_direct_F_handler_erased" ``comp (c:64 asm$asm_config) F (wordLang$Call NONE (SOME 17) [2;4] (SOME (200,Move 0 [(200,202)],31,37))) bs frame = comp c F (wordLang$Call NONE (SOME 17) [2;4] NONE) bs frame``;
+val _ = emit "tail_direct_T_handler_erased" ``comp (c:64 asm$asm_config) T (wordLang$Call NONE (SOME 17) [2;4] (SOME (200,Move 0 [(200,202)],31,37))) bs frame = comp c T (wordLang$Call NONE (SOME 17) [2;4] NONE) bs frame``;
+val _ = emit "tail_indirect_F_handler_erased" ``comp (c:64 asm$asm_config) F (wordLang$Call NONE (NONE) [2;4] (SOME (200,Move 0 [(200,202)],31,37))) bs frame = comp c F (wordLang$Call NONE (NONE) [2;4] NONE) bs frame``;
+val _ = emit "tail_indirect_T_handler_erased" ``comp (c:64 asm$asm_config) T (wordLang$Call NONE (NONE) [2;4] (SOME (200,Move 0 [(200,202)],31,37))) bs frame = comp c T (wordLang$Call NONE (NONE) [2;4] NONE) bs frame``;
+
+fun full label tm = (print(label ^ "="); print_term(rconc(EVAL tm)); print "\n");
+val _ = full "tail_direct_F_move_complete" ``comp (c:64 asm$asm_config) F (wordLang$Call NONE (SOME 17) [2;4] (SOME (200,Move 0 [(200,202)],31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = full "tail_direct_F_bitmap_complete" ``comp (c:64 asm$asm_config) F (wordLang$Call NONE (SOME 17) [2;4] (SOME (200,Alloc 0 (LN,LN),31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = full "tail_direct_T_move_complete" ``comp (c:64 asm$asm_config) T (wordLang$Call NONE (SOME 17) [2;4] (SOME (200,Move 0 [(200,202)],31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = full "tail_direct_T_bitmap_complete" ``comp (c:64 asm$asm_config) T (wordLang$Call NONE (SOME 17) [2;4] (SOME (200,Alloc 0 (LN,LN),31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = full "tail_indirect_F_move_complete" ``comp (c:64 asm$asm_config) F (wordLang$Call NONE (NONE) [2;4;6] (SOME (200,Move 0 [(200,202)],31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = full "tail_indirect_F_bitmap_complete" ``comp (c:64 asm$asm_config) F (wordLang$Call NONE (NONE) [2;4;6] (SOME (200,Alloc 0 (LN,LN),31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = full "tail_indirect_T_move_complete" ``comp (c:64 asm$asm_config) T (wordLang$Call NONE (NONE) [2;4;6] (SOME (200,Move 0 [(200,202)],31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = full "tail_indirect_T_bitmap_complete" ``comp (c:64 asm$asm_config) T (wordLang$Call NONE (NONE) [2;4;6] (SOME (200,Alloc 0 (LN,LN),31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = full "return_direct_F_bitmap_complete" ``comp (c:64 asm$asm_config) F (wordLang$Call (SOME ([2],(LN,LN),Skip,41,43)) (SOME 17) [2;4] (SOME (200,Alloc 0 (LN,LN),31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = full "return_direct_T_bitmap_complete" ``comp (c:64 asm$asm_config) T (wordLang$Call (SOME ([2],(LN,LN),Skip,41,43)) (SOME 17) [2;4] (SOME (200,Alloc 0 (LN,LN),31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = full "return_indirect_F_bitmap_complete" ``comp (c:64 asm$asm_config) F (wordLang$Call (SOME ([2],(LN,LN),Skip,41,43)) (NONE) [2;4;6] (SOME (200,Alloc 0 (LN,LN),31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;
+val _ = full "return_indirect_T_bitmap_complete" ``comp (c:64 asm$asm_config) T (wordLang$Call (SOME ([2],(LN,LN),Skip,41,43)) (NONE) [2;4;6] (SOME (200,Alloc 0 (LN,LN),31,37))) (Append (List [4w]) (List [7w]),17) (4,7,9)``;

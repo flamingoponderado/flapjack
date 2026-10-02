@@ -1,9 +1,10 @@
 import Flapjack.RiscV.L3.Defs.MMU.Access
 import Flapjack.RiscV.L3.Defs.MMU.Primitives
 import Flapjack.RiscV.L3.Defs.MMU.Exception
+import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
+import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
 import Flapjack.Misc.Words.Formatting
 import Flapjack.Misc.Words.Replicate
-import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
 import Flapjack.Compiler.Backend.LabToTarget.ZeroLabelExistence
 import Flapjack.Misc.StateTransformer
 import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness
@@ -144,6 +145,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemoryAny
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSize
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Bitmap
+import Flapjack.Compiler.Backend.Semantics.StackSem.Clock
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
@@ -473,6 +475,9 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopRecursive
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Pancake.WordConvs.LabelSafety
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
+import Flapjack.Compiler.Backend.StackProps.ExtractLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsHelpers
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsCompiler
 import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
@@ -591,6 +596,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionSpill
 import Flapjack.Compiler.Backend.RegAlloc.ProductionEdgeUpdate
 import Flapjack.Compiler.Backend.RegAlloc.ProductionCoalesceReal
 import Flapjack.Compiler.Backend.RegAlloc.ProductionParentCompression
+import Flapjack.Compiler.Backend.RegAlloc.ProductionBgOk
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
