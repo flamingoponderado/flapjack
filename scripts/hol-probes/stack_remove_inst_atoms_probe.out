@@ -1,0 +1,8 @@
+ia_full=state_rel jump off k s t ∧ reg_bound_inst i k ∧ inst i s = SOME s' ⇒ ∃t'. inst i t = SOME t' ∧ state_rel jump off k s' t'
+ia_full_types=t:(α, β, γ) stackSem$state;s':(α, β, γ) stackSem$state;s:(α, β, γ) stackSem$state;off:α word # α word;k:num;jump:bool;i:α inst
+ia_skip=∀jump off k s t s1. state_rel jump off k s t ∧ reg_bound_inst Skip k ∧ inst Skip s = SOME s1 ⇒ ∃t1. inst Skip t = SOME t1 ∧ state_rel jump off k s1 t1
+ia_skip_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;s1:(α, β, γ) stackSem$state
+ia_skip_proved=T
+ia_const=∀jump off k s t s1 r w. state_rel jump off k s t ∧ reg_bound_inst (Const r w) k ∧ inst (Const r w) s = SOME s1 ⇒ ∃t1. inst (Const r w) t = SOME t1 ∧ state_rel jump off k s1 t1
+ia_const_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;s1:(α, β, γ) stackSem$state;r:num;w:α word
+ia_const_proved=T

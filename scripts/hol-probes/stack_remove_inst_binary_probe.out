@@ -1,0 +1,6 @@
+ib_binop=∀jump off k s t s1 bop r1 r2 ri. state_rel jump off k s t ∧ reg_bound_inst (Arith (Binop bop r1 r2 ri)) k ∧ inst (Arith (Binop bop r1 r2 ri)) s = SOME s1 ⇒ ∃t1. inst (Arith (Binop bop r1 r2 ri)) t = SOME t1 ∧ state_rel jump off k s1 t1
+ib_binop_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;s1:(α, β, γ) stackSem$state;bop:binop;r1:num;r2:num;ri:α reg_imm
+ib_binop_proved=T
+ib_shift=∀jump off k s t s1 sh r1 r2 ri. state_rel jump off k s t ∧ reg_bound_inst (Arith (Shift sh r1 r2 ri)) k ∧ inst (Arith (Shift sh r1 r2 ri)) s = SOME s1 ⇒ ∃t1. inst (Arith (Shift sh r1 r2 ri)) t = SOME t1 ∧ state_rel jump off k s1 t1
+ib_shift_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;s1:(α, β, γ) stackSem$state;sh:ast$shift;r1:num;r2:num;ri:α reg_imm
+ib_shift_proved=T
