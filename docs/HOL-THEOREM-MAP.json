@@ -66074,5 +66074,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-sol-c source comparison: Source114: exact partial application w2s16HEX at arbitrary positive word dimension. words_as_type_indexed_bitvec records width/NeZero. Original character-list result and leading-zero behavior retained. Original numeric_formatting probe and70matching kernel fixtures cover all six stages.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Exception.lean",
+    "lean_name": "«raise'exception»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "raise'exception_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: riscvScript366-375 original Def parameter e:exception, Close state, tuple LX(VTy a) and conditional update only when state.exception=NoException. Lean retains generic return carrier and whole native state, canonical per-carrier holArb, exact first-exception conditional and full record update. Nonempty Ta represents intrinsic HOL type-kind nonemptiness, following already reviewed generic LINV/HD/EL/THE ports; no chosen Lean default or extra source hypothesis. Native exception/riscv_state carriers are reviewed source Types counterparts; derived BEq against payload-free NoException agrees with HOL equality. Fresh original full type and assumption-free full tuple equation are captured in l3_raise_exception probe, with matching generic Lean whole-result regression."
   }
 ]

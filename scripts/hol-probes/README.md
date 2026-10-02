@@ -6104,3 +6104,5 @@ Assembler-convention assembly probe prints both full original theorems with no o
 `word_replicate_probe.out` captures16 original complete numeric word observations across independent input/output widths1/3/7/8/16/64/80, counts0/1/2/3/5/8/10/20, truncation and zero filling. Zero-count observations are assumption-free original bit-blast proofs; the rest use original WORD_EVAL_CONV. WordReplicateParity kernel replays all16.
 
 `numeric_formatting_probe.out` records70 original full digit/character-code observations: bases0/1/2/3/10/16/17/37, all HEX digits and invalid16/17/999, arbitrary shifted converter, 121-bit decimal numerals and widths1/7/8/16/64/80 with word wrapping. NumericFormattingParity kernel replays all70 using reviewed canonical HolChar rather than Lean String.
+
+`l3_raise_exception_probe.out` captures the original polymorphic type and assumption-free full result equation, preserving ARB and every returned state field through the conditional exception update. Defs/MMU/Exception kernel-checks that complete generic equation under only HOL intrinsic Nonempty; no chosen-default binder.
