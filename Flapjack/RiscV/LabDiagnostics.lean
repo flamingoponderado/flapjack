@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackToLab.Production
 import Flapjack.RiscV.Lab
 
 /-!
@@ -357,32 +358,30 @@ def compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVCakeChecked
     [NeZero width] (context : WordFfiContext) (removeConfig : StackRemoveConfig)
     (allocConfig : StackAllocConfig) (gcConfig : StackGcConfig)
     (storeConstsLocation registerCount : Nat)
-    (entryLabel initialLabel : Nat)
+    (entryLabel _initialLabel : Nat)
     (programs : List (Nat × StackProg Nat)) :
     Except LabLoweringError
       (List (Nat × Word width × List (Instruction width))) :=
-  let removeConfig := cakeStackRemoveConfig removeConfig
-  let programs :=
-    (stackRaiseStubLocation, stackRaiseStub false removeConfig.addressScratch) ::
-      stackAllocCompileWithSimpleGcAndStoreConsts allocConfig gcConfig
-        storeConstsLocation registerCount programs
-  match stackProgramsWithLongDivRuntime removeConfig programs with
-  | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
-  | some programs =>
-      let programs := stackRawCallPrograms programs
-      match compileLabProgramLinkedWithPancakeRuntime context
-          (((programs.map (fun (sectionId, program) =>
-            if sectionId = cakeLongDiv1Location ||
-                sectionId = cakeLongDivLocation then
-              labProgramToEntrySection sectionId 0 initialLabel
-                (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
-                  (stackRemoveComplete removeConfig program))
-            else
-              labProgramToEntrySection sectionId entryLabel initialLabel
-                (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
-                  (stackRemoveComplete removeConfig program)))).map labSectionNatToWord)) with
-      | some sections => .ok sections
-      | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
+  if entryLabel ≠ 0 || removeConfig.bytesInWord ≠ width / 8 then
+    .error { sectionId := 0, position := 0, feature := .loweringFailure }
+  else
+    let removeConfig := cakeStackRemoveConfig removeConfig
+    let programs :=
+      (stackRaiseStubLocation, stackRaiseStub false removeConfig.addressScratch) ::
+        stackAllocCompileWithSimpleGcAndStoreConsts allocConfig gcConfig
+          storeConstsLocation registerCount programs
+    match stackProgramsWithLongDivRuntime removeConfig programs with
+    | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
+    | some programs =>
+        let programs := stackRawCallPrograms programs
+        let bounds := (BitVec.ofInt width (-2048), BitVec.ofNat width 2047)
+        match Flapjack.Compiler.Backend.StackToLab.ExecutedCodec.mapCodec?
+            (Flapjack.Compiler.Backend.StackToLab.Production.removedSection?
+              removeConfig.jump bounds removeConfig.stackPointer) programs with
+        | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
+        | some lab => match compileLabProgramLinkedWithPancakeRuntime context lab with
+          | some sections => .ok sections
+          | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
 
 def compileStackProgramNatToRiscVChecked [NeZero width]
   (context : WordFfiContext) (config : StackRemoveConfig)

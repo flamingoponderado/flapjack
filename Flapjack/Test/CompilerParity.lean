@@ -1,4 +1,21 @@
+import Flapjack.Test.WordCseProductionRegisterClassifiers
+import Flapjack.Test.WordCseProductionInstructionKeys
+import Flapjack.Test.WordCseProductionLoadHeapKeys
+import Flapjack.Test.WordCseProductionArithmeticKeys
+import Flapjack.Test.LabCodeSafetyParity
+import Flapjack.Test.AsmPropsEncodingParity
+import Flapjack.Test.AsmPropsInterferenceParity
+import Flapjack.Test.TargetInterferenceAppParity
+import Flapjack.Test.TargetPropsClockIoEventsParity
+import Flapjack.Test.LabToTargetIgnoreClocksParity
+import Flapjack.Test.StackPropsAllocationConstantsParity
 import Flapjack.Test.StackPropsOrderedLabelsParity
+import Flapjack.Test.NativeWordMemoryAddress
+import Flapjack.Test.NativeStackRuntimeBoundary
+import Flapjack.Test.StackRemoveProgComp
+import Flapjack.Test.StackRemoveComp
+import Flapjack.Test.StackRemoveCopyLoop
+import Flapjack.Test.StackLangInstBuilders
 import Flapjack.Test.StackSemGenericCodeLookupParity
 import Flapjack.Test.StackPropsStackLengthsParity
 import Flapjack.Test.TargetPropsIoEventsParity
@@ -53,8 +70,23 @@ import Flapjack.Test.ProductionMoves
 import Flapjack.Test.RegAllocProductionFixedTags
 import Flapjack.Test.RegAllocProductionColourLookup
 import Flapjack.Test.WordCseProductionScalarKeys
+import Flapjack.Test.BalancedMapCore
+import Flapjack.Test.BalancedMapRotations
+import Flapjack.Test.BalancedMapInsert
+import Flapjack.Test.BalancedMapInvariants
+import Flapjack.Test.BalancedMapSemantics
+import Flapjack.Test.FiniteMapUnionExact
+import Flapjack.Test.ComparisonGoodCmp
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordToStackSortedRelationsParity
+import Flapjack.Test.WordToStackSortedKeysParity
+import Flapjack.Test.WordToStackBitmapWriteParity
+import Flapjack.Test.WordToStackBitmapInsertParity
+import Flapjack.Test.WordToStackBitmapDecodeParity
+import Flapjack.Test.WordToStackKeyValueOrderParity
+import Flapjack.Test.WordToStackBitmapSentinelLengthParity
+import Flapjack.Test.WordToStackBitmapBitStructureParity
 import Flapjack.Test.WordToStackBitmapWordParity
 import Flapjack.Test.StackPropsRegisterBoundsParity
 import Flapjack.Test.WordCseListOrderRouting
@@ -125,6 +157,9 @@ import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
 import Flapjack.Test.TargetPropsInterferenceParity
+import Flapjack.Test.LabToTargetPositionAppendParity
+import Flapjack.Test.LabToTargetPositionValuesParity
+import Flapjack.Test.LabToTargetNavigationBoundsParity
 import Flapjack.Test.LabToTargetSectionLookupParity
 
 import Flapjack.Test.ParmovePreservesMovesPmovParity
@@ -325,6 +360,7 @@ import Flapjack.Test.DataToWordConfigParity
 import Flapjack.Test.WordGcFunctionsParity
 import Flapjack.Test.StackAllocGcCodeParity
 import Flapjack.Test.StackAllocGetBitsParity
+import Flapjack.Test.StackAllocGcBitmapsParity
 import Flapjack.Test.PanGlobalsBlockAlignmentParity
 import Flapjack.Test.StackSemLocValueParity
 import Flapjack.Test.StackPropsProgramValidity
@@ -686,6 +722,8 @@ import Flapjack.Test.StackSemCallParity
 import Flapjack.Test.StackSemCallIndirectParity
 import Flapjack.Test.StackSemLoopRecursiveParity
 import Flapjack.Test.StackSemBufferWriteParity
+import Flapjack.Test.StackSemInstParity
+import Flapjack.Test.StackSemEvaluateParity
 import Flapjack.Test.StackSemShMemParity
 import Flapjack.Test.StackSemShMemOpParity
 import Flapjack.Test.StackSemFfiParity
@@ -1532,8 +1570,11 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackSemCallIndirectParity.runChecks,
     Flapjack.Test.StackSemLoopRecursiveParity.runChecks,
     Flapjack.Test.StackSemBufferWriteParity.runChecks,
+    Flapjack.Test.StackSemInstParity.runChecks,
+    Flapjack.Test.StackSemEvaluateParity.runChecks,
     Flapjack.Test.StackSemGenericCodeLookupParity.runChecks,
     StackPropsOrderedLabelsParity.runChecks,
+    StackPropsAllocationConstantsParity.runChecks,
     Flapjack.Test.StackPropsStackLengthsParity.runChecks,
     Flapjack.Test.StackPropsSharedMemoryClockParity.runChecks,
     Flapjack.Test.StackSemShMemParity.runChecks,
@@ -1716,6 +1757,13 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.RegAllocProductionFixedTags.runChecks,
     Flapjack.Test.RegAllocProductionColourLookup.runChecks,
     Flapjack.Test.WordCseProductionScalarKeys.runChecks,
+    Flapjack.Test.BalancedMapCore.runChecks,
+    Flapjack.Test.BalancedMapRotations.runChecks,
+    Flapjack.Test.BalancedMapInsert.runChecks,
+    Flapjack.Test.BalancedMapInvariants.runChecks,
+    Flapjack.Test.BalancedMapSemantics.runChecks,
+    Flapjack.Test.FiniteMapUnionExact.runChecks,
+    Flapjack.Test.ComparisonGoodCmp.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.WordConvsPreAllocExactParity.runChecks,
     Flapjack.Test.WordRemoveMustTerminateParity.runChecks,
@@ -1723,6 +1771,10 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordGcFunctionsParity.runChecks,
     Flapjack.Test.StackAllocGcCodeParity.runChecks,
     Flapjack.Test.StackAllocGetBitsParity.runChecks,
+    Flapjack.Test.StackAllocGcBitmapsParity.runChecks,
+    Flapjack.Test.LabToTargetNavigationBoundsParity.runChecks,
+    Flapjack.Test.LabToTargetPositionAppendParity.runChecks,
+    Flapjack.Test.LabToTargetPositionValuesParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
     Flapjack.Test.AsmPropsPcCoverageParity.runChecks,

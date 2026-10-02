@@ -1,0 +1,19 @@
+sec_loc_to_pc_bound=∀(n :num) (xs :α line list) (x :num).
+  sec_loc_to_pc n xs = SOME x ⇒
+  x ≤ LENGTH (FILTER ($¬ ∘ (is_Label :α line -> bool)) xs)
+sec_loc_to_pc_bound_types=(n :num)::num;(xs :α line list)::α line list;(x :num)::num;
+loc_to_pc_bound=∀(code :α sec list) (l1 :num) (l2 :num) (x :num).
+  EVERY (sec_labels_ok :α sec -> bool) code ∧ loc_to_pc l1 l2 code = SOME x ⇒
+  x ≤
+  (SUM
+     (MAP
+        ((λ(xs :α line list).
+              LENGTH (FILTER ($¬ ∘ (is_Label :α line -> bool)) xs)) ∘
+         (Section_lines :α sec -> α line list)) code) :num)
+loc_to_pc_bound_types=(code :α sec list)::α sec list;(l1 :num)::num;(l2 :num)::num;(x :num)::num;
+zero_empty=T
+local_last_bound=T
+local_last_count=T
+code_empty_tail_bound=T
+code_total_count=T
+wide_zero_empty=T

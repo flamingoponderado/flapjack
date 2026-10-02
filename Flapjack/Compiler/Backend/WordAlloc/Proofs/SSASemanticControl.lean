@@ -79,7 +79,13 @@ target result, complete frame and result-sensitive locals are proved. Both
 absent/present loop-table and Skip/non-Skip reconciliation branches are covered.
 No target execution, post-frame, additional lookup success or IH is assumed.
 The full evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8); only
-Break/Skip/Move/Seq run in this case. -/
+Break/Skip/Move/Seq run in this case.
+Original word_allocProof:10098-10135 uses optional oEL for the loop table;
+`tables[n]?` preserves past-end NONE. The inherited holEl/holHd observations
+come through evaluateSSAReconcile's bounded filtered-key/value-list indexing
+(original:6660-6704), with bounds and equal lengths derived internally.
+The shared opaque out-of-range holHdNil/holArb convention remains unchanged;
+no extra public index or oracle premise is assumed. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
@@ -122,7 +128,13 @@ target result, complete frame and result-sensitive locals are proved. Both
 absent/present loop-table and Skip/non-Skip reconciliation branches are covered.
 No target execution, post-frame, additional lookup success or IH is assumed.
 The full evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8); only
-Continue/Skip/Move/Seq run in this case. -/
+Continue/Skip/Move/Seq run in this case.
+Original word_allocProof:10098-10135 uses optional oEL for the loop table;
+`tables[n]?` preserves past-end NONE. The inherited holEl/holHd observations
+come through evaluateSSAReconcile's bounded filtered-key/value-list indexing
+(original:6660-6704), with bounds and equal lengths derived internally.
+The shared opaque out-of-range holHdNil/holArb convention remains unchanged;
+no extra public index or oracle premise is assumed. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
