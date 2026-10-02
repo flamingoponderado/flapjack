@@ -1,3 +1,9 @@
+`ssa_reconcile_get_vars_probe.out` replays the literal original full theorem
+and list-induction proof, and records all universally quantified binder types.
+The Lean counterpart keeps distinctness, native get_vars result existence,
+length and every in-bounds EL/THE lookup; the replay is source-review evidence,
+not a cross-assistant equivalence proof.
+
 `riscv_jumpcmp_polarity_probe.out` records 32 fresh original encoder byte
 vectors: all eight JumpCmp predicates, register/immediate operands, and
 short/long ranges. RiscVBranchPolarity kernel-checks actual executed Lab
@@ -4386,6 +4392,16 @@ StackProps shared-memory clock-commutation proofs verbatim and captures their
 full statements/types (18 rows), then checks fifteen native returned/final/error
 observations at clock 37. `StackPropsSharedMemoryClockParity.lean` kernel-replays
 those observations and applies the full arbitrary-state dispatch theorem.
+### Complete SSA program invariant
+
+`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
+
+### SSA reconciliation list prerequisites
+
+`ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
 ### SSA recursive control invariants
 
 `ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
@@ -4453,3 +4469,22 @@ independent bitmap/stack-width decoder observations.
 `StackPropsStackLengthsParity.lean` kernel-replays the observations and applies
 both full theorems, including an 80-bit multi-frame decoded-stack result.
 A one-bit bitmap continuation with no following word correctly returns NONE.
+`ssa_reconcile_alookup_zip_probe.out` replays both original generic indexed-SOME and absent-key-NONE ALOOKUP ZIP proofs6551–6590, recording full statements and nine original argument types. Canonical opaque EL and all original domain/injection/index/length premises are retained.
+## Full Word CSE evaluation frames and state agreement
+
+`word_cse_evaluation_frames_probeScript.sml` literally replays all four original
+proofs: arithmetic register writes, arbitrary memory replacement, arithmetic
+locals agreement, and load locals/memory/domain/endianness agreement. It captures
+complete conclusions with no open hypotheses, four inferred types and 256 full
+theorem applications at widths 1/32/64/80. The applications cover all eligible
+arithmetic forms, both binop operand forms, every immediate shift, signed division,
+all four load variants, and writes to the destination or another unread register.
+The original `firstRegOfArith` expression is retained for HOL theorem matching.
+`WordCseEvaluationFramesParity.lean` applies the full kernel theorems on arbitrary
+values, states and memory functions. Eligibility/read guards and each exact set
+of input field equalities are preserved; target evaluation or global invariants
+are not assumed. The shared proof-only value factoring is checked against actual
+native Inst clauses; LoadEvaluation support was exposed without changing its
+implementation or old theorem statements. Existing finite-map/positive-word
+translations and inherited rational-cut assumption (SOUNDNESS item 8) remain.
+These are invariant-update prerequisites, not full CSE/compiler correctness.

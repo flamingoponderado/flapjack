@@ -4,11 +4,13 @@ import Flapjack.Compiler.Backend.WordCse.RegisterUses
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack Compiler.Encoders.Asm WordSemStateFiniteExact AssignmentResults
 
-/-! Full original load-evaluation transport group. The private value factoring
+/-! Full original load-evaluation transport group. The proof-only value factoring
 has no separate HOL declaration: it is proved to agree with the actual native
 `inst` clauses below. Public statements use the faithful clocked evaluator. -/
 
-private def loadValue {width : Nat} [NeZero width] {C : Type} {F : Type}
+namespace LoadEvaluationSupport
+
+def loadValue {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : HolMemop) (a : Nat) (ofs : BitVec width) (s : WordSemStateFiniteExact width C F) :
     Option (WordLocW width) :=
   match op with
@@ -28,7 +30,7 @@ private def loadValue {width : Nat} [NeZero width] {C : Type} {F : Type}
     | _ => none
   | _ => none
 
-private theorem instLoadMap {width : Nat} [NeZero width] {C : Type} {F : Type}
+theorem instLoadMap {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : HolMemop) (d a : Nat) (ofs : BitVec width) (s : WordSemStateFiniteExact width C F)
     (h : isStore op = false) :
     inst (.mem op d (.addr a ofs)) s = (loadValue op a ofs s).map (fun v => setVar d v s) := by
@@ -39,6 +41,9 @@ private theorem instLoadMap {width : Nat} [NeZero width] {C : Type} {F : Type}
     split <;> simp_all [loadValue, Option.map]
   all_goals
     split <;> simp_all
+
+end LoadEvaluationSupport
+open LoadEvaluationSupport
 
 private theorem addressSetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a n : Nat) (ofs : BitVec width) (u : WordLocW width)

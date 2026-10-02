@@ -15,6 +15,7 @@ import Flapjack.Test.WordAllocGetClashTreeParity
 import Flapjack.Test.TargetSemMachineSemParity
 import Flapjack.Test.RiscVBranchPolarity
 import Flapjack.Test.LabImplicitSectionZero
+import Flapjack.Test.SSAReconcileGetVars
 import Flapjack.Test.LabToTargetLineLenParity
 import Flapjack.Test.LabToTargetSectionLengthParity
 import Flapjack.Test.ByteWordToBytesAuxParity
@@ -42,8 +43,11 @@ import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.ProductionScheduler
 import Flapjack.Test.ProductionMoves
 import Flapjack.Test.RegAllocProductionFixedTags
+import Flapjack.Test.RegAllocProductionColourLookup
+import Flapjack.Test.WordCseProductionScalarKeys
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordCseEvaluationFramesParity
 import Flapjack.Test.WordCseLoadEvaluationParity
 import Flapjack.Test.WordCseArithmeticKeysParity
 import Flapjack.Test.WordCseInsertEqualityParity
@@ -1690,6 +1694,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.ProductionScheduler.runChecks,
     Flapjack.Test.ProductionMoves.runChecks,
     Flapjack.Test.RegAllocProductionFixedTags.runChecks,
+    Flapjack.Test.RegAllocProductionColourLookup.runChecks,
+    Flapjack.Test.WordCseProductionScalarKeys.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.WordConvsPreAllocExactParity.runChecks,
     Flapjack.Test.WordRemoveMustTerminateParity.runChecks,

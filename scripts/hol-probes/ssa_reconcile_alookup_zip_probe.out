@@ -1,0 +1,11 @@
+sz_some_full=⊢ ∀ls vs i f. ALL_DISTINCT (MAP f ls) ∧ i < LENGTH ls ∧ LENGTH vs = LENGTH ls ⇒ ALOOKUP (ZIP (MAP f ls,vs)) (f ls❲i❳) = SOME vs❲i❳
+sz_none_full=⊢ ∀ls vs n ns f. INJ f (domain ns) 𝕌(:γ) ∧ n ∈ domain ns ∧ ¬MEM n ls ∧ (∀v. MEM v ls ⇒ v ∈ domain ns) ∧ LENGTH vs = LENGTH ls ⇒ ALOOKUP (ZIP (MAP f ls,vs)) (f n) = NONE
+sz_alookup_zip_map_some_type_ls=:α list
+sz_alookup_zip_map_some_type_vs=:β list
+sz_alookup_zip_map_some_type_i=:num
+sz_alookup_zip_map_some_type_f=:α -> γ
+sz_alookup_zip_map_option_lookup_none_type_f=:num -> γ
+sz_alookup_zip_map_option_lookup_none_type_ns=:β sptree$num_map
+sz_alookup_zip_map_option_lookup_none_type_n=:num
+sz_alookup_zip_map_option_lookup_none_type_ls=:num list
+sz_alookup_zip_map_option_lookup_none_type_vs=:α list
