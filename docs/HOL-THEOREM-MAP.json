@@ -59740,5 +59740,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison 2026-10-02 against targetPropsScript.sml:940-955 and full original compiled theorem capture. All c/s1/ms1/io/i quantifiers and six hypotheses retained: exact encoder_correct, program domain equality, FFI entry disjointness over full encode length, projection-preserving next interference, literal asm_step to asm post-state, target_state_rel. Conclusion exists l/ms2 forall k keeps both evaluator/search shifted-clock equalities, original assembly post-state relation and l!=0; no added premise or assumed evaluation/post-state. Uses full reviewed native encoderCorrect89044bd06, asmStep and evaluateEqEvaluate_all, with genuine witnesses n+1/ms2 constructed. Positive word dimensions use BitVec width under NeZero and sigma Type, original list/predicate sets and oracle shapes retained. Inherited total holEl/holHd retains holHdNil/shared opaque holArb past end, no bounds guard or fallback. Full original theorem captured and complete Lean proof kernel checked. The declaration transitively inherits reals_as_rational_cuts and the external agreement assumption in docs/SOUNDNESS.md item 8 through exact encoderCorrect/asmStep and their FP semantics; it adds no altered FP behavior."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ConstMemoryAppend.lean",
+    "lean_name": "constWritesAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "const_writes_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-const-memory-append): source5973-5981 arbitrary two lists/word base/relocation offset/raw memory, whole output memory function equality, no range/disjointness/good_dimindex assumption. Uses actual tagged native WordSem constant operations and bytes_in_word=ofNat(width/8), modular word dimension/FFI-free translation, arbitrary positive dimensions retain stride0 below8. Two literal unchanged complete original proof replays and252 matching kernel/original complete memory/domain fixtures; widths1/2/8/32/64/80, wrap/relocation overflow/long70-entry cases, every address at small widths. No held HD/EL, default, carrier, target evaluator or trust policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ConstMemoryAppend.lean",
+    "lean_name": "constAddressesAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "const_addresses_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-const-memory-append): source5983-5992 arbitrary lists/domain/base, complete source domain predicate iff prefix predicate AND suffix predicate at base+bytes_in_word*n2w(prefixlength); HOL word set translated by existing native Bool characteristic function, Boolean truth as Prop equality, no new condition. Uses actual tagged native WordSem constant operations and bytes_in_word=ofNat(width/8), modular word dimension/FFI-free translation, arbitrary positive dimensions retain stride0 below8. Two literal unchanged complete original proof replays and252 matching kernel/original complete memory/domain fixtures; widths1/2/8/32/64/80, wrap/relocation overflow/long70-entry cases, every address at small widths. No held HD/EL, default, carrier, target evaluator or trust policy change."
   }
 ]
