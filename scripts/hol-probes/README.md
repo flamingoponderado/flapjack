@@ -6035,3 +6035,13 @@ not a cross-language equivalence proof.
 
 
 Assembler-naming ShareInst probe captures the full original generic seven-guard case application with no open hypotheses and720 direct original source/target predicates (374T346F). Matching kernel fixtures cover all eight operations, widths1/2/8/64/80, both two-register policy flags, direct/spilled70bit registers and frame offsets, distinct address/halfword/byte bounds, Ag32 halfword restrictions, reduced-count natural subtraction underflow and failed address extraction. Eighty fixtures apply the full case theorem after discharging all source guards. This is regression evidence and an original theorem application, not a replay of the full source proof, HOL-to-Lean equivalence or full naming/compiler correctness. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_share_probeScript.sml.
+
+`l3_riscv_cross_format_probe.out` records33 complete original FCVT_S_D/FCVT_D_S
+state observations. All33 matching nine-field tuples kernel-check in
+L3RiscvCrossFormatParity. The directed certificate adapter rebuilds discovered
+bits at the original result carrier, including compound dimensions (8+1), before
+independent original kernel certification and exact input-term validation. No
+original reference sources are edited. All static/dynamic mode validation,
+register/status/delta/flag/other-core/trap observations retain original semantics.
+These finite/infinity rows do not fix arbitrary NaN output payloads or establish
+full model/compiler correctness. SOUNDNESS item8 remains inherited.

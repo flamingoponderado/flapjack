@@ -35,6 +35,8 @@ class L3FpDefsTest(unittest.TestCase):
                 self.assertIn("def «dfn'" + op + '_' + precision + '»', body)
             for kind in ('W', 'WU', 'L', 'LU'):
                 self.assertIn("def «dfn'FCVT_" + kind + '_' + precision + '»', body)
+        for cross in ('S_D', 'D_S'):
+            self.assertIn("def «dfn'FCVT_" + cross + '»', body)
         self.assertNotIn('def walk64 ', body)
         self.assertNotIn('def Run ', body)
 
