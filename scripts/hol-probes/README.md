@@ -5265,3 +5265,5 @@ rotate/balancing definitions retain their literal branch order and arithmetic.
 `BalancedMapRotationAuxParity` uses only specified equations, matching actual
 single/double outputs and both branches of each rotate wrapper. The extra
 conditional and unreduced audit rows remain explicitly qualified above.
+
+`stack_initialized_boundary_probeScript.sml` captures40 original post-allocation compositions: stack_remove.compile ->stack_names.compile with riscv_names ->MAPprog_to_section. Positive dimensions1/8/32/64/80, both GC/jump settings, zero/huge heap bounds and start labels, zero/23 register pointers, empty/mixed input lists, duplicate section9 and reserved section0 are retained. The native executed list boundary checks each concrete section name/line count; its universal kernel recovery theorem recovers all decoded native section fields. Numeric projections use an explicit constructor case, not a symbolic pattern-lambda capture. Actual artifact prefix replacement remains on the parent production bead.
