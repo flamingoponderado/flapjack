@@ -5545,3 +5545,19 @@ its full type and ten invariant-valid constructor/guard/ratio equality cases.
 Native consumers prove both input invariants. The generic theorem retains only
 original comparator validity and those invariants; observations are regression
 evidence, not a cross-language equivalence theorem.
+`stack_remove_code_rel_probe.out` captures the complete original StackRemove
+code relation definition/type and12 HOL-kernel-proved whole-relation results:
+empty source at widths1/8/32/64/80, missing/extra target names, a nonempty Tick
+source, wrong compiled body, register-bound violation, reserved source name0
+and malformed BN LN LN source. Native generic kernel fixtures check all lookup
+keys and full domain equality, rather than finite membership sampling. Probe
+simplification unfolds recursive comp/reg_bound only after concrete branch
+selection; globally unfolding either at a symbolic program grows indefinitely.
+The full state relation and semantic preservation remain separate prerequisites.
+
+`set_sep_fun2set_probe.out` captures pinned HOL's full paired `fun2set` type,
+function graph and membership theorem, plus the full generic StackRemove
+memory prerequisite type/equation and9 original graph proofs. The graph keeps
+independent address/value carriers; kernel counterparts include wrong value,
+outside/empty domain, Bool/Nat and Bool/product values, noninjective functions
+and an infinite-domain application. No finite-heap premise is introduced.
