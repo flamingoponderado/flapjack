@@ -5499,3 +5499,9 @@ run_probe stack_remove_comp_get_size_probeScript.sml stack_remove_comp_get_size_
 run_probe stack_remove_comp_set_size_probeScript.sml stack_remove_comp_set_size_probe.out \
   css_statement css_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_padding_code_labels_probeScript.sml lab_to_target_padding_code_labels_probe.out \
+  pad_code_compute_labels pad_code_compute_labels_types pad_code_compute_labels_hypotheses \
+  empty_accumulator one_byte_full_map wide_nop_zero_labels empty_nop_zero_labels successive_sections duplicate_section_overwrite zero_id prefix_guard_needed conditional_zero_guard_false width1 width80_large_position \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
