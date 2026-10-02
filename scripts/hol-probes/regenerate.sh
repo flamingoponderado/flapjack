@@ -4733,3 +4733,7 @@ run_probe balanced_map_singleR_probeScript.sml balanced_map_singleR_probe.out \
 run_probe ssa_cc_trans_correct_share_inst_probeScript.sml ssa_cc_trans_correct_share_inst_probe.out \
   share_inst_full share_inst_type_operator share_inst_type_name share_inst_type_expression share_inst_type_st share_inst_type_cst share_inst_type_ssa share_inst_type_next share_inst_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_loop_semantic_helpers_probeScript.sml ssa_loop_semantic_helpers_probe.out \
+  collapse_full empty_cut_full collapse_type_first collapse_type_source collapse_type_after empty_cut_type_names empty_cut_type_locals empty_cut_type_map \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

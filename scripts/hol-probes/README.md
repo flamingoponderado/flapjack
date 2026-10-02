@@ -5345,3 +5345,11 @@ Successful stores preserve locals; returning loads use fresh SSA insertion;
 final FFI outcomes flush locals. Original proved theorem specialization capture,
 not isolated tactic replay or cross-language equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cc_trans_correct_share_inst_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_loop_semantic_helpers_probe` replays the two original local HOL statements
+and literal source proof scripts at word_allocProof7018–7034: successful-first
+sequence collapse and empty-list cut identity. Six inferred carrier types are
+captured; `SSALoopSemanticHelpers.lean` keeps the sole original run premise and
+unconditional generic cut identity respectively. This original local-proof
+replay and source comparison is not a cross-language equivalence proof.
+Regenerate with `HOL_PROBE_ONLY=ssa_loop_semantic_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
