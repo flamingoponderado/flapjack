@@ -5198,3 +5198,7 @@ run_probe stack_remove_inst_fp_probeScript.sml stack_remove_inst_fp_probe.out \
 run_probe stack_remove_inst_full_probeScript.sml stack_remove_inst_full_probe.out \
   ifull_statement ifull_types ifull_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_offset_establishment_probeScript.sml lab_to_target_offset_establishment_probe.out \
+  enc_lines_again_simp_offset_ok enc_lines_again_simp_offset_ok_types enc_secs_again_offset_ok enc_secs_again_offset_ok_types growth_false_full_tuple growth_false_offset_ok bad_input_repaired nongrowth_true_full_tuple same_word_malformed_unchanged sections_false_full_tuple sections_false_offset_ok bad_old_position empty_width1 empty_sections all_opcodes_false_flag large_width80_false \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
