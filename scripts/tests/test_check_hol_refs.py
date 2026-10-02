@@ -771,6 +771,35 @@ End
                     target.write_text(target.read_text().replace("x.exponent ≠ 0", "x.exponent = 0"))
                 self.assertEqual(CHECKER["real_free_ieee_names"](root), set())
 
+    def test_bit_only_ieee_compiled_overrides_fail_closed(self):
+        changes = {
+            "implemented_by": '@[implemented_by replacement]\n',
+            "combined_attributes": '@[inline, implemented_by replacement]\n',
+            "multiline_attribute": '@[\n implemented_by replacement\n]\n',
+            "extern": '@[extern "replacement"]\n',
+            "unsafe": 'unsafe ',
+        }
+        for change in (*changes, "attribute_command", "imported_attribute"):
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                for relative in {path for path, _ in CHECKER["REAL_FREE_IEEE_FORMS"]}:
+                    target = root / relative
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text((CHECKER["ROOT"] / relative).read_text())
+                target = root / "Flapjack/Misc/MachineIeee.lean"
+                if change in changes:
+                    target.write_text(target.read_text().replace(
+                        "def holFp64Abs", changes[change] + "def holFp64Abs", 1))
+                elif change == "attribute_command":
+                    target.write_text(target.read_text() +
+                        "\nattribute [implemented_by replacement] Flapjack.holFp64Abs\n")
+                else:
+                    (root / "Flapjack/Override.lean").write_text(
+                        "import Flapjack.Misc.MachineIeee\n"
+                        "attribute [extern \"replacement\"]\n  Flapjack.holFp64Abs\n")
+                self.assertEqual(CHECKER["real_free_ieee_names"](root), set())
+                self.assertIn("holFp64Abs", CHECKER["reals_rendering_names"](root))
+
     def test_reals_rendering_names_cover_nested_sqrt_real(self):
         names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
         self.assertIn("holFp64SqrtReal", names)
