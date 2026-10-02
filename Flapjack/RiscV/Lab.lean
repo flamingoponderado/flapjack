@@ -116,6 +116,8 @@ def labLineInstructionCount : LabLine (Word width) → Nat
       | .word (.arith (.longMul _ _ _ _)) => 2
       | .word (.arith (.addCarry _ _ _ _ _)) => 6
       | .word (.arith (.cakeAddCarry _ _ _ _)) => 6
+      | .word (.arith (.addOverflow _ _ _ _)) => 6
+      | .word (.arith (.subOverflow _ _ _ _)) => 6
       | .word (.const _ value) => labConstInstructionCount value.toNat
       | .const _ value => labConstInstructionCount value
       | .stackMem _ _ _ _ => 1
@@ -694,6 +696,8 @@ def labWordArithToWord [NeZero width] : WordArith Nat → WordArith (Word width)
       .addCarry destination resultCarry sourceLeft sourceRight carryIn
   | .cakeAddCarry destination sourceLeft sourceRight carry =>
       .cakeAddCarry destination sourceLeft sourceRight carry
+  | .addOverflow d l r flag => .addOverflow d l r flag
+  | .subOverflow d l r flag => .subOverflow d l r flag
   | .div destination dividend divisor =>
       .div destination dividend divisor
   | .binOp operator destination sourceLeft sourceRight =>

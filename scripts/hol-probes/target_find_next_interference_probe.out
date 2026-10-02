@@ -1,0 +1,147 @@
+search_type=:(α, β, γ) machine_config ->
+δ ffi_state ->
+num ->
+β ->
+((α, β) interference_app # (α, β, γ) machine_config # δ ffi_state) option
+search_full_definition=∀ms mc k ffi.
+  find_next_interference mc ffi k ms =
+  if k = 0 then NONE
+  else if
+    mc.target.get_pc ms ∈ mc.prog_addresses DIFF set mc.ffi_entry_pcs
+  then
+    if
+      encoded_bytes_in_mem mc.target.config (mc.target.get_pc ms)
+        (mc.target.get_byte ms) mc.prog_addresses
+    then
+      (let
+         ms1 = mc.target.next ms;
+         (ms2,new_oracle) = apply_oracle mc.next_interfer ms1;
+         mc' = mc with next_interfer := new_oracle
+       in
+         if
+           EVERY mc'.target.state_ok [ms; ms1; ms2] ∧
+           ∀x. x ∉ mc'.prog_addresses ⇒
+               mc'.target.get_byte ms1 x = mc'.target.get_byte ms x
+         then
+           find_next_interference mc' ffi (k − 1) ms2
+         else NONE)
+    else NONE
+  else if mc.target.get_pc ms = mc.halt_pc then NONE
+  else if mc.target.get_pc ms = mc.ccache_pc then
+    (let
+       (ms1,new_oracle) =
+         apply_oracle mc.ccache_interfer
+           (mc.target.get_reg ms mc.ptr_reg,mc.target.get_reg ms mc.len_reg,
+            ms)
+     in
+       SOME
+         (CcApp (mc.target.get_reg ms mc.ptr_reg)
+            (mc.target.get_reg ms mc.len_reg) ms ms1,
+          mc with ccache_interfer := new_oracle,ffi))
+  else
+    case find_index (mc.target.get_pc ms) mc.ffi_entry_pcs 0 of
+      NONE => NONE
+    | SOME ffi_index =>
+      case mc.ffi_names❲ffi_index❳ of
+        ExtCall v1 =>
+          (case ALOOKUP mc.mmio_info ffi_index of
+             NONE =>
+               (case read_ffi_bytearrays mc ms of
+                  (NONE,v3) => NONE
+                | (SOME bytes,NONE) => NONE
+                | (SOME bytes,SOME bytes2) =>
+                  case call_FFI ffi mc.ffi_names❲ffi_index❳ bytes bytes2 of
+                    FFI_return new_ffi new_bytes =>
+                      (let
+                         (ms1,new_oracle) =
+                           apply_oracle mc.ffi_interfer
+                             (ffi_index,new_bytes,ms)
+                       in
+                         SOME
+                           (FfiApp ffi_index new_bytes ms ms1,
+                            mc with ffi_interfer := new_oracle,new_ffi))
+                  | FFI_final outcome => NONE)
+           | SOME v => NONE)
+      | SharedMem op =>
+        case ALOOKUP mc.mmio_info ffi_index of
+          NONE => NONE
+        | SOME (nb,a,reg,pc') =>
+          case op of
+            MappedRead =>
+              (case a of
+                 Addr r off =>
+                   (let
+                      ad = mc.target.get_reg ms r + off
+                    in
+                      if
+                        (if nb = 0w then w2n ad MOD (dimindex (:β) DIV 8) = 0
+                         else T) ∧ ad ∈ mc.shared_addresses ∧
+                        is_valid_mapped_read (mc.target.get_pc ms) nb a reg
+                          pc' mc.target ms mc.prog_addresses
+                      then
+                        case
+                          call_FFI ffi mc.ffi_names❲ffi_index❳ [nb]
+                            (word_to_bytes ad F)
+                        of
+                          FFI_return new_ffi new_bytes =>
+                            (let
+                               (ms1,new_oracle) =
+                                 apply_oracle mc.ffi_interfer
+                                   (ffi_index,new_bytes,ms)
+                             in
+                               SOME
+                                 (FfiApp ffi_index new_bytes ms ms1,
+                                  mc with ffi_interfer := new_oracle,new_ffi))
+                        | FFI_final outcome => NONE
+                      else NONE))
+          | MappedWrite =>
+            case a of
+              Addr r off =>
+                (let
+                   ad = mc.target.get_reg ms r + off
+                 in
+                   if
+                     (if nb = 0w then w2n ad MOD (dimindex (:β) DIV 8) = 0
+                      else T) ∧ ad ∈ mc.shared_addresses ∧
+                     is_valid_mapped_write (mc.target.get_pc ms) nb a reg pc'
+                       mc.target ms mc.prog_addresses
+                   then
+                     case
+                       call_FFI ffi mc.ffi_names❲ffi_index❳ [nb]
+                         ((let
+                             w = mc.target.get_reg ms reg
+                           in
+                             if nb = 0w then word_to_bytes w F
+                             else word_to_bytes_aux (w2n nb) w F) ++
+                          word_to_bytes ad F)
+                     of
+                       FFI_return new_ffi new_bytes =>
+                         (let
+                            (ms1,new_oracle) =
+                              apply_oracle mc.ffi_interfer
+                                (ffi_index,new_bytes,ms)
+                          in
+                            SOME
+                              (FfiApp ffi_index new_bytes ms ms1,
+                               mc with ffi_interfer := new_oracle,new_ffi))
+                     | FFI_final outcome => NONE
+                   else NONE)
+search_unknown=T
+search_halt_success=T
+search_halt_resource=T
+search_shared_missing=T
+search_external_mmio=T
+search_normal_priority_encoding_fail=T
+search_normal_success=T
+search_normal_shift=T
+search_normal_guard_rollback=T
+search_mm_unshared=T
+search_mm_invalid_size=T
+search_cache_full=T
+search_zero=T
+search_mm_read_full=T
+search_mm_final=T
+search_mm_write_full=T
+search_mm_write_narrow_full=T
+search_empty_external_full=T
+search_normal_to_cache_full=T

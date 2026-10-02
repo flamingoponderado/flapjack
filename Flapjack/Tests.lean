@@ -1,3 +1,5 @@
+import Flapjack.Test.BalancedMapKeyOrderedTypes
+import Flapjack.Test.BalancedMapHeterogeneousParity
 import Flapjack.Test.LabToTargetLabsDomainParity
 import Flapjack.Test.LabImplicitSectionZero
 import Flapjack.Test.StackToLabExecutedInput
@@ -10,6 +12,9 @@ import Flapjack.Test.StackToLabNonrecursiveValidityParity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Test.WordToStackDecodedFrameShapeParity
+import Flapjack.Test.WordToStackAbsStackWordLengthParity
+import Flapjack.Test.WordToStackMapBitmapParity
 import Flapjack.Test.WordToStackFilterBitmapParity
 import Flapjack.Test.WordToStackListUpdateParity
 import Flapjack.Test.WordToStackWordListLengthParity

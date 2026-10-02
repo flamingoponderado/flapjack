@@ -270,6 +270,16 @@ def wordCopyInst {α : Type} (state : WordCopyState) :
           (.arith (.cakeAddCarry destination (wordCopyLookup state sourceLeft)
             (wordCopyLookup state sourceRight) (wordCopyLookup state carry)),
             wordCopyRemove (wordCopyRemove state destination) carry)
+      | .addOverflow d l r flag =>
+          let r' := wordCopyLookup state r
+          let r' := if r' = d then r else r'
+          (.arith (.addOverflow d (wordCopyLookup state l) r' flag),
+            wordCopyRemove (wordCopyRemove state d) flag)
+      | .subOverflow d l r flag =>
+          let r' := wordCopyLookup state r
+          let r' := if r' = d then r else r'
+          (.arith (.subOverflow d (wordCopyLookup state l) r' flag),
+            wordCopyRemove (wordCopyRemove state d) flag)
       | .div destination dividend divisor =>
           (.arith (.div destination (wordCopyLookup state dividend)
             (wordCopyLookup state divisor)), wordCopyRemove state destination)

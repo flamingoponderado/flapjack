@@ -99,7 +99,7 @@ private theorem supportsCodec_wordSsaRenameProgramWithLoops
     supportsCodec (wordSsaRenameProgramWithLoops frames state program).2 =
       supportsCodec program := by
   induction frames, state, program using wordSsaRenameProgramWithLoops.induct
-  case case41 =>
+  case case43 =>
     rename_i frames inputState op condition right thenBranch elseBranch leftState leftProgram leftEq elseInput rightState rightProgram rightEq preferred merged leftMoves rightMoves fixEq ih2 ih1
     have repair := supportsCodec_wordSsaFixInconsistencies (α := α) preferred leftState rightState rightState.next
     rw [fixEq] at repair

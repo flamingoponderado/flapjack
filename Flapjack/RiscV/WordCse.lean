@@ -259,6 +259,12 @@ def wordCseCanonicalArith (data : WordCseKnowledge) : WordArith α → WordArith
   | .cakeAddCarry destination sourceLeft sourceRight carry =>
       .cakeAddCarry destination (wordCseCanonicalRegs' destination data sourceLeft)
         (wordCseCanonicalRegs' destination data sourceRight) carry
+  | .addOverflow d l r flag =>
+      .addOverflow d (wordCseCanonicalRegs' d data l)
+        (wordCseCanonicalRegs' d data r) flag
+  | .subOverflow d l r flag =>
+      .subOverflow d (wordCseCanonicalRegs' d data l)
+        (wordCseCanonicalRegs' d data r) flag
   /- The five-register two-result primitive has no Cake counterpart and is
      never recorded, so its operands are left alone. -/
   | operation => operation
@@ -286,6 +292,8 @@ private def wordCseArithDiagnosticKey [WordCseHash α] : WordArith α → List N
       [27, sourceLeft + 100, sourceRight + 100, quotient + 100]
   | .div _ dividend divisor => [29, dividend + 100, divisor + 100]
   | .cakeAddCarry _ sourceLeft sourceRight _ => [30, sourceLeft + 100, sourceRight + 100]
+  | .addOverflow _ l r _ => [31, l + 100, r + 100]
+  | .subOverflow _ l r _ => [32, l + 100, r + 100]
   /- Never stored, so the hash only has to be distinct from the stored
      heads; `can_mem_arith` rejects the five-register primitive. -/
   | .addCarry _ _ _ _ _ => [31]
@@ -373,6 +381,8 @@ private def wordCseFirstRegDiagnostic : WordArith α → Nat
   | .div destination _ _ => destination
   | .longMul destinationLeft _ _ _ => destinationLeft
   | .longDiv destinationLeft _ _ _ _ => destinationLeft
+  | .addOverflow destination _ _ _
+  | .subOverflow destination _ _ _
   | .cakeAddCarry destination _ _ _ => destination
   | .addCarry destination _ _ _ _ => destination
 
@@ -382,6 +392,8 @@ private def wordCseArithWritesDiagnostic : WordArith α → List Nat
   | .div destination _ _ => [destination]
   | .longMul destinationLeft destinationRight _ _ => [destinationLeft, destinationRight]
   | .longDiv destinationLeft destinationRight _ _ _ => [destinationLeft, destinationRight]
+  | .addOverflow destination _ _ carry
+  | .subOverflow destination _ _ carry
   | .cakeAddCarry destination _ _ carry => [destination, carry]
   | .addCarry destination resultCarry _ _ _ => [destination, resultCarry]
 
@@ -393,6 +405,7 @@ private def wordCseArithReadsDiagnostic : WordArith α → List Nat
   | .div _ dividend divisor => [dividend, divisor]
   | .longMul _ _ sourceLeft sourceRight => [sourceLeft, sourceRight]
   | .longDiv _ _ sourceLeft sourceRight quotient => [sourceLeft, sourceRight, quotient]
+  | .addOverflow _ l r _ | .subOverflow _ l r _ => [l, r]
   | .cakeAddCarry _ sourceLeft sourceRight carry => [sourceLeft, sourceRight, carry]
   | .addCarry _ _ sourceLeft sourceRight carryIn => [sourceLeft, sourceRight, carryIn]
 

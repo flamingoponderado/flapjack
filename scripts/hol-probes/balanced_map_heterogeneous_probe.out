@@ -1,0 +1,7 @@
+bmh_keyset=⊢ ∀(cmp :β -> α -> ordering) (k :β). key_set cmp k = {k' | cmp k k' = Equal}
+bmh_map=⊢ (∀(cmp :γ -> α -> ordering). to_fmap cmp (Tip :(γ, β) balanced_map) = (FEMPTY :(α -> bool) |-> β)) ∧ ∀(cmp :γ -> α -> ordering) (s :num) (k :γ) (v :β) (l :(γ, β) balanced_map) (r :(γ, β) balanced_map). to_fmap cmp (Bin s k v l r) = (to_fmap cmp l ⊌ to_fmap cmp r)⟨key_set cmp k ↦ v⟩
+bmh_domain=⊢ ∀(cmp :α -> β -> ordering) (ks :β -> bool) (t :(α, γ) balanced_map). ks ∈ FDOM (to_fmap cmp t) ⇒ ∃(k :α). ks = key_set cmp k
+bmh_keyset_type=:(α -> β -> ordering) -> α -> β -> bool
+bmh_map_type=:(α -> β -> ordering) -> (α, γ) balanced_map -> ((β -> bool) |-> γ)
+bmh_cmp=⊢ ∀(cmp :α -> β -> γ) (k :α) (ks :β -> bool) (res :γ). key_set_cmp cmp k ks res ⇔ ∀(k' :β). k' ∈ ks ⇒ cmp k k' = res
+bmh_cmp2=⊢ ∀(cmp :α -> β -> γ) (ks1 :α -> bool) (ks2 :β -> bool) (res :γ). key_set_cmp2 cmp ks1 ks2 res ⇔ ∀(k1 :α) (k2 :β). k1 ∈ ks1 ∧ k2 ∈ ks2 ⇒ cmp k1 k2 = res

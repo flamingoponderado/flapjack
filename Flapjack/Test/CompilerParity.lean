@@ -1,4 +1,11 @@
 import Flapjack.Test.LabToTargetGoodCodeParity
+import Flapjack.Test.TargetRegisterOraclesParity
+import Flapjack.Test.TargetInterferenceSequenceParity
+import Flapjack.Test.TargetFindNextInterferenceParity
+import Flapjack.Test.StackRemoveStoreInit
+import Flapjack.Test.WordOverflowProduction
+import Flapjack.Test.StackRemoveStoreListCode
+import Flapjack.Test.RiscVOverflowTargetParity
 import Flapjack.Test.LabToTargetByteLengthsParity
 import Flapjack.Test.LabPropsLabelSetsParity
 import Flapjack.Test.LabToTargetWordLocationParity
@@ -281,6 +288,7 @@ import Flapjack.Test.RegAllocAllocatorParity
 import Flapjack.Test.WordAllocSelectRegAllocParity
 import Flapjack.Test.WordAllocDefParity
 import Flapjack.Test.WordUnreachDefParity
+import Flapjack.Test.WordCopyDefParity
 import Flapjack.Test.RegAllocStempColouringParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity

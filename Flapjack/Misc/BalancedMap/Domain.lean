@@ -8,8 +8,8 @@ namespace Flapjack.Misc.BalancedMap
     difference: no map binder, comparator law or invariant premise is added. -/
 @[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "to_fmap_key_set"
   (fmap_as_finite_support_result_observations := [Flapjack.Misc.BalancedMap.toFmap])]
-theorem toFmapKeySet {κ ν : Type} (cmp : κ → κ → Ordering)
-    (keys : Set κ) (tree : Map κ ν)
+theorem toFmapKeySet {κ ι ν : Type} (cmp : κ → ι → Ordering)
+    (keys : Set ι) (tree : Map κ ν)
     (h : (Flapjack.Misc.BalancedMap.toFmap cmp tree).lookup keys ≠ none) :
     ∃ key, keys = keySet cmp key := by
   classical
