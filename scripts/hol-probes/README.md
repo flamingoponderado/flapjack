@@ -6150,3 +6150,5 @@ rules after `allow_rebind`, and resolves `state_component_equality` with
 uses the faithful evaluator clauses before the clock-identity rewrite.
 
 `l3_mmu_insert_probe.out` records all sixteen TLB slots for eight complete original insertion runs: empty, multiple holes, last hole, full ascending ages, tied ages, all maximum ages, last oldest and early oldest. Native kernel fixtures replay the same inputs and `(asid, age)` observations, including current core 7 with totalCore 1. Strict age comparison, first-empty behavior and the all-max slot-zero sentinel are preserved. Other old-entry fields are arbitrary and unobserved in both probes. These regression observations do not establish cross-language equivalence.
+
+`stack_rawcall_shape_probe.out` captures the full original comp_seq_neq_IMP statement with zero hypotheses and five independent complete branch truth values. Kernel replay separates the generic theorem application from equal/smaller/larger changes and missing/handler fallback observations; no full simulation is claimed.

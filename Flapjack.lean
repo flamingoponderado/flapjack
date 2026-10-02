@@ -1,8 +1,9 @@
 import Flapjack.RiscV.L3.Defs.MMU.Insert
 import Flapjack.RiscV.L3.Defs.MMU.TLB
 import Flapjack.RiscV.L3.Defs.MMU.Access
-import Flapjack.RiscV.L3.Defs.MMU.Primitives
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateOk
+import Flapjack.RiscV.L3.Defs.MMU.Primitives
 import Flapjack.Compiler.Backend.StackRawCall
 import Flapjack.RiscV.L3.Defs.MMU.Exception
 import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels

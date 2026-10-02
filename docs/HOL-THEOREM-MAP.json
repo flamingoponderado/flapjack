@@ -66824,5 +66824,14 @@
     "hol_name": "addToTLB_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript5079-5385, complete sixteen-slot FOR scan. The six-component accumulator retains found-empty, candidate index, minimum age, updated table, new entry, and native state. Some uses strict unsigned age comparison and changes only candidate/minimum; None fills only the first empty slot. The initial candidate is zero and minimum is sign-extended one-bit one, so a full all-maximum-age table replaces slot zero. Final replacement occurs only when no empty slot was filled. mkTLBEntry retains arbitrary level and current-core age; no core, address, level or table restriction is added. Eight original HOL rows observe every slot at empty/multiple-hole/last-hole/full ascending/tie/all-max/last-oldest/early-oldest tables, replayed in L3MmuInsertParity. Fixed BitVec 4/6/64 and native SV_PTE/TLBEntry/riscv_state are literal source carriers. Original function-valued table retained; no finite-map representation qualifier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_seq_neq_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompSeqShape.lean",
+    "lean_name": "compSeqNeqImp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.7: original74-83 full comp_seq_neq_IMP. Arbitrary native first/second/default programs and actual Spt Nat info; sole original comp_seq inequality implies exists natural k,dest with first StackFree k and second Call NONE(INL dest)NONE. No successful lookup, frame bound, target evaluation or extra shape premise. Direct matcher proof uses literal compSeq/destCase. Sole positive type-indexed word carrier translation, native tree maps unchanged. Fresh original full statement hypcount0 and five independent branch observations matched kernel fixtures; generic theorem application separates proof from observations. Axiom audit only propext/Quot.sound. Full label/simulation parents remain open."
   }
 ]
