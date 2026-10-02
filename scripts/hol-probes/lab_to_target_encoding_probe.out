@@ -1,0 +1,17 @@
+FFIOffset=16
+LabInstJump=Jump 0w
+LabInstJumpCmp=JumpCmp Equal 1 (Reg 2) 0w
+LabInstCall=Call 0w
+LabInstLocValue=Loc 7 0w
+LabInstHalt=Jump 0w
+LabInstInstall=Jump 0w
+LabInstCallFFI=Jump 0w
+CbwToAsmAsmi=Inst Skip
+CbwToAsmCbw=Inst (Mem Store8 2 (Addr 1 0w))
+CbwToAsmShareMem=Inst (Mem Load 2 (Addr 3 0w))
+EncLineLabel=Label 3 4 7
+EncLineAsm=Asm (Asmi (Inst Skip)) [1w] 1
+EncLineAsmCbw=Asm (Cbw 1 2) [2w; 3w] 2
+EncLineLabAsm=LabAsm Halt 0w [2w; 3w] 2
+EncSec=Section 3 [Label 3 4 7; Asm (Asmi (Inst Skip)) [1w] 1]
+EncSecList=[Section 3 [Label 3 4 1; Asm (Asmi (Inst Skip)) [1w] 1]]

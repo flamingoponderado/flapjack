@@ -1,0 +1,56 @@
+(* Original generated FP64 declarations at pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae.
+   machine_ieeeScript.sml:16 supplies (fp64,52,11,SOME double); the unchanged
+   machine_ieeeLib.sml generates these 47 definitions. Captures their actual
+   HOL conclusions, not a claim that a Lean rendering is equivalent. *)
+load "bossLib";
+load "machine_ieeeTheory";
+open HolKernel Parse bossLib;
+val _ = Globals.linewidth := 10000;
+fun observe label name = (print (label ^ "="); print_term (concl (DB.fetch "machine_ieee" name)); print "\n");
+val _ = observe "float_to_fp64_def" "float_to_fp64_def";
+val _ = observe "fp64_abs_def" "fp64_abs_def";
+val _ = observe "fp64_add_def" "fp64_add_def";
+val _ = observe "fp64_add_with_flags_def" "fp64_add_with_flags_def";
+val _ = observe "fp64_bottom_def" "fp64_bottom_def";
+val _ = observe "fp64_compare_def" "fp64_compare_def";
+val _ = observe "fp64_div_def" "fp64_div_def";
+val _ = observe "fp64_div_with_flags_def" "fp64_div_with_flags_def";
+val _ = observe "fp64_equal_def" "fp64_equal_def";
+val _ = observe "fp64_greaterEqual_def" "fp64_greaterEqual_def";
+val _ = observe "fp64_greaterThan_def" "fp64_greaterThan_def";
+val _ = observe "fp64_isFinite_def" "fp64_isFinite_def";
+val _ = observe "fp64_isInfinite_def" "fp64_isInfinite_def";
+val _ = observe "fp64_isIntegral_def" "fp64_isIntegral_def";
+val _ = observe "fp64_isNan_def" "fp64_isNan_def";
+val _ = observe "fp64_isNormal_def" "fp64_isNormal_def";
+val _ = observe "fp64_isSignallingNan_def" "fp64_isSignallingNan_def";
+val _ = observe "fp64_isSubnormal_def" "fp64_isSubnormal_def";
+val _ = observe "fp64_isZero_def" "fp64_isZero_def";
+val _ = observe "fp64_lessEqual_def" "fp64_lessEqual_def";
+val _ = observe "fp64_lessThan_def" "fp64_lessThan_def";
+val _ = observe "fp64_mul_add_def" "fp64_mul_add_def";
+val _ = observe "fp64_mul_add_with_flags_def" "fp64_mul_add_with_flags_def";
+val _ = observe "fp64_mul_def" "fp64_mul_def";
+val _ = observe "fp64_mul_sub_def" "fp64_mul_sub_def";
+val _ = observe "fp64_mul_sub_with_flags_def" "fp64_mul_sub_with_flags_def";
+val _ = observe "fp64_mul_with_flags_def" "fp64_mul_with_flags_def";
+val _ = observe "fp64_negInf_def" "fp64_negInf_def";
+val _ = observe "fp64_negMin_def" "fp64_negMin_def";
+val _ = observe "fp64_negZero_def" "fp64_negZero_def";
+val _ = observe "fp64_negate_def" "fp64_negate_def";
+val _ = observe "fp64_posInf_def" "fp64_posInf_def";
+val _ = observe "fp64_posMin_def" "fp64_posMin_def";
+val _ = observe "fp64_posZero_def" "fp64_posZero_def";
+val _ = observe "fp64_roundToIntegral_def" "fp64_roundToIntegral_def";
+val _ = observe "fp64_sqrt_def" "fp64_sqrt_def";
+val _ = observe "fp64_sqrt_with_flags_def" "fp64_sqrt_with_flags_def";
+val _ = observe "fp64_sub_def" "fp64_sub_def";
+val _ = observe "fp64_sub_with_flags_def" "fp64_sub_with_flags_def";
+val _ = observe "fp64_to_float_def" "fp64_to_float_def";
+val _ = observe "fp64_to_int_def" "fp64_to_int_def";
+val _ = observe "fp64_to_real_def" "fp64_to_real_def";
+val _ = observe "fp64_to_value_def" "fp64_to_value_def";
+val _ = observe "fp64_top_def" "fp64_top_def";
+val _ = observe "int_to_fp64_def" "int_to_fp64_def";
+val _ = observe "real_to_fp64_def" "real_to_fp64_def";
+val _ = observe "real_to_fp64_with_flags_def" "real_to_fp64_with_flags_def";

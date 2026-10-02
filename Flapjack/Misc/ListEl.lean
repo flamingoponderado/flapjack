@@ -1,29 +1,35 @@
 import Flapjack.HolRef
+import Flapjack.HolArb
 
 /-!
 # HOL list `HD` and `EL`
 
-HOL `HD` (`listScript.sml:128-130`) has only the `h::t` clause, so `HD []` is
-an unspecified value; `EL` (`listScript.sml:225-228`) is `EL 0 l = HD l` and
-`EL (SUC n) l = EL n (TL l)` with `TL [] = []`, so `EL n l` past the end of
-`l` is that same unspecified value. `holHdNil` is an opaque constant: no Lean
-proof can unfold it, just as HOL proves nothing about `HD []`. The HOL list
-script is not among the pinned `hol4/` snapshots, so these renderings are
-untagged Flapjack infrastructure; under the bound `holEl n l` is the ordinary
-`l[n]` (`holEl_eq_getElem`).
+Exact ports of HOL `HD` (`HOL/src/list/src/listScript.sml:128-130`) and
+`EL_def` (`listScript.sml:225-228`), cited in the pinned upstream HOL
+submodule. `HD` has only the `h::t` clause, so `HD []` is an unspecified value
+of the (inhabited) element type: `holHdNil` aliases the shared opaque
+`holArb` at that type. This preserves equality with other missing clauses
+completed by the same HOL `ARB`, without choosing a concrete value.
+`EL 0 l = HD l` and `EL (SUC n) l = EL n (TL l)` with
+HOL `TL` as `List.tail` (`TL [] = []`, `TL_DEF` 132-135), so `EL n l` past the
+end of `l` is that same unspecified value; under the bound `holEl n l` is the
+ordinary `l[n]` (`holEl_eq_getElem`).
 -/
 
 namespace Flapjack
 
 /-- HOL's unspecified `HD []` at each (inhabited) type. -/
-noncomputable opaque holHdNil (α : Type) [Nonempty α] : α
+noncomputable abbrev holHdNil (α : Type) [Nonempty α] : α := holArb α
 
-/-- HOL `HD`. -/
+/-- Exact HOL `HD` (`listScript.sml:128-130`); the missing `[]` clause is the
+unspecified `holHdNil`. -/
+@[hol "HOL/src/list/src/listScript.sml" "HD"]
 noncomputable def holHd {α : Type} [Nonempty α] : List α → α
   | [] => holHdNil α
   | h :: _ => h
 
-/-- HOL `EL`. -/
+/-- Exact HOL `EL_def` (`listScript.sml:225-228`). -/
+@[hol "HOL/src/list/src/listScript.sml" "EL_def"]
 noncomputable def holEl {α : Type} [Nonempty α] : Nat → List α → α
   | 0, l => holHd l
   | n + 1, l => holEl n l.tail

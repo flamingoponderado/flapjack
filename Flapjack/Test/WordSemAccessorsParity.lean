@@ -14,6 +14,16 @@ namespace Flapjack.Test.WordSemAccessorsParity
 open Flapjack
 open Flapjack.WordSemStateFiniteExact
 
+/-- Original theWord Word clauses at widths 1 and 64; no Loc oracle exists. -/
+example : wordSemTheWord (.word (1 : BitVec 1)) = 1 := rfl
+example : wordSemTheWord (.word (18446744073709551615 : BitVec 64)) =
+    18446744073709551615 := rfl
+
+/-- Original get_word Word clauses at widths 32 and 80. -/
+example : wordSemGetWord (.word (2147483648 : BitVec 32)) = 2147483648 := rfl
+example : wordSemGetWord (.word (1208925819614629174706175 : BitVec 80)) =
+    1208925819614629174706175 := rfl
+
 /-- The probe's `st`: `s` with the given `locals`, `store`, `fp_regs`,
     `memory` and `mdomain := {8w}`. -/
 private def st {C : Type} {F : Type} (s : WordSemStateFiniteExact 64 C F) :
@@ -111,5 +121,13 @@ def runChecks : IO Bool := do
   else
     IO.println "FAIL wordSem accessor HOL oracle rows"
   pure pureRows
+
+/-- Symbolic original ARB completion, without choosing a concrete word. -/
+example {width : Nat} [NeZero width] (a b c d : Nat) :
+    wordSemTheWord (.loc a b : WordLocW width) =
+      wordSemGetWord (.loc c d : WordLocW width) := rfl
+
+example {width : Nat} [NeZero width] (a b : Nat) :
+    wordSemTheWord (.loc a b : WordLocW width) = holArb (BitVec width) := rfl
 
 end Flapjack.Test.WordSemAccessorsParity

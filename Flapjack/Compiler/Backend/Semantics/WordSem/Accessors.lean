@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
+import Flapjack.HolArb
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 
@@ -22,8 +23,11 @@ witness below). `'a word` is `BitVec width` at a positive width.
 
 HOL `theWord_def` (`:42-44`) and `get_word_def` (`:278-280`) are partial:
 there is no clause for `Loc`, so HOL leaves their value on `Loc` unspecified.
-They are not ported, and the accessors below pattern-match on `Word` wherever
-HOL applies them.
+HOL pattern completion uses the same `ARB` word for both missing clauses,
+independent of the location fields. Both accessors use the shared `holArb`
+at their result carrier; no concrete value is imposed.
+The evaluator accessor paths already pattern-match on `Word`, so their
+successful equations do not depend on either unspecified function.
 -/
 
 namespace Flapjack
@@ -41,6 +45,36 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F
 
 end WordSemAccessorsSupport
 
+/-- Exact HOL `theWord_def` (`wordSemScript.sml:42-44`): the sole equation is
+`theWord (Word w) = w`. Its total carrier has unspecified `Loc` results,
+represented by the shared `holArb (BitVec width)`; no concrete value is claimed.
+The word/Loc carrier and dimension are the reviewed `WordLocW width` and
+positive `BitVec width` translation. -/
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "theWord_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def wordSemTheWord {width : Nat} [NeZero width] :
+    WordLocW width → BitVec width
+  | .word w => w
+  | .loc _ _ => holArb (BitVec width)
+
+/-- Exact HOL `get_word_def` (`wordSemScript.sml:278-280`): its sole equation
+is `get_word (Word w) = w`. Its missing Loc clause uses the same ARB completion
+as `theWord`, independently of the location fields. -/
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "get_word_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def wordSemGetWord {width : Nat} [NeZero width] :
+    WordLocW width → BitVec width
+  | .word w => w
+  | .loc _ _ => holArb (BitVec width)
+
+/-- Kernel equation for the original specified Word clause. -/
+@[simp] theorem wordSemTheWord_word {width : Nat} [NeZero width] (w : BitVec width) :
+    wordSemTheWord (.word w) = w := rfl
+
+/-- Kernel equation for the original specified Word clause. -/
+@[simp] theorem wordSemGetWord_word {width : Nat} [NeZero width] (w : BitVec width) :
+    wordSemGetWord (.word w) = w := rfl
+
 /-- Exact HOL `is_fwd_ptr_def` (`wordSemScript.sml:37-40`):
     `is_fwd_ptr (Word w) = ((w && 3w) = 0w)` and `is_fwd_ptr _ = F`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "is_fwd_ptr_def"
@@ -56,6 +90,19 @@ def wordSemIsFwdPtr {width : Nat} [NeZero width] : WordLocW width → Bool
 def wordSemIsWordLoc {width : Nat} [NeZero width] : WordLocW width → Bool
   | .word _ => true
   | _ => false
+
+/-- Kernel agreement of the two identically completed definitions. -/
+theorem wordSemTheWord_eq_getWord {width : Nat} [NeZero width]
+    (v : WordLocW width) : wordSemTheWord v = wordSemGetWord v := by
+  cases v <;> rfl
+
+/-- Compatibility specialization to the specified Word clause. -/
+theorem wordSemTheWord_eq_getWord_of_isWord {width : Nat} [NeZero width]
+    (v : WordLocW width) (h : wordSemIsWordLoc v = true) :
+    wordSemTheWord v = wordSemGetWord v := by
+  cases v with
+  | word w => rfl
+  | loc label offset => simp [wordSemIsWordLoc] at h
 
 /-- Exact HOL `word_cmp_def` (`wordSemScript.sml:56-68`).  On two `Word`s,
     each of HOL's eight clauses is the same comparison as the corresponding

@@ -26,9 +26,9 @@ jobs:
 
       - name: Check @[hol] cross-references point at existing HOL declarations
         run: |
-          # This frontier checks CakeML and pinned hol4 snapshots. Initialize
-          # HOL here once the checker consumes verified HOL/ declarations.
-          git submodule update --init --depth 1 -- cakeml
+          # Tagged HOL/ declarations are verified against the pinned gitlink
+          # and tracked blobs, alongside the existing hol4 snapshots.
+          git submodule update --init --depth 1 -- cakeml HOL
           python3 -m unittest discover -s scripts/tests -p 'test*hol*.py'
           bash scripts/test-hol-ref-syntax.sh
           python3 scripts/check-hol-refs.py

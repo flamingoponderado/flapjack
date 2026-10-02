@@ -57,6 +57,14 @@ class ExternalHolSourcesTest(unittest.TestCase):
         self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], path))
         self.assertIsNone(REF_ERROR(CHECKER["ROOT"] / path, "some_def", 794, {}))
 
+    def test_binary_ieee_verified_submodule_source_and_declaration(self):
+        path = "HOL/src/floating-point/binary_ieeeScript.sml"
+        self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], path))
+        self.assertIsNone(REF_ERROR(CHECKER["ROOT"] / path, "float_some_qnan_def", 495, {}))
+        self.assertIsNotNone(REF_ERROR(CHECKER["ROOT"] / path, "missing_ieee_def", None, {}))
+        self.assertIsNotNone(CHECKER["hol_source_error"](
+            CHECKER["ROOT"], "hol4/src/floating-point/binary_ieeeScript.sml"))
+
     def test_missing_option_pin_rejected(self):
         import json
         with tempfile.TemporaryDirectory() as tmp:
@@ -2023,6 +2031,25 @@ class HolDatatypeDeclarationsTest(unittest.TestCase):
         )
         self.assertEqual(DECL(path, {})["shape"], [2])
 
+    def test_datatype_name_on_its_own_line_is_indexed(self):
+        path = self._write_sml(
+            "Datatype:\n"
+            "  shmem_info_num\n"
+            "  = <| entry_pc : num\n"
+            "     ; nbytes : word8 |>\n"
+            "End\n"
+        )
+        self.assertEqual(DECL(path, {})["shmem_info_num"], [2])
+
+    def test_lab_to_target_shmem_info_num_is_resolvable(self):
+        path = (
+            Path(__file__).resolve().parents[2]
+            / "cakeml/compiler/backend/lab_to_targetScript.sml"
+        )
+        cache = {}
+        self.assertIsNone(REF_ERROR(path, "shmem_info_num", None, cache))
+        self.assertIsNone(REF_ERROR(path, "shmem_info_num", 350, cache))
+
     def test_panlang_shape_is_resolvable(self):
         path = (
             Path(__file__).resolve().parents[2]
@@ -3279,6 +3306,174 @@ class PinnedPathAllowlistAlignmentTest(unittest.TestCase):
     def test_every_python_pin_is_snapshotted(self):
         for path in CHECKER["EXTERNAL_HOL_PATHS"]:
             self.assertTrue((CHECKER["ROOT"] / path).is_file(), path)
+
+
+
+ROOT_HOL = Path(CHECKER["ROOT"]) / "HOL"
+LIST_SCRIPT = "src/list/src/listScript.sml"
+
+
+def _run(*args, cwd=None):
+    import subprocess
+    subprocess.run(list(args), cwd=cwd, check=True, capture_output=True)
+
+
+@unittest.skipUnless((ROOT_HOL / ".git").exists(), "pinned HOL submodule not initialized")
+class HolSubmoduleSourcesTest(unittest.TestCase):
+    """``HOL/<rel>.sml`` citations need gitlink, checkout and blob provenance."""
+
+    def fixture(self, root):
+        pinned = CHECKER["HOL_SUBMODULE_COMMIT"]
+        _run("git", "init", "--quiet", str(root))
+        (root / ".gitmodules").write_text(
+            '[submodule "HOL"]\n\tpath = HOL\n'
+            "\turl = https://github.com/HOL-Theorem-Prover/HOL.git\n")
+        _run("git", "clone", "--quiet", "--shared", "--no-checkout",
+             str(ROOT_HOL), str(root / "HOL"))
+        _run("git", "-C", str(root / "HOL"), "update-ref", "--no-deref", "HEAD", pinned)
+        _run("git", "-C", str(root / "HOL"), "checkout", pinned, "--", LIST_SCRIPT)
+        _run("git", "-C", str(root), "update-index", "--add", "--cacheinfo",
+             f"160000,{pinned},HOL")
+        return "HOL/" + LIST_SCRIPT
+
+    def error(self, root, path):
+        return CHECKER["hol_source_error"](root, path)
+
+    def test_verified_submodule_file_is_accepted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            self.assertIsNone(self.error(root, path))
+
+    def test_untracked_path_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            self.assertIn("not tracked", self.error(root, "HOL/src/list/src/noSuchScript.sml"))
+
+    def test_locally_modified_file_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            target = root / path
+            target.write_text(target.read_text() + "\n(* local edit *)\n")
+            self.assertIn("differs from the pinned blob", self.error(root, path))
+
+    def test_wrong_superproject_gitlink_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            _run("git", "-C", str(root), "update-index", "--cacheinfo",
+                 f"160000,{'1' * 40},HOL")
+            self.assertIn("gitlink", self.error(root, path))
+
+    def test_checkout_at_other_commit_is_rejected(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            # CI initializes HOL with --depth 1, so its parent need not exist.
+            # Create a distinct commit using the available pinned tree instead.
+            pinned = CHECKER["HOL_SUBMODULE_COMMIT"]
+            other_commit = subprocess.run(
+                ["git", "-C", str(root / "HOL"),
+                 "-c", "user.name=HOL provenance test",
+                 "-c", "user.email=hol-provenance-test@example.invalid",
+                 "commit-tree", pinned + "^{tree}", "-p", pinned,
+                 "-m", "Distinct local commit for checkout rejection test"],
+                check=True, capture_output=True, text=True).stdout.strip()
+            self.assertNotEqual(other_commit, pinned)
+            _run("git", "-C", str(root / "HOL"), "update-ref", "--no-deref", "HEAD", other_commit)
+            self.assertIn("not at the pinned commit", self.error(root, path))
+
+    def test_wrong_submodule_url_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            (root / ".gitmodules").write_text(
+                '[submodule "HOL"]\n\tpath = HOL\n\turl = https://example.com/HOL.git\n')
+            self.assertIn(".gitmodules", self.error(root, path))
+
+    def test_repository_checkout_accepts_pinned_list_script(self):
+        self.assertIsNone(self.error(Path(CHECKER["ROOT"]), "HOL/" + LIST_SCRIPT))
+
+    def test_existing_hol4_snapshot_paths_unchanged(self):
+        self.assertIsNone(self.error(Path(CHECKER["ROOT"]), CHECKER["EXTERNAL_HOL_PATH"]))
+
+
+
+@unittest.skipUnless((ROOT_HOL / ".git").exists(), "pinned HOL submodule not initialized")
+class HolSubmoduleDeclarationTest(unittest.TestCase):
+    """Declarations cited under ``HOL/`` resolve in the verified pinned file."""
+
+    def test_list_and_sorting_definitions_resolve(self):
+        root = Path(CHECKER["ROOT"])
+        cache = {}
+        for rel, name in [("src/list/src/listScript.sml", "EL_def"),
+                          ("src/sort/sortingScript.sml", "SORTED_DEF"),
+                          ("src/sort/sortingScript.sml", "PART_DEF"),
+                          ("src/sort/sortingScript.sml", "PARTITION_DEF")]:
+            self.assertIsNone(CHECKER["hol_source_error"](root, "HOL/" + rel))
+            self.assertIsNone(REF_ERROR(root / "HOL" / rel, name, None, cache), (rel, name))
+
+    def test_missing_declaration_is_reported(self):
+        root = Path(CHECKER["ROOT"])
+        self.assertIsNotNone(
+            REF_ERROR(root / "HOL/src/list/src/listScript.sml", "no_such_def", None, {}))
+
+@unittest.skipUnless((ROOT_HOL / ".git").exists(), "pinned HOL submodule not initialized")
+class MachineIeeeGeneratedDeclarationsTest(unittest.TestCase):
+    """Only the reviewed fixed-format factory and unchanged generator qualify."""
+
+    def machine_fixture(self, root):
+        HolSubmoduleSourcesTest.fixture(self, root)
+        for path in (CHECKER["MACHINE_IEEE_SCRIPT"], CHECKER["MACHINE_IEEE_GENERATOR"]):
+            _run("git", "-C", str(root / "HOL"), "checkout",
+                 CHECKER["HOL_SUBMODULE_COMMIT"], "--", path[len("HOL/"):])
+        return root / CHECKER["MACHINE_IEEE_SCRIPT"]
+
+    def test_all_reviewed_generated_names_resolve_at_literal_call(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
+        cache = {}
+        self.assertEqual(len(CHECKER["MACHINE_IEEE_FP64_NAMES"]), 47)
+        for name in CHECKER["MACHINE_IEEE_FP64_NAMES"]:
+            self.assertIsNone(REF_ERROR(path, name, 16, cache), name)
+
+    def test_generated_names_require_call_line(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
+        for line in (None, 13, 15, 17, 63):
+            self.assertIn("source line 16", REF_ERROR(path, "fp64_to_float_def", line, {}))
+
+    def test_fabricated_or_other_format_names_are_not_generated(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
+        for name in ("fp64_fake_def", "fp32_add_def", "fp64_to_float_11"):
+            self.assertIn("declares no", REF_ERROR(path, name, 16, {}))
+
+    def test_missing_or_drifted_generator_rejected(self):
+        for missing in (False, True):
+            with self.subTest(missing=missing), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                path = self.machine_fixture(root)
+                generator = root / CHECKER["MACHINE_IEEE_GENERATOR"]
+                if missing:
+                    generator.unlink()
+                else:
+                    generator.write_text(generator.read_text() + "\n(* drift *)\n")
+                self.assertIn("machine_ieeeLib.sml", REF_ERROR(path, "fp64_add_def", 16, {}))
+                self.assertIsNotNone(CHECKER["hol_source_error"](
+                    root, CHECKER["MACHINE_IEEE_SCRIPT"]))
+
+    def test_changed_fixed_format_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.machine_fixture(root)
+            path.write_text(path.read_text().replace('("fp64", 52, 11,', '("fp64", 51, 12,'))
+            self.assertIsNotNone(REF_ERROR(path, "fp64_add_def", 16, {}))
+            # Even after a provenance provider returns success, literal format
+            # checking remains independent of that provider.
+            fn = CHECKER["machine_ieee_fp64_source_error"]
+            with patch.dict(fn.__globals__, {"hol_submodule_source_error": lambda *_: None}):
+                self.assertIn("52/11/64", fn(root))
 
 
 if __name__ == "__main__":

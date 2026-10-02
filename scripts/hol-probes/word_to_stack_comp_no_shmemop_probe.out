@@ -1,0 +1,20 @@
+cs_full=⊢ ∀ac perf prog bs kf prog' bs'. no_share_inst prog ∧ comp ac perf prog bs kf = (prog',bs') ⇒ no_shmemop prog'
+cs_conf_type=:α asm_config
+cs_perf_type=:bool
+cs_source_type=:α prog
+cs_bitmap_type=:α word app_list # num
+cs_frame_type=:num # num # num
+cs_target_type=:α stackLang$prog
+cs_residual_type=:α word app_list # num
+cs_nested_1=T
+cs_if_1=T
+cs_ignored_1=T
+cs_nested_32=T
+cs_if_32=T
+cs_ignored_32=T
+cs_nested_64=T
+cs_if_64=T
+cs_ignored_64=T
+cs_nested_80=T
+cs_if_80=T
+cs_ignored_80=T

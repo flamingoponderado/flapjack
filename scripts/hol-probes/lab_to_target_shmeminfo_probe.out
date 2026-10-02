@@ -1,0 +1,24 @@
+GetMemopInfoLoad=(MappedRead,0w)
+GetMemopInfoLoad32=(MappedRead,4w)
+GetMemopInfoLoad16=(MappedRead,2w)
+GetMemopInfoLoad8=(MappedRead,1w)
+GetMemopInfoStore=(MappedWrite,0w)
+GetMemopInfoStore32=(MappedWrite,4w)
+GetMemopInfoStore16=(MappedWrite,2w)
+GetMemopInfoStore8=(MappedWrite,1w)
+ListAddIfFreshEmpty=[3]
+ListAddIfFreshPresent=[1; 2]
+ListAddIfFreshAbsent=[1; 2; 3]
+FindFfiNamesEmpty=[]
+FindFfiNamesConcrete=[ExtCall «foo»; ExtCall «bar»]
+FindFfiNamesNonCallFFI=[]
+GetShmemInfoEmpty=([],[])
+GetShmemInfoLabelSkip=([SharedMem MappedWrite],
+ [<|entry_pc := 0; nbytes := 0w; addr_reg := 7; addr_off := 10; reg := 5;
+    exit_pc := 4|>])
+GetShmemInfoShareMem=([SharedMem MappedWrite],
+ [<|entry_pc := 0; nbytes := 4w; addr_reg := 7; addr_off := 10; reg := 5;
+    exit_pc := 4|>])
+GetShmemInfoAsmAdvance=([SharedMem MappedWrite],
+ [<|entry_pc := 2; nbytes := 0w; addr_reg := 3; addr_off := 2; reg := 4;
+    exit_pc := 3|>])

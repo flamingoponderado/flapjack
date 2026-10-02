@@ -1,0 +1,8 @@
+hd_type=:α list -> α
+el_type=:num -> α list -> α
+hd_cons=3
+hd_bool=F
+el_zero=5
+el_last=7
+el_nested=[2; 3]
+el_large=18446744073709551617

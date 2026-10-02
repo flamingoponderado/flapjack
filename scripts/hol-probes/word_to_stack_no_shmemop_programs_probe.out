@@ -1,0 +1,25 @@
+pl_full=⊢ ∀ac perf k prog bs prog' fs' bs'. EVERY (λ(n,m,pp). no_share_inst pp) prog ∧ compile_word_to_stack ac perf k prog bs = (prog',fs',bs') ⇒ EVERY (λ(a,p). no_shmemop p) prog'
+pl_conf_type=:α asm_config
+pl_perf_type=:bool
+pl_register_type=:num
+pl_source_type=:(β # num # α prog) list
+pl_bitmap_type=:α word app_list # num
+pl_outputs_type=:(β # α stackLang$prog) list
+pl_frames_type=:num list
+pl_residual_type=:α word app_list # num
+pl_empty_1=T
+pl_safe_1=T
+pl_ignored_1=T
+pl_shared_1=T
+pl_empty_32=T
+pl_safe_32=T
+pl_ignored_32=T
+pl_shared_32=T
+pl_empty_64=T
+pl_safe_64=T
+pl_ignored_64=T
+pl_shared_64=T
+pl_empty_80=T
+pl_safe_80=T
+pl_ignored_80=T
+pl_shared_80=T

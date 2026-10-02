@@ -1,3 +1,10 @@
+import Flapjack.Test.StackToLabExecutedCodecParity
+import Flapjack.Test.StackToLabFullEncodingParity
+import Flapjack.Test.StackToLabRecursiveValidityParity
+import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
 import Flapjack.Test.LabValidityNativeParity
 import Flapjack.Test.StackToLabNativeParity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
@@ -14,10 +21,6 @@ import Flapjack.Test.SSAMapExtendParity
 import Flapjack.Test.SSARenamePropertiesParity
 import Flapjack.Test.SSALocalsPhysicalInsertParity
 import Flapjack.Test.SSAMapPreservationParity
-import Flapjack.Test.SSARegisterFlipParity
-import Flapjack.Test.SSAMapExtendParity
-import Flapjack.Test.SSARenamePropertiesParity
-import Flapjack.Test.SSAMapBoundsParity
 import Flapjack.Test.SSARegisterClassParity
 import Flapjack.Test.SSALocalsParity
 import Flapjack.Test.SSAMapParity
@@ -163,6 +166,9 @@ import Flapjack.Test.FullSsa
 import Flapjack.Test.ProductionAllocationLimit
 import Flapjack.Test.LoopToWordSourceCodec
 import Flapjack.Test.ProductionPreSsaCodec
+import Flapjack.Test.ProductionLocations
+import Flapjack.Test.ProductionConfiguration
+import Flapjack.Test.ProductionScheduler
 import Flapjack.Test.PanValueMemoryFfi
 import Flapjack.Test.PanValueAcceleratorFfi
 import Flapjack.Test.PanValueFfiClockMemoryFfi
