@@ -50243,5 +50243,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 full source comparison: copy_ret_call_args retains all native HolProg constructors and original quantifiers/premises/conclusion. Predicate arbitrary five natural convention arguments, exact FFI equalities, Install ignores two data-buffer fields, Call traverses handler only inside SOME return. Three helpers specialize exactly original1 2 3 4 0, arbitrary counts/offsets/Boolean modes/continuations and independent return-list/frame-tail types; final wrapper is iff with no continuation premise. Positive-width BitVec translation only; no default or held dependency. Fresh entire predicate capture and three literal complete original proofs hyp=[] plus786 same-input direct original EVAL/kernel predicate observations (627true159false), full constructor/instruction families and330helper observations, widths1/2/8/64/80 and70bit offsets. Expected values read from fresh original capture. Regression evidence, not cross-language equivalence. Full compiler call/register convention assembly remains open; no held imports/policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallArgsCompiler.lean",
+    "lean_name": "wordToStackCallArgs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_call_args",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source comparison of word_to_stack_call_args11522-11583: arbitrary config/perf/source program/bitmap/frame, complete original post_alloc_conventions(FST frame) andperf=F premises, actual native compiler first-projection call_args1 2 3 4 0. All26constructors/three Call branches; every recursive hypothesis discharged internally at actual threaded bitmap outputs. Internal untagged calculation uses only the original call-convention conjunct, documented as stronger Flapjack infrastructure without a separate HOL declaration; final tagged theorem retains entire original guard. Native carriers reviewed; positive-width BitVec only translation. Fresh complete generic original theorem application plus140direct source-guard EVALs and140same-input full original compiler theorem applications matched in kernel, all constructors/nested allocations/ignored malformed tail handler/returns/activehandlers/widths1 2 8 64 80. No direct target EVAL, entire source proof replay or cross-language equivalence claim. Full register bounds/compiled conventions/fullcompiler remain unfinished; no held imports or policy changes."
   }
 ]
