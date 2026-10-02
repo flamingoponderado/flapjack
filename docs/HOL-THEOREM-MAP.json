@@ -64144,5 +64144,33 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 literal full local theorem4553-4590 freshly typed in stack_alloc_trigger_statement_probe.out: original evaluation equality first, forall ib/endh/w, good_dimindex/use_store/ALL_DISTINCT [1;4;7;ib_reg;endh_reg] and original ib/endh/AllocSize lookups retained. r7/r1/r4 existential order, res NONE and full source state with original regs1/7/4 and TriggerGC Word(ib+new_trig(endh-ib)w gen_sizes) updates; all other fields preserved. Actual native Const/Get/Move/Sub prefix and every lower/Test/Add/Set branch proved, actual new_trig min/allocation/byte-alignment tree matched using original good_dimindex_byte_aligned_eq32/64 mask. No desired output or weakened guards; native canonical StackSemStateFiniteExact maps, codec witness and positive-width BitVec/FFI translation only. Seven original puretrigger and seven actual StackSem runs include both widths/alignment paths and observed untouched registers/store/clock, kernel replay. Exact Inst closure inherits SOUNDNESS item8 reals_as_rational_cuts; source comparison does not certify arbitrary dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gc_fun_thm",
+    "hol_line": 1731,
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcGenerational.lean",
+    "lean_name": "word_gc_fun_thm_generational",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "s"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02, bead .5.8.4, complete original word_gc_fun_thm at 1731: freshly elaborated literal HOL statement/free carriers in stack_alloc_generational_statement_probeScript.sml. Original gcFun/kind premises only; partial/full branches, dimensions, memory/domain, root order and all updates compared. HOL tuple lambdas become sequential lets; -1w*x+y and y-x coincide by modular word arithmetic; unsigned <= becomes BitVec <=. Partial roots/ref-list/data/memcpy flag order retained (c2 && c3) && c4; full move/roots/loop flags retained. Partial current/other heaps unchanged, Temp0/1 cleared; full heaps swapped, EndOfHeap updated, Temp0..6 cleared. No extra success/evaluation premise. HOL lists remain List, TAKE/DROP/encStack/decStack and ARB failure tuples retained; reference-list success implication discharges failed bitmap input. Bare store s is canonical finite support for1731; for1884 imported actual StackSem owner regs/fpRegs/store and local genuine codec roundtrip, no shadow carrier. Positive-width BitVec/[NeZero width], C/F Type hosts match conventional carrier translation. HD/TL use holHd/List.tail; partial all-roots list includes Globals, full head becomes w1 by roots-cons. No rational-cut/FP operation reachable through pure gc."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "gc_thm",
+    "hol_line": 1884,
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/GcGenerational.lean",
+    "lean_name": "gc_thm_generational",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02, bead .5.8.4, complete original gc_thm at 1884: freshly elaborated literal HOL statement/free carriers in stack_alloc_generational_statement_probeScript.sml. Original gcFun/kind premises only; partial/full branches, dimensions, memory/domain, root order and all updates compared. HOL tuple lambdas become sequential lets; -1w*x+y and y-x coincide by modular word arithmetic; unsigned <= becomes BitVec <=. Partial roots/ref-list/data/memcpy flag order retained (c2 && c3) && c4; full move/roots/loop flags retained. Partial current/other heaps unchanged, Temp0/1 cleared; full heaps swapped, EndOfHeap updated, Temp0..6 cleared. No extra success/evaluation premise. HOL lists remain List, TAKE/DROP/encStack/decStack and ARB failure tuples retained; reference-list success implication discharges failed bitmap input. Bare store s is canonical finite support for1731; for1884 imported actual StackSem owner regs/fpRegs/store and local genuine codec roundtrip, no shadow carrier. Positive-width BitVec/[NeZero width], C/F Type hosts match conventional carrier translation. HD/TL use holHd/List.tail; partial all-roots list includes Globals, full head becomes w1 by roots-cons. No rational-cut/FP operation reachable through pure gc."
   }
 ]

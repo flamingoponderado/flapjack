@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcGenerational
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.SetNewTrigger
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionPrefix
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding

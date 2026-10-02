@@ -5906,3 +5906,11 @@ registers0/3/8 and CurrHeap. Both32/64-bit alignment branches are covered; the
 remaining state fields are arbitrary. `Flapjack/Test/SetNewTriggerParity.lean`
 replays all14 observations in the kernel. The capture elaborates the original
 simulation statement; it does not replay its original proof.
+
+### Generational collector full statement captures
+
+`stack_alloc_generational_statement_probeScript.sml` elaborates both complete
+local generational `word_gc_fun_thm` (1731) and `gc_thm` (1884), retaining
+all branches and printing their typed statements and free carriers. This is
+statement evidence, not a replay of the original HOL proof or concrete execution.
+The full Lean equalities live in `StackAlloc/Proofs/GcGenerational.lean`.
