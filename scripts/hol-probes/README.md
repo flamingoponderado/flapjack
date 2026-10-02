@@ -6033,7 +6033,19 @@ not a cross-language equivalence proof.
 
 `word_convs_full_inst_native_probe` captures the complete original predicate/type and828 literal validity observations at widths1/2/8/32/64/80 and both two_reg_arith flags. It covers all26 source constructor families, all16 FP forms, immediate validity, all8 ShareInst offset classes, recursive bad bodies and the ignored NONE-return handler. Address/halfword/byte policies have distinct ranges, while non-policy config fields remain arbitrary. Exact native Lean fixtures replay every original expectation. Broad original output/fixture behavior is retained through one shared recursive traversal; broad encoder and width carriers remain explicitly untagged. Regression evidence does not establish HOL-to-Lean equivalence.
 
+
 Assembler-naming ShareInst probe captures the full original generic seven-guard case application with no open hypotheses and720 direct original source/target predicates (374T346F). Matching kernel fixtures cover all eight operations, widths1/2/8/64/80, both two-register policy flags, direct/spilled70bit registers and frame offsets, distinct address/halfword/byte bounds, Ag32 halfword restrictions, reduced-count natural subtraction underflow and failed address extraction. Eighty fixtures apply the full case theorem after discharging all source guards. This is regression evidence and an original theorem application, not a replay of the full source proof, HOL-to-Lean equivalence or full naming/compiler correctness. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_share_probeScript.sml.
+
+`l3_riscv_cross_format_probe.out` records33 complete original FCVT_S_D/FCVT_D_S
+state observations. All33 matching nine-field tuples kernel-check in
+L3RiscvCrossFormatParity. The directed certificate adapter rebuilds discovered
+bits at the original result carrier, including compound dimensions (8+1), before
+independent original kernel certification and exact input-term validation. No
+original reference sources are edited. All static/dynamic mode validation,
+register/status/delta/flag/other-core/trap observations retain original semantics.
+These finite/infinity rows do not fix arbitrary NaN output payloads or establish
+full model/compiler correctness. SOUNDNESS item8 remains inherited.
+Assembler-naming Inst probe captures the original generic seven-guard case application with no open hypotheses and900 direct validity/guard/target observations (735T165F). Kernel fixtures include224 full seven-guard theorem applications and cover widths1/2/8/32/64/80, all arithmetic forms, eight memory operations and sixteen FP forms, both policy flags across families,70bit natural registers/frame slots, odd physical registers,32/64-bit FP pair behavior, ISA restrictions, underflow and strict frame minimum. This is regression evidence, not HOL-to-Lean equivalence or full naming/compiler correctness. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_inst_probeScript.sml.
 
 ### Generational allocator partial-case statement capture
 

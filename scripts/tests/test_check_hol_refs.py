@@ -719,7 +719,8 @@ End
         root = CHECKER["ROOT"]
         names = CHECKER["reals_rendering_names"](root)
         forms = CHECKER["REAL_FREE_IEEE_FORMS"]
-        self.assertEqual(len(CHECKER["real_free_ieee_names"](root)), 9)
+        self.assertEqual(len(CHECKER["real_free_ieee_names"](root)),
+                         len(CHECKER["REAL_FREE_IEEE_FORMS"]))
         for (_, name), form in forms.items():
             self.assertNotIn(name, names)
             self.assertEqual(CHECKER["reals_as_rational_cuts_errors"](form, False, names), [])
@@ -736,7 +737,8 @@ End
                 target = root / relative
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text((CHECKER["ROOT"] / relative).read_text())
-            self.assertEqual(len(CHECKER["real_free_ieee_names"](root)), 9)
+            self.assertEqual(len(CHECKER["real_free_ieee_names"](root)),
+                         len(CHECKER["REAL_FREE_IEEE_FORMS"]))
             target = root / "Flapjack/Misc/BinaryIeee.lean"
             target.write_text(target.read_text().replace(
                 "{ x with sign := 0 }", "{ x with sign := holFloatToReal x }"))
@@ -3556,6 +3558,24 @@ class MachineIeeeGeneratedDeclarationsTest(unittest.TestCase):
         for name in CHECKER["MACHINE_IEEE_FP64_NAMES"]:
             self.assertIsNone(REF_ERROR(path, name, 16, cache), name)
 
+    def test_binary32_prerequisites_resolve_only_at_literal_call(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
+        self.assertEqual(len(CHECKER["MACHINE_IEEE_FP32_NAMES"]), 3)
+        for name in CHECKER["MACHINE_IEEE_FP32_NAMES"]:
+            self.assertIsNone(REF_ERROR(path, name, 15, {}), name)
+            for line in (None, 13, 14, 16, 17):
+                self.assertIn("source line 15", REF_ERROR(path, name, line, {}))
+
+    def test_changed_binary32_format_rejected_independently_of_pin(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.machine_fixture(root)
+            path.write_text(path.read_text().replace('("fp32", 23, 8,', '("fp32", 22, 9,'))
+            self.assertIsNotNone(REF_ERROR(path, "fp32_to_float_def", 15, {}))
+            fn = CHECKER["machine_ieee_fp32_source_error"]
+            with patch.dict(fn.__globals__, {"hol_submodule_source_error": lambda *_: None}):
+                self.assertIn("23/8/32", fn(root))
+
     def test_generated_names_require_call_line(self):
         path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
         for line in (None, 13, 15, 17, 63):
@@ -3577,6 +3597,7 @@ class MachineIeeeGeneratedDeclarationsTest(unittest.TestCase):
                 else:
                     generator.write_text(generator.read_text() + "\n(* drift *)\n")
                 self.assertIn("machine_ieeeLib.sml", REF_ERROR(path, "fp64_add_def", 16, {}))
+                self.assertIn("machine_ieeeLib.sml", REF_ERROR(path, "fp32_to_float_def", 15, {}))
                 self.assertIsNotNone(CHECKER["hol_source_error"](
                     root, CHECKER["MACHINE_IEEE_SCRIPT"]))
 

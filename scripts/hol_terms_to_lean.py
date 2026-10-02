@@ -653,6 +653,18 @@ def special_int_to_fp(r, c, args, env):
         f'(holRealToFloat {xs[0]} ({xs[1]} : Rat)))')
 
 
+def special_cross_format_fp(r, c, args, env):
+    """Full original machine_ieee cross-format SND wrappers."""
+    r.noncomputable = True
+    if width_of_result(c) == 32:
+        return r.eta(c, args, env, 2,
+                     lambda xs, raw: f'(holFp64ToFp32 {xs[0]} {xs[1]})')
+    if width_of_result(c) == 64:
+        return r.eta(c, args, env, 1,
+                     lambda xs, raw: f'(holFp32ToFp64 {xs[0]})')
+    raise Unrenderable('cross-format conversion requires fixed binary32/binary64')
+
+
 def special_bit_field_insert(r, c, args, env):
     # HOL raw FCP indexing is unspecified outside the input width. Unlike
     # word_bit, bit_field_insert does not add that bound itself. Every call
@@ -693,6 +705,8 @@ def special_int_of_num(r, c, args, env):
 
 
 SPECIAL = {
+    ('machine_ieee', 'fp64_to_fp32'): special_cross_format_fp,
+    ('machine_ieee', 'fp32_to_fp64'): special_cross_format_fp,
     ('machine_ieee', 'int_to_fp32'): special_int_to_fp,
     ('machine_ieee', 'int_to_fp64'): special_int_to_fp,
     ('bool', 'COND'): special_cond,
@@ -732,7 +746,7 @@ def uses_ieee_real_rendering(text: str) -> bool:
     # conceal it when mapping the generated machine_ieee wrappers.
     return any(re.search(r'\b' + name + r'\b', text)
                for name in ('holFloatCompare', 'holFloatIsNan', 'holFloatToInt',
-                            'holRealToFloat', 'holIntToFp64'))
+                            'holRealToFloat', 'holIntToFp64', 'holFp64ToFp32', 'holFp32ToFp64'))
 
 
 CONSTANTS = {
