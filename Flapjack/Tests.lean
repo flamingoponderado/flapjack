@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackRegRecursiveParity
 import Flapjack.Test.WordToStackRegFlatParity
 import Flapjack.Test.WordToStackRegInstructionsParity
 import Flapjack.Test.WordToStackCallArgsCompilerParity
