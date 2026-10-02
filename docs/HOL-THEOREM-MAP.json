@@ -59714,7 +59714,22 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7.15): stackPropsScript.sml:400-418, same ∀c s r s1 and premise evaluate (c,s) = (r,s1) on the tagged exact StackSem evaluate. Conclusion: the eight conjuncts s1.use_alloc = s.use_alloc, use_store, use_stack, be, gc_fun, mdomain, sh_mdomain, compile, in HOL order. HOL proves it by recInduct evaluate_ind with alloc_const/inst_const/store_const_sem_const/sh_mem_op_const; the Lean proof is the same measure induction as evaluate_add_clock, using the ported versions of those lemmas. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7.15): stackPropsScript.sml:400-418, same ∀c s r s1 and premise evaluate (c,s) = (r,s1) on the tagged exact StackSem evaluate. Conclusion: the eight conjuncts s1.use_alloc = s.use_alloc, use_store, use_stack, be, gc_fun, mdomain, sh_mdomain, compile, in HOL order. HOL proves it by recInduct evaluate_ind with alloc_const/inst_const/store_const_sem_const/sh_mem_op_const; the Lean proof is the same measure induction as evaluate_add_clock, using the ported versions of those lemmas. Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration through the tagged StackSem evaluate (its Inst clause, StackSem instHOL / inst_def FP clauses), as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "comp_correct",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/Proofs/CompCorrect.lean",
+    "lean_name": "compCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.7): stack_namesProofScript.sml:304-526 comp_correct [local]. Same ∀p s r t. Same single conjunctive premise, in HOL order: evaluate (p,s) = (r,t), BIJ (find_name f) UNIV UNIV (Function.Bijective (findNameSpt f)), ~s.use_alloc, ~s.use_store, ~s.use_stack, s.compile = (λcfg. c cfg o stack_names$compile f) (compileHOL f). Same conclusion: evaluate (comp f p, rename_state c f s) = (r, rename_state c f t) over the tagged StackSem evaluate, progCompHOL (comp_def) and renameState (rename_state_def). HOL's free f and c are implicit binders. The proof is the measure induction of evaluate_add_clock/evaluate_consts, using the ported rename_state lemmas, evaluate_consts, and the MAP_KEYS choice-rendering laws for FEMPTY, DOMSUB_MAP_KEYS, DRESTRICT_MAP_KEYS_IMAGE and MAP_KEYS_FUPDATE (Flapjack infrastructure, injective case only). Finite maps via fmap_as_finite_support ([regs, fpRegs, store]), width via words_as_type_indexed_bitvec; C F : Type for the HOL 'c/'ffi state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration through the tagged StackSem evaluate (its Inst clause, StackSem instHOL / inst_def FP clauses), as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
   }
 ]
