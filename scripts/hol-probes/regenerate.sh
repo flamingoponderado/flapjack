@@ -3295,6 +3295,10 @@ run_probe asm_sem_step_probeScript.sml asm_sem_step_probe.out \
   as_skip_pc as_const as_arith as_mem as_jump as_jcmp_t as_jcmp_f as_call as_jumpreg_ok as_jumpreg_bad as_loc as_step_proj \
   "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
 
+run_probe asm_props_encoder_correct_probeScript.sml asm_props_encoder_correct_probe.out \
+  ec_def ec_target_ok ec_no_interference \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
+
 
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
   sc_store sc_store8 sc_store16 sc_store32 sc_load sc_load8 sc_load16 sc_load32 \
