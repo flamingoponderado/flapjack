@@ -6254,3 +6254,20 @@ NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 `stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.
 
 `stackprops_code_bitmaps_probe.out` captures the complete original existential oracle/code/bitmap theorem and explicitly checks zero theorem hypotheses. The StoreConsts case retains all dispatch guards and primitive errors, deriving count zero from the full preservation theorem. This is source evidence, not runtime parity or full theorem assembly.
+`l3_lrw_probe.out` captures the complete original LR_W definition/type and
+14 whole-state observations. These retain all aq/rl payloads, early virtual
+misalignment residues1/2/3, aligned Sv32 fault, signed32 success, register-zero,
+core255 with totalCore1, RV32/RV128 and Sv39 returned-state PTE3079->3111 reads.
+The reservation is the virtual address on success and remains unchanged on
+fault/misalignment; the other-core reservation and full frame outside the six
+potentially changed fields are observed. No whole atomic/runtime assembly is
+claimed; probes are regression evidence, not cross-language equivalence proofs.
+
+`l3_lrd_probe.out` captures the complete original LR_D definition/type and
+18 whole-state observations. All seven low3 virtual misalignment residues trap
+before translation; RV32 is rejected before address calculation, while RV128
+retains the original word64 model. All order-bit payloads, zero-register behavior,
+core255 with totalCore1, aligned Sv32 faults and Sv39 returned-state PTE3111 reads
+are replayed. Reservation/current-core/other-core and entire frame outside the
+six potentially changed fields are observed. This is the LR_D clause only,
+not full atomic/Run/Next or compiler correctness.

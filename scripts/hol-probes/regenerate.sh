@@ -5893,3 +5893,10 @@ run_probe lab_to_target_mmio_shmem_probeScript.sml lab_to_target_mmio_shmem_prob
   empty_boundary external_boundary shared_boundary mixed_boundary suffix_guard prefix_guard extraction_boundary \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe l3_lrw_probeScript.sml l3_lrw_probe.out \
+  lrw_definition lrw_type lrw_negative lrw_positive lrw_rd_zero lrw_core_wrap lrw_fault_sv32 lrw_rv32_mode lrw_rv128_mode lrw_walk_returned_state lrw_misaligned_1 lrw_misaligned_2 lrw_misaligned_3 lrw_order_0_1 lrw_order_1_0 lrw_order_1_1 \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_lrd_probeScript.sml l3_lrd_probe.out \
+  lrd_definition lrd_type lrd_negative lrd_positive lrd_rd_zero lrd_core_wrap lrd_fault_sv32 lrd_rv32_mode lrd_rv128_mode lrd_walk_returned_state lrd_misaligned_1 lrd_misaligned_2 lrd_misaligned_3 lrd_order_0_1 lrd_order_1_0 lrd_order_1_1 lrd_misaligned_4 lrd_misaligned_5 lrd_misaligned_6 lrd_misaligned_7 \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
