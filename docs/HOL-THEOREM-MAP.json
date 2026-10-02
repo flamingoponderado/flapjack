@@ -52489,7 +52489,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/PhaseSuccess.lean",
     "lean_name": "isNotCoalescedSucceeds",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.x): reg_allocProofScript.sml:2075-2081, s and n free in HOL (explicit Lean parameters). [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.9): reg_allocProofScript.sml:2075-2081, s and n free in HOL (explicit Lean parameters). [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
@@ -52497,7 +52497,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/PhaseSuccess.lean",
     "lean_name": "stExPartitionSplitDegree",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.x): reg_allocProofScript.sml:2085-2116. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.9): reg_allocProofScript.sml:2085-2116. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
@@ -52505,7 +52505,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/PhaseSuccess.lean",
     "lean_name": "decDegSuccess",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.x): reg_allocProofScript.sml:2139-2152. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.6): reg_allocProofScript.sml:2139-2152. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
@@ -52513,7 +52513,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/PhaseSuccess.lean",
     "lean_name": "decDegreeSuccess",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.x): reg_allocProofScript.sml:2154-2173. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.6): reg_allocProofScript.sml:2154-2173. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
@@ -52521,7 +52521,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/PhaseSuccess.lean",
     "lean_name": "reviveMovesSuccess",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.x): reg_allocProofScript.sml:2184-2204, s and ls free in HOL; PARTITION is the exact holPartition and sort_moves membership uses the tagged mllist sort_MEM. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.12): reg_allocProofScript.sml:2184-2204, s and ls free in HOL; PARTITION is the exact holPartition and sort_moves membership uses the tagged mllist sort_MEM. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
@@ -52529,7 +52529,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/PhaseSuccess.lean",
     "lean_name": "unspillSuccess",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.x): reg_allocProofScript.sml:2206-2237; the unused existential b has polymorphic type α in HOL (re-elaborated: (b :α)), kept as {α : Type} [Nonempty α] (HOL types are inhabited). [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.13): reg_allocProofScript.sml:2206-2237; the unused existential b has polymorphic type α in HOL (re-elaborated: (b :α)), kept as {α : Type} [Nonempty α] (HOL types are inhabited). [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
@@ -52537,7 +52537,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/PhaseSuccess.lean",
     "lean_name": "pushStackSuccess",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.x): reg_allocProofScript.sml:2239-2260. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.7): reg_allocProofScript.sml:2239-2260. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
@@ -52545,7 +52545,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/PhaseSuccess.lean",
     "lean_name": "doSimplifySuccess",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.x): reg_allocProofScript.sml:2262-2283, k free in HOL; b : bool. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.1): reg_allocProofScript.sml:2262-2283, k free in HOL; b : bool. [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
   },
   {
     "hol_path": "cakeml/basis/pure/mllistScript.sml",
