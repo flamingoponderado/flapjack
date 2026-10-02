@@ -4793,5 +4793,5 @@ run_probe lab_to_target_update_similarity_probeScript.sml lab_to_target_update_s
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe ssa_loop_iteration_probeScript.sml ssa_loop_iteration_probe.out \
-  loop_helper_full \
+  loop_helper_full loop_case_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

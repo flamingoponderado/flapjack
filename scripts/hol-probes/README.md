@@ -5491,3 +5491,10 @@ evidence, not a cross-language equivalence proof. The Lean full clock induction
 is in `WordAlloc/Proofs/SSALoopIteration.lean`; full SSA correctness remains open.
 
 Regenerate with `HOL_PROBE_ONLY=ssa_loop_iteration_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+The same Loop probe also captures `loop_case_full`: the original full
+`ssa_cc_trans_correct` Loop case under only its universal smaller-body induction
+hypothesis. The original resumed Loop proof uses the replayed local setup,
+sequence-collapse and inner Loop helper. Its Lean counterpart is
+`WordAlloc/Proofs/SSASemanticLoop.lean`. Both full native kernel proofs are
+reachable from the umbrella build; the all-constructor theorem remains open.
