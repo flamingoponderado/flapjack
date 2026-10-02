@@ -1,0 +1,16 @@
+load "bossLib";
+load "preamble";
+load "word_allocTheory";
+open bossLib HolKernel Parse preamble word_allocTheory;
+val _ = Globals.linewidth := 4000;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+fun observe_type label term = (print (label ^ "="); print_type (type_of term); print "\n");
+fun sra t = ``case ^t of M_success col => SOME (toAList col) | M_failure _ => NONE``;
+val _ = observe_type "sra_type" ``select_reg_alloc``;
+val _ = observe "sra_simple0" (sra ``select_reg_alloc 0 NONE 2 [(1,(1,5))] (Seq (Delta [1] [5]) (Delta [9] [1;5])) [] LN``);
+val _ = observe "sra_simple1" (sra ``select_reg_alloc 1 NONE 2 [(1,(1,5))] (Seq (Delta [1] [5]) (Delta [9] [1;5])) [] LN``);
+val _ = observe "sra_irc2" (sra ``select_reg_alloc 2 NONE 2 [(1,(1,5))] (Seq (Delta [1] [5]) (Delta [9] [1;5])) [] LN``);
+val _ = observe "sra_irc3_cost" (sra ``select_reg_alloc 3 (SOME (fromAList [(1,10);(5,1);(9,7)])) 1 [] (Delta [1;5;9] [1;5;9]) [] LN``);
+val _ = observe "sra_linear4" (sra ``select_reg_alloc 4 NONE 2 [(1,(1,5))] (Seq (Delta [1] [5]) (Delta [9] [1;5])) [] LN``);
+val _ = observe "sra_linear5_spill" (sra ``select_reg_alloc 5 NONE 1 [] (Delta [1;5;9] [1;5;9]) [] LN``);
+val _ = observe "sra_linear_forced" (sra ``select_reg_alloc 4 NONE 2 [] (Branch (SOME (insert 1 () LN)) (Delta [5] [1]) (Delta [9] [1])) [(1,5)] LN``);

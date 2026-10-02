@@ -3076,7 +3076,8 @@ run_probe lab_to_target_section_length_probeScript.sml lab_to_target_section_len
   SectionLengthEmpty SectionLengthMixed SectionLengthMixedPosition SectionLengthMixedLabels \
   SectionLengthZeroLabel SectionLengthZeroLenLabel SectionLengthDuplicateLabels \
   SectionLengthArbitraryAccumulator SecLengthAddEmpty SecLengthAddMixed SecLengthAddMixedValue \
-  SecLengthAddZeroAnnotation SecLengthAddEmptyBytesAnnotation \
+  SecLengthAddZeroAnnotation SecLengthAddEmptyBytesAnnotation SecLengthSumEmpty SecLengthSumMixed \
+  SectionAppendEmptyLeft SectionAppendMixedTail SectionAppendConcretePair SectionAppendZeroLabel \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe byte_word_to_bytes_aux_probeScript.sml byte_word_to_bytes_aux_probe.out \
   ByteAuxLE16Cycle ByteAuxBE16Cycle ByteAuxLE32Cycle ByteAuxBE32Cycle \
@@ -3199,6 +3200,9 @@ run_probe reg_alloc_accessors_probeScript.sml reg_alloc_accessors_probe.out \
 run_probe reg_alloc_colouring_probeScript.sml reg_alloc_colouring_probe.out \
   rc_empty_ks rc_no_nodes rc_fixed rc_dup_colours rc_oob rc_oob_after_empty aat_none aat_pref aat_stemp aat_non_atemp aat_oob aa_all aa_pref aa_one_colour fmc_hit fmc_not_in_ks fmc_empty fmc_oob \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe word_alloc_select_reg_alloc_probeScript.sml word_alloc_select_reg_alloc_probe.out \
+  sra_type sra_simple0 sra_simple1 sra_irc2 sra_irc3_cost sra_linear4 sra_linear5_spill sra_linear_forced \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe reg_alloc_allocator_probeScript.sml reg_alloc_allocator_probe.out \
   ra_simple_delta ra_irc_move ra_simple_move ra_irc_spill_cost ra_irc_spill_deg ra_simple_branch_forced ra_irc_phys ra_irc_fs ra_irc_stack ra_irc_coalesce_chain ra_irc_pressure ra_empty \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3967,3 +3971,17 @@ run_probe lab_implicit_section_zero_probeScript.sml lab_implicit_section_zero_pr
 run_probe stackprops_shared_memory_clock_probeScript.sml stackprops_shared_memory_clock_probe.out \
   sh_mem_load_with_const sh_mem_load_with_const_types sh_mem_store_with_const sh_mem_store_with_const_types sh_mem_load32_with_const sh_mem_load32_with_const_types sh_mem_store32_with_const sh_mem_store32_with_const_types sh_mem_load16_with_const sh_mem_load16_with_const_types sh_mem_store16_with_const sh_mem_store16_with_const_types sh_mem_load_byte_with_const sh_mem_load_byte_with_const_types sh_mem_store_byte_with_const sh_mem_store_byte_with_const_types sh_mem_op_with_const sh_mem_op_with_const_types store load store8 load8 store16 load16 store32 load32 load_outside store8_outside load_word_unaligned store_word_unaligned load_final store_final store_loc \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe ssa_cc_trans_props_primitives_probeScript.sml ssa_cc_trans_props_primitives_probe.out \
+  spp_case_0 spp_case_2 spp_case_3 spp_case_4 spp_case_5 spp_case_6 spp_case_11 spp_case_12 spp_case_13 spp_case_14 spp_case_15 spp_case_16 spp_case_18 spp_case_19 spp_case_23 spp_0_type_ssa spp_0_type_na spp_0_type_lt spp_0_type_progOut spp_0_type_ssaOut spp_0_type_naOut spp_2_type_a spp_2_type_b spp_2_type_c spp_2_type_d spp_2_type_ws spp_3_type_i spp_4_type_num spp_4_type_exp spp_5_type_num spp_5_type_store spp_6_type_exp spp_6_type_num spp_11_type_num spp_12_type_b spp_12_type_dst spp_12_type_src spp_13_type_num spp_13_type_nums spp_15_type_n spp_15_type_exp spp_16_type_r spp_16_type_l1 spp_18_type_r1 spp_18_type_r2 spp_19_type_r1 spp_19_type_r2 spp_23_type_op spp_23_type_v spp_23_type_exp \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_control_probeScript.sml ssa_cc_trans_props_control_probe.out \
+  spc_case_7 spc_case_8 spc_case_9 spc_7_type_s1 spc_7_type_s2 spc_7_type_ssa spc_7_type_na spc_7_type_lt spc_7_type_progOut spc_7_type_ssaOut spc_7_type_naOut spc_8_type_s1 spc_9_type_cmp spc_9_type_r1 spc_9_type_ri spc_9_type_e2 spc_9_type_e3 spc_9_type_r1P spc_9_type_riP spc_9_type_e2P spc_9_type_ssa2 spc_9_type_na2 \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_probeScript.sml ssa_cc_trans_props_probe.out \
+  ssa_props_full ssa_props_type_prog ssa_props_type_ssa ssa_props_type_na ssa_props_type_lt ssa_props_type_progOut ssa_props_type_ssaOut ssa_props_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe target_sem_evaluate_probeScript.sml target_sem_evaluate_probe.out \
+  te_zero te_unknown te_halt_success te_halt_resource te_cache te_shared_missing te_external_mmio te_cache_shift te_empty_external te_empty_external_shift te_normal_priority_encoding_fail te_normal_success te_normal_shift te_normal_guard_rollback te_mm_read_return te_mm_write_return te_mm_write_narrow te_mm_read_final te_mm_unshared te_mm_invalid_size \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"

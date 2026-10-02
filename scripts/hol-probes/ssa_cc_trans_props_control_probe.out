@@ -1,0 +1,22 @@
+spc_case_7=⊢ ∀s1 s2 ssa na lt. (∀s1' ssa' na'. (s1',ssa',na') = ssa_cc_trans s1 ssa na lt ⇒ ∀progOut ssaOut naOut. ssa_cc_trans s2 ssa' na' lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na' ssa' ∧ is_alloc_var na' ⇒ na' ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut) ∧ (∀progOut ssaOut naOut. ssa_cc_trans s1 ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut) ⇒ ∀progOut ssaOut naOut. ssa_cc_trans (Seq s1 s2) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spc_case_8=⊢ ∀s1 ssa na lt. (∀progOut ssaOut naOut. ssa_cc_trans s1 ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut) ⇒ ∀progOut ssaOut naOut. ssa_cc_trans (MustTerminate s1) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spc_case_9=⊢ ∀cmp r1 ri e2 e3 ssa na lt. (∀r1' ri' e2' ssa2 na2. r1' = option_lookup ssa r1 ∧ ri' = (case ri of Reg r => Reg (option_lookup ssa r) | Imm v => Imm v) ∧ (e2',ssa2,na2) = ssa_cc_trans e2 ssa na lt ⇒ ∀progOut ssaOut naOut. ssa_cc_trans e3 ssa na2 lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na2 ssa ∧ is_alloc_var na2 ⇒ na2 ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut) ∧ (∀r1' ri'. r1' = option_lookup ssa r1 ∧ ri' = (case ri of Reg r => Reg (option_lookup ssa r) | Imm v => Imm v) ⇒ ∀progOut ssaOut naOut. ssa_cc_trans e2 ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut) ⇒ ∀progOut ssaOut naOut. ssa_cc_trans (If cmp r1 ri e2 e3) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spc_7_type_s1=:α prog
+spc_7_type_s2=:α prog
+spc_7_type_ssa=:num sptree$num_map
+spc_7_type_na=:num
+spc_7_type_lt=:(num sptree$num_map # sptree$num_set # sptree$num_set) list
+spc_7_type_progOut=:α prog
+spc_7_type_ssaOut=:num sptree$num_map
+spc_7_type_naOut=:num
+spc_8_type_s1=:α prog
+spc_9_type_cmp=:cmp
+spc_9_type_r1=:num
+spc_9_type_ri=:α reg_imm
+spc_9_type_e2=:α prog
+spc_9_type_e3=:α prog
+spc_9_type_r1P=:num
+spc_9_type_riP=:α reg_imm
+spc_9_type_e2P=:α prog
+spc_9_type_ssa2=:num sptree$num_map
+spc_9_type_na2=:num
