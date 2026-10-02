@@ -5004,3 +5004,8 @@ aliases are manually reviewed; no standalone tactic replay is claimed.
 FPMovFromReg specialization and carriers (first=n FP destination, second=n0 left
 source, fp=n1 right source). Original FP proof8174–8209, width branches and real
 alias-input Move/fresh SSA locals are manually reviewed; no tactic replay claimed.
+
+`ssa_cc_trans_correct_inst_common_probeScript.sml` captures original kernel
+Skip/Load16/Store16 specializations and carriers. Original initial Inst split
+7860–7865, unchanged Skip and original unsupported16 Error exemptions are
+manually reviewed; no standalone tactic replay is claimed.
