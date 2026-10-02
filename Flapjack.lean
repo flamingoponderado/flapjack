@@ -1,10 +1,12 @@
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.SetNewTrigger
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
+import Flapjack.Compiler.Backend.LabToTarget.LabelPositionPrefix
+import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionUpdates
-import Flapjack.Compiler.Backend.LabToTarget.LabelPosition
-import Flapjack.Compiler.Backend.LabToTarget.CodeNopEncoding
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRefs
+import Flapjack.Compiler.Backend.LabToTarget.CodeNopEncoding
 import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
+import Flapjack.Compiler.Backend.LabToTarget.LabelPosition
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveData
 import Flapjack.Compiler.Backend.LabToTarget.NopInsertEncoding
 import Flapjack.Compiler.Backend.LabToTarget.NopPadding
@@ -82,7 +84,9 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
+import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryWrites
+import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryStores
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ExpressionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
@@ -242,6 +246,8 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundCompiler
+import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundRecursive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundFlat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundInstructions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallArgsCompiler
