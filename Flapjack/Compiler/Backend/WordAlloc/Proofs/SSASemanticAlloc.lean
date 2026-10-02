@@ -303,4 +303,18 @@ theorem allocCollectorTransport {width : Nat} [NeZero width] {C F : Type}
   simpa only [sptDomain_sptUnion] using
     allocNormalLocalsDomain amount first second {source with permute := perm} normal
 
+/-- Flapjack-specific exhaustive raw Alloc branch fact, used by the original
+9558-9606 SSA failure branch. Error exemption leaves only normal return or
+NotEnoughSpace, whose actual flush empties locals. No target outcome or locals
+shape is assumed; no standalone HOL declaration or full Alloc tag exists. -/
+theorem allocNonErrorShape {width : Nat} [NeZero width] {C F : Type}
+    (amount : BitVec width) (names : WordLangCutsetsHOL)
+    (source : WordSemStateFiniteExact width C F)
+    (nonError : (WordSemStateFiniteExact.alloc amount names source).1 ≠ some .error) :
+    (WordSemStateFiniteExact.alloc amount names source).1 = none ∨
+      ((WordSemStateFiniteExact.alloc amount names source).1 = some .notEnoughSpace ∧
+        (WordSemStateFiniteExact.alloc amount names source).2.locals = .ln) := by
+  unfold WordSemStateFiniteExact.alloc at nonError ⊢
+  repeat' split <;> simp_all [WordSemStateFiniteExact.flushState]
+
 end Flapjack.Compiler.Backend.WordAlloc
