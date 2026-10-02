@@ -664,6 +664,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionInputCodec
 import Flapjack.Compiler.Backend.RegAlloc.ProductionGraphRows
 import Flapjack.Compiler.Backend.RegAlloc.ProductionCliqueBatch
 import Flapjack.Compiler.Backend.RegAlloc.ProductionForcedGraph
+import Flapjack.Compiler.Backend.RegAlloc.ProductionMkGraph
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
