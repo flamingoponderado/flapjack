@@ -16,8 +16,10 @@ HOL `asmSemScript.sml:95-100` gives AddCarry r1 r2 r3 r4 its positional meaning
 (sum into r1, carry into r4); the codec uses those same positions in the executed
 cakeAddCarry constructor rather than permuting descriptive native field names.
 
-The production carriers cannot represent native FP, AddOverflow/SubOverflow,
-or direct word-valued Jump/JumpCmp/Call/Loc. Those conversions return none.
+The production arithmetic carrier represents all eight native arithmetic
+constructors, including AddOverflow/SubOverflow with their positional flag
+register. Native FP and direct word-valued Jump/JumpCmp/Call/Loc still have no
+executed counterpart, and those conversions return none.
 Native symbolic LabAsm constructors all have counterparts, but their native
 position word has no executed field: nonzero positions are rejected, never
 silently dropped. The emitted Stack-to-Lab definitions set that field to zero.
@@ -53,8 +55,8 @@ def arithToExecuted? {width : Nat} [NeZero width] :
   | .longMul d1 d2 l r => some (.longMul d1 d2 l r)
   | .longDiv d1 d2 l r q => some (.longDiv d1 d2 l r q)
   | .addCarry r1 r2 r3 r4 => some (.cakeAddCarry r1 r2 r3 r4)
-  | .addOverflow _ _ _ _ => none
-  | .subOverflow _ _ _ _ => none
+  | .addOverflow d l r flag => some (.addOverflow d l r flag)
+  | .subOverflow d l r flag => some (.subOverflow d l r flag)
 
 def arithFromExecuted? {width : Nat} [NeZero width] :
     WordArith (BitVec width) → Option (HolArith width)
@@ -64,6 +66,8 @@ def arithFromExecuted? {width : Nat} [NeZero width] :
   | .longMul d1 d2 l r => some (.longMul d1 d2 l r)
   | .longDiv d1 d2 l r q => some (.longDiv d1 d2 l r q)
   | .cakeAddCarry r1 r2 r3 r4 => some (.addCarry r1 r2 r3 r4)
+  | .addOverflow d l r flag => some (.addOverflow d l r flag)
+  | .subOverflow d l r flag => some (.subOverflow d l r flag)
   | .addCarry _ _ _ _ _ => none
 
 /-- Flapjack-specific exact codec recovery or boundary fact; no HOL original. -/

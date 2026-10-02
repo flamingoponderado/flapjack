@@ -8,7 +8,7 @@ import Flapjack.Pancake.WordLang
 The executed backend consumes `WordProg`; the reviewed HOL-shaped `compHOL`
 returns `WordLangProgHOL`. This module projects the common RISC-V subset at a
 fixed machine width. It rejects HOL constructors absent from the production
-carrier (`Inst Skip`, FP instructions, and add/sub overflow arithmetic) rather
+carrier (`Inst Skip` and FP instructions) rather
 than silently erasing them. Spt cutsets are enumerated with `fromNumSetHOL`.
 FFI names project with `MlString.toStringOfBytes`; the reverse `ofString`
 round-trip is total on this projected String. An arbitrary production String
@@ -24,9 +24,8 @@ open Flapjack.Basis.Pure.MlString
 
 /-- Flapjack-only carrier adapter (there is no HOL declaration for conversion
 between these two Lean datatype instances). Decode a HOL wordLang arithmetic
-instruction into the production RISC-V carrier. Overflow operations are
-rejected because `WordArith` has no such constructor in the executed target
-language. -/
+instruction into the production RISC-V carrier, retaining all eight native
+arithmetic constructors and their positional registers. -/
 def wordLangArithFromHOL {width : Nat} :
     WordLangArith (BitVec width) → Option (WordArith (BitVec width))
   | .binop operator destination source right =>
@@ -46,8 +45,8 @@ def wordLangArithFromHOL {width : Nat} :
      addend/addend/carry tuple, causing arithmetic corpus drift. -/
   | .addCarry destination sourceLeft sourceRight carry =>
       some (.cakeAddCarry destination sourceLeft sourceRight carry)
-  | .addOverflow _ _ _ _ => none
-  | .subOverflow _ _ _ _ => none
+  | .addOverflow d l r flag => some (.addOverflow d l r flag)
+  | .subOverflow d l r flag => some (.subOverflow d l r flag)
 
 /-- Flapjack-only carrier adapter (there is no HOL declaration for conversion
 between these two Lean datatype instances). Decode a HOL wordLang instruction.
