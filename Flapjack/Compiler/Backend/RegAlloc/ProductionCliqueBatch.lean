@@ -478,7 +478,10 @@ private theorem set_materialize (cache : CakeNodeMap (Std.TreeSet Nat)) (key : N
   · simp [CakeNodeMap.set, CakeNodeMap.mapValues, bounded]
   · simp [CakeNodeMap.set, CakeNodeMap.mapValues, bounded, mapUpdate_materialize]
 
-private theorem insertEdgeSet_materialize_eq (cache : CakeNodeMap (Std.TreeSet Nat)) (x y : Nat) :
+/-- Complete dense and extension map codec for actual cached edge insertion.
+Unlike the lookup-only observation, this also preserves the map structure.
+Untagged infrastructure for actual/native graph producer proofs. -/
+theorem cakeInsertEdgeSet_materialize_eq (cache : CakeNodeMap (Std.TreeSet Nat)) (x y : Nat) :
     (cakeInsertEdgeSet x y cache).mapValues cakeAdjSetList =
       cakeInsertEdge x y (cache.mapValues cakeAdjSetList) := by
   unfold cakeInsertEdgeSet cakeInsertEdge cakeAdjSub
@@ -494,7 +497,7 @@ private theorem listInsertEdgeSet_materialize_eq (nodes : List Nat)
   | nil => rfl
   | cons partner rest ih =>
     simp only [cakeListInsertEdgeSet, cakeListInsertEdge]
-    rw [ih, insertEdgeSet_materialize_eq]
+    rw [ih, cakeInsertEdgeSet_materialize_eq]
 
 /-- Full graph and live-list materialization of the recursive reference,
 including dense and extension map structure. No domain or result premise is
