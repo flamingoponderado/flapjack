@@ -44,6 +44,7 @@ import Flapjack.Test.LabToTargetWordLocationParity
 import Flapjack.Compiler.Backend.LabToTarget.WordLocValByte
 import Flapjack.Compiler.Backend.LabToTarget.StateRel
 import Flapjack.Compiler.Backend.LabToTarget.OracleTie
+import Flapjack.Compiler.Backend.LabToTarget.StateTransport
 import Flapjack.Test.LabToTargetWordLocValByteParity
 import Flapjack.Test.LabToTargetFetchValidityParity
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SequenceLaws

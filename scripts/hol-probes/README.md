@@ -5494,3 +5494,12 @@ typed theorem is closed. Six actual branches capture output trees, invariants
 and inserted-key lookups. `BalancedMapBalanceLCorrectParity` checks all original
 input premises, consumes both native invariant/map conclusions, and derives
 the actual canonical inserted-key observations. No compiler caller changes.
+
+## Complete native LabToTarget clock and state shift group
+
+`lab_to_target_state_transport_probeScript.sml` captures all five original
+clock/shift laws1098–1153 and their complete inferred HOL types. Independent
+Lab/machine word dimensions and unused outer shared-memory carrier types are
+retained. Lean `StateTransport` derives the actual shifted interference
+condition at index i+l and preserves every conjunct of the full state relation.
+These proof-side laws do not change the executed compiler.
