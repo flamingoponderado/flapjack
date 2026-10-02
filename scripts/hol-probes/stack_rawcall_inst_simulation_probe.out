@@ -1,0 +1,2 @@
+inst_simulation_statement=evaluate (Inst i,s) = (r,s1) ∧ r ≠ SOME Error ∧ state_rel i' s t ⇒ ∃ck t1 k1. state_rel i' s1 t1 ∧ evaluate (comp i' (Inst i),t with clock := ck + t.clock) = (r,t1 with stack_space := k1) ∧ (r ≠ SOME TimeOut ∧ r ≠ SOME (Halt (Word 2w)) ⇒ k1 = t1.stack_space)
+inst_simulation_hypotheses=0

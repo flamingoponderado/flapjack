@@ -1,0 +1,23 @@
+LENGTH_prog_to_bytes=∀(code :α sec list) (n :num) (c :α asm_config)
+    (labs :num sptree$num_map sptree$num_map) (ffi :ffiname list) (pos :num).
+  all_enc_ok c labs ffi pos code ⇒
+  FOLDL (λ(pos :num) (sec :α sec). sec_length (Section_lines sec) pos) n code =
+  LENGTH (prog_to_bytes code) + n
+LENGTH_prog_to_bytes_types=(code :α sec list)::α sec list;(n :num)::num;(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffi :ffiname list)::ffiname list;(pos :num)::num;
+LENGTH_prog_to_bytes_hypotheses=0
+LENGTH_prog_to_bytes2=∀(code :α sec list) (n :β) (c :α asm_config)
+    (labs :num sptree$num_map sptree$num_map) (ffi :ffiname list) (pos :num).
+  all_enc_ok c labs ffi pos code ⇒
+  (SUM
+     (MAP
+        (SUM ∘ MAP (line_length :α line -> num) ∘
+         (Section_lines :α sec -> α line list)) code) :num) =
+  LENGTH (prog_to_bytes code)
+LENGTH_prog_to_bytes2_types=(code :α sec list)::α sec list;(n :β)::β;(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffi :ffiname list)::ffiname list;(pos :num)::num;
+LENGTH_prog_to_bytes2_hypotheses=0
+physical_sum=T
+independent_fold=T
+label_zero=T
+bad_annotation=T
+bad_label=T
+empty=T

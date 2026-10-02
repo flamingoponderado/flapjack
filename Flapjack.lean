@@ -1,4 +1,11 @@
 import Flapjack.Compiler.Backend.StackRemove.Proofs.BytearrayReads
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.ControlLeaves
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.If
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.BasicLeaves
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.InstructionSimulation
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateRelation
+import Flapjack.RiscV.L3.Step.Fetch
+import Flapjack.RiscV.L3.Defs.ReadInst
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CodeBufferWrite
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.JumpLower
 import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
@@ -6,10 +13,12 @@ import Flapjack.RiscV.L3.Defs.MMU.Translate
 import Flapjack.RiscV.L3.Defs.MMU.Walk
 import Flapjack.RiscV.L3.Defs.MMU.Insert
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
+import Flapjack.Compiler.Backend.LabToTarget.EncodingValidityClosure
+import Flapjack.Compiler.Backend.LabToTarget.ProgramByteLengths
+import Flapjack.Compiler.Backend.LabToTarget.PositionExtension
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateRelation
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.Labels
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompLn
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
@@ -633,6 +642,11 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionInitAlloc
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAllocLoop
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourReads
 import Flapjack.Compiler.Backend.RegAlloc.ProductionStempReads
+import Flapjack.Compiler.Backend.RegAlloc.ProductionHandledColourReads
+import Flapjack.Compiler.Backend.RegAlloc.ProductionPreferences
+import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveTable
+import Flapjack.Compiler.Backend.RegAlloc.ProductionColouring
+import Flapjack.Compiler.Backend.RegAlloc.ProductionExtraction
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec

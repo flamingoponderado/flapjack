@@ -67069,6 +67069,169 @@
     "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-remove-loop: genuine original comp_correct Loop1703-1744/full theorem1481-1490. Same four actual source evaluation/nonError/full26state relation/register bound premises; original existential native target run at ck+target.clock and Halt/TimeOut/FinalFFI ffi equality versus full stateRelHOL result split. Only original source-fixed body IH and actual body-run/cont_loop/nonzero-middle-clock guarded reentry IH, both retain original arbitrary result/poststate/target/pointer/bounds/jump quantifiers. STOP identity and rewritten HOL evaluator equation represented using accepted unconditional native fixClockEvaluate. Source nonError excludes bodyError; contLoopImp derives body fullrelation and excludes TimeOut for real reentry. Zero-clock branch preserves timeout ffi through full relation/emptyEnv. Exit preserves original Break0 versus positive Break behavior. Reentry derives decClock stateRel, extends actual compiled body run via original evaluateAddClock, combines Nat allowances and proves exact decClock boosted-state equality from derived nonzero middle clock. No extra target-run, clock bound/success, target result, postrelation or unconditional simulation premise. Native comp Loop retains actual compiled body. Canonical native regs/fpRegs/store roundtrip witness reexported from imported owning state; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scopedHOL statement proved with literal original Loop case body prefixed only standalone rpt strip_tac."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/InstructionSimulation.lean",
+    "lean_name": "evaluateCompInst",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "evaluate_comp_Inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 .4.10 original121-132: arbitrary instruction, source/target/result states, result and frame info. Exactly source evaluate equality, result not Error and full literal state_rel are premises. Existential ck/t1/k1 retains post-state relation, actual evaluate of comp at ck+target.clock, original result and target stackSpace update, and nonTimeOut/nonHalt Word2 guard implies k1=t1.stackSpace. Positive native HolInst/HolProg/StackSemResult and full22field StackSemStateFiniteExact, configuration/FFI Type0; canonical regs/fpRegs/store qualifier covers full relation, code stays Spt. Same-module witness genuinely reexports actual owner broad/exact roundtrips. Native getVars/recursive wordExp/assign and all integer-memory/16FP operations derive code-only update transport; code preservation follows specializing unconditional transport to source.code. Postrelation derived using unchanged code/frame obligations, target primitive success derived from source success and transport. Actual evaluate Inst is clock-neutral; witness ck=0 and original stackSpace discharge existential without extra guard or target result premise. No callback or successful target execution assumption. Inherits SOUNDNESS item8 reals_as_rational_cuts through actual FP/evaluator constant closure; theorem introduces no real rendering itself and proves no HOL/Lean real equivalence. Full pass/production correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine Skip case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectHalt",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine Halt case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectGet",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine Get case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectSet",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine Set case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectOpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine OpCurrHeap case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/BasicLeaves.lean",
+    "lean_name": "compCorrectTick",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.11 genuine Tick case of original comp_correct134ff/simple_case. Original source evaluate equality, result not Error and literal full state_rel are the only premises; no leaf predicate exposed. Both compTop/comp existential clock/targetstate/stackspace results retain actual native evaluation at target.clock+clock, same source result and postrelation, original nonTimeOut/nonHalt Word2 guard. All width/configuration/FFI and complete22field native state parameters preserved; canonical regs/fpRegs/store qualifier and same-module real codec roundtrip witness, code Spt/lists unchanged. Derived actual six-case evaluator code-update transport includes failures and Tick timeout/emptyEnv; specializing at source.code derives code preservation, then whole-state code update yields postrelation and actual target execution. Both comp functions leave this constructor unchanged. Clock0 and target own stackSpace witness discharge original conclusion, no target result/relation/clock/bounds assumption. Full native evaluator constant closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced or HOL-real agreement claimed. This is one genuine case, not assembled full compiler/pass/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EncodingValidityClosure.lean",
+    "lean_name": "allEncOk_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6366 full two validity guards with actual LENGTH(prog_to_bytes left) shift and complete append validity result. No section validity/distinctness/encoder validity or map-domain premise added; physical-byte/line-length equality derived from original head validity. Native original constructors/opaque mlstring, positive-width type-indexed words and canonical nested numeric sptrees reviewed; no fmap qualifier or arbitrary carrier specialization. Original exported fulltypes0openhyps, fresh original/native byte-shift/map-lookup regressions and fullgeneric fixtures; genuine arbitrary fresh outer-map consumer discharges the full source lookup guard, and actual append consumer derives shifted validity. Kernel checking/oracle tests supplement source review without establishing cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/EncodingValidityClosure.lean",
+    "lean_name": "allEncOk_extendLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_labs_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6407 complete universally quantified preservation of successful old lookups and complete original input validity imply full validity under arbitrary extended map; failed-lookups and new entries unconstrained. Every original line constructor handled, including failed lookup and unsupported Call; no target validity premise, map-domain freshness or global invariant added. Native original constructors/opaque mlstring, positive-width type-indexed words and canonical nested numeric sptrees reviewed; no fmap qualifier or arbitrary carrier specialization. Original exported fulltypes0openhyps, fresh original/native byte-shift/map-lookup regressions and fullgeneric fixtures; genuine arbitrary fresh outer-map consumer discharges the full source lookup guard, and actual append consumer derives shifted validity. Kernel checking/oracle tests supplement source review without establishing cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ReadInst.lean",
+    "lean_name": "PC",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "PC_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript1260-1263 literal current-core c_PC read, fixed core word8/result word64 and entire native state. No procID/totalCore bound. Full original definition/type and empty-hypothesis generic whole equation captured in l3_fetch_primitives_probe; kernel rfl replay retains all state fields and arbitrary core maps. Fixed source dimensions and native function-valued fields require no representation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ReadInst.lean",
+    "lean_name": "«write'Skip»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'Skip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript1281-1293 full c_Skip function update at procID with word64 value. All other state fields and all other core keys retained; no core bound or narrowed state. Full original definition/type and empty-hypothesis generic whole equation captured in l3_fetch_primitives_probe; kernel rfl replay retains all state fields and arbitrary core maps. Fixed source dimensions and native function-valued fields require no representation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ReadInst.lean",
+    "lean_name": "rawReadInst",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rawReadInst_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared riscvScript.sml:4530-4570: fixed rawInstType Half word16 / Word word32, full native riscv_state, BL8 bits 1 and 0, current-core Skip 2/4 function update, little-endian concatenation and modular word64 addresses. No alignment, architecture subset or successful-translation premise. boolify8 is untagged generated infrastructure with fixed in-range indices 7 through 0."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/Fetch.lean",
+    "lean_name": "Fetch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "Fetch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared riscv_stepScript.sml:28-32: full native state; translateAddr (PC s, Instruction, Read); THE optional returned address; rawReadInst on returned state. No successful-translation premise and canonical unspecified THE NONE preserved. Separate step namespace does not claim the different model Fetch definition."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptWf",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-pxn.18.5.15.3.29.2: pinned original39-44 retains all four LN/LS/BN/BS clauses over exact arbitrary-payload Spt; both branch constructors recursively require both children wf and reject exactly two LN children, including a valued BS. Existing Boolean predicate unchanged: Bool true/and/not compute the HOL truth/connectives, with no payload equality or valid-tree premise. Existing approved hol4 snapshot SHA25697791ac7f3f7b0de823afb00f6f1fbd18cd158b9fe8a818a272b39daa0e49b71 agrees with pinned HOLa390cbabd and actual source installation. No provenance/allowlist/default change. Kernel complete four-clause proposition interface sptWfClauses has no assumptions; fresh original full wf_def closed statement and254 independent valid/malformed/deep-tree/function-payload complete observations replayed in kernel/runtime. Existing preservation theorems are reused, not duplicated."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/FindCode.lean",
     "lean_name": "findCodeLemma",
     "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
@@ -67095,6 +67258,99 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol original231-255 source comparison: full stateRelHOL actual imported state carrier, canonical regs/fpRegs/store roundtrip reexport, arbitrary positive-width WordLocW, native Spt code unchanged. Same destination INL/INR guard and actual source findCode success; target lookup and regBound established conclusions. Arbitrary erasure register retained without alias/bound premise in lemma2. Native findCode matches only Loc(label,0); all word/none/nonzero-offset cases excluded by actual source success. Literal original proof replay and Lean kernel checks; no carrier duplicate or target-run hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/If.lean",
+    "lean_name": "compCorrectIf",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.12 genuine If case original292-305 of comp_correct134ff. Actual positive-width native HolProg.ite comparison/register/reg-or-imm/two branches and complete22field StackSem state/configuration/FFI. Original evaluate equality/nonError/literalstateRel are sole source premises; added firstIH/secondIH are ordinary comp-component induction hypotheses for exactly the two subprograms, universally over info/source/target/result/poststate, not a wholepass predicate or supplied targetresult. BranchIH unfolds exactly original simulation premise and comp existential component. SimulationResult unfolds literal existential clock/targetstate/stackspace, postrelation, actual native evaluation at target.clock+clock, same source result/target stackSpace update, original nonTimeOut/nonHalt Word2 guard. Both compTop/comp conclusion components retained; compTop equals comp for If. Full state relation derives target register and immediate reads at every clock; actual wordSemWordCmp determines source branch. Success comparison true/false uses corresponding branchIH; missing operands/comparison-none contradict original nonError. Returned targetexecution/postrelation/guard/extra clock are derived, not assumed as new source premises. Canonical regs/fpRegs/store relation qualifier, actual imported stateowner and same-module genuine codec roundtrips; code remains native Spt and lists remain lists. Full native evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; this word comparison proof introduces no real rendering. This is one genuine recursive case, not whole comp_correct/compile_semantics/runtime correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ProgramByteLengths.lean",
+    "lean_name": "allEncOk_foldSecLength",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "LENGTH_prog_to_bytes",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6270 retains arbitrary Nat fold start n independently of encoding start pos and complete original all_enc_ok guard; physical byte length plus n conclusion. Section recorded-length/physical-byte agreement derived from head validity, no extra annotation consistency premise. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or carrier specialization. Fresh original full statements/types with zero open hypotheses and six original/native cases; full generic binders and actual arbitrary-start consumer. Kernel/oracle evidence supplements source review and does not establish cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ProgramByteLengths.lean",
+    "lean_name": "allEncOk_lengthProgToBytes",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "LENGTH_prog_to_bytes2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6288 preserves complete all_enc_ok guard and exact physical prog_to_bytes length equals section line-length sum. Source fulltype confirms unused n:beta; retained explicitly as generic independent binder with no specialization or omission. No successful output or byte-consistency hypothesis added. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or carrier specialization. Fresh original full statements/types with zero open hypotheses and six original/native cases; full generic binders and actual arbitrary-start consumer. Kernel/oracle evidence supplements source review and does not establish cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/ControlLeaves.lean",
+    "lean_name": "compCorrectReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.13 genuine Return simple_case of original comp_correct134ff/276-291. Original source evaluation equality, result not Error, literal full state_rel are the only premises; no constructor predicate exposed. Actual positive-width native HolProg and complete22field evaluator state/configuration/FFI preserved. Both compTop/comp original existential clock/targetstate/stackspace results and nonTimeOut/nonHalt Word2 guard retained verbatim. Source stackSem814-823 Return/Raise read a register and require Loc, all other payloads/missing reads Error with unchanged state; Break/Continue return exact label result and unchanged state. Native equations match each branch, including errors. Actual code-update evaluation transport derives source code preservation and target execution/full postrelation. Both comp functions leave these constructors unchanged. Clock0/target own stackSpace are derived witnesses, not premises. Qualifier fields canonical regs/fpRegs/store have actual imported stateowner and same-module genuine broad/canonical codec roundtrips; code remains Spt and lists List. Full evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced. One genuine case only, not full compiler or executed route correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/ControlLeaves.lean",
+    "lean_name": "compCorrectRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.13 genuine Raise simple_case of original comp_correct134ff/276-291. Original source evaluation equality, result not Error, literal full state_rel are the only premises; no constructor predicate exposed. Actual positive-width native HolProg and complete22field evaluator state/configuration/FFI preserved. Both compTop/comp original existential clock/targetstate/stackspace results and nonTimeOut/nonHalt Word2 guard retained verbatim. Source stackSem814-823 Return/Raise read a register and require Loc, all other payloads/missing reads Error with unchanged state; Break/Continue return exact label result and unchanged state. Native equations match each branch, including errors. Actual code-update evaluation transport derives source code preservation and target execution/full postrelation. Both comp functions leave these constructors unchanged. Clock0/target own stackSpace are derived witnesses, not premises. Qualifier fields canonical regs/fpRegs/store have actual imported stateowner and same-module genuine broad/canonical codec roundtrips; code remains Spt and lists List. Full evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced. One genuine case only, not full compiler or executed route correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/ControlLeaves.lean",
+    "lean_name": "compCorrectBreak",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.13 genuine Break simple_case of original comp_correct134ff/276-291. Original source evaluation equality, result not Error, literal full state_rel are the only premises; no constructor predicate exposed. Actual positive-width native HolProg and complete22field evaluator state/configuration/FFI preserved. Both compTop/comp original existential clock/targetstate/stackspace results and nonTimeOut/nonHalt Word2 guard retained verbatim. Source stackSem814-823 Return/Raise read a register and require Loc, all other payloads/missing reads Error with unchanged state; Break/Continue return exact label result and unchanged state. Native equations match each branch, including errors. Actual code-update evaluation transport derives source code preservation and target execution/full postrelation. Both comp functions leave these constructors unchanged. Clock0/target own stackSpace are derived witnesses, not premises. Qualifier fields canonical regs/fpRegs/store have actual imported stateowner and same-module genuine broad/canonical codec roundtrips; code remains Spt and lists List. Full evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced. One genuine case only, not full compiler or executed route correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/ControlLeaves.lean",
+    "lean_name": "compCorrectContinue",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.13 genuine Continue simple_case of original comp_correct134ff/276-291. Original source evaluation equality, result not Error, literal full state_rel are the only premises; no constructor predicate exposed. Actual positive-width native HolProg and complete22field evaluator state/configuration/FFI preserved. Both compTop/comp original existential clock/targetstate/stackspace results and nonTimeOut/nonHalt Word2 guard retained verbatim. Source stackSem814-823 Return/Raise read a register and require Loc, all other payloads/missing reads Error with unchanged state; Break/Continue return exact label result and unchanged state. Native equations match each branch, including errors. Actual code-update evaluation transport derives source code preservation and target execution/full postrelation. Both comp functions leave these constructors unchanged. Clock0/target own stackSpace are derived witnesses, not premises. Qualifier fields canonical regs/fpRegs/store have actual imported stateowner and same-module genuine broad/canonical codec roundtrips; code remains Spt and lists List. Full evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced. One genuine case only, not full compiler or executed route correctness."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/JumpLower.lean",
@@ -67125,6 +67381,42 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead flapjack-sol-remove-codebuffer: genuine original comp_correct CodeBufferWrite2023-2034/full1481-1493. Original four source evaluation/nonError/full26stateRel/regBound premises, arbitrary native operands and all original result alternatives, actual target existential at clock+target.clock. Original source nonError eliminates invalid operands/failed buffer write only; target register lookups follow bounded getVar laws, target buffer equality follows original codeBuffer conjunct. Both execute identical native wordSemBufferWrite (same width address and setWidth8 value), clock0 proves actual target run. Full26postrelation established by identical buffer replacement, no supplied targetrun/write success/postrelation or stronger guard. Actual imported owning carrier/canonical regs-fpRegs-store codec roundtrip reexport; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts. Inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh original scoped HOL theorem literal case-body replay plus standalone strip prefix and original local getVar lemma; no full comp_correct assumed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionExtension.lean",
+    "lean_name": "posVal_accSum",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_acc_sum",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6657 complete i,pos,secs,x,y binders and x+y=pos guard, exact x+pos_val i y secs=pos_val i pos secs result. Unrestricted code, annotations and positions; no all_enc_ok or bound premise. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Source pos_val uses line_length nonzero-label one-step marker whereas prog_to_bytes drops labels; validity is needed only in the original suffix law to relate those quantities. Fresh original fulltypes zero hypotheses and eight closed original/native cases, full generic fixtures and actual arbitrary-suffix/PC/start consumers. Kernel checking and original regressions supplement source review, not cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionExtension.lean",
+    "lean_name": "posVal_accZero",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_acc_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6671 complete i,pos,secs binders and unconditional pos+pos_val i 0 secs=pos_val i pos secs result, preserving arbitrary annotations. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Source pos_val uses line_length nonzero-label one-step marker whereas prog_to_bytes drops labels; validity is needed only in the original suffix law to relate those quantities. Fresh original fulltypes zero hypotheses and eight closed original/native cases, full generic fixtures and actual arbitrary-suffix/PC/start consumers. Kernel checking and original regressions supplement source review, not cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionExtension.lean",
+    "lean_name": "posVal_appendPrefix",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_APPEND1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source7270 complete pc/code plus free suffix binders; sole strict pc<num_pcs code guard and exact zero-start prefix position equality. Suffix is unrestricted including nonzero labels; no zero-label or validity guard added. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Source pos_val uses line_length nonzero-label one-step marker whereas prog_to_bytes drops labels; validity is needed only in the original suffix law to relate those quantities. Fresh original fulltypes zero hypotheses and eight closed original/native cases, full generic fixtures and actual arbitrary-suffix/PC/start consumers. Kernel checking and original regressions supplement source review, not cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PositionExtension.lean",
+    "lean_name": "posVal_appendSuffix",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_APPEND2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source7302 complete c/labs/ffis/p/code plus independent free pc/suffix binders. Sole complete prefix all_enc_ok at independent p guard; exact shifted logical PC and LENGTH(prog_to_bytes code) physical byte result. Arbitrary suffix including malformed labels preserved. Actual full byte-length law derives physical length, not assumed. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Source pos_val uses line_length nonzero-label one-step marker whereas prog_to_bytes drops labels; validity is needed only in the original suffix law to relate those quantities. Fresh original fulltypes zero hypotheses and eight closed original/native cases, full generic fixtures and actual arbitrary-suffix/PC/start consumers. Kernel checking and original regressions supplement source review, not cross-language equivalence or full compiler simulation."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/BytearrayReads.lean",
