@@ -1,3 +1,4 @@
+import Flapjack.Test.StackRawCallCompileParity
 import Flapjack.Test.StackRawCallStateOkParity
 import Flapjack.Test.StackRawCallCollectParity
 import Flapjack.Test.StackRawCallNativeParity

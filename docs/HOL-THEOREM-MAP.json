@@ -66498,5 +66498,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10803-10943 ordered-label chain. All comp constructor cases, both performance flags, exact return/handler order, duplicate labels and ignored NONE-return handlers retained. Recursion follows actual compNative induction and exact threaded bitmap states, no public IH/target predicate/result premise. List compilation retains original output alias including full residual frames/bitmaps and original EVERY owner/nonzero/nonone/ALL_DISTINCT source guard, rendered equivalent List membership quantification/Nodup; top false-perf compile proves exact stub-prefixed keys and guard for both complete native stubs plus all bodies. Stronger private projection equations are untagged Flapjack organization. Fresh original three theorem statements hyp=[] and312 independent complete label projections of comp/list/top at widths1/8/64/80, both flags, duplicate IDs/labels, nested/ignored handlers,70bit metadata and bitmap threading kernel-replayed separately from generic theorem applications. All three use only standard propext/Classical.choice/Quot.sound axioms. No semantic compiler simulation/cross-language equivalence claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
+    "lean_name": "compile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .15.4.5: originalcompile_def107-112 whole original list collect_info LN computed once then MAP name/body to name/comp_top shared info body. Native HolProg positive word dimension and actual Spt collection; keys, order, duplicates, empty list and top-level Seq preserved, no success/lookup/validity hypothesis. Sole conventional word translation. Five fresh complete original output lists independently kernel replayed (forward reference, last recognized duplicate with ignored bare entry, bare-only fallback, zero entry/top Seq, empty). Executed broad replacement remains OPEN .4.3; no full simulation or production claim."
   }
 ]
