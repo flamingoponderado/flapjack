@@ -52310,5 +52310,53 @@
     "lean_name": "sortLength",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02: mllistScript.sml:319-323 ∀R l. LENGTH (sort R l) = LENGTH l. Kernel-checked; no premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "GT_sorted_eq",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/EdgeInsertion.lean",
+    "lean_name": "gtSortedEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1020-1025 SORTED $> (x::L) ⇔ SORTED $> L ∧ ∀y. MEM y L ⇒ x > y, with x : num and L free in HOL (explicit Lean parameters). Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); SORTED $> is the exact holSorted (· > ·) (HOL/src sortingScript), MEM list membership, EVERY ∀ x ∈ l, REVERSE List.reverse, sorted_insert/sorted_mem/insert_edge/list_insert_edge the exact tagged reg_alloc definitions. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "sorted_insert_correct_lem",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/EdgeInsertion.lean",
+    "lean_name": "sortedInsertCorrectLem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1027-1072, x free in HOL; the conclusion is wrapped in the exact tagged hide as in HOL. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); SORTED $> is the exact holSorted (· > ·) (HOL/src sortingScript), MEM list membership, EVERY ∀ x ∈ l, REVERSE List.reverse, sorted_insert/sorted_mem/insert_edge/list_insert_edge the exact tagged reg_alloc definitions. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "sorted_insert_correct",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/EdgeInsertion.lean",
+    "lean_name": "sortedInsertCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1074-1085, x free in HOL. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); SORTED $> is the exact holSorted (· > ·) (HOL/src sortingScript), MEM list membership, EVERY ∀ x ∈ l, REVERSE List.reverse, sorted_insert/sorted_mem/insert_edge/list_insert_edge the exact tagged reg_alloc definitions. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "sorted_mem_correct",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/EdgeInsertion.lean",
+    "lean_name": "sortedMemCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1087-1097, x free in HOL; sorted_mem returns Bool so its truth is sortedMem x ls = true. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); SORTED $> is the exact holSorted (· > ·) (HOL/src sortingScript), MEM list membership, EVERY ∀ x ∈ l, REVERSE List.reverse, sorted_insert/sorted_mem/insert_edge/list_insert_edge the exact tagged reg_alloc definitions. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "insert_edge_succeeds",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/EdgeInsertion.lean",
+    "lean_name": "insertEdgeSucceeds",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1099-1138, s, x and y free in HOL (explicit Lean parameters); the four conclusion conjuncts incl. the has_edge characterization. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); SORTED $> is the exact holSorted (· > ·) (HOL/src sortingScript), MEM list membership, EVERY ∀ x ∈ l, REVERSE List.reverse, sorted_insert/sorted_mem/insert_edge/list_insert_edge the exact tagged reg_alloc definitions. Kernel-checked; standard axioms; no extra premise. good_ra_state and has_edge are the exact tagged goodRaState/hasEdge, reading adjacency lists through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "list_insert_edge_succeeds",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/EdgeInsertion.lean",
+    "lean_name": "listInsertEdgeSucceeds",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1140-1166, the has_edge characterization over MEM b ys / MEM a ys. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); SORTED $> is the exact holSorted (· > ·) (HOL/src sortingScript), MEM list membership, EVERY ∀ x ∈ l, REVERSE List.reverse, sorted_insert/sorted_mem/insert_edge/list_insert_edge the exact tagged reg_alloc definitions. Kernel-checked; standard axioms; no extra premise. good_ra_state and has_edge are the exact tagged goodRaState/hasEdge, reading adjacency lists through HOL EL as the exact holEl."
   }
 ]
