@@ -1,0 +1,35 @@
+load "preamble";
+load "word_allocProofTheory";
+open bossLib HolKernel Parse preamble word_allocProofTheory word_allocTheory wordSemTheory wordPropsTheory wordLangTheory sptreeTheory reg_allocTheory;
+val _ = Globals.linewidth := 1000;
+(* Capture original kernel theorem constructor specializations. No standalone
+   tactic replay is claimed; original FP opcode proof8174-8222 is compared. *)
+fun out label th = (print(label ^ "="); print_thm th; print "\n");
+fun ty label name th = let val v=valOf(List.find(fn t => fst(dest_var t)=name)(free_vars(concl(SPEC_ALL th)))) in print(label ^ "="); print_type(type_of v); print "\n" end;
+val skip_case = Q.SPEC `Inst Skip` ssa_cc_trans_correct;
+val _ = out "inst_skip_full" skip_case;
+val _ = ty "inst_skip_type_st" "st" skip_case;
+val _ = ty "inst_skip_type_cst" "cst" skip_case;
+val _ = ty "inst_skip_type_ssa" "ssa" skip_case;
+val _ = ty "inst_skip_type_next" "na" skip_case;
+val _ = ty "inst_skip_type_tables" "lt" skip_case;
+val load16_case = Q.SPEC `Inst (Mem Load16 n (Addr n0 w))` ssa_cc_trans_correct;
+val _ = out "inst_load16_full" load16_case;
+val _ = ty "inst_load16_type_st" "st" load16_case;
+val _ = ty "inst_load16_type_cst" "cst" load16_case;
+val _ = ty "inst_load16_type_ssa" "ssa" load16_case;
+val _ = ty "inst_load16_type_next" "na" load16_case;
+val _ = ty "inst_load16_type_tables" "lt" load16_case;
+val _ = ty "inst_load16_type_data" "n" load16_case;
+val _ = ty "inst_load16_type_base" "n0" load16_case;
+val _ = ty "inst_load16_type_offset" "w" load16_case;
+val store16_case = Q.SPEC `Inst (Mem Store16 n (Addr n0 w))` ssa_cc_trans_correct;
+val _ = out "inst_store16_full" store16_case;
+val _ = ty "inst_store16_type_st" "st" store16_case;
+val _ = ty "inst_store16_type_cst" "cst" store16_case;
+val _ = ty "inst_store16_type_ssa" "ssa" store16_case;
+val _ = ty "inst_store16_type_next" "na" store16_case;
+val _ = ty "inst_store16_type_tables" "lt" store16_case;
+val _ = ty "inst_store16_type_data" "n" store16_case;
+val _ = ty "inst_store16_type_base" "n0" store16_case;
+val _ = ty "inst_store16_type_offset" "w" store16_case;

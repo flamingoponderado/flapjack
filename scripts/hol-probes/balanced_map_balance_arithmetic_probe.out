@@ -1,0 +1,23 @@
+bma_left=⊢ ∀(l :num) (r :num). almost_balancedL l r ⇔ if l + r ≤ (1 :num) ∨ l ≤ delta * r then balanced l r else if r = (0 :num) then l < (5 :num) else if r = (1 :num) then l < (8 :num) else (2 :num) * l < ((2 :num) * delta + (3 :num)) * r + (2 :num)
+bma_right=⊢ ∀(l :num) (r :num). almost_balancedR l r ⇔ if l + r ≤ (1 :num) ∨ r ≤ delta * l then balanced l r else if l = (0 :num) then r < (5 :num) else if l = (1 :num) then r < (8 :num) else (2 :num) * r < ((2 :num) * delta + (3 :num)) * l + (2 :num)
+bma_lem1=⊢ ∀(l :num) (r :num). l + r ≤ (1 :num) ⇒ balanced l r
+bma_lem2=⊢ ∀(l :num) (r :num). ¬(l > delta * r) ∧ almost_balancedL l r ∧ ¬(l + r ≤ (1 :num)) ⇒ balanced l r
+bma_lem3=⊢ ∀(b :num) (b0 :num) (r :num). almost_balancedL (b + b0 + (1 :num)) r ∧ b + b0 + (1 :num) > delta * r ∧ b0 < ratio * b ∧ balanced b b0 ⇒ balanced b (b0 + r + (1 :num)) ∧ balanced b0 r
+bma_lem4=⊢ ∀(b :num) (b' :num) (b0' :num) (r :num). almost_balancedL (b + b' + b0' + (2 :num)) r ∧ b + b' + b0' + (2 :num) > delta * r ∧ ¬(b' + b0' + (1 :num) < ratio * b) ∧ balanced b (b' + b0' + (1 :num)) ∧ balanced b' b0' ⇒ balanced (b + b' + (1 :num)) (b0' + r + (1 :num)) ∧ balanced b b' ∧ balanced b0' r
+bma_lem5=⊢ ∀(l :num) (r :num). ¬(r > delta * l) ∧ almost_balancedR l r ⇒ balanced l r
+bma_lem6=⊢ ∀(b :num) (b0 :num) (l :num). almost_balancedR l (b + b0 + (1 :num)) ∧ b + b0 + (1 :num) > delta * l ∧ b < ratio * b0 ∧ balanced b b0 ⇒ balanced (b + l + (1 :num)) b0 ∧ balanced l b
+bma_lem7=⊢ ∀(b :α) (b0 :num) (b0' :num) (l :num) (b' :num). almost_balancedR l (b' + b0 + b0' + (2 :num)) ∧ b' + b0 + b0' + (2 :num) > delta * l ∧ ¬(b' + b0' + (1 :num) < ratio * b0) ∧ balanced (b' + b0' + (1 :num)) b0 ∧ balanced b' b0' ⇒ balanced (b' + l + (1 :num)) (b0 + b0' + (1 :num)) ∧ balanced l b' ∧ balanced b0' b0
+bma_left00=T
+bma_left40=T
+bma_left50=F
+bma_left71=T
+bma_left81=F
+bma_left92=T
+bma_left102=F
+bma_right00=T
+bma_right04=T
+bma_right05=F
+bma_right17=T
+bma_right18=F
+bma_right29=T
+bma_right210=F

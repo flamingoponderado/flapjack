@@ -1,0 +1,50 @@
+line_encd0_def=(line_encd0 (enc :α asm -> word8 list)
+   (Asm (b :α asm_or_cbw) (bytes :word8 list) (len :num)) ⇔
+ enc (cbw_to_asm b) = bytes ∧ len = LENGTH bytes) ∧
+(line_encd0 enc (LabAsm (l :α asm_with_lab) (w :α word) bytes len) ⇔
+ enc (lab_inst w l) = bytes ∧ LENGTH bytes ≤ len ∧
+ ∃(w' :α word). len = LENGTH (enc (lab_inst w' l))) ∧
+(line_encd0 enc (Label (v2 :num) (v3 :num) (v4 :num) :α line) ⇔ T)
+line_encd0_def_types=(v4 :num)::num;(v3 :num)::num;(v2 :num)::num;(w :α word)::α word;(l :α asm_with_lab)::α asm_with_lab;(len :num)::num;(bytes :word8 list)::word8 list;(b :α asm_or_cbw)::α asm_or_cbw;(enc :α asm -> word8 list)::α asm -> word8 list;
+sec_encd0_def=∀(enc :α asm -> word8 list) (v0 :num) (ls :α line list).
+  sec_encd0 enc (Section v0 ls) ⇔ EVERY (line_encd0 enc) ls
+sec_encd0_def_types=(enc :α asm -> word8 list)::α asm -> word8 list;(v0 :num)::num;(ls :α line list)::α line list;
+all_encd0=λ(enc :α asm -> word8 list) (l :α sec list). EVERY (sec_encd0 enc) l
+all_encd0_types=:(α asm -> word8 list) -> α sec list -> bool
+enc_sec_list_encd0=∀(ls :α sec list). all_encd0 (enc :α asm -> word8 list) (enc_sec_list enc ls)
+enc_sec_list_encd0_types=(ls :α sec list)::α sec list;(enc :α asm -> word8 list)::α asm -> word8 list;
+enc_lines_again_encd0=∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+    (enc :α asm -> word8 list) (lines :α line list) (acc :α line list)
+    (ok :bool) (res :α line list) (ok' :num # bool).
+  enc_lines_again labs ffis pos enc lines (acc,ok) = (res,ok') ∧
+  EVERY (line_encd0 enc) lines ∧ EVERY (line_encd0 enc) acc ⇒
+  EVERY (line_encd0 enc) res
+enc_lines_again_encd0_types=(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(enc :α asm -> word8 list)::α asm -> word8 list;(lines :α line list)::α line list;(acc :α line list)::α line list;(ok :bool)::bool;(res :α line list)::α line list;(ok' :num # bool)::num # bool;
+enc_secs_again_encd0=∀(pos :num) (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+    (enc :α asm -> word8 list) (ls :α sec list) (res :α sec list) (ok :bool).
+  enc_secs_again pos labs ffis enc ls = (res,ok) ∧ all_encd0 enc ls ⇒
+  all_encd0 enc res
+enc_secs_again_encd0_types=(pos :num)::num;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(enc :α asm -> word8 list)::α asm -> word8 list;(ls :α sec list)::α sec list;(res :α sec list)::α sec list;(ok :bool)::bool;
+lines_upd_lab_len_encd0=∀(pos :num) (ls :α line list) (acc :α line list).
+  EVERY (line_encd0 (enc :α asm -> word8 list)) ls ∧
+  EVERY (line_encd0 enc) acc ⇒
+  EVERY (line_encd0 enc) (FST (lines_upd_lab_len pos ls acc))
+lines_upd_lab_len_encd0_types=(pos :num)::num;(ls :α line list)::α line list;(acc :α line list)::α line list;(enc :α asm -> word8 list)::α asm -> word8 list;
+upd_lab_len_encd0=∀(pos :num) (ss :α sec list).
+  all_encd0 (enc :α asm -> word8 list) ss ⇒
+  all_encd0 enc (upd_lab_len pos ss)
+upd_lab_len_encd0_types=(pos :num)::num;(ss :α sec list)::α sec list;(enc :α asm -> word8 list)::α asm -> word8 list;
+label_annotation_unrestricted=T
+asm_cache_mismatch_rejected=T
+shrink_source_valid=T
+grow_source_valid=T
+shrink_output_valid=T
+grow_output_valid=T
+shrink_full_output=T
+grow_full_output=T
+equal_word_full_output=T
+initial_code_valid=T
+repeat_code_valid=T
+update_lines_valid=T
+update_code_valid=T
+grow_empty_encoder_initial=T

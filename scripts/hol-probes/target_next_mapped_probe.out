@@ -1,0 +1,36 @@
+next_mapped_read_full_statement=mc.target.get_pc ms ∉ mc.prog_addresses DIFF set mc.ffi_entry_pcs ∧
+mc.target.get_pc ms ≠ mc.halt_pc ∧ mc.target.get_pc ms ≠ mc.ccache_pc ∧
+find_index (mc.target.get_pc ms) mc.ffi_entry_pcs 0 = SOME index ∧
+mc.ffi_names❲index❳ = SharedMem MappedRead ∧
+ALOOKUP mc.mmio_info index = SOME (nb,Addr r off,reg,pc') ∧
+(nb = 0w ⇒ w2n (mc.target.get_reg ms r + off) MOD (dimindex (:β) DIV 8) = 0) ∧
+mc.target.get_reg ms r + off ∈ mc.shared_addresses ∧
+is_valid_mapped_read (mc.target.get_pc ms) nb (Addr r off) reg pc' mc.target
+  ms mc.prog_addresses ∧
+call_FFI ffi mc.ffi_names❲index❳ [nb]
+  (word_to_bytes (mc.target.get_reg ms r + off) F) =
+FFI_return new_ffi new_bytes ⇒
+next_interference mc ffi ms =
+SOME
+  (FfiApp index new_bytes ms (mc.ffi_interfer 0 (index,new_bytes,ms)),
+   mc with ffi_interfer := shift_seq 1 mc.ffi_interfer,new_ffi)
+next_mapped_write_full_statement=mc.target.get_pc ms ∉ mc.prog_addresses DIFF set mc.ffi_entry_pcs ∧
+mc.target.get_pc ms ≠ mc.halt_pc ∧ mc.target.get_pc ms ≠ mc.ccache_pc ∧
+find_index (mc.target.get_pc ms) mc.ffi_entry_pcs 0 = SOME index ∧
+mc.ffi_names❲index❳ = SharedMem MappedWrite ∧
+ALOOKUP mc.mmio_info index = SOME (nb,Addr r off,reg,pc') ∧
+(nb = 0w ⇒ w2n (mc.target.get_reg ms r + off) MOD (dimindex (:β) DIV 8) = 0) ∧
+mc.target.get_reg ms r + off ∈ mc.shared_addresses ∧
+is_valid_mapped_write (mc.target.get_pc ms) nb (Addr r off) reg pc' mc.target
+  ms mc.prog_addresses ∧
+call_FFI ffi mc.ffi_names❲index❳ [nb]
+  ((let
+      w = mc.target.get_reg ms reg
+    in
+      if nb = 0w then word_to_bytes w F else word_to_bytes_aux (w2n nb) w F) ++
+   word_to_bytes (mc.target.get_reg ms r + off) F) =
+FFI_return new_ffi new_bytes ⇒
+next_interference mc ffi ms =
+SOME
+  (FfiApp index new_bytes ms (mc.ffi_interfer 0 (index,new_bytes,ms)),
+   mc with ffi_interfer := shift_seq 1 mc.ffi_interfer,new_ffi)

@@ -1,0 +1,14 @@
+bmra_singleL=⊢ ∀(k1 :α) (x1 :β) (t1 :(α, β) balanced_map) (v0 :num) (k2 :α) (x2 :β) (t2 :(α, β) balanced_map) (t3 :(α, β) balanced_map). singleL k1 x1 t1 (Bin v0 k2 x2 t2 t3) = bin k2 x2 (bin k1 x1 t1 t2) t3
+bmra_singleR=⊢ ∀(k1 :α) (x1 :β) (v0 :num) (k2 :α) (x2 :β) (t1 :(α, β) balanced_map) (t2 :(α, β) balanced_map) (t3 :(α, β) balanced_map). singleR k1 x1 (Bin v0 k2 x2 t1 t2) t3 = bin k2 x2 t1 (bin k1 x1 t2 t3)
+bmra_doubleL=⊢ doubleL (k1 :α) (x1 :β) (t1 :(α, β) balanced_map) (Bin (v0 :num) (k2 :α) (x2 :β) (Bin (v1 :num) (k3 :α) (x3 :β) (t2 :(α, β) balanced_map) (t3 :(α, β) balanced_map)) (t4 :(α, β) balanced_map)) = bin k3 x3 (bin k1 x1 t1 t2) (bin k2 x2 t3 t4)
+bmra_doubleR=⊢ doubleR (k1 :α) (x1 :β) (Bin (v0 :num) (k2 :α) (x2 :β) (t1 :(α, β) balanced_map) (Bin (v1 :num) (k3 :α) (x3 :β) (t2 :(α, β) balanced_map) (t3 :(α, β) balanced_map))) (t4 :(α, β) balanced_map) = bin k3 x3 (bin k2 x2 t1 t2) (bin k1 x1 t3 t4)
+bmra_rotateL=⊢ (∀(k :α) (x :β) (l :(α, β) balanced_map) (s' :num) (k' :α) (x' :β) (ly :(α, β) balanced_map) (ry :(α, β) balanced_map). rotateL k x l (Bin s' k' x' ly ry) = if size ly < ratio * size ry then singleL k x l (Bin s' k' x' ly ry) else doubleL k x l (Bin s' k' x' ly ry)) ∧ ∀(k :α) (x :β) (l :(α, β) balanced_map). rotateL k x l (Tip :(α, β) balanced_map) = doubleL k x l (Tip :(α, β) balanced_map)
+bmra_rotateR=⊢ (∀(k :α) (x :β) (s' :num) (k' :α) (x' :β) (ly :(α, β) balanced_map) (ry :(α, β) balanced_map) (r :(α, β) balanced_map). rotateR k x (Bin s' k' x' ly ry) r = if size ry < ratio * size ly then singleR k x (Bin s' k' x' ly ry) r else doubleR k x (Bin s' k' x' ly ry) r) ∧ ∀(k :α) (x :β) (r :(α, β) balanced_map). rotateR k x (Tip :(α, β) balanced_map) r = doubleR k x (Tip :(α, β) balanced_map) r
+bmra_bal=⊢ ∀(k :α) (x :β) (l :(α, β) balanced_map) (r :(α, β) balanced_map). bal k x l r = if size l + size r ≤ (1 :num) then Bin (size l + size r + (1 :num)) k x l r else if size r > delta * size l then rotateL k x l r else if size l > delta * size r then rotateR k x l r else Bin (size l + size r + (1 :num)) k x l r
+bmra_balL=⊢ ∀(k :α) (x :β) (l :(α, β) balanced_map) (r :(α, β) balanced_map). balL k x l r = if size l + size r ≤ (1 :num) then Bin (size l + size r + (1 :num)) k x l r else if size l > delta * size r then rotateR k x l r else Bin (size l + size r + (1 :num)) k x l r
+bmra_balR=⊢ ∀(k :α) (x :β) (l :(α, β) balanced_map) (r :(α, β) balanced_map). balR k x l r = if size l + size r ≤ (1 :num) then Bin (size l + size r + (1 :num)) k x l r else if size r > delta * size l then rotateL k x l r else Bin (size l + size r + (1 :num)) k x l r
+bmra_single_right=Bin 2 1 10 Tip (Bin 1 2 20 Tip Tip)
+bmra_single_left=Bin 2 2 20 (Bin 1 1 10 Tip Tip) Tip
+bmra_unspecified_unreduced=singleR 1 10 Tip Tip = doubleL 2 20 Tip Tip
+bmra_completed_singleR= [.] ⊢ singleR k1 x1 v t3 = case v of Tip => ARB | Bin v0 k2 x2 t1 t2 => bin k2 x2 t1 (bin k1 x1 t2 t3)
+bmra_completion_hyp=∃t2 t1 x2 k2 v0. v = Bin v0 k2 x2 t1 t2
