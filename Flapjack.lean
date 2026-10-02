@@ -588,6 +588,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionSpillChoice
 import Flapjack.Compiler.Backend.RegAlloc.ProductionSpill
 import Flapjack.Compiler.Backend.RegAlloc.ProductionEdgeUpdate
 import Flapjack.Compiler.Backend.RegAlloc.ProductionCoalesceReal
+import Flapjack.Compiler.Backend.RegAlloc.ProductionParentCompression
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
