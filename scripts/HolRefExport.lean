@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList
 import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
 import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLength

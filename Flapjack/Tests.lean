@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackSortedAListParity
 import Flapjack.Test.WordToStackFrameOffsetsParity
 import Flapjack.Test.WordToStackDecodedFrameShapeParity
 import Flapjack.Test.WordToStackAbsStackWordLengthParity
