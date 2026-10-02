@@ -4834,3 +4834,7 @@ run_probe lab_to_target_oracle_tie_probeScript.sml lab_to_target_oracle_tie_prob
 run_probe lab_to_target_state_transport_probeScript.sml lab_to_target_state_transport_probe.out \
   oracle_tie_clock_full oracle_tie_clock_types state_rel_clock_full state_rel_clock_types share_mem_state_rel_shift_interfer_full share_mem_state_rel_shift_interfer_types share_mem_domain_code_rel_shift_interfer_full share_mem_domain_code_rel_shift_interfer_types state_rel_shift_interfer_full state_rel_shift_interfer_types \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe l3_riscv_mmu_fetch_probeScript.sml l3_riscv_mmu_fetch_probe.out \
+  read_aligned read_unaligned read_cross_word translate_bare walk_invalid_level0 walk_invalid_level2 fetch_half fetch_half_skip fetch_word fetch_word_skip load_double store_cross_word \
+  "$repo_dir/HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"

@@ -5562,3 +5562,15 @@ Lab/machine word dimensions and unused outer shared-memory carrier types are
 retained. Lean `StateTransport` derives the actual shifted interference
 condition at index i+l and preserves every conjunct of the full state relation.
 These proof-side laws do not change the executed compiler.
+
+## Native L3 MMU, Fetch and integer memory closure
+
+`l3_riscv_mmu_fetch_probeScript.sml` captures twelve original model EVAL
+observations: nonconstant aligned/unaligned/cross-word bytes, bare translation,
+invalid page-table entries at levels0/2, compressed/full instruction Fetch
+and Skip, LD and a cross-word store. `L3RiscvMmuFetchParity` kernel replays
+those observations on the actual native state. The numeric greater-than
+rendering unlocks41 full original definitions; walk64 terminates on its
+original page-table level. The 240 emitted definitions remain pending full
+source/body acceptance; 52 FP-dependent declarations including whole Run and
+NextRISCV are still omitted and tracked separately. No reduced ISA is substituted.

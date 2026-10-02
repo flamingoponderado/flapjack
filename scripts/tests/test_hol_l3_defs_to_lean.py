@@ -10,6 +10,15 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 
 class L3DefsToLeanTest(unittest.TestCase):
+    def test_integer_memory_closure_is_present(self):
+        body = (ROOT / 'Flapjack/RiscV/L3/Defs.lean').read_text()
+        for name in ['walk64', 'translate64', 'translateAddr', 'Fetch',
+                     "«dfn'LB»", "«dfn'LBU»", "«dfn'LH»", "«dfn'LHU»",
+                     "«dfn'LW»", "«dfn'LWU»", "«dfn'LD»",
+                     "«dfn'SB»", "«dfn'SH»", "«dfn'SW»", "«dfn'SD»"]:
+            self.assertRegex(body, r'(?:noncomputable )?def ' + __import__('re').escape(name) + r'\s')
+        self.assertIn('termination_by arg0.2.2.2.2.2', body)
+
     def test_riscv_defs_match_export(self):
         with tempfile.TemporaryDirectory() as directory:
             export = pathlib.Path(directory) / 'riscv_defs.sexp'

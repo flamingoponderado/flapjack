@@ -12,7 +12,7 @@ tables of that script and `Flapjack/RiscV/L3/Support.lean`; HOL `bool` is Lean `
 `=` is `==` and quantifier-free conditions are Boolean.
 
 Definitions that reach a constant without a rendering (the `machine_ieee` floating-point
-operations, and through them `Run`, `Fetch` and `NextRISCV`) are not emitted yet. Every
+operations, and through them `Run` and `NextRISCV`) are not emitted yet. Every
 emitted definition is pending statement review: the rendering is mechanical, and agreement
 with HOL is checked by parity probes, not proved.
 -/
@@ -134,6 +134,15 @@ def isGlobal (perm : (BitVec 4)) : Bool :=
 def PAGESIZE_BITS  : Nat :=
   12
 
+/-- HOL `riscv$walk64` (`walk64_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "walk64_def"]
+def walk64 (arg0 : ((BitVec 64) × (fetchType × (accessType × (Privilege × ((BitVec 64) × Nat)))))) (state : riscv_state) : ((Option ((BitVec 64) × (SV_PTE × (Nat × (Bool × (BitVec 64)))))) × riscv_state) :=
+  match arg0 with
+  | (vAddr, (ft, (ac, (priv, (ptb, level))))) =>
+  (let va : SV_Vaddr := («rec'SV_Vaddr» vAddr); (let pte_addr : (BitVec 64) := (ptb + ((((BitVec.setWidth 64 ((holWordExtract 9 (LEVEL_BITS - 1) 0 ((va.Sv_VPNi >>> (level * LEVEL_BITS))))))) <<< 3))); (let v : SV_PTE := («rec'SV_PTE» (rawReadData pte_addr state)); (if (!v.PTE_V) then ((((none : (Option ((BitVec 64) × (SV_PTE × (Nat × (Bool × (BitVec 64)))))))), state)) else ((if ((((v.PTE_T == (BitVec.ofNat 4 0))) || ((v.PTE_T == (BitVec.ofNat 4 1))))) then ((if (level == 0) then ((((none : (Option ((BitVec 64) × (SV_PTE × (Nat × (Bool × (BitVec 64)))))))), state)) else ((walk64 ((vAddr, ((ft, ((ac, ((priv, ((((BitVec.setWidth 64 (v.PTE_PPNi <<< PAGESIZE_BITS))), (level - 1))))))))))) state)))) else ((match (checkMemPermission ((ft, ((ac, (priv, v.PTE_T))))) state) with | (v0, s) => (if (!v0) then ((((none : (Option ((BitVec 64) × (SV_PTE × (Nat × (Bool × (BitVec 64)))))))), s)) else ((match (let s0 : SV_PTE := (let r := v; { r with PTE_R := ((fun (_eta1 : Bool) => true)) r.PTE_R }); (let s0_1 : SV_PTE := (if (ac == accessType.Write) then ((let r := s0; { r with PTE_D := ((fun (_eta1 : Bool) => true)) r.PTE_D })) else s0); (((some ((((BitVec.setWidth 64 ((BitVec.setWidth 50 (((if ((decide (level > 0))) then ((((BitVec.setWidth 38 ((((v.PTE_PPNi >>> (level * LEVEL_BITS))) <<< (level * LEVEL_BITS))))) ||| ((BitVec.setWidth 38 ((va.Sv_VPNi &&& (((((BitVec.ofNat 36 1) <<< (level * LEVEL_BITS))) - (BitVec.ofNat 36 1))))))))) else v.PTE_PPNi)) ++ va.Sv_PgOfs))))), ((s0_1, ((level, (((isGlobal v.PTE_T), pte_addr)))))))))), ((s0_1, ((if ((((!(v.PTE_R == s0_1.PTE_R))) || ((!(v.PTE_D == s0_1.PTE_D))))) then ((rawWriteData ((pte_addr, (((«reg'SV_PTE» s0_1), 8)))) s)) else s))))))) with | (r, s1) => (r, s1.2))))))))))))
+termination_by arg0.2.2.2.2.2
+decreasing_by simp_wf; simp_all only [beq_iff_eq]; omega
+
 /-- HOL `riscv$mkTLBEntry` (`mkTLBEntry_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "mkTLBEntry_def"]
 def mkTLBEntry (arg0 : ((BitVec 6) × (Bool × ((BitVec 64) × ((BitVec 64) × (SV_PTE × (Nat × (BitVec 64)))))))) : (riscv_state → TLBEntry) :=
@@ -160,6 +169,20 @@ def lookupTLB (arg0 : ((BitVec 6) × ((BitVec 64) × ((BitVec 4) → (Option TLB
   | (asid, (vAddr, tlb)) =>
   ((((holFor ((0, (((TLBEntries - 1), ((fun (i : Nat) => (fun (state : ((Option (TLBEntry × (BitVec 4))) × Unit)) => (match (tlb (BitVec.ofNat 4 i)) with | none => ((), state) | some e => ((), ((if ((((state.1 == ((none : (Option (TLBEntry × (BitVec 4))))))) && ((((e.global || (e.asid == asid))) && ((e.vAddr == (vAddr &&& e.vMatchMask))))))) then ((((some ((e, (BitVec.ofNat 4 i))))), ())) else state)))))))))))) ((((none : (Option (TLBEntry × (BitVec 4))))), ())))).2).1
 
+/-- HOL `riscv$translate64` (`translate64_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "translate64_def"]
+def translate64 (arg0 : ((BitVec 64) × (fetchType × (accessType × (Privilege × Nat))))) : (riscv_state → ((Option (BitVec 64)) × riscv_state)) :=
+  match arg0 with
+  | (vAddr, (ft, (ac, (priv, level)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 6) := (curASID () state); (match (lookupTLB ((v, ((vAddr, (TLB state)))))) with | none => (match (walk64 ((vAddr, ((ft, ((ac, ((priv, ((((SCSR state).sptbr), level)))))))))) state) with | (v0, s) => (match v0 with | none => (((none : (Option (BitVec 64)))), s) | some v1 => (match v1 with | (pAddr, v3) => (match v3 with | (pte, v5) => (match v5 with | (i, v7) => (match v7 with | (global, pteAddr) => ((some pAddr), ((«write'TLB» ((addToTLB ((v, ((vAddr, ((pAddr, ((pte, ((pteAddr, ((i, ((global, (TLB s))))))))))))))) s)) s))))))))) | some v2 => (match v2 with | (e, idx) => (match (checkMemPermission ((ft, ((ac, (priv, e.pte.PTE_T))))) state) with | (v_1, s) => (if v_1 then ((((some ((e.pAddr ||| (vAddr &&& e.vAddrMask))))), ((if (((ac == accessType.Write) && (!e.pte.PTE_D))) then ((let s0 : TLBEntry := (let r := e; { r with pte := ((fun (_eta1 : SV_PTE) => ((let r := e.pte; { r with PTE_D := ((fun (_eta1 : Bool) => true)) r.PTE_D })))) r.pte }); (let s1 : riscv_state := (rawWriteData ((s0.pteAddr, (((«reg'SV_PTE» s0.pte), 8)))) s); («write'TLB» ((holUpdate idx (some s0) (TLB s1))) s1)))) else s)))) else ((((none : (Option (BitVec 64)))), s))))))))
+
+/-- HOL `riscv$translateAddr` (`translateAddr_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "translateAddr_def"]
+def translateAddr (arg0 : ((BitVec 64) × (fetchType × accessType))) : (riscv_state → ((Option (BitVec 64)) × riscv_state)) :=
+  match arg0 with
+  | (vAddr, (ft, ac)) =>
+  (fun (state : riscv_state) => (let v : Privilege := (privilege ((if (((((MCSR state).mstatus).MMPRV) && (ft == fetchType.Data))) then (((MCSR state).mstatus).MPRV1) else (((MCSR state).mstatus).MPRV)))); (match (match (vmType (((MCSR state).mstatus).VM) state) with | (v0, s) => ((v0, v), s)) with | (v0, s) => (match v0 with | (v1, v2) => (match v1 with | .Mbare => ((some vAddr), s) | .Mbb => (match v2 with | .User => (((none : (Option (BitVec 64)))), s) | .Supervisor => (((none : (Option (BitVec 64)))), s) | .Hypervisor => (((none : (Option (BitVec 64)))), s) | .Machine => ((some vAddr), s)) | .Mbbid => (match v2 with | .User => (((none : (Option (BitVec 64)))), s) | .Supervisor => (((none : (Option (BitVec 64)))), s) | .Hypervisor => (((none : (Option (BitVec 64)))), s) | .Machine => ((some vAddr), s)) | .Sv32 => (match v2 with | .User => (((none : (Option (BitVec 64)))), s) | .Supervisor => (((none : (Option (BitVec 64)))), s) | .Hypervisor => (((none : (Option (BitVec 64)))), s) | .Machine => ((some vAddr), s)) | .Sv39 => (match v2 with | .User => (translate64 ((vAddr, ((ft, ((ac, (v, 2))))))) s) | .Supervisor => (translate64 ((vAddr, ((ft, ((ac, (v, 2))))))) s) | .Hypervisor => (translate64 ((vAddr, ((ft, ((ac, (v, 2))))))) s) | .Machine => ((some vAddr), s)) | .Sv48 => (match v2 with | .User => (translate64 ((vAddr, ((ft, ((ac, (v, 3))))))) s) | .Supervisor => (translate64 ((vAddr, ((ft, ((ac, (v, 3))))))) s) | .Hypervisor => (translate64 ((vAddr, ((ft, ((ac, (v, 3))))))) s) | .Machine => ((some vAddr), s)) | .Sv57 => (match v2 with | .User => (((none : (Option (BitVec 64)))), s) | .Supervisor => (((none : (Option (BitVec 64)))), s) | .Hypervisor => (((none : (Option (BitVec 64)))), s) | .Machine => ((some vAddr), s)) | .Sv64 => (match v2 with | .User => (((none : (Option (BitVec 64)))), s) | .Supervisor => (((none : (Option (BitVec 64)))), s) | .Hypervisor => (((none : (Option (BitVec 64)))), s) | .Machine => ((some vAddr), s)))))))
+
 /-- HOL `riscv$boolify8` (`boolify8_def`), generated by `bitstringLib.bitify_boolify` for an L3 `BL` call (no source declaration); mechanically rendered from the elaborated HOL definition. Flapjack infrastructure, untagged. -/
 def boolify8 (w : (BitVec 8)) : (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × Bool))))))) :=
   ((w.getLsbD 7), (((w.getLsbD 6), (((w.getLsbD 5), (((w.getLsbD 4), (((w.getLsbD 3), (((w.getLsbD 2), (((w.getLsbD 1), (w.getLsbD 0))))))))))))))
@@ -173,6 +196,11 @@ def «write'Skip» (value : (BitVec 64)) : (riscv_state → riscv_state) :=
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "rawReadInst_def"]
 def rawReadInst (pAddr : (BitVec 64)) : (riscv_state → (rawInstType × riscv_state)) :=
   (fun (state : riscv_state) => (match (boolify8 (state.MEM8 pAddr)) with | (_b_7, _b_6, _b_5, _b_4, _b_3, _b_2, b_1, b_0) => (if (b_1 && b_0) then ((let s : riscv_state := («write'Skip» (BitVec.ofNat 64 4) state); (((rawInstType.Word ((BitVec.setWidth 32 (((s.MEM8 ((pAddr + (BitVec.ofNat 64 3))))) ++ ((BitVec.setWidth 24 (((s.MEM8 ((pAddr + (BitVec.ofNat 64 2))))) ++ ((BitVec.setWidth 16 (((s.MEM8 ((pAddr + (BitVec.ofNat 64 1))))) ++ (s.MEM8 pAddr)))))))))))), s))) else ((let s : riscv_state := («write'Skip» (BitVec.ofNat 64 2) state); (((rawInstType.Half ((BitVec.setWidth 16 (((s.MEM8 ((pAddr + (BitVec.ofNat 64 1))))) ++ (s.MEM8 pAddr)))))), s))))))
+
+/-- HOL `riscv_step$Fetch` (`Fetch_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "Fetch_def"]
+noncomputable def Fetch (s : riscv_state) : (rawInstType × riscv_state) :=
+  (match (translateAddr (((PC s), (fetchType.Instruction, accessType.Read))) s) with | (w, s_1) => (rawReadInst (holThe w) s_1))
 
 /-- HOL `riscv$boolify32` (`boolify32_def`), generated by `bitstringLib.bitify_boolify` for an L3 `BL` call (no source declaration); mechanically rendered from the elaborated HOL definition. Flapjack infrastructure, untagged. -/
 def boolify32 (w : (BitVec 32)) : (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × Bool))))))))))))))))))))))))))))))) :=
@@ -625,6 +653,34 @@ def signalAddressException (arg0 : (ExceptionType × (BitVec 64))) : (riscv_stat
   | (e, vAddr) =>
   (fun (state : riscv_state) => (setTrap ((e, (some vAddr))) state))
 
+/-- HOL `riscv$dfn'SW` (`dfn'SW_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'SW_def"]
+def «dfn'SW» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rs1, (rs2, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (rawWriteData ((pAddr, (((GPR rs2 s), 4)))) s)))))
+
+/-- HOL `riscv$dfn'SH` (`dfn'SH_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'SH_def"]
+def «dfn'SH» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rs1, (rs2, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (rawWriteData ((pAddr, (((GPR rs2 s), 2)))) s)))))
+
+/-- HOL `riscv$dfn'SD` (`dfn'SD_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'SD_def"]
+def «dfn'SD» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rs1, (rs2, offs)) =>
+  (fun (state : riscv_state) => (match (in32BitMode () state) with | (v, s) => (if v then (signalException ExceptionType.Illegal_Instr s) else ((let v_1 : (BitVec 64) := ((GPR rs1 s) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v_1, (fetchType.Data, accessType.Write))) s) with | (v0, s_1) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v_1) s_1) | some pAddr => (rawWriteData ((pAddr, (((GPR rs2 s_1), 8)))) s_1))))))))
+
+/-- HOL `riscv$dfn'SB` (`dfn'SB_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'SB_def"]
+def «dfn'SB» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rs1, (rs2, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (rawWriteData ((pAddr, (((GPR rs2 s), 1)))) s)))))
+
 /-- HOL `riscv$dfn'SRLW` (`dfn'SRLW_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'SRLW_def"]
 def «dfn'SRLW» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) : (riscv_state → riscv_state) :=
@@ -800,6 +856,55 @@ def «dfn'DIV» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) : (riscv_sta
   | (rd, (rs1, rs2)) =>
   (fun (state : riscv_state) => (if (((GPR rs2 state) == (BitVec.ofNat 64 0))) then ((«write'GPR» ((((BitVec.signExtend 64 (BitVec.ofNat 1 1))), rd)) state)) else ((«write'GPR» ((((BitVec.sdiv (GPR rs1 state) (GPR rs2 state))), rd)) state))))
 
+/-- HOL `riscv$dfn'LWU` (`dfn'LWU_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'LWU_def"]
+def «dfn'LWU» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, (rs1, offs)) =>
+  (fun (state : riscv_state) => (match (in32BitMode () state) with | (v, s) => (if v then (signalException ExceptionType.Illegal_Instr s) else ((let v_1 : (BitVec 64) := ((GPR rs1 s) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v_1, (fetchType.Data, accessType.Read))) s) with | (v0, s_1) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v_1) s_1) | some pAddr => («write'GPR» ((((BitVec.setWidth 64 ((holWordExtract 32 31 0 (rawReadData pAddr s_1))))), rd)) s_1))))))))
+
+/-- HOL `riscv$dfn'LW` (`dfn'LW_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'LW_def"]
+def «dfn'LW» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, (rs1, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Read))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v) s) | some pAddr => («write'GPR» ((((BitVec.signExtend 64 ((holWordExtract 32 31 0 (rawReadData pAddr s))))), rd)) s)))))
+
+/-- HOL `riscv$dfn'LHU` (`dfn'LHU_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'LHU_def"]
+def «dfn'LHU» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, (rs1, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Read))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v) s) | some pAddr => («write'GPR» ((((BitVec.setWidth 64 ((holWordExtract 16 15 0 (rawReadData pAddr s))))), rd)) s)))))
+
+/-- HOL `riscv$dfn'LH` (`dfn'LH_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'LH_def"]
+def «dfn'LH» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, (rs1, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Read))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v) s) | some pAddr => («write'GPR» ((((BitVec.signExtend 64 ((holWordExtract 16 15 0 (rawReadData pAddr s))))), rd)) s)))))
+
+/-- HOL `riscv$dfn'LD` (`dfn'LD_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'LD_def"]
+def «dfn'LD» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, (rs1, offs)) =>
+  (fun (state : riscv_state) => (match (in32BitMode () state) with | (v, s) => (if v then (signalException ExceptionType.Illegal_Instr s) else ((let v_1 : (BitVec 64) := ((GPR rs1 s) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v_1, (fetchType.Data, accessType.Read))) s) with | (v0, s_1) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v_1) s_1) | some pAddr => («write'GPR» (((rawReadData pAddr s_1), rd)) s_1))))))))
+
+/-- HOL `riscv$dfn'LBU` (`dfn'LBU_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'LBU_def"]
+def «dfn'LBU» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, (rs1, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Read))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v) s) | some pAddr => («write'GPR» ((((BitVec.setWidth 64 ((holWordExtract 8 7 0 (rawReadData pAddr s))))), rd)) s)))))
+
+/-- HOL `riscv$dfn'LB` (`dfn'LB_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'LB_def"]
+def «dfn'LB» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, (rs1, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Read))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v) s) | some pAddr => («write'GPR» ((((BitVec.signExtend 64 ((holWordExtract 8 7 0 (rawReadData pAddr s))))), rd)) s)))))
+
 /-- HOL `riscv$dfn'FETCH_MISALIGNED` (`dfn'FETCH_MISALIGNED_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FETCH_MISALIGNED_def"]
 def «dfn'FETCH_MISALIGNED» (addr : (BitVec 64)) : (riscv_state → riscv_state) :=
@@ -820,10 +925,24 @@ def fpr (n : (BitVec 5)) : (riscv_state → (BitVec 64)) :=
 def FPRS (n : (BitVec 5)) : (riscv_state → (BitVec 32)) :=
   (fun (state : riscv_state) => (holWordExtract 32 31 0 (fpr n state)))
 
+/-- HOL `riscv$dfn'FSW` (`dfn'FSW_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FSW_def"]
+def «dfn'FSW» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rs1, (rs2, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (rawWriteData ((pAddr, ((((BitVec.setWidth 64 (FPRS rs2 s))), 4)))) s)))))
+
 /-- HOL `riscv$FPRD` (`FPRD_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FPRD_def"]
 def FPRD (n : (BitVec 5)) : (riscv_state → (BitVec 64)) :=
   (fun (state : riscv_state) => (fpr n state))
+
+/-- HOL `riscv$dfn'FSD` (`dfn'FSD_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FSD_def"]
+def «dfn'FSD» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rs1, (rs2, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (rawWriteData ((pAddr, (((FPRD rs2 s), 8)))) s)))))
 
 /-- HOL `riscv$write'fpr` (`write'fpr_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "write'fpr_def"]
@@ -839,12 +958,26 @@ def «write'FPRS» (arg0 : ((BitVec 32) × (BitVec 5))) : (riscv_state → riscv
   | (value, n) =>
   (fun (state : riscv_state) => («write'fpr» ((((holBitFieldInsert 31 0 value (fpr n state))), n)) state))
 
+/-- HOL `riscv$dfn'FLW` (`dfn'FLW_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FLW_def"]
+def «dfn'FLW» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, (rs1, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Read))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v) s) | some pAddr => («write'FPRS» ((((holWordExtract 32 31 0 (rawReadData pAddr s))), rd)) s)))))
+
 /-- HOL `riscv$write'FPRD` (`write'FPRD_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "write'FPRD_def"]
 def «write'FPRD» (arg0 : ((BitVec 64) × (BitVec 5))) : (riscv_state → riscv_state) :=
   match arg0 with
   | (value, n) =>
   (fun (state : riscv_state) => («write'fpr» (value, n) state))
+
+/-- HOL `riscv$dfn'FLD` (`dfn'FLD_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'FLD_def"]
+def «dfn'FLD» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (rd, (rs1, offs)) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := ((GPR rs1 state) + (BitVec.signExtend 64 offs)); (match (translateAddr ((v, (fetchType.Data, accessType.Read))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v) s) | some pAddr => («write'FPRD» (((rawReadData pAddr s), rd)) s)))))
 
 /-- HOL `riscv$FP32_Sign` (`FP32_Sign_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FP32_Sign_def"]
@@ -1192,6 +1325,160 @@ def ReserveLoad (state : riscv_state) : (Option (BitVec 64)) :=
 noncomputable def matchLoadReservation (vAddr : (BitVec 64)) : (riscv_state → Bool) :=
   (fun (state : riscv_state) => (((ReserveLoad state).isSome) && ((((holThe (ReserveLoad state))) == vAddr))))
 
+/-- HOL `riscv$dfn'SC_W` (`dfn'SC_W_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'SC_W_def"]
+noncomputable def «dfn'SC_W» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 2 1 0 v) == (BitVec.ofNat 2 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((if ((!(matchLoadReservation v state))) then ((«write'GPR» (((BitVec.ofNat 64 1), rd)) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Read))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => («write'ReserveLoad» ((none : (Option (BitVec 64)))) ((«write'GPR» (((BitVec.ofNat 64 0), rd)) ((rawWriteData ((pAddr, (((GPR rs2 s), 4)))) s)))))))))))))
+
+/-- HOL `riscv$dfn'SC_D` (`dfn'SC_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'SC_D_def"]
+noncomputable def «dfn'SC_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (match (in32BitMode () state) with | (v, s) => (if v then (signalException ExceptionType.Illegal_Instr s) else ((let v_1 : (BitVec 64) := (GPR rs1 s); (if ((!(((holWordExtract 3 2 0 v_1) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v_1) s)) else ((if ((!(matchLoadReservation v_1 s))) then ((«write'GPR» (((BitVec.ofNat 64 1), rd)) s)) else ((match (translateAddr ((v_1, (fetchType.Data, accessType.Read))) s) with | (v0, s_1) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v_1) s_1) | some pAddr => («write'ReserveLoad» ((none : (Option (BitVec 64)))) ((«write'GPR» (((BitVec.ofNat 64 0), rd)) ((rawWriteData ((pAddr, (((GPR rs2 s_1), 8)))) s_1))))))))))))))))
+
+/-- HOL `riscv$dfn'LR_W` (`dfn'LR_W_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'LR_W_def"]
+def «dfn'LR_W» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × (BitVec 5))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, rs1))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 2 1 0 v) == (BitVec.ofNat 2 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Read))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v) s) | some pAddr => («write'ReserveLoad» (some v) ((«write'GPR» ((((BitVec.signExtend 64 ((holWordExtract 32 31 0 (rawReadData pAddr s))))), rd)) s)))))))))
+
+/-- HOL `riscv$dfn'LR_D` (`dfn'LR_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'LR_D_def"]
+def «dfn'LR_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × (BitVec 5))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, rs1))) =>
+  (fun (state : riscv_state) => (match (in32BitMode () state) with | (v, s) => (if v then (signalException ExceptionType.Illegal_Instr s) else ((let v_1 : (BitVec 64) := (GPR rs1 s); (if ((!(((holWordExtract 3 2 0 v_1) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v_1) s)) else ((match (translateAddr ((v_1, (fetchType.Data, accessType.Read))) s) with | (v0, s_1) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v_1) s_1) | some pAddr => («write'ReserveLoad» (some v_1) ((«write'GPR» (((rawReadData pAddr s_1), rd)) s_1))))))))))))
+
+/-- HOL `riscv$dfn'AMOXOR_W` (`dfn'AMOXOR_W_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOXOR_W_def"]
+def «dfn'AMOXOR_W» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 2 1 0 v) == (BitVec.ofNat 2 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (BitVec.signExtend 64 ((holWordExtract 32 31 0 (rawReadData pAddr s)))); (rawWriteData ((pAddr, (((((GPR rs2 s) ^^^ v_1)), 4)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOXOR_D` (`dfn'AMOXOR_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOXOR_D_def"]
+def «dfn'AMOXOR_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 3 2 0 v) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (rawReadData pAddr s); (rawWriteData ((pAddr, (((((GPR rs2 s) ^^^ v_1)), 8)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOSWAP_W` (`dfn'AMOSWAP_W_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOSWAP_W_def"]
+def «dfn'AMOSWAP_W» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 2 1 0 v) == (BitVec.ofNat 2 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (rawWriteData ((pAddr, (((GPR rs2 s), 4)))) ((«write'GPR» ((((BitVec.signExtend 64 ((holWordExtract 32 31 0 (rawReadData pAddr s))))), rd)) s)))))))))
+
+/-- HOL `riscv$dfn'AMOSWAP_D` (`dfn'AMOSWAP_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOSWAP_D_def"]
+def «dfn'AMOSWAP_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 3 2 0 v) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (rawWriteData ((pAddr, (((GPR rs2 s), 8)))) ((«write'GPR» (((rawReadData pAddr s), rd)) s)))))))))
+
+/-- HOL `riscv$dfn'AMOOR_W` (`dfn'AMOOR_W_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOOR_W_def"]
+def «dfn'AMOOR_W» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 2 1 0 v) == (BitVec.ofNat 2 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (BitVec.signExtend 64 ((holWordExtract 32 31 0 (rawReadData pAddr s)))); (rawWriteData ((pAddr, (((((GPR rs2 s) ||| v_1)), 4)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOOR_D` (`dfn'AMOOR_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOOR_D_def"]
+def «dfn'AMOOR_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 3 2 0 v) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (rawReadData pAddr s); (rawWriteData ((pAddr, (((((GPR rs2 s) ||| v_1)), 8)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOMIN_W` (`dfn'AMOMIN_W_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOMIN_W_def"]
+def «dfn'AMOMIN_W» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 2 1 0 v) == (BitVec.ofNat 2 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (BitVec.signExtend 64 ((holWordExtract 32 31 0 (rawReadData pAddr s)))); (rawWriteData ((pAddr, ((((if BitVec.slt (GPR rs2 s) v_1 then (GPR rs2 s) else v_1)), 4)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOMIN_D` (`dfn'AMOMIN_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOMIN_D_def"]
+def «dfn'AMOMIN_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 3 2 0 v) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (rawReadData pAddr s); (rawWriteData ((pAddr, ((((if BitVec.slt (GPR rs2 s) v_1 then (GPR rs2 s) else v_1)), 8)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOMINU_W` (`dfn'AMOMINU_W_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOMINU_W_def"]
+def «dfn'AMOMINU_W» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 2 1 0 v) == (BitVec.ofNat 2 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (BitVec.signExtend 64 ((holWordExtract 32 31 0 (rawReadData pAddr s)))); (rawWriteData ((pAddr, ((((if BitVec.ult (GPR rs2 s) v_1 then (GPR rs2 s) else v_1)), 4)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOMINU_D` (`dfn'AMOMINU_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOMINU_D_def"]
+def «dfn'AMOMINU_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 3 2 0 v) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (rawReadData pAddr s); (rawWriteData ((pAddr, ((((if BitVec.ult (GPR rs2 s) v_1 then (GPR rs2 s) else v_1)), 8)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOMAX_W` (`dfn'AMOMAX_W_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOMAX_W_def"]
+def «dfn'AMOMAX_W» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 2 1 0 v) == (BitVec.ofNat 2 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (BitVec.signExtend 64 ((holWordExtract 32 31 0 (rawReadData pAddr s)))); (rawWriteData ((pAddr, ((((if BitVec.slt (GPR rs2 s) v_1 then v_1 else (GPR rs2 s))), 4)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOMAX_D` (`dfn'AMOMAX_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOMAX_D_def"]
+def «dfn'AMOMAX_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 3 2 0 v) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (rawReadData pAddr s); (rawWriteData ((pAddr, ((((if BitVec.slt (GPR rs2 s) v_1 then v_1 else (GPR rs2 s))), 8)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOMAXU_W` (`dfn'AMOMAXU_W_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOMAXU_W_def"]
+def «dfn'AMOMAXU_W» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 2 1 0 v) == (BitVec.ofNat 2 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (BitVec.signExtend 64 ((holWordExtract 32 31 0 (rawReadData pAddr s)))); (rawWriteData ((pAddr, ((((if BitVec.ult (GPR rs2 s) v_1 then v_1 else (GPR rs2 s))), 4)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOMAXU_D` (`dfn'AMOMAXU_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOMAXU_D_def"]
+def «dfn'AMOMAXU_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 3 2 0 v) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (rawReadData pAddr s); (rawWriteData ((pAddr, ((((if BitVec.ult (GPR rs2 s) v_1 then v_1 else (GPR rs2 s))), 8)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOAND_W` (`dfn'AMOAND_W_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOAND_W_def"]
+def «dfn'AMOAND_W» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 2 1 0 v) == (BitVec.ofNat 2 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (BitVec.signExtend 64 ((holWordExtract 32 31 0 (rawReadData pAddr s)))); (rawWriteData ((pAddr, (((((GPR rs2 s) &&& v_1)), 4)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOAND_D` (`dfn'AMOAND_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOAND_D_def"]
+def «dfn'AMOAND_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 3 2 0 v) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (rawReadData pAddr s); (rawWriteData ((pAddr, (((((GPR rs2 s) &&& v_1)), 8)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOADD_W` (`dfn'AMOADD_W_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOADD_W_def"]
+def «dfn'AMOADD_W» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 2 1 0 v) == (BitVec.ofNat 2 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (BitVec.signExtend 64 ((holWordExtract 32 31 0 (rawReadData pAddr s)))); (rawWriteData ((pAddr, (((((GPR rs2 s) + v_1)), 4)))) ((«write'GPR» (v_1, rd) s))))))))))
+
+/-- HOL `riscv$dfn'AMOADD_D` (`dfn'AMOADD_D_def`), mechanically rendered from the elaborated HOL definition. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'AMOADD_D_def"]
+def «dfn'AMOADD_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, (rs1, rs2)))) =>
+  (fun (state : riscv_state) => (let v : (BitVec 64) := (GPR rs1 state); (if ((!(((holWordExtract 3 2 0 v) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v) state)) else ((match (translateAddr ((v, (fetchType.Data, accessType.Write))) state) with | (v0, s) => (match v0 with | none => (signalAddressException (ExceptionType.Store_AMO_Fault, v) s) | some pAddr => (let v_1 : (BitVec 64) := (rawReadData pAddr s); (rawWriteData ((pAddr, (((((GPR rs2 s) + v_1)), 8)))) ((«write'GPR» (v_1, rd) s))))))))))
+
 /-- HOL `riscv$write'PC` (`write'PC_def`), mechanically rendered from the elaborated HOL definition. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "write'PC_def"]
 def «write'PC» (value : (BitVec 64)) : (riscv_state → riscv_state) :=
@@ -1206,5 +1493,6 @@ def update_pc (v : (BitVec 64)) (s : riscv_state) : (Option riscv_state) :=
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "NextFetch_def"]
 def NextFetch (state : riscv_state) : (Option TransferControl) :=
   (state.c_NextFetch state.procID)
+
 
 end Flapjack.RiscV.L3

@@ -22,9 +22,13 @@ This module holds the remaining renderings, each following the cited HOL definit
   (`ASCIInumbersScript.sml:18-85`, `wordsScript.sml:114`): `n2s b HEX`.
 * `bool$ARB` as an uninterpreted constant.
 
-As elsewhere in Flapjack, HOL's FCP index `w ' i` is `BitVec.getLsbD`, which is `false` for an
-index past the width where HOL leaves the value unspecified. HOL's `x DIV 0`/`x MOD 0` and
-`word_div`/`word_mod` by zero are likewise unspecified, and are Lean's `0`/`x`.
+HOL `word_bit i w` explicitly guards i by the word's highest valid bit,
+so `BitVec.getLsbD` supplies its false result outside the width. Direct FCP
+indices occur behind the original word_bits/insert/replicate guards; their
+in-range bit behavior is preserved. The pinned arithmetic DIV_def/MOD_def
+explicitly specify x DIV 0 = 0 and x MOD 0 = x, matching Lean Nat and the
+BitVec unsigned division/modulo renderings. Signed quotient/remainder follow
+the original four sign branches of word_quot_def/word_rem_def.
 -/
 
 namespace Flapjack.RiscV.L3

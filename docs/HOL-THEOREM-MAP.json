@@ -63128,5 +63128,333 @@
     "lean_name": "NextFetch",
     "statement_status": "pending_statement_review",
     "reviewer": "flapjack-opus2 2026-10-02 (bead flapjack-pxn.18.5.13.8): mechanical rendering by scripts/hol_terms_to_lean.py of the elaborated HOL definition theorem exported by scripts/l3/export_riscv_defs.sml; statement review and parity probes are open."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "walk64_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "walk64",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "translate64_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "translate64",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "translateAddr_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "translateAddr",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "Fetch_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "Fetch",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SH_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SH\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SD_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SD\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SB_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SB\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LWU_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'LWU\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'LW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LHU_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'LHU\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LH_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'LH\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LD_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'LD\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LBU_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'LBU\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LB_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'LB\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FSW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSD_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FSD\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FLW_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FLW\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FLD_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'FLD\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SC_W_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SC_W\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SC_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'SC_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LR_W_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'LR_W\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LR_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'LR_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOXOR_W_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOXOR_W\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOXOR_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOXOR_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOSWAP_W_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOSWAP_W\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOSWAP_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOSWAP_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOOR_W_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOOR_W\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOOR_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOOR_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOMIN_W_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOMIN_W\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOMIN_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOMIN_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOMINU_W_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOMINU_W\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOMINU_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOMINU_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOMAX_W_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOMAX_W\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOMAX_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOMAX_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOMAXU_W_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOMAXU_W\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOMAXU_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOMAXU_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOAND_W_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOAND_W\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOAND_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOAND_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOADD_W_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOADD_W\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOADD_D_def",
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "\u00abdfn'AMOADD_D\u00bb",
+    "statement_status": "pending_statement_review",
+    "reviewer": "flapjack-sol-c recovered full MMU/Fetch closure2026-10-02 bead.18.5.13.8.1: numeric greater-than rendering preserves original Nat comparison, walk64 terminates on original page-table level with original nonzero guard. Full literal exported equations rendered; complete primitive/body source review and whole transition acceptance remain open. No reduced ISA/evaluator."
   }
 ]

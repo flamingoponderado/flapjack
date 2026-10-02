@@ -1,0 +1,12 @@
+read_aligned=0x706050403020100w
+read_unaligned=0xA09080706050403w
+read_cross_word=0xE0D0C0B0A090807w
+translate_bare=SOME 0x12345w
+walk_invalid_level0=NONE
+walk_invalid_level2=NONE
+fetch_half=Half 256w
+fetch_half_skip=2w
+fetch_word=Word 0x3020103w
+fetch_word_skip=4w
+load_double=0xF0E0D0C0B0A0908w
+store_cross_word=0xE0D0C0B0A09ABCDw

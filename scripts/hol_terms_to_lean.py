@@ -707,6 +707,7 @@ CONSTANTS = {
     ('arithmetic', '*'): bin_op('*'),
     ('arithmetic', 'DIV'): bin_op('/'),
     ('arithmetic', 'EXP'): bin_op('^'),
+    ('arithmetic', '>'): (2, lambda r, c, xs, raw: f'(decide ({xs[0]} > {xs[1]}))'),
     ('arithmetic', '<='): (2, lambda r, c, xs, raw: f'(decide ({xs[0]} ≤ {xs[1]}))'),
     ('prim_rec', '<'): (2, lambda r, c, xs, raw: f'(decide ({xs[0]} < {xs[1]}))'),
     ('integer', 'int_neg'): (1, lambda r, c, xs, raw: f'(-{xs[0]})'),
@@ -905,6 +906,9 @@ if __name__ == '__main__':
             print(f'/-- HOL `{thy}${name}` (`{defname}`), mechanically rendered from the elaborated HOL definition. -/')
             print(f'@[hol "{paths[thy]}" "{defname}"]')
         print(('noncomputable ' if nc else '') + text)
+        if (thy, name) == ('riscv', 'walk64'):
+            print('termination_by arg0.2.2.2.2.2')
+            print('decreasing_by simp_wf; simp_all only [beq_iff_eq]; omega')
         print()
     print(f'-- emitted {len(emitted)}, failed {len(failed)}', file=sys.stderr)
     for f in failed:

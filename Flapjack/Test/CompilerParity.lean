@@ -1,3 +1,4 @@
+import Flapjack.Test.L3RiscvMmuFetchParity
 import Flapjack.Test.LabToTargetZeroPreservationParity
 import Flapjack.Test.LabToTargetUpdatePositionParity
 import Flapjack.Test.LabToTargetUpdateSimilarityParity
