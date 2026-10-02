@@ -61705,5 +61705,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-02 at342-348: entire unconditional LENGTH(actual init_stubs gen_gc max_heap k start)+2=stack_num_stubs statement retained, arbitrary Bool and three Nat parameters and positive-width native HolProg carrier. Uses actual reviewed initStubs including initialization/tailcall and two word-valued halts, count5 from reviewed backend_common. Only standard type-indexed word carrier translation with NeZero width, no success/evaluation/invariant premise. Literal original EVAL_TAC replay hyp=[] and complete inferred generic types captured; widths1/8/64 count5 plus universal kernel consumer. No production wiring claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "stub_names_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/StubNames.lean",
+    "lean_name": "stubNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against original619-624: entire unit argument, ordered raise_stub_location/_Raise and store_consts_stub_location/_StoreConsts pairs retained; actual reviewed WordLang locations evaluate5/6; exact native implode bytes. Full original unit->(num#mlstring)list type/equation captured; native MlString character list, no String carrier translation or additional premise. Original full values/bytes/count observations match kernel fixtures. Actual artifact-format symbol dispatch remains separately tracked parent production wiring; source table alone is not executed-route completion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "stub_names_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/StubNames.lean",
+    "lean_name": "stubNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against original642-644: entire unit argument, singleton gc_stub_location/_GC pair retained; actual reviewed StackLang location evaluates4; exact native implode bytes. Full original unit->(num#mlstring)list type/equation captured; native MlString character list, no String carrier translation or additional premise. Original full values/bytes/count observations match kernel fixtures. Actual artifact-format symbol dispatch remains separately tracked parent production wiring; source table alone is not executed-route completion."
   }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Test.BackendRuntimeStubNamesParity
 import Flapjack.Test.StackRemoveStubNamesParity
 import Flapjack.Test.BalancedMapInsertCorrectParity
 import Flapjack.Test.FiniteMapCardUpdateParity
