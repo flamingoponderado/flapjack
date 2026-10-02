@@ -6045,6 +6045,20 @@ original reference sources are edited. All static/dynamic mode validation,
 register/status/delta/flag/other-core/trap observations retain original semantics.
 These finite/infinity rows do not fix arbitrary NaN output payloads or establish
 full model/compiler correctness. SOUNDNESS item8 remains inherited.
+
+### Full native L3 single/double arithmetic equations
+
+`l3_riscv_arithmetic_probeScript.sml` captures140 original FADD/FSUB/FMUL/FDIV
+S/D cases:132numeric ten-field state observations and8closed whole-state
+FDIV negative-zero/zero equations. Inputs cover all four supported rounding modes,
+dynamic rounding, invalid static/dynamic modes, cancellation, ties, signed zero
+and infinities. Observations include source/destination registers, MFS/MSD, delta,
+NV/NX, another core and the illegal-instruction trap. The NaN equations preserve
+the original symbolic quiet-NaN choice and complete writeFPRS/FPRD result; they
+do not assign a numeric payload. `Flapjack.Test.L3RiscvArithmeticParity`
+kernel-checks all140matching cases. The existing rational-real rendering
+assumption (SOUNDNESS item8) remains; regression evidence does not establish
+HOL-to-Lean equivalence or full model/compiler correctness.
 Assembler-naming Inst probe captures the original generic seven-guard case application with no open hypotheses and900 direct validity/guard/target observations (735T165F). Kernel fixtures include224 full seven-guard theorem applications and cover widths1/2/8/32/64/80, all arithmetic forms, eight memory operations and sixteen FP forms, both policy flags across families,70bit natural registers/frame slots, odd physical registers,32/64-bit FP pair behavior, ISA restrictions, underflow and strict frame minimum. This is regression evidence, not HOL-to-Lean equivalence or full naming/compiler correctness. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_inst_probeScript.sml.
 
 ### Generational allocator partial-case statement capture
