@@ -66816,5 +66816,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-remove-seq: genuine original comp_correct Seq1645-1663, full theorem1481-1490. Same four evaluation/nonError/full26conjunct state relation/register bound premises and existential target run at ck+target.clock; same Halt/TimeOut/FinalFFI ffi equality versus full stateRelHOL result split. Only original subprogram induction hypotheses: first fixed at actual source, second guarded by actual first NONE run; both retain arbitrary result/poststate/target/pointer/bounds/jump quantifiers. Rewritten HOL evaluator equation recovered in Lean from checked unconditional full fixClockEvaluate; actual target NONE run extended by original evaluateAddClock (NONE is not TimeOut), additional allowances combined by Nat associativity/commutativity. No target-evaluation, global simulation law, extra clock bound or successful-pass premise. Canonical native finite-support regs/fpRegs/store witness reexported from owning imported state; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scoped HOL statement proved by literal original Seq case body, prefixed only rpt strip_tac for standalone constructor goal."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/If.lean",
+    "lean_name": "compCorrectIf",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-remove-if: genuine original comp_correct If1687-1702/full theorem1481-1490. Same four actual source evaluation/nonError/full26state relation/register bound premises; same existential native target run at ck+target.clock and Halt/TimeOut/FinalFFI ffi equality versus full stateRelHOL result split. Only original branch IHs guarded by actual source get_var/get_var_imm lookups and word_cmp SOME true/false; both retain arbitrary result/poststate/target/pointer/bounds/jump quantifiers. Target register/immediate lookups derived from full relation and original operand register bound, unchanged under added clock; comparison follows same native wordSemWordCmp on identical full WordLocW values. Native comp preserves condition and compiles actual branches. No target-evaluation, target lookup/comparison, unconditional simulation or successful-pass premise added. Invalid source lookup/comparison errors eliminated only by original nonError premise. Imported owning native finite-support regs/fpRegs/store codec witness reexported; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scopedHOL statement proved with literal original If case body, only standalone rpt strip_tac prefix and recreated original local state_rel_get_var helper."
   }
 ]

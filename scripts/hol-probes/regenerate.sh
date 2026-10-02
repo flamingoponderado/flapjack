@@ -5610,3 +5610,7 @@ run_probe l3_mmu_tlb_probeScript.sml l3_mmu_tlb_probe.out \
 run_probe l3_mmu_write_frame_probeScript.sml l3_mmu_write_frame_probe.out \
   raw_write_frame \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe stack_remove_comp_if_probeScript.sml stack_remove_comp_if_probe.out \
+  cc_if_statement cc_if_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
