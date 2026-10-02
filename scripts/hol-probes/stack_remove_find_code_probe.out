@@ -1,0 +1,4 @@
+find_code_lemma_statement=state_rel jump off k s t1 ∧ (case dest of INL v2 => T | INR i => i < k) ∧ find_code dest s.regs s.code = SOME x ⇒ find_code dest t1.regs t1.code = SOME (comp jump off k x) ∧ reg_bound x k
+find_code_lemma_proved=T
+find_code_lemma2_statement=state_rel jump off k s t1 ∧ (case dest of INL v2 => T | INR i => i < k) ∧ find_code dest (s.regs \\ x1) s.code = SOME x ⇒ find_code dest (t1.regs \\ x1) t1.code = SOME (comp jump off k x) ∧ reg_bound x k
+find_code_lemma2_proved=T

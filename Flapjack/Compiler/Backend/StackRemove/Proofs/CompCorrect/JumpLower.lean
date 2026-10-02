@@ -1,0 +1,139 @@
+import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
+namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.JumpLower
+open Flapjack Compiler.Backend.StackLang Compiler.Encoders.Asm StackSemEvaluate StackSemStateOps
+
+/-- Canonical owning-state roundtrip; Flapjack representation infrastructure. -/
+theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
+    {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : StackSemStateBroad width C F) (h : state.FiniteSupport),
+      (StackSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : StackSemStateFiniteExact width C F,
+      StackSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  StackSemStateSupport.holFmapAsFiniteSupportWitness
+
+/-- Genuine original JumpLower case: original four premises and only the
+actual source operand/comparison/code-lookup/nonzero-clock guarded callee IH.
+Every original body-simulation quantifier and result alternative is retained. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
+  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem compCorrectJumpLower {width : Nat} [NeZero width] {C F : Type}
+    (first second label : Nat)
+    (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
+    (postSource target : StackSemStateFiniteExact width C F)
+    (pointer : Nat) (bounds : BitVec width × BitVec width) (jump : Bool)
+    (calleeIH : ∀ (left right : BitVec width) (program : HolProg width),
+      getVar first source = some (.word left) → getVar second source = some (.word right) →
+      wordCmpHOL .lower left right = true → sptLookup label source.code = some program →
+      source.clock ≠ 0 →
+      ∀ (r : Option (StackSemResult width)) (post t : StackSemStateFiniteExact width C F)
+        (k : Nat) (off : BitVec width × BitVec width) (j : Bool),
+      evaluate (program, decClock source) = (r, post) ∧ r ≠ some .error ∧
+        stateRelHOL j off k (decClock source) t ∧ StackProps.regBound program k →
+      ∃ clock postTarget,
+        evaluate (comp j off k program, {t with clock := clock + t.clock}) = (r, postTarget) ∧
+        (match r with
+         | some (.halt _) | some .timeOut | some (.finalFFI _) => postTarget.ffi = post.ffi
+         | _ => stateRelHOL j off k post postTarget))
+    (hypothesis : evaluate (.jumpLower first second label, source) = (result, postSource) ∧
+      result ≠ some .error ∧ stateRelHOL jump bounds pointer source target ∧
+      StackProps.regBound (.jumpLower first second label : HolProg width) pointer) :
+    ∃ clock postTarget,
+      evaluate (comp jump bounds pointer (.jumpLower first second label),
+        {target with clock := clock + target.clock}) = (result, postTarget) ∧
+      (match result with
+       | some (.halt _) | some .timeOut | some (.finalFFI _) => postTarget.ffi = postSource.ffi
+       | _ => stateRelHOL jump bounds pointer postSource postTarget) := by
+  rcases hypothesis with ⟨sourceRun, notError, relation, bound⟩
+  change first < pointer ∧ second < pointer at bound
+  have readFirst := RelationLaws.stateRelGetVar jump bounds pointer first source target ⟨relation, bound.1⟩
+  have readSecond := RelationLaws.stateRelGetVar jump bounds pointer second source target ⟨relation, bound.2⟩
+  change source.regs.lookup first = target.regs.lookup first at readFirst
+  change source.regs.lookup second = target.regs.lookup second at readSecond
+  have clocks : target.clock = source.clock := relation.2.2.2.2.2.2.2.2.1
+  rw [evaluate_jumpLower] at sourceRun
+  cases hFirst : getVar first source with
+  | none =>
+    simp only [hFirst] at sourceRun
+    exact False.elim (notError (Prod.mk.inj sourceRun).1.symm)
+  | some left =>
+    cases left with
+    | loc name offset =>
+      simp only [hFirst] at sourceRun
+      exact False.elim (notError (Prod.mk.inj sourceRun).1.symm)
+    | word left =>
+      cases hSecond : getVar second source with
+      | none =>
+        simp only [hFirst, hSecond] at sourceRun
+        exact False.elim (notError (Prod.mk.inj sourceRun).1.symm)
+      | some right =>
+        cases right with
+        | loc name offset =>
+          simp only [hFirst, hSecond] at sourceRun
+          exact False.elim (notError (Prod.mk.inj sourceRun).1.symm)
+        | word right =>
+          simp only [hFirst, hSecond] at sourceRun
+          have targetFirst : target.regs.lookup first = some (.word left) := readFirst.symm.trans hFirst
+          have targetSecond : target.regs.lookup second = some (.word right) := readSecond.symm.trans hSecond
+          by_cases lower : wordCmpHOL .lower left right = true
+          · simp only [lower, if_true, StackSemControl.findCode] at sourceRun
+            cases lookup : sptLookup label source.code with
+            | none =>
+              simp only [lookup] at sourceRun
+              exact False.elim (notError (Prod.mk.inj sourceRun).1.symm)
+            | some program =>
+              simp only [lookup] at sourceRun
+              obtain ⟨targetLookup, bodyBound⟩ := FindCode.codeLookup jump bounds pointer label source target program relation lookup
+              by_cases zero : source.clock = 0
+              · simp only [zero, if_true] at sourceRun
+                rcases Prod.mk.inj sourceRun with ⟨resultEq, postEq⟩
+                subst result
+                subst postSource
+                refine ⟨0, emptyEnv target, ?_, ?_⟩
+                · simpa only [comp, Nat.zero_add] using
+                    (evaluate_jumpLower first second label target).trans (by
+                      simp only [getVar, targetFirst, targetSecond, lower, if_true,
+                        StackSemControl.findCode, targetLookup, clocks, zero])
+                · exact (RelationLaws.stateRelConst jump bounds pointer source target relation).2.2.2.2.1
+              · simp only [zero, if_false] at sourceRun
+                rcases bodyRun : evaluate (program, decClock source) with ⟨bodyResult, middle⟩
+                rw [bodyRun] at sourceRun
+                by_cases bad : StackSemControl.badFunReturn bodyResult = true
+                · simp only [bad, if_true] at sourceRun
+                  exact False.elim (notError (Prod.mk.inj sourceRun).1.symm)
+                · simp [bad] at sourceRun
+                  rcases sourceRun with ⟨resultEq, postEq⟩
+                  subst result
+                  subst postSource
+                  obtain ⟨clock, postTarget, targetRun, postRelation⟩ :=
+                    calleeIH left right program hFirst hSecond lower lookup zero bodyResult middle
+                      (decClock target) pointer bounds jump
+                      ⟨bodyRun, notError, RelationLaws.stateRelDecClock jump bounds pointer source target relation, bodyBound⟩
+                  refine ⟨clock, postTarget, ?_, ?_⟩
+                  swap
+                  · cases bodyResult with
+                    | none => exact postRelation
+                    | some r => cases r <;> exact postRelation
+                  have nonzero : clock + target.clock ≠ 0 := by omega
+                  have clockEq : decClock {target with clock := clock + target.clock} =
+                      {decClock target with clock := clock + (decClock target).clock} := by
+                    simp only [decClock]
+                    congr 1
+                    omega
+                  simp only [comp]
+                  rw [evaluate_jumpLower]
+                  simp only [getVar, targetFirst, targetSecond, StackSemControl.findCode,
+                    targetLookup, lower, if_true, nonzero, if_false]
+                  rw [clockEq, targetRun]
+                  simp [bad]
+          · simp [lower] at sourceRun
+            rcases sourceRun with ⟨resultEq, postEq⟩
+            subst result
+            subst postSource
+            refine ⟨0, target, ?_, relation⟩
+            simpa only [comp, Nat.zero_add] using
+              (evaluate_jumpLower first second label target).trans (by
+                simp [getVar, targetFirst, targetSecond, lower])
+end Flapjack.Compiler.Backend.StackRemove.CompCorrect.JumpLower
