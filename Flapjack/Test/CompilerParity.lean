@@ -1,6 +1,7 @@
 import Flapjack.Test.LabToTargetEncodingValidityClosureParity
 import Flapjack.Test.LabToTargetProgramByteLengthsParity
 import Flapjack.Test.LabToTargetPositionExtensionParity
+import Flapjack.Test.LabToTargetFetchSuccessorParity
 import Flapjack.Test.LabToTargetRemoveLabelsCorrectnessParity
 import Flapjack.Test.L3FetchPrimitivesParity
 import Flapjack.Test.L3MmuTranslateAddrParity
