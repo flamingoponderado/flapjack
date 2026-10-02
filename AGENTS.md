@@ -436,6 +436,20 @@ authorize changed quantifiers, hypotheses, conclusions, `BEq` side conditions,
 or word-model differences, and the manifest must use status
 `reviewed_fmap_as_finite_support_result` after source comparison.
 
+**Qualify standalone finite-map input parameters.** Use
+`(fmap_as_finite_support_parameters := [binder, ...])` for explicitly named
+HOL `|->` inputs represented directly by `HolFiniteMapExact`, when the result
+is not a finite map. Each binder must have that explicit carrier and a
+same-module kernel-checked
+`holFmapAsFiniteSupportParamWitness_<declaration>_<binder>` establishing its
+lookup/finite-support codec roundtrip. This is distinct from qualifiers for
+structure fields and map-valued results. Source review must preserve binder
+order, hypotheses, and conclusions; the representation witness and checker
+do not prove HOL-to-Lean correspondence or permit other statement differences.
+Record the named parameters in the reviewed manifest, with the matching
+`reviewed_fmap_as_finite_support_parameters` status (or its supported combined
+status).
+
 **Qualify observations of computed finite-map results.** Use
 `(fmap_as_finite_support_result_observations := [Producer, ...])` only
 for explicitly named imported map producers used in the tagged observer's
