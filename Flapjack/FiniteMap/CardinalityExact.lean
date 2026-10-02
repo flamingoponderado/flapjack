@@ -76,4 +76,50 @@ theorem card_union_disjoint (left right : HolFiniteMapExact α β)
   intro key hl hr
   exact Set.disjoint_left.mp h
     (left.domain_finite.mem_toFinset.mp hl) (right.domain_finite.mem_toFinset.mp hr)
+
+/-- Existing-key update leaves the actual lookup domain unchanged. -/
+theorem card_updateEq_existing [DecidableEq α] (map : HolFiniteMapExact α β)
+    (key : α) (value : β) (h : map.lookup key ≠ none) :
+    (map.updateEq (key, value)).card = map.card := by
+  classical
+  unfold card
+  congr 1
+  ext query
+  simp only [Set.Finite.mem_toFinset]
+  rw [domain_updateEq, Set.insert_eq_of_mem h]
+
+/-- Full HOL-shaped hit-or-fresh update equation over the canonical finite
+lookup domain. Source/qualifier registration remains pending. -/
+theorem card_updateEq [DecidableEq α] (map : HolFiniteMapExact α β)
+    (key : α) (value : β) :
+    (map.updateEq (key, value)).card =
+      if map.lookup key ≠ none then map.card else 1 + map.card := by
+  classical
+  by_cases h : map.lookup key = none
+  · rw [if_neg (not_not_intro h), card_updateEq_fresh map key value h]
+    omega
+  · rw [if_pos h, card_updateEq_existing map key value h]
+
+/-- Raw lookup codec for the standard canonical finite-map parameter witness;
+Flapjack infrastructure, not a separate HOL declaration. -/
+def toBroadlookupCardinality (map : HolFiniteMapExact α β) : α → Option β := map.lookup
+def ofBroadCardinality (lookup : α → Option β)
+    (finiteSupport : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact α β := ⟨lookup, finiteSupport⟩
+
+theorem holFmapAsFiniteSupportParamWitness_fcardFupdate_map (map : HolFiniteMapExact α β) :
+    ofBroadCardinality (toBroadlookupCardinality map) map.finiteSupport = map := by
+  cases map
+  rfl
+
+/-- Full original FCARD_FUPDATE. HOL map equality is represented by the
+classical equality decision, with no decidability or finite-key premise.
+Cardinality counts the actual defined lookup domain, not support-list length. -/
+@[hol "HOL/src/finite_maps/finite_mapScript.sml" "FCARD_FUPDATE"
+  (fmap_as_finite_support_parameters := [map])]
+theorem fcardFupdate (map : HolFiniteMapExact α β) (key : α) (value : β) :
+    (@updateEq α β (Classical.typeDecidableEq α) map (key, value)).card =
+      if map.lookup key ≠ none then map.card else 1 + map.card := by
+  classical
+  exact card_updateEq map key value
 end Flapjack.HolFiniteMapExact

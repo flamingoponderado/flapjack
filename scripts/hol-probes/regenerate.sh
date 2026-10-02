@@ -4799,3 +4799,7 @@ run_probe balanced_map_almost_balance_correct_probeScript.sml balanced_map_almos
 run_probe balanced_map_cardinality_correct_probeScript.sml balanced_map_cardinality_correct_probe.out \
   structure_size_thm structure_size_to_fmap size_thm bmcard_empty_size bmcard_empty_invariant bmcard_singleton_size bmcard_singleton_invariant bmcard_left_size bmcard_left_invariant bmcard_right_size bmcard_right_invariant bmcard_both_size bmcard_both_invariant bmcard_equivalent_invariant \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe finite_map_card_update_probeScript.sml finite_map_card_update_probe.out \
+  FCARD_FUPDATE fmcard_empty fmcard_replace fmcard_fresh fmcard_repeat \
+  "$repo_dir/HOL/src/finite_maps/finite_mapScript.sml" "$hol_dir/src/finite_maps"
