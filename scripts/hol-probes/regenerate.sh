@@ -4455,3 +4455,7 @@ run_probe data_max_heap_limit_probeScript.sml data_max_heap_limit_probe.out \
 run_probe stack_remove_code_rel_probeScript.sml stack_remove_code_rel_probe.out \
   cr_full_def cr_full_type cr_empty_1 cr_empty_8 cr_empty_32 cr_empty_64 cr_empty_80 cr_missing_stub cr_extra_target cr_tick cr_wrong_body cr_bad_register cr_reserved_source cr_malformed_source \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe set_sep_fun2set_probeScript.sml set_sep_fun2set_probe.out \
+  fg_full_def fg_full_type fg_member_full memory_full_def memory_full_type fg_nat_bool_member fg_nat_bool_false_value fg_wrong_value fg_outside_domain fg_empty_domain fg_bool_nat_member fg_bool_nat_other fg_bool_product_value fg_noninjective \
+  "$repo_dir/HOL/examples/machine-code/hoare-triple/set_sepScript.sml" "$cake_dir/compiler/backend/proofs"

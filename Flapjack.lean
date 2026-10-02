@@ -1,3 +1,4 @@
+import Flapjack.Misc.SetSep
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
 import Flapjack.Compiler.Backend.StackToLab.InitializedProduction

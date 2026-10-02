@@ -1,3 +1,4 @@
+import Flapjack.Test.SetSepFun2Set
 import Flapjack.Test.StackRemoveCodeRelation
 import Flapjack.Test.DataMaxHeapLimit
 import Flapjack.Test.InitializedProduction

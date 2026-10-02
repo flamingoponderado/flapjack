@@ -4947,3 +4947,10 @@ keys and full domain equality, rather than finite membership sampling. Probe
 simplification unfolds recursive comp/reg_bound only after concrete branch
 selection; globally unfolding either at a symbolic program grows indefinitely.
 The full state relation and semantic preservation remain separate prerequisites.
+
+`set_sep_fun2set_probe.out` captures pinned HOL's full paired `fun2set` type,
+function graph and membership theorem, plus the full generic StackRemove
+memory prerequisite type/equation and9 original graph proofs. The graph keeps
+independent address/value carriers; kernel counterparts include wrong value,
+outside/empty domain, Bool/Nat and Bool/product values, noninjective functions
+and an infinite-domain application. No finite-heap premise is introduced.
