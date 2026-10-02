@@ -49,4 +49,49 @@ example {width : Nat} [NeZero width] (name : Nat) (parameters wordParameters : L
         (wordBeforeSsaAllocatorBody (loopToWordCompFuncRouted name parameters body)) :=
   sourceAllocatorInput_usesNativeLimit name parameters body wordParameters
 
+
+-- These statements name the actual PipelineDiagnostics source function,
+-- rather than the separate loopToWordCompFuncRouted variant.
+example {width : Nat} [NeZero width] (name : Nat) (parameters wordParameters : List Nat)
+    (body : LoopProg (BitVec width)) :
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA name wordParameters
+        (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) =
+      CakeRegAlloc.cakeAllocateWordFunctionAfterDeadNativeSSA name wordParameters
+        (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) :=
+  executedSourceAllocatorInput_usesNativeSSA name parameters body wordParameters
+
+example {width : Nat} [NeZero width] (name : Nat) (parameters wordParameters : List Nat)
+    (body : LoopProg (BitVec width)) :
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedLimit name wordParameters
+        (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) =
+      CakeRegAlloc.cakeAllocateWordFunctionAfterDeadNativeLimit name wordParameters
+        (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) :=
+  executedSourceAllocatorInput_usesNativeLimit name parameters body wordParameters
+
+example : (wordLangProgToHOL (wordBeforeSsaAllocatorBody
+    (LoopToWord.loopToWordCompFunc 73 [2,4] (nested 1)))).isSome = true :=
+  executedSourceAllocatorInput_isSome _ _ _
+example : (wordLangProgToHOL (wordBeforeSsaAllocatorBody
+    (LoopToWord.loopToWordCompFunc 73 [2,4] (nested 64)))).isSome = true :=
+  executedSourceAllocatorInput_isSome _ _ _
+example : (wordLangProgToHOL (wordBeforeSsaAllocatorBody
+    (LoopToWord.loopToWordCompFunc 73 [2,4] (nested 80)))).isSome = true :=
+  executedSourceAllocatorInput_isSome _ _ _
+example : (wordLangProgToHOL (wordBeforeSsaAllocatorBody
+    (LoopToWord.loopToWordCompFunc 91 []
+      (.seq (.ffi "λ" 2 4 6 8 [10]) (.primitive [2] .addCarry [4]) :
+        LoopProg (BitVec 64))))).isSome = true :=
+  executedSourceAllocatorInput_isSome _ _ _
+
+-- Arbitrary Word inputs have a real rejection branch. A rejection proves
+-- compatibility routing, not successful native SSA or allocation.
+example {width : Nat} [NeZero width] (name : Nat) (parameters : List Nat)
+    (program : WordProg (BitVec width))
+    (rejected : wordLangProgToHOL (wordBeforeSsaAllocatorBody program) = none) :
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA name parameters
+        (wordBeforeSsaAllocatorBody program) =
+      CakeRegAlloc.cakeAllocateWordFunctionAfterDead name parameters
+        (wordBeforeSsaAllocatorBody program) :=
+  CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA_rejected _ _ _ rejected
+
 end Flapjack.Test.ProductionPreSsaCodec

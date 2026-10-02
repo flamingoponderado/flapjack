@@ -31,7 +31,7 @@ class L3FpDefsTest(unittest.TestCase):
         for name in ('writeFPRS', 'writeFPRD', 'setFP_Invalid', 'round', 'setTrap', 'Delta'):
             self.assertIn('def ' + name + ' ', body)
         for precision in ('S', 'D'):
-            for op in ('FMIN', 'FMAX', 'FLT', 'FLE', 'FEQ', 'FCLASS', 'FADD', 'FSUB', 'FMUL', 'FDIV', 'FSQRT'):
+            for op in ('FMIN', 'FMAX', 'FLT', 'FLE', 'FEQ', 'FCLASS', 'FADD', 'FSUB', 'FMUL', 'FDIV', 'FSQRT', 'FMADD', 'FMSUB', 'FNMADD', 'FNMSUB'):
                 self.assertIn("def «dfn'" + op + '_' + precision + '»', body)
             for kind in ('W', 'WU', 'L', 'LU'):
                 self.assertIn("def «dfn'FCVT_" + kind + '_' + precision + '»', body)

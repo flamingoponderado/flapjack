@@ -200,3 +200,7 @@ producers. This narrow qualifier cannot combine with other representations and
 permits no changed quantifiers, hypotheses, evaluator, or conclusion. The
 syntactic checks and kernel witnesses do not prove cross-language equivalence;
 the complete observer still requires manual HOL source comparison.
+
+The pinned `HOL/src/monad/more_monads/state_transformerScript.sml` iteration counterpart is `Flapjack/Misc/StateTransformer.lean` (`FOR_def`).
+
+`Flapjack/Misc/Words/Replicate.lean` is the `word_replicate_def` group counterpart of pinned `HOL/src/n-bit/wordsScript.sml`.
