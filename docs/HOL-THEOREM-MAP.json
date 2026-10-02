@@ -51723,15 +51723,92 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
   },
-{
-  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
-  "hol_name": "ssa_cc_trans_props",
-  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramProps.lean",
-  "lean_name": "ssaCcTransProps",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-sol-a source comparison flapjack-hyxt: full original all-program ssa_cc_trans_props5951ff, including resumed Loop/Break/Continue cases. Quantified native program/map/counter/loop-table/output tuple; actual compiler equality then original ssa_map_ok/is_alloc_var premise imply counter monotonicity/allocated counter/output-map bound. No case IH, desired target evaluation, validity or output-frame premise in final theorem. Native datatype induction includes both nested option-product handler programs and all27functional cases; scoped original case IHs are discharged by induction. Exact original HOL functional-induction assembly from literal27case proof replays, full source types captured. Spt Nat map, List of Spt Nat/two Spt Unit loop-table triples, native constructor arities and positive width BitVec match reviewed owning carriers. No executable behavior change."
-},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramProps.lean",
+    "lean_name": "ssaCcTransProps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-hyxt: full original all-program ssa_cc_trans_props5951ff, including resumed Loop/Break/Continue cases. Quantified native program/map/counter/loop-table/output tuple; actual compiler equality then original ssa_map_ok/is_alloc_var premise imply counter monotonicity/allocated counter/output-map bound. No case IH, desired target evaluation, validity or output-frame premise in final theorem. Native datatype induction includes both nested option-product handler programs and all27functional cases; scoped original case IHs are discharged by induction. Exact original HOL functional-induction assembly from literal27case proof replays, full source types captured. Spt Nat map, List of Spt Nat/two Spt Unit loop-table triples, native constructor arities and positive width BitVec match reviewed owning carriers. No executable behavior change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionLength.lean",
+    "lean_name": "secLengthSumLineLen",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_length_sum_line_len",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison at3142: retains every original quantified list/position/accumulator and unconditional conclusion. Sum is SUM(MAP line_len lines)+n; append is the full section_labels pair with pos+SUM(MAP line_len left) and SND(section_labels pos left labs). No accumulator uniqueness/byte annotation consistency or target result hypothesis. Canonical source-compared lineLen consumed at pushed abd7cf3a6 under coordinator23:18 delivered-dependency instruction, acceptance bead remains open. Native Line fixed byte8/MlString payloads and positive generic word translation only. Generalized list induction covers every constructor and label-zero branch. Six fresh original/kernel rows supplement all13previous rows, pinning duplicate-label accumulation and whole result pair."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionLength.lean",
+    "lean_name": "sectionLabelsAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "section_labels_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison at3213: retains every original quantified list/position/accumulator and unconditional conclusion. Sum is SUM(MAP line_len lines)+n; append is the full section_labels pair with pos+SUM(MAP line_len left) and SND(section_labels pos left labs). No accumulator uniqueness/byte annotation consistency or target result hypothesis. Canonical source-compared lineLen consumed at pushed abd7cf3a6 under coordinator23:18 delivered-dependency instruction, acceptance bead remains open. Native Line fixed byte8/MlString payloads and positive generic word translation only. Generalized list induction covers every constructor and label-zero branch. Six fresh original/kernel rows supplement all13previous rows, pinning duplicate-label accumulation and whole result pair."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Evaluate.lean",
+    "lean_name": "evaluateTargetHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "evaluate_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.5): Compared the entire original targetSemScript.sml:118-219. Retains machine_config and universe-0 FFI host, arbitrary positive word width, clock-only recursion, program-domain minus FFI-entry priority before halt/cache, encoded-memory existential, all three state_ok guards and frame only on ms1, failure rollback to original machine/FFI, separate shifted next/cache/FFI oracles, first-match find_index and ALOOKUP, total EL using shared HOL ARB without a length premise, both mapped templates and full-word alignment, canonical little-endian arbitrary-count bytes, external MMIO rejection and two optional reads, original FFI_final event and old FFI state, and FFI_return new host/events. words_as_type_indexed_bitvec records only the standard positive word/FFI carrier translation. No callback, successful-run premise, concrete unspecified FFI name, or executable compiler routing change. Original target_sem_evaluate probes and matching kernel examples provide regressions, not cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "select_reg_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SelectRegAlloc.lean",
+    "lean_name": "selectRegAlloc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.3.5): word_allocScript.sml:1697-1703 select_reg_alloc alg spillcosts k heu_moves tree forced fs = if 4 <= alg then linear_scan$linear_scan_reg_alloc k heu_moves tree forced else reg_alloc (if alg <= 1n then Simple else IRC) spillcosts k heu_moves tree forced fs, over the exact tagged linearScanRegAlloc and regAlloc (RegAlloc/Allocator.lean); type num -> num num_map option -> num -> (num # num # num) list -> clash_tree -> (num # num) list -> num_set -> (num num_map, state_exn) exc confirmed by the sra_type probe row and a Lean signature check. Seven original HOL EVAL rows (algorithms 0-5) kernel-replayed in Flapjack.Test.WordAllocSelectRegAllocParity. Proof-side; the executed compiler's allocator routing remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/LoadEvaluation.lean",
+    "lean_name": "evaluateLoadAnyDest",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_any_dest",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-load-evaluation, original221-270: Original op/r0/address/offset/value/state/target-destination binders and only not-store plus original successful source evaluation guard; derives target evaluation at any destination, including destination equal to address. All8memop constructor cases considered, stores excluded by original guard; Load16 retained and source-success impossible exactly as faithful native inst. Private loadValue is only factoring of actual native memory clauses, instLoadMap proves agreement under original guard; public statements use complete clocked evaluate. Generic assignment result iff recovers loaded value using full insert_eq internally on arbitrary sparse trees. No extra wf/range/width/clock/heap-domain hypothesis. fmap_as_finite_support_relation names reviewed owning WordSemStateFiniteExact.fpRegs/store, transitive original owner not duplicated and same-module LoadEvaluationWitness gives genuine broad/exact roundtrip; locals/code are original Spt num_map. words_as_type_indexed_bitvec records only positive-width words with NeZero and arbitrary universe-0 configuration/FFI hosts. Inherits reals_as_rational_cuts through evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Original full literal proof replays with hyp=[] including local address theorem, four inferred types and80complete whole theorem applications at1/32/64/80; matching80kernel applications include write/destination alias and target/address alias. Full CSE invariant/pass and compiler theorem remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/LoadEvaluation.lean",
+    "lean_name": "evaluateLoadSetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-load-evaluation, original221-270: Original op/destination/address/offset/write-register/input-value/output-value/state binders; only not-store and address != write-register guard; full bidirectional equivalence, including write-register = destination. No disjoint-destination premise added. All8memop constructor cases considered, stores excluded by original guard; Load16 retained and source-success impossible exactly as faithful native inst. Private loadValue is only factoring of actual native memory clauses, instLoadMap proves agreement under original guard; public statements use complete clocked evaluate. Generic assignment result iff recovers loaded value using full insert_eq internally on arbitrary sparse trees. No extra wf/range/width/clock/heap-domain hypothesis. fmap_as_finite_support_relation names reviewed owning WordSemStateFiniteExact.fpRegs/store, transitive original owner not duplicated and same-module LoadEvaluationWitness gives genuine broad/exact roundtrip; locals/code are original Spt num_map. words_as_type_indexed_bitvec records only positive-width words with NeZero and arbitrary universe-0 configuration/FFI hosts. Inherits reals_as_rational_cuts through evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Original full literal proof replays with hyp=[] including local address theorem, four inferred types and80complete whole theorem applications at1/32/64/80; matching80kernel applications include write/destination alias and target/address alias. Full CSE invariant/pass and compiler theorem remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/LoadEvaluation.lean",
+    "lean_name": "evaluateLoadChangeAddr",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_change_addr",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-load-evaluation, original221-270: Complete local original declaration retained: only not-store, actual input lookup equality and original source evaluation guard; derives evaluation at replaced address. No successful target, word-valued lookup or canonical-map invariant premise. All8memop constructor cases considered, stores excluded by original guard; Load16 retained and source-success impossible exactly as faithful native inst. Private loadValue is only factoring of actual native memory clauses, instLoadMap proves agreement under original guard; public statements use complete clocked evaluate. Generic assignment result iff recovers loaded value using full insert_eq internally on arbitrary sparse trees. No extra wf/range/width/clock/heap-domain hypothesis. fmap_as_finite_support_relation names reviewed owning WordSemStateFiniteExact.fpRegs/store, transitive original owner not duplicated and same-module LoadEvaluationWitness gives genuine broad/exact roundtrip; locals/code are original Spt num_map. words_as_type_indexed_bitvec records only positive-width words with NeZero and arbitrary universe-0 configuration/FFI hosts. Inherits reals_as_rational_cuts through evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Original full literal proof replays with hyp=[] including local address theorem, four inferred types and80complete whole theorem applications at1/32/64/80; matching80kernel applications include write/destination alias and target/address alias. Full CSE invariant/pass and compiler theorem remain unfinished."
+  },
 {
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "ssa_reconcile_moves_eq",

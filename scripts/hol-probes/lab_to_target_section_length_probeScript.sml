@@ -25,3 +25,11 @@ val _ = print_eval "SecLengthAddMixed" ``sec_length ^mixed (17+9) = sec_length ^
 val _ = print_eval "SecLengthAddMixedValue" ``sec_length ^mixed (17+9) = 40``;
 val _ = print_eval "SecLengthAddZeroAnnotation" ``sec_length [labLang$Label 1 2 0; labLang$Asm (labLang$Asmi (asm$Inst asm$Skip)) [] 0:8 labLang$line] (3+4) = 7``;
 val _ = print_eval "SecLengthAddEmptyBytesAnnotation" ``sec_length [labLang$Asm (labLang$Asmi (asm$Inst asm$Skip)) [] 100:8 labLang$line] (2+6) = 108``;
+
+val appendTail = ``[labLang$Label 1 4 3;labLang$Asm (labLang$Asmi (asm$Inst asm$Skip)) [] 10:8 labLang$line]``;
+val _ = print_eval "SecLengthSumEmpty" ``sec_length ([]:8 labLang$line list) 9 = SUM(MAP line_len []) + 9``;
+val _ = print_eval "SecLengthSumMixed" ``sec_length ^mixed 11 = SUM(MAP line_len ^mixed) + 11``;
+val _ = print_eval "SectionAppendEmptyLeft" ``section_labels 17 (([]:8 labLang$line list) ++ ^mixed) ^acc = section_labels (17 + SUM(MAP line_len [])) ^mixed (SND(section_labels 17 [] ^acc))``;
+val _ = print_eval "SectionAppendMixedTail" ``section_labels 17 (^mixed ++ ^appendTail) ^acc = section_labels (17 + SUM(MAP line_len ^mixed)) ^appendTail (SND(section_labels 17 ^mixed ^acc))``;
+val _ = print_eval "SectionAppendConcretePair" ``section_labels 17 (^mixed ++ ^appendTail) ^acc = (44,[(4,34);(4,22);(99,7)])``;
+val _ = print_eval "SectionAppendZeroLabel" ``section_labels 5 ([labLang$Label 1 0 3:8 labLang$line] ++ ^mixed) ^acc = (22,[(4,13);(99,7)])``;

@@ -1,3 +1,4 @@
+import Flapjack.Test.TargetSemEvaluateParity
 import Flapjack.Test.LabToTargetLineLenParity
 import Flapjack.Test.LabToTargetSectionLengthParity
 import Flapjack.Test.ByteWordToBytesAuxParity
@@ -31,6 +32,7 @@ import Flapjack.Test.ProductionMoves
 import Flapjack.Test.RegAllocProductionFixedTags
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordCseLoadEvaluationParity
 import Flapjack.Test.WordCseArithmeticKeysParity
 import Flapjack.Test.WordCseInsertEqualityParity
 import Flapjack.Test.WordCseRegisterKeysParity
@@ -206,6 +208,7 @@ import Flapjack.Test.RegAllocAccessorsParity
 import Flapjack.Test.RegAllocColouringParity
 import Flapjack.Test.RegAllocExceptionFunctionsParity
 import Flapjack.Test.RegAllocAllocatorParity
+import Flapjack.Test.WordAllocSelectRegAllocParity
 import Flapjack.Test.RegAllocStempColouringParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
