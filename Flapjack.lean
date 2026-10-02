@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
 import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
 import Flapjack.Compiler.Backend.LabToTarget.PositionValues
 import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
