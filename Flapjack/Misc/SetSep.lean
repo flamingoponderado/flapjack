@@ -60,4 +60,51 @@ theorem fun2SetThm {α β : Type} (function : α → β) (domain : α → Prop)
   · rintro ⟨valueEq, inDomain⟩
     exact ⟨address, inDomain, congrArg (Prod.mk address) valueEq.symm⟩
 
+/-- Full separation associativity on arbitrary predicate heaps, including infinite
+heaps. Both directions reconstruct the complete disjoint partition. -/
+@[hol "HOL/examples/machine-code/hoare-triple/set_sepScript.sml" "STAR_ASSOC"]
+theorem starAssoc {α : Type} (p q r : (α → Prop) → Prop) :
+    star p (star q r) = star (star p q) r := by
+  funext heap
+  apply propext
+  constructor
+  · rintro ⟨a, bc, outer, pa, b, c, inner, qb, rc⟩
+    refine ⟨(fun x => a x ∨ b x), c, ⟨?_, ?_⟩, ?_, rc⟩
+    · funext x
+      have outerEq := congrFun outer.1 x
+      have innerEq := congrFun inner.1 x
+      exact propext (by simpa only [← innerEq, or_assoc] using iff_of_eq outerEq)
+    · intro x member
+      rcases member.1 with ax | bx
+      · apply outer.2 x
+        refine ⟨ax, ?_⟩
+        rw [← inner.1]
+        exact Or.inr member.2
+      · exact inner.2 x ⟨bx, member.2⟩
+    · refine ⟨a, b, ⟨rfl, ?_⟩, pa, qb⟩
+      intro x member
+      apply outer.2 x
+      refine ⟨member.1, ?_⟩
+      rw [← inner.1]
+      exact Or.inl member.2
+  · rintro ⟨ab, c, outer, ⟨a, b, inner, pa, qb⟩, rc⟩
+    refine ⟨a, (fun x => b x ∨ c x), ⟨?_, ?_⟩, pa, ?_⟩
+    · funext x
+      have outerEq := congrFun outer.1 x
+      have innerEq := congrFun inner.1 x
+      exact propext (by simpa only [← innerEq, or_assoc] using iff_of_eq outerEq)
+    · intro x member
+      rcases member.2 with bx | cx
+      · exact inner.2 x ⟨member.1, bx⟩
+      · apply outer.2 x
+        refine ⟨?_, cx⟩
+        rw [← inner.1]
+        exact Or.inl member.1
+    · refine ⟨b, c, ⟨rfl, ?_⟩, qb, rc⟩
+      intro x member
+      apply outer.2 x
+      refine ⟨?_, member.2⟩
+      rw [← inner.1]
+      exact Or.inr member.1
+
 end Flapjack.SetSep
