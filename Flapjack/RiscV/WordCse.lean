@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.WordCse.ListOrder
 import Flapjack.Word
 import Flapjack.Compiler.Backend.WordCse.InstructionKeys
+import Flapjack.Compiler.Backend.WordCse.RegisterUses
 import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
 import Std.Data.TreeMap
 
@@ -47,6 +48,7 @@ class WordCseHash (α : Type u) where
   hash : α → Nat
   nativeArithKey : WordArith α → Option (List Nat) := fun _ => none
   nativeInstKey : WordInst α → Option (List Nat) := fun _ => none
+  nativeArithInfo : WordArith α → Option (Nat × List Nat × List Nat × Bool) := fun _ => none
   loadKey : WordMemOp → Nat → α → List Nat := fun operator address offset =>
     [Compiler.Backend.WordCse.memOpToNum operator, address + 100, hash offset]
   regImmKey : WordRegImm α → List Nat := fun
@@ -76,6 +78,12 @@ def wordCseNativeInst? {width : Nat} [NeZero width] :
 zero-width/generic diagnostic instance remains outside the HOL word claim. -/
 instance {width : Nat} [NeZero width] : WordCseHash (BitVec width) where
   hash := Flapjack.Compiler.Backend.WordCse.wordToNum
+  nativeArithInfo operation :=
+    (Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted? operation).map
+      (fun native => (Compiler.Backend.WordCse.firstRegOfArith native,
+        Compiler.Backend.WordCse.arithWrites native,
+        Compiler.Backend.WordCse.arithReads native,
+        Compiler.Backend.WordCse.canMemArith native))
   loadKey := Compiler.Backend.WordCse.loadToNumList
   nativeInstKey instruction := (wordCseNativeInst? instruction).map
     Compiler.Backend.WordCse.instToNumList
@@ -355,14 +363,11 @@ theorem wordCseInstToNumList_native {width : Nat} [NeZero width]
     wordCseInstToNumList instruction = Compiler.Backend.WordCse.instToNumList native := by
   simp [wordCseInstToNumList, WordCseHash.nativeInstKey, converted]
 
-def wordCseIsStore : WordMemOp → Bool
-  | .store => true
-  | .store8 => true
-  | .store16 => true
-  | .store32 => true
-  | _ => false
+/-- Actual store detection delegates the reviewed identical memory carrier. -/
+def wordCseIsStore (operator : WordMemOp) : Bool :=
+  Compiler.Backend.WordCse.isStore operator
 
-def wordCseFirstRegOfArith : WordArith α → Nat
+private def wordCseFirstRegDiagnostic : WordArith α → Nat
   | .binOp _ destination _ _ => destination
   | .shift _ destination _ _ => destination
   | .div destination _ _ => destination
@@ -371,7 +376,7 @@ def wordCseFirstRegOfArith : WordArith α → Nat
   | .cakeAddCarry destination _ _ _ => destination
   | .addCarry destination _ _ _ _ => destination
 
-def wordCseArithWrites : WordArith α → List Nat
+private def wordCseArithWritesDiagnostic : WordArith α → List Nat
   | .binOp _ destination _ _ => [destination]
   | .shift _ destination _ _ => [destination]
   | .div destination _ _ => [destination]
@@ -380,7 +385,7 @@ def wordCseArithWrites : WordArith α → List Nat
   | .cakeAddCarry destination _ _ carry => [destination, carry]
   | .addCarry destination resultCarry _ _ _ => [destination, resultCarry]
 
-def wordCseArithReads : WordArith α → List Nat
+private def wordCseArithReadsDiagnostic : WordArith α → List Nat
   | .binOp _ _ sourceLeft (.reg sourceRight) => [sourceLeft, sourceRight]
   | .binOp _ _ sourceLeft (.imm _) => [sourceLeft]
   | .shift _ _ sourceLeft (.reg sourceRight) => [sourceLeft, sourceRight]
@@ -394,13 +399,57 @@ def wordCseArithReads : WordArith α → List Nat
 /-- Cake's `can_mem_arith`: only instructions whose operands are odd
     registers (or an odd register with an immediate) may be shared through
     the fact table. -/
-def wordCseCanMemArith : WordArith α → Bool
+private def wordCseCanMemArithDiagnostic : WordArith α → Bool
   | .binOp _ _ sourceLeft (.reg sourceRight) =>
       sourceLeft % 2 != 0 && sourceRight % 2 != 0
   | .binOp _ _ sourceLeft (.imm _) => sourceLeft % 2 != 0
   | .div _ dividend divisor => dividend % 2 != 0 && divisor % 2 != 0
   | .shift _ _ destination (.imm _) => destination % 2 != 0
   | _ => false
+
+/-- Executed shared arithmetic destination, through reviewed native classifiers.
+The fallback is generic diagnostic or Flapjack extension infrastructure. -/
+def wordCseFirstRegOfArith [WordCseHash α] (operation : WordArith α) : Nat :=
+  match WordCseHash.nativeArithInfo operation with
+  | some info => info.1
+  | none => wordCseFirstRegDiagnostic operation
+
+/-- Executed shared arithmetic writes, preserving native positional carry output. -/
+def wordCseArithWrites [WordCseHash α] (operation : WordArith α) : List Nat :=
+  match WordCseHash.nativeArithInfo operation with
+  | some info => info.2.1
+  | none => wordCseArithWritesDiagnostic operation
+
+/-- Executed shared arithmetic reads, including the native carry input. -/
+def wordCseArithReads [WordCseHash α] (operation : WordArith α) : List Nat :=
+  match WordCseHash.nativeArithInfo operation with
+  | some info => info.2.2.1
+  | none => wordCseArithReadsDiagnostic operation
+
+/-- Native sharing eligibility for represented instructions. The separate
+five-register extension is excluded even for an arbitrary diagnostic instance,
+so CSE cannot erase an unsupported input and hide its codec failure. -/
+def wordCseCanMemArith [WordCseHash α] : WordArith α → Bool
+  | .addCarry _ _ _ _ _ => false
+  | operation => match WordCseHash.nativeArithInfo operation with
+    | some info => info.2.2.2
+    | none => wordCseCanMemArithDiagnostic operation
+
+/-- Exact four-classifier correspondence on successful positional conversion.
+Flapjack routing infrastructure, not a HOL simulation or theorem port. -/
+theorem wordCseArithInfo_native {width : Nat} [NeZero width]
+    (operation : WordArith (BitVec width)) (native : Compiler.Encoders.Asm.HolArith width)
+    (converted : Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted? operation = some native) :
+    wordCseFirstRegOfArith operation = Compiler.Backend.WordCse.firstRegOfArith native ∧
+    wordCseArithWrites operation = Compiler.Backend.WordCse.arithWrites native ∧
+    wordCseArithReads operation = Compiler.Backend.WordCse.arithReads native ∧
+    wordCseCanMemArith operation = Compiler.Backend.WordCse.canMemArith native := by
+  cases operation <;>
+    simp [Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted?] at converted
+  all_goals subst native
+  all_goals simp [wordCseFirstRegOfArith, wordCseArithWrites, wordCseArithReads,
+    wordCseCanMemArith, WordCseHash.nativeArithInfo,
+    Compiler.Backend.StackToLab.ExecutedCodec.arithFromExecuted?]
 
 /-- Cake's `add_to_data_aux`/`add_to_load_aux`, shared by the instruction and
     load fact tables.  `table` is the fact map consulted for a repeated
