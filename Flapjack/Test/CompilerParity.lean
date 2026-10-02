@@ -1,3 +1,4 @@
+import Flapjack.Test.L3RiscvArithmeticParity
 import Flapjack.Test.LabToTargetZeroPositionEvenLabelsParity
 import Flapjack.Test.LabToTargetEvenLabelsParity
 import Flapjack.Test.LabToTargetComputedLabelDomainParity

@@ -6045,3 +6045,17 @@ original reference sources are edited. All static/dynamic mode validation,
 register/status/delta/flag/other-core/trap observations retain original semantics.
 These finite/infinity rows do not fix arbitrary NaN output payloads or establish
 full model/compiler correctness. SOUNDNESS item8 remains inherited.
+
+### Full native L3 single/double arithmetic equations
+
+`l3_riscv_arithmetic_probeScript.sml` captures140 original FADD/FSUB/FMUL/FDIV
+S/D cases:132numeric ten-field state observations and8closed whole-state
+FDIV negative-zero/zero equations. Inputs cover all four supported rounding modes,
+dynamic rounding, invalid static/dynamic modes, cancellation, ties, signed zero
+and infinities. Observations include source/destination registers, MFS/MSD, delta,
+NV/NX, another core and the illegal-instruction trap. The NaN equations preserve
+the original symbolic quiet-NaN choice and complete writeFPRS/FPRD result; they
+do not assign a numeric payload. `Flapjack.Test.L3RiscvArithmeticParity`
+kernel-checks all140matching cases. The existing rational-real rendering
+assumption (SOUNDNESS item8) remains; regression evidence does not establish
+HOL-to-Lean equivalence or full model/compiler correctness.

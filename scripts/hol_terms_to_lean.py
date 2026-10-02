@@ -665,6 +665,18 @@ def special_cross_format_fp(r, c, args, env):
     raise Unrenderable('cross-format conversion requires fixed binary32/binary64')
 
 
+def special_binary_fp(operation):
+    def render(r, c, args, env):
+        r.noncomputable = True
+        width = width_of_result(c)
+        if width not in (32, 64):
+            raise Unrenderable('binary FP requires fixed binary32/binary64')
+        return r.eta(c, args, env, 3, lambda xs, raw:
+            f'(holFloatToFp{width} (holFloat{operation} {xs[0]} '
+            f'(holFp{width}ToFloat {xs[1]}) (holFp{width}ToFloat {xs[2]})).2)')
+    return render
+
+
 def special_bit_field_insert(r, c, args, env):
     # HOL raw FCP indexing is unspecified outside the input width. Unlike
     # word_bit, bit_field_insert does not add that bound itself. Every call
@@ -705,6 +717,15 @@ def special_int_of_num(r, c, args, env):
 
 
 SPECIAL = {
+    ('machine_ieee', 'fp32_add'): special_binary_fp('Add'),
+    ('machine_ieee', 'fp32_sub'): special_binary_fp('Sub'),
+    ('machine_ieee', 'fp32_mul'): special_binary_fp('Mul'),
+    ('machine_ieee', 'fp32_div'): special_binary_fp('Div'),
+    ('machine_ieee', 'fp64_add'): special_binary_fp('Add'),
+    ('machine_ieee', 'fp64_sub'): special_binary_fp('Sub'),
+    ('machine_ieee', 'fp64_mul'): special_binary_fp('Mul'),
+    ('machine_ieee', 'fp64_div'): special_binary_fp('Div'),
+
     ('machine_ieee', 'fp64_to_fp32'): special_cross_format_fp,
     ('machine_ieee', 'fp32_to_fp64'): special_cross_format_fp,
     ('machine_ieee', 'int_to_fp32'): special_int_to_fp,
@@ -746,7 +767,8 @@ def uses_ieee_real_rendering(text: str) -> bool:
     # conceal it when mapping the generated machine_ieee wrappers.
     return any(re.search(r'\b' + name + r'\b', text)
                for name in ('holFloatCompare', 'holFloatIsNan', 'holFloatToInt',
-                            'holRealToFloat', 'holIntToFp64', 'holFp64ToFp32', 'holFp32ToFp64'))
+                            'holRealToFloat', 'holIntToFp64', 'holFp64ToFp32', 'holFp32ToFp64',
+                            'holFloatAdd', 'holFloatSub', 'holFloatMul', 'holFloatDiv'))
 
 
 CONSTANTS = {

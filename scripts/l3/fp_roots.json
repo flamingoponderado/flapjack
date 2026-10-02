@@ -30,5 +30,13 @@
   "riscv$dfn'FCVT_D_L",
   "riscv$dfn'FCVT_D_LU",
   "riscv$dfn'FCVT_S_D",
-  "riscv$dfn'FCVT_D_S"
+  "riscv$dfn'FCVT_D_S",
+  "riscv$dfn'FADD_S",
+  "riscv$dfn'FSUB_S",
+  "riscv$dfn'FMUL_S",
+  "riscv$dfn'FDIV_S",
+  "riscv$dfn'FADD_D",
+  "riscv$dfn'FSUB_D",
+  "riscv$dfn'FMUL_D",
+  "riscv$dfn'FDIV_D"
 ]
