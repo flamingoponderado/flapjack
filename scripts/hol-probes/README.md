@@ -5476,3 +5476,18 @@ typed theorem is closed. Six actual branches capture output trees, invariants
 and inserted-key lookups. `BalancedMapBalanceLCorrectParity` checks all original
 input premises, consumes both native invariant/map conclusions, and derives
 the actual canonical inserted-key observations. No compiler caller changes.
+
+
+### Full native SSA Loop iteration helper
+
+`ssa_loop_iteration_probeScript.sml` replays the full original local
+`ssa_cc_trans_Loop_helper` (word_allocProofScript.sml:7039–7654), including
+its literal local prerequisite closure and original suspended/resumed proof
+branches. It restores the original simplifier settings and ML aliases; it
+exports nothing into the read-only reference tree. `loop_helper_full` captures
+all premises, the universal body induction hypothesis and the full existential
+permutation/result/frame/locals conclusion. This is original HOL regression
+evidence, not a cross-language equivalence proof. The Lean full clock induction
+is in `WordAlloc/Proofs/SSALoopIteration.lean`; full SSA correctness remains open.
+
+Regenerate with `HOL_PROBE_ONLY=ssa_loop_iteration_probeScript.sml scripts/hol-probes/regenerate.sh`.

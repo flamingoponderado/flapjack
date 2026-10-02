@@ -60872,5 +60872,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 original534-539: full arbitrary positive word dimension, base, nested native Spt labels, actual arbitrary memory function, address and endian. Literal word_loc_val on memory(byte_align address); NONE preserved, SOME word passed to original get_byte fixed word8. Uses accepted native holByteAlign/holLOG2 and HolByte.getByte. All widths1-7 retain symbolic global LOG2(0); no zero completion, width restriction or production panByteAlignHOL equality. Production correspondence bead .18.5.4.3.9 stays open. words_as_type_indexed_bitvec is the only representation translation. Generic kernel word/hit/miss cases and one-bit symbolic actual memory plus eleven fresh original rows cover full equation/types, endian, aligned nonconstant memory, actual label hit/misses and narrow widths. Native relation helper, not completed state relation or executable compiler replacement."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_Loop_helper",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALoopIteration.lean",
+    "lean_name": "ssaCcTransLoopHelper",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a author source comparison2026-10-02 HOL7039-7654: complete original fifteen premises including universal body induction hypothesis; ssaSimulation expands its original existential source permutation/Error-or-target-result/frame/result-sensitive locals statement. Original actual target Loop evaluation premise retained, never a source/post-state hypothesis. Complete source permutation existential and Error alternative, nextOut/inter exit locals for NONE, original outer loop-table Break/Continue cases and equality otherwise. EVERY retained over original toAList keys; scoped INJ rendered directly; UNIV codomain obligation tautological. Actual compiler reconciliation constructor test equals original Skip if/else; native total pair evaluator, clocks, cuts, timeout flush, label popping and permute_swap retained. Strong clock induction derives every internal run/frame/locals obligation. Native Nat/List/Spt Unit/Spt Nat and wordLang program carriers; imported WordSemStateFiniteExact canonical fpRegs/store finite maps and positive type-indexed words explicit, no tree maps qualified. Inherits reals_as_rational_cuts evaluator SOUNDNESS item 8. HOL local replay is regression evidence, not cross-language equivalence. Full Loop case/full SSA/end-to-end remain open."
   }
 ]

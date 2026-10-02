@@ -4791,3 +4791,7 @@ run_probe balanced_map_balanceL_correct_probeScript.sml balanced_map_balanceL_co
 run_probe lab_to_target_update_similarity_probeScript.sml lab_to_target_update_similarity_probe.out \
   lines_upd_lab_len_AUX lines_upd_lab_len_AUX_types line_similar_lines_upd_lab_len line_similar_lines_upd_lab_len_types code_similar_upd_lab_len code_similar_upd_lab_len_types lines_upd_lab_len_similar lines_upd_lab_len_similar_types empty_acc_full even_full odd_full acc_full aux_equality line_relation_positive line_relation_negative raw_changed_similarity_retained code_relation_positive section_id_mismatch_rejected instruction_mismatch_rejected accumulator_similarity empty_code program_full \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_loop_iteration_probeScript.sml ssa_loop_iteration_probe.out \
+  loop_helper_full \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

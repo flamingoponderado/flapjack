@@ -748,6 +748,7 @@
     {"bytes": 380, "out": "ssa_locals_rel_get_vars_probe.out", "rows": 7, "sha256": "f0d296161fe21e95d1338f58f39316e11269b241cecdc178ab6d35a9b5948c4e"},
     {"bytes": 526, "out": "ssa_locals_rel_probe.out", "rows": 10, "sha256": "6dd57ee5c171ed3a5f0c2b346cbf85ba68409ed6320b180b19a4cca89291b7f0"},
     {"bytes": 325, "out": "ssa_locals_swap_probe.out", "rows": 6, "sha256": "340cf84bef67a7ae9a74496e1513101aa90f81d69fa2e6ab13544030b7947663"},
+    {"bytes": 3350, "out": "ssa_loop_iteration_probe.out", "rows": 1, "sha256": "142c47116e2cf9f054b813fc4a060e11f048fd6fa8e39bb7271ac579d41a32ce"},
     {"bytes": 402, "out": "ssa_loop_semantic_helpers_probe.out", "rows": 8, "sha256": "022aee739cc0628ca14241184f0f5e9ee78f81ec8aa74a2a0d3671d8a405c9bf"},
     {"bytes": 1180, "out": "ssa_loop_setup_correct_probe.out", "rows": 10, "sha256": "808445e35f53fbc38b14b004de689a5d8f737d86939dac227a1f730ec0fb81ce"},
     {"bytes": 274, "out": "ssa_lt_ok_probe.out", "rows": 2, "sha256": "8afee29f3616cd118d9fc6ef7b7d59a2d6bd3c29c523b4c690d49fd75f484a1b"},
