@@ -4743,3 +4743,21 @@ malformed cached sizes, requires only a defined semantic lookup, and constructs
 a key whose comparator class equals the queried set. The observation qualifier
 records the already reviewed canonical result-map translation of `toFmap`; it
 does not add a map parameter, comparator law, or invariant assumption.
+
+### Native SSA Inst.Const semantic case
+
+`ssa_cc_trans_correct_inst_const_probeScript.sml` replays the literal original
+Const opcode proof and its original fresh-update locals helper. Fixed-constructor
+selection and discarded primitive induction bookkeeping are omitted. The capture
+records the full original pass statement and native register/word/state/map/table
+carriers. It is source evidence, not a cross-assistant equivalence proof; the
+whole Inst semantic assembly remains open.
+
+### Native SSA Inst.Binop semantic case
+
+`ssa_cc_trans_correct_inst_binop_probeScript.sml` replays the literal original
+Binop opcode branch for both register/immediate operands, including the original
+expression setup and local helpers. Fixed-constructor selection and discarded
+primitive induction bookkeeping are omitted. It captures the complete pass
+statement and native operand/operator/state/map/table carriers. This is source
+evidence, not a cross-assistant equivalence proof; whole Inst assembly remains open.

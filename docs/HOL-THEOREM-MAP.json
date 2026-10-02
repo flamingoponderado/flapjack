@@ -56158,5 +56158,33 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL831-836: full arbitrary comparator, key-set and tree quantifiers, only domain-membership premise, existential key with equality to comparator key_set. HOL FDOM membership is canonical defined lookup; exact imported toFmap is already source-reviewed with fmap-result qualification and independent unconditional semanticLookup witness. Tip empty domain and Bin root update/left-biased union child induction match original proof. No extra map binder, good_cmp, invariant, target evaluation or post-state premise; literal Map/Nat/Ordering/Set carriers unchanged. Observation qualifier records only producer finite-support translation; source review covers complete observer separately. Production tree-map replacement and full lookup/insert correctness remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstConst.lean",
+    "lean_name": "ssaCcTransCorrectInstConst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: genuine original resumedInst Const opcode7867-7873 case of ssa_cc_trans_correct. Same six original premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no extra targetrun/success/poststate/IH. Native instruction Const registerNat/positive-widthBitVec carrier matches original num/alpha word. Native inst/assign/wordExp Const and nextVarRename exact branches; original setVar locals relation proves fresh update and frame. Full native state/map/table carriers shared arbitrary Type0 code/FFI hosts, canonical fpRegs/store finite-support and positive-widthBitVec translations reviewed. Inherits reals_as_rational_cuts evaluator/Inst boundary SOUNDNESS8. Fresh literal original opcode proof with original local setVar helper and complete carrier captures PASS; only fixed-constructor selection and discarded primitive induction bookkeeping omitted. Lean kernel checked; fullInst assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstBinop.lean",
+    "lean_name": "ssaCcTransCorrectInstBinop",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison: genuine original resumedInst Binop7874-7880 opcode case of ssa_cc_trans_correct, both register/immediate branches. Same six original premises/full Error-exempt source permutation/result/frame/result-sensitive locals, no added targeteval/success/poststate/IH. Native BinOp, Nat register and WordRegImm(BitVec width) carriers match original binop/num/alpha reg_imm. Actual native inst/assign/op expressions and SSA compiler branches use original operand map before nextVarRename; original expression and setVar locals helpers derive target success/fresh update from source success internally. Full state/map/table carriers shared arbitrary Type0 code/FFI hosts, canonical fpRegs/store finite-support and positive-widthBitVec translations reviewed. Inherits reals_as_rational_cuts Inst/evaluator boundary SOUNDNESS8. Fresh literal original opcode/setup_tac/expression/setVar helpers and complete carrier captures PASS; fixed-constructor selection and discarded primitive induction bookkeeping omitted. Lean kernel checked; fullInst assembly remains open."
   }
 ]
