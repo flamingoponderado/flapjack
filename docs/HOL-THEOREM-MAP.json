@@ -52770,5 +52770,69 @@
     "lean_name": "doAlloc1Success",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8): reg_allocProofScript.sml:2918-3022, s moves scost k free in HOL (explicit parameters, moves : (num # num # num) list); premises good_ra_state s ∧ EVERY (λ(p,x,y). x < s.dim ∧ y < s.dim) moves; conclusion ∃ls s' with do_alloc1 the exact tagged doAlloc1, good_ra_state s', is_subgraph s.adj_ls s'.adj_ls and, in HOL's orientation, s'.dim = s.dim ∧ s'.node_tag = s.node_tag. The init_alloc1_heu initialiser subproofs (COUNT_LIST as List.range, is_Atemp filter, degree and do_upd_coalesce traversals, sort_moves membership via mllist sort_MEM) are private lemmas in the same module. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, M_success Exc.success, is_subgraph the exact tagged isSubgraph. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and the node_tag/adj_ls/coalesced/move_related/degrees subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "clique_insert_edge_succeeds",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CliqueSuccess.lean",
+    "lean_name": "cliqueInsertEdgeSucceeds",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1168-1194, ∀ls s with the two premises; conclusion ∃s' with the five HOL conjuncts in order; clique_insert_edge the exact tagged cliqueInsertEdge. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, ALL_DISTINCT List.Nodup, M_success Exc.success, record update `s with f := v` the Lean structure update, is_clique/is_subgraph/has_edge the exact tagged isClique/isSubgraph/hasEdge. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and adjacency/node_tag subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "extend_clique_succeeds",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CliqueSuccess.lean",
+    "lean_name": "extendCliqueSucceeds",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1196-1231, ∀ls cli s with the five premises in HOL order; conclusion ∃cli' s' with the seven HOL conjuncts in order, set cli' = set (cli++ls) rendered as equality of the list-membership predicates (sets as predicates, as in set_FILTER); extend_clique the exact tagged extendClique. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, ALL_DISTINCT List.Nodup, M_success Exc.success, record update `s with f := v` the Lean structure update, is_clique/is_subgraph/has_edge the exact tagged isClique/isSubgraph/hasEdge. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and adjacency/node_tag subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "is_clique_FILTER",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CliqueSuccess.lean",
+    "lean_name": "isCliqueFilter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1334-1344 [local], G and P free in HOL (explicit parameters, P : num -> bool as a Bool predicate as in set_FILTER), ∀ls. is_clique ls G ⇒ is_clique (FILTER P ls) G. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, ALL_DISTINCT List.Nodup, M_success Exc.success, record update `s with f := v` the Lean structure update, is_clique/is_subgraph/has_edge the exact tagged isClique/isSubgraph/hasEdge. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and adjacency/node_tag subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "is_clique_subgraph",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CliqueSuccess.lean",
+    "lean_name": "isCliqueSubgraph",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1346-1352 [local], ls s s' free in HOL (explicit parameters); is_clique ls s ∧ is_subgraph s s' ⇒ is_clique ls s'. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, ALL_DISTINCT List.Nodup, M_success Exc.success, record update `s with f := v` the Lean structure update, is_clique/is_subgraph/has_edge the exact tagged isClique/isSubgraph/hasEdge. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and adjacency/node_tag subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "mk_graph_succeeds",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CliqueSuccess.lean",
+    "lean_name": "mkGraphSucceeds",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1365-1481, ∀ct ta liveout s with the six premises in HOL order. INJ ta {x | in_clash_tree ct x} (count (LENGTH s.adj_ls)) is expanded as HOL INJ_DEF (range conjunct ta x < LENGTH s.adj_ls on in_clash_tree ct, then injectivity on it), as in the accepted injUnion port. Conclusion ∃livein s' with the eight HOL conjuncts in order; set livein SUBSET set liveout ∪ IMAGE ta {x | in_clash_tree ct x} is the pointwise implication to MEM-or-existential-preimage. mk_graph and in_clash_tree are the exact tagged mkGraph/inClashTree. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, ALL_DISTINCT List.Nodup, M_success Exc.success, record update `s with f := v` the Lean structure update, is_clique/is_subgraph/has_edge the exact tagged isClique/isSubgraph/hasEdge. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and adjacency/node_tag subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "extend_graph_succeeds",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CliqueSuccess.lean",
+    "lean_name": "extendGraphSucceeds",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1924-1949, ∀(forced:(num,num)alist) f s (f : num -> num, forced : List (Nat × Nat) instantiating the polymorphic extendGraph at num as in HOL); EVERY (λ(x,y). f x < s.dim ∧ f y < s.dim) forced uses the pair projections; the has_edge characterization keeps HOL's three disjuncts in order (MEM (y,x) then MEM (x,y) then the old edge). Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, ALL_DISTINCT List.Nodup, M_success Exc.success, record update `s with f := v` the Lean structure update, is_clique/is_subgraph/has_edge the exact tagged isClique/isSubgraph/hasEdge. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and adjacency/node_tag subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "mk_tags_st_ex_FOREACH_lem",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CliqueSuccess.lean",
+    "lean_name": "mkTagsStExForeachLem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:1953-2007 [local], fs free in HOL (explicit parameter, num_set as NumSet), ∀ls s fa. The traversal body is HOL's statement lambda (fa i MOD 4 tests, lookup case, Fixed (fa i DIV 2)) verbatim; conclusion ∃s' with the four HOL conjuncts, the nested if MEM x ls / is_phy_var / is_stack_var as Lean ifs over the exact tagged isPhyVar/isStackVar. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, ALL_DISTINCT List.Nodup, M_success Exc.success, record update `s with f := v` the Lean structure update, is_clique/is_subgraph/has_edge the exact tagged isClique/isSubgraph/hasEdge. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and adjacency/node_tag subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "mk_tags_succeeds",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/CliqueSuccess.lean",
+    "lean_name": "mkTagsSucceeds",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.6): reg_allocProofScript.sml:2009-2028, s n fs fa free in HOL (explicit parameters); premises good_ra_state s ∧ n = s.dim; conclusion ∃s' with mk_tags the exact tagged mkTags (GENLIST (λx. x) n as List.range n) and the four HOL conjuncts, ∀x y. x < n ∧ y = fa x ⇒ the convention tag cases. Statement compared clause by clause with the source text ([local] theorems are not exported by DB.fetch); EVERY is ∀ x ∈ l, MEM list membership, ALL_DISTINCT List.Nodup, M_success Exc.success, record update `s with f := v` the Lean structure update, is_clique/is_subgraph/has_edge the exact tagged isClique/isSubgraph/hasEdge. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and adjacency/node_tag subscripts read through HOL EL as the exact holEl."
   }
 ]
