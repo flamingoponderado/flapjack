@@ -1,0 +1,76 @@
+enc_lines_again_simp_def=(∀(pos :num) (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+     (enc :α asm -> word8 list).
+   enc_lines_again_simp labs ffis pos enc ([] :α line list) =
+   (([] :α line list),T)) ∧
+(∀(xs :α line list) (w :α word) (pos :num)
+     (labs :num sptree$num_map sptree$num_map) (l :num) (ffis :ffiname list)
+     (enc :α asm -> word8 list) (bytes :word8 list) (a :α asm_with_lab).
+   enc_lines_again_simp labs ffis pos enc (LabAsm a w bytes l::xs) =
+   (let
+      (w1 :α word) = (get_jump_offset a ffis labs pos :α word)
+    in
+      if w = w1 then
+        (let
+           ((rest :α line list),(ok :bool)) =
+             enc_lines_again_simp labs ffis (pos + l) enc xs
+         in
+           (LabAsm a w bytes l::rest,ok))
+      else
+        (let
+           (bs :word8 list) = enc (lab_inst w1 a);
+           (l1 :num) = MAX (LENGTH bs) l;
+           ((rest :α line list),(ok :bool)) =
+             enc_lines_again_simp labs ffis (pos + l1) enc xs
+         in
+           (LabAsm a w1 bs l1::rest,l1 = l ∧ ok)))) ∧
+(∀(xs :α line list) (pos :num) (labs :num sptree$num_map sptree$num_map)
+     (l :num) (k2 :num) (k1 :num) (ffis :ffiname list)
+     (enc :α asm -> word8 list).
+   enc_lines_again_simp labs ffis pos enc ((Label k1 k2 l :α line)::xs) =
+   (let
+      ((rest :α line list),(ok :bool)) =
+        enc_lines_again_simp labs ffis (pos + l) enc xs
+    in
+      ((Label k1 k2 l :α line)::rest,ok))) ∧
+∀(xs :α line list) (x2 :word8 list) (x1 :α asm_or_cbw) (pos :num)
+    (labs :num sptree$num_map sptree$num_map) (l :num) (ffis :ffiname list)
+    (enc :α asm -> word8 list).
+  enc_lines_again_simp labs ffis pos enc (Asm x1 x2 l::xs) =
+  (let
+     ((rest :α line list),(ok :bool)) =
+       enc_lines_again_simp labs ffis (pos + l) enc xs
+   in
+     (Asm x1 x2 l::rest,ok))
+enc_lines_again_simp_def_types=
+enc_lines_again_simp_EQ=∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+    (enc :α asm -> word8 list) (ls :α line list) (acc :α line list)
+    (b :bool).
+  (let
+     ((ls' :α line list),(flag :bool)) =
+       enc_lines_again_simp labs ffis pos enc ls
+   in
+     enc_lines_again labs ffis pos enc ls (acc,b) =
+     (REVERSE acc ++ ls',sec_length ls' pos,b ∧ flag))
+enc_lines_again_simp_EQ_types=(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(enc :α asm -> word8 list)::α asm -> word8 list;(ls :α line list)::α line list;(acc :α line list)::α line list;(b :bool)::bool;
+enc_lines_again_simp_len=∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+    (enc :α asm -> word8 list) (lines :α line list) (res :α line list).
+  enc_lines_again_simp labs ffis pos enc lines = (res,T) ⇒
+  MAP (line_len :α line -> num) res = MAP (line_len :α line -> num) lines
+enc_lines_again_simp_len_types=(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(enc :α asm -> word8 list)::α asm -> word8 list;(lines :α line list)::α line list;(res :α line list)::α line list;
+enc_lines_again_simp_signature=:num sptree$num_map sptree$num_map ->
+ffiname list ->
+num -> (α asm -> word8 list) -> α line list -> α line list # bool
+empty_full=T
+shrink_full=T
+grow_full=T
+equal_word_full=T
+shrink_acc_true=T
+shrink_acc_false=T
+grow_acc_true=T
+shrink_lengths=T
+grow_lengths_differ=T
+invalid_annotations_full=T
+invalid_acc_position_full=T
+shifted_full=T
+wrapped_word_full=T
+unbounded_position_full=T

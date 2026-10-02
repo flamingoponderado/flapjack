@@ -1,0 +1,45 @@
+label_one_def=(label_one (Label (v0 :num) (v1 :num) (n :num) :α line) ⇔ n ≤ (1 :num)) ∧
+(label_one (Asm (v5 :α asm_or_cbw) (v6 :word8 list) (v7 :num)) ⇔ T) ∧
+(label_one
+   (LabAsm (v8 :α asm_with_lab) (v9 :α word) (v10 :word8 list) (v11 :num)) ⇔
+ T)
+label_one_def_types=(v11 :num)::num;(v10 :word8 list)::word8 list;(v9 :α word)::α word;(v8 :α asm_with_lab)::α asm_with_lab;(v7 :num)::num;(v6 :word8 list)::word8 list;(v5 :α asm_or_cbw)::α asm_or_cbw;(n :num)::num;(v1 :num)::num;(v0 :num)::num;
+sec_label_one_def=∀(v0 :num) (ls :α line list).
+  sec_label_one (Section v0 ls) ⇔ EVERY (label_one :α line -> bool) ls
+sec_label_one_def_types=(v0 :num)::num;(ls :α line list)::α line list;
+lines_upd_lab_len_label_one=∀(pos :num) (ls :α line list) (acc :α line list).
+  EVERY (label_one :α line -> bool) acc ⇒
+  EVERY (label_one :α line -> bool) (FST (lines_upd_lab_len pos ls acc))
+lines_upd_lab_len_label_one_types=(pos :num)::num;(ls :α line list)::α line list;(acc :α line list)::α line list;
+upd_lab_len_label_one=∀(pos :num) (ss :α sec list).
+  EVERY (sec_label_one :α sec -> bool) (upd_lab_len pos ss)
+upd_lab_len_label_one_types=(pos :num)::num;(ss :α sec list)::α sec list;
+enc_lines_again_simp_label_one=∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+    (enc :α asm -> word8 list) (ls :α line list) (res :α line list)
+    (ok :bool).
+  enc_lines_again_simp labs ffis pos enc ls = (res,ok) ∧
+  EVERY (label_one :α line -> bool) ls ⇒
+  EVERY (label_one :α line -> bool) res
+enc_lines_again_simp_label_one_types=(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(enc :α asm -> word8 list)::α asm -> word8 list;(ls :α line list)::α line list;(res :α line list)::α line list;(ok :bool)::bool;
+enc_secs_again_label_one=∀(pos :num) (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+    (enc :α asm -> word8 list) (lines :α sec list) (res :α sec list)
+    (ok :bool).
+  enc_secs_again pos labs ffis enc lines = (res,ok) ∧
+  EVERY (sec_label_one :α sec -> bool) lines ⇒
+  EVERY (sec_label_one :α sec -> bool) res
+enc_secs_again_label_one_types=(pos :num)::num;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(enc :α asm -> word8 list)::α asm -> word8 list;(lines :α sec list)::α sec list;(res :α sec list)::α sec list;(ok :bool)::bool;
+label_one_signature=:α line -> bool
+sec_label_one_signature=:α sec -> bool
+label_zero=T
+label_one=T
+label_two_rejected=T
+asm_any_annotation=T
+labasm_any_annotation=T
+empty_section=T
+bad_section_rejected=T
+update_even_full=T
+update_odd_full=T
+update_establishes=T
+bad_acc_retained=T
+grow_false_preserves=T
+sections_false_preserve=T

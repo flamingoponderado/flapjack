@@ -1,0 +1,11 @@
+load "preamble";
+load "word_allocProofTheory";
+open bossLib HolKernel Parse preamble word_allocProofTheory word_allocTheory sptreeTheory;
+val _ = Globals.linewidth := 1000;
+fun out label th = (print(label ^ "="); print_thm th; print "\n");
+fun ty label name th = let val v=valOf(List.find(fn t => fst(dest_var t)=name)(free_vars(concl(SPEC_ALL th)))) in print(label ^ "="); print_type(type_of v); print "\n" end;
+val _ = out "cut_envs_domain_full" cut_envs_domain_SUBSET;
+val _ = ty "cut_envs_type_first" "x1" cut_envs_domain_SUBSET;
+val _ = ty "cut_envs_type_second" "x2" cut_envs_domain_SUBSET;
+val _ = ty "cut_envs_type_locals" "locs" cut_envs_domain_SUBSET;
+val _ = ty "cut_envs_type_output" "x" cut_envs_domain_SUBSET;
