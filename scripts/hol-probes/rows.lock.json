@@ -1502,6 +1502,12 @@
       "sha256": "a723a32ed2ec7ad43900d51861577142d2f973649ec63607caf78eaefce5e275"
     },
     {
+      "bytes": 9494,
+      "out": "l3_integer_load_probe.out",
+      "rows": 84,
+      "sha256": "792489b120d9de648eca301411a986c7c9cfd61f8480532698c161f7d16c45ea"
+    },
+    {
       "bytes": 11729,
       "out": "l3_mmu_access_probe.out",
       "rows": 288,

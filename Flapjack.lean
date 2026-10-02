@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.IntegerLoad
 import Flapjack.RiscV.L3.Defs.Reservation
 import Flapjack.RiscV.L3.Defs.IntegerLoadMode
 import Flapjack.RiscV.L3.Defs.AddressException
