@@ -1,3 +1,5 @@
+`stack_rawcall_basic_cases_probe.out` captures the full original comp_correct theorem, zero open assumptions and all six Skip/Halt/Get/Set/OpCurrHeap/Tick specialized paired conclusions. Native positive-width kernel cases keep every source premise and derive complete target execution/postrelation, including Tick timeout. This is a six-case slice; recursive/pass/production correctness remains open.
+
 `stack_rawcall_inst_simulation_probe.out` captures the full original arbitrary-instruction existential simulation and zero theorem assumptions. Native kernel proof derives complete primitive transport, target evaluation and postrelation for every integer/memory/FP constructor. Inherited FP real-carrier limits remain; this is not full pass or executed compiler correctness.
 
 `stack_rawcall_state_rel_probe.out` captures the complete original full-state relation type/equation and generic reflexivity under state_ok and exact compile-oracle preservation. Native kernel consequences retain arbitrary whole states and independent per-entry frame-info witnesses; this establishes no evaluator simulation or production replacement.
