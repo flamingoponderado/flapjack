@@ -67497,5 +67497,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol original comp_correct RawCall1766-1783/full1481-1493 source comparison2026-10-02. Same four actual source run/nonError/full26stateRel/regBound premises; only original actual source successful Seq-code lookup/nonzero-clock guarded callee-body IH, retaining arbitrary body result/poststate/target/pointer/bounds/jump quantifiers. RawCall enters the Seq second program exactly as original dest_Seq. Accepted full findCodeLemma proves target compiled Seq lookup and whole program bound; native regBound Seq derives body bound. Missing/non-Seq source code and bad return excluded by source nonError; clock0 yields original timeout FFI equality. Nonzero callee simulation uses stateRelDecClock and original clock equality for actual boosted target clock subtraction. Every original result alternative and target existential/full postrelation retained; no targetrun/code success/postrelation or stronger source premise. Canonical imported owning-state codec witness reexport, qualified regs/fpRegs/store only, Spt code/List stack unchanged, positive type-indexed words and Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scoped original theorem with same source-guarded IHs, literal original RawCall proof body and recreated original local lookup/decClock helpers, no full comp_correct assumed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/CallTail.lean",
+    "lean_name": "compCorrectCallTail",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original comp_correct retNONE Call branch1785-1804/full1481-1493 source comparison2026-10-03. Genuine original AST-option case: arbitrary destination and handler option, same four actual source run/nonError/full26stateRel/regBound premises. HandlerSOME and missing source code errors excluded by original nonError only, no global handlerNONE premise. Callee IH only actual source findCode success/handlerNONE/nonzero-clock guarded, retaining all original body simulation quantifiers and premises. Native unconditional fixClockEvaluate eliminates both faithful source/target clamps without a target-clock-success assumption. Full findCodeLemma proves target compiled callee lookup/body bound; stateRelDecClock plus original clock equality proves target boosted clock subtraction. Clock0 gives original timeout FFI equality; all original result alternatives and native target existential/full postrelation retained. Canonical owning state roundtrip reexport, qualified regs/fpRegs/store only, Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh original scoped statement with same source-guarded IH and literal original retNONE case body/local lookup-decClock proofs; no full comp_correct assumed. This is tail AST case only, not full Call constructor or pass assembly."
   }
 ]

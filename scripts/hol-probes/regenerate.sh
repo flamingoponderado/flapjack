@@ -5765,3 +5765,7 @@ run_probe stack_remove_bytearray_read_probeScript.sml stack_remove_bytearray_rea
 run_probe stack_remove_comp_raw_call_probeScript.sml stack_remove_comp_raw_call_probe.out \
   cc_raw_call_statement cc_raw_call_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_call_tail_probeScript.sml stack_remove_comp_call_tail_probe.out \
+  cc_call_tail_statement cc_call_tail_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
