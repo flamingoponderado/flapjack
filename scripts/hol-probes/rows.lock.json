@@ -5816,6 +5816,12 @@
       "sha256": "12ff9d1858e8a107f19a8f6013cf0897bcb5fd2c16395dc4287b7573afc013b4"
     },
     {
+      "bytes": 1056,
+      "out": "stack_sem_clock_control_probe.out",
+      "rows": 6,
+      "sha256": "4c4749100cac0d1411fac34188cba459adbe880acc7594d18184891021d11b72"
+    },
+    {
       "bytes": 718,
       "out": "stack_to_lab_executed_codec_probe.out",
       "rows": 9,
