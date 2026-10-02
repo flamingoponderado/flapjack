@@ -1,3 +1,7 @@
+import Flapjack.Test.BalancedMapBalanceREqParity
+import Flapjack.Test.BalancedMapRotateLParity
+import Flapjack.Test.BalancedMapDoubleLParity
+import Flapjack.Test.BalancedMapSingleLParity
 import Flapjack.Test.BalancedMapBalanceLCorrectParity
 import Flapjack.Test.BalancedMapBalanceLEqParity
 import Flapjack.Test.BalancedMapRotateRParity

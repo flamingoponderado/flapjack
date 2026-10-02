@@ -5402,6 +5402,25 @@ and both invariant/map conclusions. Original actual single/double branch
 outputs, invariants and all three key values are captured.
 `BalancedMapRotateRParity` consumes both complete native conclusions and
 derives six semantic finite-map lookups through the native full lookup theorem.
+
+### Original production/proof left-balancing equality
+
+`balanced_map_balanceL_eq_probeScript.sml` replays the complete original
+local `balanceL_balL` proof and prints its typed closed generic equality.
+Ten actual original executable equalities cover empty/singleton, both one-sided
+children, nonempty single/double rotations, left Tip, nonempty-right fallback,
+and both heavy branches. Kernel fixtures check their input invariants and
+consume the full equality. Small-child constructors and impossible malformed
+heavy branches are derived from invariants; no stronger premises are added.
+
+### Full original left-balancing correctness
+
+`balanced_map_balanceL_correct_probeScript.sml` replays the entire original
+local `balanceL_thm` proof and full prerequisite proof chain, checking its
+typed theorem is closed. Six actual branches capture output trees, invariants
+and inserted-key lookups. `BalancedMapBalanceLCorrectParity` checks all original
+input premises, consumes both native invariant/map conclusions, and derives
+the actual canonical inserted-key observations. No compiler caller changes.
 ### Native FFI and cache-clear interference contracts
 
 `target_interference_contracts_probeScript.sml` captures both complete original
@@ -5451,7 +5470,7 @@ Duplicate registers remain allowed. Original local HOL proof replay and manual
 source comparison are not a cross-language equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_fake_const_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-### Original production/proof left-balancing equality
+## Full single-left rotation correctness
 
 `balanced_map_balanceL_eq_probeScript.sml` replays the complete original
 local `balanceL_balL` proof and prints its typed closed generic equality.
@@ -5467,8 +5486,15 @@ heavy branches are derived from invariants; no stronger premises are added.
 five-premise/ten-conclusion statement and nine native carriers. The pinned
 original HOL kernel replay and Lean kernel check are regression/source-review
 evidence, not a cross-language equivalence proof. Full Loop simulation remains open.
+`balanced_map_singleL_probeScript.sml` replays the literal original full
+`singleL_thm`1343-1372 with all nine premises and both conclusions, checking
+that its hypotheses are closed. Seven rows capture its typed statement, actual
+rotated tree, invariant, three lookups and invalid cached-size rejection.
+Native fixtures establish every premise and consume both conclusions and
+canonical map lookups. These observations are regression evidence, not a
+cross-language equivalence theorem.
 
-### Full original left-balancing correctness
+## Full double-left rotation correctness
 
 `balanced_map_balanceL_correct_probeScript.sml` replays the entire original
 local `balanceL_thm` proof and full prerequisite proof chain, checking its
@@ -5495,3 +5521,27 @@ clock-update equivalence, and rejection at the one-element word index. Native
 kernel consumers in `LabToTarget/StateRel.lean` use the complete relation. Lab
 Boolean memory domains are read by equality to true; both Boolean values have
 a checked truth roundtrip. Every FFI/cache/oracle/code-buffer condition remains.
+`balanced_map_doubleL_probeScript.sml` replays the literal original full
+`doubleL_thm` and checks its hypotheses are closed. Seven rows capture the full
+typed theorem, actual tree, invariant, three lookups and bad cached-size
+rejection. Native consumers establish every original premise and consume both
+invariant and map conclusions and all three canonical lookups. These fixtures
+are regression observations, not a cross-language equivalence theorem.
+
+## Full left-rotation assembly
+
+`balanced_map_rotateL_probeScript.sml` literally replays both original full
+constructor proofs and full `rotateL_thm`, checking the assembly has no open
+hypotheses. Eleven rows capture its full type and both actual dispatch trees,
+invariants and six lookups. Native fixtures establish every original premise
+and consume both invariant/map conclusions. Observations are regression
+evidence, not a cross-language equivalence theorem.
+
+## Full right balancing equality
+
+`balanced_map_balanceR_eq_probeScript.sml` literally replays the full original
+`balanceR_balR` induction proof with no open hypotheses. Eleven rows capture
+its full type and ten invariant-valid constructor/guard/ratio equality cases.
+Native consumers prove both input invariants. The generic theorem retains only
+original comparator validity and those invariants; observations are regression
+evidence, not a cross-language equivalence theorem.

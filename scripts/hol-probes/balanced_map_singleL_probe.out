@@ -1,0 +1,7 @@
+bmsl_full=⊢ ∀(k :α) (v :β) (l :(α, β) balanced_map) (cmp :α -> α -> ordering) (n :num) (k' :α) (v' :β) (b :(α, β) balanced_map) (b0 :(α, β) balanced_map). good_cmp cmp ∧ key_ordered cmp k (Bin n k' v' b b0) Less ∧ key_ordered cmp k l Greater ∧ almost_balancedR (size l) n ∧ ¬(size l + n ≤ (1 :num)) ∧ n > delta * size l ∧ size b < ratio * size b0 ∧ invariant cmp (Bin n k' v' b b0) ∧ invariant cmp l ⇒ invariant cmp (singleL k v l (Bin n k' v' b b0)) ∧ to_fmap cmp (singleL k v l (Bin n k' v' b b0)) = (to_fmap cmp l ⊌ to_fmap cmp (Bin n k' v' b b0))⟨key_set cmp k ↦ v⟩
+bmsl_tree=Bin (3 :num) (1 :num) (10 :num) (Bin (1 :num) (0 :num) (0 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Bin (1 :num) (2 :num) (20 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map))
+bmsl_invariant=T
+bmsl_lookup0=SOME (0 :num)
+bmsl_lookup1=SOME (10 :num)
+bmsl_lookup2=SOME (20 :num)
+bmsl_badsize=F

@@ -4759,6 +4759,13 @@ run_probe balanced_map_rotateR_probeScript.sml balanced_map_rotateR_probe.out \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
 
 
+run_probe balanced_map_balanceL_eq_probeScript.sml balanced_map_balanceL_eq_probe.out \
+  bmbl_full bmbl_empty bmbl_singleton bmbl_lr_only bmbl_ll_only bmbl_single_tip bmbl_double_tip bmbl_left_tip bmbl_fallback bmbl_heavy_single bmbl_heavy_double \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_balanceL_correct_probeScript.sml balanced_map_balanceL_correct_probe.out \
+  bmlc_full bmlc_empty_tree bmlc_empty_invariant bmlc_empty_lookup5 bmlc_fallback_tree bmlc_fallback_invariant bmlc_fallback_lookup5 bmlc_single_tip_tree bmlc_single_tip_invariant bmlc_single_tip_lookup5 bmlc_double_tip_tree bmlc_double_tip_invariant bmlc_double_tip_lookup5 bmlc_heavy_single_tree bmlc_heavy_single_invariant bmlc_heavy_single_lookup5 bmlc_heavy_double_tree bmlc_heavy_double_invariant bmlc_heavy_double_lookup5 \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
 run_probe lab_to_target_positional_encd_probeScript.sml lab_to_target_positional_encd_probe.out \
   line_length_leq_def line_length_leq_def_types sec_length_leq_def sec_length_leq_def_types line_encd_def line_encd_def_types lines_encd_def lines_encd_def_types all_encd_def all_encd_def_types line_encd_length_leq line_encd_length_leq_types lines_encd_length_leq lines_encd_length_leq_types all_encd_length_leq all_encd_length_leq_types enc_lines_again_simp_encd enc_lines_again_simp_encd_types enc_secs_again_encd enc_secs_again_encd_types all_length_leq all_length_leq_type line_length_leq_signature sec_length_leq_signature line_encd_signature lines_encd_signature all_encd_signature label_any_annotation asm_exact asm_extra_length_rejected asm_lower_bound_weaker halt_offset install_offset ffi_first_index ffi_absent_default jump_offset cmp_offset loc_offset call_offset wrong_position_rejected short_annotation_rejected missing_label_zero word_wrap_position line_position_threading section_position_threading section_wrong_position_rejected simple_success_full sections_success_full \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4805,3 +4812,19 @@ run_probe lab_to_target_zero_preservation_probeScript.sml lab_to_target_zero_pre
 run_probe lab_to_target_state_rel_probeScript.sml lab_to_target_state_rel_probe.out \
   state_rel_full_definition state_rel_full_definition_types state_rel_target_projection state_rel_compile_projection state_rel_memory_projection state_rel_clock_update state_rel_one_bit_rejected \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe balanced_map_singleL_probeScript.sml balanced_map_singleL_probe.out \
+  bmsl_full bmsl_tree bmsl_invariant bmsl_lookup0 bmsl_lookup1 bmsl_lookup2 bmsl_badsize \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_doubleL_probeScript.sml balanced_map_doubleL_probe.out \
+  bmdl_full bmdl_tree bmdl_invariant bmdl_lookup0 bmdl_lookup1 bmdl_lookup2 bmdl_badsize \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_rotateL_probeScript.sml balanced_map_rotateL_probe.out \
+  bmrl_full bmrl_single_tree bmrl_single_invariant bmrl_single_lookup0 bmrl_single_lookup1 bmrl_single_lookup2 bmrl_double_tree bmrl_double_invariant bmrl_double_lookup0 bmrl_double_lookup1 bmrl_double_lookup2 \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_balanceR_eq_probeScript.sml balanced_map_balanceR_eq_probe.out \
+  bmbr_full bmbr_empty bmbr_singleton bmbr_lr_only bmbr_ll_only bmbr_single_tip bmbr_double_tip bmbr_left_tip bmbr_fallback bmbr_heavy_single bmbr_heavy_double \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

@@ -61002,5 +61002,46 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c full original source/type comparison2026-10-02 lines959-1096. All original relation conditions retained over actual MachineConfig/LabSem.State Config F/AsmState and shared positive BitVec width; machine state/projection/FFI host independently Type0. Original tuple parameter order retained. Complete target/dimension/domain/register/normal-FFI/cache/oracle/label/position/register/memory/code-buffer/code-safety conditions, actual compileLab equality, original list_subset/get_ffi_index/find_index/EL/THE/byte_align and original full encoder/code/shared-memory relations. holEl/holHd source review: normal-FFI names and imported shared-memory entry/name reads use literal total EL recursion on TL, HD nil is shared opaque holHdNil/holArb, and no bounds or fallback are added to the original guards. holThe retains SOME identity and shared opaque holTheNone at NONE; no chosen MMIO boundary completion. Source inner quantifiers and record updates are literal, including return register s1.linkReg, cache ptrReg preservation, ordinary FFI ffi-state closure and bytes read, no extra runtime-state/evaluation assumption. Native Boolean Lab domains enter Prop-based ASM/machine/bytes/shared-domain relations only through pointwise equality-to-true; same-module domainTruth_roundtrip kernel-checks both Boolean values, no changed membership or out-of-domain convention. Full quantified width retained; original good_dimindex guard remains a conjunct, no new width premise or LOG2zero completion. Fixed word8/word64 payloads literal. words_as_type_indexed_bitvec is the standard word/FFI translation. Fresh original whole equation/inferred types and generic target/compile/memory projections, complete clock-update equivalence and original one-index rejection are mirrored by native kernel consumers. Production alignment .18.5.4.3.9 remains open; declaration defines source state relation, not pass simulation or completed compiler correctness."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "singleL_thm",
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/SingleL.lean",
+    "lean_name": "singleLThm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against original1343-1372: all nine original premises and BOTH invariant/canonical map union-update conclusions retained; generic constructor-for-constructor key,payload,comparator and tree carriers. Actual singleL constructor equation; structural-size arithmetic and balanced_lem6; original good_cmp greater transitivity derives root ordering and left-map root absence. Canonical toFmap observer translation only. Literal original full proof replay has no open hypotheses; native complete premise/invariant/map/three lookup fixtures and original whole tree/invariant/lookups/badsize observations checked. No executable definition change."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "doubleL_thm",
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/DoubleL.lean",
+    "lean_name": "doubleLThm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against original1374 onward doubleL_thm: all nine original hypotheses and BOTH invariant and canonical to_fmap union/update conclusions preserved, generic constructor-for-constructor key/payload/comparator/tree carriers. Original heavy/ratio/size invariants exclude inner Tip before actual doubleLDef; balanced_lem7 and structural sizes prove both new subtree/root invariants; original good_cmp transitivity and strict ordering derive map absence and lookup extensionality. Only canonical toFmap observer representation translation. Full literal original closed proof replay and complete-premise native tree/invariant/map/three lookup consumers checked, with seven original full statement/tree/invariant/lookups/badcache rows. No executable behavior change."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "rotateL_thm",
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/RotateL.lean",
+    "lean_name": "rotateLThm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full original rotateL_thm: all eight original premises and BOTH invariant/canonical to_fmap union-update conclusions preserved; generic original comparator,key,payload,tree carriers. Heavy premise excludes outer Tip; literal strict ratio guard selects full singleL_thm or doubleL_thm with original size-addition commutation only. Canonical toFmap observer translation only. Literal full original constructor and assembly proofs replay hyp=[]; two complete-premise native dispatch fixtures consume invariant/map and six lookup observations. No executed definition change."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "balanceR_balR",
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/BalanceR.lean",
+    "lean_name": "balanceRBalR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full original balanceR_balR: same generic key/payload/tree/comparator quantifiers, ONLY good_cmp and both input invariants, full actual balanceR=balR conclusion. Constructor-for-constructor list-free/tree carrier; invariant structural sizes derive all small/singleton child constraints; literal heavy and ratio guards retained and impossible malformed rotation branches excluded from original invariants. Literal full original induction proof replay hyp=[] and ten valid constructor/guard/ratio equality observations; native consumers prove both invariants for all ten cases. No executable behavior change."
   }
 ]
