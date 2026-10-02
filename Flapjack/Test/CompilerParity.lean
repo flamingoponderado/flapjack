@@ -53,6 +53,8 @@ import Flapjack.Test.RegAllocProductionColourLookup
 import Flapjack.Test.WordCseProductionScalarKeys
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordCseListOrderRouting
+import Flapjack.Test.WordCseListOrderParity
 import Flapjack.Test.WordCseDeletionFramesParity
 import Flapjack.Test.WordCseEvaluationFramesParity
 import Flapjack.Test.WordCseLoadEvaluationParity

@@ -4540,3 +4540,11 @@ equivalence or complete CSE correctness.
 `ssa_cc_trans_correct_primitives_probe.out` replays the literal original Skip/Tick semantic correctness proofs and original exists_tac against their complete original theorem specializations. All six premises, full existential postconditions and five native carrier types are captured; Tick retains both zero/positive-clock paths in Lean.
 
 `ssa_locals_get_var_probe.out` replays the complete original SSA get_var lookup transport and captures six original types, including independently arbitrary source/target configuration and FFI hosts. It supports expression-producing SSA semantic cases without adding a target-read-success premise.
+`word_cse_list_order_probeScript.sml` captures original `listCmp_def`, replays
+the complete equality, antisymmetry and transitivity proof bodies with no open
+hypotheses, evaluates 64 independent empty/prefix/long-prefix/large-numeral
+comparison pairs, and applies the original full laws to 144 pairs/triples
+with arbitrary suffixes. The matching `WordCseListOrderParity.lean` checks
+all 208 values/applications. This group does not establish external
+`TotOrd`/`good_cmp`, the balanced-map carrier or full CSE correctness.
+The production list-key comparator route is tracked separately.
