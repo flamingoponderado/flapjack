@@ -1,0 +1,28 @@
+lab_lookup_compute_labels_alt_ignore=∀(pos :num) (secs :α sec list) (acc :num sptree$num_map sptree$num_map).
+  ¬MEM (n1 :num) (MAP (Section_num :α sec -> num) secs) ⇒
+  lab_lookup n1 (n2 :num) (compute_labels_alt pos secs acc) =
+  lab_lookup n1 n2 acc
+lab_lookup_compute_labels_alt_ignore_types=(pos :num)::num;(secs :α sec list)::α sec list;(acc :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(n2 :num)::num;(n1 :num)::num;
+enc_lines_again_section_labels=∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+    (enc :α asm -> word8 list) (lines :α line list) (res :α line list)
+    (acc :(num # num) list).
+  enc_lines_again_simp labs ffis pos enc lines = (res,T) ⇒
+  section_labels pos lines acc = section_labels pos res acc
+enc_lines_again_section_labels_types=(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(enc :α asm -> word8 list)::α asm -> word8 list;(lines :α line list)::α line list;(res :α line list)::α line list;(acc :(num # num) list)::(num # num) list;
+enc_secs_again_compute_labels=∀(pos :num) (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+    (enc :α asm -> word8 list) (secs :α sec list) (res :α sec list)
+    (acc :num sptree$num_map sptree$num_map).
+  enc_secs_again pos labs ffis enc secs = (res,T) ⇒
+  compute_labels_alt pos res acc = compute_labels_alt pos secs acc
+enc_secs_again_compute_labels_types=(pos :num)::num;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(enc :α asm -> word8 list)::α asm -> word8 list;(secs :α sec list)::α sec list;(res :α sec list)::α sec list;(acc :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;
+changed_full_pair=T
+unchanged_encoding=T
+empty_odd=T
+zero_label_ignored=T
+duplicate_sections_full_map=T
+ignore_old_huge_nat=T
+ignore_missing=T
+nonmembership_guard_needed=T
+false_flag_changes_labels=T
+width1_changed=T
+width80_large_position=T

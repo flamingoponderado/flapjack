@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness
 import Flapjack.Compiler.Backend.LabToTarget.StrongEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
+import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
 import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
 import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceDomain
