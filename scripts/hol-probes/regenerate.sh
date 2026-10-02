@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe stack_code_bitmaps_install_probeScript.sml stack_code_bitmaps_install_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_install_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe sptree_subspt_union_probeScript.sml sptree_subspt_union_probe.out \
   subspt_def_statement subspt_def_hypotheses subspt_lookup_statement subspt_lookup_hypotheses subspt_trans_statement subspt_trans_hypotheses subspt_union_statement subspt_union_hypotheses subspt_foldl_union_statement subspt_foldl_union_hypotheses \
   "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend/proofs"

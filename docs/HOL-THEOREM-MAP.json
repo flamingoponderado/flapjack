@@ -67522,5 +67522,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: Source6871 complete pc/p/code/p-prime and free c/labs/ffi/line binders. Sole conjunction of full all_enc_ok at independent p-prime and literal successful asm_fetch_aux at pc; exact LENGTH(line_bytes line)+pos_val pc p code=pos_val(pc+1)p code result. No bounds/encoder validity/target-execution or assumed successor conclusion. Full last-instruction case derives zero position from valid tail. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Fresh original fulltypes zero hypotheses and seven closed original/native cases, full generic fixtures and actual arbitrary queried-start consumers that discharge full guards. Empty sections, zero-label tails, missing fetch and invalid nonzero labels retained. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Install.lean",
+    "lean_name": "evaluateCodeBitmapsInstall",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 original424-440: genuine Install constructor case, actual evaluate equality sole premise, arbitrary positive width/configuration/Type0 FFI/full native state/result. All three existential conjuncts retained: exact shifted compileOracle, left-accumulator FOLDL union over original oracle prefix fromAList, original bitmap append FLAT. GENLIST becomes List.range followed by map without order change. Native Install dispatch covers register/buffer/compile/empty-program/equality failures with count0 and success with count1; actual oracle destructuring equations discharge both output projections. No successful execution, target evaluation, prefix or count assumption. Canonical regs/fpRegs/store imported owner and same-module genuine state codec witness; code Spt and lists List unchanged. Full evaluator closure inherits reals_as_rational_cuts assurance limit; no new real translation. Fresh original closed full statement and Install specialization are statement evidence only, not executed parity or assembled theorem."
   }
 ]

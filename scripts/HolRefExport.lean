@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Install
 import Flapjack.Misc.Sptree.Subspt
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
