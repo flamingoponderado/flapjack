@@ -478,6 +478,7 @@ import Flapjack.Compiler.Backend.StackProps.CodeLabels
 import Flapjack.Compiler.Backend.StackProps.ExtractLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsCompiler
+import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
 import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
