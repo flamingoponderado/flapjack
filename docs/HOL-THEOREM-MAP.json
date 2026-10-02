@@ -59758,5 +59758,16 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-const-memory-append): source5983-5992 arbitrary lists/domain/base, complete source domain predicate iff prefix predicate AND suffix predicate at base+bytes_in_word*n2w(prefixlength); HOL word set translated by existing native Bool characteristic function, Boolean truth as Prop equality, no new condition. Uses actual tagged native WordSem constant operations and bytes_in_word=ofNat(width/8), modular word dimension/FFI-free translation, arbitrary positive dimensions retain stride0 below8. Two literal unchanged complete original proof replays and252 matching kernel/original complete memory/domain fixtures; widths1/2/8/32/64/80, wrap/relocation overflow/long70-entry cases, every address at small widths. No held HD/EL, default, carrier, target evaluator or trust policy change."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/RotationCorrect/SingleR.lean",
+    "lean_name": "singleRThm",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "singleR_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison 2026-10-02 HOL1181-1210: full nine premise conjuncts and both invariant and map equality conclusions, generic homogeneous comparator/key and independent payload, cached size and all children unchanged. Only canonical finite-support representation of observed to_fmap is qualified; union precedence and update at comparator equivalence class preserved. Native proof derives ordering and missing child lookup rather than assuming post-state/map facts. Uses only original specified singleR Bin clause of chosen whole function; no missing-case output or cross-prover choice equivalence claim. Complete original proof and required local prerequisite proofs replayed with no hypotheses; concrete invariant and all three key observations kernel-checked."
   }
 ]
