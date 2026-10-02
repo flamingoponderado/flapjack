@@ -1,0 +1,8 @@
+ssa_props_full=⊢ ∀v v1 v2 v3 progOut ssaOut naOut. ssa_cc_trans v v1 v2 v3 = (progOut,ssaOut,naOut) ⇒ ssa_map_ok v2 v1 ∧ is_alloc_var v2 ⇒ v2 ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+ssa_props_type_prog=:α prog
+ssa_props_type_ssa=:num sptree$num_map
+ssa_props_type_na=:num
+ssa_props_type_lt=:(num sptree$num_map # sptree$num_set # sptree$num_set) list
+ssa_props_type_progOut=:α prog
+ssa_props_type_ssaOut=:num sptree$num_map
+ssa_props_type_naOut=:num

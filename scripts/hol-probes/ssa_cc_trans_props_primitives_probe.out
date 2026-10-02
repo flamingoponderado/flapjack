@@ -1,0 +1,50 @@
+spp_case_0=⊢ ∀ssa na lt progOut ssaOut naOut. ssa_cc_trans Skip ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_2=⊢ ∀a b c d ws ssa na lt progOut ssaOut naOut. ssa_cc_trans (StoreConsts a b c d ws) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_3=⊢ ∀i ssa na lt progOut ssaOut naOut. ssa_cc_trans (Inst i) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_4=⊢ ∀num exp ssa na lt progOut ssaOut naOut. ssa_cc_trans (Assign num exp) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_5=⊢ ∀num store ssa na lt progOut ssaOut naOut. ssa_cc_trans (Get num store) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_6=⊢ ∀exp num ssa na lt progOut ssaOut naOut. ssa_cc_trans (Store exp num) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_11=⊢ ∀num ssa na lt progOut ssaOut naOut. ssa_cc_trans (Raise num) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_12=⊢ ∀b dst src ssa na lt progOut ssaOut naOut. ssa_cc_trans (OpCurrHeap b dst src) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_13=⊢ ∀num nums ssa na lt progOut ssaOut naOut. ssa_cc_trans (Return num nums) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_14=⊢ ∀ssa na lt progOut ssaOut naOut. ssa_cc_trans Tick ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_15=⊢ ∀n exp ssa na lt progOut ssaOut naOut. ssa_cc_trans (Set n exp) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_16=⊢ ∀r l1 ssa na lt progOut ssaOut naOut. ssa_cc_trans (LocValue r l1) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_18=⊢ ∀r1 r2 ssa na lt progOut ssaOut naOut. ssa_cc_trans (CodeBufferWrite r1 r2) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_19=⊢ ∀r1 r2 ssa na lt progOut ssaOut naOut. ssa_cc_trans (DataBufferWrite r1 r2) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_case_23=⊢ ∀op v exp ssa na lt progOut ssaOut naOut. ssa_cc_trans (ShareInst op v exp) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spp_0_type_ssa=:num sptree$num_map
+spp_0_type_na=:num
+spp_0_type_lt=:(num sptree$num_map # sptree$num_set # sptree$num_set) list
+spp_0_type_progOut=:α prog
+spp_0_type_ssaOut=:num sptree$num_map
+spp_0_type_naOut=:num
+spp_2_type_a=:num
+spp_2_type_b=:num
+spp_2_type_c=:num
+spp_2_type_d=:num
+spp_2_type_ws=:(bool # α word) list
+spp_3_type_i=:α inst
+spp_4_type_num=:num
+spp_4_type_exp=:α exp
+spp_5_type_num=:num
+spp_5_type_store=:store_name
+spp_6_type_exp=:α exp
+spp_6_type_num=:num
+spp_11_type_num=:num
+spp_12_type_b=:binop
+spp_12_type_dst=:num
+spp_12_type_src=:num
+spp_13_type_num=:num
+spp_13_type_nums=:num list
+spp_15_type_n=:store_name
+spp_15_type_exp=:α exp
+spp_16_type_r=:num
+spp_16_type_l1=:num
+spp_18_type_r1=:num
+spp_18_type_r2=:num
+spp_19_type_r1=:num
+spp_19_type_r2=:num
+spp_23_type_op=:memop
+spp_23_type_v=:num
+spp_23_type_exp=:α exp
