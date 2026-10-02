@@ -57,6 +57,40 @@ class L3FpDefsTest(unittest.TestCase):
         self.assertNotIn('default', exception)
         self.assertTrue(all('[Inhabited ' not in text for text in bodies.values()))
 
+    def test_model_and_step_fetch_remain_distinct_complete_roots(self):
+        spec = importlib.util.spec_from_file_location('fetch_closure_renderer', ROOT / 'scripts/hol_terms_to_lean.py')
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory() as directory:
+            export = Path(directory) / 'definitions.sexp'
+            export.write_bytes(gzip.decompress((ROOT / 'scripts/l3/riscv_defs.sexp.gz').read_bytes()))
+            args = ['renderer', *self.args(export)[1:]]
+            model, failed = module.main([*args, '--roots=riscv$Fetch'])
+            self.assertFalse(failed)
+            model_body = next(text for thy, name, _, text, _, _ in model if (thy, name) == ('riscv', 'Fetch'))
+            self.assertIn('def Fetch (_u_ : Unit)', model_body)
+            self.assertIn('FetchResult.F_Error', model_body)
+            self.assertIn('Internal.FETCH_MISALIGNED', model_body)
+            self.assertIn('Internal.FETCH_FAULT', model_body)
+            self.assertIn('FetchResult.F_Result', model_body)
+            self.assertIn('«write\'Delta»', model_body)
+            model_keys = {(thy, name) for thy, name, *_ in model}
+            self.assertTrue({('riscv', name) for name in ('Delta', "write'Delta", 'PC', 'translateAddr', 'rawReadInst')} <= model_keys)
+            step, failed = module.main([*args, '--roots=riscv_step$Fetch'])
+            self.assertFalse(failed)
+            step_body = next(text for thy, name, _, text, _, _ in step if (thy, name) == ('riscv_step', 'Fetch'))
+            self.assertIn('def Fetch (s : riscv_state)', step_body)
+            self.assertIn('rawReadInst (holThe w)', step_body)
+            self.assertNotIn('FetchResult', step_body)
+            combined, failed = module.main([*args, '--roots=riscv$Fetch,riscv_step$NextRISCV'])
+            self.assertFalse(failed)
+            bodies = {(thy, name): text for thy, name, _, text, _, _ in combined}
+            self.assertIn('def riscv_Fetch ', bodies[('riscv', 'Fetch')])
+            self.assertIn('def riscv_step_Fetch ', bodies[('riscv_step', 'Fetch')])
+            self.assertIn('riscv_step_Fetch s', bodies[('riscv_step', 'NextRISCV')])
+            self.assertNotIn('riscv_Fetch s', bodies[('riscv_step', 'NextRISCV')])
+
     def test_invalid_root_selection_fails_closed(self):
         spec = importlib.util.spec_from_file_location('fp_selection_renderer', ROOT / 'scripts/hol_terms_to_lean.py')
         module = importlib.util.module_from_spec(spec)
