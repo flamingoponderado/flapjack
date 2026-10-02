@@ -54214,5 +54214,37 @@
     "lean_name": "extractColorSucceeds",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.11): reg_allocProofScript.sml:2048-2066, s ta free in HOL (explicit parameters, ta : num num_map as Spt Nat); premises good_ra_state s ∧ (∀x y. lookup x ta = SOME y ⇒ y < s.dim) ∧ wf ta; conclusion extract_color ta s = (M_success (map (λv. extract_tag (EL v s.node_tag)) ta), s) with extract_color, lookup, map and wf the exact tagged extractColor/sptLookup/sptMap/sptWf. good_ra_state is the exact tagged goodRaState; node_tag subscripts read through HOL EL as the exact holEl. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "colouring_satisfactory_cliques",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/ColouringTransport.lean",
+    "lean_name": "colouringSatisfactoryCliques",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.7): reg_allocProofScript.sml:1307-1325, ∀ls g (f:num->num) with the four premises in HOL order. Statement compared clause by clause with the source text. ALL_DISTINCT is List.Nodup, EVERY bounded membership, MAP List.map, colouring_satisfactory/is_clique/is_subgraph/no_clash/has_edge the exact tagged colouringSatisfactory/isClique/isSubgraph/noClash/hasEdge, adjacency/tag subscripts through HOL EL as the exact holEl. Kernel-checked; standard axioms (propext, Classical.choice, Quot.sound); no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "colouring_satisfactory_subgraph",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/ColouringTransport.lean",
+    "lean_name": "colouringSatisfactorySubgraph",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.7): reg_allocProofScript.sml:1483-1491, f g h free in HOL (explicit parameters, f : num -> α at colouring_satisfactory's polymorphic colour type). Statement compared clause by clause with the source text. ALL_DISTINCT is List.Nodup, EVERY bounded membership, MAP List.map, colouring_satisfactory/is_clique/is_subgraph/no_clash/has_edge the exact tagged colouringSatisfactory/isClique/isSubgraph/noClash/hasEdge, adjacency/tag subscripts through HOL EL as the exact holEl. Kernel-checked; standard axioms (propext, Classical.choice, Quot.sound); no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "no_clash_colouring_satisfactory",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/ColouringTransport.lean",
+    "lean_name": "noClashColouringSatisfactory",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.7): reg_allocProofScript.sml:3024-3041, adjls node_tag free in HOL (explicit parameters); EVERY (λn. n ≠ Stemp ∧ n ≠ Atemp) node_tag as ∀ n ∈ node_tag; the colouring λf. if f < LENGTH node_tag then extract_tag (EL f node_tag) else 0 verbatim with the exact tagged extractTag. Statement compared clause by clause with the source text. ALL_DISTINCT is List.Nodup, EVERY bounded membership, MAP List.map, colouring_satisfactory/is_clique/is_subgraph/no_clash/has_edge the exact tagged colouringSatisfactory/isClique/isSubgraph/noClash/hasEdge, adjacency/tag subscripts through HOL EL as the exact holEl. Kernel-checked; standard axioms (propext, Classical.choice, Quot.sound); no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "mk_graph_check_clash_tree",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/MkGraphCheckClashTree.lean",
+    "lean_name": "mkGraphCheckClashTree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.7): reg_allocProofScript.sml:1565-1920, ∀ct ta livelist s livelist' s' col live flive with the nine premises in HOL order. HOL sets are predicates: {x | in_clash_tree ct x} ∪ domain live is inClashTree ct x ∨ sptDomain live x; INJ ta (that set) (count (LENGTH s.adj_ls)) is expanded as INJ_DEF (range conjunct ta x < s.adj_ls.length, then injectivity), as in the accepted injUnion/mk_graph_succeeds rows; IMAGE f s is λy. ∃x. s x ∧ f x = y and set l is λy. y ∈ l, the set equalities being equalities of these predicates (as in check_partial_col_success). col o ta is Function.comp. Conclusion ∃livein flivein with check_clash_tree the exact tagged checkClashTree and both image equations. mk_graph, in_clash_tree and check_clash_tree are the exact tagged mkGraph/inClashTree/checkClashTree; good_ra_state is the exact tagged goodRaState. Statement compared clause by clause with the source text. ALL_DISTINCT is List.Nodup, EVERY bounded membership, MAP List.map, colouring_satisfactory/is_clique/is_subgraph/no_clash/has_edge the exact tagged colouringSatisfactory/isClique/isSubgraph/noClash/hasEdge, adjacency/tag subscripts through HOL EL as the exact holEl. Kernel-checked; standard axioms (propext, Classical.choice, Quot.sound); no extra premise."
   }
 ]
