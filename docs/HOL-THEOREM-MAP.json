@@ -57828,5 +57828,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02: Original351-355 full seven-argument definition: init_stubs prefix appended to MAP(prog_comp jump off k) source sections, native List(Nat x HolProg width), no section deduplication or sorting. Forty original/native fixtures cover both jump settings and empty/nonempty input, duplicate labels, huge labels, Get CurrHeap lowering, retained Tick and Seq/Halt, zero/max word bounds. Standard positive-width BitVec/[NeZero width] translation only; original native carriers and all quantifiers retained, no added success/safety/evaluation premises. Proof-side definition group; compile_semantics and actual executed compiler routing remain separately tracked. Coordinator source-ready group authorization05:04:53 preserves acceptance dependencies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/MaxHeapLimit.lean",
+    "lean_name": "maxHeapLimit",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "max_heap_limit_def",
+    "statement_status": "reviewed_word_dimension_as_width",
+    "word_dimension_as_width": "width",
+    "reviewer": "flapjack-sol source comparison2026-10-02; bead .6.6.6.2: original116-120 MIN(dimword(:a) DIV2^shift_length c)(dimword(:a) DIV2^(shift(:a)+1)), full imported Config25-36 retained. wordLang329 overload explicitly identifies shift as reviewed backend_common.word_shift,2 at dimension32 and3 otherwise. Lean preserves both denominator exponent groupings and MIN/Nat DIV, no extra config validity/shift bounds or word carriers. Only numeric dimension translated to explicit positive width/[NeZero width] and dimword to2^width, hence word_dimension_as_width qualifier. Fresh original full definition/type and64 independent numeric/kernel expectations at dimensions1/7/8/31/32/33/64/80, varying allconfig fields/gcKind and shifts below/above dimension, including exact RV64data config4/4/2/lenSize32. Actual backend73/165/222 supplies2*maxHeapLimit-1 to full initializer; its production caller remains on linked .6.6.6 parent, not completed by this definition."
   }
 ]

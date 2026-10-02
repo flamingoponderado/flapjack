@@ -1,3 +1,4 @@
+import Flapjack.Test.DataMaxHeapLimit
 import Flapjack.Test.InitializedProduction
 import Flapjack.Test.StackRemoveInitCode
 import Flapjack.Test.StackRemoveCompile
