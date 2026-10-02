@@ -23,6 +23,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
 import Flapjack.Compiler.Backend.WordCse.Proofs.ArithmeticKeys
 import Flapjack.Compiler.Backend.WordCse.Proofs.InsertEquality
 import Flapjack.Compiler.Backend.WordCse.Proofs.KeyInjectivity
