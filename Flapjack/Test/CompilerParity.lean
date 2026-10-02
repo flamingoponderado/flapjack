@@ -168,6 +168,7 @@ import Flapjack.Test.FiniteMapUnionExact
 import Flapjack.Test.ComparisonGoodCmp
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordToStackAsmNameFlatParity
 import Flapjack.Test.WordToStackAsmNameInstructionsParity
 import Flapjack.Test.WordToStackAsmNameShareParity
 import Flapjack.Test.WordToStackSortedRelationsParity
