@@ -4222,3 +4222,11 @@ and label observations across all 34 continuation constructors, widths
 The handler-without-return case preserves its AST while contributing no labels,
 as in the original semantics. These checks are regression evidence, not a
 HOL-to-Lean equivalence proof.
+
+Return-copy label probes replay the complete original `copy_ret_aux_thm` and
+`get_labels_copy_ret` proofs. 460 matching native/original packets compare whole
+recursive return-copy ASTs and continuation labels, including saturated natural
+subtraction, independent Nat/Bool value and frame metadata carriers, all four
+performance/handler modes, 70-bit indices, and widths 1/2/8/64/80.
+They retain the descending load/store sequence and zero-count continuation.
+These observations provide regression evidence, not cross-language equivalence.
