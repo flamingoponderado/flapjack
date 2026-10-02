@@ -5734,3 +5734,5 @@ condition from the empty separation partition; it adds no premise to the
 tagged definitions. Original existential proofs select bounded witnesses
 explicitly rather than searching through the recursive list definition. This
 is heap separation from miscScript, not WordToStack bitmap-word chunking.
+
+Register-bound monotonicity probe replays the full original reg_bound_mono proof with no open hypotheses and captures456 direct whole-predicate pairs at k/k+1. Kernel fixture expected values are read from this fresh original output; source/Lean program shapes reuse reviewed register-bound predicate fixtures. All program and instruction constructor families, valid/invalid bounds, bitmap store rejection, ignored tail handlers and returning/active handlers are covered. No cross-language equivalence or full compiler register-bound theorem is claimed. Selector: HOL_PROBE_ONLY=word_to_stack_reg_bound_mono_probeScript.sml.

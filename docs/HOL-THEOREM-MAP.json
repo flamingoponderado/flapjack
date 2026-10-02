@@ -62709,5 +62709,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-02, original stack_allocProofScript.sml:4124-4241: full binder order and four curried premise groups, free conf/gs/rs implicit; all shift/width/lenSize/goodDimindex, store, memory/domain and register hypotheses preserved. Exact StackSem evaluate existential clock, memory m2 and nine-register update (register8 Word pa2); store unchanged. Complete fuel induction follows original empty/data-bit/pointer-list cases using native partial-list theorem and evaluateAddClock, no supplied target evaluation. Fresh original HOL typed capture confirms unused existential t0:delta,t1:epsilon, retained as independently arbitrary D/E with Nonempty instances; main source-review policy agmsg2026-10-02T10:04:33Z confirms standard HOL inhabited-type interpretation, not additional operational premise/qualifier. Canonical actual StackSemStateFiniteExact regs/fpRegs/store codec witness; positive-width BitVec NeZero. Seven original concrete EVAL observations; no claimed concrete oracle for unspecified theWord(Loc). Inst evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts, not an independent review of all dependencies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterBoundMono.lean",
+    "lean_name": "regBoundMono",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "reg_bound_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of complete reg_bound_mono11589-11603: arbitrary actual native program and bounds, exactly original regBound p k and k<=kprime imply regBound p kprime. All34 program and all native instruction constructors, original return-dependent optional handler branch retained. All recursive hypotheses internal, no target/success/output/extra guard premise. Native HolProg carrier reviewed, positive-width BitVec translation only. Fresh literal complete original proof replay hyp=[] plus456 direct original EVAL whole-predicate pairs at k/k+1, same-input kernel expectations read from new captured output using already reviewed source/Lean fixture carriers. Includes all program constructors/instruction variants, valid/invalid bounds, forbidden bitmap store, ignored handlers and active return/handler branches. No cross-language equivalence or full compiler theorem claim. No held imports/policy change."
   }
 ]
