@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness
 import Flapjack.Compiler.Backend.LabToTarget.StrongEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
+import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
 import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
 import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceDomain
@@ -31,6 +32,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstallCase
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAllocCase
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallReturn
 import Flapjack.Misc.TakeFlatReplicate
+import Flapjack.Compiler.Backend.LabToTarget.PreconditionPreservation
+import Flapjack.Compiler.Backend.LabToTarget.ValidityEstablishment
 import Flapjack.Compiler.Backend.LabToTarget.ValidityNop
 import Flapjack.Compiler.Backend.LabToTarget.NopInvariant
 import Flapjack.Compiler.Backend.LabToTarget.LengthCorrectness
@@ -110,6 +113,8 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.AllocationArithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackAllocSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ShiftSimulation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordAddressArithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
@@ -554,9 +559,11 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoves
 import Flapjack.Compiler.Backend.RegAlloc.ProductionStateRelation
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInitialSeed
+import Flapjack.Compiler.Backend.RegAlloc.ProductionStackTransition
 import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTransition
 import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTraversal
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
+import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyQuery
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
