@@ -107,6 +107,12 @@ run_probe() {
   done
 }
 
+run_probe stack_rawcall_state_ok_probeScript.sml stack_rawcall_state_ok_probe.out \
+  state_ok_type state_ok_definition state_ok_empty state_ok_entry state_ok_zero state_ok_bare_rejected state_ok_wrong_size \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_compile_probeScript.sml stack_rawcall_compile_probe.out \
+  raw_compile_empty raw_compile_forward raw_compile_duplicates raw_compile_bare raw_compile_zero_top \
+  "$cake_dir/compiler/backend/stack_rawcallScript.sml" "$cake_dir/compiler/backend"
 run_probe stack_rawcall_collect_probeScript.sml stack_rawcall_collect_probe.out \
   collect_bare_rejected collect_seq_zero collect_nested_rejected collect_duplicates \
   "$cake_dir/compiler/backend/stack_rawcallScript.sml" "$cake_dir/compiler/backend"
@@ -5538,6 +5544,11 @@ run_probe lab_to_target_sec_pos_zero_probeScript.sml lab_to_target_sec_pos_zero_
 run_probe stack_sem_atomic_clocks_probeScript.sml stack_sem_atomic_clocks_probe.out \
   gc_clock_statement gc_clock_proved alloc_clock_statement alloc_clock_proved store_const_sem_clock_statement store_const_sem_clock_proved inst_clock_statement inst_clock_proved sh_mem_op_clock_statement sh_mem_op_clock_proved \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_sem_clock_control_probeScript.sml stack_sem_clock_control_probe.out \
+  cseq_statement cseq_proved cif_statement cif_proved cloop_statement cloop_proved \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stackprops_extract_labels_probeScript.sml stackprops_extract_labels_probe.out \
   sel_1_skip sel_1_inst sel_1_location sel_1_raw sel_1_return sel_1_both sel_1_ignored sel_1_loop sel_1_seq sel_1_if sel_1_nested sel_1_duplicate sel_1_zero sel_1_wide sel_8_skip sel_8_inst sel_8_location sel_8_raw sel_8_return sel_8_both sel_8_ignored sel_8_loop sel_8_seq sel_8_if sel_8_nested sel_8_duplicate sel_8_zero sel_8_wide sel_64_skip sel_64_inst sel_64_location sel_64_raw sel_64_return sel_64_both sel_64_ignored sel_64_loop sel_64_seq sel_64_if sel_64_nested sel_64_duplicate sel_64_zero sel_64_wide sel_80_skip sel_80_inst sel_80_location sel_80_raw sel_80_return sel_80_both sel_80_ignored sel_80_loop sel_80_seq sel_80_if sel_80_nested sel_80_duplicate sel_80_zero sel_80_wide \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -5557,13 +5568,18 @@ run_probe l3_mmu_tlb_probeScript.sml l3_mmu_tlb_probe.out \
 run_probe l3_mmu_write_frame_probeScript.sml l3_mmu_write_frame_probe.out \
   raw_write_frame \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe stack_sem_evaluate_clock_probeScript.sml stack_sem_evaluate_clock_probe.out \
+  gc_clock_statement gc_clock_proved alloc_clock_statement alloc_clock_proved store_const_sem_clock_statement store_const_sem_clock_proved inst_clock_statement inst_clock_proved sh_mem_op_clock_statement sh_mem_op_clock_proved evaluate_clock_statement evaluate_clock_proved fix_clock_evaluate_statement fix_clock_evaluate_proved \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_remove_comp_seq_probeScript.sml stack_remove_comp_seq_probe.out \
+  cc_seq_statement cc_seq_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe l3_mmu_primitives_probeScript.sml l3_mmu_primitives_probe.out \
   constant_ASID_SIZE constant_LEVEL_BITS constant_PAGESIZE_BITS constant_TLBEntries privilege_0 privilege_1 privilege_2 privilege_3 global_0 global_1 global_2 global_3 global_4 global_5 global_6 global_7 global_8 global_9 global_10 global_11 global_12 global_13 global_14 global_15 pte_0 pte_repack_0 vaddr_0 pte_1 pte_repack_1 vaddr_1 pte_2 pte_repack_2 vaddr_2 pte_3 pte_repack_3 vaddr_3 pte_4 pte_repack_4 vaddr_4 pte_5 pte_repack_5 vaddr_5 pte_6 pte_repack_6 vaddr_6 pte_7 pte_repack_7 vaddr_7 pte_8 pte_repack_8 vaddr_8 pte_9 pte_repack_9 vaddr_9 scsr_full tlb_full tlb_write_full mem_write_full mem_read_0 mem_read_1 mem_read_2 mem_read_3 \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
 
-run_probe stack_sem_clock_control_probeScript.sml stack_sem_clock_control_probe.out \
-  cseq_statement cseq_proved cif_statement cif_proved cloop_statement cloop_proved \
-  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe word_to_stack_make_init_probeScript.sml word_to_stack_make_init_probe.out \
   mi_definition mi_1_0_reset mi_1_0_sizes mi_1_0_inherit mi_1_0_store mi_1_0_oracle mi_1_1_reset mi_1_1_sizes mi_1_1_inherit mi_1_1_store mi_1_1_oracle mi_1_2_reset mi_1_2_sizes mi_1_2_inherit mi_1_2_store mi_1_2_oracle mi_1_3_reset mi_1_3_sizes mi_1_3_inherit mi_1_3_store mi_1_3_oracle mi_1_4_reset mi_1_4_sizes mi_1_4_inherit mi_1_4_store mi_1_4_oracle mi_1_0_0_compile mi_1_0_99_compile mi_1_17_0_compile mi_1_17_99_compile mi_1_300_0_compile mi_1_300_99_compile mi_8_0_reset mi_8_0_sizes mi_8_0_inherit mi_8_0_store mi_8_0_oracle mi_8_1_reset mi_8_1_sizes mi_8_1_inherit mi_8_1_store mi_8_1_oracle mi_8_2_reset mi_8_2_sizes mi_8_2_inherit mi_8_2_store mi_8_2_oracle mi_8_3_reset mi_8_3_sizes mi_8_3_inherit mi_8_3_store mi_8_3_oracle mi_8_4_reset mi_8_4_sizes mi_8_4_inherit mi_8_4_store mi_8_4_oracle mi_8_0_0_compile mi_8_0_99_compile mi_8_17_0_compile mi_8_17_99_compile mi_8_300_0_compile mi_8_300_99_compile mi_64_0_reset mi_64_0_sizes mi_64_0_inherit mi_64_0_store mi_64_0_oracle mi_64_1_reset mi_64_1_sizes mi_64_1_inherit mi_64_1_store mi_64_1_oracle mi_64_2_reset mi_64_2_sizes mi_64_2_inherit mi_64_2_store mi_64_2_oracle mi_64_3_reset mi_64_3_sizes mi_64_3_inherit mi_64_3_store mi_64_3_oracle mi_64_4_reset mi_64_4_sizes mi_64_4_inherit mi_64_4_store mi_64_4_oracle mi_64_0_0_compile mi_64_0_99_compile mi_64_17_0_compile mi_64_17_99_compile mi_64_300_0_compile mi_64_300_99_compile mi_80_0_reset mi_80_0_sizes mi_80_0_inherit mi_80_0_store mi_80_0_oracle mi_80_1_reset mi_80_1_sizes mi_80_1_inherit mi_80_1_store mi_80_1_oracle mi_80_2_reset mi_80_2_sizes mi_80_2_inherit mi_80_2_store mi_80_2_oracle mi_80_3_reset mi_80_3_sizes mi_80_3_inherit mi_80_3_store mi_80_3_oracle mi_80_4_reset mi_80_4_sizes mi_80_4_inherit mi_80_4_store mi_80_4_oracle mi_80_0_0_compile mi_80_0_99_compile mi_80_17_0_compile mi_80_17_99_compile mi_80_300_0_compile mi_80_300_99_compile \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -5598,4 +5614,13 @@ run_probe l3_mmu_insert_probeScript.sml l3_mmu_insert_probe.out \
 
 run_probe l3_mmu_walk_probeScript.sml l3_mmu_walk_probe.out \
   walk_invalid walk_pointer_zero walk_pointer_type_one walk_leaf_read walk_leaf_write walk_leaf_already_rd walk_permission_denied walk_leaf_global walk_superpage_unaligned_ppn walk_pointer_leaf walk_leaf_level4 walk_leaf_level1000 walk_recursive_ppn_truncated walk_pointer_type_one_leaf walk_pte_address_wrap \
+run_probe stack_sem_evaluate_clock_probeScript.sml stack_sem_evaluate_clock_probe.out \
+  gc_clock_statement gc_clock_proved alloc_clock_statement alloc_clock_proved store_const_sem_clock_statement store_const_sem_clock_proved inst_clock_statement inst_clock_proved sh_mem_op_clock_statement sh_mem_op_clock_proved evaluate_clock_statement evaluate_clock_proved fix_clock_evaluate_statement fix_clock_evaluate_proved \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe l3_mmu_tlb_probeScript.sml l3_mmu_tlb_probe.out \
+  entry_0 entry_1 entry_5 entry_6 entry_7 entry_1000 lookup_empty lookup_first lookup_last lookup_two lookup_wrong_asid lookup_global lookup_wrong_address lookup_zero_mask \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_mmu_write_frame_probeScript.sml l3_mmu_write_frame_probe.out \
+  raw_write_frame \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"

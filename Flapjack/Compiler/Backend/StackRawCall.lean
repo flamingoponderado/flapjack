@@ -70,4 +70,14 @@ def compTop {width : Nat} [NeZero width] (info : Spt Nat) : HolProg width → Ho
   | .seq first second => .seq (comp info first) (comp info second)
   | other => comp info other
 
+/-- Original whole-program wrapper collects frame sizes from the complete input
+before compiling any body. Keys, list order and duplicate entries are retained.
+This native definition is not yet the executed broad compiler route. -/
+@[hol "cakeml/compiler/backend/stack_rawcallScript.sml" "compile_def"
+  (words_as_type_indexed_bitvec)]
+def compile {width : Nat} [NeZero width]
+    (programs : List (Nat × HolProg width)) : List (Nat × HolProg width) :=
+  let info := collectInfo programs .ln
+  programs.map fun (name, body) => (name, compTop info body)
+
 end Flapjack.Compiler.Backend.StackRawCall

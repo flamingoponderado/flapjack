@@ -3,11 +3,15 @@ import Flapjack.Test.L3MmuInsertParity
 import Flapjack.Test.L3MmuTlbParity
 import Flapjack.Test.L3MmuAccessParity
 import Flapjack.Test.L3MmuPrimitivesParity
+import Flapjack.Test.L3MmuTlbParity
+import Flapjack.Test.L3MmuAccessParity
+import Flapjack.Test.StackRawCallCompileParity
+import Flapjack.Test.StackRawCallStateOkParity
+import Flapjack.Test.StackRawCallCollectParity
+import Flapjack.Test.StackRawCallNativeParity
 import Flapjack.Test.LabToTargetSecPosZeroParity
 import Flapjack.Test.LabToTargetPaddingCodeLabelsParity
 import Flapjack.Test.LabToTargetPaddingLabelsParity
-import Flapjack.Test.StackRawCallCollectParity
-import Flapjack.Test.StackRawCallNativeParity
 import Flapjack.Test.WordToStackTailHandlerParity
 import Flapjack.Test.L3MmuPrimitivesParity
 import Flapjack.Test.LabToTargetSectionLookupPositionsParity
