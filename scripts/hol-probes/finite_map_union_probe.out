@@ -1,0 +1,15 @@
+fmu_0=NONE
+
+fmu_1=SOME 10
+
+fmu_2=SOME 20
+
+fmu_3=SOME 300
+
+fmu_4=NONE
+
+fmu_empty_left=SOME 200
+
+fmu_empty_right=SOME 20
+
+fmu_lookup_theorem=⊢ FLOOKUP (f1 ⊌ f2) k = case FLOOKUP f1 k of NONE => FLOOKUP f2 k | SOME v => SOME v

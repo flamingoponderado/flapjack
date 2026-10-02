@@ -195,6 +195,7 @@ elab "#emit_hol_ref_export" : command => do
           ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
           ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
           ("fmap_as_finite_support_function", toJson ref.fmapAsFiniteSupportFunction),
+          ("fmap_as_finite_support_result_observations", toJson ref.fmapAsFiniteSupportResultObservations),
           ("fmap_as_finite_support_parameters", toJson ref.fmapAsFiniteSupportParameters),
           ("fmap_as_finite_support_existentials", toJson ref.fmapAsFiniteSupportExistentials),
           ("fmap_as_finite_support_relation",

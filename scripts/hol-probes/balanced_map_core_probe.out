@@ -1,0 +1,26 @@
+bm_size=0
+
+bm_bin_size=171
+
+bm_nonnull=F
+
+bm_empty_null=T
+
+bm_equal_lookup=SOME 100
+
+bm_left_absent=NONE
+
+bm_root=SOME 100
+
+bm_right_absent=NONE
+
+bm_equal_member=T
+
+bm_left_member=F
+
+bm_singleton_hit=SOME 70
+
+bm_singleton_miss=NONE
+
+bm_lookup_definition=⊢ (∀cmp k. lookup cmp k Tip = NONE) ∧ ∀cmp k s k' v l r. lookup cmp k (Bin s k' v l r) = case cmp k k' of Less => lookup cmp k l | Equal => SOME v | Greater => lookup cmp k r
+bm_member_definition=⊢ (∀cmp k. member cmp k Tip ⇔ F) ∧ ∀cmp k s k' v l r. member cmp k (Bin s k' v l r) ⇔ case cmp k k' of Less => member cmp k l | Equal => T | Greater => member cmp k r
