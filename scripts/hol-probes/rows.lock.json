@@ -5564,6 +5564,12 @@
       "sha256": "d3ef1f8f9aab079091592d9457f09df02c8d32f9290a61f0bf723e81283d8ecb"
     },
     {
+      "bytes": 444,
+      "out": "stack_rawcall_state_rel_probe.out",
+      "rows": 4,
+      "sha256": "ac1f65acba3d79713c36b260d2be89c27cf9eeeae370b339b888c7484cb60083"
+    },
+    {
       "bytes": 558,
       "out": "stack_remove_alloc_guard_probe.out",
       "rows": 12,
