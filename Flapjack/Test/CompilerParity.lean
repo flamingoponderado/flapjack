@@ -1,3 +1,4 @@
+import Flapjack.Test.InitializedProduction
 import Flapjack.Test.StackRemoveInitCode
 import Flapjack.Test.StackRemoveCompile
 import Flapjack.Test.ByteDecoder
@@ -1647,6 +1648,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CakeAllocatorBitsBridgeParity.runChecks,
     Flapjack.Test.StackNamesParity.runChecks,
     Flapjack.Test.StackRemoveInitParity.runChecks,
+    Flapjack.Test.InitializedProduction.runChecks,
     Flapjack.Test.WordLocWParity.runChecks,
     Flapjack.Test.StackRemoveHelpersParity.runChecks,
     Flapjack.Test.LoopSemStateParity.runChecks,

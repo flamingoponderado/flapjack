@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackToLab.InitializedProduction
 import Flapjack.Compiler.Backend.StackRemove.InitCode
 import Flapjack.Compiler.Backend.StackRemove.InitStubs
 import Flapjack.Compiler.Backend.StackRemove.Compile
