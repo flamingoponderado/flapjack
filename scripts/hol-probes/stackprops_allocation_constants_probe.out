@@ -1,0 +1,107 @@
+alloc_const=(alloc (w :α word) (s :(α, β, γ) state) :α result option # (α, β, γ) state) =
+((r :α result option),(t :(α, β, γ) state)) ⇒
+t.ffi = s.ffi ∧ t.clock = s.clock ∧ (t.use_alloc ⇔ s.use_alloc) ∧
+(t.use_store ⇔ s.use_store) ∧ (t.use_stack ⇔ s.use_stack) ∧ t.code = s.code ∧
+(t.be ⇔ s.be) ∧ t.gc_fun = s.gc_fun ∧ t.mdomain = s.mdomain ∧
+t.sh_mdomain = s.sh_mdomain ∧ t.bitmaps = s.bitmaps ∧ t.compile = s.compile ∧
+t.data_buffer = s.data_buffer ∧ t.code_buffer = s.code_buffer ∧
+t.compile_oracle = s.compile_oracle
+alloc_const_types=(t :(α, β, γ) state)::(α, β, γ) state;(r :α result option)::α result option;(s :(α, β, γ) state)::(α, β, γ) state;(w :α word)::α word;
+store_const_sem_const=(store_const_sem (t1 :num) (t2 :num) (s :(β, γ, δ) state) :
+ α result option # (β, γ, δ) state) =
+((r :α result option),(t :(β, γ, δ) state)) ⇒
+t.ffi = s.ffi ∧ t.clock = s.clock ∧ (t.use_alloc ⇔ s.use_alloc) ∧
+(t.use_store ⇔ s.use_store) ∧ (t.use_stack ⇔ s.use_stack) ∧ t.code = s.code ∧
+(t.be ⇔ s.be) ∧ t.gc_fun = s.gc_fun ∧ t.mdomain = s.mdomain ∧
+t.sh_mdomain = s.sh_mdomain ∧ t.bitmaps = s.bitmaps ∧ t.compile = s.compile ∧
+t.store = s.store ∧ t.data_buffer = s.data_buffer ∧
+t.code_buffer = s.code_buffer ∧ t.compile_oracle = s.compile_oracle
+store_const_sem_const_types=(t :(β, γ, δ) state)::(β, γ, δ) state;(r :α result option)::α result option;(s :(β, γ, δ) state)::(β, γ, δ) state;(t2 :num)::num;(t1 :num)::num;
+gc_with_const=gc ((x :(α, β, γ) state) with clock := (k :num)) =
+OPTION_MAP (λ(s :(α, β, γ) state). s with clock := k) (gc x)
+gc_with_const_types=(x :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;
+alloc_with_const=(alloc (x :α word) ((y :(α, β, γ) state) with clock := (z :num)) :
+ α result option # (α, β, γ) state) =
+((I :α result option -> α result option) ##
+ (λ(s :(α, β, γ) state). s with clock := z))
+  (alloc x y :α result option # (α, β, γ) state)
+alloc_with_const_types=(y :(α, β, γ) state)::(α, β, γ) state;(z :num)::num;(x :α word)::α word;
+store_const_sem_with_const=(store_const_sem (t1 :num) (t2 :num)
+   ((y :(β, γ, δ) state) with clock := (z :num)) :
+ α result option # (β, γ, δ) state) =
+((I :α result option -> α result option) ##
+ (λ(s :(β, γ, δ) state). s with clock := z))
+  (store_const_sem t1 t2 y :α result option # (β, γ, δ) state)
+store_const_sem_with_const_types=(y :(β, γ, δ) state)::(β, γ, δ) state;(z :num)::num;(t2 :num)::num;(t1 :num)::num;
+store_const_sem_def=∀(t1 :num) (t2 :num) (s :(α, γ, 'ffi) state).
+  (store_const_sem t1 t2 s :β result option # (α, γ, 'ffi) state) =
+  if ¬ALL_DISTINCT [(0 :num); (1 :num); (2 :num); (3 :num); t1; t2] then
+    (SOME (Error :β result),s)
+  else
+    case
+      ((get_var (1 :num) s :α word_loc option),
+       (get_var (2 :num) s :α word_loc option),
+       (get_var (3 :num) s :α word_loc option))
+    of
+      ((NONE :α word_loc option),v4) => (SOME (Error :β result),s)
+    | (SOME (Word i),(NONE :α word_loc option),v16) =>
+      (SOME (Error :β result),s)
+    | (SOME (Word i),SOME (Word a),(NONE :α word_loc option)) =>
+      (SOME (Error :β result),s)
+    | (SOME (Word i),SOME (Word a),SOME (Word off)) =>
+      (case copy_words (w2n i) a off s.bitmaps s.mdomain s.memory of
+         (NONE :(α word # (α word -> α word_loc)) option) =>
+           (SOME (Error :β result),s)
+       | SOME (a,m) =>
+         ((NONE :β result option),
+          ((if s.use_alloc then unset_var (0 :num) else I)
+             (set_var t1 (Word (1w :α word))
+                (set_var t2 (Word (1w :α word))
+                   (set_var (1 :num) (Word (1w :α word))
+                      (set_var (2 :num) (Word a) (s with memory := m))))) :
+           (α, γ, 'ffi) state)))
+    | (SOME (Word i),SOME (Word a),SOME (Loc v31 v32 :α word_loc)) =>
+      (SOME (Error :β result),s)
+    | (SOME (Word i),SOME (Loc v23 v24 :α word_loc),v16) =>
+      (SOME (Error :β result),s)
+    | (SOME (Loc v11 v12 :α word_loc),v4) => (SOME (Error :β result),s)
+store_const_sem_def_types=(t1 :num)::num;(t2 :num)::num;(s :(α, γ, 'ffi) state)::(α, γ, 'ffi) state;
+alloc_success_frame=T
+alloc_success_clock=T
+alloc_success_outcome=0
+alloc_halt_frame=T
+alloc_halt_clock=T
+alloc_halt_outcome=2
+alloc_gc_failure_frame=T
+alloc_gc_failure_clock=T
+alloc_gc_failure_outcome=1
+alloc_missing_frame=T
+alloc_missing_clock=T
+alloc_missing_outcome=1
+alloc_bad_amount_frame=T
+alloc_bad_amount_clock=T
+alloc_bad_amount_outcome=1
+alloc_bad_space_frame=T
+alloc_bad_space_clock=T
+alloc_bad_space_outcome=1
+store_duplicate_frame=T
+store_duplicate_clock=T
+store_duplicate_outcome=1
+store_nonword_frame=T
+store_nonword_clock=T
+store_nonword_outcome=1
+store_copy_failure_frame=T
+store_copy_failure_clock=T
+store_copy_failure_outcome=1
+store_success_alloc_frame=T
+store_success_alloc_clock=T
+store_success_alloc_outcome=0
+store_success_noalloc_frame=T
+store_success_noalloc_clock=T
+store_success_noalloc_outcome=0
+gc_success_clock=T
+gc_gc_failure_clock=T
+gc_missing_clock=T
+gc_bad_amount_clock=T
+mixed_state1_result80=SOME Error
+mixed_state80_result1=SOME Error

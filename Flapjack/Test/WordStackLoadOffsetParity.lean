@@ -193,11 +193,9 @@ example :
         addressScratch := 29
         stackBase := 10 }
       (.op .add [.var 1, .const (2 ^ 64 - 8)]) (.var 0) =
-      some (.seq (.seq (.const 31 (2 ^ 64 - 8))
-        (.arith .add 29 5 31))
-        (.inst (.mem .store 4 29)) : StackProg Nat) := by
-  simp [wordStackCompileStoreNatNested, wordStackLocation, lookupNatInfo,
-    wordStackJoin]
+      some (.inst (.memOffset .store 4 5 (2 ^ 64 - 8)) : StackProg Nat) := by
+  simp [wordStackCompileStoreNatNested, wordStackStoreOffsetInst,
+    wordStackLocation, wordStackOffset, lookupNatInfo]
 
 example :
     wordStackMemoryOffsetInst
@@ -316,11 +314,9 @@ example :
         addressScratch := 29
         stackBase := 10 }
       (.op .add [.var 1, .const 8]) (.var 0) =
-      some (.seq (.seq (.const 31 8)
-        (.arith .add 29 5 31))
-        (.inst (.mem .store 4 29)) : StackProg Nat) := by
-  simp [wordStackCompileStoreNatNested, wordStackLocation, lookupNatInfo,
-    wordStackJoin]
+      some (.inst (.memOffset .store 4 5 8) : StackProg Nat) := by
+  simp [wordStackCompileStoreNatNested, wordStackStoreOffsetInst,
+    wordStackLocation, wordStackOffset, lookupNatInfo]
 
 /- Cake's signed-12 negative Store displacement remains in the source-shaped
    carrier as the modulo-2^64 word (2^64 - 8); Lab later emits the signed
@@ -332,14 +328,12 @@ example :
         addressScratch := 29
         stackBase := 10 }
       (.op .add [.var 1, .const (2 ^ 64 - 8)]) (.var 0) =
-      some (.seq (.seq (.const 31 (2 ^ 64 - 8))
-        (.arith .add 29 5 31))
-        (.inst (.mem .store 4 29)) : StackProg Nat) := by
-  simp [wordStackCompileStoreNatNested, wordStackLocation, lookupNatInfo,
-    wordStackJoin]
+      some (.inst (.memOffset .store 4 5 (2 ^ 64 - 8)) : StackProg Nat) := by
+  simp [wordStackCompileStoreNatNested, wordStackStoreOffsetInst,
+    wordStackLocation, wordStackOffset, lookupNatInfo]
 
 /- A spilled Store value still follows Cake's address/value staging: the
-   address is formed first, then the value is reloaded through `wReg2`. -/
+   value is reloaded through `wReg2`, with the offset retained on Addr. -/
 example :
     wordStackCompileStoreNatNested
       { locations := [(0, .stack 2), (1, .register 5)]
@@ -347,13 +341,9 @@ example :
         addressScratch := 29
         stackBase := 10 }
       (.op .add [.var 1, .const 8]) (.var 0) =
-      some (.seq (.inst (.arith (.binOp .add 29 5 (.imm 8))))
-        (.seq (.stackLoad 31 12)
-          (.inst (.mem .store 31 29))) : StackProg Nat) := by
-  simp [wordStackCompileStoreNatNested, wordStackCompileExpToRegisterNat,
-    wordStackExpressionIsAtom, wordStackAtomNat, wordStackReadRegister,
-    wordStackExpressionTemporaries, wordStackExpressionTemporariesExcluding,
-    wordStackLocation, wordStackOffset, lookupNatInfo, wordStackJoin]
+      some (.seq (.stackLoad 29 12) (.inst (.memOffset .store 29 5 8)) : StackProg Nat) := by
+  simp [wordStackCompileStoreNatNested, wordStackStoreOffsetInst,
+    wordStackLocation, wordStackOffset, lookupNatInfo]
 
 /- The dual spill shape reloads the address through `wReg1` and preserves the
    register-resident value through the independent store scratch. -/
@@ -364,15 +354,9 @@ example :
         addressScratch := 29
         stackBase := 10 }
       (.op .add [.var 1, .const 8]) (.var 0) =
-      some (.seq
-        (.seq (.stackLoad 31 12)
-          (.inst (.arith (.binOp .add 29 31 (.imm 8)))))
-        (.seq (.arith .or 31 4 4)
-          (.inst (.mem .store 31 29))) : StackProg Nat) := by
-  simp [wordStackCompileStoreNatNested, wordStackCompileExpToRegisterNat,
-    wordStackExpressionIsAtom, wordStackAtomNat, wordStackReadRegister,
-    wordStackExpressionTemporaries, wordStackExpressionTemporariesExcluding,
-    wordStackLocation, wordStackOffset, lookupNatInfo, wordStackJoin]
+      some (.seq (.stackLoad 31 12) (.inst (.memOffset .store 4 31 8)) : StackProg Nat) := by
+  simp [wordStackCompileStoreNatNested, wordStackStoreOffsetInst,
+    wordStackLocation, wordStackOffset, lookupNatInfo]
 
 example :
     wordStackCompileStoreNatNested
@@ -381,15 +365,9 @@ example :
         addressScratch := 29
         stackBase := 10 }
       (.op .add [.var 1, .const 8]) (.var 0) =
-      some (.seq
-        (.seq (.stackLoad 31 12)
-          (.inst (.arith (.binOp .add 29 31 (.imm 8)))))
-        (.seq (.stackLoad 31 13)
-          (.inst (.mem .store 31 29))) : StackProg Nat) := by
-  simp [wordStackCompileStoreNatNested, wordStackCompileExpToRegisterNat,
-    wordStackExpressionIsAtom, wordStackAtomNat, wordStackReadRegister,
-    wordStackExpressionTemporaries, wordStackExpressionTemporariesExcluding,
-    wordStackLocation, wordStackOffset, lookupNatInfo, wordStackJoin]
+      some (.seq (.stackLoad 31 12) (.seq (.stackLoad 29 13) (.inst (.memOffset .store 29 31 8))) : StackProg Nat) := by
+  simp [wordStackCompileStoreNatNested, wordStackStoreOffsetInst,
+    wordStackLocation, wordStackOffset, lookupNatInfo]
 
 /- Subword Stores retain the same Cake spill order: reload the address into
    `wReg1`, reload the value into the independent store register, and keep the
@@ -419,7 +397,7 @@ example :
     wordStackLocation, wordStackOffset, lookupNatInfo]
 
 /- Cake's subtraction-shaped address keeps the same source/target carrier;
-   the subtraction operator is applied in the reserved address register. -/
+   the subtraction becomes its modular negative displacement on Addr. -/
 example :
     wordStackCompileStoreNatNested
       { locations := [(0, .register 4), (1, .register 5)]
@@ -427,11 +405,9 @@ example :
         addressScratch := 29
         stackBase := 10 }
       (.op .sub [.var 1, .const 8]) (.var 0) =
-      some (.seq (.seq (.const 31 8)
-        (.arith .sub 29 5 31))
-        (.inst (.mem .store 4 29)) : StackProg Nat) := by
-  simp [wordStackCompileStoreNatNested, wordStackLocation, lookupNatInfo,
-    wordStackJoin]
+      some (.inst (.memOffset .store 4 5 (2 ^ 64 - 8)) : StackProg Nat) := by
+  simp [wordStackCompileStoreNatNested, wordStackStoreOffsetInst,
+    wordStackLocation, wordStackOffset, lookupNatInfo]
 
 /- An out-of-range positive displacement does not use Cake's MemOffset
    carrier.  `word_to_stack` materializes the constant, forms the address in

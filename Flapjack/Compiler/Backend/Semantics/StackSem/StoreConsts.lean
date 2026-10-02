@@ -111,12 +111,15 @@ if the six registers `[0;1;2;3;t1;t2]` are not all distinct it returns
 `NONE` as `(SOME Error, s)`. On success it stores `1` into `t1`, `t2` and
 register `1`, stores the returned address into register `2`, installs the
 returned memory, and, when `s.use_alloc`, removes register `0` (`unset_var 0`);
-the result is `(NONE, ...)`. -/
+the result is `(NONE, ...)`. The result-word carrier is independently
+polymorphic from the state words, exactly as in the full original type;
+only NONE and Error are returned. Same-width evaluator callers infer their
+original specialization from their declared result type. -/
 @[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "store_const_sem_def"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
-def storeConstSem {width : Nat} [NeZero width] {C F : Type}
+def storeConstSem {width : Nat} {resultWidth : Nat} [NeZero width] [NeZero resultWidth] {C F : Type}
     (t1 t2 : Nat) (s : StackSemStateFiniteExact width C F) :
-    Option (StackSemResult width) × StackSemStateFiniteExact width C F :=
+    Option (StackSemResult resultWidth) × StackSemStateFiniteExact width C F :=
   if ¬ [0, 1, 2, 3, t1, t2].Nodup then (some .error, s) else
     match getVar 1 s, getVar 2 s, getVar 3 s with
     | some (.word i), some (.word a), some (.word off) =>
