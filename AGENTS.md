@@ -433,6 +433,30 @@ authorize changed quantifiers, hypotheses, conclusions, `BEq` side conditions,
 or word-model differences, and the manifest must use status
 `reviewed_fmap_as_finite_support_result` after source comparison.
 
+**Qualify observations of computed finite-map results.** Use
+`(fmap_as_finite_support_result_observations := [Producer, ...])` only
+for explicitly named imported map producers used in the tagged observer's
+type. Each producer must resolve uniquely to an imported tagged declaration,
+return `HolFiniteMapExact` directly, carry `fmap_as_finite_support_result`,
+and have its checked same-module canonical lookup witness and a
+`reviewed_fmap_as_finite_support_result` manifest row with source review.
+Local declarations or observer binders must not shadow the producer; short
+names ambiguous among imported declarations are rejected. The producer list
+must be nonempty, distinct, used in the observer signature, and identical in
+the attribute and observer manifest row. Use status
+`reviewed_fmap_as_finite_support_result_observations` after separately
+comparing the observer's complete HOL statement and carriers.
+
+This qualifier records only the canonical representation of those computed
+map results. It does not qualify an observer's own map parameters, authorize
+raw function maps, change any quantifier or hypothesis, or establish the
+observer from producer acceptance. It cannot combine with any other
+representation qualifier. The reference checker validates producer resolution,
+usage, result carrier, witness and manifest evidence syntactically; the
+elaborated-attribute export checks manifest agreement and Lean checks the
+witness. None establishes cross-language correspondence. Complete source
+review of both the producer and observer remains required.
+
 **Qualify multi-carrier finite-map relations.** Use
 `(fmap_as_finite_support_relation := [Carrier.field, ...])` when a HOL relation
 mentions multiple carrier structures and needs explicit ownership for the

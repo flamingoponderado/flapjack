@@ -5,12 +5,11 @@ import Flapjack.FfiHOL
 
 /-! Source-matched `evaluate_def` FFI clause fragment over the exact StackSem
 state/result carriers. It is deliberately untagged: this partial dispatch helper
-is not the total HOL `evaluate_def` definition, and because no total recursive
-`evaluate` exists yet the outer `NONE` means this module does not handle the
+is not the total HOL `evaluate_def` definition, and the outer
+`NONE` means this module does not handle the
 constructor, so it never substitutes `Error` for an unported clause. The FFI
 clause does not recurse, so no recursive-evaluation parameter is needed. The
-assembled evaluator route is tracked by `flapjack-y19g`
-(bead `flapjack-y19g.14.4`).
+total evaluator is assembled in Evaluate.lean.
 
 Counterpart of `cakeml/compiler/backend/semantics/stackSemScript.sml:945-960`.
 The four word registers are read in HOL order, both byte arrays are read with

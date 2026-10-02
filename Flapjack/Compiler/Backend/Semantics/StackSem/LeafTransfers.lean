@@ -3,7 +3,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 /-! Source-matched leaf clauses of stackSemScript.sml evaluate_def:774-823.
 This is a partial dispatch helper, not a second evaluator: the outer NONE
 means this module does not handle the constructor. In particular it never
-substitutes Error for an unported clause. Full assembly is tracked by y19g.
+substitutes Error for an unported clause. The total evaluator is assembled in Evaluate.lean.
 No HOL tag applies to this extra Option-shaped fragment or its factoring
 theorems; they are Flapjack-specific assembly infrastructure. -/
 namespace Flapjack.StackSemLeafTransfers

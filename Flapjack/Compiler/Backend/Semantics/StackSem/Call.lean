@@ -3,10 +3,9 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 
 /-! A source-shaped `evaluate_def` Call case fragment over the exact
 StackSem state/result carriers. It is deliberately untagged: this partial case
-helper is not the total HOL `evaluate_def` definition, and because no total
-recursive `evaluate` exists yet the eventual evaluator is an explicit parameter
-so the recursive measure stays explicit. The assembled evaluator route is
-tracked by `flapjack-y19g`. -/
+helper is not the total HOL `evaluate_def` definition, and the recursive evaluator is an explicit parameter so the
+recursive measure stays explicit without an import cycle. The total evaluator
+is assembled in Evaluate.lean and supplies its checked recursive calls. -/
 
 namespace Flapjack.StackSemCall
 
