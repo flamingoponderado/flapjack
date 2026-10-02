@@ -4851,3 +4851,20 @@ results and comparator keys; Lean retains this and every original conjunct.
 key-set, semantic-map and domain declarations. Comparator key and query types
 are independent. The Lean repair preserves this in the producer, raw codec and
 unconditional lookup witness; generic consumers and Bool/Nat fixtures check it.
+`ssa_cc_trans_correct_inst_addcarry_probeScript.sml` captures the original
+kernel theorem specialization and complete native state/register/SSA/table
+carriers at AddCarry. Opcode8031–8068, input/output moves and original physical
+and fresh locals relations are manually compared. No standalone tactic replay
+is claimed.
+
+`ssa_cc_trans_correct_inst_addoverflow_probeScript.sml` captures the original
+kernel theorem specialization at AddOverflow, its full simulation and native
+state/register/SSA/table carriers. Opcode8069–8090, signed overflow test and
+actual physical/fresh-flag output path are manually compared. No standalone
+tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_suboverflow_probeScript.sml` captures the original
+kernel theorem specialization at SubOverflow, full six-premise simulation and
+complete native state/register/SSA/table carriers. Opcode8092–8113, signed
+wrapped difference test and physical/fresh-flag output path are manually
+compared. No standalone tactic replay is claimed.

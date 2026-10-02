@@ -9,6 +9,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstShift
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstDiv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLongMul
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLongDiv
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstAddCarry
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstAddOverflow
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstSubOverflow
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp

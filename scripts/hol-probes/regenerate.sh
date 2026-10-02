@@ -4383,3 +4383,14 @@ run_probe comparison_bundle_probeScript.sml comparison_bundle_probe.out \
 run_probe balanced_map_heterogeneous_probeScript.sml balanced_map_heterogeneous_probe.out \
   bmh_keyset bmh_map bmh_domain bmh_keyset_type bmh_map_type bmh_cmp bmh_cmp2 \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+run_probe ssa_cc_trans_correct_inst_addcarry_probeScript.sml ssa_cc_trans_correct_inst_addcarry_probe.out \
+  inst_addcarry_full inst_addcarry_type_st inst_addcarry_type_cst inst_addcarry_type_dst inst_addcarry_type_src inst_addcarry_type_left inst_addcarry_type_right inst_addcarry_type_ssa inst_addcarry_type_next inst_addcarry_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_inst_addoverflow_probeScript.sml ssa_cc_trans_correct_inst_addoverflow_probe.out \
+  inst_addoverflow_full inst_addoverflow_type_st inst_addoverflow_type_cst inst_addoverflow_type_dst inst_addoverflow_type_src inst_addoverflow_type_left inst_addoverflow_type_right inst_addoverflow_type_ssa inst_addoverflow_type_next inst_addoverflow_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_inst_suboverflow_probeScript.sml ssa_cc_trans_correct_inst_suboverflow_probe.out \
+  inst_suboverflow_full inst_suboverflow_type_st inst_suboverflow_type_cst inst_suboverflow_type_dst inst_suboverflow_type_src inst_suboverflow_type_left inst_suboverflow_type_right inst_suboverflow_type_ssa inst_suboverflow_type_next inst_suboverflow_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
