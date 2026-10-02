@@ -30,4 +30,16 @@ example : keySetCmp (fun (_ : Bool) (_ : Nat) => "value") true Set.univ "value" 
 example : keySetCmp2 (fun (_ : Bool) (_ : Nat) => "value") Set.univ Set.univ "value" := by
   intro k1 k2 h; rfl
 
+-- Recursive core uses independent query/key types, including malformed sizes.
+example : lookup hetero true (.bin 0 0 "root" .tip .tip) = some "root" := rfl
+example : member hetero true (.bin 0 0 "root" .tip .tip) = true := rfl
+example : lookup (fun (_ : Bool) (_ : Nat) => .lt) false
+    (.bin 0 1 "root" (.bin 99 2 "left" .tip .tip) .tip) = none := rfl
+example : member (fun (_ : Bool) (_ : Nat) => .gt) false
+    (.bin 0 1 "root" .tip (.bin 99 2 "right" .tip .tip)) = false := rfl
+example {ι κ ν : Type} (cmp : ι → κ → Ordering) (query : ι) :
+    lookup cmp query (.tip : Map κ ν) = none := rfl
+example {ι κ ν : Type} (cmp : ι → κ → Ordering) (query : ι) :
+    member cmp query (.tip : Map κ ν) = false := rfl
+
 end Flapjack.Test.BalancedMapHeterogeneousParity

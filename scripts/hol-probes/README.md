@@ -4868,3 +4868,19 @@ kernel theorem specialization at SubOverflow, full six-premise simulation and
 complete native state/register/SSA/table carriers. Opcode8092–8113, signed
 wrapped difference test and physical/fresh-flag output path are manually
 compared. No standalone tactic replay is claimed.
+
+### Balanced-map core independent carriers
+
+`balanced_map_core_types_probeScript.sml` captures the complete fully typed original
+`lookup_def` and `member_def`, including independent query/stored-key/payload types
+and all recursive ordering branches. Both captured theorems have no hypotheses.
+The heterogeneous kernel fixtures instantiate query Bool, stored key Nat and
+payload String; existing homogeneous observations remain unchanged.
+
+### Balanced-map key-order full carriers
+
+`balanced_map_key_ordered_types_probeScript.sml` captures complete typed
+`key_ordered_def` and `invariant_def` without hypotheses. The former permits
+independent query/key/result/payload types; the latter forces a homogeneous
+Ordering comparator. `BalancedMapKeyOrderedTypes` checks generic constructors
+and Bool-query/Nat-key/String-result/Bool-payload examples, including malformed sizes.

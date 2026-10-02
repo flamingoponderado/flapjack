@@ -4401,3 +4401,11 @@ run_probe lab_to_target_byte_lengths_probeScript.sml lab_to_target_byte_lengths_
   prog_to_bytes_APPEND prog_to_bytes_APPEND_types line_ok_line_byte_length line_ok_line_byte_length_types lines_ok_MAP_line_byte_length lines_ok_MAP_line_byte_length_types all_enc_ok_prog_to_bytes_EVEN all_enc_ok_prog_to_bytes_EVEN_types \
   append_bytes label_bytes asm_bytes labasm_bytes map_lengths even_output invalid_label odd_start_valid odd_start_output even_start_rejects \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe balanced_map_core_types_probeScript.sml balanced_map_core_types_probe.out \
+  bmct_lookup bmct_member \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_key_ordered_types_probeScript.sml balanced_map_key_ordered_types_probe.out \
+  bmkt_ordered bmkt_invariant \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
