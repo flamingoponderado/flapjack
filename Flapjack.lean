@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.PositionValues
 import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
 import Flapjack.Compiler.Backend.StackProps.AllocationConstants
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels

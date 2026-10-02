@@ -1,0 +1,81 @@
+line_length_def=(∀(k1 :num) (k2 :num) (l :num).
+   line_length (Label k1 k2 l :α line) =
+   if l = (0 :num) then (0 :num) else (1 :num)) ∧
+(∀(b :α asm_or_cbw) (bytes :word8 list) (l :num).
+   line_length (Asm b bytes l) = LENGTH bytes) ∧
+∀(a :α asm_with_lab) (w :α word) (bytes :word8 list) (l :num).
+  line_length (LabAsm a w bytes l) = LENGTH bytes
+line_length_def_types=
+sec_pos_val_def=(∀(i :num) (pos :num).
+   sec_pos_val i pos ([] :α line list) = (NONE :num option)) ∧
+∀(i :num) (pos :num) (y :α line) (ys :α line list).
+  sec_pos_val i pos (y::ys) =
+  if is_Label y then sec_pos_val i (pos + line_length y) ys
+  else if i = (0 :num) then SOME pos
+  else sec_pos_val (i − (1 :num)) (pos + line_length y) ys
+sec_pos_val_def_types=
+sec_pos_val_too_big=∀(i :num) (pos :num) (lines :α line list).
+  LENGTH (FILTER ($¬ ∘ (is_Label :α line -> bool)) lines) ≤ i ⇒
+  sec_pos_val i pos lines = (NONE :num option)
+sec_pos_val_too_big_types=(i :num)::num;(pos :num)::num;(lines :α line list)::α line list;
+every_label_sec_pos_val=∀(n :num) (pos :num) (lines :α line list).
+  EVERY (is_Label :α line -> bool) lines ⇒
+  sec_pos_val n pos lines = (NONE :num option)
+every_label_sec_pos_val_types=(n :num)::num;(pos :num)::num;(lines :α line list)::α line list;
+pos_val_def=(∀(pos :num) (i :num). pos_val i pos ([] :α sec list) = pos) ∧
+(∀(xs :α sec list) (pos :num) (k :num) (i :num).
+   pos_val i pos (Section k ([] :α line list)::xs) = pos_val i pos xs) ∧
+∀(ys :α line list) (y :α line) (xs :α sec list) (pos :num) (k :num) (i :num).
+  pos_val i pos (Section k (y::ys)::xs) =
+  if is_Label y then pos_val i (pos + line_length y) (Section k ys::xs)
+  else if i = (0 :num) then pos
+  else pos_val (i − (1 :num)) (pos + line_length y) (Section k ys::xs)
+pos_val_def_types=
+pos_val_thm0=∀(i :num) (pos :num) (acc :α sec list).
+  pos_val i pos acc =
+  case acc of
+    ([] :α sec list) => pos
+  | Section k s::ss =>
+    case sec_pos_val i pos s of
+      (NONE :num option) =>
+        pos_val (i − LENGTH (FILTER ($¬ ∘ (is_Label :α line -> bool)) s))
+          (pos + (SUM (MAP (line_length :α line -> num) s) :num)) ss
+    | SOME x => x
+pos_val_thm0_types=(i :num)::num;(pos :num)::num;(acc :α sec list)::α sec list;
+pos_val_thm=pos_val (i :num) (pos :num) ([] :α sec list) = pos ∧
+pos_val i pos (Section (k :num) (s :β line list)::(ss :β sec list)) =
+case sec_pos_val i pos s of
+  (NONE :num option) =>
+    pos_val (i − LENGTH (FILTER ($¬ ∘ (is_Label :β line -> bool)) s))
+      (pos + (SUM (MAP (line_length :β line -> num) s) :num)) ss
+| SOME x => x
+pos_val_thm_types=(ss :β sec list)::β sec list;(s :β line list)::β line list;(k :num)::num;(pos :num)::num;(i :num)::num;
+pos_val_thm_operator_types=(pos_val :num -> num -> β sec list -> num)::num -> num -> β sec list -> num;(pos_val :num -> num -> β sec list -> num)::num -> num -> β sec list -> num;(pos_val :num -> num -> α sec list -> num)::num -> num -> α sec list -> num;
+pos_val_acc=∀(ls :α sec list) (n :num).
+  pos_val
+    (SUM
+       (MAP
+          ((λ(xs :α line list).
+                LENGTH (FILTER ($¬ ∘ (is_Label :α line -> bool)) xs)) ∘
+           (Section_lines :α sec -> α line list)) ls) :num) n ls =
+  n +
+  (SUM
+     (MAP
+        (SUM ∘ MAP (line_length :α line -> num) ∘
+         (Section_lines :α sec -> α line list)) ls) :num)
+pos_val_acc_types=(ls :α sec list)::α sec list;(n :num)::num;
+label_zero_length=T
+label_nonzero_length=T
+asm_bytes_length=T
+labasm_bytes_length=T
+sec_first=T
+sec_second=T
+sec_equal_exhaustion=T
+sec_past_exhaustion=T
+sec_labels_only=T
+code_first=T
+code_second=T
+code_third=T
+code_equal_exhaustion=T
+code_past_exhaustion=T
+code_empty_wide=T
