@@ -1,3 +1,4 @@
+import Flapjack.Test.L3MmuAccessParity
 import Flapjack.Test.L3MmuPrimitivesParity
 import Flapjack.Test.NumericFormattingParity
 import Flapjack.Test.WordReplicateParity

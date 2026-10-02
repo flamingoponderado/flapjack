@@ -66380,5 +66380,45 @@
     "hol_name": "TLBEntries_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison: literal complete original clause with fixed source BitVec widths, current-core selection, record field positions and sequential little-endian memory updates preserved. No core-bound, memory-domain or success premise added. Canonical HOL ARB handles unreachable privilege completion. Original 62-row MMU primitive probe and kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Access.lean",
+    "lean_name": "vmType",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "vmType_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal source comparison: All32 VM selectors:8 defined modes and24 full exception-call results with canonical unspecified result and exact decimal byte-list message. Fixed source dimensions and original state carrier retained. Original288-row access regression and Lean kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Access.lean",
+    "lean_name": "curASID",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "curASID_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal source comparison: Unit argument and current-core SCSR sasid extraction bits5..0 preserved. Fixed source dimensions and original state carrier retained. Original288-row access regression and Lean kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Access.lean",
+    "lean_name": "checkMemPermission",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "checkMemPermission_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal source comparison: All16 permission selectors, both fetch types, both access types and all4 privileges;0/1 raise INTERNAL_ERROR retaining unspecified result,2..15 Boolean clauses preserve state. Fixed source dimensions and original state carrier retained. Original288-row access regression and Lean kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Access.lean",
+    "lean_name": "rawReadData",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rawReadData_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal source comparison: Full aligned/un-aligned branches,61-bit wrapping word index,128-bit arithmetic shift followed by low64 extraction. Fixed source dimensions and original state carrier retained. Original288-row access regression and Lean kernel replay."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Access.lean",
+    "lean_name": "rawWriteData",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rawWriteData_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal source comparison: Full arbitrary Nat byte counts;64-bit mask (1 shifted nbytes*8)-1, aligned/single-word/cross-word branches and higher-word then lower-word state updates. No nbytes bound or alignment premise. Fixed source dimensions and original state carrier retained. Original288-row access regression and Lean kernel replay."
   }
 ]
