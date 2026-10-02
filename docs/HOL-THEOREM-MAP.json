@@ -63292,5 +63292,50 @@
     "lean_name": "returningRestoreRegisters",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific inline returning Call continuation factoring of original8550-8575, no standalone HOL declaration. Internal restored cut SSA, source cut domain, original map validity/frame and return-value length derive preservation under actual physical registers2*(i+1) insertion and actual retMov NONE/newSSA/frame via original rename preservation. No target evaluation or desired output SSA premise. Pop-environment cut SSA derivation, continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Atoms.lean",
+    "lean_name": "compCorrectSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.2: genuine case of full comp_correct source1481-1493, p specialized only to named HOL constructor with no recursive IH needed. Full four original hypotheses retained: faithful source evaluate=(result,postSource), result not SOME Error, full native stateRel, and regBound. Conclusion retains existential Nat extra clock and full target poststate with evaluate(comp p,target clock+extra) equal same result, plus exactly original Halt/TimeOut/FinalFFI ffi equality versus full stateRel in every other result case. No target evaluation, postrelation, successful lookup, restricted clock, or weaker evaluator premise. Uses actual total StackSemEvaluate.evaluate/evaluate_def, StackLang.HolProg, StackSemStateFiniteExact with canonical regs/fpRegs/store and Spt code, exact native comp/regBound and imported full relation. Positive width and independently quantified C/F Type0; qualifier names only the three real finite-map fields and same-module canonical codec witness reexports genuine state roundtrips. All result payloads use exact WordLocW/StackSemResult carriers. Complete original kernel case replay and full statement/binder types provide source evidence; remaining constructor cases and assembly stay open. Original Skip1493-1495 uses unchanged comp/evaluate Skip equations. Source run forces resultNONE and unchanged state; proof supplies clock0 and unchanged target, proving the existential evaluation and original full postrelation directly. Inherited representation assumption: elaborated declaration closure reaches reals_as_rational_cuts through the full StackSem evaluator and its FP instruction implementation, so the manifest explicitly propagates the existing docs/SOUNDNESS.md real-rendering assurance limit. These specialized Skip/Halt/Alloc paths execute no FP instruction by their exact evaluate clauses (Alloc is source-excluded); the syntactic inherited marker remains. This does not add a theorem premise, remove upstream FP obligations, or source-review arbitrary untagged dependencies.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Atoms.lean",
+    "lean_name": "compCorrectHalt",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.2: genuine case of full comp_correct source1481-1493, p specialized only to named HOL constructor with no recursive IH needed. Full four original hypotheses retained: faithful source evaluate=(result,postSource), result not SOME Error, full native stateRel, and regBound. Conclusion retains existential Nat extra clock and full target poststate with evaluate(comp p,target clock+extra) equal same result, plus exactly original Halt/TimeOut/FinalFFI ffi equality versus full stateRel in every other result case. No target evaluation, postrelation, successful lookup, restricted clock, or weaker evaluator premise. Uses actual total StackSemEvaluate.evaluate/evaluate_def, StackLang.HolProg, StackSemStateFiniteExact with canonical regs/fpRegs/store and Spt code, exact native comp/regBound and imported full relation. Positive width and independently quantified C/F Type0; qualifier names only the three real finite-map fields and same-module canonical codec witness reexports genuine state roundtrips. All result payloads use exact WordLocW/StackSemResult carriers. Complete original kernel case replay and full statement/binder types provide source evidence; remaining constructor cases and assembly stay open. Original Halt1496-1502 uses original regBound register<k and exact stateRelGetVar lookup equality. Missing source lookup contradicts original nonError; present arbitrary Word or Loc payload passes unchanged to target Halt and emptyEnv. Proof supplies clock0 and actual emptyEnv target; emptyEnv preserves ffi, established by full stateRelConst. No Word-only or successful lookup premise added. Inherited representation assumption: elaborated declaration closure reaches reals_as_rational_cuts through the full StackSem evaluator and its FP instruction implementation, so the manifest explicitly propagates the existing docs/SOUNDNESS.md real-rendering assurance limit. These specialized Skip/Halt/Alloc paths execute no FP instruction by their exact evaluate clauses (Alloc is source-excluded); the syntactic inherited marker remains. This does not add a theorem premise, remove upstream FP obligations, or source-review arbitrary untagged dependencies.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Atoms.lean",
+    "lean_name": "compCorrectAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.2: genuine case of full comp_correct source1481-1493, p specialized only to named HOL constructor with no recursive IH needed. Full four original hypotheses retained: faithful source evaluate=(result,postSource), result not SOME Error, full native stateRel, and regBound. Conclusion retains existential Nat extra clock and full target poststate with evaluate(comp p,target clock+extra) equal same result, plus exactly original Halt/TimeOut/FinalFFI ffi equality versus full stateRel in every other result case. No target evaluation, postrelation, successful lookup, restricted clock, or weaker evaluator premise. Uses actual total StackSemEvaluate.evaluate/evaluate_def, StackLang.HolProg, StackSemStateFiniteExact with canonical regs/fpRegs/store and Spt code, exact native comp/regBound and imported full relation. Positive width and independently quantified C/F Type0; qualifier names only the three real finite-map fields and same-module canonical codec witness reexports genuine state roundtrips. All result payloads use exact WordLocW/StackSemResult carriers. Complete original kernel case replay and full statement/binder types provide source evidence; remaining constructor cases and assembly stay open. Original Alloc1503-1504 is impossible under original full stateRel source.useAlloc=false: faithful evaluate_alloc produces SOME Error, contradicting the original nonError hypothesis. Lean proves exactly that contradiction, as the original kernel replay does, rather than adding a universally impossible context premise or assuming target existence. Full original existential conclusion and all four hypotheses are retained. Inherited representation assumption: elaborated declaration closure reaches reals_as_rational_cuts through the full StackSem evaluator and its FP instruction implementation, so the manifest explicitly propagates the existing docs/SOUNDNESS.md real-rendering assurance limit. These specialized Skip/Halt/Alloc paths execute no FP instruction by their exact evaluate clauses (Alloc is source-excluded); the syntactic inherited marker remains. This does not add a theorem premise, remove upstream FP obligations, or source-review arbitrary untagged dependencies.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
