@@ -506,4 +506,71 @@ theorem fp32DirectedPositive_choice (d : Fp32Direction) {X : Rat} (hX : 0 ≤ X)
       (holClosest (fp32DirectedCandidates d (X / 2 ^ 149)) (X / 2 ^ 149)) = true := hc.1.1
   exact fp32_zero_sign_value_eq _ _ hf (fp32DirectedPositive_finite d hX hmax) hv z
 
+/-- Negation exchanges upward and downward rounding. -/
+def fp32FlipDirection : Fp32Direction → Fp32Direction
+  | .zero => .zero
+  | .positive => .negative
+  | .negative => .positive
+
+/-- Directed candidate sets transform exactly under sign reversal. -/
+theorem fp32DirectedCandidates_negate (d : Fp32Direction) (x : Rat) (b : HolFloat 23 8) :
+    fp32DirectedCandidates d (-x) (holFloatNegate b) ↔
+      fp32DirectedCandidates (fp32FlipDirection d) x b := by
+  unfold fp32DirectedCandidates
+  rw [holFloatIsFinite_negate, holFloatToReal_negate]
+  cases d <;> simp only [fp32FlipDirection]
+  · rw [holRatAbs_neg, holRatAbs_neg]
+  · constructor <;> intro h <;> exact ⟨h.1, by grind⟩
+  · constructor <;> intro h <;> exact ⟨h.1, by grind⟩
+
+/-- The negative-domain computed candidate satisfies the exact closest predicate. -/
+theorem fp32DirectedNegative_closest (d : Fp32Direction) {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) :
+    holIsClosest (fp32DirectedCandidates d (-(X / 2 ^ 149)))
+      (-(X / 2 ^ 149))
+      (holFloatNegate (fp32DirectedPositive (fp32FlipDirection d) X)) := by
+  apply fp32_closest_negate _ _ _ _
+    (fp32DirectedPositive_closest (fp32FlipDirection d) hX hmax)
+  · intro a ha
+    exact (fp32DirectedCandidates_negate d _ a).2 ha
+  · intro b hb
+    have h := (fp32DirectedCandidates_negate d (X / 2 ^ 149) (holFloatNegate b)).1
+    rw [holFloatNegate_negate] at h
+    exact h hb
+
+/-- Negative-domain closest candidates share the computed negative bracket's value. -/
+theorem fp32DirectedNegative_closest_value (d : Fp32Direction) {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) (b : HolFloat 23 8)
+    (hb : holIsClosest (fp32DirectedCandidates d (-(X / 2 ^ 149)))
+      (-(X / 2 ^ 149)) b) :
+    holFloatToReal b =
+      holFloatToReal (holFloatNegate (fp32DirectedPositive (fp32FlipDirection d) X)) := by
+  have hn : holIsClosest (fp32DirectedCandidates (fp32FlipDirection d) (X / 2 ^ 149))
+      (X / 2 ^ 149) (holFloatNegate b) := by
+    have h := fp32_closest_negate _ _ (-(X / 2 ^ 149)) b hb
+      (fun a ha => (fp32DirectedCandidates_negate d (X / 2 ^ 149) (holFloatNegate a)).1
+        (by simpa only [holFloatNegate_negate] using ha))
+      (fun c hc => (fp32DirectedCandidates_negate d (X / 2 ^ 149) c).2 hc)
+    simpa only [Rat.neg_neg] using h
+  have hv := fp32DirectedPositive_closest_value (fp32FlipDirection d) hX hmax _ hn
+  rw [holFloatToReal_negate] at hv
+  rw [holFloatToReal_negate]
+  grind
+
+/-- Negative-domain choice agrees with the computed candidate after zero-sign selection. -/
+theorem fp32DirectedNegative_choice (d : Fp32Direction) {X : Rat} (hX : 0 ≤ X)
+    (hmax : X ≤ ((fp32N fp32MaxPat : Nat) : Rat)) (z : HolFloat 23 8) :
+    let c := holClosest (fp32DirectedCandidates d (-(X / 2 ^ 149))) (-(X / 2 ^ 149))
+    let a := holFloatNegate (fp32DirectedPositive (fp32FlipDirection d) X)
+    (if holFloatIsZero c then z else c) = (if holFloatIsZero a then z else a) := by
+  have hc := fp32_closest_spec _ _ _ (fp32DirectedNegative_closest d hX hmax)
+  have hv := fp32DirectedNegative_closest_value d hX hmax _ hc
+  have hf : holFloatIsFinite
+      (holClosest (fp32DirectedCandidates d (-(X / 2 ^ 149))) (-(X / 2 ^ 149))) = true := hc.1.1
+  have ha : holFloatIsFinite
+      (holFloatNegate (fp32DirectedPositive (fp32FlipDirection d) X)) = true := by
+    rw [holFloatIsFinite_negate]
+    exact fp32DirectedPositive_finite _ hX hmax
+  exact fp32_zero_sign_value_eq _ _ hf ha hv z
+
 end Flapjack.Binary32Rounding
