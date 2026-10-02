@@ -53851,7 +53851,7 @@
     "hol_name": "offset_monotonic_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol-c source comparison 2026-10-02, bead flapjack-native-target-encoding-ok: HOL19-24 full implication: both asm_ok guards, nonnegative ascending and strictly negative reverse-order offset comparisons, both encoding-length conclusions. HOL inferred type has independent instruction/config alpha word and offset gamma word dimensions plus arbitrary beta list encoding payload; Lean retains both positive widths and arbitrary byte Type. HOL word_lt/word_le signed NZCV relations correspond to BitVec.slt/sle, including sign boundaries and reversed negatives at widths1,2,8,32,64,80. words_as_type_indexed_bitvec records positive BitVec/NeZero translation only. Fresh original full equation/type probes and condition fixtures plus generic Lean kernel regressions; coordinator acceptance pending."
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02, bead flapjack-native-target-encoding-ok: HOL19-24 full implication: both asm_ok guards, nonnegative ascending and strictly negative reverse-order offset comparisons, both encoding-length conclusions. HOL inferred type has independent instruction/config alpha word and offset gamma word dimensions plus arbitrary beta list encoding payload; Lean retains both positive widths and arbitrary byte Type. HOL word_lt/word_le signed NZCV relations correspond to BitVec.slt/sle, including sign boundaries and reversed negatives at widths1,2,8,32,64,80. words_as_type_indexed_bitvec records positive BitVec/NeZero translation only. Fresh original full equation/type probes and condition fixtures plus generic Lean kernel regressions; integration acceptance tracked on the shared bead."
   },
   {
     "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Encoding.lean",
@@ -53860,7 +53860,7 @@
     "hol_name": "enc_ok_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol-c source comparison 2026-10-02, bead flapjack-native-target-encoding-ok: HOL27-41 full six conjuncts: skip encoding length equals 2^alignment, every encoding length divisible and nonzero, and universally quantified Jump/JumpCmp/Call/Loc offset-length predicates. Exact AsmConfigExact.encode retains word8 List output and offsets at the instruction word dimension. No successful evaluator assumption or omitted instruction family. words_as_type_indexed_bitvec records positive BitVec/NeZero translation only. Fresh original full equation/type probes and condition fixtures plus generic Lean kernel regressions; coordinator acceptance pending."
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02, bead flapjack-native-target-encoding-ok: HOL27-41 full six conjuncts: skip encoding length equals 2^alignment, every encoding length divisible and nonzero, and universally quantified Jump/JumpCmp/Call/Loc offset-length predicates. Exact AsmConfigExact.encode retains word8 List output and offsets at the instruction word dimension. No successful evaluator assumption or omitted instruction family. words_as_type_indexed_bitvec records positive BitVec/NeZero translation only. Fresh original full equation/type probes and condition fixtures plus generic Lean kernel regressions; integration acceptance tracked on the shared bead."
   },
   {
     "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Encoding.lean",
@@ -53869,7 +53869,7 @@
     "hol_name": "target_ok_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol-c source comparison 2026-10-02, bead flapjack-native-target-encoding-ok: HOL65-73 full enc_ok conjunction and arbitrary machine-state pair/AsmState projection-equality implication. Retains target_state_rel truth-value equality as propositional iff, state_ok Bool equality, PC equality, and all domain byte equalities. Exact imported HolAsmTarget/AsmState carriers, arbitrary independent state/projection Type, no execution premise. words_as_type_indexed_bitvec records positive BitVec/NeZero translation only. Fresh original full equation/type probes and condition fixtures plus generic Lean kernel regressions; coordinator acceptance pending."
+    "reviewer": "flapjack-sol-c source comparison 2026-10-02, bead flapjack-native-target-encoding-ok: HOL65-73 full enc_ok conjunction and arbitrary machine-state pair/AsmState projection-equality implication. Retains target_state_rel truth-value equality as propositional iff, state_ok Bool equality, PC equality, and all domain byte equalities. Exact imported HolAsmTarget/AsmState carriers, arbitrary independent state/projection Type, no execution premise. words_as_type_indexed_bitvec records positive BitVec/NeZero translation only. Fresh original full equation/type probes and condition fixtures plus generic Lean kernel regressions; integration acceptance tracked on the shared bead."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/CopyLoop.lean",
