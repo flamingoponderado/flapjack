@@ -5931,3 +5931,17 @@ Directed modes and the full eight L3 integer-to-FP case acceptance stay open on
 linked prerequisites; these regressions do not stand in for those modes.
 Regenerate using `HOL_PROBE_ONLY=binary_ieee_round_fp32_probeScript.sml` with
 the matching built original HOL and the standard probe driver.
+
+## Complete binary32 directed rounding agreement
+
+The untagged BinaryIeeeDirectedFp32 infrastructure proves all three directed
+clauses for every rational input and both zero signs, and assembles all four
+modes. Source review compared HOL round_def411–443's strict largest guards,
+per-mode clamps/infinities and finite candidate sets, plus float_round's zero
+selection. Agreement is with the rational rendering; SOUNDNESS item8 remains.
+
+The directed probe captures 50 fresh original toward-zero numeric outputs,
+replayed by Lean kernel proofs. Finite upward/downward conversion is rejected
+by the pinned original binary_ieeeLib; six signed tie checks are explicitly
+Lean algorithm regressions. The independent certified-converter bead remains
+open for the complete144-row original int-to-FP oracle; no modes are dropped.
