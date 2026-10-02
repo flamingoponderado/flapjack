@@ -3359,6 +3359,100 @@ def source_bound_rounding_enum(root: Path) -> bool:
     return owners == [owner]
 
 
+# The nine real-free source forms below were compared with binary_ieee's
+# float carrier/classification/sign clauses (30-32, 107-115, 153-159) and the pinned machine_ieee
+# codec/sign generator (49-78, 147-171, 431-432). They manipulate bits only.
+# Match every form together: if a dependency changes, conservatively classify
+# the complete group as renderings again. This is a source-shape rule, not a
+# blanket exception for every declaration in either module.
+REAL_FREE_IEEE_FORMS = {
+    ("Flapjack/Misc/BinaryIeee.lean", "holFloatIsNormal"): """
+def holFloatIsNormal {t w : Nat} (x : HolFloat t w) : Bool :=
+  decide (x.exponent ≠ 0) && decide (x.exponent ≠ BitVec.allOnes w)
+""",
+    ("Flapjack/Misc/BinaryIeee.lean", "holFloatIsSubnormal"): """
+def holFloatIsSubnormal {t w : Nat} (x : HolFloat t w) : Bool :=
+  decide (x.exponent = 0) && decide (x.significand ≠ 0)
+""",
+    ("Flapjack/Misc/BinaryIeee.lean", "HolFloat"): """
+structure HolFloat (t w : Nat) where
+  sign : BitVec 1
+  exponent : BitVec w
+  significand : BitVec t
+  deriving DecidableEq, Repr
+""",
+    ("Flapjack/Misc/BinaryIeee.lean", "holFloatNegate"): """
+def holFloatNegate {t w : Nat} (x : HolFloat t w) : HolFloat t w :=
+  { x with sign := ~~~x.sign }
+""",
+    ("Flapjack/Misc/BinaryIeee.lean", "holFloatAbs"): """
+def holFloatAbs {t w : Nat} (x : HolFloat t w) : HolFloat t w :=
+  { x with sign := 0 }
+""",
+    ("Flapjack/Misc/MachineIeee.lean", "holFp64ToFloat"): """
+def holFp64ToFloat (w : BitVec 64) : HolFloat 52 11 :=
+  { sign := w.extractLsb' 63 1, exponent := w.extractLsb' 52 11,
+    significand := w.extractLsb' 0 52 }
+""",
+    ("Flapjack/Misc/MachineIeee.lean", "holFloatToFp64"): """
+def holFloatToFp64 (x : HolFloat 52 11) : BitVec 64 :=
+  (x.sign ++ x.exponent ++ x.significand).cast (by decide)
+""",
+    ("Flapjack/Misc/MachineIeee.lean", "holFp64Abs"): """
+def holFp64Abs (a : BitVec 64) : BitVec 64 :=
+  holFloatToFp64 (holFloatAbs (holFp64ToFloat a))
+""",
+    ("Flapjack/Misc/MachineIeee.lean", "holFp64Negate"): """
+def holFp64Negate (a : BitVec 64) : BitVec 64 :=
+  holFloatToFp64 (holFloatNegate (holFp64ToFloat a))
+""",
+}
+
+
+def real_free_ieee_names(root: Path) -> set[str]:
+    """Recognize the complete reviewed bit-only dependency group; fail closed."""
+    declarations: dict[tuple[str, str], list[str]] = {}
+    for relative in sorted({path for path, _ in REAL_FREE_IEEE_FORMS}):
+        path = root / relative
+        if not path.is_file():
+            return set()
+        source = strip_lean_comments(path.read_text(encoding="utf-8"))
+        # Attributes do not change the bit operation's signature or body.
+        source = re.sub(r"@\[[^\]]*\]\s*", "", source)
+        matches = list(REALS_RENDERING_DECL_RE.finditer(source))
+        for index, match in enumerate(matches):
+            name = match.group(1).rsplit(".", 1)[-1]
+            if (relative, name) in REAL_FREE_IEEE_FORMS:
+                scopes = re.findall(r"(?m)^(?:namespace|end)\b[^\n]*",
+                                    source[:match.start()])
+                if scopes != ["namespace Flapjack"]:
+                    return set()
+            end = matches[index + 1].start() if index + 1 < len(matches) else len(source)
+            body = re.split(r"(?m)^(?:namespace|end|section|open)\b",
+                            source[match.start():end], maxsplit=1)[0]
+            declarations.setdefault((relative, name), []).append(re.sub(r"\s+", "", body))
+    for key, form in REAL_FREE_IEEE_FORMS.items():
+        if declarations.get(key) != [re.sub(r"\s+", "", form)]:
+            return set()
+    # Short-name classification must not hide a local or imported shadow.
+    # Require one owner across the entire source tree, including qualified aliases.
+    owners: dict[str, list[str]] = {}
+    reviewed_names = {n for _, n in REAL_FREE_IEEE_FORMS}
+    owner_re = re.compile(
+        r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial)\s+)*"
+        r"(?:def|abbrev|structure|inductive|opaque|theorem|lemma|axiom|constant)\s+"
+        r"([A-Za-z_][A-Za-z0-9_'.]*)", re.M)
+    for path in root.glob("Flapjack/**/*.lean"):
+        source = strip_lean_comments(path.read_text(encoding="utf-8"))
+        for match in owner_re.finditer(source):
+            name = match.group(1).rsplit(".", 1)[-1]
+            if name in reviewed_names:
+                owners.setdefault(name, []).append(str(path.relative_to(root)))
+    for (relative, name) in REAL_FREE_IEEE_FORMS:
+        if owners.get(name) != [relative]:
+            return set()
+    return {name for _, name in REAL_FREE_IEEE_FORMS}
+
 def reals_rendering_names(root: Path) -> set[str]:
     """Short names of the reviewed binary64 real-rendering declarations."""
     names: set[str] = set()
@@ -3369,7 +3463,7 @@ def reals_rendering_names(root: Path) -> set[str]:
                 names.add(match.group(1).rsplit(".", 1)[-1])
     if source_bound_rounding_enum(root):
         names.discard("HolRounding")
-    return names
+    return names - real_free_ieee_names(root)
 
 
 REALS_SOURCE_END_RE = re.compile(r"^(?:@\[|/--|/-!|namespace\b|end\b|section\b|open\b)")

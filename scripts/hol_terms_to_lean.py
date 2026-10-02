@@ -709,8 +709,7 @@ def uses_ieee_real_rendering(text: str) -> bool:
     # Their real carrier is the existing rational-cut translation; do not
     # conceal it when mapping the generated machine_ieee wrappers.
     return any(re.search(r'\b' + name + r'\b', text)
-               for name in ('holFloatCompare', 'holFloatIsNan', 'holFloatToInt',
-                            'holFloatIsNormal', 'holFloatIsSubnormal'))
+               for name in ('holFloatCompare', 'holFloatIsNan', 'holFloatToInt'))
 
 
 CONSTANTS = {
