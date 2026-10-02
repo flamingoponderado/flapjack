@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe misc_memory_regions_probeScript.sml misc_memory_regions_probe.out \
+  memory_append_full_statement memory_change_full_statement \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
+
 run_probe lab_to_target_encoding_similarity_probeScript.sml lab_to_target_encoding_similarity_probe.out \
   es_line es_line_types es_initial es_initial_types es_again es_again_types es_sections es_sections_types es_initial_value es_again_growth es_again_unchanged es_again_no_growth es_sections_value es_sections_similar \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
