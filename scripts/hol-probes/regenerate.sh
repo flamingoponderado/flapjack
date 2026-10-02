@@ -5319,3 +5319,7 @@ run_probe stack_remove_comp_get_probeScript.sml stack_remove_comp_get_probe.out 
 run_probe stack_remove_comp_set_probeScript.sml stack_remove_comp_set_probe.out \
   cs_statement cs_types cs_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_label_builders_probeScript.sml stack_remove_label_builders_probe.out \
+  lf_statement lf_proved la_statement la_proved lu_statement lu_proved ld_statement ld_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

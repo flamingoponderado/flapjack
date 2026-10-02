@@ -64888,5 +64888,41 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.8: genuine complete Set constructor case comp_correct1481-1493/1598-1625, exactly original4premises source total evaluate/nonError/fullstateRel/fullregBound. EXISTS targetclock/posttarget/samecompiled total evaluate result and original result branch. Source getVar success from originalnonError; bounded target input lookup from fullrelation. CurrHeap actual moveHOL Or same-register copies arbitrary Word/Loc value to reserved k+2, source canonicalstore CurrHeap update preserves all26relation conjuncts using original word_store_CurrHeap and bounded lower-register lookup exclusion. All other names derive actual base Word/full5heap and target mdomain from original mem_load_lemma2; native memory store execution established; original store_write_lemma supplies complete heap update while all other fullrelation conjuncts are proved, preserving CurrHeap and BitmapBase lookups by constructor codec equality. BitmapBase exclusion only original regBound Set conjunct, nonCurrHeap only compiler case split; no extra success/domain/heap/frame/clock/postrelation assumption or permanent case parameter. Extra clock0 derived. Actual canonical native regs/fpRegs/store with same-module genuine codec witness; fixed5Temp carrier; Spt code excluded; positive BitVec/NeZero and independent C/F Type0, phantom Set program bound pinned to same width. Native total evaluator inherits reals_as_rational_cuts explicitly retained, not a global real equivalence claim. Full native kernel proof and fresh literal original fullcase/genuine local helper proofs/types checked. Remaining constructors/IHs/fullassembly and compiler passes remain separate obligations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelBuilders.lean",
+    "lean_name": "labelsStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_labels_stack_free",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02: original local get_labels_stack_free at917-948. Unconditional whole label-set equality to empty predicate, arbitrary registers/counts and positive type-indexed word dimension. Native HolProg constructor carrier, original zero/small/255-word chunk recursion; allocation preserves both jump/conditional overflow branches. No extra register bound, evaluator success, fixed-width or target-label premise. HOL sets represented as predicates; NeZero discharges inherent word dimension positivity. Kernel strong induction follows original decreasing count recursion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelBuilders.lean",
+    "lean_name": "labelsStackAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_labels_stack_alloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02: original local get_labels_stack_alloc at917-948. Unconditional whole label-set equality to empty predicate, arbitrary registers/counts and positive type-indexed word dimension. Native HolProg constructor carrier, original zero/small/255-word chunk recursion; allocation preserves both jump/conditional overflow branches. No extra register bound, evaluator success, fixed-width or target-label premise. HOL sets represented as predicates; NeZero discharges inherent word dimension positivity. Kernel strong induction follows original decreasing count recursion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelBuilders.lean",
+    "lean_name": "labelsUpshift",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_labels_upshift",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02: original local get_labels_upshift at917-948. Unconditional whole label-set equality to empty predicate, arbitrary registers/counts and positive type-indexed word dimension. Native HolProg constructor carrier, original zero/small/255-word chunk recursion; allocation preserves both jump/conditional overflow branches. No extra register bound, evaluator success, fixed-width or target-label premise. HOL sets represented as predicates; NeZero discharges inherent word dimension positivity. Kernel strong induction follows original decreasing count recursion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabelBuilders.lean",
+    "lean_name": "labelsDownshift",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_labels_downshift",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02: original local get_labels_downshift at917-948. Unconditional whole label-set equality to empty predicate, arbitrary registers/counts and positive type-indexed word dimension. Native HolProg constructor carrier, original zero/small/255-word chunk recursion; allocation preserves both jump/conditional overflow branches. No extra register bound, evaluator success, fixed-width or target-label premise. HOL sets represented as predicates; NeZero discharges inherent word dimension positivity. Kernel strong induction follows original decreasing count recursion."
   }
 ]
