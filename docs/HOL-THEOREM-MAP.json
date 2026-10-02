@@ -65829,5 +65829,77 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-recursive: entire original11007-11127 with all seven source guards, arbitrary original program/bitmap/frame and positive shared config/program word width. Actual compNative first projection; no desired target naming/evaluation/result/simulation premise. Proper-subprogram recursion internally discharges Loop/MustTerminate/Seq/If and all three Call branches at actual threaded bitmap states, including the handler state following the return body. Reuses source-reviewed21 nonrecursive constructor cases. Internal inherited-guard and Call-prefix calculations are untagged proof organization. words_as_type_indexed_bitvec records only the standard positive word translation; fixed five-bit Temp and original mlstring carriers remain unchanged. Fresh original full theorem has no open hypotheses;288 independently evaluated guard/naming predicates and144 kernel whole-program applications cover12 recursive/Call families, six widths1/2/8/32/64/80 and both two-register policies. Full assembler conventions and compiler correctness remain separate open work. Regression evidence does not establish HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FMADD_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMADD_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.9: complete original line8833; fixed rd/rs1/rs2/rs3 word5 and round word3, native state->state. Original successful round branch performs fp32/fp64_mul with selected mode, encodes its rounded word, decodes that word for separately rounded add (FMADD/FNMADD) or subtract (FMSUB/FNMSUB). Negative variants negate the final encoded add/sub result, not an operand or rounding mode. No hardware-fused float_mul_add substitution. Original NONE->Illegal_Instr and exact FPRS/FPRD reads plus writeFPRS/FPRD whole-state effects preserved, with original flag SND discard and unchanged NV/NX. Generic arithmetic source-ready from checked .8, whose acceptance remains open. Canonical82definitionclosure0fail. Fresh240original cases:208numeric eleven-field state tuples +32complete symbolic invalid-product whole-state equations, matching Lean kernel regressions. Covers all4modes/dynamic/invalidstatic/dynamic, signedzero/infinity/negativefinite and separate-rounding discriminator (1+ulp)*(1-ulp)-1 returning zero at ties-even for bothformats. Nested NaN choices stay unspecified. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external real/float correspondence assumption; no HOL-to-Lean equivalence or full model/compiler correctness inferred."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FMSUB_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMSUB_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.9: complete original line8867; fixed rd/rs1/rs2/rs3 word5 and round word3, native state->state. Original successful round branch performs fp32/fp64_mul with selected mode, encodes its rounded word, decodes that word for separately rounded add (FMADD/FNMADD) or subtract (FMSUB/FNMSUB). Negative variants negate the final encoded add/sub result, not an operand or rounding mode. No hardware-fused float_mul_add substitution. Original NONE->Illegal_Instr and exact FPRS/FPRD reads plus writeFPRS/FPRD whole-state effects preserved, with original flag SND discard and unchanged NV/NX. Generic arithmetic source-ready from checked .8, whose acceptance remains open. Canonical82definitionclosure0fail. Fresh240original cases:208numeric eleven-field state tuples +32complete symbolic invalid-product whole-state equations, matching Lean kernel regressions. Covers all4modes/dynamic/invalidstatic/dynamic, signedzero/infinity/negativefinite and separate-rounding discriminator (1+ulp)*(1-ulp)-1 returning zero at ties-even for bothformats. Nested NaN choices stay unspecified. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external real/float correspondence assumption; no HOL-to-Lean equivalence or full model/compiler correctness inferred."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FNMADD_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FNMADD_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.9: complete original line8901; fixed rd/rs1/rs2/rs3 word5 and round word3, native state->state. Original successful round branch performs fp32/fp64_mul with selected mode, encodes its rounded word, decodes that word for separately rounded add (FMADD/FNMADD) or subtract (FMSUB/FNMSUB). Negative variants negate the final encoded add/sub result, not an operand or rounding mode. No hardware-fused float_mul_add substitution. Original NONE->Illegal_Instr and exact FPRS/FPRD reads plus writeFPRS/FPRD whole-state effects preserved, with original flag SND discard and unchanged NV/NX. Generic arithmetic source-ready from checked .8, whose acceptance remains open. Canonical82definitionclosure0fail. Fresh240original cases:208numeric eleven-field state tuples +32complete symbolic invalid-product whole-state equations, matching Lean kernel regressions. Covers all4modes/dynamic/invalidstatic/dynamic, signedzero/infinity/negativefinite and separate-rounding discriminator (1+ulp)*(1-ulp)-1 returning zero at ties-even for bothformats. Nested NaN choices stay unspecified. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external real/float correspondence assumption; no HOL-to-Lean equivalence or full model/compiler correctness inferred."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FNMSUB_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FNMSUB_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.9: complete original line8937; fixed rd/rs1/rs2/rs3 word5 and round word3, native state->state. Original successful round branch performs fp32/fp64_mul with selected mode, encodes its rounded word, decodes that word for separately rounded add (FMADD/FNMADD) or subtract (FMSUB/FNMSUB). Negative variants negate the final encoded add/sub result, not an operand or rounding mode. No hardware-fused float_mul_add substitution. Original NONE->Illegal_Instr and exact FPRS/FPRD reads plus writeFPRS/FPRD whole-state effects preserved, with original flag SND discard and unchanged NV/NX. Generic arithmetic source-ready from checked .8, whose acceptance remains open. Canonical82definitionclosure0fail. Fresh240original cases:208numeric eleven-field state tuples +32complete symbolic invalid-product whole-state equations, matching Lean kernel regressions. Covers all4modes/dynamic/invalidstatic/dynamic, signedzero/infinity/negativefinite and separate-rounding discriminator (1+ulp)*(1-ulp)-1 returning zero at ties-even for bothformats. Nested NaN choices stay unspecified. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external real/float correspondence assumption; no HOL-to-Lean equivalence or full model/compiler correctness inferred."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FMADD_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMADD_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.9: complete original line9723; fixed rd/rs1/rs2/rs3 word5 and round word3, native state->state. Original successful round branch performs fp32/fp64_mul with selected mode, encodes its rounded word, decodes that word for separately rounded add (FMADD/FNMADD) or subtract (FMSUB/FNMSUB). Negative variants negate the final encoded add/sub result, not an operand or rounding mode. No hardware-fused float_mul_add substitution. Original NONE->Illegal_Instr and exact FPRS/FPRD reads plus writeFPRS/FPRD whole-state effects preserved, with original flag SND discard and unchanged NV/NX. Generic arithmetic source-ready from checked .8, whose acceptance remains open. Canonical82definitionclosure0fail. Fresh240original cases:208numeric eleven-field state tuples +32complete symbolic invalid-product whole-state equations, matching Lean kernel regressions. Covers all4modes/dynamic/invalidstatic/dynamic, signedzero/infinity/negativefinite and separate-rounding discriminator (1+ulp)*(1-ulp)-1 returning zero at ties-even for bothformats. Nested NaN choices stay unspecified. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external real/float correspondence assumption; no HOL-to-Lean equivalence or full model/compiler correctness inferred."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FMSUB_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMSUB_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.9: complete original line9757; fixed rd/rs1/rs2/rs3 word5 and round word3, native state->state. Original successful round branch performs fp32/fp64_mul with selected mode, encodes its rounded word, decodes that word for separately rounded add (FMADD/FNMADD) or subtract (FMSUB/FNMSUB). Negative variants negate the final encoded add/sub result, not an operand or rounding mode. No hardware-fused float_mul_add substitution. Original NONE->Illegal_Instr and exact FPRS/FPRD reads plus writeFPRS/FPRD whole-state effects preserved, with original flag SND discard and unchanged NV/NX. Generic arithmetic source-ready from checked .8, whose acceptance remains open. Canonical82definitionclosure0fail. Fresh240original cases:208numeric eleven-field state tuples +32complete symbolic invalid-product whole-state equations, matching Lean kernel regressions. Covers all4modes/dynamic/invalidstatic/dynamic, signedzero/infinity/negativefinite and separate-rounding discriminator (1+ulp)*(1-ulp)-1 returning zero at ties-even for bothformats. Nested NaN choices stay unspecified. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external real/float correspondence assumption; no HOL-to-Lean equivalence or full model/compiler correctness inferred."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FNMADD_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FNMADD_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.9: complete original line9791; fixed rd/rs1/rs2/rs3 word5 and round word3, native state->state. Original successful round branch performs fp32/fp64_mul with selected mode, encodes its rounded word, decodes that word for separately rounded add (FMADD/FNMADD) or subtract (FMSUB/FNMSUB). Negative variants negate the final encoded add/sub result, not an operand or rounding mode. No hardware-fused float_mul_add substitution. Original NONE->Illegal_Instr and exact FPRS/FPRD reads plus writeFPRS/FPRD whole-state effects preserved, with original flag SND discard and unchanged NV/NX. Generic arithmetic source-ready from checked .8, whose acceptance remains open. Canonical82definitionclosure0fail. Fresh240original cases:208numeric eleven-field state tuples +32complete symbolic invalid-product whole-state equations, matching Lean kernel regressions. Covers all4modes/dynamic/invalidstatic/dynamic, signedzero/infinity/negativefinite and separate-rounding discriminator (1+ulp)*(1-ulp)-1 returning zero at ties-even for bothformats. Nested NaN choices stay unspecified. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external real/float correspondence assumption; no HOL-to-Lean equivalence or full model/compiler correctness inferred."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FNMSUB_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FNMSUB_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.9: complete original line9827; fixed rd/rs1/rs2/rs3 word5 and round word3, native state->state. Original successful round branch performs fp32/fp64_mul with selected mode, encodes its rounded word, decodes that word for separately rounded add (FMADD/FNMADD) or subtract (FMSUB/FNMSUB). Negative variants negate the final encoded add/sub result, not an operand or rounding mode. No hardware-fused float_mul_add substitution. Original NONE->Illegal_Instr and exact FPRS/FPRD reads plus writeFPRS/FPRD whole-state effects preserved, with original flag SND discard and unchanged NV/NX. Generic arithmetic source-ready from checked .8, whose acceptance remains open. Canonical82definitionclosure0fail. Fresh240original cases:208numeric eleven-field state tuples +32complete symbolic invalid-product whole-state equations, matching Lean kernel regressions. Covers all4modes/dynamic/invalidstatic/dynamic, signedzero/infinity/negativefinite and separate-rounding discriminator (1+ulp)*(1-ulp)-1 returning zero at ties-even for bothformats. Nested NaN choices stay unspecified. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external real/float correspondence assumption; no HOL-to-Lean equivalence or full model/compiler correctness inferred."
   }
 ]

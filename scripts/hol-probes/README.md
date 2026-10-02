@@ -6080,3 +6080,19 @@ use the generic rational-cut square-root specification; existing all-mode
 Mathlib real agreement covers both carriers. The external HOL correspondence
 assumption in docs/SOUNDNESS.md item 8 and full-model obligations remain.
 Whole-program assembler-naming probe freshly prints the original theorem with no open hypotheses and288 direct complete-seven-guard/actual-target-name predicates, allT. Matching kernel fixtures independently reduce the naming predicates and apply the complete all-program theorem144 times. Twelve families cover MustTerminate/Loop/Seq, register/accepted-immediate/loaded-immediate If, direct and indirect tail Call, empty returning Call, spilling returning Call, handler Call and nested combinations at widths1/2/8/32/64/80 with both two-register policies. Tail Call retains an ignored invalid handler; raw labels/frame tails exceed64 bits. Original bitmap input uses Append; actual compilation threads residual bitmaps. These are naming-predicate regressions, not complete compiled-output comparisons or cross-language equivalence. Full assembler conventions and compiler correctness remain open. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_compiler_probeScript.sml.
+
+### Native L3 separately rounded multiply/add/subtract instructions
+
+`l3_riscv_madd_probeScript.sml` captures 240 complete original FMADD/FMSUB/
+FNMADD/FNMSUB S/D cases. The original L3 clauses first round the product to
+a word, then decode it for a separately rounded add/subtract; the negative
+variants negate the final result. They do not use a hardware-fused primitive.
+The 208 numeric eleven-field tuples cover all four modes, dynamic rounding,
+invalid modes, signed zero, infinities and negative finite values. In both
+formats, the ties-even discriminator `(1 + ulp) * (1 - ulp) - 1` returns zero,
+while a truly fused operation would retain the small negative exact result.
+Thirty-two closed whole-state invalid-product equations preserve nested NaN
+choices without selecting payloads. `Flapjack.Test.L3RiscvMaddParity` replays
+the same inputs, states and expectations in the kernel. Full IEEE arithmetic
+uses the existing rational-real rendering assumption (docs/SOUNDNESS.md item 8);
+this does not establish HOL-to-Lean equivalence or full model correctness.

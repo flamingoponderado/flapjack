@@ -40,5 +40,13 @@
   "riscv$dfn'FMUL_D",
   "riscv$dfn'FDIV_D",
   "riscv$dfn'FSQRT_S",
-  "riscv$dfn'FSQRT_D"
+  "riscv$dfn'FSQRT_D",
+  "riscv$dfn'FMADD_S",
+  "riscv$dfn'FMSUB_S",
+  "riscv$dfn'FNMADD_S",
+  "riscv$dfn'FNMSUB_S",
+  "riscv$dfn'FMADD_D",
+  "riscv$dfn'FMSUB_D",
+  "riscv$dfn'FNMADD_D",
+  "riscv$dfn'FNMSUB_D"
 ]
