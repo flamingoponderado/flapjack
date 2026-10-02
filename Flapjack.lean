@@ -130,6 +130,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Locations
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSpace
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
@@ -559,6 +560,9 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionConfiguration
 import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoves
 import Flapjack.Compiler.Backend.RegAlloc.ProductionStateRelation
+import Flapjack.Compiler.Backend.RegAlloc.ProductionInitialSeed
+import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTransition
+import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTraversal
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup

@@ -107,10 +107,15 @@ private theorem fold_nodeTag {α : Type} (step : CakeRaState → α → CakeRaSt
 /-- Decrementing all adjacent degrees changes no production tags. -/
 theorem decDegree_nodeTag (node : Nat) (state : CakeRaState) :
     (cakeDecDegree node state).nodeTag = state.nodeTag := by
-  unfold cakeDecDegree
-  split
-  · exact fold_nodeTag (fun s n => cakeDecDeg n s) (fun s n => decDeg_nodeTag n s) _ _
-  · rfl
+  cases failure : state.failure with
+  | some error => simp [cakeDecDegree, failure]
+  | none =>
+      simp only [cakeDecDegree, failure]
+      split
+      · split
+        · exact fold_nodeTag (fun s n => cakeDecDeg n s) (fun s n => decDeg_nodeTag n s) _ _
+        · rfl
+      · rfl
 
 /-- The actual simplify phase preserves all tags through degree updates,
 stack pushes and worklist revival. No success premise is required. -/

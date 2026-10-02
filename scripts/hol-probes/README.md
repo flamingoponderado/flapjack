@@ -6045,6 +6045,20 @@ original reference sources are edited. All static/dynamic mode validation,
 register/status/delta/flag/other-core/trap observations retain original semantics.
 These finite/infinity rows do not fix arbitrary NaN output payloads or establish
 full model/compiler correctness. SOUNDNESS item8 remains inherited.
+
+### Full native L3 single/double arithmetic equations
+
+`l3_riscv_arithmetic_probeScript.sml` captures140 original FADD/FSUB/FMUL/FDIV
+S/D cases:132numeric ten-field state observations and8closed whole-state
+FDIV negative-zero/zero equations. Inputs cover all four supported rounding modes,
+dynamic rounding, invalid static/dynamic modes, cancellation, ties, signed zero
+and infinities. Observations include source/destination registers, MFS/MSD, delta,
+NV/NX, another core and the illegal-instruction trap. The NaN equations preserve
+the original symbolic quiet-NaN choice and complete writeFPRS/FPRD result; they
+do not assign a numeric payload. `Flapjack.Test.L3RiscvArithmeticParity`
+kernel-checks all140matching cases. The existing rational-real rendering
+assumption (SOUNDNESS item8) remains; regression evidence does not establish
+HOL-to-Lean equivalence or full model/compiler correctness.
 Assembler-naming Inst probe captures the original generic seven-guard case application with no open hypotheses and900 direct validity/guard/target observations (735T165F). Kernel fixtures include224 full seven-guard theorem applications and cover widths1/2/8/32/64/80, all arithmetic forms, eight memory operations and sixteen FP forms, both policy flags across families,70bit natural registers/frame slots, odd physical registers,32/64-bit FP pair behavior, ISA restrictions, underflow and strict frame minimum. This is regression evidence, not HOL-to-Lean equivalence or full naming/compiler correctness. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_inst_probeScript.sml.
 
 ### Generational allocator partial-case statement capture
@@ -6053,3 +6067,16 @@ Assembler-naming Inst probe captures the original generic seven-guard case appli
 Assembler-naming flat-constructor probe freshly prints the original general theorem with no open hypotheses and558 direct validity/complete-guard/actual-target-name observations (510T48F). Matching kernel fixtures include150 full seven-guard case applications. It covers all19 remaining nonrecursive constructors at widths1/2/8/32/64/80, both policy flags across families, arbitrary70bit natural fields, cycle/empty/odd moves, fixed five-bit Temp, ASCII mlstring FFI names, empty/nonempty live sets and constant lists, zero frame tail, strict frame minimum, natural subtraction underflow and rejected source conventions. Direct naming predicates are regression observations, not complete compiled-output comparisons or HOL-to-Lean equivalence. Recursive cases and full naming/compiler assembly remain open. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_flat_probeScript.sml.
 
 Whole-program assembler-naming probe freshly prints the original theorem with no open hypotheses and288 direct complete-seven-guard/actual-target-name predicates, allT. Matching kernel fixtures independently reduce the naming predicates and apply the complete all-program theorem144 times. Twelve families cover MustTerminate/Loop/Seq, register/accepted-immediate/loaded-immediate If, direct and indirect tail Call, empty returning Call, spilling returning Call, handler Call and nested combinations at widths1/2/8/32/64/80 with both two-register policies. Tail Call retains an ignored invalid handler; raw labels/frame tails exceed64 bits. Original bitmap input uses Append; actual compilation threads residual bitmaps. These are naming-predicate regressions, not complete compiled-output comparisons or cross-language equivalence. Full assembler conventions and compiler correctness remain open. Selector: HOL_PROBE_ONLY=word_to_stack_asm_name_compiler_probeScript.sml.
+### Complete native L3 square-root equations
+
+`l3_riscv_sqrt_probeScript.sml` captures 56 original FSQRT_S/D cases over
+all four supported modes, dynamic rounding and invalid static/dynamic modes.
+Thirty-six numeric ten-field state tuples cover positive infinity, negative
+zero and traps. Twenty closed whole-state equations cover positive finite four
+and invalid negative one while retaining symbolic rounding and quiet-NaN
+choices. These equations preserve all flags before the machine lift takes SND;
+they do not claim numerical finite rounding or fix a NaN payload.
+`Flapjack.Test.L3RiscvSqrtParity` kernel-checks the same 56 cases. Both formats
+use the generic rational-cut square-root specification; existing all-mode
+Mathlib real agreement covers both carriers. The external HOL correspondence
+assumption in docs/SOUNDNESS.md item 8 and full-model obligations remain.
