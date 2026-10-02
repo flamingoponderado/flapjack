@@ -4709,6 +4709,23 @@ through a structural program observation and lookups of the `num_map`s on keys `
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_copy_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`logroot_log_spec_probe` captures the original HOL kernel statements of `LOG_exists`, the
+`new_specification` theorem `LOG`, `LOG_UNIQUE` and `LOG2_def`, and four `LOG2` values on
+positive arguments proved in HOL from `LOG_UNIQUE` (`LOG2` is `[nocompute]`). No value of
+`LOG2 0` is derivable from the specification. `LogrootParity` checks the Lean statements
+against the captured ones and proves the same values. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=logroot_log_spec_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`alignment_align_probe` captures the original HOL `align`/`byte_align` types and EVAL results
+of `word_slice` (including a bound above `^HB` and an empty slice), `align` (exponents 0, 3 and
+40 on a 32-bit word) and `aligned`, plus `byte_align`/`byte_aligned` at 64 bits proved in HOL
+through `LOG2 8 = 3`. Kernel-replayed in `AlignmentParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=alignment_align_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+
+
 `word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
 original missing-bit, SNOC and prefix-reconstruction proofs plus their local
 original bit-index context, each with no open hypotheses. It prints two
@@ -4781,6 +4798,7 @@ It captures the full statement and native list/value/map/bound carriers;
 source and target state captures establish their independent code/FFI hosts.
 The capture is source evidence, not a cross-assistant equivalence proof.
 
+
 ### Balanced-map ordering/domain equivalence
 
 `balanced_map_keyordered_probeScript.sml` replays the original local
@@ -4804,6 +4822,7 @@ continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a 
 observation in `WordUnreachDefParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 
 ### Balanced-map ordering/domain equivalence
 
