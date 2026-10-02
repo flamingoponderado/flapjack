@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation

@@ -4158,3 +4158,12 @@ values. `WordCseDeletionFramesParity.lean` kernel-checks matching applications.
 The statements retain the original input guards and both evaluation directions.
 These regressions supplement source review; they do not prove cross-language
 equivalence or complete CSE correctness.
+
+`word_cse_list_order_probeScript.sml` captures original `listCmp_def`, replays
+the complete equality, antisymmetry and transitivity proof bodies with no open
+hypotheses, evaluates 64 independent empty/prefix/long-prefix/large-numeral
+comparison pairs, and applies the original full laws to 144 pairs/triples
+with arbitrary suffixes. The matching `WordCseListOrderParity.lean` checks
+all 208 values/applications. This group does not establish external
+`TotOrd`/`good_cmp`, the balanced-map carrier or full CSE correctness.
+The production list-key comparator route is tracked separately.
