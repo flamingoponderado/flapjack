@@ -4748,6 +4748,14 @@ definition and three HOL-proved consumers: its reduction on code with no lines t
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=lab_to_target_share_mem_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`lab_to_target_share_mem_state_probe` captures the original typed `share_mem_state_rel`
+definition (independent labSem and machine word widths, vacuous outer `t1`/`ms1`) and two
+HOL-proved consumers: the instance with no FFI names and the counterexample with one shared-memory
+name whose entry PC is the halt PC (via `mmio_pcs_min_index [SharedMem MappedRead] = SOME 0`).
+`LabToTargetShareMemStateParity` replays both. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=lab_to_target_share_mem_state_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `asm_sem_mem_ops_probe` captures 14 original HOL results of `mem_load`, `mem_store` and
 `mem_op` on an 8-bit state: little/big-endian two-byte loads, misaligned and out-of-domain
 failures, one-byte stores, four `mem_op` opcodes, and the zero-count load, whose failure flag is
@@ -4755,6 +4763,13 @@ proved equal to `¬aligned (LOG2 0) 1w` with `LOG2 0` left unconstrained. Positi
 are proved from `LOG_UNIQUE` (`LOG2` is `[nocompute]`). Kernel-replayed in `AsmSemMemOpsParity`.
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=asm_sem_mem_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`asm_sem_step_probe` captures 12 original HOL results of `asm` (with `inst`/`jump_to_offset`)
+on an 8-bit state: every assembly clause, `Const`/`Arith`/`Mem`/`Skip` instructions, both
+`JumpCmp` branches, `JumpReg` with a satisfied and a violated `aligned s.align` guard, and the
+HOL-proved projection of `asm_step` onto its transition and non-failure conjuncts.
+Kernel-replayed in `AsmSemStepParity`. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=asm_sem_step_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 
 
@@ -5135,6 +5150,23 @@ Inst specialization and native instruction/state/SSA/table carriers. Original
 Inst7860–8222 and all34 constructor cases are compared with the exhaustive
 Lean assembly; no standalone tactic replay is claimed.
 
+`target_next_shared_mem_probeScript.sml` captures the complete original
+`next_interference_SharedMem` statement with no open hypotheses; native
+assembly is in `TargetProps/NextSharedMem.lean`.
+The capture also replays the entire original `lookup_thm` statement and proof,
+with typed closed output, and evaluates left/root/right hits, whole-tree and
+child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
+consume the full generic theorem and derive actual semantic finite-map results
+for nonempty children and a distinct equivalent key with an independent payload.
+
+### Misc byte-region prerequisites
+
+`misc_memory_regions_probeScript.sml` captures the complete original
+`bytes_in_memory_APPEND` and `bytes_in_memory_change_mem` theorem conclusions
+from compiled `miscTheory`; `misc_memory_regions_probe.out` is statement review
+and regression evidence, not a cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=misc_memory_regions_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`init_code_probeScript.sml` captures the full original definition/type and120 complete native-tree equalities across positive widths1/8/32/64/80, heap-limit multiplication below/at/above overflow, GC modes, and zero/large/aliased register indices. The original word_shift is2 for32-bit words and3 otherwise; narrow immediate truncation is preserved. `stack_remove_compile_native_probeScript.sml` adds full init_stubs/compile definitions/types and50 outputs with50 equality checks for all three initializer labels, tail-call start, both jump modes, empty/nonempty section lists, repeated section labels, and huge natural labels. Matching Lean fixtures use kernel-checked literal trees/equations. These are proof-side definitions; production routing and compile_semantics remain separate obligations.
 `ssa_locals_force_rename_probe` captures the original proved generic
 `ssa_locals_rel_force_rename` (word_allocProof:6383–6403) and five inferred
 carriers: source/target alpha Spt, Nat SSA Spt, Nat pair list, and Nat bound.
@@ -5143,6 +5175,37 @@ The original three premises and conclusion were manually compared with
 force-rename updates. This is an original theorem capture, not a replay of
 the isolated source tactic or a cross-language equivalence proof. Regenerate
 with `HOL_PROBE_ONLY=ssa_locals_force_rename_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Target evaluation induction base
+
+`target_evaluate_eq_probeScript.sml` captures the full original
+`evaluate_EQ_evaluate_lemma` and its zero specialization in
+`target_evaluate_eq_probe.out`. This is source-review regression evidence,
+not a proof of cross-language equivalence.
+Regenerate with `HOL_PROBE_ONLY=target_evaluate_eq_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+### Rotation auxiliary completion audit
+
+`balanced_map_rotation_aux_probeScript.sml` captures the complete typed
+specified equations for `singleL/R`, `doubleL/R`, `rotateL/R`, `bal`, `balL`,
+and `balR`, and actual single-rotation outputs with malformed cached sizes.
+The `bmra_unspecified_unreduced` row is an **unreduced expression**, not a true
+shared-ARB equality. `bmra_completed_singleR` is a **conditional theorem**;
+`bmra_completion_hyp` records its constructor-existence hypothesis explicitly.
+Do not use this capture to claim unconditional missing-case equivalence.
+
+Source audit: HOL `src/tfl/src/Defn.sml:1156-1171` sends constructor-pattern
+nonrecursive definitions to `Prim_rec.new_recursive_definition`.
+`src/1/Prim_rec.sml:259-266` proves function existence from the supplied
+equations, then calls `new_specification`. The existence construction at
+lines127-164 selects the requested constructor equations from the recursion
+axiom; it does not supply a Tip equation absent from the source specification.
+Thus the exported single-rotation equations constrain Bin cases, while the
+choice of the total function leaves the missing outputs unspecified. A shared
+map-valued ARB fallback is one possible realization, not established original
+behavior. A faithful port must retain that unspecified function specification
+(or prove a justified defining-body correspondence), and its missing-case
+outputs must not be treated as concrete parity fixtures. Full rotation proofs
+still need their original constructor premises and specified equations.
 `target_next_shared_mem_probeScript.sml` captures the complete original
 `next_interference_SharedMem` statement with no open hypotheses; native
 assembly is in `TargetProps/NextSharedMem.lean`.
