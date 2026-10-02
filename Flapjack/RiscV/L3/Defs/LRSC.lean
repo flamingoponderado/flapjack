@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.IntegerLoadMode
 import Flapjack.RiscV.L3.Defs.Reservation
 import Flapjack.RiscV.L3.Defs.AddressException
 import Flapjack.RiscV.L3.Defs.MMU.Translate
@@ -29,6 +30,34 @@ theorem lrWWholeState (aq rl : BitVec 1) (rd rs : BitVec 5) (s : riscv_state) :
       | none => signalAddressException (.Load_Fault,v) t
       | some p => «write'ReserveLoad» (some v)
           («write'GPR» (BitVec.signExtend 64 (holWordExtract 32 31 0 (rawReadData p t)),rd) t) := by
+  rfl
+
+/-- Literal source7506-7554: complete LR_D; full order/register payloads retained.
+The original mode test precedes address calculation and forwards its returned
+state to illegal-instruction, low3 alignment and Data/Read translation routes.
+Success reads the entire returned-state word64, writes GPR, then reserves the
+original virtual address. No alignment/mode/success/core premise is added. -/
+@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'LR_D_def"]
+noncomputable def «dfn'LR_D» (arg0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × (BitVec 5))))) : (riscv_state → riscv_state) :=
+  match arg0 with
+  | (_aq, (_rl, (rd, rs1))) =>
+  (fun (state : riscv_state) => (match (in32BitMode () state) with | (v, s) => (if v then (signalException ExceptionType.Illegal_Instr s) else ((let v_1 : (BitVec 64) := (GPR rs1 s); (if ((!(((holWordExtract 3 2 0 v_1) == (BitVec.ofNat 3 0))))) then ((signalAddressException (ExceptionType.AMO_Misaligned, v_1) s)) else ((match (translateAddr ((v_1, (fetchType.Data, accessType.Read))) s) with | (v0, s_1) => (match v0 with | none => (signalAddressException (ExceptionType.Load_Fault, v_1) s_1) | some pAddr => («write'ReserveLoad» (some v_1) ((«write'GPR» (((rawReadData pAddr s_1), rd)) s_1))))))))))))
+
+/-- Flapjack-only unconditional complete-state normal form; no separately named
+HOL theorem is claimed and no original branch is removed. -/
+theorem lrDWholeState (aq rl : BitVec 1) (rd rs : BitVec 5) (s : riscv_state) :
+    «dfn'LR_D» (aq,rl,rd,rs) s =
+    let (is32,t) := in32BitMode () s
+    if is32 then signalException .Illegal_Instr t else
+    let v := GPR rs t
+    if !(holWordExtract 3 2 0 v == BitVec.ofNat 3 0) then
+      signalAddressException (.AMO_Misaligned,v) t
+    else
+      let (addr,u) := translateAddr (v,fetchType.Data,accessType.Read) t
+      match addr with
+      | none => signalAddressException (.Load_Fault,v) u
+      | some p => «write'ReserveLoad» (some v)
+          («write'GPR» (rawReadData p u,rd) u) := by
   rfl
 
 end Flapjack.RiscV.L3

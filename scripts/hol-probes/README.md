@@ -6261,3 +6261,12 @@ The reservation is the virtual address on success and remains unchanged on
 fault/misalignment; the other-core reservation and full frame outside the six
 potentially changed fields are observed. No whole atomic/runtime assembly is
 claimed; probes are regression evidence, not cross-language equivalence proofs.
+
+`l3_lrd_probe.out` captures the complete original LR_D definition/type and
+18 whole-state observations. All seven low3 virtual misalignment residues trap
+before translation; RV32 is rejected before address calculation, while RV128
+retains the original word64 model. All order-bit payloads, zero-register behavior,
+core255 with totalCore1, aligned Sv32 faults and Sv39 returned-state PTE3111 reads
+are replayed. Reservation/current-core/other-core and entire frame outside the
+six potentially changed fields are observed. This is the LR_D clause only,
+not full atomic/Run/Next or compiler correctness.

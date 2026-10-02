@@ -67986,5 +67986,13 @@
     "hol_name": "dfn'LR_W_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal pinned source7463-7505 comparison: full word1 aq/rl and word5 rd/rs1 tuple, arbitrary complete native riscv_state; unused order payloads retained. Early low2 virtual-address AMO_Misaligned before any translation; otherwise exact Data/Read, returned-state Load_Fault with original virtual address or low32 signed64 read/GPR write followed by virtual-address reservation on that resulting state. No successful/core/alignment premise or changed architecture mode. Original definition/type plus14 whole-state observations freshly regenerated; independently derived expected values match14/14, including all order bits, misalignment residues1/2/3, fault reservation retention, zero register, core255,totalCore1,RV32/RV128 and Sv39 PTE3079->3111 returned-state read. Unconditional normal form kernel checked; full regression/final gates pending. Not full LR/SC/Run/Next or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/LRSC.lean",
+    "lean_name": "«dfn'LR_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LR_D_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7506-7554: full fixed word1 aq/rl and word5 rd/rs1 arguments, arbitrary complete riscv_state; original unused order bits retained. in32BitMode first and forwards returned state to Illegal_Instr or subsequent GPR virtual address calculation; low3 virtual alignment failure AMO_Misaligned precedes any translation. Aligned route exact Data/Read; fault Load_Fault retains returned translation state and original virtual address; success rawReadData entire64word from returned state, writeGPR then reserve original virtual address on resulting state. No mode/alignment/success/core premise. Mechanically rendered full40-declaration closure0failed; definition and unconditional complete-state normal form kernel checked. Fresh pinned original definition/type+18 whole-state observations independently matched, all7misalignment residues, earlyRV32/RV128, orderbit combinations, register0/core255,totalCore1/Sv32 fault retention/Sv39 PTE3111 returned read, complete reservation/frame. No whole atomic/Run/Next or compiler theorem claim."
   }
 ]
