@@ -8,19 +8,19 @@ example {width : Nat} [NeZero width]
       (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
         (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
     (acc : Spt (Spt Nat)) (sectionId labelId pc : Nat) (c : AsmConfigExact width)
-    (labs : Spt (Spt Nat)) (ffis : List HolFfiName) :
+    (labs : Spt (Spt Nat)) (ffis : List HolFfiName) {β : Type u} (nop : β) :
     (∀ sec ∈ code, secLabelsOk sec) ∧
     (code.map (fun sec => sec.sectionId)).Nodup ∧
     (∀ sec ∈ code, (extractLabels sec.lines).Nodup) ∧
     (∀ sec ∈ code, secLabelZero sec) ∧
     allEncOk c labs ffis pos code ∧ locToPc sectionId labelId code = some pc →
-    labLookup sectionId labelId (computeLabelsAlt pos code acc) = some (posVal pc pos code) := labLookup_computeLabels_position pos code acc sectionId labelId pc c labs ffis
+    labLookup sectionId labelId (computeLabelsAlt pos code acc) = some (posVal pc pos code) := labLookup_computeLabels_position pos code acc sectionId labelId pc c labs ffis nop
 example (pos : Nat) (acc : Spt (Spt Nat)) (c : AsmConfigExact 8)
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (henc : allEncOk c labs ffis pos [⟨1,[.label 1 7 0]⟩,⟨2,[]⟩]) :
     labLookup 1 7 (computeLabelsAlt (width := 8) pos [⟨1,[.label 1 7 0]⟩,⟨2,[]⟩] acc) =
       some (posVal (width := 8) 0 pos [⟨1,[.label 1 7 0]⟩,⟨2,[]⟩]) := by
-  apply labLookup_computeLabels_position pos _ acc 1 7 0 c labs ffis
+  apply labLookup_computeLabels_position pos _ acc 1 7 0 c labs ffis ()
   refine ⟨?_,?_,?_,?_,henc,?_⟩ <;>
     simp [secLabelsOk,secLabelOk,extractLabels,secLabelZero,labelZero,locToPc]
 example : locToPc (width := 8) 1 0 [⟨1,[]⟩] = some 0 ∧

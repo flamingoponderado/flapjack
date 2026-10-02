@@ -10,8 +10,8 @@ open Flapjack.Compiler.Backend.LabProps.LabelSets Flapjack.Basis.Pure.MlString
 
 /-- Full original whole-code lookup result, with all six source guards and an
 arbitrary actual nested-map accumulator. The source's final `nop : β` binder is
-vacuous: it occurs in neither guards nor conclusion and is omitted after review.
-No word-byte specialization of that independent source type is made. -/
+retained at its independent generic carrier, even though it occurs in neither
+guards nor conclusion. No word-byte specialization is made. -/
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "lab_lookup_compute_labels_test" (words_as_type_indexed_bitvec)]
 theorem labLookup_computeLabels_position {width : Nat} [NeZero width]
@@ -19,13 +19,14 @@ theorem labLookup_computeLabels_position {width : Nat} [NeZero width]
       (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
         (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
     (acc : Spt (Spt Nat)) (sectionId labelId pc : Nat) (c : AsmConfigExact width)
-    (labs : Spt (Spt Nat)) (ffis : List HolFfiName) :
+    (labs : Spt (Spt Nat)) (ffis : List HolFfiName) {β : Type u} (_nop : β) :
     (∀ sec ∈ code, secLabelsOk sec) ∧
     (code.map (fun sec => sec.sectionId)).Nodup ∧
     (∀ sec ∈ code, (extractLabels sec.lines).Nodup) ∧
     (∀ sec ∈ code, secLabelZero sec) ∧
     allEncOk c labs ffis pos code ∧ locToPc sectionId labelId code = some pc →
     labLookup sectionId labelId (computeLabelsAlt pos code acc) = some (posVal pc pos code) := by
+  clear _nop
   induction code generalizing pos acc pc with
   | nil => rintro ⟨_,_,_,_,_,hpc⟩; simp [locToPc] at hpc
   | cons sec rest ih =>

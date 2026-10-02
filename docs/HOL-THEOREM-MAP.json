@@ -66705,6 +66705,15 @@
     "hol_name": "lab_lookup_compute_labels_test",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 source comparison: complete original six guards, arbitrary nested numeric sptree accumulator, actual loc_to_pc premise and computed lab_lookup equality to pos_val preserved. Native constructor carriers and type-indexed positive-width word translation reviewed; no desired lookup, callback, freshness or successful encoding premise added. Original unused nop : beta binder is vacuous and omitted, not specialized to a word type. Original local literal Q.prove replays full statement/proof with zero open hypotheses and captures all quantified types. Original source and native section-boundary/accumulator regression cases supplement kernel checking, not cross-language equivalence."
+    "reviewer": "flapjack-sol3 source comparison: complete original six guards, arbitrary nested numeric sptree accumulator, actual loc_to_pc premise and computed lab_lookup equality to pos_val preserved. Native constructor carriers and type-indexed positive-width word translation reviewed; no desired lookup, callback, freshness or successful encoding premise added. Original unused nop : beta binder is explicitly retained at independent generic beta, never specialized to a word/list carrier; repaired per coordinator source-shape review. Original local literal Q.prove replays full statement/proof with zero open hypotheses and captures all quantified types. Original source and native section-boundary/accumulator regression cases supplement kernel checking, not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabelsLoop.lean",
+    "lean_name": "removeLabelsLoop_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "remove_labels_loop_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison5922-6129: complete original twelve guards (actual execution, ending labels, section validity, both distinctness conditions, accumulator-domain disjointness, restricted label inclusion, encoding precondition, encd0, encOk, initial parity and OPTION_ALL parity of every initial lookup) and all eight conclusions retained. Clock induction uses actual recursive encoder output, establishing all retry guards; successful branch establishes NOP/alignment/prefix/position/offset/label existence, full allEncOk, code similarity, odd-instruction alignment, every returned-label evenness, preservation of every initial lookup, and complete original navigation equality. Canonical nested numeric sptrees, native original constructors/opaque mlstring and positive-width word translation reviewed; no fmap qualifier, callback, returned-success or poststate premise added. Explicit original arbitrary unused nop:beta binder retained in full139 dependency. Original literal complete local proof and13 original local prerequisites replay with zero open hypotheses/full types; eight fresh original/native branch cases and genuine discharged-guard theorem consumer supplement kernel checking without asserting cross-language equivalence."
   }
 ]

@@ -5572,6 +5572,12 @@ run_probe lab_to_target_initial_encoding_navigation_probeScript.sml lab_to_targe
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_remove_labels_loop_probeScript.sml lab_to_target_remove_labels_loop_probe.out \
+  remove_labels_loop_thm remove_labels_loop_thm_types hypotheses \
+  empty retry_zero retry_one odd_padding labels_only light_reject width1_large width80_large \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_computed_label_positions_probeScript.sml lab_to_target_computed_label_positions_probe.out \
   lab_lookup_compute_labels_test lab_lookup_compute_labels_test_types hypotheses \
   head_zero trailing_label next_instruction tail_section empty_prefix \
