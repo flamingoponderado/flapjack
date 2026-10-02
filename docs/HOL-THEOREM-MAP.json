@@ -51418,6 +51418,321 @@
     "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original3391 all pos/labs/ffis/enc/code/code1/ok binders, full result equality and code-similarity implication; complete recursion threads actual position and both section success flags. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
   },
   {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "revive_moves_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "reviveMoves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:363-377. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "unspill_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "unspill",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:379-392. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_simplify_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doSimplify",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:400-415. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_coalesce_real_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doCoalesceReal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:457-471. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "bg_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "bgOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:524-554, both George and Briggs branches with k+1 as infinity for case1. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_coalesce_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doCoalesce",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:668-690. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_prefreeze_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doPrefreeze",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:726-746, including the unused result of set_unavail_moves_wl. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_freeze_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doFreeze",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:750-765. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_spill_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doSpill",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:809-829, NONE/SOME scost branches. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_step_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doStep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:831-858. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "rpt_do_step_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "rptDoStep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:860-867, both clauses (0 and SUC c). Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_upd_coalesce_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doUpdCoalesce",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1251-1254 update_coalesced i (0+i) kept literally. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "init_alloc1_heu_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "initAlloc1Heu",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1257-1286. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_alloc1_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doAlloc1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1288-1296. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "biased_pref_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "biasedPref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1369-1380, the case on lookup n mtable and handle_Subscript around first_match_col. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "do_reg_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "doRegAlloc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1449-1462, if alg = Simple then [] else moves. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "reg_alloc_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "regAllocAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1473-1488, run_ira_state with the twelve-field ira_state record literally. Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "reg_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Allocator.lean",
+    "lean_name": "regAlloc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1490-1493 reg_alloc_aux ... (mk_bij ct). Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsStoreConsts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsAssign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsGet",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsStore",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsRaise",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsOpCurrHeap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsReturn",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsTick",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsSet",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsLocValue",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsCodeBufferWrite",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsDataBufferWrite",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsShareInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+    "lean_name": "ssaCcTransPropsSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+    "lean_name": "ssaCcTransPropsMustTerminate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+    "lean_name": "ssaCcTransPropsIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramProps.lean",
+    "lean_name": "ssaCcTransProps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-hyxt: full original all-program ssa_cc_trans_props5951ff, including resumed Loop/Break/Continue cases. Quantified native program/map/counter/loop-table/output tuple; actual compiler equality then original ssa_map_ok/is_alloc_var premise imply counter monotonicity/allocated counter/output-map bound. No case IH, desired target evaluation, validity or output-frame premise in final theorem. Native datatype induction includes both nested option-product handler programs and all27functional cases; scoped original case IHs are discharged by induction. Exact original HOL functional-induction assembly from literal27case proof replays, full source types captured. Spt Nat map, List of Spt Nat/two Spt Unit loop-table triples, native constructor arities and positive width BitVec match reviewed owning carriers. No executable behavior change."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionLength.lean",
     "lean_name": "secLengthSumLineLen",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
@@ -51443,6 +51758,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.5): Compared the entire original targetSemScript.sml:118-219. Retains machine_config and universe-0 FFI host, arbitrary positive word width, clock-only recursion, program-domain minus FFI-entry priority before halt/cache, encoded-memory existential, all three state_ok guards and frame only on ms1, failure rollback to original machine/FFI, separate shifted next/cache/FFI oracles, first-match find_index and ALOOKUP, total EL using shared HOL ARB without a length premise, both mapped templates and full-word alignment, canonical little-endian arbitrary-count bytes, external MMIO rejection and two optional reads, original FFI_final event and old FFI state, and FFI_return new host/events. words_as_type_indexed_bitvec records only the standard positive word/FFI carrier translation. No callback, successful-run premise, concrete unspecified FFI name, or executable compiler routing change. Original target_sem_evaluate probes and matching kernel examples provide regressions, not cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "select_reg_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SelectRegAlloc.lean",
+    "lean_name": "selectRegAlloc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.3.5): word_allocScript.sml:1697-1703 select_reg_alloc alg spillcosts k heu_moves tree forced fs = if 4 <= alg then linear_scan$linear_scan_reg_alloc k heu_moves tree forced else reg_alloc (if alg <= 1n then Simple else IRC) spillcosts k heu_moves tree forced fs, over the exact tagged linearScanRegAlloc and regAlloc (RegAlloc/Allocator.lean); type num -> num num_map option -> num -> (num # num # num) list -> clash_tree -> (num # num) list -> num_set -> (num num_map, state_exn) exc confirmed by the sra_type probe row and a Lean signature check. Seven original HOL EVAL rows (algorithms 0-5) kernel-replayed in Flapjack.Test.WordAllocSelectRegAllocParity. Proof-side; the executed compiler's allocator routing remains separate."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/MachineSem.lean",

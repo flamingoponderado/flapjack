@@ -1,11 +1,14 @@
 import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
 import Flapjack.Compiler.Backend.LabToTarget.LineLength
 import Flapjack.Compiler.Backend.LabToTarget.SectionLength
 import Flapjack.Byte
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
 import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
 import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
@@ -108,6 +111,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarInst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
 import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
+import Flapjack.Compiler.Backend.WordAlloc.SelectRegAlloc
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstall
@@ -1278,6 +1282,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
 import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ConsideredVarFilter
 import Flapjack.Compiler.Backend.RegAlloc.Worklists
+import Flapjack.Compiler.Backend.RegAlloc.Allocator
 import Flapjack.Misc.LookupAny
 import Flapjack.Compiler.Backend.RegAlloc.Coalesce
 import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
