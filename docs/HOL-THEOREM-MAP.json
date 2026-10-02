@@ -66350,15 +66350,6 @@
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-stack-atomic-clocks): full original sh_mem_op_clock at stackSem1033-1077. Exact native operation, source returned Option/pair equality premise and post.clock<=source.clock conclusion, arbitrary state/config/FFI/word dimensions. No callback clock assumption, program restriction, target success or added premise. Canonical finite-support regs/fpRegs/store and positive type-indexed word translation only; code Spt and stacks List remain unchanged. Same-module witness reexports actual imported native carrier codec. Native field-preservation helpers are stronger independently checked facts used in proof; statement is original inequality. Literal original proof replay PASS."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExtractLabels.lean",
-    "lean_name": "extractLabels",
-    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
-    "hol_name": "extract_labels_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol2 source comparison 2026-10-02: complete source771-787 five clauses on reviewed HolProg with shared positive word dimension. Both optional tuple arities, return/handler label-before-body ordering, duplicates and ignored NONE-return handler retained; target/immediate/instruction/mlstring payloads ignored exactly as source. No finite map/list-array/default substitution. Fresh original56 ordered list observations at widths1/8/64/80 independently kernel replayed."
-  },
-  {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ExtractLabelsHelpers.lean",
     "lean_name": "stackMoveNoLabs",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
