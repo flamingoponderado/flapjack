@@ -5530,3 +5530,9 @@ run_probe labprops_extraction_validity_probeScript.sml labprops_extraction_valid
   empty mixed wrong_owner zero_rejected width1 width80 \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe lab_to_target_initial_encoding_navigation_probeScript.sml lab_to_target_initial_encoding_navigation_probe.out \
+  loc_to_pc_enc_sec_list loc_to_pc_enc_sec_list_types loc_to_pc_enc_sec_list_hypotheses \
+  empty section_zero mixed_index wrong_section_owner duplicate_labels absent zero_label_ignored width1 width80_large_ids \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

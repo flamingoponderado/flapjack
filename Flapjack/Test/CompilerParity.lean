@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetInitialEncodingNavigationParity
 import Flapjack.Test.LabToTargetLookupPrerequisitesParity
 import Flapjack.Test.LabToTargetSecPosZeroParity
 import Flapjack.Test.NumericFormattingParity
