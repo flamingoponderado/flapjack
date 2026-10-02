@@ -4800,3 +4800,9 @@ theorem specialization at native Mem Load and full state/register/offset-word/
 SSA/table carriers. Original opcode8115–8123, address expression, domain errors
 and fresh destination relation are manually compared; no standalone tactic
 replay is claimed.
+
+`ssa_cc_trans_correct_inst_load8_probeScript.sml` captures the original kernel
+theorem specialization at Mem Load8 and complete native state/register/offset/
+SSA/table carriers. Opcode8124–8132, domain/endianness byte-load branches and
+HOL w2w byte-to-word fresh update are manually compared; no standalone tactic
+replay is claimed.
