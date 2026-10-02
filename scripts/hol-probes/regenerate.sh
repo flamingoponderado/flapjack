@@ -5659,3 +5659,6 @@ run_probe l3_mmu_insert_probeScript.sml l3_mmu_insert_probe.out \
 run_probe stack_remove_comp_if_probeScript.sml stack_remove_comp_if_probe.out \
   cc_if_statement cc_if_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe l3_mmu_translate_probeScript.sml l3_mmu_translate_probe.out \
+  translate_hit_read translate_hit_write translate_hit_write_dirty translate_hit_permission_denied translate_miss_empty translate_miss_invalid translate_miss_asid translate_hit_global translate_miss_full_replace \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"

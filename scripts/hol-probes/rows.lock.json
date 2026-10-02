@@ -1508,6 +1508,12 @@
       "sha256": "7b68c20e24e3ce354410c6511bbbeaa1fa7a10b2dc2504adf346fd91ea945b83"
     },
     {
+      "bytes": 2416,
+      "out": "l3_mmu_translate_probe.out",
+      "rows": 9,
+      "sha256": "b1efc9679537b68ef3299e196f8e56ff6d78e8208ac71a56c388e5e812db72e3"
+    },
+    {
       "bytes": 717,
       "out": "l3_mmu_walk_probe.out",
       "rows": 15,

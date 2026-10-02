@@ -66892,5 +66892,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison6159-6167: arbitrary code, encoder enc and independent configuration c retained; sole original all_enc_ok_pre premise and complete same-predicate result over actual enc_sec_list. Initial encoding changes only bytes/length/offset caches and retains the asm payload inspected by original precondition. Native original constructor carriers, opaque mlstring and positive-width word translation reviewed; no enc=configuration.encode or encoding-success premise. Literal original local full proof/type capture0openhyps, fresh original cases and native fullgeneric/actual arbitrary independent encoder consumer; kernel validity and probes do not establish cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Translate.lean",
+    "lean_name": "translate64",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "translate64_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source review: riscvScript5491-5623 complete hit/miss equation. Current ASID and current-core TLB select the first matching entry. A hit checks permission, retains its returned state, and combines physical base with masked virtual offset. Only a Write hit with D=false sets D, writes exactly eight PTE bytes, and updates the same TLB index; R and age remain unchanged. Failure forwards None and the permission-returned state. A miss walks from original SCSR.sptbr at the supplied level, forwards a failed walk state, or inserts the entire successful result into the returned state's TLB using the original ASID. No hit, permission, alignment, level or core-bound hypothesis is added. Fixed word64/ASID6/index4, native state/SV_PTE/TLBEntry and function-valued core maps retained exactly. Nine original observations replay complete optional physical address, all nine entry fields in every slot and the PTE memory word. Both observation languages leave other state fields unobserved; this regression scope does not replace full source comparison."
   }
 ]
