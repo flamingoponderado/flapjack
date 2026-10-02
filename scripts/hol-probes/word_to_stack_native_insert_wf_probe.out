@@ -1,0 +1,170 @@
+iw_full_wf_alist_insert=⊢ ∀xs ys z. wf z ⇒ wf (alist_insert xs ys z)
+iw_full_wf_fromList2=⊢ ∀ls. wf (fromList2 ls)
+iw_insert_num_0_0_0=⊢ (alist_insert [] [] LN,wf LN,wf (alist_insert [] [] LN)) = (LN,T,T) ⇔ T
+iw_insert_num_0_0_1=⊢ (alist_insert [] [3] LN,wf LN,wf (alist_insert [] [3] LN)) = (LN,T,T) ⇔ T
+iw_insert_num_0_0_2=⊢ (alist_insert [] [3; 9] LN,wf LN,wf (alist_insert [] [3; 9] LN)) = (LN,T,T) ⇔ T
+iw_insert_num_0_0_3=⊢ (alist_insert [] [3; 9; 13; 9; 3] LN,wf LN,wf (alist_insert [] [3; 9; 13; 9; 3] LN)) = (LN,T,T) ⇔ T
+iw_insert_num_0_1_0=⊢ (alist_insert [0] [] LN,wf LN,wf (alist_insert [0] [] LN)) = (LN,T,T) ⇔ T
+iw_insert_num_0_1_1=⊢ (alist_insert [0] [3] LN,wf LN,wf (alist_insert [0] [3] LN)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_0_1_2=⊢ (alist_insert [0] [3; 9] LN,wf LN,wf (alist_insert [0] [3; 9] LN)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_0_1_3=⊢ (alist_insert [0] [3; 9; 13; 9; 3] LN,wf LN,wf (alist_insert [0] [3; 9; 13; 9; 3] LN)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_0_2_0=⊢ (alist_insert [2; 0; 2] [] LN,wf LN,wf (alist_insert [2; 0; 2] [] LN)) = (LN,T,T) ⇔ T
+iw_insert_num_0_2_1=⊢ (alist_insert [2; 0; 2] [3] LN,wf LN,wf (alist_insert [2; 0; 2] [3] LN)) = (⦕ 2 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_0_2_2=⊢ (alist_insert [2; 0; 2] [3; 9] LN,wf LN,wf (alist_insert [2; 0; 2] [3; 9] LN)) = (⦕ 0 ↦ 9; 2 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_0_2_3=⊢ (alist_insert [2; 0; 2] [3; 9; 13; 9; 3] LN,wf LN,wf (alist_insert [2; 0; 2] [3; 9; 13; 9; 3] LN)) = (⦕ 0 ↦ 9; 2 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_0_3_0=⊢ (alist_insert [7; 1; 0; 8; 3] [] LN,wf LN,wf (alist_insert [7; 1; 0; 8; 3] [] LN)) = (LN,T,T) ⇔ T
+iw_insert_num_0_3_1=⊢ (alist_insert [7; 1; 0; 8; 3] [3] LN,wf LN,wf (alist_insert [7; 1; 0; 8; 3] [3] LN)) = (⦕ 7 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_0_3_2=⊢ (alist_insert [7; 1; 0; 8; 3] [3; 9] LN,wf LN,wf (alist_insert [7; 1; 0; 8; 3] [3; 9] LN)) = (⦕ 1 ↦ 9; 7 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_0_3_3=⊢ (alist_insert [7; 1; 0; 8; 3] [3; 9; 13; 9; 3] LN,wf LN,wf (alist_insert [7; 1; 0; 8; 3] [3; 9; 13; 9; 3] LN)) = (⦕ 0 ↦ 13; 1 ↦ 9; 3 ↦ 3; 7 ↦ 3; 8 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_1_0_0=⊢ (alist_insert [] [] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [] [] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_0_1=⊢ (alist_insert [] [3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [] [3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_0_2=⊢ (alist_insert [] [3; 9] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [] [3; 9] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_0_3=⊢ (alist_insert [] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_1_0=⊢ (alist_insert [0] [] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [0] [] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_1_1=⊢ (alist_insert [0] [3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [0] [3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_1_2=⊢ (alist_insert [0] [3; 9] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [0] [3; 9] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_1_3=⊢ (alist_insert [0] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [0] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_2_0=⊢ (alist_insert [2; 0; 2] [] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [2; 0; 2] [] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_2_1=⊢ (alist_insert [2; 0; 2] [3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [2; 0; 2] [3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3; 2 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_2_2=⊢ (alist_insert [2; 0; 2] [3; 9] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [2; 0; 2] [3; 9] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 9; 2 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_2_3=⊢ (alist_insert [2; 0; 2] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [2; 0; 2] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 9; 2 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_3_0=⊢ (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_3_1=⊢ (alist_insert [7; 1; 0; 8; 3] [3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3; 7 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_3_2=⊢ (alist_insert [7; 1; 0; 8; 3] [3; 9] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [3; 9] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 9; 7 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_1_3_3=⊢ (alist_insert [7; 1; 0; 8; 3] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 13; 1 ↦ 9; 3 ↦ 3; 7 ↦ 3; 8 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_2_0_0=⊢ (alist_insert [] [] (BN LN LN),wf (BN LN LN),wf (alist_insert [] [] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_num_2_0_1=⊢ (alist_insert [] [3] (BN LN LN),wf (BN LN LN),wf (alist_insert [] [3] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_num_2_0_2=⊢ (alist_insert [] [3; 9] (BN LN LN),wf (BN LN LN),wf (alist_insert [] [3; 9] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_num_2_0_3=⊢ (alist_insert [] [3; 9; 13; 9; 3] (BN LN LN),wf (BN LN LN),wf (alist_insert [] [3; 9; 13; 9; 3] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_num_2_1_0=⊢ (alist_insert [0] [] (BN LN LN),wf (BN LN LN),wf (alist_insert [0] [] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_num_2_1_1=⊢ (alist_insert [0] [3] (BN LN LN),wf (BN LN LN),wf (alist_insert [0] [3] (BN LN LN))) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_2_1_2=⊢ (alist_insert [0] [3; 9] (BN LN LN),wf (BN LN LN),wf (alist_insert [0] [3; 9] (BN LN LN))) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_2_1_3=⊢ (alist_insert [0] [3; 9; 13; 9; 3] (BN LN LN),wf (BN LN LN),wf (alist_insert [0] [3; 9; 13; 9; 3] (BN LN LN))) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_2_2_0=⊢ (alist_insert [2; 0; 2] [] (BN LN LN),wf (BN LN LN),wf (alist_insert [2; 0; 2] [] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_num_2_2_1=⊢ (alist_insert [2; 0; 2] [3] (BN LN LN),wf (BN LN LN),wf (alist_insert [2; 0; 2] [3] (BN LN LN))) = (⦕ 2 ↦ 3 ⦖,F,T) ⇔ T
+iw_insert_num_2_2_2=⊢ (alist_insert [2; 0; 2] [3; 9] (BN LN LN),wf (BN LN LN),wf (alist_insert [2; 0; 2] [3; 9] (BN LN LN))) = (⦕ 0 ↦ 9; 2 ↦ 3 ⦖,F,T) ⇔ T
+iw_insert_num_2_2_3=⊢ (alist_insert [2; 0; 2] [3; 9; 13; 9; 3] (BN LN LN),wf (BN LN LN),wf (alist_insert [2; 0; 2] [3; 9; 13; 9; 3] (BN LN LN))) = (⦕ 0 ↦ 9; 2 ↦ 3 ⦖,F,T) ⇔ T
+iw_insert_num_2_3_0=⊢ (alist_insert [7; 1; 0; 8; 3] [] (BN LN LN),wf (BN LN LN),wf (alist_insert [7; 1; 0; 8; 3] [] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_num_2_3_1=⊢ (alist_insert [7; 1; 0; 8; 3] [3] (BN LN LN),wf (BN LN LN),wf (alist_insert [7; 1; 0; 8; 3] [3] (BN LN LN))) = (⦕ 7 ↦ 3 ⦖,F,T) ⇔ T
+iw_insert_num_2_3_2=⊢ (alist_insert [7; 1; 0; 8; 3] [3; 9] (BN LN LN),wf (BN LN LN),wf (alist_insert [7; 1; 0; 8; 3] [3; 9] (BN LN LN))) = (⦕ 1 ↦ 9; 7 ↦ 3 ⦖,F,T) ⇔ T
+iw_insert_num_2_3_3=⊢ (alist_insert [7; 1; 0; 8; 3] [3; 9; 13; 9; 3] (BN LN LN),wf (BN LN LN),wf (alist_insert [7; 1; 0; 8; 3] [3; 9; 13; 9; 3] (BN LN LN))) = (⦕ 0 ↦ 13; 1 ↦ 9; 3 ↦ 3; 7 ↦ 3; 8 ↦ 9 ⦖,F,T) ⇔ T
+iw_insert_num_3_0_0=⊢ (alist_insert [] [] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [] [] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_3_0_1=⊢ (alist_insert [] [3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [] [3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_3_0_2=⊢ (alist_insert [] [3; 9] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [] [3; 9] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_3_0_3=⊢ (alist_insert [] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_3_1_0=⊢ (alist_insert [0] [] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [0] [] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_3_1_1=⊢ (alist_insert [0] [3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [0] [3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_3_1_2=⊢ (alist_insert [0] [3; 9] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [0] [3; 9] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_3_1_3=⊢ (alist_insert [0] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [0] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_3_2_0=⊢ (alist_insert [2; 0; 2] [] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [2; 0; 2] [] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_3_2_1=⊢ (alist_insert [2; 0; 2] [3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [2; 0; 2] [3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3; 2 ↦ 3 ⦖,F,T) ⇔ T
+iw_insert_num_3_2_2=⊢ (alist_insert [2; 0; 2] [3; 9] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [2; 0; 2] [3; 9] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 9; 2 ↦ 3 ⦖,F,T) ⇔ T
+iw_insert_num_3_2_3=⊢ (alist_insert [2; 0; 2] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [2; 0; 2] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 9; 2 ↦ 3 ⦖,F,T) ⇔ T
+iw_insert_num_3_3_0=⊢ (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3 ⦖,F,F) ⇔ T
+iw_insert_num_3_3_1=⊢ (alist_insert [7; 1; 0; 8; 3] [3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3; 7 ↦ 3 ⦖,F,T) ⇔ T
+iw_insert_num_3_3_2=⊢ (alist_insert [7; 1; 0; 8; 3] [3; 9] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [3; 9] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 9; 7 ↦ 3 ⦖,F,T) ⇔ T
+iw_insert_num_3_3_3=⊢ (alist_insert [7; 1; 0; 8; 3] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖,wf ⦕ 0 ↦ 3 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3 ⦖)) = (⦕ 0 ↦ 13; 1 ↦ 9; 3 ↦ 3; 7 ↦ 3; 8 ↦ 9 ⦖,F,T) ⇔ T
+iw_insert_num_4_0_0=⊢ (alist_insert [] [] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [] [] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_4_0_1=⊢ (alist_insert [] [3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [] [3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_4_0_2=⊢ (alist_insert [] [3; 9] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [] [3; 9] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_4_0_3=⊢ (alist_insert [] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_4_1_0=⊢ (alist_insert [0] [] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [0] [] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_4_1_1=⊢ (alist_insert [0] [3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [0] [3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_4_1_2=⊢ (alist_insert [0] [3; 9] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [0] [3; 9] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_4_1_3=⊢ (alist_insert [0] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [0] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_4_2_0=⊢ (alist_insert [2; 0; 2] [] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [2; 0; 2] [] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_4_2_1=⊢ (alist_insert [2; 0; 2] [3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [2; 0; 2] [3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_4_2_2=⊢ (alist_insert [2; 0; 2] [3; 9] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [2; 0; 2] [3; 9] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 9; 1 ↦ 13; 2 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_4_2_3=⊢ (alist_insert [2; 0; 2] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [2; 0; 2] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 9; 1 ↦ 13; 2 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_4_3_0=⊢ (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,T,T) ⇔ T
+iw_insert_num_4_3_1=⊢ (alist_insert [7; 1; 0; 8; 3] [3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9; 7 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_4_3_2=⊢ (alist_insert [7; 1; 0; 8; 3] [3; 9] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [3; 9] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 3; 1 ↦ 9; 2 ↦ 9; 7 ↦ 3 ⦖,T,T) ⇔ T
+iw_insert_num_4_3_3=⊢ (alist_insert [7; 1; 0; 8; 3] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖,wf (alist_insert [7; 1; 0; 8; 3] [3; 9; 13; 9; 3] ⦕ 0 ↦ 3; 1 ↦ 13; 2 ↦ 9 ⦖)) = (⦕ 0 ↦ 13; 1 ↦ 9; 2 ↦ 9; 3 ↦ 3; 7 ↦ 3; 8 ↦ 9 ⦖,T,T) ⇔ T
+iw_fromlist_num_0=⊢ (fromList2 [],wf (fromList2 [])) = (LN,T) ⇔ T
+iw_fromlist_num_1=⊢ (fromList2 [3],wf (fromList2 [3])) = (⦕ 0 ↦ 3 ⦖,T) ⇔ T
+iw_fromlist_num_2=⊢ (fromList2 [3; 9],wf (fromList2 [3; 9])) = (⦕ 0 ↦ 3; 2 ↦ 9 ⦖,T) ⇔ T
+iw_fromlist_num_3=⊢ (fromList2 [3; 9; 13; 9; 3],wf (fromList2 [3; 9; 13; 9; 3])) = (⦕ 0 ↦ 3; 2 ↦ 9; 4 ↦ 13; 6 ↦ 9; 8 ↦ 3 ⦖,T) ⇔ T
+iw_insert_bool_0_0_0=⊢ (alist_insert [] [] LN,wf LN,wf (alist_insert [] [] LN)) = (LN,T,T) ⇔ T
+iw_insert_bool_0_0_1=⊢ (alist_insert [] [T] LN,wf LN,wf (alist_insert [] [T] LN)) = (LN,T,T) ⇔ T
+iw_insert_bool_0_0_2=⊢ (alist_insert [] [T; F] LN,wf LN,wf (alist_insert [] [T; F] LN)) = (LN,T,T) ⇔ T
+iw_insert_bool_0_0_3=⊢ (alist_insert [] [T; F; T; F; T] LN,wf LN,wf (alist_insert [] [T; F; T; F; T] LN)) = (LN,T,T) ⇔ T
+iw_insert_bool_0_1_0=⊢ (alist_insert [0] [] LN,wf LN,wf (alist_insert [0] [] LN)) = (LN,T,T) ⇔ T
+iw_insert_bool_0_1_1=⊢ (alist_insert [0] [T] LN,wf LN,wf (alist_insert [0] [T] LN)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_0_1_2=⊢ (alist_insert [0] [T; F] LN,wf LN,wf (alist_insert [0] [T; F] LN)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_0_1_3=⊢ (alist_insert [0] [T; F; T; F; T] LN,wf LN,wf (alist_insert [0] [T; F; T; F; T] LN)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_0_2_0=⊢ (alist_insert [2; 0; 2] [] LN,wf LN,wf (alist_insert [2; 0; 2] [] LN)) = (LN,T,T) ⇔ T
+iw_insert_bool_0_2_1=⊢ (alist_insert [2; 0; 2] [T] LN,wf LN,wf (alist_insert [2; 0; 2] [T] LN)) = (⦕ 2 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_0_2_2=⊢ (alist_insert [2; 0; 2] [T; F] LN,wf LN,wf (alist_insert [2; 0; 2] [T; F] LN)) = (⦕ 0 ↦ F; 2 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_0_2_3=⊢ (alist_insert [2; 0; 2] [T; F; T; F; T] LN,wf LN,wf (alist_insert [2; 0; 2] [T; F; T; F; T] LN)) = (⦕ 0 ↦ F; 2 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_0_3_0=⊢ (alist_insert [7; 1; 0; 8; 3] [] LN,wf LN,wf (alist_insert [7; 1; 0; 8; 3] [] LN)) = (LN,T,T) ⇔ T
+iw_insert_bool_0_3_1=⊢ (alist_insert [7; 1; 0; 8; 3] [T] LN,wf LN,wf (alist_insert [7; 1; 0; 8; 3] [T] LN)) = (⦕ 7 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_0_3_2=⊢ (alist_insert [7; 1; 0; 8; 3] [T; F] LN,wf LN,wf (alist_insert [7; 1; 0; 8; 3] [T; F] LN)) = (⦕ 1 ↦ F; 7 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_0_3_3=⊢ (alist_insert [7; 1; 0; 8; 3] [T; F; T; F; T] LN,wf LN,wf (alist_insert [7; 1; 0; 8; 3] [T; F; T; F; T] LN)) = (⦕ 0 ↦ T; 1 ↦ F; 3 ↦ T; 7 ↦ T; 8 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_1_0_0=⊢ (alist_insert [] [] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [] [] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_0_1=⊢ (alist_insert [] [T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [] [T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_0_2=⊢ (alist_insert [] [T; F] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [] [T; F] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_0_3=⊢ (alist_insert [] [T; F; T; F; T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [] [T; F; T; F; T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_1_0=⊢ (alist_insert [0] [] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [0] [] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_1_1=⊢ (alist_insert [0] [T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [0] [T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_1_2=⊢ (alist_insert [0] [T; F] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [0] [T; F] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_1_3=⊢ (alist_insert [0] [T; F; T; F; T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [0] [T; F; T; F; T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_2_0=⊢ (alist_insert [2; 0; 2] [] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [2; 0; 2] [] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_2_1=⊢ (alist_insert [2; 0; 2] [T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [2; 0; 2] [T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T; 2 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_2_2=⊢ (alist_insert [2; 0; 2] [T; F] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [2; 0; 2] [T; F] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ F; 2 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_2_3=⊢ (alist_insert [2; 0; 2] [T; F; T; F; T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [2; 0; 2] [T; F; T; F; T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ F; 2 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_3_0=⊢ (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_3_1=⊢ (alist_insert [7; 1; 0; 8; 3] [T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [7; 1; 0; 8; 3] [T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T; 7 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_3_2=⊢ (alist_insert [7; 1; 0; 8; 3] [T; F] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [7; 1; 0; 8; 3] [T; F] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T; 1 ↦ F; 7 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_1_3_3=⊢ (alist_insert [7; 1; 0; 8; 3] [T; F; T; F; T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [7; 1; 0; 8; 3] [T; F; T; F; T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T; 1 ↦ F; 3 ↦ T; 7 ↦ T; 8 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_2_0_0=⊢ (alist_insert [] [] (BN LN LN),wf (BN LN LN),wf (alist_insert [] [] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_bool_2_0_1=⊢ (alist_insert [] [T] (BN LN LN),wf (BN LN LN),wf (alist_insert [] [T] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_bool_2_0_2=⊢ (alist_insert [] [T; F] (BN LN LN),wf (BN LN LN),wf (alist_insert [] [T; F] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_bool_2_0_3=⊢ (alist_insert [] [T; F; T; F; T] (BN LN LN),wf (BN LN LN),wf (alist_insert [] [T; F; T; F; T] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_bool_2_1_0=⊢ (alist_insert [0] [] (BN LN LN),wf (BN LN LN),wf (alist_insert [0] [] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_bool_2_1_1=⊢ (alist_insert [0] [T] (BN LN LN),wf (BN LN LN),wf (alist_insert [0] [T] (BN LN LN))) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_2_1_2=⊢ (alist_insert [0] [T; F] (BN LN LN),wf (BN LN LN),wf (alist_insert [0] [T; F] (BN LN LN))) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_2_1_3=⊢ (alist_insert [0] [T; F; T; F; T] (BN LN LN),wf (BN LN LN),wf (alist_insert [0] [T; F; T; F; T] (BN LN LN))) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_2_2_0=⊢ (alist_insert [2; 0; 2] [] (BN LN LN),wf (BN LN LN),wf (alist_insert [2; 0; 2] [] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_bool_2_2_1=⊢ (alist_insert [2; 0; 2] [T] (BN LN LN),wf (BN LN LN),wf (alist_insert [2; 0; 2] [T] (BN LN LN))) = (⦕ 2 ↦ T ⦖,F,T) ⇔ T
+iw_insert_bool_2_2_2=⊢ (alist_insert [2; 0; 2] [T; F] (BN LN LN),wf (BN LN LN),wf (alist_insert [2; 0; 2] [T; F] (BN LN LN))) = (⦕ 0 ↦ F; 2 ↦ T ⦖,F,T) ⇔ T
+iw_insert_bool_2_2_3=⊢ (alist_insert [2; 0; 2] [T; F; T; F; T] (BN LN LN),wf (BN LN LN),wf (alist_insert [2; 0; 2] [T; F; T; F; T] (BN LN LN))) = (⦕ 0 ↦ F; 2 ↦ T ⦖,F,T) ⇔ T
+iw_insert_bool_2_3_0=⊢ (alist_insert [7; 1; 0; 8; 3] [] (BN LN LN),wf (BN LN LN),wf (alist_insert [7; 1; 0; 8; 3] [] (BN LN LN))) = (BN LN LN,F,F) ⇔ T
+iw_insert_bool_2_3_1=⊢ (alist_insert [7; 1; 0; 8; 3] [T] (BN LN LN),wf (BN LN LN),wf (alist_insert [7; 1; 0; 8; 3] [T] (BN LN LN))) = (⦕ 7 ↦ T ⦖,F,T) ⇔ T
+iw_insert_bool_2_3_2=⊢ (alist_insert [7; 1; 0; 8; 3] [T; F] (BN LN LN),wf (BN LN LN),wf (alist_insert [7; 1; 0; 8; 3] [T; F] (BN LN LN))) = (⦕ 1 ↦ F; 7 ↦ T ⦖,F,T) ⇔ T
+iw_insert_bool_2_3_3=⊢ (alist_insert [7; 1; 0; 8; 3] [T; F; T; F; T] (BN LN LN),wf (BN LN LN),wf (alist_insert [7; 1; 0; 8; 3] [T; F; T; F; T] (BN LN LN))) = (⦕ 0 ↦ T; 1 ↦ F; 3 ↦ T; 7 ↦ T; 8 ↦ F ⦖,F,T) ⇔ T
+iw_insert_bool_3_0_0=⊢ (alist_insert [] [] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [] [] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_3_0_1=⊢ (alist_insert [] [T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [] [T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_3_0_2=⊢ (alist_insert [] [T; F] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [] [T; F] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_3_0_3=⊢ (alist_insert [] [T; F; T; F; T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [] [T; F; T; F; T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_3_1_0=⊢ (alist_insert [0] [] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [0] [] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_3_1_1=⊢ (alist_insert [0] [T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [0] [T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_3_1_2=⊢ (alist_insert [0] [T; F] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [0] [T; F] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_3_1_3=⊢ (alist_insert [0] [T; F; T; F; T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [0] [T; F; T; F; T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_3_2_0=⊢ (alist_insert [2; 0; 2] [] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [2; 0; 2] [] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_3_2_1=⊢ (alist_insert [2; 0; 2] [T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [2; 0; 2] [T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T; 2 ↦ T ⦖,F,T) ⇔ T
+iw_insert_bool_3_2_2=⊢ (alist_insert [2; 0; 2] [T; F] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [2; 0; 2] [T; F] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ F; 2 ↦ T ⦖,F,T) ⇔ T
+iw_insert_bool_3_2_3=⊢ (alist_insert [2; 0; 2] [T; F; T; F; T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [2; 0; 2] [T; F; T; F; T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ F; 2 ↦ T ⦖,F,T) ⇔ T
+iw_insert_bool_3_3_0=⊢ (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T ⦖,F,F) ⇔ T
+iw_insert_bool_3_3_1=⊢ (alist_insert [7; 1; 0; 8; 3] [T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [7; 1; 0; 8; 3] [T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T; 7 ↦ T ⦖,F,T) ⇔ T
+iw_insert_bool_3_3_2=⊢ (alist_insert [7; 1; 0; 8; 3] [T; F] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [7; 1; 0; 8; 3] [T; F] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T; 1 ↦ F; 7 ↦ T ⦖,F,T) ⇔ T
+iw_insert_bool_3_3_3=⊢ (alist_insert [7; 1; 0; 8; 3] [T; F; T; F; T] ⦕ 0 ↦ T ⦖,wf ⦕ 0 ↦ T ⦖,wf (alist_insert [7; 1; 0; 8; 3] [T; F; T; F; T] ⦕ 0 ↦ T ⦖)) = (⦕ 0 ↦ T; 1 ↦ F; 3 ↦ T; 7 ↦ T; 8 ↦ F ⦖,F,T) ⇔ T
+iw_insert_bool_4_0_0=⊢ (alist_insert [] [] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [] [] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_4_0_1=⊢ (alist_insert [] [T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [] [T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_4_0_2=⊢ (alist_insert [] [T; F] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [] [T; F] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_4_0_3=⊢ (alist_insert [] [T; F; T; F; T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [] [T; F; T; F; T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_4_1_0=⊢ (alist_insert [0] [] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [0] [] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_4_1_1=⊢ (alist_insert [0] [T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [0] [T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_4_1_2=⊢ (alist_insert [0] [T; F] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [0] [T; F] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_4_1_3=⊢ (alist_insert [0] [T; F; T; F; T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [0] [T; F; T; F; T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_4_2_0=⊢ (alist_insert [2; 0; 2] [] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [2; 0; 2] [] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_4_2_1=⊢ (alist_insert [2; 0; 2] [T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [2; 0; 2] [T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_4_2_2=⊢ (alist_insert [2; 0; 2] [T; F] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [2; 0; 2] [T; F] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ F; 1 ↦ T; 2 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_4_2_3=⊢ (alist_insert [2; 0; 2] [T; F; T; F; T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [2; 0; 2] [T; F; T; F; T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ F; 1 ↦ T; 2 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_4_3_0=⊢ (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [7; 1; 0; 8; 3] [] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,T,T) ⇔ T
+iw_insert_bool_4_3_1=⊢ (alist_insert [7; 1; 0; 8; 3] [T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [7; 1; 0; 8; 3] [T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F; 7 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_4_3_2=⊢ (alist_insert [7; 1; 0; 8; 3] [T; F] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [7; 1; 0; 8; 3] [T; F] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ F; 2 ↦ F; 7 ↦ T ⦖,T,T) ⇔ T
+iw_insert_bool_4_3_3=⊢ (alist_insert [7; 1; 0; 8; 3] [T; F; T; F; T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖,wf (alist_insert [7; 1; 0; 8; 3] [T; F; T; F; T] ⦕ 0 ↦ T; 1 ↦ T; 2 ↦ F ⦖)) = (⦕ 0 ↦ T; 1 ↦ F; 2 ↦ F; 3 ↦ T; 7 ↦ T; 8 ↦ F ⦖,T,T) ⇔ T
+iw_fromlist_bool_0=⊢ (fromList2 [],wf (fromList2 [])) = (LN,T) ⇔ T
+iw_fromlist_bool_1=⊢ (fromList2 [T],wf (fromList2 [T])) = (⦕ 0 ↦ T ⦖,T) ⇔ T
+iw_fromlist_bool_2=⊢ (fromList2 [T; F],wf (fromList2 [T; F])) = (⦕ 0 ↦ T; 2 ↦ F ⦖,T) ⇔ T
+iw_fromlist_bool_3=⊢ (fromList2 [T; F; T; F; T],wf (fromList2 [T; F; T; F; T])) = (⦕ 0 ↦ T; 2 ↦ F; 4 ↦ T; 6 ↦ F; 8 ↦ T ⦖,T) ⇔ T

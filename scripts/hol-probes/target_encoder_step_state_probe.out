@@ -1,0 +1,15 @@
+encoder_step_state_full_statement=encoder_correct t ∧ target_state_rel t s1 ms ∧ asm_step t.config s1 i s2 ⇒
+∃n. target_state_rel t s2 (FUNPOW t.next n ms) ∧
+    (∀j. j < n ⇒
+         (∀pc.
+            pc ∈ all_pcs (LENGTH (t.config.encode i)) s1.pc 0 ⇒
+            t.get_byte (FUNPOW t.next j ms) pc = t.get_byte ms pc) ∧
+         t.get_pc (FUNPOW t.next j ms) ∈
+         all_pcs (LENGTH (t.config.encode i)) s1.pc t.config.code_alignment ∧
+         t.state_ok (FUNPOW t.next j ms)) ∧
+    ∀j x.
+      j ≤ n ∧ x ∉ s1.mem_domain ⇒
+      t.get_byte (FUNPOW t.next j ms) x = t.get_byte ms x
+encoder_rtc_state_full_statement=encoder_correct t ∧ target_state_rel t s1 ms ∧
+(λs1 s2. ∃i. asm_step t.config s1 i s2)꙳ s1 s2 ⇒
+∃n. target_state_rel t s2 (FUNPOW t.next n ms)

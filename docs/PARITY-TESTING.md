@@ -300,3 +300,14 @@ python3 scripts/check-guest-parity.py guest-software.pp.pnk --variant software
 ```
 
 Any mismatch is a parity defect to track and repair, not an alternate golden.
+
+Native insertion-wf probes replay both complete original proofs and168 whole
+native Spt/input/output-wf fixtures. Matching kernel cases retain empty and
+unequal lists, repeated keys, Nat/Bool payloads and malformed trees.
+Regression evidence is not HOL-to-Lean equivalence.
+
+ALookupMap probes replay three complete original lookup mapping proofs and
+302 matching full Option/scoped-injection observations. Nat/Bool key
+and payload carriers, repeated/absent/large keys and noninjective sentinels
+retain the original injection boundary. Regression evidence does not establish
+cross-language equivalence.

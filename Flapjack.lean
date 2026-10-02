@@ -2,8 +2,14 @@ import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceLCorrect
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceL
 import Flapjack.Misc.BalancedMap.RotationCorrect.RotateR
 import Flapjack.Misc.BalancedMap.RotationCorrect.DoubleR
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
 import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
+import Flapjack.Compiler.Backend.Semantics.TargetProps.EncoderStepState
+import Flapjack.Compiler.Backend.Semantics.TargetProps.PostInterferenceState
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EncodingNonempty
+import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
+import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
 import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
 import Flapjack.Test.LabToTargetSimpleEncoderParity
 import Flapjack.Misc.BalancedMap.RotationCorrect.SingleR
@@ -156,6 +162,7 @@ import Flapjack.Byte
 import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
 import Flapjack.Compiler.Backend.StackLang.ProductionWordBoundary
@@ -168,6 +175,8 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ALookupMap
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstMemoryAppend
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
@@ -1448,6 +1457,7 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocSimple
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocNone
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveList
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveLoop
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveBitmap
@@ -1468,6 +1478,7 @@ import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.FiniteMap.MapKeys
 import Flapjack.Compiler.Backend.StackNames.Proofs.RenameState
+import Flapjack.Compiler.Backend.StackNames.Proofs.CompCorrect
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend

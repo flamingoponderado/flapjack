@@ -5313,6 +5313,15 @@ input equality. Standard positive indexed-word program translation is explicit.
 Original theorem capture/manual source comparison, not isolated tactic replay
 or equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_rename_move_distinct_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`ssa_cc_trans_correct_ffi_probe` captures the original full theorem specialized
+to FFI and nine inferred carriers, including native mlstring and paired num_sets.
+Original FFI9868–10010 was manually compared with `SSASemanticFFI.lean`: all six
+premises/full simulation retained, actual refresh/scratch/cut/FFI/restore execution
+derived for both final and returning outcomes; Error branches remain exempt.
+Original proved theorem specialization capture, not isolated tactic replay or
+cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_ffi_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `target_asm_step_evaluate_probeScript.sml` captures the complete original
 `asm_step_IMP_evaluate_step_find_next` statement, including all six hypotheses
 and both equalities, the assembly post-state relation, and nonzero step count.
@@ -5327,6 +5336,24 @@ invariant and map equality conclusions. Actual defined rotation, invariant,
 three recursive lookup values, and invalid cached-size rejection are captured.
 `BalancedMapSingleRParity` consumes both full native conclusions and derives
 all three canonical semantic lookups; missing constructor outputs are unused.
+
+The same assembly-step probe also captures the full original evaluator-only
+`asm_step_IMP_evaluate_step` conclusion (1038), projected by
+`asmStepImpEvaluateOnly`; its nonzero step count and all source premises remain.
+
+### Native encoder target-state simulation
+
+`target_encoder_step_state_probeScript.sml` captures the complete original
+`encoder_correct_asm_step_target_state_rel` and its RTC consequence from
+`targetPropsScript.sml:1207-1277`, including strict-prefix encoded-byte/PC/state
+invariants and inclusive-prefix out-of-domain byte preservation. Lean proofs
+live in `TargetProps/EncoderStepState.lean`. These original full statements
+provide regression evidence, not cross-language equivalence.
+
+Native insertion-wf probes replay both complete original proofs and168 whole
+native Spt/input/output-wf fixtures. Matching kernel cases retain empty and
+unequal lists, repeated keys, Nat/Bool payloads and malformed trees.
+Regression evidence is not HOL-to-Lean equivalence.
 `target_next_shared_mem_probeScript.sml` captures the complete original
 `next_interference_SharedMem` statement with no open hypotheses; native
 assembly is in `TargetProps/NextSharedMem.lean`.
@@ -5357,6 +5384,14 @@ Defined double rotation, invariant, three key lookups and invalid cached-size
 rejection are original observations. `BalancedMapDoubleRParity` kernel-checks
 both full native conclusions and derives the three semantic lookups. The
 inner Bin is proved from original premises, with no missing-output assumption.
+`ssa_cc_trans_correct_share_inst_probe` captures the full original theorem
+specialized to ShareInst and eight inferred carriers. Original ShareInst10012–10045
+was manually compared with `SSASemanticShareInst.lean`: all eight native shared
+load/store operators, six original premises and full simulation are retained.
+Successful stores preserve locals; returning loads use fresh SSA insertion;
+final FFI outcomes flush locals. Original proved theorem specialization capture,
+not isolated tactic replay or cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=ssa_cc_trans_correct_share_inst_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 ### Full right-rotation correctness assembly
 
@@ -5386,3 +5421,28 @@ typed theorem is closed. Six actual branches capture output trees, invariants
 and inserted-key lookups. `BalancedMapBalanceLCorrectParity` checks all original
 input premises, consumes both native invariant/map conclusions, and derives
 the actual canonical inserted-key observations. No compiler caller changes.
+### Native FFI and cache-clear interference contracts
+
+`target_interference_contracts_probeScript.sml` captures both complete original
+`targetSem` contract definitions and both complete `targetProps` post-state
+theorems. It retains the ordinary FFI branch, the existential MMIO lookup and
+its read/write promises, every source entry/alignment condition, and all
+memory/register postconditions. Counterparts are
+`TargetSem/InterferenceContracts.lean` and
+`TargetProps/PostInterferenceState.lean`. Full original statement/definition
+captures are regression evidence, not HOL-to-Lean equivalence proofs.
+### Full single-right rotation correctness
+
+`balanced_map_singleR_probeScript.sml` replays the entire original local
+`singleR_thm` proof with its original local prerequisites, checking no open
+hypotheses. The typed statement retains all nine premise conjuncts and both
+invariant and map equality conclusions. Actual defined rotation, invariant,
+three recursive lookup values, and invalid cached-size rejection are captured.
+`BalancedMapSingleRParity` consumes both full native conclusions and derives
+all three canonical semantic lookups; missing constructor outputs are unused.
+
+ALookupMap probes replay three complete original lookup mapping proofs and
+302 matching full Option/scoped-injection observations. Nat/Bool key
+and payload carriers, repeated/absent/large keys and noninjective sentinels
+retain the original injection boundary. Regression evidence does not establish
+cross-language equivalence.

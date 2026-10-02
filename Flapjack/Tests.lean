@@ -22,6 +22,8 @@ import Flapjack.Test.StackToLabNonrecursiveValidityParity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Test.WordToStackALookupMapParity
+import Flapjack.Test.WordToStackNativeInsertWfParity
 import Flapjack.Test.WordToStackConstMemoryAppendParity
 import Flapjack.Test.WordToStackNativeAccessorsParity
 import Flapjack.Test.WordToStackCallLocalRecoveryParity
