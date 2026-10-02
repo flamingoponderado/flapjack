@@ -26,10 +26,10 @@ example : (toFmap cmp malformed).lookup (keySet cmp 20) = some 200 := by
 example : (toFmap cmp malformed).lookup (keySet cmp 30) = none := by
   rw [holFmapAsFiniteSupportResultWitness_toFmap]
   simp [malformed, semanticLookup, keySet_cmp, Set.singleton_eq_singleton_iff]
-example : (toFmap (fun _ _ => .eq) malformed).lookup Set.univ = some 100 := by
+example : (toFmap (fun (_ _ : Nat) => .eq) malformed).lookup Set.univ = some 100 := by
   rw [holFmapAsFiniteSupportResultWitness_toFmap]
   simp [malformed, semanticLookup, keySet]
-example : (toFmap (fun _ _ => .lt) malformed).lookup ∅ = some 100 := by
+example : (toFmap (fun (_ _ : Nat) => .lt) malformed).lookup ∅ = some 100 := by
   rw [holFmapAsFiniteSupportResultWitness_toFmap]
   simp [malformed, semanticLookup, keySet]
 example : (toFmap cmp (.tip : Map Nat Nat)).lookup (keySet cmp 10) = none := rfl

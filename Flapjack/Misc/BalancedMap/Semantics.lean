@@ -5,7 +5,7 @@ import Mathlib.Data.Set.Basic
 namespace Flapjack.Misc.BalancedMap
 
 @[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "key_set_def"]
-def keySet {κ : Type} (cmp : κ → κ → Ordering) (key : κ) : Set κ :=
+def keySet {κ ι : Type} (cmp : κ → ι → Ordering) (key : κ) : Set ι :=
   {query | cmp key query = .eq}
 
 /-- Literal semantic finite map: keys are comparator-equivalence sets, not
@@ -15,8 +15,8 @@ production tree map. No comparator law or decidable set-equality premise is
 added to the HOL definition. -/
 @[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "to_fmap_def"
   (fmap_as_finite_support_result)]
-noncomputable def toFmap {κ ν : Type} (cmp : κ → κ → Ordering) :
-    Map κ ν → HolFiniteMapExact (Set κ) ν
+noncomputable def toFmap {κ ι ν : Type} (cmp : κ → ι → Ordering) :
+    Map κ ν → HolFiniteMapExact (Set ι) ν
   | .tip => HolFiniteMapExact.empty
   | .bin _ key value left right => by
     classical
@@ -26,8 +26,8 @@ noncomputable def toFmap {κ ν : Type} (cmp : κ → κ → Ordering) :
 call the canonical map operation or assume the target correspondence; it
 selects the root binding by set equality, then the left binding, then right.
 This is Flapjack witness infrastructure without a separate HOL declaration. -/
-noncomputable def semanticLookup {κ ν : Type} (cmp : κ → κ → Ordering) :
-    Map κ ν → Set κ → Option ν
+noncomputable def semanticLookup {κ ι ν : Type} (cmp : κ → ι → Ordering) :
+    Map κ ν → Set ι → Option ν
   | .tip, _ => none
   | .bin _ key value left right, query => by
     classical
@@ -38,8 +38,8 @@ noncomputable def semanticLookup {κ ν : Type} (cmp : κ → κ → Ordering) :
 
 /-- Lookup-level carrier witness against the independent raw semantic codec;
 it retains arbitrary comparators and malformed cached sizes. -/
-theorem holFmapAsFiniteSupportResultWitness_toFmap {κ ν : Type}
-    (cmp : κ → κ → Ordering) (tree : Map κ ν) (query : Set κ) :
+theorem holFmapAsFiniteSupportResultWitness_toFmap {κ ι ν : Type}
+    (cmp : κ → ι → Ordering) (tree : Map κ ν) (query : Set ι) :
     (toFmap cmp tree).lookup query = semanticLookup cmp tree query := by
   classical
   induction tree with
