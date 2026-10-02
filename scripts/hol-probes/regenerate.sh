@@ -4440,6 +4440,9 @@ run_probe balanced_map_membership_probeScript.sml balanced_map_membership_probe.
 run_probe balanced_map_null_probeScript.sml balanced_map_null_probe.out \
   bmn_full bmn_typed bmn_tip bmn_bin_badsize \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+run_probe balanced_map_invariant_eq_probeScript.sml balanced_map_invariant_eq_probe.out \
+  bmi_full bmi_typed bmi_replay bmi_singleton bmi_badsize bmi_equal_child \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
 run_probe target_search_const_probeScript.sml target_search_const_probe.out \
   search_const_full_statement next_const_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

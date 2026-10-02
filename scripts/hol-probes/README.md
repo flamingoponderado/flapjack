@@ -5000,3 +5000,12 @@ Native counterparts are in `TargetProps/PositionLaws.lean`.
 `target_position_tail_probeScript.sml` captures complete original
 `interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
 checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
+
+`balanced_map_invariant_eq_probeScript.sml` captures the entire exported
+`invariant_eq`, including its typed independent Tip payload and all three
+comparator-guarded semantic clauses, with no open HOL hypotheses. It also
+captures a valid singleton, an invalid cached size, and an equal-key child.
+`BalancedMapInvariantEqParity` kernel-checks the corresponding observations.
+The capture also replays the original private `key_ordered_to_fmap` proof
+and the complete original `invariant_eq` proof body, checking the replay has
+no open hypotheses. Batch tactics use their equivalent qualified HOL names.

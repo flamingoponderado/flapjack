@@ -58139,5 +58139,16 @@
       "Flapjack.Misc.BalancedMap.toFmap"
     ],
     "reviewer": "flapjack-sol-b source comparison2026-10-02 HOL940-945: full null iff to_fmap empty, independent tree-key kappa/query iota/payload nu and arbitrary comparator kappa->iota->Ordering; no goodCmp/invariant or target map premise. Bool null truth translates as =true. Only canonical qualified toFmap producer representation observed, imported unconditional independent lookup witness remains reviewed. Bin root update at keySet has some value, impossible for empty map even with malformed sizes or empty/universal key sets; Tip literal empty. No bounds, finite-domain or inhabited query assumption. Fresh complete typed original theorem hyp=[] and actual null observations; generic kernel consumer and Bool/Nat/String malformed nonempty fixture."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/InvariantSemantics.lean",
+    "lean_name": "invariantEq",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "invariant_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL880-902: entire original Tip/Bin conjunction. Fresh typed exported theorem hyp=[] confirms independent Tip payload beta and Bin payload nu, homogeneous comparator kappa->kappa->Ordering. All three goodCmp implications remain inside Bin equivalence; original six structural clauses retained. Semantic FDOM is defined canonical lookup of reviewed toFmap producer, Disjoint is actual set disjointness. No assumed invariant, target domain facts, ordering law, inhabited carrier, or target result outside original equation. Domain representative plus original keyOrderedToFmap/keySetCmpThm derive disjointness and root exclusion, converse retains structural invariant. Original full typed capture and singleton/bad-size/equal-child observations replayed in Lean. Proof-side only; no executed-path replacement."
   }
 ]
