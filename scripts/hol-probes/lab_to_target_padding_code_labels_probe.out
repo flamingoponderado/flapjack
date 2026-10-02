@@ -1,0 +1,21 @@
+pad_code_compute_labels=∀(pos :num) (code :α sec list) (acc :num sptree$num_map sptree$num_map).
+  EVERY (sec_label_one :α sec -> bool) code ∧
+  (LENGTH (nop :word8 list) ≠ (1 :num) ⇒
+   EVERY (sec_label_zero :α sec -> bool) code) ∧
+  EVERY (sec_label_prefix_zero :α sec -> bool) code ∧
+  all_lab_len_pos_ok pos code ⇒
+  compute_labels_alt pos (pad_code nop code) acc =
+  compute_labels_alt pos code acc
+pad_code_compute_labels_types=(pos :num)::num;(code :α sec list)::α sec list;(acc :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(nop :word8 list)::word8 list;
+pad_code_compute_labels_hypotheses=0
+empty_accumulator=T
+one_byte_full_map=T
+wide_nop_zero_labels=T
+empty_nop_zero_labels=T
+successive_sections=T
+duplicate_section_overwrite=T
+zero_id=T
+prefix_guard_needed=T
+conditional_zero_guard_false=T
+width1=T
+width80_large_position=T

@@ -1,0 +1,15 @@
+sec_pos_val_0=∀(pos :num) (lines :α line list).
+  ¬EVERY (is_Label :α line -> bool) lines ∧
+  EVERY (label_zero :α line -> bool) lines ⇒
+  sec_pos_val (0 :num) pos lines = SOME pos
+sec_pos_val_0_types=(pos :num)::num;(lines :α line list)::α line list;
+sec_pos_val_0_hypotheses=0
+empty_guard_false=T
+all_labels_none=T
+zero_labels_asm=T
+zero_labels_labasm=T
+asm_unrestricted_annotation=T
+zero_guard_needed=T
+physical_not_annotation=T
+width1_large_pos=T
+width80_large_pos=T

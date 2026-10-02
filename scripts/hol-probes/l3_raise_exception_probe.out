@@ -1,0 +1,2 @@
+raise_exception_type=:exception -> riscv_state -> α # riscv_state
+raise_exception_equation=⊢ raise'exception e s = (ARB,if s.exception = NoException then s with exception := e else s)
