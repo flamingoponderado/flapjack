@@ -65340,5 +65340,176 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-02, bead .5.8.5.1: original partial collector case 4592-4832 only; full Generational case remains open. Fresh literal typed HOL capture confirms c is stack_alloc config. Original allocation, non-error, gcFun/kind, bitmap/stack bounds and initial register premises retained; only original partial branch selector added. Actual wordGcCode evaluation, existential clock/register map, full final state, halt-only result, register submap and return register conclusion retained. Source collector success derives every move/roots/ref-list/data/memcpy premise; no target evaluation or successful pass assumed. Original store updates, root order, stack prefix, memory/domain and clock compared. Imported actual StackSemStateFiniteExact owner uses canonical regs/fpRegs/store maps, same-module genuine codec roundtrip; positive-width BitVec and Type host translation only. Exact instruction closure inherits SOUNDNESS item 8 reals_as_rational_cuts assumption; this source comparison does not certify arbitrary untagged dependencies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Skip constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameMove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Move constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameAssign",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Assign constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameGet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Get constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameSet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Set constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Store constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Alloc constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameStoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete StoreConsts constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Raise constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Return constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameBreak",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Break constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameContinue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Continue constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameTick",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Tick constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameOpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete OpCurrHeap constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameLocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete LocValue constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Install constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameCodeBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete CodeBufferWrite constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameDataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete DataBufferWrite constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AsmNameFlat.lean",
+    "lean_name": "wordToStackStackAsmNameFfi",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_stack_asm_name_lem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Ffi constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
   }
 ]
