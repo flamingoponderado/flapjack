@@ -3247,6 +3247,11 @@ run_probe stack_alloc_get_bits_probeScript.sml stack_alloc_get_bits_probe.out \
   "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_alloc_gc_bitmaps_probeScript.sml stack_alloc_gc_bitmaps_probe.out \
+  gcb_bitmap gcb_roots_bitmaps \
+  "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
   gf_addcarry_riscv gf_addcarry_mips gf_addcarry_self gf_addcarry_x86 gf_addovf_riscv gf_addovf_armv8 gf_subovf_mips gf_subovf_self gf_longmul_armv7 gf_longmul_armv7_self gf_longmul_riscv gf_longmul_ag32 gf_longmul_x86 gf_fptoreg_32 gf_fptoreg_32_self gf_fptoreg_64 gf_fpfromreg_32 gf_fpfromreg_64 gf_other_inst gf_seq gf_if gf_must gf_loop gf_call_return gf_call_both gf_call_tail gf_skip gf_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

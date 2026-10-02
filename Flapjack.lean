@@ -1252,6 +1252,8 @@ import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.StackAlloc.GcCode
 import Flapjack.Compiler.Backend.StackAlloc.Compile
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
