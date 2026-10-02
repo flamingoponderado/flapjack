@@ -1,3 +1,5 @@
+import Flapjack.Test.LabToTargetLabelValidityParity
+import Flapjack.Test.LabToTargetSimilarLabelsParity
 import Flapjack.Test.LabToTargetGoodCodeParity
 import Flapjack.Test.TargetRegisterOraclesParity
 import Flapjack.Test.TargetInterferenceSequenceParity
@@ -5,6 +7,8 @@ import Flapjack.Test.TargetFindNextInterferenceParity
 import Flapjack.Test.MmioIndex
 import Flapjack.Test.LabInitialLabelSlots
 import Flapjack.Test.StackRemoveInitMemory
+import Flapjack.Test.ByteDecoder
+import Flapjack.Test.ByteWordSliceAlt
 import Flapjack.Test.StackRemoveStoreInit
 import Flapjack.Test.WordOverflowProduction
 import Flapjack.Test.StackRemoveStoreListCode
@@ -276,6 +280,7 @@ import Flapjack.Test.HeuCountersParity
 import Flapjack.Test.ClashTreeCallNoneParity
 import Flapjack.Test.FindIndexBoundsParity
 import Flapjack.Test.ParmoveTempAppendParity
+import Flapjack.Test.AsmSemMemoryParity
 import Flapjack.Test.WordAllocShareCheckerParity
 import Flapjack.Test.SpDefaultParity
 import Flapjack.Test.InClashTreeParity
@@ -292,6 +297,8 @@ import Flapjack.Test.WordAllocSelectRegAllocParity
 import Flapjack.Test.WordAllocDefParity
 import Flapjack.Test.WordUnreachDefParity
 import Flapjack.Test.WordCopyDefParity
+import Flapjack.Test.LogrootParity
+import Flapjack.Test.AlignmentParity
 import Flapjack.Test.RegAllocStempColouringParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
@@ -938,6 +945,8 @@ import Flapjack.Test.WordAllocSSAHelpersParity
 import Flapjack.Test.WordAllocSSACcTransParity
 import Flapjack.Test.WordAllocFullSSAParity
 import Flapjack.Test.SSAMergeMovesRouteParity
+import Flapjack.Test.LabToTargetShareMemDomainParity
+import Flapjack.Test.AsmSemMemOpsParity
 
 
 
@@ -1788,6 +1797,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordGcFunctionsParity.runChecks,
     Flapjack.Test.StackAllocGcCodeParity.runChecks,
     Flapjack.Test.StackAllocGetBitsParity.runChecks,
+    Flapjack.Test.LabToTargetLabelValidityParity.runChecks,
+    Flapjack.Test.LabToTargetSimilarLabelsParity.runChecks,
     Flapjack.Test.LabToTargetGoodCodeParity.runChecks,
     Flapjack.Test.LabToTargetByteLengthsParity.runChecks,
     Flapjack.Test.LabPropsLabelSetsParity.runChecks,
@@ -1804,6 +1815,9 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetNavigationBoundsParity.runChecks,
     Flapjack.Test.LabToTargetPositionAppendParity.runChecks,
     Flapjack.Test.LabToTargetPositionValuesParity.runChecks,
+    Flapjack.Test.LabToTargetPositionsParity.runChecks,
+    Flapjack.Test.LabToTargetLabelsParity.runChecks,
+    Flapjack.Test.AsmSemMemoryParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
     Flapjack.Test.AsmPropsPcCoverageParity.runChecks,

@@ -1,0 +1,19 @@
+next_extcall_full_statement=mc.target.get_pc ms ∉ mc.prog_addresses DIFF set mc.ffi_entry_pcs ∧
+mc.target.get_pc ms ≠ mc.halt_pc ∧ mc.target.get_pc ms ≠ mc.ccache_pc ∧
+find_index (mc.target.get_pc ms) mc.ffi_entry_pcs 0 = SOME index ∧
+mc.ffi_names❲index❳ = ExtCall name ∧ ALOOKUP mc.mmio_info index = NONE ∧
+read_ffi_bytearrays mc ms = (SOME bytes,SOME bytes2) ∧
+call_FFI ffi (ExtCall name) bytes bytes2 = FFI_return new_ffi new_bytes ⇒
+next_interference mc ffi ms =
+SOME
+  (FfiApp index new_bytes ms (mc.ffi_interfer 0 (index,new_bytes,ms)),
+   mc with ffi_interfer := shift_seq 1 mc.ffi_interfer,new_ffi)
+next_cache_full_statement=mc.target.get_pc ms ∉ mc.prog_addresses DIFF set mc.ffi_entry_pcs ∧
+mc.target.get_pc ms ≠ mc.halt_pc ∧ mc.target.get_pc ms = mc.ccache_pc ⇒
+next_interference mc ffi ms =
+SOME
+  (CcApp (mc.target.get_reg ms mc.ptr_reg) (mc.target.get_reg ms mc.len_reg)
+     ms
+     (mc.ccache_interfer 0
+        (mc.target.get_reg ms mc.ptr_reg,mc.target.get_reg ms mc.len_reg,ms)),
+   mc with ccache_interfer := shift_seq 1 mc.ccache_interfer,ffi)

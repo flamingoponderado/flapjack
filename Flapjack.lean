@@ -1,5 +1,11 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsForceRename
+import Flapjack.Test.LabToTargetLabelValidityParity
+import Flapjack.Test.LabToTargetSimilarLabelsParity
 import Flapjack.Test.LabToTargetGoodCodeParity
+import Flapjack.Byte.WordOfBytes
+import Flapjack.Byte.WordSliceAlt
+import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+import Flapjack.Compiler.Backend.StackRemove.InitMemory
 import Flapjack.Test.LabToTargetByteLengthsParity
 import Flapjack.Test.LabPropsLabelSetsParity
 import Flapjack.Test.LabToTargetWordLocationParity
@@ -10,12 +16,16 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionLaws
 import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionTail
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchConst
 import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
+import Flapjack.Compiler.Backend.Semantics.TargetProps.NextCases
+import Flapjack.Compiler.Backend.Semantics.TargetProps.NextMapped
+import Flapjack.Compiler.Backend.Semantics.TargetProps.NextSharedMem
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchMono
 import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
+import Flapjack.Compiler.Backend.Semantics.TargetProps.CalleeSaved
+import Flapjack.Compiler.Backend.Semantics.TargetProps.ConstructedOracles
+import Flapjack.Compiler.Backend.Semantics.TargetProps.OracleEquality
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence
 import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
-import Flapjack.Compiler.Backend.StackRemove.InitMemory
 import Flapjack.Compiler.Backend.StackRemove.StoreInit
 import Flapjack.Compiler.Backend.StackRemove.StoreListCode
 import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
@@ -136,6 +146,9 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSuffix
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SourceFrameSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList
 import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
 import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape
@@ -267,6 +280,7 @@ import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Navigation
 import Flapjack.Compiler.Backend.LabToTarget.Memory
+import Flapjack.Compiler.Backend.Parmove.InjOnState.Step
 import Flapjack.Compiler.Backend.LabToTarget.Fetch
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
@@ -312,6 +326,7 @@ import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CallNone
 import Flapjack.Misc.FindIndex.Bounds
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Append
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Insert
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
 import Flapjack.Compiler.Backend.WordAlloc.GetForced
 import Flapjack.Compiler.Backend.WordAlloc.RemoveDead
@@ -566,6 +581,8 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
 import Flapjack.Compiler.Backend.Semantics.TargetSem.State
 import Flapjack.Compiler.Encoders.AsmProps.Target
 import Flapjack.Compiler.Encoders.AsmSem.State
+import Flapjack.Compiler.Encoders.AsmProps.Memory
+import Flapjack.Compiler.Encoders.AsmSem.MemOps
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
 import Flapjack.Misc.AsmWriteBytearray
 import Flapjack.Misc.BytesInMemory
@@ -1402,12 +1419,25 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveList
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveLoop
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveBitmap
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveBitmaps
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveRootsBitmaps
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
 import Flapjack.Compiler.Backend.WordAlloc.FullSSA
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
+import Flapjack.Compiler.Backend.LabSem
+import Flapjack.Compiler.Backend.LabProps
+import Flapjack.Compiler.Backend.LabToTarget.Positions
+import Flapjack.Compiler.Backend.LabToTarget.Labels
+import Flapjack.Compiler.Backend.StackNames
+import Flapjack.Compiler.Backend.StackNames.NamesOk
+import Flapjack.Compiler.Backend.StackNames.Labels
+import Flapjack.Compiler.Backend.StackRemove
+import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.Parmove
@@ -1478,22 +1508,12 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
-import Flapjack.Compiler.Backend.LabSem
-import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
-import Flapjack.Compiler.Backend.LabToTarget.Labels
-import Flapjack.Compiler.Backend.LabToTarget.Positions
 import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
 import Flapjack.Compiler.Backend.LabToTarget.SecondPass
 import Flapjack.Compiler.Backend.LabToTarget.Padding
-import Flapjack.Compiler.Backend.StackNames
-import Flapjack.Compiler.Backend.StackNames.NamesOk
-import Flapjack.Compiler.Backend.StackNames.Labels
-import Flapjack.Compiler.Backend.StackRemove
-import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordUnreach
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
-
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Models
@@ -1501,8 +1521,18 @@ import Flapjack.Compiler.Backend.WordCopy.Proofs.Move
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Store
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Inst
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
+import Flapjack.Misc.Logroot
+import Flapjack.Misc.Bit
+import Flapjack.Misc.Alignment
+import Flapjack.Misc.Alignment.Production
+import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
 
 
+import Flapjack.Misc.BalancedMap.NullSemantics
+import Flapjack.Misc.BalancedMap.InvariantSemantics
+import Flapjack.Misc.BalancedMap.LookupSemantics
+import Flapjack.Misc.BalancedMap.Membership
+import Flapjack.Misc.BalancedMap.BalanceArithmetic
 
 -- Tagged modules required by the HOL reference coverage gate.
 

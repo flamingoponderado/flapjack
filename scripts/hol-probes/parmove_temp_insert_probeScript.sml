@@ -1,0 +1,11 @@
+load "bossLib";
+load "preamble";
+load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun observe label term = let val th = EVAL term in print(label ^ "="); print_term(rhs(concl th)); print "\n" end;
+val _ = observe "nti_empty" ``let first = ([]:(num option#num option)list) in let second = ([]:(num option#num option)list) in not_use_temp_before_assign(first++[(SOME 1,SOME 2)]++second)``;
+val _ = observe "nti_real_ok" ``let first = ([(SOME 1,SOME 2)]:(num option#num option)list) in let second = ([(SOME 3,SOME 4)]:(num option#num option)list) in not_use_temp_before_assign(first++[(SOME 5,SOME 6)]++second)``;
+val _ = observe "nti_read_bad" ``let first = ([(SOME 1,NONE)]:(num option#num option)list) in let second = ([]:(num option#num option)list) in not_use_temp_before_assign(first++[(SOME 2,SOME 3)]++second)``;
+val _ = observe "nti_write_first" ``let first = ([(NONE,SOME 1)]:(num option#num option)list) in let second = ([(SOME 2,NONE)]:(num option#num option)list) in not_use_temp_before_assign(first++[(SOME 3,SOME 4)]++second)``;
+val _ = observe "nti_bad_append" ``let first = ([(SOME 1,SOME 2)]:(num option#num option)list) in let second = ([(SOME 3,NONE)]:(num option#num option)list) in not_use_temp_before_assign(first++[(SOME 4,SOME 5)]++second)``;
+val _ = observe "nti_append_ok" ``let first = ([(SOME 1,SOME 2)]:(num option#num option)list) in let second = ([(NONE,SOME 3)]:(num option#num option)list) in not_use_temp_before_assign(first++[(SOME 4,SOME 5)]++second)``;

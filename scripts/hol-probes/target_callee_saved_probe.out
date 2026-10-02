@@ -1,0 +1,2 @@
+io_callee_saved_full_statement=MEM r mc.callee_saved_regs ⇒ target_io_regs mc ffi ms k name r = NONE
+cc_callee_saved_full_statement=MEM r mc.callee_saved_regs ⇒ target_cc_regs mc ffi ms k r = NONE
