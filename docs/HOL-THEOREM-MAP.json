@@ -49594,5 +49594,39 @@
     "hol_name": "LASTN_LESS",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-suffix-laws): source2608-2626: arbitrary input/index/head/tail, exactly original successor-index<=length guard and actual successor suffix=head::tail equality, complete previous suffix=tail conclusion including n=0 boundary. Native wordSemLastN exactly reverse/take/reverse and HOL lists retained, arbitrary element carriers need no word/representation qualifier. Six literal complete original proofs and natural/Boolean boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallLocalRecovery.lean",
+    "lean_name": "getVarsFromList2Eq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_vars_fromList2_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-call-local-recovery): source5149-5165 full successful GENLIST even-key caller read plus fromList2 lookup implies original caller locals lookup. Native arbitrary argument element type is retained despite only its length being used; width/C/F state quantifiers retained. No bound or desired source lookup premise. Actual tagged native sptFromList2 even-key fold, private optional observation kernel proof covers every key/index, no totalHD/EL or default. Four literal whole original proof replays (get_vars_eq prerequisite plus three ports) and 538 matching natural/Boolean/native state fixtures.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallLocalRecovery.lean",
+    "lean_name": "getVarsFromList2EqCons",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_vars_fromList2_eq_cons",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-call-local-recovery): source5168-5187 full shifted GENLIST caller read, Loc reserved at key zero and original nonzero lookup guard; complete source locals lookup. Native Loc carries both original Nat fields, no extra positive-index/read-length premise. Actual tagged native sptFromList2 even-key fold, private optional observation kernel proof covers every key/index, no totalHD/EL or default. Four literal whole original proof replays (get_vars_eq prerequisite plus three ports) and 538 matching natural/Boolean/native state fixtures.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallLocalRecovery.lean",
+    "lean_name": "lookupFromList2Prefix",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "lookup_fromList2_prefix",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-call-local-recovery): source5190-5199 full arbitrary generic lists/payload/key, original prefix and lookup-success premises, whole lookup equality. HOL uppercase IS_PREFIX z x reverses lowercase isPREFIX per original rich_listScript304; native x.IsPrefix z retains direction from shorter x to extended z. No list-distinctness, wf or lower/upper key guard. Actual tagged native sptFromList2 even-key fold, private optional observation kernel proof covers every key/index, no totalHD/EL or default. Four literal whole original proof replays (get_vars_eq prerequisite plus three ports) and 538 matching natural/Boolean/native state fixtures."
   }
 ]
