@@ -51,7 +51,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/wordLangScript.sml` | `Flapjack/Pancake/WordLang.lean` |
 | `compiler/backend/backend_commonScript.sml` | `Flapjack/Compiler/Backend/BackendCommon.lean` |
 | `compiler/backend/semantics/wordConvsScript.sml` | `Flapjack/Pancake/WordConvs.lean` |
-| `compiler/backend/stackLangScript.sml` | `Flapjack/Compiler/Backend/StackLang.lean`, `Flapjack/Compiler/Encoders/Asm.lean`, `Flapjack/Compiler/Backend/StackLang/Prog.lean`, `Flapjack/Compiler/Backend/StackCarrier.lean`, `Flapjack/Compiler/Backend/MlStringBridge.lean` |
+| `compiler/backend/stackLangScript.sml` | `Flapjack/Compiler/Backend/StackLang.lean`, `Flapjack/Compiler/Encoders/Asm.lean`, `Flapjack/Compiler/Backend/StackLang/Prog.lean`, `Flapjack/Compiler/Backend/StackLang/Overloads.lean` (`While`/`move`/arithmetic overloads, `list_Seq`, `gc_stub_location`), `Flapjack/Compiler/Backend/StackCarrier.lean`, `Flapjack/Compiler/Backend/MlStringBridge.lean` |
 | `basis/pure/mlstringScript.sml` | `Flapjack/Basis/Pure/MlString.lean` (`mlstring = implode string`, `string = char list`; HOL `char` modeled by `HolChar = BitVec 8`, the canonical 256-element carrier); kernel-checked `String`<->`mlstring` bridge and stack-program embedding in `Flapjack/Compiler/Backend/MlStringBridge.lean` |
 | `basis/pure/mllistScript.sml` (`sort`) | `Flapjack/Basis/Pure/MlList.lean` (tagged `sort_def`, with an untagged clause-for-clause rendering of HOL `mergesort_tail`) |
 | `compiler/backend/word_allocScript.sml` | `Flapjack/Compiler/Backend/WordAlloc/` (`Expressions.lean` exact expression renaming and live sets) |
@@ -79,7 +79,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/stackLangScript.sml` (shared-word `prog`) | `Flapjack/Compiler/Backend/StackCarrier.lean` |
 | `compiler/backend/stack_removeScript.sml` | `Flapjack/Compiler/Backend/StackRemove.lean` (`max_stack_alloc`, `word_offset`, `store_list`, `store_length`, `stack_err_lab`, `halt_inst`; also the tagged stackLang instruction overloads `left_shift_inst`/`right_shift_inst`/`const_inst`/`load_inst`/`store_inst` over the exact `HolProg` carrier) |
 | `compiler/backend/proofs/stack_removeProofScript.sml` | `Flapjack/Compiler/Backend/StackRemove.lean` (`is_SOME_Word`, `read_mem`/`LENGTH_read_mem`, `addresses`/`IN_addresses`; `names_ok` Prop-shaped tag) |
-| `compiler/backend/stack_allocScript.sml` | `Flapjack/Compiler/Backend/StackAlloc.lean` (`next_lab`; executable pass counterpart remains `Flapjack/StackAlloc.lean`) |
+| `compiler/backend/stack_allocScript.sml` | `Flapjack/Compiler/Backend/StackAlloc.lean` (generic `next_lab`; executable pass counterpart remains `Flapjack/StackAlloc.lean`); `StackAlloc/GcCode.lean` (GC stub code); `StackAlloc/Compile.lean` (`next_lab`, `comp`, `prog_comp`, `stubs`, `compile` over `HolProg`) |
 | `compiler/backend/stack_to_labScript.sml` | `Flapjack/Compiler/Backend/StackToLab.lean` (`flatten` and `prog_to_section`; `compile` remains open) |
 | `compiler/backend/reg_alloc/parmoveScript.sml` | `Flapjack/Compiler/Backend/Parmove.lean` |
 | `compiler/backend/word_to_stackScript.sml` | `Flapjack/Compiler/Backend/WordToStack.lean`, `Flapjack/Compiler/Backend/WordToStackRegFormat.lean` |

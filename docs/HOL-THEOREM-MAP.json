@@ -52207,5 +52207,400 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:588-592: word_gc_fun c (xs,m,dm,s) = SOME (zs,m1,s1) ==> LENGTH xs = LENGTH zs; store binders s and s1 are the canonical HolFiniteMapExact carrier (bare relation entries). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. The statement mentions word_gc_fun, whose HOL HD is the reviewed total holHd (unspecified HD [] value), so this is an EL/HD-dependent row reviewed against holHd."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "While",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "whileHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:68 Overload While = \\cmp r ri c. Loop (If cmp r ri c (Break 0)). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "move",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "moveHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:70 Overload move = \\dest src. Inst (Arith (Binop Or dest src (Reg src))). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "sub_1_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "sub1Inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:71 Overload sub_1_inst: literal instruction shape (register operands in HOL order, immediates 1w/bytes_in_word as BitVec literals/wordSemBytesInWord). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "sub_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "subInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:72 Overload sub_inst: literal instruction shape (register operands in HOL order, immediates 1w/bytes_in_word as BitVec literals/wordSemBytesInWord). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "add_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "addInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:73 Overload add_inst: literal instruction shape (register operands in HOL order, immediates 1w/bytes_in_word as BitVec literals/wordSemBytesInWord). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "and_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "andInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:74 Overload and_inst: literal instruction shape (register operands in HOL order, immediates 1w/bytes_in_word as BitVec literals/wordSemBytesInWord). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "xor_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "xorInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:75 Overload xor_inst: literal instruction shape (register operands in HOL order, immediates 1w/bytes_in_word as BitVec literals/wordSemBytesInWord). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "add_1_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "add1Inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:76 Overload add_1_inst: literal instruction shape (register operands in HOL order, immediates 1w/bytes_in_word as BitVec literals/wordSemBytesInWord). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "or_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "orInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:77 Overload or_inst: literal instruction shape (register operands in HOL order, immediates 1w/bytes_in_word as BitVec literals/wordSemBytesInWord). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "add_bytes_in_word_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "addBytesInWordInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:78 Overload add_bytes_in_word_inst: literal instruction shape (register operands in HOL order, immediates 1w/bytes_in_word as BitVec literals/wordSemBytesInWord). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "div2_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "div2Inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:79 Overload div2_inst: literal instruction shape (register operands in HOL order, immediates 1w/bytes_in_word as BitVec literals/wordSemBytesInWord). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "list_Seq_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "listSeqHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:86-90 all three clauses ([] = Skip, [x] = x, x::y::xs = Seq x (list_Seq (y::xs))); listSeqHOL_eq_listSeq relates it to the untagged generic listSeq. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
+    "hol_name": "gc_stub_location_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
+    "lean_name": "gcStubLocation",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stackLangScript.sml:92-94 gc_stub_location = stack_num_stubs - 1 with the reviewed stackNumStubs (natural subtraction)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "memcpy_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "memcpyCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:16-24 memcpy_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "clear_top_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "clearTopInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:26-30 clear_top_inst_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gc_move_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGcMoveCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:32-71 word_gc_move_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gc_move_list_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGcMoveListCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:73-81 word_gc_move_list_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gc_move_loop_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGcMoveLoopCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:83-96 word_gc_move_loop_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gc_move_bitmap_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGcMoveBitmapCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:98-110 word_gc_move_bitmap_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gc_move_bitmaps_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGcMoveBitmapsCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:112-120 word_gc_move_bitmaps_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gc_move_roots_bitmaps_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGcMoveRootsBitmapsCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:123-131 word_gc_move_roots_bitmaps_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_move_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcMoveCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:133-206 word_gen_gc_move_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_partial_move_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcPartialMoveCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:208-255 word_gen_gc_partial_move_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_move_bitmap_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcMoveBitmapCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:257-268 word_gen_gc_move_bitmap_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_partial_move_bitmap_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcPartialMoveBitmapCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:270-281 word_gen_gc_partial_move_bitmap_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_move_bitmaps_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcMoveBitmapsCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:284-292 word_gen_gc_move_bitmaps_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_partial_move_bitmaps_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcPartialMoveBitmapsCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:295-303 word_gen_gc_partial_move_bitmaps_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_move_roots_bitmaps_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcMoveRootsBitmapsCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:306-314 word_gen_gc_move_roots_bitmaps_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_partial_move_roots_bitmaps_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcPartialMoveRootsBitmapsCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:317-325 word_gen_gc_partial_move_roots_bitmaps_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_move_list_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcMoveListCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:327-335 word_gen_gc_move_list_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_partial_move_list_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcPartialMoveListCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:337-345 word_gen_gc_partial_move_list_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_move_data_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcMoveDataCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:347-359 word_gen_gc_move_data_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_partial_move_ref_list_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcPartialMoveRefListCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:361-368 word_gen_gc_partial_move_ref_list_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_partial_move_data_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcPartialMoveDataCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:370-382 word_gen_gc_partial_move_data_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_move_refs_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcMoveRefsCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:384-393 word_gen_gc_move_refs_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gen_gc_move_loop_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGenGcMoveLoopCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:395-427 word_gen_gc_move_loop_code_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gc_partial_or_full_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGcPartialOrFull",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:429-440 word_gc_partial_or_full_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "SetNewTrigger_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "setNewTrigger",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:442-457 SetNewTrigger_def: literal transcription, every list_Seq element, If/While comparison, register and immediate in HOL order. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "word_gc_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/GcCode.lean",
+    "lean_name": "wordGcCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:459-636: None, Simple and Generational (partial list then full list passed to word_gc_partial_or_full) stubs instruction for instruction; shift (:'a)/word_shift (:'a) as wordShiftAmount width. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "next_lab_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Compile.lean",
+    "lean_name": "nextLabHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:649-662: the reviewed traversal of the generic nextLab instantiated at HolProg width. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "comp_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Compile.lean",
+    "lean_name": "comp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:678-703 every case: Seq/If/Loop recursion threading m left to right, Call NONE dest exc -> Call NONE dest NONE (handler dropped), returning Call with and without handler, Alloc k -> Call (SOME (Skip,0,n,m)) (INL gc_stub_location) NONE with m+1, StoreConsts k1 k2 (SOME loc) -> call to loc with m+1, catch-all unchanged (including StoreConsts _ _ NONE). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "prog_comp_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Compile.lean",
+    "lean_name": "progComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:716-718 prog_comp (n,p) = (n, FST (comp n (next_lab p 2) p)). HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "stubs_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Compile.lean",
+    "lean_name": "stubs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:638-640 [(gc_stub_location, Seq (word_gc_code conf) (Return 0))]. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_allocScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Compile.lean",
+    "lean_name": "compile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.4), stack_allocScript.sml:720-722 compile c prog = stubs c ++ MAP prog_comp prog. HOL 'a word as positive-width BitVec width with [NeZero width] in the exact HolProg width carrier (all payload words share the one dimension); no clause, argument order or constant changed. Pinned by the original HOL EVAL rows of scripts/hol-probes/stack_alloc_gc_code_probe.out, replayed constructor for constructor in Flapjack/Test/StackAllocGcCodeParity.lean."
   }
 ]

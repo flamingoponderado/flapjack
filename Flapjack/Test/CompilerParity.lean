@@ -288,6 +288,7 @@ import Flapjack.Test.WordConvsPreAllocExactParity
 import Flapjack.Test.WordRemoveMustTerminateParity
 import Flapjack.Test.DataToWordConfigParity
 import Flapjack.Test.WordGcFunctionsParity
+import Flapjack.Test.StackAllocGcCodeParity
 import Flapjack.Test.PanGlobalsBlockAlignmentParity
 import Flapjack.Test.StackSemLocValueParity
 import Flapjack.Test.StackPropsProgramValidity
@@ -1686,6 +1687,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordRemoveMustTerminateParity.runChecks,
     Flapjack.Test.DataToWordConfigParity.runChecks,
     Flapjack.Test.WordGcFunctionsParity.runChecks,
+    Flapjack.Test.StackAllocGcCodeParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
     Flapjack.Test.AsmPropsPcCoverageParity.runChecks,
