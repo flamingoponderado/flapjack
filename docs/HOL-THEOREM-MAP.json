@@ -61791,5 +61791,53 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c full original source/type comparison2026-10-02 original788-956, native oracle group. All original shifted searches, program-domain difference, halt/cache exclusions, entry index/name, ALOOKUP NONE, byte reads and FFI return guards retained. Whole register and FP function equalities derived from actual nextInterferenceExtCall and FFI oracle step. Original get_reg_value with I is native getRegValue with id. First-hit natural ALOOKUP compatibility to List.lookup is kernel-proved for arbitrary lists including duplicates, no altered key equality or uniqueness assumption. Full arbitrary positive word dimension, actual native LabSem.State and MachineConfig, independent Type0 C/F/S/Q and fixed word64/word8 preserved. words_as_type_indexed_bitvec is the sole representation translation. Fresh unchanged original whole theorem and inferred types captured; complete generic kernel proof and actual four-field tied-state construction, no extra target-run/oracle equality/success/residue premise. holEl/holHd review: imported actual interference search keeps literal total EL/HD nil opaque holArb at the original guards, no added bound or fallback; ExtCall direct holEl retains original name equality guard. Compiler execution unchanged; full pass and end-to-end goal remain open."
+  },
+  {
+    "lean_path": "Flapjack/Misc/SetSep.lean",
+    "lean_name": "one",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+    "hol_name": "one_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.6.7.6): HOL one x is the whole-heap equality s={x}; Lean uses the predicate singleton entry=element and whole function equality, preserving the arbitrary heap-element type. Full original definitions/types and positive/negative separation fixtures freshly reproduced in set_sep_elementary_probe.out; generic kernel fixtures include infinite heaps, overlapping partitions, extraneous entries, false conditions, and independent witness types. Sets remain ordinary predicate sets, not arrays or finite maps."
+  },
+  {
+    "lean_path": "Flapjack/Misc/SetSep.lean",
+    "lean_name": "emp",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+    "hol_name": "emp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.6.7.6): HOL emp is the whole-heap equality s=empty; Lean uses the empty predicate and whole function equality, with no finiteness assumption. Full original definitions/types and positive/negative separation fixtures freshly reproduced in set_sep_elementary_probe.out; generic kernel fixtures include infinite heaps, overlapping partitions, extraneous entries, false conditions, and independent witness types. Sets remain ordinary predicate sets, not arrays or finite maps."
+  },
+  {
+    "lean_path": "Flapjack/Misc/SetSep.lean",
+    "lean_name": "cond",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+    "hol_name": "cond_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.6.7.6): HOL cond c requires s=empty AND c; Lean retains that conjunction and ordering, including empty-heap obligation for true conditions. Full original definitions/types and positive/negative separation fixtures freshly reproduced in set_sep_elementary_probe.out; generic kernel fixtures include infinite heaps, overlapping partitions, extraneous entries, false conditions, and independent witness types. Sets remain ordinary predicate sets, not arrays or finite maps."
+  },
+  {
+    "lean_path": "Flapjack/Misc/SetSep.lean",
+    "lean_name": "split",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+    "hol_name": "SPLIT_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.6.7.6): HOL SPLIT s (u,v) is u UNION v=s AND DISJOINT u v. Lean retains the paired argument and union-to-heap equality orientation; union is pointwise disjunction and disjointness is forall entry, not(u entry AND v entry), exactly DISJOINT_DEF with empty intersection. No finite-support or heap-validity premise. Full original definitions/types and positive/negative separation fixtures freshly reproduced in set_sep_elementary_probe.out; generic kernel fixtures include infinite heaps, overlapping partitions, extraneous entries, false conditions, and independent witness types. Sets remain ordinary predicate sets, not arrays or finite maps."
+  },
+  {
+    "lean_path": "Flapjack/Misc/SetSep.lean",
+    "lean_name": "star",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+    "hol_name": "STAR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.6.7.6): HOL STAR p q is lambda s. exists u v. SPLIT s(u,v) AND p u AND q v. Lean retains both independent existential heaps, the full partition, original conjunct order and arbitrary assertion functions. Full original definitions/types and positive/negative separation fixtures freshly reproduced in set_sep_elementary_probe.out; generic kernel fixtures include infinite heaps, overlapping partitions, extraneous entries, false conditions, and independent witness types. Sets remain ordinary predicate sets, not arrays or finite maps."
+  },
+  {
+    "lean_path": "Flapjack/Misc/SetSep.lean",
+    "lean_name": "sepExists",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/set_sepScript.sml",
+    "hol_name": "SEP_EXISTS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-02; bead flapjack-pxn.18.5.15.6.7.6): HOL binder constant is lambda f s. exists y. f y s. Lean preserves the independently generic witness and heap-element types, exact assertion arity, existential and unchanged supplied heap. No word or finite-map carrier is introduced. Full original definitions/types and positive/negative separation fixtures freshly reproduced in set_sep_elementary_probe.out; generic kernel fixtures include infinite heaps, overlapping partitions, extraneous entries, false conditions, and independent witness types. Sets remain ordinary predicate sets, not arrays or finite maps."
   }
 ]

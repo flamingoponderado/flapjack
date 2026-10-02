@@ -686,6 +686,7 @@
     {"bytes": 97, "out": "semantics_props_implements_probe.out", "rows": 1, "sha256": "01a6cff089205778ea38712e76e5dbe3d6e33d938ee5c27848b0be045da49c46"},
     {"bytes": 104, "out": "seq_assoc_probe.out", "rows": 4, "sha256": "8ab5e367a9c452fccd1b21d7336832c7a367af7cbddda67f170d0645699f5892"},
     {"bytes": 147, "out": "seq_call_ret_probe.out", "rows": 3, "sha256": "d1b446c7ea60af5120fc2c1103e2b564d2eb064d0550eb52fa39cb5efa2a2012"},
+    {"bytes": 954, "out": "set_sep_elementary_probe.out", "rows": 26, "sha256": "c02fdabf1e5ec421bbb3e2fb91502658c59472020f4c67e714e3cdaa898cb1a5"},
     {"bytes": 510, "out": "set_sep_fun2set_probe.out", "rows": 14, "sha256": "b3c0ba354e267904bbc1b51498b395276857415e8a9962d51b6a3af329485bf4"},
     {"bytes": 69, "out": "shape_to_str_probe.out", "rows": 4, "sha256": "0ed871149fc7ba74ea5e9c6a083c87bf5262e884a1f864a1064474ac4b7fe9b8"},
     {"bytes": 259, "out": "shrink_leaf_probe.out", "rows": 7, "sha256": "f0585ac0b5833d875bcfd05635e7d46487772342308b3f0bc74e087b32a19adb"},

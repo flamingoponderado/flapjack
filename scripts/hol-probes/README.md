@@ -5622,3 +5622,11 @@ a cross-language equivalence theorem.
 ### Balanced map full cardinality laws
 
 `balanced_map_cardinality_correct_probeScript.sml` replays the literal original local disjoint-union and three size/cardinality proofs, checking empty hypotheses. Typed statements retain generic comparator/tree carriers and original premises. Five valid numeric tree shapes capture size and invariant observations; the equivalent-key singleton checks a constant Equal comparator. Native consumers apply both full generic theorems. These rows support source review; they do not prove cross-assistant equivalence.
+`set_sep_elementary_probe.out` freshly records the six canonical `set_sep`
+heap predicates (`one`, `emp`, `cond`, `SPLIT`, `STAR`, `SEP_EXISTS`), their full
+independently generic types, and fourteen original kernel-proved fixtures. The
+fixtures include overlapping/extra partitions, empty heaps, true/false pure
+conditions, distinct/overlapping singleton assertions, independent witness
+types, and an infinite domain. `Flapjack.Test.SetSepElementary` supplies sixteen
+Lean kernel fixtures. The port adds no finite-heap, word-width or validity
+restriction.

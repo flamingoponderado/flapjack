@@ -4868,3 +4868,6 @@ run_probe balanced_map_almost_balance_correct_probeScript.sml balanced_map_almos
 run_probe balanced_map_cardinality_correct_probeScript.sml balanced_map_cardinality_correct_probe.out \
   structure_size_thm structure_size_to_fmap size_thm bmcard_empty_size bmcard_empty_invariant bmcard_singleton_size bmcard_singleton_invariant bmcard_left_size bmcard_left_invariant bmcard_right_size bmcard_right_invariant bmcard_both_size bmcard_both_invariant bmcard_equivalent_invariant \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+run_probe set_sep_elementary_probeScript.sml set_sep_elementary_probe.out \
+  se_one_def se_one_type se_emp_def se_emp_type se_cond_def se_cond_type se_split_def se_split_type se_star_def se_star_type se_exists_def se_exists_type se_one_fixture se_emp_fixture se_cond_fixture se_false_fixture se_nonempty_fixture se_split_empty_fixture se_overlap_fixture se_extra_fixture se_star_empty_fixture se_star_distinct_fixture se_star_overlap_fixture se_witness_fixture se_no_witness_fixture se_infinite_fixture \
+  "$repo_dir/HOL/examples/machine-code/hoare-triple/set_sepScript.sml" "$cake_dir/compiler/backend/proofs"
