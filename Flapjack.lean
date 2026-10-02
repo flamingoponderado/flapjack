@@ -1279,6 +1279,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
 import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ConsideredVarFilter
 import Flapjack.Compiler.Backend.RegAlloc.Worklists
+import Flapjack.Compiler.Backend.RegAlloc.Allocator
 import Flapjack.Misc.LookupAny
 import Flapjack.Compiler.Backend.RegAlloc.Coalesce
 import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
