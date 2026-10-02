@@ -56147,5 +56147,16 @@
     "hol_name": "filter_bitmap_MEM",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 full source comparison2026-10-02: Full original424-523 nine bitmap-filter laws on reviewed native StackSem.filterBitmap/WordToStackProofs.indexList. Arbitrary payload lists and both arbitrary pair field types; HOL List/Bool/Nat and Option/pair carriers constructor-for-constructor. Native filter clauses preserve unconsumed suffix, reject insufficient input even for allfalse mask, and select true positions. Every original length/output/zero-suffix/membership guard retained; equal-length reconstruction takes exactly original zs definition; pair reconstruction assumes only original two projection successes, no full pair target success. Take/index reconstruction derives native suffix rather than assuming it. Private formula/map/take/rest/pair-extensionality helpers are untagged Flapjack induction infrastructure, no external totalHD/EL tags or sourceallowance change. Fresh nine literal full original proofs hyp=[] and155 matching closed kernel/oracle boundary cases: actual scalar/pair full outputs, insufficient input, true/false/allfalse masks, unused suffix, selected/input length/membership, indexed prefixes at0/7 and exact equal-length zip/filter. Full evaluate_wLive/pass/compiler theorem remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BalancedMap/Domain.lean",
+    "lean_name": "toFmapKeySet",
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "to_fmap_key_set",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL831-836: full arbitrary comparator, key-set and tree quantifiers, only domain-membership premise, existential key with equality to comparator key_set. HOL FDOM membership is canonical defined lookup; exact imported toFmap is already source-reviewed with fmap-result qualification and independent unconditional semanticLookup witness. Tip empty domain and Bin root update/left-biased union child induction match original proof. No extra map binder, good_cmp, invariant, target evaluation or post-state premise; literal Map/Nat/Ordering/Set carriers unchanged. Observation qualifier records only producer finite-support translation; source review covers complete observer separately. Production tree-map replacement and full lookup/insert correctness remain open."
   }
 ]

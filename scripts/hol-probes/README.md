@@ -4734,3 +4734,12 @@ continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a 
 observation in `WordUnreachDefParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Full balanced-map semantic domain theorem
+
+`balanced_map_domain_probe.out` captures the complete original `to_fmap_key_set`
+with no open hypotheses. The Lean theorem retains arbitrary comparators and
+malformed cached sizes, requires only a defined semantic lookup, and constructs
+a key whose comparator class equals the queried set. The observation qualifier
+records the already reviewed canonical result-map translation of `toFmap`; it
+does not add a map parameter, comparator law, or invariant assumption.

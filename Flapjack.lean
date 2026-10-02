@@ -4,6 +4,30 @@ import Flapjack.Compiler.Backend.LabToTarget.PositionValues
 import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
+import Flapjack.Misc.BalancedMap.Domain
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMove
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.Memcpy
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.Submap
+import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
+import Flapjack.FiniteMap.Comparison
+import Flapjack.Misc.BalancedMap.Core
+import Flapjack.Misc.BalancedMap.Insert
+import Flapjack.Misc.BalancedMap.Invariants
+import Flapjack.Misc.BalancedMap.KeySetComparison
+import Flapjack.Misc.BalancedMap.KeySets
+import Flapjack.Misc.BalancedMap.Rotations
+import Flapjack.Misc.BalancedMap.Semantics
+import Flapjack.Misc.BalancedMap.StructuralSize
+import Flapjack.Misc.FlatReplicate
+import Flapjack.Misc.FoldrMaxList
+import Flapjack.Misc.Uncurry
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
@@ -1283,9 +1307,6 @@ import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
 import Flapjack.Misc.LList
 import Flapjack.Misc.LprefixLub
-import Flapjack.Misc.FlatReplicate
-import Flapjack.Misc.FoldrMaxList
-import Flapjack.Misc.Uncurry
 import Flapjack.Misc.OptMmapCong
 import Flapjack.Misc.ListSubset
 import Flapjack.Compiler.Backend.LabLang
@@ -1328,21 +1349,13 @@ import Flapjack.Compiler.Backend.StackAlloc.GcCode
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.Submap
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.Memcpy
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMove
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
 import Flapjack.Compiler.Backend.WordAlloc.FullSSA
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.Parmove
 import Flapjack.Compiler.Backend.Parmove.Semantics
@@ -1412,18 +1425,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsLoopControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
-import Flapjack.FiniteMap.Comparison
-import Flapjack.Misc.BalancedMap.Core
-import Flapjack.Misc.BalancedMap.Insert
-import Flapjack.Misc.BalancedMap.Invariants
-import Flapjack.Misc.BalancedMap.KeySetComparison
-import Flapjack.Misc.BalancedMap.KeySets
-import Flapjack.Misc.BalancedMap.Rotations
-import Flapjack.Misc.BalancedMap.Semantics
-import Flapjack.Misc.BalancedMap.StructuralSize
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
@@ -1436,6 +1437,7 @@ import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
+
 
 
 
