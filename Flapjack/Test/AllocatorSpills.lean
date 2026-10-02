@@ -10,7 +10,7 @@ theorem wordAllocateSsaProgramWithSpills_example :
         .assign 10 (.var 0),
         { locations := [(10, .register 12), (0, .register 2)],
           nextSpill := 0 }) : WordSsaState × WordProg Nat × WordSpillState) := by
-  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordAllocateSsaProgramWithSpills, wordSsaRenameProgram,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename,    sptToAList, sptFromAList, sptFoldi, sptInsert,  lrNext, wordAllocateSsaProgramWithSpills, wordSsaRenameProgram,
     wordSsaRenameProgramWithLoops, wordSsaRenameExp, wordSsaFresh,
     wordSsaRead, wordProgClashAnalysis, wordProgReadVars,
     wordProgWriteVars, wordProgLiveBeforeFast, wordProgReadVarsFastAcc,
@@ -69,7 +69,7 @@ example :
         .assign 10 (.var 0),
         { locations := [(10, .register 12), (0, .register 2)],
           nextSpill := 0 }) : WordSsaState × WordProg Nat × WordSpillState) := by
-    simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordAllocateSsaProgramWithSpills, wordSsaRenameProgram,
+    simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename,    sptToAList, sptFromAList, sptFoldi, sptInsert,  lrNext, wordAllocateSsaProgramWithSpills, wordSsaRenameProgram,
       wordSsaRenameProgramWithLoops, wordSsaRenameExp, wordSsaFresh,
       wordSsaRead, wordProgClashAnalysis, wordProgReadVars,
       wordProgWriteVars, wordProgLiveBeforeFast, wordProgReadVarsFastAcc,
@@ -94,7 +94,7 @@ example :
   simp at hname
   rcases hname with rfl
   apply h
-  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordProgVariables, wordProgReadVars, wordProgWriteVars,
+  simp [           wordProgVariables, wordProgReadVars, wordProgWriteVars,
     wordExpReadVars]
 
 example :
@@ -170,7 +170,7 @@ example :
         .assign 10 (.var 0),
         { locations := [(10, .register 12), (0, .register 2)],
           nextSpill := 0 }) : WordSsaState × WordProg Nat × WordSpillState) := by
-  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordAllocateSsaProgramWithClashTreeWithSpills,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename,    sptToAList, sptFromAList, sptFoldi, sptInsert,  lrNext, wordAllocateSsaProgramWithClashTreeWithSpills,
     wordSsaRenameProgram, wordSsaRenameProgramWithLoops, wordSsaRenameExp,
     wordSsaFresh, wordSsaRead, wordClashTree, wordClashTreeAnalyze,
     wordClashAnalyzeIntros, wordProgVariables, wordProgReadVars,
@@ -178,7 +178,7 @@ example :
     wordGreedyAllocateWithSpills, wordUsedLocationRegisters,
     wordColourCandidates, wordFirstAvailable, wordNeighbours,
     wordPreferredRegister, wordAllocatableRegisters,
-    wordSpillAllocationRespectsClashes, 
+    wordSpillAllocationRespectsClashes,
     wordProgSpecialLocationsSafe, lookupNatInfo, List.eraseDups,
     List.eraseDupsBy, List.eraseDupsBy.loop]
 
@@ -251,7 +251,7 @@ example :
         .assign 10 (.var 0),
         { locations := [(10, .register 2), (0, .register 2)],
           nextSpill := 0 }) : WordSsaState × WordProg Nat × WordSpillState) := by
-  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordAllocateSsaProgramWithClashTreeWithSpillsAndPreferences,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename,    sptToAList, sptFromAList, sptFoldi, sptInsert,  lrNext, wordAllocateSsaProgramWithClashTreeWithSpillsAndPreferences,
     wordSsaRenameProgram, wordSsaRenameProgramWithLoops, wordSsaRenameExp,
     wordSsaFresh, wordSsaRead, wordClashTree, wordClashTreeAnalyze,
     wordClashAnalyzeIntros, wordProgVariables, wordProgReadVars,

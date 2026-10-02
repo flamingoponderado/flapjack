@@ -1,0 +1,7 @@
+shape_statement=comp_seq p1 p2 i default ≠ default ⇒ ∃k dest. p1 = StackFree k ∧ p2 = Call NONE (INL dest) NONE
+shape_hypotheses=0
+shape_equal_changes=T
+shape_smaller_changes=T
+shape_larger_changes=T
+shape_missing_fallback=T
+shape_handler_fallback=T

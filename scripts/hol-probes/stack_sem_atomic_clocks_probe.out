@@ -1,0 +1,10 @@
+gc_clock_statement=∀s1 s2. gc s1 = SOME s2 ⇒ s2.clock ≤ s1.clock
+gc_clock_proved=T
+alloc_clock_statement=∀x xs s1 vs s2. alloc x s1 = (vs,s2) ⇒ s2.clock ≤ s1.clock
+alloc_clock_proved=T
+store_const_sem_clock_statement=∀t2 t1 s1 v s2. store_const_sem t1 t2 s1 = (v,s2) ⇒ s2.clock ≤ s1.clock
+store_const_sem_clock_proved=T
+inst_clock_statement=∀s2 s i. inst i s = SOME s2 ⇒ s2.clock ≤ s.clock
+inst_clock_proved=T
+sh_mem_op_clock_statement=∀s' s res r op a. sh_mem_op op r a s = (res,s') ⇒ s'.clock ≤ s.clock
+sh_mem_op_clock_proved=T

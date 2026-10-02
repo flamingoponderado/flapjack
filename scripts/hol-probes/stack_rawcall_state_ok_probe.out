@@ -1,0 +1,7 @@
+state_ok_type=:num sptree$num_map -> α prog sptree$num_map -> bool
+state_ok_definition=∀i code. state_ok i code ⇔ ∀n v. lookup n i = SOME v ⇒ ∃p. lookup n code = SOME (Seq (StackAlloc v) p)
+state_ok_empty=state_ok LN code
+state_ok_entry=state_ok (insert 7 4 LN) (insert 7 (Seq (StackAlloc 4) Skip) LN)
+state_ok_zero=state_ok (insert 7 0 LN) (insert 7 (Seq (StackAlloc 0) Skip) LN)
+state_ok_bare_rejected=¬state_ok (insert 7 4 LN) (insert 7 (StackAlloc 4) LN)
+state_ok_wrong_size=¬state_ok (insert 7 4 LN) (insert 7 (Seq (StackAlloc 6) Skip) LN)

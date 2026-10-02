@@ -6116,4 +6116,47 @@ Assembler-convention assembly probe prints both full original theorems with no o
 
 `numeric_formatting_probe.out` records70 original full digit/character-code observations: bases0/1/2/3/10/16/17/37, all HEX digits and invalid16/17/999, arbitrary shifted converter, 121-bit decimal numerals and widths1/7/8/16/64/80 with word wrapping. NumericFormattingParity kernel replays all70 using reviewed canonical HolChar rather than Lean String.
 
+`word_to_stack_tail_handler_probe.out` captures four original whole-result
+handler-erasure equalities and twelve direct/indirect, perf on/off compiler
+outputs. NONE-return calls ignore Move and Alloc handlers and preserve the
+supplied bitmap tree/counter; SOME-return Alloc handlers remain and update both.
+Returning trees retain original opaque instruction-builder macros. Actual fused
+production regressions replay the eight tail outputs with explicit leading
+Seq Skip removal and flattening of the original bitmap append tree to its
+production list; generic proofs cover arbitrary handlers and unchanged states.
+
 `l3_raise_exception_probe.out` captures the original polymorphic type and assumption-free full result equation, preserving ARB and every returned state field through the conditional exception update. Defs/MMU/Exception kernel-checks that complete generic equation under only HOL intrinsic Nonempty; no chosen-default binder.
+
+`stack_rawcall_native_probe.out` captures seven complete original trees: three frame comparison branches, missing lookup, preserved top Seq, untouched NONE-return handler, and both compiled SOME-return continuations. Matching native kernel fixtures compare full trees. This is definition evidence, not production-path replacement or compiler correctness.
+
+`stack_rawcall_collect_probe.out` captures bare and nested allocation rejection, zero-sized entry acceptance, and all four queried map results for duplicate entries with an existing map. Native replay retains last-wins insertion; broad production frame collection remains a separate obligation.
+
+`stack_rawcall_state_ok_probe.out` captures the original generic tree-map/program type, full relation definition, and five assumption-free source proofs (empty, recognized/zero entry, bare allocation/wrong size rejection). Native kernel fixtures reproduce these propositions; this is not the whole rawcall state relation or simulation.
+`stackprops_extract_labels_probe.out` captures56 fresh complete original ordered label lists at positive widths1/8/64/80. Kernel fixtures retain duplicates, return/handler prefix order, nested continuation order, ignored NONE-return handler, zero/one and70bit labels, Loop/Seq/If and representative label-free leaves. This supports the complete native five-clause extract_labels definition; it is regression evidence, not cross-language equivalence or full WordToStack label preservation. Selector: HOL_PROBE_ONLY=stackprops_extract_labels_probeScript.sml.
+
+Ordered-label helper probe freshly replays five complete original local proofs10760-10802 with no open hypotheses and captures108 independent full label lists at widths1/8/64/80. Kernel fixtures retain arbitrary-continuation label order, duplicate return/handler labels, zero/multiple moves/copies, both flags,70bit frame/count fields, natural subtraction, empty/duplicate load lists, and five full generic theorem applications. These are regression observations and original proof replays, not cross-language equivalence or semantic compiler simulation. Selector: HOL_PROBE_ONLY=word_to_stack_extract_labels_helpers_probeScript.sml.
+
+Complete ordered-label compiler probe prints three original full statements with hyp=[] and312 independent full-label projections (104 each comp/program-list/top) at widths1/8/64/80 and both performance flags. Kernel equalities preserve duplicates, nested return/handler order, ignored tail handlers, repeated IDs,70bit labels, and both stub keys. Three generic full-theorem applications and standard-axiom audits are separate from those observations. Direct comp includes70bit register boundaries; list/top If uses register2 because an evaluated70bit maximum with live calls demands an enormous original bitmap (profiled live EVAL stalled before that row, no capture accepted). The same chosen input is used on both languages; no theorem quantifier or default gate is restricted. Original observations are regression evidence, not cross-language equivalence or semantic compiler simulation. Selector: HOL_PROBE_ONLY=word_to_stack_extract_labels_compiler_probeScript.sml.
+
+`stack_rawcall_compile_probe.out` captures five complete original program lists: empty, forward frame reference, recognized duplicate last-wins with ignored bare entry, bare-only fallback, and zero-frame preserved top Seq. Matching kernel fixtures use the native whole-list wrapper. This is definition evidence; executed replacement remains open.
+WordToStack make_init probe captures the complete original definition and124 ground projections at widths1/8/64/80: reset fields, inherited fields and Handler deletion, full indexed frame trees including malformed normalization, oracle and callback failure/success with bitmap/counter/configuration threading. Abstract target states are projected only into closed observations; no ARB fixture state. Independent kernel equalities provide regression evidence, not HOL-to-Lean equivalence or initialization simulation. Selector: HOL_PROBE_ONLY=word_to_stack_make_init_probeScript.sml.
+
+
+
+`l3_mmu_insert_probe.out` records all sixteen TLB slots for eight complete original insertion runs: empty, multiple holes, last hole, full ascending ages, tied ages, all maximum ages, last oldest and early oldest. Native kernel fixtures replay the same inputs and `(asid, age)` observations, including current core 7 with totalCore 1. Strict age comparison, first-empty behavior and the all-max slot-zero sentinel are preserved. Other old-entry fields are arbitrary and unobserved in both probes. These regression observations do not establish cross-language equivalence.
+
+`l3_mmu_walk_probe.out` records fifteen complete original page-walk observations: invalid PTE, both pointer types at level zero, permitted reads/writes, unchanged R/D, permission denial, global leaf, superpage mixing, both recursive pointer types, levels4/1000, 38-bit PPN-shift truncation and wrapped PTE address. Native kernel fixtures replay the full optional payload (physical address, whole packed PTE, level, global flag, PTE address) and both memory PTE words. Probes retain original arbitrary unobserved state fields. Source widths and decreasing-level recursion are unchanged; there is no alignment guard or fuel restriction. Regression evidence is distinct from cross-language equivalence.
+
+`stack_rawcall_shape_probe.out` captures the full original comp_seq_neq_IMP statement with zero hypotheses and five independent complete branch truth values. Kernel replay separates the generic theorem application from equal/smaller/larger changes and missing/handler fallback observations; no full simulation is claimed.
+`stack_sem_evaluate_clock_probeScript.sml` replays the full original
+`evaluate_clock` and `fix_clock_evaluate` proof bodies, recreating their local
+atomic clock and `fix_clock_IMP` helpers. It uses the exported HOL evaluator
+rules after `allow_rebind`, and resolves `state_component_equality` with
+`DB.fetch` rather than a current-theory lookup. The Lean proof independently
+uses the faithful evaluator clauses before the clock-identity rewrite.
+
+
+`stack_rawcall_ln_probe.out` captures the full universally quantified comp_LN conjunction with no hypotheses and four complete paired comp_top/comp output trees. Generic identity application and kernel tree fixtures retain Seq, Loop, returning handler and ignored tail-handler cases; this is a proof helper, not full compiler simulation.
+`l3_mmu_translate_probe.out` records nine full original translate64 hit/miss observations: read, write-clean, write-dirty, denied hit, empty/invalid/ASID miss, global hit and full-table replacement. Replays observe optional physical address, all nine fields in all sixteen current-core TLB slots and the packed PTE memory word. Inputs preserve core7/totalCore1, original current-ASID selection and cycle age77; other state fields remain unobserved. Hit reads retain R=false and age3, hit writes set D only, while walk misses set R and insert age77. These observations check regressions and do not establish cross-language equivalence.
+
+`stack_rawcall_labels_probe.out` captures the full original get_labels_comp conjunction with zero hypotheses and five complete finite set pairs. Independent kernel fixtures compare predicate sets for all frame comparisons, returning labels/handler labels and ignored NONE-return handlers. The generic proof uses exact StackSem label sets, not ordered extract_labels; no full simulation is claimed.
