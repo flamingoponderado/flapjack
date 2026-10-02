@@ -67124,5 +67124,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: Source7302 complete c/labs/ffis/p/code plus independent free pc/suffix binders. Sole complete prefix all_enc_ok at independent p guard; exact shifted logical PC and LENGTH(prog_to_bytes code) physical byte result. Arbitrary suffix including malformed labels preserved. Actual full byte-length law derives physical length, not assumed. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Source pos_val uses line_length nonzero-label one-step marker whereas prog_to_bytes drops labels; validity is needed only in the original suffix law to relate those quantities. Fresh original fulltypes zero hypotheses and eight closed original/native cases, full generic fixtures and actual arbitrary-suffix/PC/start consumers. Kernel checking and original regressions supplement source review, not cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FetchSuccessor.lean",
+    "lean_name": "posVal_zeroAt",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "pos_val_0_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6859 complete c/labs/ffis/p/xs/pos binders. Sole complete all_enc_ok at p guard; exact pos_val 0 pos xs=pos result. Queried pos remains independent from validity p; no parity or bound hypothesis on queried start. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Fresh original fulltypes zero hypotheses and seven closed original/native cases, full generic fixtures and actual arbitrary queried-start consumers that discharge full guards. Empty sections, zero-label tails, missing fetch and invalid nonzero labels retained. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FetchSuccessor.lean",
+    "lean_name": "asmFetchAux_posVal_successor",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_fetch_aux_pos_val_SUC",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6871 complete pc/p/code/p-prime and free c/labs/ffi/line binders. Sole conjunction of full all_enc_ok at independent p-prime and literal successful asm_fetch_aux at pc; exact LENGTH(line_bytes line)+pos_val pc p code=pos_val(pc+1)p code result. No bounds/encoder validity/target-execution or assumed successor conclusion. Full last-instruction case derives zero position from valid tail. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or arbitrary carrier specialization. Fresh original fulltypes zero hypotheses and seven closed original/native cases, full generic fixtures and actual arbitrary queried-start consumers that discharge full guards. Empty sections, zero-label tails, missing fetch and invalid nonzero labels retained. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler simulation."
   }
 ]

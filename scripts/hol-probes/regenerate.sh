@@ -5627,6 +5627,13 @@ run_probe lab_to_target_computed_label_positions_probeScript.sml lab_to_target_c
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_fetch_successor_probeScript.sml lab_to_target_fetch_successor_probe.out \
+  pos_val_0_aux pos_val_0_aux_types pos_val_0_aux_hypotheses \
+  asm_fetch_aux_pos_val_SUC asm_fetch_aux_pos_val_SUC_types asm_fetch_aux_pos_val_SUC_hypotheses \
+  independent_zero first_successor last_successor missing_fetch labels_only invalid_suffix empty_code \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_position_extension_probeScript.sml lab_to_target_position_extension_probe.out \
   pos_val_acc_sum pos_val_acc_sum_types pos_val_acc_sum_hypotheses \
   pos_val_acc_0 pos_val_acc_0_types pos_val_acc_0_hypotheses \
