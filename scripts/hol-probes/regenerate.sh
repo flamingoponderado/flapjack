@@ -5490,3 +5490,16 @@ run_probe stack_remove_comp_load_any_probeScript.sml stack_remove_comp_load_any_
 run_probe stack_remove_comp_store_any_probeScript.sml stack_remove_comp_store_any_probe.out \
   csa_statement csa_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_padding_labels_probeScript.sml lab_to_target_padding_labels_probe.out \
+  pad_section_labels pad_section_labels_types pad_section_labels_hypotheses \
+  empty_arbitrary_acc even_zero_label odd_asm_empty_nop odd_labasm_wide_nop successive_boundaries annotation_not_bytes boundary_guard_needed line_parity_guard_needed aux_parity_guard_false aux_zero_guard_false zero_label_id_ignored width1 width80_large_pos \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_comp_get_size_probeScript.sml stack_remove_comp_get_size_probe.out \
+  cgs_statement cgs_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_set_size_probeScript.sml stack_remove_comp_set_size_probe.out \
+  css_statement css_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
