@@ -57902,5 +57902,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:640: same sole MEM r initial calleeSavedRegs premise and oracle result NONE for arbitrary k/r. All original position/application match branches retained; no successful selection, register bounds or validity premise. Full generic native MachineConfig/HolFfiState with independent state/projection/σ : Type, positive width NeZero and BitVec width register result. Kernel80jobs zero warnings; fresh original full statements in target_callee_saved_probe.out. Inherited EL via oracle position/sequence/nextInterference/findNextInterference source112-211: reviewed holEl ffi_names keeps in-range element and opaque holHdNil/holArb out of range, no fallback/bounds premise. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/NextCases.lean",
+    "lean_name": "nextInterferenceExtCall",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "next_interference_ExtCall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:646: fresh complete original statements in target_next_cases_probe.out; same eight conjuncts: PC outside program DIFF FFI entries, not halt/cache, findIndex present, total EL ExtCall name, ALOOKUP absent, both bytearrays present, exact callFFI return. Same application index/new bytes/pre and oracle0 post, only ffiInterfer shifted1 in returned configuration and actual newFfi. Predicate negation of program membership and not FFI list membership is literal set-DIFF nonmembership, no extra guard. Native generic MachineConfig/InterferenceApp/HolFfiState state/projection/σ : Type, positive width NeZero, fixed word8 byte lists and native MlString ExtCall name retained; no String substitution or index bound. Original proof nextInterferenceIntro finiteclock1 and full literal search/applyOracle; native kernel81jobs zero warnings. EL provenance source112-211: holEl ffi_names keeps in-range list element and shared opaque holHdNil/holArb out of range; ExtCall equation assumes the same total EL identity, does not add bounds or fallback. No executed compiler body/routing change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/NextCases.lean",
+    "lean_name": "nextInterferenceCache",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "next_interference_ccache",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:666: fresh complete original statements in target_next_cases_probe.out; same three conjuncts: PC outside program DIFF FFI entries, not halt, at cache PC. Same ptr/len register word payloads, pre and cache oracle0 post, only ccacheInterfer shifted1 in returned configuration, original FFI unchanged. Predicate negation of program membership and not FFI list membership is literal set-DIFF nonmembership, no extra guard. Native generic MachineConfig/InterferenceApp/HolFfiState state/projection/σ : Type, positive width NeZero, fixed word8 byte lists and native MlString ExtCall name retained; no String substitution or index bound. Original proof nextInterferenceIntro finiteclock1 and full literal search/applyOracle; native kernel81jobs zero warnings. EL provenance source112-211: holEl ffi_names keeps in-range list element and shared opaque holHdNil/holArb out of range; ExtCall equation assumes the same total EL identity, does not add bounds or fallback. No executed compiler body/routing change."
   }
 ]

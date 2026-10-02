@@ -4444,3 +4444,7 @@ run_probe target_oracle_equality_probeScript.sml target_oracle_equality_probe.ou
 run_probe target_callee_saved_probeScript.sml target_callee_saved_probe.out \
   io_callee_saved_full_statement cc_callee_saved_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_next_cases_probeScript.sml target_next_cases_probe.out \
+  next_extcall_full_statement next_cache_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

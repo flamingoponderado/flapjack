@@ -4933,3 +4933,7 @@ undischarged hypotheses. Native counterparts are in `TargetProps/OracleEquality.
 `target_callee_saved_probeScript.sml` captures complete original
 `target_io_regs_callee_saved` and `target_cc_regs_callee_saved` statements
 with no open hypotheses. Native ports are in `TargetProps/CalleeSaved.lean`.
+
+`target_next_cases_probeScript.sml` captures complete original
+`next_interference_ExtCall` and `next_interference_ccache` statements and
+checks no undischarged hypotheses. Native ports are in `TargetProps/NextCases.lean`.
