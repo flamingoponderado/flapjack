@@ -5645,6 +5645,13 @@ run_probe lab_to_target_computed_label_positions_probeScript.sml lab_to_target_c
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_fetch_successor_probeScript.sml lab_to_target_fetch_successor_probe.out \
+  pos_val_0_aux pos_val_0_aux_types pos_val_0_aux_hypotheses \
+  asm_fetch_aux_pos_val_SUC asm_fetch_aux_pos_val_SUC_types asm_fetch_aux_pos_val_SUC_hypotheses \
+  independent_zero first_successor last_successor missing_fetch labels_only invalid_suffix empty_code \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_position_extension_probeScript.sml lab_to_target_position_extension_probe.out \
   pos_val_acc_sum pos_val_acc_sum_types pos_val_acc_sum_hypotheses \
   pos_val_acc_0 pos_val_acc_0_types pos_val_acc_0_hypotheses \
@@ -5749,4 +5756,11 @@ run_probe stack_remove_comp_jump_lower_probeScript.sml stack_remove_comp_jump_lo
 
 run_probe stack_remove_comp_code_buffer_probeScript.sml stack_remove_comp_code_buffer_probe.out \
   cc_code_buffer_statement cc_code_buffer_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_top_label_safety_probeScript.sml word_to_stack_top_label_safety_probe.out \
+  top_full_word_to_stack_good_code_labels top_full_word_to_stack_good_handler_labels top_empty top_self top_missing top_external top_duplicates top_owned top_wrong_owner top_tail_missing top_threaded top_width_one top_raise_owned top_store_owned \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_bytearray_read_probeScript.sml stack_remove_bytearray_read_probe.out \
+  read_bytearray_IMP_read_bytearray_statement read_bytearray_IMP_read_bytearray_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -1,6 +1,7 @@
 import Flapjack.Test.LabToTargetEncodingValidityClosureParity
 import Flapjack.Test.LabToTargetProgramByteLengthsParity
 import Flapjack.Test.LabToTargetPositionExtensionParity
+import Flapjack.Test.LabToTargetFetchSuccessorParity
 import Flapjack.Test.LabToTargetRemoveLabelsCorrectnessParity
 import Flapjack.Test.L3FetchPrimitivesParity
 import Flapjack.Test.L3MmuTranslateAddrParity
@@ -332,6 +333,7 @@ import Flapjack.Test.WordToStackInitializationParity
 import Flapjack.Test.ListLookupParity
 import Flapjack.Test.WordToStackListUpdateSlicesParity
 import Flapjack.Test.SptreeWfDefinitionParity
+import Flapjack.Test.WordToStackTopLabelSafetyParity
 import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.ParmoveAllDistinctPmovParity
 import Flapjack.Test.ParmoveTempPmovParity

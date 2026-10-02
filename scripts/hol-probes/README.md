@@ -50,13 +50,9 @@ identity step using the empty external call. `Flapjack/EvaluateProps.lean`
 retains all four existential witnesses and kernel-checks the same generic
 identity step. The reflexive-transitive closure and full LabToTarget
 shared-memory relation remain separate obligations.
-`target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
 
-`target_search_mono_probe.out` captures the complete original find_next_interference_mono and find_next_interference_unique statements. Native kernel proofs retain arbitrary clock limits, all machine/FFI parameters and equality of the entire returned tuple, with no added bounds or validity premise.
 
-`target_register_oracles_probe.out` captures all four full native targetProps register-oracle types/equations and ten generic IO/cache presence, absence, callee filtering and allowed register/FP branches, replayed by TargetRegisterOraclesParity. Fixed word64 FP fallback and unused FFI name remain literal.
 
-`target_interference_sequence_probe.out` captures the full original types and equations for next_interference, interference_app_seq, interference_count and interference_pos (source215-249), with generic recurrence replays. Native kernel regressions preserve all generic parameters and unspecified option choice.
 
 `word_to_stack_native_addr_probe.out` records72 original wInst memory trees across Load/Store/Load8/Store8/Load32/Store32, register/spilled operands and zero/positive/negative64bit offsets; five selected Store trees include signed12 endpoints and out-of-range2048. Native kernel fixtures replay all72 source trees; production fixtures preserve Addr instead of macro address sequences, with unchanged original artifact/corpus goldens.
 
@@ -343,7 +339,6 @@ unsupported incoming preludes rejected. `ProductionSelectorPrelude` proves
 actual atom/load-tail/address-wrapper carrier closure only. This does not prove
 universal HOL instruction-selector equivalence, whole-program selection,
 pre-SSA/source-image closure, or production native routing. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_to_stack_selector_prelude_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `word_to_stack_allocator_stages_probe.out` records four fresh original
@@ -371,7 +366,6 @@ the same inputs/results and the five-register codec rejection sentinel.
 and `cakeWordFrameSlots` to the Option-mapped native compiler frame; rejected
 codecs remain `none`. This does not establish codec success, native ABI/config
 or output correspondence, or executed native routing. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_to_stack_retained_frame_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `ParmoveAllDistinctPmovParity` replays the complete original scheduler outputs
@@ -410,7 +404,6 @@ overflow writes, odd-half insertion, and actual widths8/32/64/128. The IEEE
 definitions and conversions are registered in HOL's EVAL compset as in the
 existing machine IEEE probes. These finite observations do not establish full
 LabSem evaluator routing or cross-language IEEE equivalence. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=labsem_fp_updates_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `linear_scan_pure_props_probe.out` captures eighteen direct original
@@ -425,7 +418,6 @@ clash). Closed instances are decided by EVAL/SIMP_CONV; the two
 `check_intervals` rows are HOL `prove` calls. `Flapjack.Test.LinearScanPurePropsParity`
 kernel-checks the same propositions over the opaque `holTheNone`. This does
 not compare an unspecified `THE NONE` value across provers. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=linear_scan_pure_props_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `linear_scan_top_probe.out` captures fourteen direct original EVAL results
@@ -438,7 +430,6 @@ and Subscript failure), and six end-to-end `linear_scan_reg_alloc` runs
 `Flapjack.Test.LinearScanTopParity` kernel-checks every full result. These
 finite rows do not prove `linear_scan_reg_alloc_correct` or route the
 definitions into the compiler. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=linear_scan_top_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `linear_scan_generic_types_probe.out` captures the original HOL types of
@@ -471,7 +462,6 @@ ml_monadBase fixed-array primitives (`Msub`/`Mupdate` in and out of range,
 failure) and reg_alloc `st_ex_MAP` (success threading the state, and the first
 failure stopping the traversal with its state), replayed in
 `Flapjack.Test.MonadArraysParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=monad_arrays_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `linear_scan_pure_defs_probe.out` captures fifteen direct original
@@ -494,7 +484,6 @@ right-first Seq traversal, Branch merging and fixed-set collisions.
 `Flapjack.Test.RegAllocClashTreeParity` kernel-replays the identical inputs and
 full output trees. These finite regressions do not prove allocator soundness
 or wire the checker into the executed compiler. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=reg_alloc_clash_tree_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `stacksem_call_indirect_probe.out` captures ten direct original `stackSem$evaluate`
@@ -517,7 +506,6 @@ ordinary, wrapped, zero, and unaligned addresses. The kernel replay is
 untagged synthesized GlobalAssign proof infrastructure at the dimensions
 already required by `state_rel`; it does not claim a generic external
 `byte_aligned_add` port. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=pan_globals_block_alignment_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The runner reads original
 `HOL/src/n-bit/alignmentScript.sml` and loads the standard CakeML preamble.
@@ -560,7 +548,6 @@ typed `unreach_elim_prog_size` statement (`show_types`). It is the evidence that
 the size-function domain is the same type variable `α` that indexes `α word`,
 which is why the Lean rendering with an independent `α` is kept untagged
 (bead `flapjack-pxn.18.5.5.50`). Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=crep_inline_prog_size_type_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
@@ -635,7 +622,6 @@ return continuation is `NONE`, and the zero-offset domain-key case. HOL EVAL
 leaves the nonzero code-lookup existential symbolic, so the probe also records
 a kernel-proved witness for that alternative. The Lean replay is
 `Flapjack.Test.StackSemLabelsParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_labels_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `loop_to_word_defs_probe.out` records direct HOL EVAL rows for the exact
 `spt`-carrier loop_to_word context definitions `find_var_def`,
@@ -734,7 +720,6 @@ enclosing Loop shrink result; its replay guards are in
 there. `ocompile_probe.out` includes an ExtCall-to-FFI result from
 `crep_to_loop$ocompile`; `Flapjack.Test.OCompileParity` checks that row.
 Regenerate these with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=loop_live_optimise_probeScript.sml scripts/hol-probes/regenerate.sh`
 and `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=ocompile_probeScript.sml scripts/hol-probes/regenerate.sh` for
@@ -767,7 +752,6 @@ singleton, three-expression, and zero-offset MAPi Assign lists all evaluate to
 `T`. The exact `HolLoopExp`/`HolLoopProg` theorem port is
 `Flapjack.Pancake.CrepToLoop.Proofs.holSurvivesMapiAssign`; replay fixtures are
 in `Flapjack.Test.CrepToLoopSurvivesMapiAssignParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=crep_to_loop_survives_mapi_assign_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 `crep_to_loop_write_bytearray_mem_rel_probe.out` records direct HOL EVAL rows
@@ -778,7 +762,6 @@ three-byte list, domain (full and partial) and endianness from
 `wlab_wloc`-related 64-bit memories, read at both affected aligned words.
 The Lean replay, including the pointwise `mem_rel` conclusion, is
 `Flapjack.Test.CrepToLoopWriteBytearrayMemRelParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=crep_to_loop_write_bytearray_mem_rel_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 `loop_props_survives_probe.out` records direct HOL EVAL rows for every clause
@@ -996,7 +979,6 @@ carrier checks live in `Flapjack.Test.PanToCrepStateRelCarrierParity`. The
 source review is intentionally narrow: it pins the carrier fields consumed by
 the state relation, not a port of `state_rel` or a claim that production
 String/Shape states satisfy the relation. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=pan_to_crep_state_rel_carrier_probeScript.sml
 scripts/hol-probes/regenerate.sh` when using a read-only CakeML checkout whose
 compiled theories match the source commit.
@@ -1007,7 +989,6 @@ compiled theories match the source commit.
 the source `OPT_MMAP`, successful code lookup, body `Return (Const 7w)` run,
 matching `state_rel`, and empty `locals_rel`. It also records the combined
 five-premise row and result constructor. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=pan_to_crep_ret_inst2_probeScript.sml
 scripts/hol-probes/regenerate.sh` against the matching built CakeML theories.
 
@@ -1072,7 +1053,6 @@ Refresh with
 `HOL_PROBE_ONLY=crep_arith_store_glob_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `crep_arith_store_32_probe.out` records seven direct HOL EVAL rows for the
 `Store32` case of the proof-script `simp_prog_correct` at
-`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`:
 `simp_prog (Store32 exp1 exp2) = Store32 (simp_exp exp1) (simp_exp exp2)`
 (`crep_arithScript.sml:87`); the successful `evaluate` equation
 `evaluate (Store32 (Const 4w) (Const 0x11w), s)` returning `NONE`
@@ -1088,7 +1068,6 @@ Refresh with
 
 `crep_arith_if_probe.out` records eight direct HOL EVAL rows for the `If` case
 of the proof-script `simp_prog_correct` at
-`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`:
 `simp_prog (If exp c1 c2) = If (simp_exp exp) (simp_prog c1) (simp_prog c2)`
 (`crep_arithScript.sml:90`); the true- and false-guard `evaluate` equations
 `evaluate (If e c1 c2, s)` selecting `c1`/`c2` and their resulting states
@@ -1104,7 +1083,6 @@ tagged exact `simpProgCorrectIfCase` proof. Refresh with
 
 `crep_arith_store_byte_probe.out` records seven direct HOL EVAL rows for the
 `StoreByte` case of the proof-script `simp_prog_correct` at
-`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`:
 `simp_prog (StoreByte dst src) = StoreByte (simp_exp dst) (simp_exp src)`
 (`crep_arithScript.sml:88`); the successful `evaluate` result under a full byte
 domain and the same result under the local `mapc` rewrite (both projected onto
@@ -1112,7 +1090,6 @@ their first component, since `=` is undecidable on state pairs); the
 out-of-domain and missing-variable failure branches `(SOME Error, s)` and their
 `mapc` image; and the code-only commutation `(mapc f s).memory = s.memory`. The
 `mapc` overload is local to the proof script, so the probe inlines
-`st with code := FMAP_MAP2 f st.code`.
 `Flapjack.Test.CrepArithStoreByteParity` replays the rows against the tagged
 exact `simpProgCorrectStoreByteCase` and the exact `CrepSemHOLState` memory
 update. Refresh with
@@ -1418,7 +1395,6 @@ matching/mismatching named-record, missing-context, and duplicate-key first
 match rows for
 `v_flds_ok_def` and `is_wf_shape_v_def`; the matching Bool-valued Lean
 definitions and regressions live in
-`Flapjack.Pancake.Proofs.PanStructs.CompileCorrect` and
 `Flapjack.Test.PanStructsValueValidityParity`.
 `pan_structs_afindi_append_probe.out` records direct HOL EVAL of prefix-hit,
 shifted suffix-hit and missing-key rows for `afindi_append` at
@@ -1571,7 +1547,6 @@ counterpart `Flapjack/Pancake/CrepToLoop/Proofs/Primop.lean`, over the exact
 `HolWordLab`(`word_lab`)/`WordLocW`(`word_loc`) carriers and the
 `wlabWlocHOL` bridge; the kernel replay guards and `example`s are in
 `Flapjack.Test.CrepPrimopLoopPrimopParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=crep_primop_loop_primop_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
@@ -1602,9 +1577,7 @@ theories match the submodule source commit.
 From the repository root, with HOL4 and the CakeML checkout available,
 regenerate both checked-in outputs with:
 
-```sh
 scripts/hol-probes/regenerate.sh
-```
 
 Normal Lean CI consumes the checked-in output and does not require HOL4. A
 reviewer with HOL4 can rerun the command and inspect the diff. Each probe's
@@ -1614,9 +1587,7 @@ observes, or the script itself is newer than that fixture. Delete a fixture
 when a forced regeneration is desired. To refresh one fixture while developing,
 set `HOL_PROBE_ONLY` to its probe filename, for example:
 
-```sh
 HOL_PROBE_ONLY=pan_globals_compile_top_probeScript.sml scripts/hol-probes/regenerate.sh
-```
 
 The checked-in source-facing compiler corpus at
 `scripts/parity-small-corpus.json` complements these semantic probes. Run
@@ -1805,7 +1776,6 @@ Rows print `(result, toAList locals, clock)` unless the clause updates another
 field, in which case the projection adds the affected field (memory/buffer
 contents, code map, `stack_max`/`stack_size`). The kernel-checked Lean replay
 is `Flapjack.Test.WordSemEvaluateParity`. Refresh with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_sem_evaluate_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
@@ -1837,9 +1807,7 @@ the executed list boundary against these captured rows.
 
 Regenerate with:
 
-```sh
 CAKEML=/path/to/built/cakeml HOL_PROBE_ONLY=word_alloc_key_map_probeScript.sml scripts/hol-probes/regenerate.sh
-```
 
 ## StackSem word bitmap codec
 
@@ -1849,10 +1817,8 @@ least-significant-first ordering, ignored terminal suffix, missing continuation,
 continuation concatenation, and width-one words. Regenerate against read-only
 prebuilt theory objects with:
 
-```sh
 CAKEML=/home/zksecurity/pancake-lean/cakeml \
 HOL_PROBE_ONLY=stacksem_word_bitmap_probeScript.sml scripts/hol-probes/regenerate.sh
-```
 
 `Flapjack/Test/StackSemWordBitmapParity.lean` kernel-checks each captured result.
 These rows exercise the HOL-shaped word/list ports; they do not establish
@@ -1870,7 +1836,6 @@ constructors, and its distinct five-register AddCarry retains a separate
 Flapjack route. The retained-instruction liveness of `wordDeadInst` uses this
 same route. Its keep/drop decisions remain separate work on bead `.11.1.12`.
 Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_live_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh` (the shared checkout supplies built objects;
 its original word_alloc source was compared byte-for-byte).
@@ -1895,7 +1860,6 @@ operand's, the `Const`/`Lookup` catch-all empty list, and a mixed nested
 kernel-replays all seven rows through the exact polymorphic
 `getReadsExpHOL`. This proof-side port does not yet replace the executed
 caller. Regenerate read-only with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_reads_exp_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
@@ -1914,7 +1878,6 @@ unit-map collisions, and an empty component with duplicate input keys.
 `Flapjack.Test.CakeApplyColourParity.pairedKeyMapExact` kernel-replays the
 heterogeneous exact maps and runtime-checks the actual paired allocator route
 for the unit cutsets. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_pair_keys_probeScript.sml
 scripts/hol-probes/regenerate.sh`; the original source was compared byte-for-byte
 before using the shared checkout's built objects.
@@ -1938,7 +1901,6 @@ Full GC/evaluator execution and Nat-machine refinement remain separate work.
 traversals (nested, duplicate, empty, binary Shift, constant, lookup).
 `Flapjack.Test.WordAllocLiveExpressionParity` replays all six with kernel
 reduction of the executed constant-erasure wrapper. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_live_exp_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `word_alloc_remove_dead_inst_probe.out` records twelve original
@@ -1980,7 +1942,6 @@ unsigned immediate preservation, all control-result constructors, zero and
 positive labels, and unchanged final-event payloads. StackSem Break0 exits
 normally, unlike WordSem. Kernel replay and runtime control checks live in
 `Flapjack/Test/StackSemLoopControlParity.lean`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_loop_control_probeScript.sml
 scripts/hol-probes/regenerate.sh`. Evaluator assembly and its production
 refinement remain tracked by y19g/.12.
@@ -1998,7 +1959,6 @@ body result that times out immediately, and `Break 1`/`Continue 1` exits that
 decrement through `exit_loop`. The observer records result, clock, register 1
 and stack length. Kernel replay over a concrete `evaluate` stub lives in
 `Flapjack/Test/StackSemControlCasesParity.lean`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_control_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The `evaluateSeq`/`evaluateIf`/`evaluateLoop`
 fragments are untagged; the tagged ports of `fix_clock_def`, `cont_loop_def`,
@@ -2017,7 +1977,6 @@ a missing code target, a false comparison (`NONE` with the state unchanged), a
 records result, clock, register 1 and stack length. Kernel replay over a
 concrete `evaluate` stub lives in
 `Flapjack/Test/StackSemJumpLowerParity.lean`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_jumplower_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The `evaluateJumpLower` fragment is
 untagged; the tagged port of `bad_fun_return_def` lives in
@@ -2033,11 +1992,9 @@ target (`Error`), a non-`Seq` code entry (`dest_Seq` returns `NONE`, hence
 to `Error` with the recursed state). The observer records result, clock,
 register 1 and stack length. Kernel replay over a concrete `evaluate` stub lives
 in `Flapjack/Test/StackSemRawCallParity.lean`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_rawcall_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The `evaluateRawCall` fragment is untagged;
 the tagged ports of `dest_Seq_def` and `bad_fun_return_def` live in
-`StackSem/Control.lean`, and assembled full evaluation remains on y19g.
 
 `stacksem_call_probeScript.sml` records fourteen direct original
 `stackSem$evaluate` observations for the `Call` clause
@@ -2071,7 +2028,6 @@ succeeds through the 64-bit dimension factor, a data-buffer address mismatch
 records result plus the affected buffer's position, buffer and space_left.
 Kernel replay over concrete `WordSemBuffer` fixtures lives in
 `Flapjack/Test/StackSemBufferWriteParity.lean`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_buffer_write_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The `evaluateBufferWrite` fragment is
 untagged; the tagged `buffer_write_def` port lives in
@@ -2088,7 +2044,6 @@ a plain-word address miss (`a IN sh_mdomain`), a sized-form miss on
 sized form accepts is `Error`), both `FFI_final` outcome rows (state unchanged),
 and a non-word register (`Loc`, `Error`). Kernel replay over a concrete base
 state lives in `Flapjack/Test/StackSemShMemParity.lean`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_sh_mem_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The tagged ports of `sh_mem_store_def`,
 `sh_mem_load_def`, `sh_mem_store_byte_def`, `sh_mem_store16_def`,
@@ -2107,12 +2062,10 @@ miss on a `Loc` operand (`SOME Error`, state unchanged), a miss on a missing
 register (same), and `clock = 0` (`SOME TimeOut`, `empty_env` clearing regs and
 the stack). Kernel replay of all four rows lives in
 `Flapjack/Test/StackSemShMemOpParity.lean`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_sh_mem_op_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The `evaluateShMemOp` fragment is untagged;
 the tagged `word_exp_def`, `sh_mem_op_def`, `dec_clock_def` and `empty_env_def`
 ports live in `StackSem/Expressions.lean`, `StackSem/ShMem.lean` and
-`StackSem/StateOps.lean`, and assembled full evaluation remains on y19g.
 
 `stacksem_ffi_probeScript.sml` records four direct original `stackSem$evaluate`
 observations for the `FFI` clause (`stackSemScript.sml:945-960`) at 64-bit words.
@@ -2156,7 +2109,6 @@ operand (`SOME Error`). The probe rewrites `FLOOKUP` through
 `FLOOKUP_UPDATE`/`FLOOKUP_DRESTRICT` because the register update is
 non-computational. Kernel replay of all six rows lives in
 `Flapjack/Test/StackSemInstallParity.lean`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_install_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The `evaluateInstall` fragment is untagged,
 it reuses the tagged `buffer_flush_def` and `shift_seq_def` ports and the
@@ -2195,7 +2147,6 @@ register and CurrHeap lookup. Kernel replay is in
 The syntax/state store-name codec preserves every constructor and has both
 kernel-checked roundtrips. The dispatcher is untagged assembly infrastructure;
 full evaluation remains on y19g. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_register_transfers_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
@@ -2207,7 +2158,6 @@ and later failure, address/value wraparound, and widths16/4. Width4 has zero
 byte stride and overwrites the same address; both HOL and the kernel replay
 retain that behavior. `Flapjack/Test/StackSemPatternCopyParity.lean` replays
 all rows. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_pattern_copy_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
@@ -2221,7 +2171,6 @@ a zero pattern reached during the loop (`zero_pattern`, `NONE`), and an
 out-of-range start index (`out_of_range`, `NONE`).
 `Flapjack/Test/StackSemCopyWordsParity.lean` replays all rows as kernel-checked
 examples and prints a PASS line. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_copy_words_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
@@ -2239,7 +2188,6 @@ The dispatcher is untagged assembly infrastructure, with outer NONE reserved
 for unhandled FP and inner NONE for original failures. Whole inst assembly
 remains on y19g.11.3. HOL words `/` is signed word_quot, unlike Lean BitVec `/`;
 the local quotient mirrors HOL's sign cases. Regenerate using
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_integer_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
@@ -2284,7 +2232,6 @@ carriers. Two universal kernel certificates equate its structural decision
 and lookup result to actual program equality, without an opaque-payload BEq
 or DecidableEq premise. Full StoreConsts evaluation and production routing
 remain on the assembly beads. Regenerate read-only with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_store_consts_guard_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
@@ -2303,7 +2250,6 @@ removes register `0`, `use_alloc = F` keeps it. The other rows cover the
 duplicate-register guard, a non-word operand, and the `copy_words` `NONE` arm.
 `Flapjack/Test/StackSemStoreConstSemParity.lean` kernel-replays all rows.
 Regenerate read-only with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_store_const_sem_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
@@ -2321,7 +2267,6 @@ label 7 with `use_alloc = T`. `Flapjack/Test/StackSemStoreConstsParity.lean`
 kernel-replays every row; the untagged partial case helper
 `Flapjack/StackSemStoreConsts.evaluateStoreConsts` is not the total HOL
 `evaluate`. Regenerate read-only with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_store_consts_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
@@ -2340,7 +2285,6 @@ certificates prove successful clock/stack/memory preservation, high-slice
 alias behavior, and the 64-bit single-source FromReg equation.
 Floating arithmetic, real conversions and complete evaluator routing remain
 on the assembling instruction/evaluator beads. Regenerate read-only using
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_fpreg_inst_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
@@ -2366,7 +2310,6 @@ FPMovFromReg are already covered by `stacksem_fpreg_inst_probeScript.sml`. The
 untagged partial case helper
 `Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean` is
 not the whole HOL `inst_def`. Regenerate read-only using
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_fp_arith_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
@@ -2387,9 +2330,7 @@ kernel-replays every row: the FPSqrt row uses `holFp64Sqrt_rte` from
 `Flapjack/Misc/BinaryIeeeSqrtFp64.lean`, the FPFromInt rows use
 `holIntToFp64_rte` from `Flapjack/Misc/BinaryIeeeConvert.lean`, and the FPToInt
 rows use the computable `holFp64ToInt`. The untagged partial case helper
-`Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean` is
 not the whole HOL `inst_def`. Regenerate read-only using
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_fp_convert_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
@@ -2427,7 +2368,6 @@ FPMovToReg at64/32, and the FPMovFromReg catchall. The identical inputs and
 outputs are kernel replayed by `Flapjack.Test.WordAllocInstructionWritesParity`.
 These regression rows do not establish cross-language equivalence or complete
 the production route. Regenerate read-only with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_get_writes_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
@@ -2439,7 +2379,6 @@ StoreConsts insert order, instruction/shared Load16 distinction, shared-store
 fallback, compound Seq fallback, and Install's first destination only.
 These rows are regression evidence; the executed compiler route and allocator
 correctness remain open. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_get_writes_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
@@ -2447,7 +2386,6 @@ scripts/hol-probes/regenerate.sh`.
 observations (absent/present maximum, failed bound, absent local/frame sizes,
 and frame guard) from `word_to_stackProofTheory`. The exact kernel replay is
 `Flapjack.Test.WordToStackStackSizeParity`. Regenerate read-only with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_to_stack_stack_size_rel_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `word_lang_occurrences_exact_probe.out` records twelve original `every_name`,
@@ -2455,7 +2393,6 @@ HOL_PROBE_ONLY=word_to_stack_stack_size_rel_probeScript.sml scripts/hol-probes/r
 Loop live-set scope and Call handlers under NONE/SOME returns.
 `Flapjack.Test.WordLangOccurrencesExactParity` invokes all three new tagged
 predicates and kernel-replays each row. Regenerate read-only with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 - `word_to_stack_frames_probeScript.sml`: original `handler_val`,
@@ -2697,7 +2634,6 @@ non-well-formed BN trees are retained without a validity restriction.
 carrier prerequisite does not establish the top compiler or its executed route;
 those remain tracked on the WordToStack compiler beads.
 
-`parmove_destination_probeScript.sml` observes the real/temporary destinations
 of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
 states. `ParmoveDestinationParity` replays each row and applies the unconditional
 original destination-membership theorem, including malformed states.
@@ -2777,7 +2713,6 @@ flattened length. `WordToStackCompilePrefixParity` applies the full original
 output-equation theorem to the same actual compiler outputs in the real Lake
 test driver. These observations are regression evidence, not a cross-prover
 equivalence or whole-compiler correctness proof.
-`word_alloc_merge_stack_sets_probeScript.sml` evaluates eight literal full-tree merge equations: empty, retained right payload, left-biased new entries, right-only entries, removal, fixed-set bias, malformed tree, and generic payloads. Same-input kernel fixtures are imported by CompilerParity. This helper does not establish the whole allocator theorem.
 
 `word_alloc_loop_checker_probeScript.sml` freshly observes seven original
 checker equations: absent and present Break/Continue table lookups, Loop with
@@ -2785,11 +2720,8 @@ Skip and Continue bodies, and a rejected colliding colour. The kernel fixtures
 in `WordAllocLoopCheckerParity` replay the same inputs through the actual test
 driver. These observations do not establish cross-prover equivalence or the
 whole allocator theorem; universal case proofs retain the original motive.
-`word_alloc_remove_temp_stack_probeScript.sml` captures eight original full-tree deletion equations: empty, root key, duplicate, missing, untouched fixed tree, raw non-wf tree, and two generalized payload/second-component inputs. The native right fold and same-input kernel fixtures preserve arbitrary payload/second-component generality; actual CompilerParity registers them. This helper does not establish allocator correctness or executed compiler routing.
 
-`word_alloc_merge_stack_only_probeScript.sml` captures nine original full-tree equations for every move-analysis branch: present alloc/physical/stack source, absent stack alloc/physical source, missing/root deletion, fixed overwrite, and raw non-wf trees. Same-input kernel fixtures are registered in actual CompilerParity. This helper is not full stack analysis or allocator correctness.
 
-`parmove_correct_probeScript.sml` kernel-proves seven universal-environment instances of original `parmove_correct`, deriving the windmill premise by EVAL: empty, self, chain, cycle, fan-out, reordered chain and Boolean register/value carriers. Matching Lean kernel applications are imported by CompilerParity; this is theorem replay, not an executable compiler parity measurement.
 
 `word_alloc_coalesce_cost_probeScript.sml` observes eight original native
 `get_coalescecost` equations, covering endpoint absence/presence, unequal stored
@@ -2805,13 +2737,9 @@ The `word_to_stack_comp_length_probe` checks eighteen actual compiler bitmap-acc
 
 `word_to_stack_abs_stack_generality_probe` captures eight original abstraction equations with frame dimensions 1 and 16 independent of bitmap/target-stack dimension 8. Saved cutsets contain nonempty payloads and predicted sizes differ from consumed target frames. `WordToStackAbsStackGeneralityParity` replays them with the generalized declaration and applies both prefix and length lemmas at arbitrary independent positive dimensions. The abstraction remains partial with the original guards.
 `word_alloc_heu_counters_probeScript.sml` captures twenty original HOL equations for all five counter updates: absent key, existing asymmetric tuple, repeated update, and preservation of another key. Matching kernel fixtures are in `HeuCountersParity`; these observations do not establish whole allocator equivalence.
-`target_sem_mapped_memory_probeScript.sml` checks both literal mapped instruction templates in original HOL: all eight size/opcode choices, invalid sizes, mismatched register/address/bytes, missing domain, wrapped addresses, empty encodings and word8 size wrap. The ignored return-PC parameter remains independently polymorphic. `TargetSemMappedMemoryParity` checks the same 35 observations in the Lean kernel.
 
-`word_alloc_even_colour_probeScript.sml` compares the actual sparse-tree physical-colour constraint with twenty original observations: physical keys require half their key, virtual values are unrestricted, duplicate entries use original first precedence, arbitrary large natural keys and malformed trees remain accepted inputs. `WordAllocEvenColourParity` checks the same results in the Lean kernel; no well-formedness or complete-domain assumption is added.
 
-`spt_union_algebra_probeScript.sml` checks all four literal universal Spt union/insert statements using their original kernel theorem proofs, then 28 concrete original raw-tree observations. `SptUnionAlgebraParity` applies the matching universal Lean theorems and checks malformed trees, singleton overwrites and left bias. Commutativity is restricted to unit-valued number sets; a Nat-valued counterexample is also checked. Concrete stored numerals are explicitly Nat on both sides.
 
-`word_to_stack_native_top_probeScript.sml` audits the original compile type and checks 24 full top-level result tuples. `WordToStackNativeTopParity` checks identical bitmap words, exact sparse frame maps, complete frame lists and ordered stub/program bodies in the kernel. Boundaries include both performance seeds and narrow wrap, natural register subtraction, duplicate avoid entries/identifiers, unbounded natural IDs, zero frames and ordered multiword bitmap threading. Expected stub subterms use the independently reviewed original/native stub definitions; body and bitmap values are otherwise literal expectations. Executed compiler routing remains separately tracked.
 
 `word_alloc_share_checker_probeScript.sml` freshly observes all eight ShareInst
 checker cases (Store/Store8/Store16/Store32 and Load/Load8/Load16/Load32) under
@@ -2821,13 +2749,11 @@ These finite observations supplement the full original-motive case proofs;
 they do not establish cross-prover equivalence or whole allocator correctness.
 
 `parmove_temp_mixed_probeScript.sml` checks four literal scratch-safety clauses with independent bool destination and num source carriers. `ParmoveTempAppendParity` kernel-replays these rows and applies the append theorem to arbitrary independent carriers; existing same-carrier sentinels remain registered.
-`word_alloc_share_checker_probeScript.sml` freshly observes all eight ShareInst
 checker cases (Store/Store8/Store16/Store32 and Load/Load8/Load16/Load32) under
 identity colouring, with a variable address. The same inputs are kernel-replayed
 in `WordAllocShareCheckerParity`, imported by the actual CompilerParity driver.
 These finite observations supplement the full original-motive case proofs;
 they do not establish cross-prover equivalence or whole allocator correctness.
-`word_to_stack_comp_prefix_probeScript.sml` freshly observes nine whole
 compiler-prefix equations: Skip, Alloc, MustTerminate, Seq, If, Loop, returning
 Call with perf enabled, returning Call with handler, and StoreConsts. Every
 input starts from a nested AppList whose count is deliberately below its
@@ -2843,7 +2769,6 @@ programs, and independently rejected return-set/argument-set colour collisions.
 `WordAllocReturnCheckerParity` kernel-replays the same inputs through the actual
 CompilerParity driver and instantiates the universal original-motive theorem.
 These finite observations do not prove cross-prover or whole-allocator equivalence.
-`word_alloc_spillcost_probeScript.sml` captures ten original natural costs: zero, each counter weight, both tail branches on asymmetric counters, and a fifth counter at 2^64. Same-input kernel numeric fixtures are in the actual CompilerParity root. The formula retains source tuple order and multiplies the entire sum; this helper does not establish allocator or executed compiler correctness.
 
 `word_alloc_oracle_colour_probeScript.sml` freshly observes ten original oracle
 branches: NONE input, empty success, physical-map failure, clash failure,
@@ -2863,7 +2788,6 @@ These finite observations do not establish cross-prover equivalence or route
 the executed allocator. Regenerate read-only with
 `HOL_PROBE_ONLY=spt_mapi_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `parmove_seqsem_unchanged_probeScript.sml` captures eight original sequential-evaluator value/equality tuples: empty, chain, cycle, repeated destinations, source-only observed register, written-key negative sentinel, self update, and Bool registers with Nat values. Matching kernel fixtures instantiate the unrestricted preservation theorem. These tests do not establish whole allocator equivalence.
-`parmove_temp_mixed_probeScript.sml` checks four literal scratch-safety clauses with independent bool destination and num source carriers. `ParmoveTempAppendParity` kernel-replays these rows and applies the append theorem to arbitrary independent carriers; existing same-carrier sentinels remain registered.
 
 
 `word_alloc_stack_only_probeScript.sml` captures fifteen original full-tree equalities for native stack analysis: right-fold Move and reverse Seq order, branch operand deletion, recursive wrappers, all Call handler forms, Delta removal and non-Delta preservation, including raw initial trees and the entry projection. Matching kernel fixtures run through CompilerParity. Production allocator routing remains separate.
@@ -2921,9 +2845,7 @@ the executed allocator. Regenerate with
 
 `word_to_stack_cutset_maximum_probe` captures twelve original cutset maxima, including duplicate/root keys, reordered and overlapping lists, sparse names and naturals above 2^80. Kernel fixtures replay the same inputs and apply the unconditional full list-to-Spt maximum correspondence. The production frame and compiler route remain separate dependency-linked work.
 `parmove_independence_probeScript.sml` proves ten original whole environment-transformer equalities using the original independence/parsem_nil theorems and evaluated windmill premises. Cases cover head/middle/tail extraction, cyclic sources, fanout, self moves, empty surrounding lists and independent Bool/Nat register/value carriers. Matching kernel theorem applications run in CompilerParity; these universal equality observations are not executable compiler parity or whole compiler correctness.
-`word_alloc_stack_only_probeScript.sml` captures fifteen original full-tree equalities for native stack analysis: right-fold Move and reverse Seq order, branch operand deletion, recursive wrappers, all Call handler forms, Delta removal and non-Delta preservation, including raw initial trees and the entry projection. Matching kernel fixtures run through CompilerParity. Production allocator routing remains separate.
 
-`word_alloc_get_prefs_probeScript.sml` captures seventeen original full-list preference equalities, with nonempty accumulators, duplicates/self moves, branch and sequential ordering, both returning handlers, tail-handler exclusion, loops, nested wrappers, ignored constructors and priority/register naturals exceeding 2^64. Matching actual CompilerParity fixtures reduce in the kernel. Native allocator assembly and production routing remain separate.
 
 `spt_map_probe.out` contains ten direct original payload-only `sptree$map`
 observations, kernel-replayed by `SptMapParity`. Every constructor, malformed
@@ -2940,7 +2862,6 @@ FP moves at widths1/32/64/128 (both integer registers counted at every width).
 Finite observations do not establish cross-prover equivalence or route the
 executed allocator. Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_inst_probeScript.sml scripts/hol-probes/regenerate.sh`.
-`parmove_independence_probeScript.sml` proves ten original whole environment-transformer equalities using the original independence/parsem_nil theorems and evaluated windmill premises. Cases cover head/middle/tail extraction, cyclic sources, fanout, self moves, empty surrounding lists and independent Bool/Nat register/value carriers. Matching kernel theorem applications run in CompilerParity; these universal equality observations are not executable compiler parity or whole compiler correctness.
 
 `word_alloc_heu_max_probe.out` captures twenty original componentwise maximum
 and branch-tree join observations, kernel-replayed by `HeuMaxParity`. Cases
@@ -2965,10 +2886,7 @@ are covered. Payload-only map retains raw structure and no wf premise is added.
 Finite observations do not establish cross-prover equivalence or executed
 allocator routing. Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_call_probeScript.sml scripts/hol-probes/regenerate.sh`.
-`word_to_stack_full_read_bitmap_mixed_probeScript.sml` captures six original universal success-preservation applications at independently chosen bitmap/descriptor widths (8/1, 8/16, 1/32, 16/8, offset 8/32 and same-width 8/8), plus four actual success/zero/location guard equalities. Matching kernel applications include arbitrary independent positive widths. This repairs full_read_bitmap_append type generality; its proof and executed fullReadBitmap definition are unchanged.
-`word_to_stack_cutset_maximum_probe` captures twelve original cutset maxima, including duplicate/root keys, reordered and overlapping lists, sparse names and naturals above 2^80. Kernel fixtures replay the same inputs and apply the unconditional full list-to-Spt maximum correspondence. The production frame and compiler route remain separate dependency-linked work.
 
-`word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
 
 `word_to_stack_program_maximum_probe` captures thirty-two original full program maxima and kernel-replays the same inputs through the actual production/native codec. Every production constructor appears, including all Call forms, ignored tail handlers, tuple-move scans, duplicate cutsets/loop live sets, nonzero Return accumulators, shared 16-bit memory and names above 2^80. The complete Option-map correspondence uses only the existing allocator memory guard and preserves codec rejection; separate sentinels expose nested five-register AddCarry and ordinary 16-bit rejection. This carrier proof does not establish initial source-to-SSA codec image, native frame/config correspondence or the executed route.
 `reg_alloc_remap_probe.out` captures twelve fresh original list remapping and
@@ -2978,7 +2896,6 @@ names, raw nodes, large names/counters and arbitrary initial maps are covered.
 These finite observations do not establish general cross-prover equivalence or
 production allocator routing. Regenerate read-only with
 `HOL_PROBE_ONLY=reg_alloc_remap_probeScript.sml scripts/hol-probes/regenerate.sh`.
-`word_to_stack_cutset_maximum_probe` captures twelve original cutset maxima, including duplicate/root keys, reordered and overlapping lists, sparse names and naturals above 2^80. Kernel fixtures replay the same inputs and apply the unconditional full list-to-Spt maximum correspondence. The production frame and compiler route remain separate dependency-linked work.
 
 `word_to_stack_ssa_codec_probe` captures eight fresh original full SSA equations, including ABI entry moves, assignment, constant, shift, long multiplication, Raise, Call and Return. Kernel fixtures replay every complete output tree at the same inputs. Nine separate codec-domain sentinels cover ordinary 16-bit memory and nested five-register AddCarry rejection. Untagged universal infrastructure proves actual SSA renaming for arbitrary frames/state and the full ABI wrapper preserve codec acceptance; subsequent optimization passes and the native production route remain open.
 `word_alloc_heu_prog_probe.out` captures fifty-two fresh original program
@@ -2990,7 +2907,6 @@ unbounded names/counters and widths 1/64/128. These finite observations do not
 establish general cross-prover equivalence or production allocator routing.
 Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
-`word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
 
 `word_alloc_canonize_sort_probe.out` captures seventeen fresh original mllist
 sort observations on the exact inline x/y/priority comparator, replayed by
@@ -3053,17 +2969,13 @@ Bool/list states, Bool values and a large Nat state. Generic pointwise equation
 is separately kernel checked. Finite observations do not establish
 cross-assistant equivalence or production allocator routing. Regenerate with
 `HOL_PROBE_ONLY=monad_array_length_probeScript.sml scripts/hol-probes/regenerate.sh`.
-`word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
 
-`word_alloc_canonize_sort_probe.out` captures seventeen fresh original mllist
 sort observations on the exact inline x/y/priority comparator, replayed by
-`CanonizeSortParity`. Empty/base/recursive sizes, duplicates, coordinate
 precedence, unnormalized reversed pairs and unbounded names/priorities are
 covered. This reuses the existing native MlList sorter; it neither expands
 external-source checker trust nor completes normalization/grouping or executed
 allocator routing. Source revision/span digest are beside `canonizeMoveLess`.
 Regenerate read-only with
-`HOL_PROBE_ONLY=word_alloc_canonize_sort_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `word_to_stack_unreach_codec_probe` captures sixteen fresh original complete unreachable-pass output equations: Skip and right association, Raise/Return/Break/Continue/tail-call pruning, priority-preserving move composition with duplicate destinations and a residual sequence, loops, MustTerminate, If, unchanged nonreturning handlers and both returning Call continuations. Kernel fixtures replay the same complete outputs. Separate production-only five-register AddCarry sentinels check unreachable deletion, retained rejection and the different handler policies. Untagged infrastructure proves actual sequence simplification, suffix-accumulator flattening and folding preserve acceptance, then derives the executed post-copy wrapper; no output-codec, normal-form, guard or successful-pass premise is assumed. This is one-way closure, since unreachable rejected inputs can be erased; native frame and routing remain open.
 
@@ -3100,7 +3012,6 @@ owner-matching and owner-mismatching handler labels, recursive traversal of
 both bodies, duplicates, Seq/If/Loop, RawCall entry one, LocValue and optional
 StoreConsts stubs. These regressions do not establish compiler label
 correctness or cross-language equivalence. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stackprops_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh` against the read-only prebuilt theories.
 - `parmove_all_distinct_steps_probeScript.sml`: four full destination predicates for zero-step scratch and start/save states. Lean fixtures additionally certify the RTC trace; HOL observations alone do not establish it.
@@ -3116,7 +3027,6 @@ the same cases and the executed wrapper's equation for arbitrary keys/lists.
 `word_alloc_full_ssa_probe` captures 5 original EVAL results of
 `full_ssa_cc_trans` at 64-bit words (limit, entry move, renamed body), replayed
 in `WordAllocFullSSAParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_full_ssa_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `word_alloc_ssa_cc_trans_probe` captures 31 original EVAL results of
@@ -3131,7 +3041,6 @@ HOL_PROBE_ONLY=word_alloc_ssa_cc_trans_probeScript.sml scripts/hol-probes/regene
 `list_next_var_rename_move`, `force_rename`, `mk_prio`, `ssa_reconcile` and
 `loop_setup` at 64-bit words, replayed by definitional equality in
 `WordAllocSSAHelpersParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_ssa_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `word_alloc_ssa_trans_inst_probe` captures 28 original EVAL results of
@@ -3145,7 +3054,6 @@ HOL_PROBE_ONLY=word_alloc_ssa_trans_inst_probeScript.sml scripts/hol-probes/rege
 `option_lookup`, `priority`, `fake_move`, `fake_moves` and
 `fix_inconsistencies` at 64-bit words (raw sparse trees), replayed by
 definitional equality in `WordAllocFixInconsistenciesParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_fix_inconsistencies_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `hol_sorting_probe` captures the original HOL `SORTED`, `PART` and `PARTITION`
@@ -3158,7 +3066,6 @@ HOL_PROBE_ONLY=hol_sorting_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `mergesortN` types and 14 EVAL results at the pinned HOL revision (a non-strict, a strict
 and a non-total relation, unsorted `merge` inputs, and `mergesortN` counts below, above and
 equal to the list length), kernel-replayed in `HolMergesortParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=hol_mergesort_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `hol_list_el_probe` captures the original HOL `HD`/`EL` types and six in-range
@@ -3171,7 +3078,6 @@ HOL_PROBE_ONLY=hol_list_el_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `extract_color` (raw sparse result), `coalesce_root`, `full_consistency_ok`
 (each rejecting check and an accepted pair) and `update_move`, kernel-replayed
 in `RegAllocMovePrepParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=reg_alloc_move_prep_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `reg_alloc_coalesce_probe` captures 29 original EVAL results of misc
@@ -3179,7 +3085,6 @@ HOL_PROBE_ONLY=reg_alloc_move_prep_probeScript.sml scripts/hol-probes/regenerate
 (including path compression), `canonize_move`, `st_ex_FIRST`,
 `reset_move_related`, `st_ex_list_MAX_deg` and `st_ex_list_MIN_cost`, with full
 `ra_state` results, kernel-replayed in `RegAllocCoalesceParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=reg_alloc_coalesce_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `reg_alloc_worklist_probe` captures 18 original EVAL results of `dec_deg`,
@@ -3188,21 +3093,18 @@ HOL_PROBE_ONLY=reg_alloc_coalesce_probeScript.sml scripts/hol-probes/regenerate.
 results (truncated decrement, duplicate neighbours, out-of-dimension no-op,
 partial updates before `Subscript`), kernel-replayed in
 `RegAllocWorklistsParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=reg_alloc_worklist_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `reg_alloc_considered_var_probe` captures 20 original EVAL results of
 `is_Fixed`, `is_Atemp`, `is_Fixed_k`, `considered_var` and `deg_or_inf`
 (tag kinds, `k` boundaries, out-of-array failures, state preservation),
 kernel-replayed in `RegAllocConsideredVarParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=reg_alloc_considered_var_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `reg_alloc_split_degree_probe` captures 12 original EVAL results of
 `is_not_coalesced` and `split_degree` (coalesce targets, degree comparisons,
 the `v ≥ d` short-circuit, an out-of-array failure and state preservation),
 kernel-replayed in `RegAllocSplitDegreeParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=reg_alloc_split_degree_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `reg_alloc_graph_construction_probe` captures 20 original EVAL results of
@@ -3211,7 +3113,6 @@ HOL_PROBE_ONLY=reg_alloc_split_degree_probeScript.sml scripts/hol-probes/regener
 (Bool endpoints) and `init_ra_state` over literal `ra_state` records, with
 full result states including `Subscript` failures and their partial updates.
 `RegAllocGraphConstructionParity` kernel-replays every row. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=reg_alloc_graph_construction_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `reg_alloc_move_table_probe` captures the original types and 25 EVAL results
@@ -3281,7 +3182,6 @@ and indirect Calls, both populated bodies, populated handlers with no return,
 excluded continuation metadata, duplicate labels, Seq/If/Loop/MustTerminate
 and LocValue. These regressions do not establish compiler label correctness or
 cross-language equivalence. Regenerate against read-only prebuilt theories with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=wordconvs_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
@@ -3304,7 +3204,6 @@ width one, and zero/nonzero live frames with irregular bitmap counts. The
 nonempty continuation includes both code references and an owned handler.
 These finite regressions do not prove compiler correctness or cross-language
 equivalence. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_to_stack_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 - `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
@@ -3394,7 +3293,6 @@ instruction/name/memory-operation carriers are fixed by labLang's datatype.
 Run `HOL/bin/hol run <absolute script path>` from the original backend semantics
 directory and redirect stdout to the paired `.txt`, trimming trailing whitespace
 (optionally set `CAKEML`). All printed type and statement content is retained.
-`parmove_preserves_moves_pmov_probe.out` records three fresh original scheduler
 observations: terminal scratch destination, pending destination, and full pending
 output. ParmovePreservesMovesPmovParity kernel-replays the same inputs and applies
 the source-shaped preservation theorem with internally discharged well-formedness.
@@ -3452,13 +3350,10 @@ wrapped PCs at width 1, strides equal to or larger than word dimension, and
 original recursive characterization and byte-memory domain subset theorem,
 with no added length/alignment/uniqueness premise. Probes remain regression
 evidence, not cross-language equivalence or full encoder acceptance.
-`parmove_all_distinct_wrapper_probe.out` freshly fetches the complete exported
-`ALL_DISTINCT_parmove` theorem and captures six whole scheduler outputs
 (empty/self/chain/swap/cycle/shared source), plus the duplicate-destination
 input/output distinctness boundary `(F,F)`. `ParmoveAllDistinctWrapperParity`
 replays all outputs and non-vacuous theorem applications in Lean, with a Bool
 carrier check. Original run used a temporary cwd and canonical in-memory
-`holpathdb` CAKEMLDIR registration/read-only theory paths; CakeML unchanged.
 Selector: `HOL_PROBE_ONLY=parmove_all_distinct_wrapper_probeScript.sml`.
 `parmove_scratch_order_wrapper_probe.out` freshly fetches the complete exported
 `parmove_not_use_temp_before_assign` theorem and records complete scheduled moves,
@@ -3476,20 +3371,15 @@ external labels and owned versus foreign handlers. Kernel fixtures replay the
 full predicates; these observations are regression evidence, not cross-language
 equivalence. Regenerate with HOL_PROBE_ONLY=stackprops_label_safety_probeScript.sml
 and the read-only prebuilt backend semantics theories.
-`parmove_all_distinct_wrapper_probe.out` freshly fetches the complete exported
-`ALL_DISTINCT_parmove` theorem and captures six whole scheduler outputs
 (empty/self/chain/swap/cycle/shared source), plus the duplicate-destination
 input/output distinctness boundary `(F,F)`. `ParmoveAllDistinctWrapperParity`
 replays all outputs and non-vacuous theorem applications in Lean, with a Bool
 carrier check. Original run used a temporary cwd and canonical in-memory
-`holpathdb` CAKEMLDIR registration/read-only theory paths; CakeML unchanged.
 Selector: `HOL_PROBE_ONLY=parmove_all_distinct_wrapper_probeScript.sml`.
 ### Native asmSem arithmetic and state operations
 
-`asmsem_arithmetic_probeScript.sml` evaluates the loaded original `asmSemTheory`
 state primitives and all eight `arith_upd_def` constructors. Its 52 captured rows
 are replayed by `Flapjack.Test.AsmSemArithmeticParity` against the native
-`AsmSem.Arithmetic` definitions, with unrelated state fields arbitrary. Cases
 cover ordered aliasing writes, retained writes on failed division and register
 shifts, immediate shifts without that register-only guard, prior failure,
 carry and signed overflow, and widths 1, 8, 32, and 64. Original DIV_0/MOD_0
@@ -3709,11 +3599,9 @@ Two native erasure certificates prove that changing unused fields and their
 carriers leaves complete helper outputs unchanged. This does not establish
 cross-language equivalence, instrumentation correctness, or pass simulation.
 Selector: `HOL_PROBE_ONLY=word_to_stack_handler_frame_carriers_probeScript.sml`.
-`word_alloc_limit_var_probe.out` records the full original definition/type and
 twelve native-program maximum/limit/class/strict-bound observations. Inputs
 cover all four residues, zero/multiples, widths1/32/64/80, unbounded naturals,
 returning Call bodies, ignored tail handlers and ignored Load16 fields.
-`WordAllocLimitVarParity` checks thirteen kernel examples against identical
 inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
 The executed upstream maximum/limit route remains tracked on .30.1.2.1.
 
@@ -3749,10 +3637,7 @@ concrete original theorem applications match `SSALocalsInsertParity`: insertion
 from empty trees and insertion preserving an existing mapped source key/value.
 These are checked theorem applications rather than a claim that the original
 simplifier decides the quantified relation after insertion.
-`ssa_locals_bounds_probe.out` replays the literal original local
-`ssa_locals_rel_more` proof (5195–5203), preserving its generic locals payload
 and original conjunction. Existing `ssa_locals_rel_probe.out` observations and
-`SSALocalsParity` fixtures cover nonvacuous, rejected, boundary and malformed
 relations; that fixture additionally applies the complete bound theorem at
 arbitrary payload, trees and counters.
 
@@ -3973,9 +3858,7 @@ types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
 three machine-IEEE operations and the generic compile-oracle projection. The
 state parameters and fixed word64 FP register carrier are retained; this is
 source-shape evidence, not a HOL-to-Lean equivalence proof.
-`ssa_rename_move_preserve_weak_probe.out` freshly replays the full original move-renaming preservation proof plus its literal local prerequisites and five original inferred carriers; both states share all three type dimensions. No successful target evaluation or post-state relation is assumed.
 
-`ssa_get_set_vars_probe.out` freshly replays the full original generalized prefix/list-insert read and set/read proofs, with nine original inferred state/list/tree types. Native SSAGetSetVars retains every original length, distinctness and disjointness premise and the real WordSem operations.
 ### Native compiler flat-effect no-shared-memory cases
 
 `word_to_stack_no_shmemop_flat_probeScript.sml` captures fifty-four original
@@ -4018,7 +3901,6 @@ their original statements and proofs. In particular, empty_env_const has
 independently polymorphic x and z states. These are source-shape captures,
 not a claim of HOL-to-Lean equivalence or exported status for local helpers.
 
-`ssa_rename_move_preserve_weak_probe.out` freshly replays the full original move-renaming preservation proof plus its literal local prerequisites and five original inferred carriers; both states share all three type dimensions. No successful target evaluation or post-state relation is assumed.
 ### Loop-to-Word compiled names, membership, and first-match lookup
 
 `loop_to_word_program_names_probeScript.sml` replays all four complete original proofs at lines 1850–1909. It captures entire duplicate-name and distinct-name compiled lists, true/false name-distinctness, the first duplicate lookup, and missing lookup. Generic-width Lean fixtures match these results and apply each public theorem. Lookup preserves the original first-match semantics without a distinct-name premise. Selector: `HOL_PROBE_ONLY=loop_to_word_program_names_probeScript.sml`.
@@ -4045,7 +3927,6 @@ and shared Load inputs. `StackToLabNonrecursiveValidityParity` applies all
 those two concrete theorem applications. Every case retains all original
 premises and the full app-list output conclusion. Recursive Seq/If/Loop and
 returned Call, the assembling theorem and executable route remain open.
-`stacksem_fp_conversion_types_probeScript.sml` captures seven original full
 types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
 three machine-IEEE operations and the generic compile-oracle projection. The
 state parameters and fixed word64 FP register carrier are retained; this is
@@ -4058,22 +3939,18 @@ asm Const type confirms that the program parameter indexes HOL words. Ten
 clock_neutral observations cover recursion and rejected Loop/Call/Tick cases
 at word dimensions1/16/64; StackPropsClockSupportParity kernel-replays them.
 These are source and regression captures, not evaluator equivalence.
-`word_alloc_limit_props_probe.out` freshly re-elaborates the literal complete
 local `limit_var_props` proof, then evaluates twelve complete native program
 maximum/limit/allocation/strict-occurrence tuples. The tuples exactly match
-`WordAllocLimitVarParity.lean`; `WordAllocLimitPropertiesParity.lean` imports
 those kernel fixtures and applies the full public theorem with arbitrary
 positive-width programs and the original limit equality premise. Cases retain
 all residues, widths1/32/64/80, the original ignored Load16 registers, tail Call
 handler exclusion, returning Call body traversal and unbounded Nat registers.
 The qualified tag records only the standard HOL type-indexed word translation.
 
-`word_to_stack_no_shmemop_handlers_probe.out` literally replays all three local
 PushHandler/PopHandler/StackHandlerArgs no-shmemop proofs and captures their
 generic operation types. Sixteen fresh predicate observations cover both perf
 flags, independent unused frame carriers, safe and forbidden continuations,
 widths1/32/64/80, direct/indirect generic destinations and large frame offsets.
-`WordToStackNoShmemopHandlersParity.lean` kernel-replays every observation and
 applies each full theorem at arbitrary original carriers. Pop retains false
 continuations; no range, safety, valid-frame or execution premises are added.
 
@@ -4119,7 +3996,6 @@ group; other constructors and assembly remain separately tracked. These
 regressions do not establish cross-language equivalence or whole compiler correctness.
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_handled_probeScript.sml`.
 
-`stackprops_state_constants_probeScript.sml` captures the complete thirteen
 state-operation constant/commutation statements from stackProps20-168 and
 their original free-variable types. It fetches exported HOL theorems; the
 local/overwritten declarations at84/90/110/125 are explicitly re-proved with
@@ -4156,9 +4032,7 @@ deriving fuel sufficiency from the source measure. The native wMove tree
 fixtures retain both temporary registers and natural frame subtraction; they
 do not establish actual move materialization or complete compiler equivalence.
 Regenerate with `HOL_PROBE_ONLY=word_to_stack_scheduler_route_probeScript.sml`.
-`ssa_locals_list_rename_probe.out` freshly replays the full original generic list-renaming locals relation, its three local theorem prerequisites and source physical-class tactic, with nine original inferred types confirming generic payload alpha and native tree/list carriers. All seven original premises are retained.
 
-`ssa_setup_props_probe.out` freshly replays the complete original setup-SSA proof, six local prerequisite proofs and two ML tactics, plus four inferred types. State/program/move share their word dimension. The tagged native theorem retains the original allocation/domain premises and all six actual evaluator conclusions; executed setup routing is tracked separately.
 
 ### Full arbitrary-program comp no-shared-memory preservation
 
@@ -4254,11 +4128,8 @@ The new kernel replay covers domain failure, Loc rejection, missing operands,
 operator lists, wraparound, shift bounds and successful/failed assignment.
 The full recursive theorem imposes no success, size or clock bound. These
 captures provide regression evidence, not HOL-to-Lean equivalence.
-`ssa_fake_moves_correct_right_probeScript.sml` replays the literal right fake-move simulation and its local prerequisites, capturing the full five-conclusion statement and seven inferred types.
 
-`ssa_fix_inconsistencies_correct_left_probeScript.sml` replays the literal left reconciliation assembly and its original merge/fake prerequisites; captures the full statement and six types, including identical source/target word/code/FFI dimensions.
 
-`ssa_fix_inconsistencies_correct_right_probeScript.sml` replays the literal right reconciliation assembly and original map-agreement prerequisites, capturing the full returned-left-map result and six inferred types.
 
 `stackprops_instruction_constants_probeScript.sml` captures four complete
 original instruction support statements and their full types, plus ten native
@@ -4327,7 +4198,6 @@ and an earlier duplicate that must win. The kernel replay is
 `Flapjack/Misc/Sptree.lean` and `findIndex` in `Flapjack/Misc/FindIndex.lean`;
 HOL `=` is rendered by Lean's standard `DecidableEq` for the generic element
 type (bead `flapjack-pxn.18.5.15.10.10`). Regenerate with
-`HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=misc_lookup_any_find_index_probeScript.sml
 scripts/hol-probes/regenerate.sh`. These finite observations are regression
 evidence, not a cross-prover equivalence proof.
@@ -4398,7 +4268,6 @@ HOL's complete result tail `(position, flag)` and arbitrary prefix premise.
 Kernel fixtures replay the observations and apply the full section theorem.
 ### SSA Call allocation/map invariant
 
-`ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
 ### Generic force_rename repair
 
 `ssa_force_rename_generic_probe.out` replays the literal three complete lookup/domain proofs at word_allocProofScript.sml:6347–6381 and captures the original arbitrary-payload definition type. The Lean Bool/Unit fixtures exercise the generalized definition and theorem instances; SSA bounds retain their Nat specialization.
@@ -4411,7 +4280,6 @@ Kernel fixtures replay the observations and apply the full section theorem.
 
 The section-length probe additionally captures five `sec_length_add` (lab_to_targetProofScript.sml:3135) observations: arbitrary nonzero additive offsets, empty/mixed lists, zero annotations and empty encoded bytes with a large recorded annotation. All original eight section-label rows remain mandatory. The same Lean parity module kernel-replays all thirteen observations.
 
-`lab_to_target_padding_similarity_probeScript.sml` captures the complete
 original add-nop, section-padding and code-padding similarity statements and
 full quantified types. Its local add-nop theorem replays the original statement
 and proof literally. Six direct padding observations include empty nop chunks,
@@ -4430,7 +4298,6 @@ provide review/regression evidence, not cross-assistant equivalence.
 ### SSA primitive program invariants
 
 `ssa_cc_trans_props_primitives_probe.out` captures the original 15 nonrecursive primitive invariant statements and actual constructor types. It replays the literal StoreConsts, instruction, expression tactic, CBW/DBW and ShareInst proofs after the original compiler simplification, including original instruction/extension/allocation prerequisites. The Lean cases derive all three invariants from only the original compiler equality and map/allocation premise.
-`ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
 
 ### SSA recursive control invariants
 
@@ -4494,17 +4361,14 @@ those observations and applies the full arbitrary-state dispatch theorem.
 `ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
 ### SSA recursive control invariants
 
-`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
 
 ### SSA reconciliation list prerequisites
 
 `ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
 ### SSA recursive control invariants
 
-`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
 ### Complete SSA program invariant
 
-`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
 ### Full target machine evaluator
 
 `target_sem_evaluate_probeScript.sml` evaluates the original `targetSem`
@@ -4551,14 +4415,11 @@ clause checks live in `Flapjack.Test.TargetSemMachineSemParity`; these check
 local definition shape and are not a cross-language equivalence theorem.
 ### Complete SSA program invariant
 
-`ssa_cc_trans_props_probe.out` kernel-replays all 27 original constructor case proofs and applies the original native functional-induction theorem to their conjunction. It captures the complete all-program theorem and original variable types (the induction theorem names the first four variables v/v1/v2/v3). The Lean assembly uses the faithful native nested datatype induction, discharging every scoped case IH; no IH or stronger assumption remains in its final statement.
 ### SSA recursive control invariants
 
-`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
 
 ### SSA reconciliation list prerequisites
 
-`ssa_reconcile_list_props_probe.out` replays the full original move-list rewrite and filtered-name distinctness proofs6485/6500 used by evaluate_ssa_reconcile6609/6612. It captures arbitrary payload/function/map types; the Lean rewrite retains imported exact THE and the HOL inhabited-type convention, with no new lookup-success premise or invented NONE value.
 
 `ssa_reconcile_empty_probe.out` replays the complete original local evaluator reconciliation proof and its literal prerequisites, then specializes the genuine empty-moves branch. Six native types are captured; this is regression evidence, and the Lean branch independently derives the evaluator/post-state conclusions. Full SSA simulation remains unfinished.
 `stackprops_stack_lengths_probeScript.sml` literally replays the complete
@@ -4568,8 +4429,6 @@ independent bitmap/stack-width decoder observations.
 `StackPropsStackLengthsParity.lean` kernel-replays the observations and applies
 both full theorems, including an 80-bit multi-frame decoded-stack result.
 A one-bit bitmap continuation with no following word correctly returns NONE.
-`ssa_reconcile_empty_probe.out` replays the complete original local evaluator reconciliation proof and its literal prerequisites, then specializes the genuine empty-moves branch. Six native types are captured; this is regression evidence, and the Lean branch independently derives the evaluator/post-state conclusions. Full SSA simulation remains unfinished.
-`ssa_reconcile_alookup_zip_probe.out` replays both original generic indexed-SOME and absent-key-NONE ALOOKUP ZIP proofs6551–6590, recording full statements and nine original argument types. Canonical opaque EL and all original domain/injection/index/length premises are retained.
 ## Full Word CSE evaluation frames and state agreement
 
 `word_cse_evaluation_frames_probeScript.sml` literally replays all four original
@@ -4604,9 +4463,7 @@ register-key polymorphism of StackSem `find_code_def`;
 The full ordered extractor/containment ports remain separate work on qipb.
 The same `ssa_reconcile_empty_probe.out` also backs full `evaluateSSAReconcile`: `re_original_full` is the complete original result without a branch guard; its literal source proof and all six native carrier types were replayed before the assembling Lean theorem was tagged.
 
-`ssa_lt_ok_probe.out` captures the complete original loop-table predicate and its inferred native product/list/tree type, confirming independently arbitrary entry/exit name-set payloads. The Lean definition retains both original domain injections; this supports full SSA simulation rather than certifying it.
 
-`ssa_cc_trans_correct_control_probe.out` replays both literal resumed Break/Continue semantic correctness proofs against their full original theorem specializations, including all six premises, existential permutation and complete result-sensitive postcondition. Six native carrier types are captured. Other native SSA correctness cases and compiler composition remain unfinished.
 
 `target_props_clock_probeScript.sml` checks the original closed
 `evaluate_add_clock` theorem against its entire quantified statement and captures
@@ -4617,7 +4474,6 @@ budget for the complete constructor case analysis. No default target or gate is
 shortened. Source-reviewed total `holEl`/`holHd` behavior is retained at both
 clocks and explicitly recorded for the evaluator and machine semantics.
 
-`ssa_reconcile_empty_probe.out` replays the complete original local evaluator reconciliation proof and its literal prerequisites, then specializes the genuine empty-moves branch. Six native types are captured; this is regression evidence, and the Lean branch independently derives the evaluator/post-state conclusions. Full SSA simulation remains unfinished.
 `word_cse_deletion_frames_probeScript.sml` regenerates the two complete local
 `evaluate_arith_unset_var` / `evaluate_load_unset_var` proofs from original
 `word_cseProofScript.sml`, requiring closed hypotheses, plus four inferred types
@@ -4675,7 +4531,6 @@ cover empty/singleton register sequences, widths 1/2/32/64/80, zero/all-ones,
 MSB values and discarded top bits. `WordToStackBitmapWordParity.lean` checks
 matching observations/full applications plus arbitrary width/count instances.
 These are full original helper theorems, not a bitmap decoder simulation.
-`target_props_io_events_probeScript.sml` replays the full original `evaluate_io_events_mono` quantified theorem with no open hypotheses. `TargetPropsIoEventsParity.lean` checks the same unrestricted statement over the full literal evaluator. Clock induction composes exact returning FFI append with recursive prefix preservation; all failed/final paths retain the original trace.
 
 `lab_to_target_ignore_clocks_probeScript.sml` replays the complete original local proof18-27 and checks the full closed statement. `LabToTargetIgnoreClocksParity.lean` applies the corresponding unrestricted kernel theorem; both original non-TimeOut runs are retained.
 
@@ -4683,7 +4538,6 @@ Native SSA register-writing probe replays original Assign/Get/LocValue exp_tac2 
 
 SSA state-writing probe replays original Set/Store semantic cases and local prerequisites, captures full statements and six original carrier types. Primitive Set omits only discarded recursive IH bookkeeping; Store substitutes its expression binder. Source errors and successful native store/memory updates are preserved.
 
-`lab_to_target_ignore_clocks_probeScript.sml` replays the complete original local proof18-27 and checks the full closed statement. `LabToTargetIgnoreClocksParity.lean` applies the corresponding unrestricted kernel theorem; both original non-TimeOut runs are retained.
 
 `target_props_clock_io_events_probeScript.sml` replays the full original `evaluate_add_clock_io_events_mono` theorem (targetPropsScript.sml:1112-1137), including only clock order and no open hypotheses. `TargetPropsClockIoEventsParity.lean` checks the same full statement over the literal evaluator. Paired clock induction retains every transition and uses full input-event prefix preservation at clock zero.
 
@@ -4725,7 +4579,6 @@ and 18 EVAL results of `dest_Seq_Move`, `merge_moves`, `SimpSeq` and `remove_unr
 `remove_unreach_test`, continuations dropped after `Return`/`Raise`, a `Call` without return
 continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a structural
 observation in `WordUnreachDefParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `word_copy_def_probe` captures the original HOL `copy_prop` and `copy_prop_prog` types and 41
@@ -4744,14 +4597,12 @@ HOL_PROBE_ONLY=word_copy_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 positive arguments proved in HOL from `LOG_UNIQUE` (`LOG2` is `[nocompute]`). No value of
 `LOG2 0` is derivable from the specification. `LogrootParity` checks the Lean statements
 against the captured ones and proves the same values. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=logroot_log_spec_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `alignment_align_probe` captures the original HOL `align`/`byte_align` types and EVAL results
 of `word_slice` (including a bound above `^HB` and an empty slice), `align` (exponents 0, 3 and
 40 on a 32-bit word) and `aligned`, plus `byte_align`/`byte_aligned` at 64 bits proved in HOL
 through `LOG2 8 = 3`. Kernel-replayed in `AlignmentParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=alignment_align_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `lab_to_target_share_mem_domain_probe` captures the original typed `share_mem_domain_code_rel`
@@ -4759,7 +4610,6 @@ definition and three HOL-proved consumers: its reduction on code with no lines t
 `byte_align` domain closure and `shared_addresses` equation, the full-domain instance, and the
 64-bit singleton `{8w}` counterexample (`byte_align 9w = 8w` through `LOG2 8 = 3`).
 `LabToTargetShareMemDomainParity` replays the three consumers in the kernel. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=lab_to_target_share_mem_domain_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `lab_to_target_share_mem_state_probe` captures the original typed `share_mem_state_rel`
@@ -4767,7 +4617,6 @@ definition (independent labSem and machine word widths, vacuous outer `t1`/`ms1`
 HOL-proved consumers: the instance with no FFI names and the counterexample with one shared-memory
 name whose entry PC is the halt PC (via `mmio_pcs_min_index [SharedMem MappedRead] = SOME 0`).
 `LabToTargetShareMemStateParity` replays both. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=lab_to_target_share_mem_state_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `asm_sem_mem_ops_probe` captures 14 original HOL results of `mem_load`, `mem_store` and
@@ -4788,7 +4637,6 @@ HOL_PROBE_ONLY=asm_sem_step_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `asm_props_encoder_correct_probe` captures the original typed `encoder_correct` definition and
 two HOL-proved consumers: its `target_ok` projection and the specialization to the identity
 interference environment. `AsmPropsEncoderCorrectParity` replays both. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=asm_props_encoder_correct_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 
@@ -4833,11 +4681,9 @@ including complete continuation configurations and returned FFI events.
 The full definition retains total EL without an added bounds premise.
 `riscv_overflow_target_probeScript.sml` captures both original RV64 six-instruction overflow expansions and their encoded bytes for eight register tuples, including zero, scratch-register and alias cases. These source observations support a staged target-helper prerequisite; the production overflow carrier and codec remain separate work.
 
-`word_alloc_def_probe` captures the original HOL `word_alloc` type and eight EVAL results on
 small 64-bit programs: each allocator branch (Simple, IRC, linear scan), an accepted and a
 clashing oracle colouring (the latter falls back to the allocator), stack variables under
 IRC and linear scan, and a physical register. HOL's free `asm_config` is only read through
-`ISA`. Kernel-replayed through a structural observation in `WordAllocDefParity`.
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
@@ -4848,12 +4694,10 @@ proof and its original non-exported getVar transport helper. No recursive IH
 or additional success/target-evaluation premise is introduced. The capture
 records the complete original statement and native state/register/map/table
 carriers; it is source evidence, not a cross-assistant equivalence proof.
-`word_to_stack_bitmap_bit_structure_probeScript.sml` replays the complete
 original missing-bit, SNOC and prefix-reconstruction proofs plus their local
 original bit-index context, each with no open hypotheses. It prints two
 original types and 187 cases across widths 1/2/8/64/80, including truncating
 long lists, empty prefixes, missing bits and true/false terminal bits.
-`WordToStackBitmapBitStructureParity.lean` checks matching observations and
 whole theorem applications. The HOL context replay uses original EL read-only;
 no new Lean total-EL port or provenance allowance is introduced.
 
@@ -4881,13 +4725,10 @@ proof and its original getVar/getVars, physical list-write, and set/read local
 helpers, without added target-run or success premises. The capture records the
 complete original statement and native state/register/list/map/table carriers.
 It is source evidence, not a cross-assistant equivalence proof.
-`word_unreach_def_probe` captures the original HOL `remove_unreach` and `merge_moves` types
 and 18 EVAL results of `dest_Seq_Move`, `merge_moves`, `SimpSeq` and `remove_unreach`
 (through `Seq_assoc_right`) on small 64-bit programs, including the source's
-`remove_unreach_test`, continuations dropped after `Return`/`Raise`, a `Call` without return
 continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a structural
 observation in `WordUnreachDefParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 
@@ -4934,18 +4775,12 @@ expression setup and local helpers. Fixed-constructor selection and discarded
 primitive induction bookkeeping are omitted. It captures the complete pass
 statement and native operand/operator/state/map/table carriers. This is source
 evidence, not a cross-assistant equivalence proof; whole Inst assembly remains open.
-`balanced_map_keyordered_probeScript.sml` replays the original local
-`key_ordered_to_fmap` proof with its full statement and no open hypotheses.
 It retains arbitrary trees and only the original good comparator premise.
 This source capture does not assert cross-assistant equivalence or production wiring.
-`store_list_code_probeScript.sml` records the full original definition/type and 24 complete initializer trees at widths 1/8/64/80, with empty, constant, register and mixed lists, aliasing, arbitrary large registers, and word truncation. Native kernel fixtures retain the terminal Skip and literal right-nesting. Full init/compiler routing is tracked separately.
-`word_unreach_def_probe` captures the original HOL `remove_unreach` and `merge_moves` types
 and 18 EVAL results of `dest_Seq_Move`, `merge_moves`, `SimpSeq` and `remove_unreach`
 (through `Seq_assoc_right`) on small 64-bit programs, including the source's
-`remove_unreach_test`, continuations dropped after `Return`/`Raise`, a `Call` without return
 continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a structural
 observation in `WordUnreachDefParity`. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `ssa_cc_trans_correct_inst_shift_probeScript.sml` replays the literal original
@@ -5115,18 +4950,12 @@ absent left/right branches and successful left/right recursive searches.
 with and without full types, checks no open hypotheses and observes Tip and
 malformed cached-size Bin. `BalancedMapNullParity` checks the full independent
 key/query theorem and a Bool/Nat/String nonempty root, without comparator laws.
-`target_position_unique_probeScript.sml` captures the complete original
-`interference_count_lt` and `interference_pos_unique` theorem statements,
 checking that both compiled original theorems have no undischarged hypotheses.
 The native Lean counterparts are in `TargetProps/PositionUnique.lean`.
 
-`target_position_laws_probeScript.sml` prints the full original
-`interference_count_tail` and `interference_pos_head` statements and checks
 that the original compiled theorems have no undischarged hypotheses.
 Native counterparts are in `TargetProps/PositionLaws.lean`.
 
-`target_position_tail_probeScript.sml` captures complete original
-`interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
 checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
 
 `ssa_cc_trans_correct_inst_fpint_probeScript.sml` captures original kernel
@@ -5234,8 +5063,6 @@ still need their original constructor premises and specified equations.
 exported from `targetPropsTheory`. Its output captures the full kernel-checked
 conclusion, retaining `asm_ok`. This is regression/source-review evidence.
 Regenerate with `HOL_PROBE_ONLY=target_encoding_nonempty_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
-`target_next_shared_mem_probeScript.sml` captures the complete original
-`next_interference_SharedMem` statement with no open hypotheses; native
 assembly is in `TargetProps/NextSharedMem.lean`.
 The capture also replays the entire original `lookup_thm` statement and proof,
 with typed closed output, and evaluates left/root/right hits, whole-tree and
@@ -5256,8 +5083,6 @@ capture, not an isolated tactic replay or equivalence proof. Regenerate with
 
 ### Full ASM-step target evaluation theorem
 
-`target_encoding_nonempty_probeScript.sml` replays the literal original local
-`enc_ok_not_empty` statement and proof in HOL; local declarations are not
 exported from `targetPropsTheory`. Its output captures the full kernel-checked
 conclusion, retaining `asm_ok`. This is regression/source-review evidence.
 Regenerate with `HOL_PROBE_ONLY=target_encoding_nonempty_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
@@ -5272,11 +5097,8 @@ an isolated tactic replay or equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=ssa_cc_trans_correct_buffer_writes_probeScript.sml scripts/hol-probes/regenerate.sh`.
 ### Misc byte-region prerequisites
 
-`misc_memory_regions_probeScript.sml` captures the complete original
-`bytes_in_memory_APPEND` and `bytes_in_memory_change_mem` theorem conclusions
 from compiled `miscTheory`; `misc_memory_regions_probe.out` is statement review
 and regression evidence, not a cross-language equivalence proof. Regenerate with
-`HOL_PROBE_ONLY=misc_memory_regions_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 
 `RotationAux.lean` now follows the approved whole-function specification
 route: existence witnesses establish satisfiability; `Classical.choose`
@@ -5368,8 +5190,6 @@ Native insertion-wf probes replay both complete original proofs and168 whole
 native Spt/input/output-wf fixtures. Matching kernel cases retain empty and
 unequal lists, repeated keys, Nat/Bool payloads and malformed trees.
 Regression evidence is not HOL-to-Lean equivalence.
-`target_next_shared_mem_probeScript.sml` captures the complete original
-`next_interference_SharedMem` statement with no open hypotheses; native
 assembly is in `TargetProps/NextSharedMem.lean`.
 The capture also replays the entire original `lookup_thm` statement and proof,
 with typed closed output, and evaluates left/root/right hits, whole-tree and
@@ -5377,8 +5197,6 @@ child misses, and comparator-equivalent distinct Bool keys. Kernel fixtures
 consume the full generic theorem and derive actual semantic finite-map results
 for nonempty children and a distinct equivalent key with an independent payload.
 
-`ssa_cc_trans_correct_move_probe` captures the original proved theorem
-`ssa_cc_trans_correct` specialized to arbitrary `Move pri ls`, with seven
 original inferred carriers. Original resumed Move proof7740–7858 and all six
 premises/full simulation were manually compared with `SSASemanticMove.lean`.
 The port derives the provisional parallel-write locals relation and filtered
@@ -5386,7 +5204,6 @@ force-rename premises from actual successful source reads; duplicate destination
 and missing-read errors retain the original exemption. Bounded list observations
 use the existing guarded holEl translation. This is a theorem specialization
 capture, not an isolated tactic replay or equivalence proof. Regenerate with
-`HOL_PROBE_ONLY=ssa_cc_trans_correct_move_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 ### Full double-right rotation correctness
 
@@ -5447,12 +5264,9 @@ memory/register postconditions. Counterparts are
 captures are regression evidence, not HOL-to-Lean equivalence proofs.
 ### Full single-right rotation correctness
 
-`balanced_map_singleR_probeScript.sml` replays the entire original local
-`singleR_thm` proof with its original local prerequisites, checking no open
 hypotheses. The typed statement retains all nine premise conjuncts and both
 invariant and map equality conclusions. Actual defined rotation, invariant,
 three recursive lookup values, and invalid cached-size rejection are captured.
-`BalancedMapSingleRParity` consumes both full native conclusions and derives
 all three canonical semantic lookups; missing constructor outputs are unused.
 
 ### Native LabToTarget word/location byte conversion
@@ -5504,7 +5318,6 @@ source comparison are not a cross-language equivalence proof. Regenerate with
 
 ## Full single-left rotation correctness
 
-`balanced_map_balanceL_eq_probeScript.sml` replays the complete original
 local `balanceL_balL` proof and prints its typed closed generic equality.
 Ten actual original executable equalities cover empty/singleton, both one-sided
 children, nonempty single/double rotations, left Tip, nonempty-right fallback,
@@ -5528,7 +5341,6 @@ cross-language equivalence theorem.
 
 ## Full double-left rotation correctness
 
-`balanced_map_balanceL_correct_probeScript.sml` replays the entire original
 local `balanceL_thm` proof and full prerequisite proof chain, checking its
 typed theorem is closed. Six actual branches capture output trees, invariants
 and inserted-key lookups. `BalancedMapBalanceLCorrectParity` checks all original
@@ -5568,7 +5380,6 @@ succeed; they inspect absent lookup directly and never compute THE NONE.
 
 ### Full native LabToTarget state relation
 
-`lab_to_target_state_rel_probeScript.sml` captures the full original relation
 and all inferred carriers, generic target/compiler/memory consequences, whole
 clock-update equivalence, and rejection at the one-element word index. Native
 kernel consumers in `LabToTarget/StateRel.lean` use the complete relation. Lab
@@ -5733,7 +5544,6 @@ Recursive allocation-argument probe captures seven full generic original source 
 
 Full allocation-argument compiler probe captures the complete original generic theorem application and35 nested-program theorem applications, matched in Lean across widths1/2/8/64/80. Includes allocations nested under MustTerminate/Loop/Seq/If/Call return/handler and arbitrary ignored tail handlers, with arbitrary configurations. These are original theorem applications, not direct EVAL or full original proof replay. The Lean arbitrary-program theorem discharges all case induction hypotheses internally and retains only perf=F. Full pass simulation/compiler composition remain unfinished. Selector: HOL_PROBE_ONLY=word_to_stack_alloc_compiler_probeScript.sml.
 
-`ssa_alloc_case_probe.out` captures the full original `ssa_cc_trans_correct` Alloc specialization with all six premises, source permutation/Error exemption, actual target result/frame and result-sensitive locals. Native SSA Alloc derives rename/count preparation, GC transport, normal restoration and exhausted-space stopping; full SSA assembly remains open.
 `ssa_install_case_probe.out` captures the full original `ssa_cc_trans_correct` Install specialization, all six premises and complete source-permutation/Error-exempt result/frame/locals conclusion. Native proof derives input guards, compiled preparation, actual callback execution, pointer copy and final rename. Full SSA/end-to-end assembly remain open.
 Return register-bound probe replays three complete original proofs (stack_move_reg_bound, copy_ret_aux_reg_bound, copy_ret_reg_bound), with no open hypotheses, and330 direct original EVAL whole-predicate observations matched by kernel fixtures. Widths1/2/8/64/80 cover zero/nonzero move and return counts, all Boolean modes,70bit frame offsets, and valid/violated continuation and temporary-register bounds. No full compiler register-bound theorem or cross-language equivalence is claimed. Selector: HOL_PROBE_ONLY=word_to_stack_return_reg_bound_probeScript.sml.
 `misc_wordlist_heap_probe.out` records full `word_list_def` and
@@ -5760,8 +5570,6 @@ stack-space overflow, missing/non-word bitmap values, and missing/non-word
 base registers; corresponding Lean fixtures use the actual evaluator carrier.
 The source's local `num_stubs` is `stack_num_stubs`. This evidence verifies
 the relation definition, not the unfinished pass simulation theorem.
-`ssa_install_case_probe.out` captures the full original `ssa_cc_trans_correct` Install specialization, all six premises and complete source-permutation/Error-exempt result/frame/locals conclusion. Native proof derives input guards, compiled preparation, actual callback execution, pointer copy and final rename. Full SSA/end-to-end assembly remain open.
-`ssa_alloc_case_probe.out` captures the full original `ssa_cc_trans_correct` Alloc specialization with all six premises, source permutation/Error exemption, actual target result/frame and result-sensitive locals. Native SSA Alloc derives rename/count preparation, GC transport, normal restoration and exhausted-space stopping; full SSA assembly remains open.
 
 Return CallArgs probe captures the full original call_args_def and replays three complete original helper proofs with no open hypotheses.786 direct predicate EVAL observations (627true159false) match kernel fixtures with expectations read from fresh original captures, widths1/2/8/64/80. Full program/instruction families, two five-register conventions, ignored/active handlers,330stack-move/return cases, all Boolean modes and70bit offsets are covered. Full compiler call-argument preservation remains open; this regression evidence is not cross-language equivalence. Selector: HOL_PROBE_ONLY=word_to_stack_return_call_args_probeScript.sml.
 
@@ -5788,7 +5596,6 @@ Run from the Flapjack checkout:
 ```bash
 HOL4=/path/to/built/pinned/HOL bash scripts/l3/regenerate-export.sh --update
 HOL4=/path/to/built/pinned/HOL bash scripts/l3/regenerate-export.sh --check
-```
 
 The driver loads the original HOL `riscv_stepTheory`, runs
 `scripts/l3/export_riscv_defs.sml` in a temporary directory, and traverses the
@@ -6195,3 +6002,7 @@ sptree_wf_definition_probeScript.sml captures the full original wf_def and254 co
 `stack_remove_comp_jump_lower_probeScript.sml` replays the literal original complete JumpLower case with actual source-guarded callee IH and original local register/dec-clock helpers, without assuming full `comp_correct`. Two rows record the scoped statement and proof success.
 
 `stack_remove_comp_code_buffer_probeScript.sml` proves the full original four-premise CodeBufferWrite case using the literal original case body and local getVar helper, without assuming full `comp_correct`. Two rows record its scoped statement and proof success.
+
+
+`word_to_stack_top_label_safety_probe` replays both literal full original top-level code/handler safety proofs, recording closed statements, and checks 12 independent actual `compile ... F` predicate triples. Empty external sets, source references to compiler-owned stubs, missing/external/self labels, duplicates, returning owned/wrong-owner handlers, dropped tail handlers, bitmap updates and width-one words are covered. `WordToStackTopLabelSafetyParity` kernel-checks the identical triples and applies both full theorems to constructed output at arbitrary positive width/configuration/external sets. The existing 24 complete native top-level tuple observations were independently regenerated unchanged alongside this delivery. Probes are regression evidence, not cross-language equivalence proofs.
+`stack_remove_bytearray_read_probeScript.sml` replays the complete original bytearray-read preservation proof and its original local memory/read/load prerequisites. Two rows capture the full arbitrary-length/address statement and kernel proof success.
