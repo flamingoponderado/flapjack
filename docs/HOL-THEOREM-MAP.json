@@ -49847,5 +49847,23 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-alist-move-reconstruction): full original3612-3701 all six original premises retained: distinct destination keys, actual successful native getVars, distinct IS_SOME-filtered option list, wf locals, selected destination subset, nonself destination coverage. Whole native Spt equality with exact MAP THE/FILTER/ALOOKUP/get_var updates and actual successful value-list insertion, no desired lookup/output/extra bound premise. Both distinctness premises retained even though the observation proof works without using them. Original omitted-self case uses coverage to derive destination=source and read success to derive unchanged lookup. Imported canonical WordSem state actual fpRegs/store |-> fields, locals original Spt not fmap, local roundtrip witness; arbitrary positive type-indexed WordLoc/BitVec width and C/F Type0, no word width restriction. Existing approved option THE only, no NONE default specified or list HD/EL hold bypass. Five literal whole original proof replays hyp=[] and560 matching kernel/original full read/whole-tree/six-guard packets across1/2/8/64/80 widths, parallel swaps/duplicate guards/omitted self/missing reads/malformed trees/70bit keys. Fifteen additional isolated subset-failure packets observe successful reads plus absent selected-key lookup and exactly the false subset guard, without attempting THE NONE. No production/whole compiler equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadContinuations.lean",
+    "lean_name": "wStackLoadAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wStackLoad_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-load-continuations): full original3711-3720 and5594-5599. Whole actual wStackLoadNative continuation-function equality and whole getLabelsExact label-set equality, arbitrary pair lists, indices, repetitions and continuation constructors; no bounds/success/label hypothesis. HolProg is constructor-for-constructor native34-constructor stackLang with HolInst/HolRegImm/HolAddr at arbitrary positive BitVec width and faithful MlString byte carrier. HOL set translated to predicate equality, including exact optional return/handler nesting (no return ignores handler labels). Two literal original whole proof replays hyp=[] and410 same-input whole-AST/label packets over1/2/8/64/80 widths, all34 constructors, long20 loads,70bit indices, duplicate/nested call labels, handler-without-return and byte names. No held list HD/EL or trust policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadContinuations.lean",
+    "lean_name": "getLabelsWStackLoad",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_labels_wStackLoad",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-load-continuations): full original3711-3720 and5594-5599. Whole actual wStackLoadNative continuation-function equality and whole getLabelsExact label-set equality, arbitrary pair lists, indices, repetitions and continuation constructors; no bounds/success/label hypothesis. HolProg is constructor-for-constructor native34-constructor stackLang with HolInst/HolRegImm/HolAddr at arbitrary positive BitVec width and faithful MlString byte carrier. HOL set translated to predicate equality, including exact optional return/handler nesting (no return ignores handler labels). Two literal original whole proof replays hyp=[] and410 same-input whole-AST/label packets over1/2/8/64/80 widths, all34 constructors, long20 loads,70bit indices, duplicate/nested call labels, handler-without-return and byte names. No held list HD/EL or trust policy change."
   }
 ]

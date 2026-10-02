@@ -4214,3 +4214,11 @@ produce NONE rather than evaluating THE NONE. Regression evidence is not a
 HOL-to-Lean equivalence proof.
 Fifteen extra packets isolate the subset guard failure while all other guards
 succeed; they inspect absent lookup directly and never compute THE NONE.
+
+Load-continuation probes replay the complete original `wStackLoad_append` and
+`get_labels_wStackLoad` proofs. 410 matching packets retain whole native ASTs
+and label observations across all 34 continuation constructors, widths
+1/2/8/64/80, repeated and 70-bit load indices, and nested return/handler cases.
+The handler-without-return case preserves its AST while contributing no labels,
+as in the original semantics. These checks are regression evidence, not a
+HOL-to-Lean equivalence proof.

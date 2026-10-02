@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveReconstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ALookupMap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
