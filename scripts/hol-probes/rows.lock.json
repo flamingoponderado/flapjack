@@ -8210,6 +8210,12 @@
       "sha256": "5d0d77274dc6f121eb0c9fe109f2af2618bc57ebd2946f4e5438798a0a702945"
     },
     {
+      "bytes": 8077,
+      "out": "word_to_stack_word_extraction_probe.out",
+      "rows": 139,
+      "sha256": "5223d42ea3148c0f779f61cbd68bad2fbe85b72d812da73c1b006b81e1950899"
+    },
+    {
       "bytes": 44295,
       "out": "word_to_stack_word_list_length_probe.out",
       "rows": 249,
