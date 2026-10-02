@@ -4770,3 +4770,7 @@ Native counterparts are in `TargetProps/PositionLaws.lean`.
 `target_position_tail_probeScript.sml` captures complete original
 `interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
 checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
+
+`target_constructed_oracles_probeScript.sml` captures full six-conjunct original
+`constructed_oracles_ffi_step` and `constructed_oracles_cc_step` statements,
+checking no undischarged hypotheses. Native ports are in `TargetProps/ConstructedOracles.lean`.

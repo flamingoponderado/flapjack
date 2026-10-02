@@ -56363,5 +56363,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:498: fresh complete compiled original statement captured in target_position_tail_probe.out. Same successful whole nextInterference result premise and not P app0; initial position at k, equals OPTION_MAP SUC suffix position at k in returned mcc/ffic/appPost. Option.map (n+1) is literal OPTION_MAP SUC; NONE and SOME both preserved. Complete generic MachineConfig/InterferenceApp/HolFfiState and independent σ : Type/positive width NeZero retained. Kernel82jobs zero warnings. Private Flapjack choice lemma premises are fully discharged by literal sequence/count tail, zero exclusion and interferencePosUnique; no extra choice/existence/uniqueness/bounds premise on port. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names preserves in-range list element and shared opaque holHdNil/holArb out of range, no fallback. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/ConstructedOracles.lean",
+    "lean_name": "constructedOraclesFfiStep",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "constructed_oracles_ffi_step",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:527: full six-conjunct original statement freshly captured in target_constructed_oracles_probe.out. Same sole nextInterference whole-result premise, native constructor payloads, arbitrary k/r/i and HolFfiName name; no added bounds or simulation premise. Zero regs/FP use original post-state and register residue; successor same-class oracles and unchanged opposite-class oracles retain returned config/FFI/post. Callee list, target configuration and ptr field preserved by literal nextInterferenceConst; cache excludes ptr, FFI does not. Native state/projection/host carriers independent, σ : Type/positive width NeZero, machine registers BitVec width and FP BitVec64 exactly. Kernel85jobs zero warnings. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names keeps in-range list element and shared opaque holHdNil/holArb out of range, no fallback/indexbounds premise. No executed compiler body change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/ConstructedOracles.lean",
+    "lean_name": "constructedOraclesCcStep",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "constructed_oracles_cc_step",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:563: full six-conjunct original statement freshly captured in target_constructed_oracles_probe.out. Same sole nextInterference whole-result premise, native constructor payloads, arbitrary k/r/i and HolFfiName name; no added bounds or simulation premise. Zero regs/FP use original post-state and register residue; successor same-class oracles and unchanged opposite-class oracles retain returned config/FFI/post. Callee list, target configuration and ptr field preserved by literal nextInterferenceConst; cache excludes ptr, FFI does not. Native state/projection/host carriers independent, σ : Type/positive width NeZero, machine registers BitVec width and FP BitVec64 exactly. Kernel85jobs zero warnings. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names keeps in-range list element and shared opaque holHdNil/holArb out of range, no fallback/indexbounds premise. No executed compiler body change."
   }
 ]
