@@ -59029,5 +59029,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison: full arbitrary Inst case original resumed Inst7860-8222, same six original premises and complete Error-exempt source-permutation/result/fullframe/result-sensitive locals, no targetrun/success/poststate/IH premise. Exhaustive native WordLangInst fixed word carrier: Skip/Const, eightArith, eightMem, sixteenFP, all34 source-reviewed case proofs give the same simulation. Native Nat registers, positivewidth BitVec and fixed64FP/native state/Spt/table/sharedType0 code-FFI match original genericInst Q.SPEC capture. Canonical fpRegs/store finite-support and indexedword qualifiers explicit. Inherits reals_as_rational_cuts evaluator/FP proofs including directqualified ToInt, SOUNDNESS8 rational/choice/quietNaN boundary; no stronger numerical agreement claimed. Original source case structure manually compared; kernel/capture PASS, no isolated tactic replay claim. FullSSA program theorem remainsopen."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/NextSharedMem.lean",
+    "lean_name": "nextInterferenceSharedMem",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "next_interference_SharedMem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:742: full original statement freshly captured in target_next_shared_mem_probe.out. Same eight common conjuncts for PC/index/total EL SharedMem op/ALOOKUP/zero-nb alignment/shared domain, then original two conditional conjuncts op=MappedRead implies valid read and exact read-byte FFI return, op=MappedWrite implies valid write and exact conditional data-word/aux bytes plus address FFI return. Neither implication replaced by uniform stronger premise; exact op datatype has two original constructors. Same application/pre/oracle0 post, only ffiInterfer shifted1 in updated configuration, actual newFfi. Generic native MachineConfig/InterferenceApp/HolFfiState carriers, independent σ : Type, positive width NeZero, fixed word8 bytes and machine words BitVec width; no width>=8/indexbounds. Native kernel82jobs zero warnings, proof original operator cases delegates to literal read/write theorems. EL provenance holEl ffi_names retains in-range list element and opaque holHdNil/holArb out of range; original total EL identity premise preserved, no fallback. No executed compiler body/routing change."
   }
 ]

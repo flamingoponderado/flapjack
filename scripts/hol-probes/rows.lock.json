@@ -845,6 +845,7 @@
     {"bytes": 1101, "out": "target_next_cases_probe.out", "rows": 2, "sha256": "04a2cd7d6be954e2b9fb816d13bf3cb6c19f2365ab3abe57719ee54d53eb1570"},
     {"bytes": 306, "out": "target_next_interference_probe.out", "rows": 2, "sha256": "9cd54a485fa2534c561f871efcf54032a9eced781a86a0fd9198fbc0a979eb6a"},
     {"bytes": 1951, "out": "target_next_mapped_probe.out", "rows": 2, "sha256": "8af6490850c8efc2035de58a7889829214e2f8670bfacf9a7312b1499cdf789f"},
+    {"bytes": 1322, "out": "target_next_shared_mem_probe.out", "rows": 1, "sha256": "c2202a11466ce833671d5178ca3ca534561c07b9120ee890a8702a20a14d2337"},
     {"bytes": 630, "out": "target_oracle_equality_probe.out", "rows": 2, "sha256": "ea0e9251f9e7b693b4f9869fe8d22fc0f92677edbc16d8598a510308a8ac2c76"},
     {"bytes": 342, "out": "target_position_laws_probe.out", "rows": 2, "sha256": "09c0db0b63088edcda21ba1421f80199560afcaef54329c912e6e1977fca2c5b"},
     {"bytes": 389, "out": "target_position_tail_probe.out", "rows": 2, "sha256": "8a3ec5a4e7cf6a7df06f75377f9f0ccc27c97fa9734634c0b91db56500a2c784"},

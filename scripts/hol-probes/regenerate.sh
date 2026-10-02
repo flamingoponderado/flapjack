@@ -4619,3 +4619,7 @@ run_probe ssa_cc_trans_correct_inst_common_probeScript.sml ssa_cc_trans_correct_
 run_probe ssa_cc_trans_correct_inst_probeScript.sml ssa_cc_trans_correct_inst_probe.out \
   inst_full inst_type_instruction inst_type_st inst_type_cst inst_type_ssa inst_type_next inst_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe target_next_shared_mem_probeScript.sml target_next_shared_mem_probe.out \
+  next_shared_mem_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

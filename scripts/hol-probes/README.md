@@ -5134,3 +5134,7 @@ manually reviewed; no standalone tactic replay is claimed.
 Inst specialization and native instruction/state/SSA/table carriers. Original
 Inst7860–8222 and all34 constructor cases are compared with the exhaustive
 Lean assembly; no standalone tactic replay is claimed.
+
+`target_next_shared_mem_probeScript.sml` captures the complete original
+`next_interference_SharedMem` statement with no open hypotheses; native
+assembly is in `TargetProps/NextSharedMem.lean`.
