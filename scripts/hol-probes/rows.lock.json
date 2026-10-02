@@ -5648,6 +5648,12 @@
       "sha256": "61919c67cf5332803c82eab5243ad7a1a3cba20a80855dab9d7e82d7d45fd8fe"
     },
     {
+      "bytes": 280,
+      "out": "stack_remove_bytearray_read_probe.out",
+      "rows": 2,
+      "sha256": "d90de51eaaf13cbb76e0257207a7e0dbd27fd70d8699dcb1d689cebb193b10db"
+    },
+    {
       "bytes": 549,
       "out": "stack_remove_code_rel_probe.out",
       "rows": 14,

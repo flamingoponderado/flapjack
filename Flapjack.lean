@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.StackRawCall.Proofs.InstructionSimulation
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateRelation
 import Flapjack.RiscV.L3.Step.Fetch
 import Flapjack.RiscV.L3.Defs.ReadInst
+import Flapjack.Compiler.Backend.StackRemove.Proofs.BytearrayReads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CodeBufferWrite
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.JumpLower
 import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
