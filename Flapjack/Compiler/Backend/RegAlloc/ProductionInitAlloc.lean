@@ -497,4 +497,71 @@ theorem initAllocMovePartition_production (nodes : List Nat)
   exact initPartition_pure _ _ _ _ _ _
     (fun node member => moveRelatedSub_production node related good (bounds node member))
 
+/-- Complete initializer preparation, in native source order: degree writes,
+self-parent writes, sorted available moves, clearing and endpoint marking.
+The fused executed state is derived from those traversals. All intermediate
+good states and domains follow from the original invariant and move bounds.
+This is actual/native implementation correspondence without a HOL original. -/
+theorem initAllocPreparation_production (moves : List (Nat × (Nat × Nat))) (limit : Nat)
+    {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native production) (good : goodRaState native)
+    (bounds : ∀ move ∈ moves, move.2.1 < native.dim ∧ move.2.2 < native.dim) :
+    ∃ result : State,
+      ignoreBind (stExForeach (List.range native.dim) (fun node =>
+        bind (adjLsSub node) (fun neighbours =>
+          bind (stExFilter (fun neighbour => consideredVar limit neighbour) neighbours [])
+            (fun fills => updateDegrees node fills.length))))
+        (ignoreBind (stExForeach (List.range native.dim) doUpdCoalesce)
+          (ignoreBind (setAvailMovesWl (sortMoves moves)) (resetMoveRelated moves))) native =
+        (.success (), result) ∧
+      goodRaState result ∧ native.dim = result.dim ∧
+      ProductionStateRel result
+        (cakeResetMoveRelated moves
+          {((List.range production.dim).foldl
+            (initAllocFusedStep production limit) ([], production)).2 with
+            availMovesWl := cakeSortMoves moves}) := by
+  let degrees := (List.range native.dim).foldl (fun state node =>
+    {state with
+      degrees := state.degrees.set node
+        (((state.adjLists.get node).getD []).filter (cakeConsideredVar state limit)).length}) production
+  let parents := (List.range native.dim).foldl
+    (fun state node => {state with coalesced := state.coalesced.set node node}) degrees
+  obtain ⟨degreeState, degreeRun, degreeGood, degreeDim, degreeRel⟩ :=
+    initAllocDegrees_production limit (List.range native.dim) related good
+      (fun _ member => List.mem_range.mp member)
+  obtain ⟨parentState, parentRun, parentGood, parentDim, parentRel⟩ :=
+    initAllocParents_production (List.range native.dim) degreeRel degreeGood (by
+      intro node member
+      rw [← degreeDim]
+      exact List.mem_range.mp member)
+  let withMoves : State := {parentState with avail_moves_wl := sortMoves moves}
+  let actualMoves : CakeRaState := {parents with availMovesWl := cakeSortMoves moves}
+  have phaseDim : native.dim = parentState.dim := degreeDim.trans parentDim
+  have movesGood : goodRaState withMoves := by
+    obtain ⟨a,b,c,d,e,f,g,h,i,j,k,_,m,n⟩ := parentGood
+    refine ⟨a,b,c,d,e,f,g,h,i,j,k,?_,m,n⟩
+    intro move member
+    rw [← phaseDim]
+    exact bounds move ((Basis.Pure.MlList.sortMem move _ moves).mp member)
+  have movesRel : ProductionStateRel withMoves actualMoves :=
+    {parentRel with availableMoves := rfl}
+  obtain ⟨result, resetRun, resultRel, resultGood, resultDim⟩ :=
+    resetMoveRelated_production_invariant moves movesRel movesGood (by
+      intro move member
+      change move.2.1 < parentState.dim ∧ move.2.2 < parentState.dim
+      rw [← phaseDim]
+      exact bounds move member)
+  have actual : cakeResetMoveRelated moves actualMoves =
+      cakeResetMoveRelated moves
+        {((List.range production.dim).foldl
+          (initAllocFusedStep production limit) ([], production)).2 with
+          availMovesWl := cakeSortMoves moves} := by
+    rw [initAllocFused_separate limit related good]
+    simp only [related.dimension]
+    rfl
+  refine ⟨result, ?_, resultGood, phaseDim.trans resultDim.symm, ?_⟩
+  · simpa only [ignoreBind, degreeRun, parentRun, setAvailMovesWl] using resetRun
+  · rw [← actual]
+    exact resultRel
+
 end Flapjack.RegAlloc
