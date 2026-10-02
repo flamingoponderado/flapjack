@@ -1,3 +1,13 @@
+import Flapjack.Test.TargetRegisterOraclesParity
+import Flapjack.Test.TargetInterferenceSequenceParity
+import Flapjack.Test.TargetFindNextInterferenceParity
+import Flapjack.Test.StackRemoveStoreInit
+import Flapjack.Test.WordOverflowProduction
+import Flapjack.Test.StackRemoveStoreListCode
+import Flapjack.Test.RiscVOverflowTargetParity
+import Flapjack.Test.LabToTargetByteLengthsParity
+import Flapjack.Test.LabPropsLabelSetsParity
+import Flapjack.Test.LabToTargetWordLocationParity
 import Flapjack.Test.WordCseProductionRegisterClassifiers
 import Flapjack.Test.WordCseProductionInstructionKeys
 import Flapjack.Test.WordCseProductionLoadHeapKeys
@@ -157,6 +167,7 @@ import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
 import Flapjack.Test.TargetPropsInterferenceParity
+import Flapjack.Test.LabToTargetFetchValidityParity
 import Flapjack.Test.LabToTargetEncodingValidityParity
 import Flapjack.Test.LabToTargetPositionAppendParity
 import Flapjack.Test.LabToTargetPositionValuesParity
@@ -1775,6 +1786,10 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordGcFunctionsParity.runChecks,
     Flapjack.Test.StackAllocGcCodeParity.runChecks,
     Flapjack.Test.StackAllocGetBitsParity.runChecks,
+    Flapjack.Test.LabToTargetByteLengthsParity.runChecks,
+    Flapjack.Test.LabPropsLabelSetsParity.runChecks,
+    Flapjack.Test.LabToTargetWordLocationParity.runChecks,
+    Flapjack.Test.LabToTargetFetchValidityParity.runChecks,
     Flapjack.Test.LabToTargetEncodingValidityParity.runChecks,
     Flapjack.Test.LabToTargetPositionAppendParity.runChecks,
     Flapjack.Test.LabToTargetPositionValuesParity.runChecks,

@@ -1,0 +1,233 @@
+load "preamble"; load "word_to_stackProofTheory";
+open HolKernel Parse bossLib preamble word_to_stackProofTheory stackSemTheory arithmeticTheory listTheory rich_listTheory miscTheory;
+val _ = Globals.linewidth := 4000;
+val _ = temp_delsimps ["NORMEQ_CONV"];
+val _ = diminish_srw_ss ["ABBREV"];
+val map_bitmap_success = prove(``∀bs stack a b ls.
+  filter_bitmap bs stack = SOME(a,b) ∧
+  LENGTH ls = LENGTH a ⇒
+  ∃x z.
+  map_bitmap bs ls stack = SOME(x,[],DROP (LENGTH bs) stack) ∧
+  filter_bitmap bs x = SOME(ls,[])``,   ho_match_mp_tac filter_bitmap_ind>>fs[filter_bitmap_def,map_bitmap_def]>>
+  rw[LENGTH_NIL]
+  >-
+    (res_tac>>fs[filter_bitmap_def])
+  >>
+    EVERY_CASE_TAC>>fs[]>>
+    rveq>>Cases_on`ls`>>fs[map_bitmap_def,filter_bitmap_def]>>
+    res_tac>>fs[filter_bitmap_def]);
+val _ = (if null(hyp map_bitmap_success) then () else raise Fail "open premise"; print "mb_full_map_bitmap_success="; print_thm map_bitmap_success; print "\n");
+val map_bitmap_more = prove(``∀bs ls stack n a c ls'.
+  map_bitmap bs ls stack = SOME(a,[],c) ⇒
+  map_bitmap bs (ls++ls') stack = SOME(a,ls',c)``,   ho_match_mp_tac map_bitmap_ind>>fs[map_bitmap_def]>>rw[]>>
+  pop_assum mp_tac>>ntac 3 TOP_CASE_TAC>>fs[]);
+val _ = (if null(hyp map_bitmap_more) then () else raise Fail "open premise"; print "mb_full_map_bitmap_more="; print_thm map_bitmap_more; print "\n");
+val map_bitmap_more_simp = prove(``map_bitmap bs (TAKE (LENGTH l) ls) stack = SOME (a,[],c) ⇒
+  map_bitmap bs ls stack = SOME (a,DROP (LENGTH l) ls,c)``,   metis_tac[TAKE_DROP,map_bitmap_more]);
+val _ = (if null(hyp map_bitmap_more_simp) then () else raise Fail "open premise"; print "mb_full_map_bitmap_more_simp="; print_thm map_bitmap_more_simp; print "\n");
+val map_bitmap_LLOOKUP_F = prove(``∀bm ls stack n res ls1 stack1.
+  LLOOKUP bm n = SOME F ∧
+  map_bitmap bm ls stack = SOME (res,ls1,stack1) ⇒
+  ∃v.
+  LLOOKUP res n = SOME v ∧
+  LLOOKUP stack n = SOME v``,   ho_match_mp_tac map_bitmap_ind>>rw[map_bitmap_def]>>
+  gvs[oEL_def,AllCaseEqs()]);
+val _ = (if null(hyp map_bitmap_LLOOKUP_F) then () else raise Fail "open premise"; print "mb_full_map_bitmap_LLOOKUP_F="; print_thm map_bitmap_LLOOKUP_F; print "\n");
+fun emit label q = let val th = EVAL q in print(label ^ "="); print_thm th; print "\n" end;
+val _ = emit "mb_output_0_0_0" ``map_bitmap [] ([]:num list) ([]:num list) = SOME (([]:num list),([]:num list),([]:num list))``;
+val _ = emit "mb_output_0_0_1" ``map_bitmap [] ([(91:num)]:num list) ([]:num list) = SOME (([]:num list),([(91:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_0_0_2" ``map_bitmap [] ([(91:num);(92:num)]:num list) ([]:num list) = SOME (([]:num list),([(91:num);(92:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_0_0_3" ``map_bitmap [] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([]:num list) = SOME (([]:num list),([(91:num);(92:num);(93:num);(94:num)]:num list),([]:num list))``;
+val _ = emit "mb_success_witness_0_0" ``map_bitmap [] ([]:num list) ([]:num list) = SOME (([]:num list),[],([]:num list)) /\ filter_bitmap [] ([]:num list) = SOME (([]:num list),[])``;
+val _ = emit "mb_more_0_0" ``map_bitmap [] (([]:num list) ++ ([(77:num);(78:num)]:num list)) ([]:num list) = SOME (([]:num list),([(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_prefix_suffix_0_0" ``map_bitmap [] (TAKE (LENGTH []) ([(77:num);(78:num)]:num list)) ([]:num list) = SOME (([]:num list),[],([]:num list)) /\ map_bitmap [] ([(77:num);(78:num)]:num list) ([]:num list) = SOME (([]:num list),DROP (LENGTH []) ([(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_0_1_0" ``map_bitmap [] ([]:num list) ([(3:num)]:num list) = SOME (([]:num list),([]:num list),([(3:num)]:num list))``;
+val _ = emit "mb_output_0_1_1" ``map_bitmap [] ([(91:num)]:num list) ([(3:num)]:num list) = SOME (([]:num list),([(91:num)]:num list),([(3:num)]:num list))``;
+val _ = emit "mb_output_0_1_2" ``map_bitmap [] ([(91:num);(92:num)]:num list) ([(3:num)]:num list) = SOME (([]:num list),([(91:num);(92:num)]:num list),([(3:num)]:num list))``;
+val _ = emit "mb_output_0_1_3" ``map_bitmap [] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(3:num)]:num list) = SOME (([]:num list),([(91:num);(92:num);(93:num);(94:num)]:num list),([(3:num)]:num list))``;
+val _ = emit "mb_success_witness_0_1" ``map_bitmap [] ([]:num list) ([(3:num)]:num list) = SOME (([]:num list),[],([(3:num)]:num list)) /\ filter_bitmap [] ([]:num list) = SOME (([]:num list),[])``;
+val _ = emit "mb_more_0_1" ``map_bitmap [] (([]:num list) ++ ([(77:num);(78:num)]:num list)) ([(3:num)]:num list) = SOME (([]:num list),([(77:num);(78:num)]:num list),([(3:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_0_1" ``map_bitmap [] (TAKE (LENGTH []) ([(77:num);(78:num)]:num list)) ([(3:num)]:num list) = SOME (([]:num list),[],([(3:num)]:num list)) /\ map_bitmap [] ([(77:num);(78:num)]:num list) ([(3:num)]:num list) = SOME (([]:num list),DROP (LENGTH []) ([(77:num);(78:num)]:num list),([(3:num)]:num list))``;
+val _ = emit "mb_output_0_2_0" ``map_bitmap [] ([]:num list) ([(2:num);(5:num)]:num list) = SOME (([]:num list),([]:num list),([(2:num);(5:num)]:num list))``;
+val _ = emit "mb_output_0_2_1" ``map_bitmap [] ([(91:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([]:num list),([(91:num)]:num list),([(2:num);(5:num)]:num list))``;
+val _ = emit "mb_output_0_2_2" ``map_bitmap [] ([(91:num);(92:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([]:num list),([(91:num);(92:num)]:num list),([(2:num);(5:num)]:num list))``;
+val _ = emit "mb_output_0_2_3" ``map_bitmap [] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([]:num list),([(91:num);(92:num);(93:num);(94:num)]:num list),([(2:num);(5:num)]:num list))``;
+val _ = emit "mb_success_witness_0_2" ``map_bitmap [] ([]:num list) ([(2:num);(5:num)]:num list) = SOME (([]:num list),[],([(2:num);(5:num)]:num list)) /\ filter_bitmap [] ([]:num list) = SOME (([]:num list),[])``;
+val _ = emit "mb_more_0_2" ``map_bitmap [] (([]:num list) ++ ([(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([]:num list),([(77:num);(78:num)]:num list),([(2:num);(5:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_0_2" ``map_bitmap [] (TAKE (LENGTH []) ([(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([]:num list),[],([(2:num);(5:num)]:num list)) /\ map_bitmap [] ([(77:num);(78:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([]:num list),DROP (LENGTH []) ([(77:num);(78:num)]:num list),([(2:num);(5:num)]:num list))``;
+val _ = emit "mb_output_0_3_0" ``map_bitmap [] ([]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([]:num list),([]:num list),([(8:num);(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_0_3_1" ``map_bitmap [] ([(91:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([]:num list),([(91:num)]:num list),([(8:num);(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_0_3_2" ``map_bitmap [] ([(91:num);(92:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([]:num list),([(91:num);(92:num)]:num list),([(8:num);(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_0_3_3" ``map_bitmap [] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([]:num list),([(91:num);(92:num);(93:num);(94:num)]:num list),([(8:num);(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_success_witness_0_3" ``map_bitmap [] ([]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([]:num list),[],([(8:num);(3:num);(6:num);(1:num)]:num list)) /\ filter_bitmap [] ([]:num list) = SOME (([]:num list),[])``;
+val _ = emit "mb_more_0_3" ``map_bitmap [] (([]:num list) ++ ([(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([]:num list),([(77:num);(78:num)]:num list),([(8:num);(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_0_3" ``map_bitmap [] (TAKE (LENGTH []) ([(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([]:num list),[],([(8:num);(3:num);(6:num);(1:num)]:num list)) /\ map_bitmap [] ([(77:num);(78:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([]:num list),DROP (LENGTH []) ([(77:num);(78:num)]:num list),([(8:num);(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_1_0_0" ``map_bitmap [F] ([]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_1_0_1" ``map_bitmap [F] ([(91:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_1_0_2" ``map_bitmap [F] ([(91:num);(92:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_1_0_3" ``map_bitmap [F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_1_1_0" ``map_bitmap [F] ([]:num list) ([(3:num)]:num list) = SOME (([(3:num)]:num list),([]:num list),([]:num list))``;
+val _ = emit "mb_output_1_1_1" ``map_bitmap [F] ([(91:num)]:num list) ([(3:num)]:num list) = SOME (([(3:num)]:num list),([(91:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_1_1_2" ``map_bitmap [F] ([(91:num);(92:num)]:num list) ([(3:num)]:num list) = SOME (([(3:num)]:num list),([(91:num);(92:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_1_1_3" ``map_bitmap [F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(3:num)]:num list) = SOME (([(3:num)]:num list),([(91:num);(92:num);(93:num);(94:num)]:num list),([]:num list))``;
+val _ = emit "mb_success_witness_1_1" ``map_bitmap [F] ([]:num list) ([(3:num)]:num list) = SOME (([(3:num)]:num list),[],([]:num list)) /\ filter_bitmap [F] ([(3:num)]:num list) = SOME (([]:num list),[])``;
+val _ = emit "mb_more_1_1" ``map_bitmap [F] (([]:num list) ++ ([(77:num);(78:num)]:num list)) ([(3:num)]:num list) = SOME (([(3:num)]:num list),([(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_prefix_suffix_1_1" ``map_bitmap [F] (TAKE (LENGTH []) ([(77:num);(78:num)]:num list)) ([(3:num)]:num list) = SOME (([(3:num)]:num list),[],([]:num list)) /\ map_bitmap [F] ([(77:num);(78:num)]:num list) ([(3:num)]:num list) = SOME (([(3:num)]:num list),DROP (LENGTH []) ([(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_false_slot_1_1_0" ``LLOOKUP [F] (0:num) = SOME F /\ LLOOKUP ([(3:num)]:num list) (0:num) = SOME (3:num) /\ LLOOKUP ([(3:num)]:num list) (0:num) = SOME (3:num)``;
+val _ = emit "mb_output_1_2_0" ``map_bitmap [F] ([]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num)]:num list),([]:num list),([(5:num)]:num list))``;
+val _ = emit "mb_output_1_2_1" ``map_bitmap [F] ([(91:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num)]:num list),([(91:num)]:num list),([(5:num)]:num list))``;
+val _ = emit "mb_output_1_2_2" ``map_bitmap [F] ([(91:num);(92:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num)]:num list),([(91:num);(92:num)]:num list),([(5:num)]:num list))``;
+val _ = emit "mb_output_1_2_3" ``map_bitmap [F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num)]:num list),([(91:num);(92:num);(93:num);(94:num)]:num list),([(5:num)]:num list))``;
+val _ = emit "mb_success_witness_1_2" ``map_bitmap [F] ([]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num)]:num list),[],([(5:num)]:num list)) /\ filter_bitmap [F] ([(2:num)]:num list) = SOME (([]:num list),[])``;
+val _ = emit "mb_more_1_2" ``map_bitmap [F] (([]:num list) ++ ([(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(2:num)]:num list),([(77:num);(78:num)]:num list),([(5:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_1_2" ``map_bitmap [F] (TAKE (LENGTH []) ([(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(2:num)]:num list),[],([(5:num)]:num list)) /\ map_bitmap [F] ([(77:num);(78:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num)]:num list),DROP (LENGTH []) ([(77:num);(78:num)]:num list),([(5:num)]:num list))``;
+val _ = emit "mb_false_slot_1_2_0" ``LLOOKUP [F] (0:num) = SOME F /\ LLOOKUP ([(2:num)]:num list) (0:num) = SOME (2:num) /\ LLOOKUP ([(2:num);(5:num)]:num list) (0:num) = SOME (2:num)``;
+val _ = emit "mb_output_1_3_0" ``map_bitmap [F] ([]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num)]:num list),([]:num list),([(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_1_3_1" ``map_bitmap [F] ([(91:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num)]:num list),([(91:num)]:num list),([(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_1_3_2" ``map_bitmap [F] ([(91:num);(92:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num)]:num list),([(91:num);(92:num)]:num list),([(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_1_3_3" ``map_bitmap [F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num)]:num list),([(91:num);(92:num);(93:num);(94:num)]:num list),([(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_success_witness_1_3" ``map_bitmap [F] ([]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num)]:num list),[],([(3:num);(6:num);(1:num)]:num list)) /\ filter_bitmap [F] ([(8:num)]:num list) = SOME (([]:num list),[])``;
+val _ = emit "mb_more_1_3" ``map_bitmap [F] (([]:num list) ++ ([(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num)]:num list),([(77:num);(78:num)]:num list),([(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_1_3" ``map_bitmap [F] (TAKE (LENGTH []) ([(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num)]:num list),[],([(3:num);(6:num);(1:num)]:num list)) /\ map_bitmap [F] ([(77:num);(78:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num)]:num list),DROP (LENGTH []) ([(77:num);(78:num)]:num list),([(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_false_slot_1_3_0" ``LLOOKUP [F] (0:num) = SOME F /\ LLOOKUP ([(8:num)]:num list) (0:num) = SOME (8:num) /\ LLOOKUP ([(8:num);(3:num);(6:num);(1:num)]:num list) (0:num) = SOME (8:num)``;
+val _ = emit "mb_output_2_0_0" ``map_bitmap [T] ([]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_2_0_1" ``map_bitmap [T] ([(91:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_2_0_2" ``map_bitmap [T] ([(91:num);(92:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_2_0_3" ``map_bitmap [T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_2_1_0" ``map_bitmap [T] ([]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_2_1_1" ``map_bitmap [T] ([(91:num)]:num list) ([(3:num)]:num list) = SOME (([(91:num)]:num list),([]:num list),([]:num list))``;
+val _ = emit "mb_output_2_1_2" ``map_bitmap [T] ([(91:num);(92:num)]:num list) ([(3:num)]:num list) = SOME (([(91:num)]:num list),([(92:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_2_1_3" ``map_bitmap [T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(3:num)]:num list) = SOME (([(91:num)]:num list),([(92:num);(93:num);(94:num)]:num list),([]:num list))``;
+val _ = emit "mb_success_witness_2_1" ``map_bitmap [T] ([(91:num)]:num list) ([(3:num)]:num list) = SOME (([(91:num)]:num list),[],([]:num list)) /\ filter_bitmap [T] ([(91:num)]:num list) = SOME (([(91:num)]:num list),[])``;
+val _ = emit "mb_more_2_1" ``map_bitmap [T] (([(91:num)]:num list) ++ ([(77:num);(78:num)]:num list)) ([(3:num)]:num list) = SOME (([(91:num)]:num list),([(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_prefix_suffix_2_1" ``map_bitmap [T] (TAKE (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list)) ([(3:num)]:num list) = SOME (([(91:num)]:num list),[],([]:num list)) /\ map_bitmap [T] ([(91:num);(77:num);(78:num)]:num list) ([(3:num)]:num list) = SOME (([(91:num)]:num list),DROP (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_2_2_0" ``map_bitmap [T] ([]:num list) ([(2:num);(5:num)]:num list) = NONE``;
+val _ = emit "mb_output_2_2_1" ``map_bitmap [T] ([(91:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num)]:num list),([]:num list),([(5:num)]:num list))``;
+val _ = emit "mb_output_2_2_2" ``map_bitmap [T] ([(91:num);(92:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num)]:num list),([(92:num)]:num list),([(5:num)]:num list))``;
+val _ = emit "mb_output_2_2_3" ``map_bitmap [T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num)]:num list),([(92:num);(93:num);(94:num)]:num list),([(5:num)]:num list))``;
+val _ = emit "mb_success_witness_2_2" ``map_bitmap [T] ([(91:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num)]:num list),[],([(5:num)]:num list)) /\ filter_bitmap [T] ([(91:num)]:num list) = SOME (([(91:num)]:num list),[])``;
+val _ = emit "mb_more_2_2" ``map_bitmap [T] (([(91:num)]:num list) ++ ([(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(91:num)]:num list),([(77:num);(78:num)]:num list),([(5:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_2_2" ``map_bitmap [T] (TAKE (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(91:num)]:num list),[],([(5:num)]:num list)) /\ map_bitmap [T] ([(91:num);(77:num);(78:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num)]:num list),DROP (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list),([(5:num)]:num list))``;
+val _ = emit "mb_output_2_3_0" ``map_bitmap [T] ([]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = NONE``;
+val _ = emit "mb_output_2_3_1" ``map_bitmap [T] ([(91:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num)]:num list),([]:num list),([(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_2_3_2" ``map_bitmap [T] ([(91:num);(92:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num)]:num list),([(92:num)]:num list),([(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_2_3_3" ``map_bitmap [T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num)]:num list),([(92:num);(93:num);(94:num)]:num list),([(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_success_witness_2_3" ``map_bitmap [T] ([(91:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num)]:num list),[],([(3:num);(6:num);(1:num)]:num list)) /\ filter_bitmap [T] ([(91:num)]:num list) = SOME (([(91:num)]:num list),[])``;
+val _ = emit "mb_more_2_3" ``map_bitmap [T] (([(91:num)]:num list) ++ ([(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num)]:num list),([(77:num);(78:num)]:num list),([(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_2_3" ``map_bitmap [T] (TAKE (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num)]:num list),[],([(3:num);(6:num);(1:num)]:num list)) /\ map_bitmap [T] ([(91:num);(77:num);(78:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num)]:num list),DROP (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list),([(3:num);(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_3_0_0" ``map_bitmap [F;F] ([]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_3_0_1" ``map_bitmap [F;F] ([(91:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_3_0_2" ``map_bitmap [F;F] ([(91:num);(92:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_3_0_3" ``map_bitmap [F;F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_3_1_0" ``map_bitmap [F;F] ([]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_3_1_1" ``map_bitmap [F;F] ([(91:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_3_1_2" ``map_bitmap [F;F] ([(91:num);(92:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_3_1_3" ``map_bitmap [F;F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_3_2_0" ``map_bitmap [F;F] ([]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(5:num)]:num list),([]:num list),([]:num list))``;
+val _ = emit "mb_output_3_2_1" ``map_bitmap [F;F] ([(91:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(5:num)]:num list),([(91:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_3_2_2" ``map_bitmap [F;F] ([(91:num);(92:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(5:num)]:num list),([(91:num);(92:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_3_2_3" ``map_bitmap [F;F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(5:num)]:num list),([(91:num);(92:num);(93:num);(94:num)]:num list),([]:num list))``;
+val _ = emit "mb_success_witness_3_2" ``map_bitmap [F;F] ([]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(5:num)]:num list),[],([]:num list)) /\ filter_bitmap [F;F] ([(2:num);(5:num)]:num list) = SOME (([]:num list),[])``;
+val _ = emit "mb_more_3_2" ``map_bitmap [F;F] (([]:num list) ++ ([(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(5:num)]:num list),([(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_prefix_suffix_3_2" ``map_bitmap [F;F] (TAKE (LENGTH []) ([(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(5:num)]:num list),[],([]:num list)) /\ map_bitmap [F;F] ([(77:num);(78:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(5:num)]:num list),DROP (LENGTH []) ([(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_false_slot_3_2_0" ``LLOOKUP [F;F] (0:num) = SOME F /\ LLOOKUP ([(2:num);(5:num)]:num list) (0:num) = SOME (2:num) /\ LLOOKUP ([(2:num);(5:num)]:num list) (0:num) = SOME (2:num)``;
+val _ = emit "mb_false_slot_3_2_1" ``LLOOKUP [F;F] (1:num) = SOME F /\ LLOOKUP ([(2:num);(5:num)]:num list) (1:num) = SOME (5:num) /\ LLOOKUP ([(2:num);(5:num)]:num list) (1:num) = SOME (5:num)``;
+val _ = emit "mb_output_3_3_0" ``map_bitmap [F;F] ([]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(3:num)]:num list),([]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_3_3_1" ``map_bitmap [F;F] ([(91:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(3:num)]:num list),([(91:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_3_3_2" ``map_bitmap [F;F] ([(91:num);(92:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(3:num)]:num list),([(91:num);(92:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_3_3_3" ``map_bitmap [F;F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(3:num)]:num list),([(91:num);(92:num);(93:num);(94:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_success_witness_3_3" ``map_bitmap [F;F] ([]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(3:num)]:num list),[],([(6:num);(1:num)]:num list)) /\ filter_bitmap [F;F] ([(8:num);(3:num)]:num list) = SOME (([]:num list),[])``;
+val _ = emit "mb_more_3_3" ``map_bitmap [F;F] (([]:num list) ++ ([(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(3:num)]:num list),([(77:num);(78:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_3_3" ``map_bitmap [F;F] (TAKE (LENGTH []) ([(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(3:num)]:num list),[],([(6:num);(1:num)]:num list)) /\ map_bitmap [F;F] ([(77:num);(78:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(3:num)]:num list),DROP (LENGTH []) ([(77:num);(78:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_false_slot_3_3_0" ``LLOOKUP [F;F] (0:num) = SOME F /\ LLOOKUP ([(8:num);(3:num)]:num list) (0:num) = SOME (8:num) /\ LLOOKUP ([(8:num);(3:num);(6:num);(1:num)]:num list) (0:num) = SOME (8:num)``;
+val _ = emit "mb_false_slot_3_3_1" ``LLOOKUP [F;F] (1:num) = SOME F /\ LLOOKUP ([(8:num);(3:num)]:num list) (1:num) = SOME (3:num) /\ LLOOKUP ([(8:num);(3:num);(6:num);(1:num)]:num list) (1:num) = SOME (3:num)``;
+val _ = emit "mb_output_4_0_0" ``map_bitmap [T;F] ([]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_4_0_1" ``map_bitmap [T;F] ([(91:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_4_0_2" ``map_bitmap [T;F] ([(91:num);(92:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_4_0_3" ``map_bitmap [T;F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_4_1_0" ``map_bitmap [T;F] ([]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_4_1_1" ``map_bitmap [T;F] ([(91:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_4_1_2" ``map_bitmap [T;F] ([(91:num);(92:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_4_1_3" ``map_bitmap [T;F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_4_2_0" ``map_bitmap [T;F] ([]:num list) ([(2:num);(5:num)]:num list) = NONE``;
+val _ = emit "mb_output_4_2_1" ``map_bitmap [T;F] ([(91:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(5:num)]:num list),([]:num list),([]:num list))``;
+val _ = emit "mb_output_4_2_2" ``map_bitmap [T;F] ([(91:num);(92:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(5:num)]:num list),([(92:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_4_2_3" ``map_bitmap [T;F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(5:num)]:num list),([(92:num);(93:num);(94:num)]:num list),([]:num list))``;
+val _ = emit "mb_success_witness_4_2" ``map_bitmap [T;F] ([(91:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(5:num)]:num list),[],([]:num list)) /\ filter_bitmap [T;F] ([(91:num);(5:num)]:num list) = SOME (([(91:num)]:num list),[])``;
+val _ = emit "mb_more_4_2" ``map_bitmap [T;F] (([(91:num)]:num list) ++ ([(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(5:num)]:num list),([(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_prefix_suffix_4_2" ``map_bitmap [T;F] (TAKE (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(5:num)]:num list),[],([]:num list)) /\ map_bitmap [T;F] ([(91:num);(77:num);(78:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(5:num)]:num list),DROP (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_false_slot_4_2_1" ``LLOOKUP [T;F] (1:num) = SOME F /\ LLOOKUP ([(91:num);(5:num)]:num list) (1:num) = SOME (5:num) /\ LLOOKUP ([(2:num);(5:num)]:num list) (1:num) = SOME (5:num)``;
+val _ = emit "mb_output_4_3_0" ``map_bitmap [T;F] ([]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = NONE``;
+val _ = emit "mb_output_4_3_1" ``map_bitmap [T;F] ([(91:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num)]:num list),([]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_4_3_2" ``map_bitmap [T;F] ([(91:num);(92:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num)]:num list),([(92:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_4_3_3" ``map_bitmap [T;F] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num)]:num list),([(92:num);(93:num);(94:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_success_witness_4_3" ``map_bitmap [T;F] ([(91:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num)]:num list),[],([(6:num);(1:num)]:num list)) /\ filter_bitmap [T;F] ([(91:num);(3:num)]:num list) = SOME (([(91:num)]:num list),[])``;
+val _ = emit "mb_more_4_3" ``map_bitmap [T;F] (([(91:num)]:num list) ++ ([(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num)]:num list),([(77:num);(78:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_4_3" ``map_bitmap [T;F] (TAKE (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num)]:num list),[],([(6:num);(1:num)]:num list)) /\ map_bitmap [T;F] ([(91:num);(77:num);(78:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num)]:num list),DROP (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_false_slot_4_3_1" ``LLOOKUP [T;F] (1:num) = SOME F /\ LLOOKUP ([(91:num);(3:num)]:num list) (1:num) = SOME (3:num) /\ LLOOKUP ([(8:num);(3:num);(6:num);(1:num)]:num list) (1:num) = SOME (3:num)``;
+val _ = emit "mb_output_5_0_0" ``map_bitmap [F;T] ([]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_5_0_1" ``map_bitmap [F;T] ([(91:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_5_0_2" ``map_bitmap [F;T] ([(91:num);(92:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_5_0_3" ``map_bitmap [F;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_5_1_0" ``map_bitmap [F;T] ([]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_5_1_1" ``map_bitmap [F;T] ([(91:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_5_1_2" ``map_bitmap [F;T] ([(91:num);(92:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_5_1_3" ``map_bitmap [F;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_5_2_0" ``map_bitmap [F;T] ([]:num list) ([(2:num);(5:num)]:num list) = NONE``;
+val _ = emit "mb_output_5_2_1" ``map_bitmap [F;T] ([(91:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(91:num)]:num list),([]:num list),([]:num list))``;
+val _ = emit "mb_output_5_2_2" ``map_bitmap [F;T] ([(91:num);(92:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(91:num)]:num list),([(92:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_5_2_3" ``map_bitmap [F;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(91:num)]:num list),([(92:num);(93:num);(94:num)]:num list),([]:num list))``;
+val _ = emit "mb_success_witness_5_2" ``map_bitmap [F;T] ([(91:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(91:num)]:num list),[],([]:num list)) /\ filter_bitmap [F;T] ([(2:num);(91:num)]:num list) = SOME (([(91:num)]:num list),[])``;
+val _ = emit "mb_more_5_2" ``map_bitmap [F;T] (([(91:num)]:num list) ++ ([(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(91:num)]:num list),([(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_prefix_suffix_5_2" ``map_bitmap [F;T] (TAKE (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(91:num)]:num list),[],([]:num list)) /\ map_bitmap [F;T] ([(91:num);(77:num);(78:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(2:num);(91:num)]:num list),DROP (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_false_slot_5_2_0" ``LLOOKUP [F;T] (0:num) = SOME F /\ LLOOKUP ([(2:num);(91:num)]:num list) (0:num) = SOME (2:num) /\ LLOOKUP ([(2:num);(5:num)]:num list) (0:num) = SOME (2:num)``;
+val _ = emit "mb_output_5_3_0" ``map_bitmap [F;T] ([]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = NONE``;
+val _ = emit "mb_output_5_3_1" ``map_bitmap [F;T] ([(91:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(91:num)]:num list),([]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_5_3_2" ``map_bitmap [F;T] ([(91:num);(92:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(91:num)]:num list),([(92:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_5_3_3" ``map_bitmap [F;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(91:num)]:num list),([(92:num);(93:num);(94:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_success_witness_5_3" ``map_bitmap [F;T] ([(91:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(91:num)]:num list),[],([(6:num);(1:num)]:num list)) /\ filter_bitmap [F;T] ([(8:num);(91:num)]:num list) = SOME (([(91:num)]:num list),[])``;
+val _ = emit "mb_more_5_3" ``map_bitmap [F;T] (([(91:num)]:num list) ++ ([(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(91:num)]:num list),([(77:num);(78:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_5_3" ``map_bitmap [F;T] (TAKE (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(91:num)]:num list),[],([(6:num);(1:num)]:num list)) /\ map_bitmap [F;T] ([(91:num);(77:num);(78:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(8:num);(91:num)]:num list),DROP (LENGTH [T]) ([(91:num);(77:num);(78:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_false_slot_5_3_0" ``LLOOKUP [F;T] (0:num) = SOME F /\ LLOOKUP ([(8:num);(91:num)]:num list) (0:num) = SOME (8:num) /\ LLOOKUP ([(8:num);(3:num);(6:num);(1:num)]:num list) (0:num) = SOME (8:num)``;
+val _ = emit "mb_output_6_0_0" ``map_bitmap [T;T] ([]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_6_0_1" ``map_bitmap [T;T] ([(91:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_6_0_2" ``map_bitmap [T;T] ([(91:num);(92:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_6_0_3" ``map_bitmap [T;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_6_1_0" ``map_bitmap [T;T] ([]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_6_1_1" ``map_bitmap [T;T] ([(91:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_6_1_2" ``map_bitmap [T;T] ([(91:num);(92:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_6_1_3" ``map_bitmap [T;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_6_2_0" ``map_bitmap [T;T] ([]:num list) ([(2:num);(5:num)]:num list) = NONE``;
+val _ = emit "mb_output_6_2_1" ``map_bitmap [T;T] ([(91:num)]:num list) ([(2:num);(5:num)]:num list) = NONE``;
+val _ = emit "mb_output_6_2_2" ``map_bitmap [T;T] ([(91:num);(92:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(92:num)]:num list),([]:num list),([]:num list))``;
+val _ = emit "mb_output_6_2_3" ``map_bitmap [T;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(92:num)]:num list),([(93:num);(94:num)]:num list),([]:num list))``;
+val _ = emit "mb_success_witness_6_2" ``map_bitmap [T;T] ([(91:num);(92:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(92:num)]:num list),[],([]:num list)) /\ filter_bitmap [T;T] ([(91:num);(92:num)]:num list) = SOME (([(91:num);(92:num)]:num list),[])``;
+val _ = emit "mb_more_6_2" ``map_bitmap [T;T] (([(91:num);(92:num)]:num list) ++ ([(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(92:num)]:num list),([(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_prefix_suffix_6_2" ``map_bitmap [T;T] (TAKE (LENGTH [T;T]) ([(91:num);(92:num);(77:num);(78:num)]:num list)) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(92:num)]:num list),[],([]:num list)) /\ map_bitmap [T;T] ([(91:num);(92:num);(77:num);(78:num)]:num list) ([(2:num);(5:num)]:num list) = SOME (([(91:num);(92:num)]:num list),DROP (LENGTH [T;T]) ([(91:num);(92:num);(77:num);(78:num)]:num list),([]:num list))``;
+val _ = emit "mb_output_6_3_0" ``map_bitmap [T;T] ([]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = NONE``;
+val _ = emit "mb_output_6_3_1" ``map_bitmap [T;T] ([(91:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = NONE``;
+val _ = emit "mb_output_6_3_2" ``map_bitmap [T;T] ([(91:num);(92:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(92:num)]:num list),([]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_6_3_3" ``map_bitmap [T;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(92:num)]:num list),([(93:num);(94:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_success_witness_6_3" ``map_bitmap [T;T] ([(91:num);(92:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(92:num)]:num list),[],([(6:num);(1:num)]:num list)) /\ filter_bitmap [T;T] ([(91:num);(92:num)]:num list) = SOME (([(91:num);(92:num)]:num list),[])``;
+val _ = emit "mb_more_6_3" ``map_bitmap [T;T] (([(91:num);(92:num)]:num list) ++ ([(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(92:num)]:num list),([(77:num);(78:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_6_3" ``map_bitmap [T;T] (TAKE (LENGTH [T;T]) ([(91:num);(92:num);(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(92:num)]:num list),[],([(6:num);(1:num)]:num list)) /\ map_bitmap [T;T] ([(91:num);(92:num);(77:num);(78:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(92:num)]:num list),DROP (LENGTH [T;T]) ([(91:num);(92:num);(77:num);(78:num)]:num list),([(6:num);(1:num)]:num list))``;
+val _ = emit "mb_output_7_0_0" ``map_bitmap [T;F;T] ([]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_7_0_1" ``map_bitmap [T;F;T] ([(91:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_7_0_2" ``map_bitmap [T;F;T] ([(91:num);(92:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_7_0_3" ``map_bitmap [T;F;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([]:num list) = NONE``;
+val _ = emit "mb_output_7_1_0" ``map_bitmap [T;F;T] ([]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_7_1_1" ``map_bitmap [T;F;T] ([(91:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_7_1_2" ``map_bitmap [T;F;T] ([(91:num);(92:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_7_1_3" ``map_bitmap [T;F;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(3:num)]:num list) = NONE``;
+val _ = emit "mb_output_7_2_0" ``map_bitmap [T;F;T] ([]:num list) ([(2:num);(5:num)]:num list) = NONE``;
+val _ = emit "mb_output_7_2_1" ``map_bitmap [T;F;T] ([(91:num)]:num list) ([(2:num);(5:num)]:num list) = NONE``;
+val _ = emit "mb_output_7_2_2" ``map_bitmap [T;F;T] ([(91:num);(92:num)]:num list) ([(2:num);(5:num)]:num list) = NONE``;
+val _ = emit "mb_output_7_2_3" ``map_bitmap [T;F;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(2:num);(5:num)]:num list) = NONE``;
+val _ = emit "mb_output_7_3_0" ``map_bitmap [T;F;T] ([]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = NONE``;
+val _ = emit "mb_output_7_3_1" ``map_bitmap [T;F;T] ([(91:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = NONE``;
+val _ = emit "mb_output_7_3_2" ``map_bitmap [T;F;T] ([(91:num);(92:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num);(92:num)]:num list),([]:num list),([(1:num)]:num list))``;
+val _ = emit "mb_output_7_3_3" ``map_bitmap [T;F;T] ([(91:num);(92:num);(93:num);(94:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num);(92:num)]:num list),([(93:num);(94:num)]:num list),([(1:num)]:num list))``;
+val _ = emit "mb_success_witness_7_3" ``map_bitmap [T;F;T] ([(91:num);(92:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num);(92:num)]:num list),[],([(1:num)]:num list)) /\ filter_bitmap [T;F;T] ([(91:num);(3:num);(92:num)]:num list) = SOME (([(91:num);(92:num)]:num list),[])``;
+val _ = emit "mb_more_7_3" ``map_bitmap [T;F;T] (([(91:num);(92:num)]:num list) ++ ([(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num);(92:num)]:num list),([(77:num);(78:num)]:num list),([(1:num)]:num list))``;
+val _ = emit "mb_prefix_suffix_7_3" ``map_bitmap [T;F;T] (TAKE (LENGTH [T;T]) ([(91:num);(92:num);(77:num);(78:num)]:num list)) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num);(92:num)]:num list),[],([(1:num)]:num list)) /\ map_bitmap [T;F;T] ([(91:num);(92:num);(77:num);(78:num)]:num list) ([(8:num);(3:num);(6:num);(1:num)]:num list) = SOME (([(91:num);(3:num);(92:num)]:num list),DROP (LENGTH [T;T]) ([(91:num);(92:num);(77:num);(78:num)]:num list),([(1:num)]:num list))``;
+val _ = emit "mb_false_slot_7_3_1" ``LLOOKUP [T;F;T] (1:num) = SOME F /\ LLOOKUP ([(91:num);(3:num);(92:num)]:num list) (1:num) = SOME (3:num) /\ LLOOKUP ([(8:num);(3:num);(6:num);(1:num)]:num list) (1:num) = SOME (3:num)``;

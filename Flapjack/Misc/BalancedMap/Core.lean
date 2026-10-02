@@ -38,7 +38,7 @@ def null {κ ν : Type} : Map κ ν → Bool
   | .bin _ _ _ _ _ => false
 
 @[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "lookup_def"]
-def lookup {κ ν : Type} (cmp : κ → κ → Ordering) (key : κ) : Map κ ν → Option ν
+def lookup {ι κ ν : Type} (cmp : ι → κ → Ordering) (key : ι) : Map κ ν → Option ν
   | .tip => none
   | .bin _ key' value left right =>
     match cmp key key' with
@@ -47,7 +47,7 @@ def lookup {κ ν : Type} (cmp : κ → κ → Ordering) (key : κ) : Map κ ν 
     | .eq => some value
 
 @[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "member_def"]
-def member {κ ν : Type} (cmp : κ → κ → Ordering) (key : κ) : Map κ ν → Bool
+def member {ι κ ν : Type} (cmp : ι → κ → Ordering) (key : ι) : Map κ ν → Bool
   | .tip => false
   | .bin _ key' _ left right =>
     match cmp key key' with
