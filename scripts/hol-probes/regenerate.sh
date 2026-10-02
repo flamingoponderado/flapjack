@@ -5522,3 +5522,6 @@ run_probe lab_to_target_sec_pos_zero_probeScript.sml lab_to_target_sec_pos_zero_
   empty_guard_false all_labels_none zero_labels_asm zero_labels_labasm asm_unrestricted_annotation zero_guard_needed physical_not_annotation width1_large_pos width80_large_pos \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe stack_sem_atomic_clocks_probeScript.sml stack_sem_atomic_clocks_probe.out \
+  gc_clock_statement gc_clock_proved alloc_clock_statement alloc_clock_proved store_const_sem_clock_statement store_const_sem_clock_proved inst_clock_statement inst_clock_proved sh_mem_op_clock_statement sh_mem_op_clock_proved \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"

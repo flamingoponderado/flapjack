@@ -66277,5 +66277,76 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: complete original sec_pos_val_0 4061-4066 and full typed/null-hypothesis capture. Exact NOT EVERY is_Label and EVERY label_zero conjunction, actual sec_pos_val at instruction index0 returning SOME initial Nat position. Arbitrary Nat position and native positive word dimension retained; words_as_type_indexed_bitvec only translates actual native carriers. No nonempty, encoding-validity, successful evaluation or supplied position result guard; empty/all-label exclusion follows only from original classifier guard. Actual label physical length zero derived from original label_zero; Asm/LabAsm annotations, encoded bytes and payloads unrestricted. Same literal constructor induction, no total HD/EL or opaque default. Child of PositionValues imports the existing labelZero owner PositionAppend, avoiding a dependency cycle or duplicate definition. Fresh original9 observations and identical native kernel replays include empty/all-label NONE, both instruction constructors, arbitrary annotation, needed zero-label guard/physical-vs-annotation sentinel, widths1/8/80 and >64-bit positions; full generic and genuine arbitrary-position consumers discharge original premises. This is a prerequisite of full ALOOKUP_section_labels and lab_lookup_compute_labels_test; no full location/machine/end-to-end theorem or HOL-to-Lean equivalence proof is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Clock.lean",
+    "lean_name": "gcClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "gc_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-stack-atomic-clocks): full original gc_clock at stackSem1033-1077. Exact native operation, source returned Option/pair equality premise and post.clock<=source.clock conclusion, arbitrary state/config/FFI/word dimensions. No callback clock assumption, program restriction, target success or added premise. Canonical finite-support regs/fpRegs/store and positive type-indexed word translation only; code Spt and stacks List remain unchanged. Same-module witness reexports actual imported native carrier codec. Native field-preservation helpers are stronger independently checked facts used in proof; statement is original inequality. Literal original proof replay PASS."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Clock.lean",
+    "lean_name": "allocClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "alloc_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-stack-atomic-clocks): full original alloc_clock at stackSem1033-1077. Exact native operation, source returned Option/pair equality premise and post.clock<=source.clock conclusion, arbitrary state/config/FFI/word dimensions. No callback clock assumption, program restriction, target success or added premise. Canonical finite-support regs/fpRegs/store and positive type-indexed word translation only; code Spt and stacks List remain unchanged. Same-module witness reexports actual imported native carrier codec. Native field-preservation helpers are stronger independently checked facts used in proof; statement is original inequality. Literal original proof replay PASS. Original unused universally quantified xs retained at arbitrary U with no premise; word x retains source dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Clock.lean",
+    "lean_name": "storeConstSemClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "store_const_sem_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-stack-atomic-clocks): full original store_const_sem_clock at stackSem1033-1077. Exact native operation, source returned Option/pair equality premise and post.clock<=source.clock conclusion, arbitrary state/config/FFI/word dimensions. No callback clock assumption, program restriction, target success or added premise. Canonical finite-support regs/fpRegs/store and positive type-indexed word translation only; code Spt and stacks List remain unchanged. Same-module witness reexports actual imported native carrier codec. Native field-preservation helpers are stronger independently checked facts used in proof; statement is original inequality. Literal original proof replay PASS. Independent result dimension retained as resultWidth with its own NeZero; original helper produces only Error/NONE so it does not tie result words to state words."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Clock.lean",
+    "lean_name": "instClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-stack-atomic-clocks): full original inst_clock at stackSem1033-1077. Exact native operation, source returned Option/pair equality premise and post.clock<=source.clock conclusion, arbitrary state/config/FFI/word dimensions. No callback clock assumption, program restriction, target success or added premise. Canonical finite-support regs/fpRegs/store and positive type-indexed word translation only; code Spt and stacks List remain unchanged. Same-module witness reexports actual imported native carrier codec. Native field-preservation helpers are stronger independently checked facts used in proof; statement is original inequality. Literal original proof replay PASS. All native integer/memory/FP cases retained; inherited reals_as_rational_cuts from exact total instruction carrier, not a stronger cross-language real equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Clock.lean",
+    "lean_name": "shMemOpClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "sh_mem_op_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-stack-atomic-clocks): full original sh_mem_op_clock at stackSem1033-1077. Exact native operation, source returned Option/pair equality premise and post.clock<=source.clock conclusion, arbitrary state/config/FFI/word dimensions. No callback clock assumption, program restriction, target success or added premise. Canonical finite-support regs/fpRegs/store and positive type-indexed word translation only; code Spt and stacks List remain unchanged. Same-module witness reexports actual imported native carrier codec. Native field-preservation helpers are stronger independently checked facts used in proof; statement is original inequality. Literal original proof replay PASS."
   }
 ]
