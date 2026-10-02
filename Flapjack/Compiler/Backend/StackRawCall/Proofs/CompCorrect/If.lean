@@ -73,15 +73,30 @@ abbrev SimulationResult {width : Nat} [NeZero width] {C F : Type}
     (result ≠ some .timeOut ∧ result ≠ some (.halt (.word (BitVec.ofNat width 2))) →
       stackSpace = targetState.stackSpace)
 
-abbrev BranchIH {width : Nat} [NeZero width] (C F : Type) (program : HolProg width) : Prop :=
-  ∀ (info : Spt Nat) (source target resultState : StackSemStateFiniteExact width C F)
+abbrev ProgramIH {width : Nat} [NeZero width] (C F : Type) (program : HolProg width)
+    (source : StackSemStateFiniteExact width C F) : Prop :=
+  ∀ (info : Spt Nat) (target resultState : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width)),
     StackSemEvaluate.evaluate (program, source) = (result, resultState) ∧
       result ≠ some .error ∧ stateRel info source target →
     SimulationResult (comp info program) info target resultState result
 
-/-- Genuine recursive If case: only branch-program induction hypotheses are
-added to the original three premises. Both original existential conclusions
+/-- The original evaluate_ind branch IH: its source is fixed, and the operand
+reads and selected comparison result guard the recursive motive. This is
+Flapjack notation for that IH, not a separately named HOL declaration. -/
+abbrev BranchIH {width : Nat} [NeZero width] (C F : Type)
+    (comparison : Cmp) (register : Nat) (operand : Compiler.Encoders.Asm.HolRegImm width)
+    (truth : Bool) (program : HolProg width)
+    (source : StackSemStateFiniteExact width C F) : Prop :=
+  ∀ (left right : WordLocW width),
+    StackSemStateOps.getVar register source = some left →
+    StackSemStateOps.getVarImm (Compiler.Encoders.Asm.HolRegImm.toWordRegImm operand)
+      source = some right →
+    wordSemWordCmp comparison left right = some truth →
+    ProgramIH C F program source
+
+/-- Genuine recursive If case: the original fixed-source, selected-branch
+evaluate_ind hypotheses augment the three original premises. Both existential conclusions
 are retained. The full evaluator inherits its documented real-carrier
 assurance limit; this comparison/branch proof introduces no real rendering. -/
 @[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
@@ -90,9 +105,11 @@ assurance limit; this comparison/branch proof introduces no real rendering. -/
   (words_as_type_indexed_bitvec)]
 theorem compCorrectIf {width : Nat} [NeZero width] {C F : Type}
     (comparison : Cmp) (register : Nat) (operand : Compiler.Encoders.Asm.HolRegImm width)
-    (first second : HolProg width) (firstIH : BranchIH C F first) (secondIH : BranchIH C F second)
+    (first second : HolProg width)
     (info : Spt Nat) (source target resultState : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width))
+    (firstIH : BranchIH C F comparison register operand true first source)
+    (secondIH : BranchIH C F comparison register operand false second source)
     (hypothesis : StackSemEvaluate.evaluate (.ite comparison register operand first second, source) =
       (result, resultState) ∧ result ≠ some .error ∧ stateRel info source target) :
     SimulationResult (compTop info (.ite comparison register operand first second))
@@ -108,17 +125,19 @@ theorem compCorrectIf {width : Nat} [NeZero width] {C F : Type}
     exact ⟨simulation, simulation⟩
   rw [StackSemEvaluate.evaluate_ite] at execution
   split at execution
-  · rename_i left right reads
+  · rename_i left right leftRead rightRead
     split at execution
     · rename_i compared
       obtain ⟨clock, targetState, stackSpace, postRelation, targetExecution, guard⟩ :=
-        firstIH info source target resultState result ⟨execution, nonerror, relation⟩
+        firstIH left right leftRead rightRead compared
+          info target resultState result ⟨execution, nonerror, relation⟩
       refine ⟨clock, targetState, stackSpace, postRelation, ?_, guard⟩
       rw [evaluateCompiledIf info source target relation]
       simp_all
     · rename_i compared
       obtain ⟨clock, targetState, stackSpace, postRelation, targetExecution, guard⟩ :=
-        secondIH info source target resultState result ⟨execution, nonerror, relation⟩
+        secondIH left right leftRead rightRead compared
+          info target resultState result ⟨execution, nonerror, relation⟩
       refine ⟨clock, targetState, stackSpace, postRelation, ?_, guard⟩
       rw [evaluateCompiledIf info source target relation]
       simp_all
