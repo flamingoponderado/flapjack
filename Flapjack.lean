@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EncodingNonempty
+import Flapjack.Test.LabToTargetSimpleEncoderParity
 import Flapjack.Test.LabToTargetEncd0Parity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticBufferWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMove
