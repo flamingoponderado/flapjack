@@ -126,6 +126,7 @@ layout guide.
 | compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml | Flapjack/Compiler/Backend/LinearScan/Proofs.lean |
 | translator/monadic/monad_base/ml_monadBaseScript.sml | Flapjack/Translator/Monadic/MonadBase.lean (fixed arrays in `MonadBase/Arrays.lean`) |
 | `misc/miscScript.sml` (`the`) | `Flapjack/Misc/MiscThe.lean` |
+| `misc/miscScript.sml` (`LLOOKUP` optional indexing and list-update laws) | `Flapjack/Misc/ListLookup.lean` |
 
 The pinned external `hol4/src/coretypes/optionScript.sml` counterpart is
 `Flapjack/Misc/Option.lean`.

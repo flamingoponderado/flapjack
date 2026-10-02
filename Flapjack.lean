@@ -201,6 +201,7 @@ import Flapjack.Compiler.Backend.WordAlloc.HeuInst
 import Flapjack.Misc.Sptree.Map
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
+import Flapjack.Misc.ListLookup
 import Flapjack.Compiler.Backend.Parmove.Independence
 import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
 import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly

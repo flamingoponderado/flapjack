@@ -50934,5 +50934,45 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-02: complete original10398-10427 all23 fields, original positive word width/ffi host and Nat-counter paired target configuration retained. Imported canonical owners have local non-vacuous codec roundtrips; only traversed fp/store finite maps qualified, source locals/code/stack_size remain exact Spt trees. Handler deletion, empty stack and its stack_size, identity permutation, indexed frame mapping via full native compile_prog false (Nil,0), complete native list compiler false threads original counter and flattened bitmap with target callback NONE/SOME and returned configuration. Original complete definition printed and124 fresh ground observations at widths1/8/64/80 include malformed trees, inherited fields, callback failure and full success outputs; Lean kernel replays independent outputs. No init_state_ok/state_rel/GC correctness or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListLookup.lean",
+    "lean_name": "llookup",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "LLOOKUP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: original miscScript182-195 overload and direct listTheory reexports compared against actual pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae listScript5482-5528, with six fully closed GEN_ALL source statements captured. LLOOKUP is list-first ordinary zero-based oEL, not reverse indexing. Native getElem? retains both complete nil/cons clauses with natural subtraction and unconditional none outside bounds. DROP uses original m+n offset; TAKE retains only source successful-lookup premise; LUPDATE native List.set preserves all equal/different index and in/out-of-range branches. Arbitrary source payload type and unbounded natural indices retained; no bounds, equality instances or success premises added. Native implementation is shared getElem?, with definitional compatibility witness; 480 fresh original complete outputs include312 Nat and168 positive-width WordLoc rows at widths1/8/64/80 with70bit metadata, empty/duplicate lists and complete prefix/update outputs. Kernel/runtime expected literals come only from original capture. Five optional-only declarations reviewed; source EL-facing THM/EQ_EL captured for audit only, no total-HD/EL port, external trust expansion or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListLookup.lean",
+    "lean_name": "llookupDef",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "LLOOKUP_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: original miscScript182-195 overload and direct listTheory reexports compared against actual pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae listScript5482-5528, with six fully closed GEN_ALL source statements captured. LLOOKUP is list-first ordinary zero-based oEL, not reverse indexing. Native getElem? retains both complete nil/cons clauses with natural subtraction and unconditional none outside bounds. DROP uses original m+n offset; TAKE retains only source successful-lookup premise; LUPDATE native List.set preserves all equal/different index and in/out-of-range branches. Arbitrary source payload type and unbounded natural indices retained; no bounds, equality instances or success premises added. Native implementation is shared getElem?, with definitional compatibility witness; 480 fresh original complete outputs include312 Nat and168 positive-width WordLoc rows at widths1/8/64/80 with70bit metadata, empty/duplicate lists and complete prefix/update outputs. Kernel/runtime expected literals come only from original capture. Five optional-only declarations reviewed; source EL-facing THM/EQ_EL captured for audit only, no total-HD/EL port, external trust expansion or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListLookup.lean",
+    "lean_name": "llookupDrop",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "LLOOKUP_DROP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: original miscScript182-195 overload and direct listTheory reexports compared against actual pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae listScript5482-5528, with six fully closed GEN_ALL source statements captured. LLOOKUP is list-first ordinary zero-based oEL, not reverse indexing. Native getElem? retains both complete nil/cons clauses with natural subtraction and unconditional none outside bounds. DROP uses original m+n offset; TAKE retains only source successful-lookup premise; LUPDATE native List.set preserves all equal/different index and in/out-of-range branches. Arbitrary source payload type and unbounded natural indices retained; no bounds, equality instances or success premises added. Native implementation is shared getElem?, with definitional compatibility witness; 480 fresh original complete outputs include312 Nat and168 positive-width WordLoc rows at widths1/8/64/80 with70bit metadata, empty/duplicate lists and complete prefix/update outputs. Kernel/runtime expected literals come only from original capture. Five optional-only declarations reviewed; source EL-facing THM/EQ_EL captured for audit only, no total-HD/EL port, external trust expansion or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListLookup.lean",
+    "lean_name": "llookupTakeImp",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "LLOOKUP_TAKE_IMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: original miscScript182-195 overload and direct listTheory reexports compared against actual pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae listScript5482-5528, with six fully closed GEN_ALL source statements captured. LLOOKUP is list-first ordinary zero-based oEL, not reverse indexing. Native getElem? retains both complete nil/cons clauses with natural subtraction and unconditional none outside bounds. DROP uses original m+n offset; TAKE retains only source successful-lookup premise; LUPDATE native List.set preserves all equal/different index and in/out-of-range branches. Arbitrary source payload type and unbounded natural indices retained; no bounds, equality instances or success premises added. Native implementation is shared getElem?, with definitional compatibility witness; 480 fresh original complete outputs include312 Nat and168 positive-width WordLoc rows at widths1/8/64/80 with70bit metadata, empty/duplicate lists and complete prefix/update outputs. Kernel/runtime expected literals come only from original capture. Five optional-only declarations reviewed; source EL-facing THM/EQ_EL captured for audit only, no total-HD/EL port, external trust expansion or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListLookup.lean",
+    "lean_name": "llookupLupdate",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "LLOOKUP_LUPDATE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-02: original miscScript182-195 overload and direct listTheory reexports compared against actual pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae listScript5482-5528, with six fully closed GEN_ALL source statements captured. LLOOKUP is list-first ordinary zero-based oEL, not reverse indexing. Native getElem? retains both complete nil/cons clauses with natural subtraction and unconditional none outside bounds. DROP uses original m+n offset; TAKE retains only source successful-lookup premise; LUPDATE native List.set preserves all equal/different index and in/out-of-range branches. Arbitrary source payload type and unbounded natural indices retained; no bounds, equality instances or success premises added. Native implementation is shared getElem?, with definitional compatibility witness; 480 fresh original complete outputs include312 Nat and168 positive-width WordLoc rows at widths1/8/64/80 with70bit metadata, empty/duplicate lists and complete prefix/update outputs. Kernel/runtime expected literals come only from original capture. Five optional-only declarations reviewed; source EL-facing THM/EQ_EL captured for audit only, no total-HD/EL port, external trust expansion or cross-language equivalence claim."
   }
 ]
