@@ -52496,5 +52496,33 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-a source comparison flapjack-2nhb: Genuine original6593-6650 empty-moves branch of evaluate_ssa_reconcile: both original SSA-locals/injection premises retained and only actual filtered moves=[] branch guard added. Native total pair evaluate, existential poststate, full21-field wordStateEqRel and original domain-scoped strongLocalsRel derived; no output/result/simulation premise. Injection unused here retained for assembly. Fresh literal full original reconciliation proof replay plus branch specialization and6carrier types confirms arbitrary names delta num_map, positive word width, native word_loc and independent configuration/FFI host types. Guard uses exact compiler filter/flatten and lawful Nat equality. Native Spt locals/names/maps unchanged; fmap_as_finite_support_relation translates only actual imported owner fpRegs/store with same-module genuine broad/exact roundtrip witness; words_as_type_indexed_bitvec only conventional positive-width/FFI translation. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item8); Skip-only branch. Full nonempty assembly and native SSA simulation remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DeletionFrames.lean",
+    "lean_name": "evaluateArithUnsetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_arith_unset_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-cse-deletion-frames, original local341-405: Full original arbitrary arithmetic/register/value/state or memop/destination/address/offset/deletion/value/state binders and evaluation iff, not merely forward transport. Arithmetic original can_mem_arith and notMEM reads; load original non-store and address-distinct only. Destination/deletion alias permitted, no output evaluation/wf/clock/value-range premise. Native unset_var uses exact Spt delete; unconditional native lookup_delete proves input-value independence for arbitrary Spt shapes. Untagged arithmetic value factoring checked against actual faithful inst; native load support reused unchanged, including original Load16 impossible success. fmap_as_finite_support_relation names only imported reviewed WordSemStateFiniteExact.fpRegs/store with same-module DeletionFramesWitness genuine broad/exact roundtrip; locals/code stay native Spt. words_as_type_indexed_bitvec records positive width and universe-0 hosts only. Actual evaluate/inst inherits existing reals_as_rational_cuts SOUNDNESS item8. Two literal original complete proof replays hyp=[] and four original inferred types,152full original/kernel applications at1/32/64/80 including destination alias. Initial generated fixture incorrectly rewrote an outer set_var; repaired update generation and freshly regenerated before delivery. No complete data_inv/knowledge/pass/compiler claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DeletionFrames.lean",
+    "lean_name": "evaluateLoadUnsetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_unset_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-cse-deletion-frames, original local341-405: Full original arbitrary arithmetic/register/value/state or memop/destination/address/offset/deletion/value/state binders and evaluation iff, not merely forward transport. Arithmetic original can_mem_arith and notMEM reads; load original non-store and address-distinct only. Destination/deletion alias permitted, no output evaluation/wf/clock/value-range premise. Native unset_var uses exact Spt delete; unconditional native lookup_delete proves input-value independence for arbitrary Spt shapes. Untagged arithmetic value factoring checked against actual faithful inst; native load support reused unchanged, including original Load16 impossible success. fmap_as_finite_support_relation names only imported reviewed WordSemStateFiniteExact.fpRegs/store with same-module DeletionFramesWitness genuine broad/exact roundtrip; locals/code stay native Spt. words_as_type_indexed_bitvec records positive width and universe-0 hosts only. Actual evaluate/inst inherits existing reals_as_rational_cuts SOUNDNESS item8. Two literal original complete proof replays hyp=[] and four original inferred types,152full original/kernel applications at1/32/64/80 including destination alias. Initial generated fixture incorrectly rewrote an outer set_var; repaired update generation and freshly regenerated before delivery. No complete data_inv/knowledge/pass/compiler claim."
   }
 ]
