@@ -1,0 +1,17 @@
+all_lab_len_pos_ok_pad_code=∀(nop :word8 list) (code :α sec list) (pos :num).
+  all_lab_len_pos_ok pos code ∧
+  (LENGTH nop ≠ (1 :num) ⇒ EVERY (sec_label_zero :α sec -> bool) code) ∧
+  EVERY (sec_label_one :α sec -> bool) code ∧
+  EVERY (sec_label_prefix_zero :α sec -> bool) code ⇒
+  all_lab_len_pos_ok pos (pad_code nop code)
+all_lab_len_pos_ok_pad_code_types=(nop :word8 list)::word8 list;(code :α sec list)::α sec list;(pos :num)::num;
+one_byte_original_four_guards=T
+one_byte_full_tuple=T
+one_byte_output_parity=T
+empty_nop_zero_guard=T
+multibyte_full_tuple_parity=T
+prefix_guard_necessary=T
+input_parity_guard_necessary=T
+empty_code_width1=T
+empty_sections=T
+large_width80=T

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAStateRoute
 import Flapjack.RiscV.AllocatorCorrectness
 import Flapjack.RiscV.LocValue
 
@@ -22,29 +23,20 @@ theorem wordSsaRenameInst_store {width : Nat}
 
 theorem wordSsaRead_fresh_name (state : WordSsaState) (name : Nat) :
     wordSsaRead (wordSsaFresh state name).1 name = state.next := by
-  simp [wordSsaRead, wordSsaFresh, lookupNatInfo]
+  simp only [wordSsaRead,wordSsaFresh,
+    Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable,
+    Compiler.Backend.WordAlloc.nextVarRename]
+  rw [Compiler.Backend.WordAlloc.productionSsaDecodedLookup,sptLookup_sptInsert_same]
 
 theorem wordSsaRead_fresh_of_ne (state : WordSsaState) (name other : Nat)
     (hneq : other ≠ name) :
     wordSsaRead (wordSsaFresh state name).1 other = wordSsaRead state other := by
-  have hlookup : ∀ entries : NatInfoMap Nat,
-      lookupNatInfo other (entries.filter (fun entry => entry.1 != name)) =
-        lookupNatInfo other entries := by
-    intro entries
-    induction entries with
-    | nil => rfl
-    | cons entry entries ih =>
-        rcases entry with ⟨key, value⟩
-        by_cases hkeyName : key = name
-        · subst key
-          simp [lookupNatInfo, ih, Ne.symm hneq]
-        · simp [lookupNatInfo, ih, hkeyName]
-  simp only [wordSsaRead, wordSsaFresh]
-  have hhead : lookupNatInfo other
-      ((name, state.next) :: state.current.filter (fun entry => entry.1 != name)) =
-      lookupNatInfo other (state.current.filter (fun entry => entry.1 != name)) := by
-    simp [lookupNatInfo, Ne.symm hneq]
-  rw [hhead, hlookup state.current]
+  simp only [wordSsaRead,wordSsaFresh,
+    Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable,
+    Compiler.Backend.WordAlloc.nextVarRename]
+  rw [Compiler.Backend.WordAlloc.productionSsaDecodedLookup,
+    sptLookup_sptInsert_ne name other state.next _ hneq,sptLookup_sptFromAList,
+    ← Compiler.Backend.WordAlloc.productionMergeMapLookup]
 
 theorem wordSsaRenameInst_load {width : Nat}
     (ssa : WordSsaState) (destination address : Nat) :
@@ -474,6 +466,9 @@ theorem wordSsaRenameProgram_move_one [OfNat α 0]
   · subst source
     simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
       wordSsaRenameMove, wordSsaFreshList, wordSsaForceRename,
+      wordSsaFresh, Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable,
+      Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable,
+      Compiler.Backend.WordAlloc.forceRename, sptToAListFromAListToAList,
       wordSsaReadMoveSource]
   · simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
       wordSsaRenameMove, wordSsaFreshList, wordSsaForceRename, hsource,

@@ -1,0 +1,19 @@
+section_labels_line_get_code_labels=∀(pos :num) (lines :α line list) (aux :(num # num) list) (new_pos :num)
+    (labs :(num # num) list).
+  section_labels pos lines aux = (new_pos,labs) ⇒
+  (0 :num) INSERT set (MAP (FST :num # num -> num) labs) =
+  (0 :num) INSERT
+  set (MAP (FST :num # num -> num) aux) ∪
+  BIGUNION (IMAGE (line_get_code_labels :α line -> num -> bool) (set lines))
+section_labels_line_get_code_labels_types=(pos :num)::num;(lines :α line list)::α line list;(aux :(num # num) list)::(num # num) list;(new_pos :num)::num;(labs :(num # num) list)::(num # num) list;
+mixed_full_tuple=T
+mixed_full_set_equality=T
+duplicate_zero_accumulator_retained=T
+all_label_zero_skipped_nonzero_kept=T
+both_zero_insertions_needed=T
+empty_accumulator_retained=T
+zero_accumulator_value_unconstrained=T
+nonlabel_bytes_not_annotation=T
+all_seven_opcodes_no_definitions=T
+width1_empty=T
+width80_large_position=T

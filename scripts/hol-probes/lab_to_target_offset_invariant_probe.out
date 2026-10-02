@@ -1,0 +1,45 @@
+line_offset_ok_def=(line_offset_ok (labs :num sptree$num_map sptree$num_map)
+   (ffis :ffiname list) (pos' :num)
+   (LabAsm (a :α asm_with_lab) (w :α word) (bytes :word8 list) (v0 :num)) ⇔
+ w = (get_jump_offset a ffis labs pos' :α word)) ∧
+(line_offset_ok (v1 :num sptree$num_map sptree$num_map) (v2 :ffiname list)
+   (v3 :num) (Label (v10 :num) (v11 :num) (v12 :num) :α line) ⇔ T) ∧
+(line_offset_ok v1 v2 v3
+   (Asm (v13 :α asm_or_cbw) (v14 :word8 list) (v15 :num)) ⇔ T)
+line_offset_ok_def_types=(v15 :num)::num;(v14 :word8 list)::word8 list;(v13 :α asm_or_cbw)::α asm_or_cbw;(v12 :num)::num;(v11 :num)::num;(v10 :num)::num;(v3 :num)::num;(v2 :ffiname list)::ffiname list;(v1 :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(v0 :num)::num;(bytes :word8 list)::word8 list;(w :α word)::α word;(a :α asm_with_lab)::α asm_with_lab;(pos' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;
+lines_offset_ok_def=(∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num).
+   lines_offset_ok labs ffis pos ([] :α line list) ⇔ T) ∧
+∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+    (l :α line) (ls :α line list).
+  lines_offset_ok labs ffis pos (l::ls) ⇔
+  line_offset_ok labs ffis pos l ∧
+  lines_offset_ok labs ffis (pos + line_len l) ls
+lines_offset_ok_def_types=
+lines_offset_ok_append=∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+    (l1 :α line list) (l2 :α line list).
+  lines_offset_ok labs ffis pos (l1 ++ l2) ⇔
+  lines_offset_ok labs ffis pos l1 ∧
+  lines_offset_ok labs ffis
+    (pos + (SUM (MAP (line_len :α line -> num) l1) :num)) l2
+lines_offset_ok_append_types=(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(l1 :α line list)::α line list;(l2 :α line list)::α line list;
+offset_ok_def=(∀(pos :num) (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list).
+   (offset_ok labs ffis pos ([] :α sec list) :bool) ⇔ T) ∧
+∀(ss :α sec list) (pos :num) (ls :α line list)
+    (labs :num sptree$num_map sptree$num_map) (k :num) (ffis :ffiname list).
+  (offset_ok labs ffis pos (Section k ls::ss) :bool) ⇔
+  lines_offset_ok labs ffis pos ls ∧
+  (offset_ok labs ffis (pos + (SUM (MAP (line_len :α line -> num) ls) :num))
+     ss :bool)
+offset_ok_def_types=
+label_unconstrained=T
+asm_unconstrained=T
+all_lab_opcodes=T
+wrong_stored_word=T
+missing_label_default=T
+missing_ffi_default=T
+annotation_append=T
+bad_append_position=T
+sections_advance=T
+bad_section_reset=T
+empty_width1=T
+large_width80=T

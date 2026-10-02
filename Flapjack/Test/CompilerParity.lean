@@ -1,3 +1,16 @@
+import Flapjack.Test.WordToStackRegOutputParity
+import Flapjack.Test.LabToTargetCodeOffsetPaddingParity
+import Flapjack.Test.LabToTargetSectionLabelExtractionParity
+import Flapjack.Test.LabToTargetLabelExistenceDomainParity
+import Flapjack.Test.LabToTargetLabelExistenceEncodingParity
+import Flapjack.Test.LabToTargetLabelExistenceParity
+import Flapjack.Test.LabToTargetOffsetPaddingParity
+import Flapjack.Test.BinaryIeeeDirectedFp64Parity
+import Flapjack.Test.LabToTargetOffsetEstablishmentParity
+import Flapjack.Test.BinaryIeeeDirectedFp32Parity
+import Flapjack.Test.LabToTargetOffsetInvariantParity
+import Flapjack.Test.LabToTargetCodeLabelPositionPaddingParity
+import Flapjack.Test.LabToTargetPrefixPaddingLengthParity
 import Flapjack.Test.LabToTargetLabelPositionPaddingParity
 import Flapjack.Test.LabToTargetLabelPositionPrefixParity
 import Flapjack.Test.LabToTargetLabelPositionEncodingParity
@@ -13,7 +26,9 @@ import Flapjack.Test.L3RiscvFpStateUpdatesParity
 import Flapjack.Test.CanonicalL3ArbParity
 import Flapjack.Test.L3RiscvFpCompareParity
 import Flapjack.Test.L3RiscvFpToIntParity
+import Flapjack.Test.L3RiscvIntToFpParity
 import Flapjack.Test.L3RiscvRoundingParity
+import Flapjack.Test.BinaryIeeeRoundFp32Parity
 import Flapjack.Test.LabToTargetNopInsertEncodingParity
 import Flapjack.Test.LabToTargetNopPaddingParity
 import Flapjack.Test.MiscTakeFlatReplicateParity
@@ -147,6 +162,7 @@ import Flapjack.Test.FiniteMapUnionExact
 import Flapjack.Test.ComparisonGoodCmp
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordToStackAsmNameShareParity
 import Flapjack.Test.WordToStackSortedRelationsParity
 import Flapjack.Test.WordToStackSortedKeysParity
 import Flapjack.Test.WordToStackBitmapWriteParity
@@ -1863,6 +1879,16 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetAlignmentParity.runChecks,
     Flapjack.Test.LabToTargetPrefixZeroParity.runChecks,
     Flapjack.Test.LabToTargetPrefixPreservationParity.runChecks,
+    Flapjack.Test.LabToTargetSectionLabelExtractionParity.runChecks,
+    Flapjack.Test.LabToTargetLabelExistenceDomainParity.runChecks,
+    Flapjack.Test.LabToTargetLabelExistenceEncodingParity.runChecks,
+    Flapjack.Test.LabToTargetLabelExistenceParity.runChecks,
+    Flapjack.Test.LabToTargetCodeOffsetPaddingParity.runChecks,
+    Flapjack.Test.LabToTargetOffsetPaddingParity.runChecks,
+    Flapjack.Test.LabToTargetOffsetEstablishmentParity.runChecks,
+    Flapjack.Test.LabToTargetOffsetInvariantParity.runChecks,
+    Flapjack.Test.LabToTargetCodeLabelPositionPaddingParity.runChecks,
+    Flapjack.Test.LabToTargetPrefixPaddingLengthParity.runChecks,
     Flapjack.Test.LabToTargetLabelPositionPaddingParity.runChecks,
     Flapjack.Test.LabToTargetLabelPositionPrefixParity.runChecks,
     Flapjack.Test.LabToTargetLabelPositionEncodingParity.runChecks,

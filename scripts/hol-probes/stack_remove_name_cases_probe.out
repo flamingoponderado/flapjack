@@ -1,0 +1,3 @@
+nc_statement=∀name. name ≠ CurrHeap ⇒ MEM name store_list
+nc_types=name:store_name
+nc_proved=T

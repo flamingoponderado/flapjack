@@ -7,15 +7,15 @@ open Flapjack Flapjack.RiscV.CakeRegAlloc
 not cross-language oracle claims or HOL theorem ports. -/
 
 example : wordSsaSetupParametersFromLimit 21 [0, 2] =
-    ({ current := [(2, 25), (0, 21)], next := 29 }, [21, 25]) := by
-  simp [wordSsaSetupParametersFromLimit, wordSsaFreshList, wordSsaFresh]
+    ({ current := sptToAList (sptFromAList [(2, 25), (0, 21)]), next := 29 }, [21, 25]) := by
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaSetupParametersFromLimit, wordSsaFreshList, wordSsaFresh]
 
 example : wordFullSsaCcTransNativeLimit 2 (.skip : WordProg (BitVec 64)) =
-    some ({ current := [(2, 9), (0, 5)], next := 13 }, [5, 9],
+    some ({ current := sptToAList (sptFromAList [(2, 9), (0, 5)]), next := 13 }, [5, 9],
       .seq (.move 1 [(5, 0), (9, 2)]) .skip) := by
   have abi : wordSsaAbiParameters 2 = [0, 2] := by rfl
   rw [wordFullSsaCcTransNativeLimit_eq]
-  simp [wordLangProgToHOL, wordFullSsaCcTrans, abi,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordLangProgToHOL, wordFullSsaCcTrans, abi,
     wordSsaRenameFunctionWithEntry, wordSsaEntryMove, wordSsaRenameFunction,
     wordSsaSetupParameters, wordSsaLimitVar, wordProgCakeMaxVar,
     wordSsaFreshList, wordSsaFresh, wordSsaRenameProgram, wordSsaRenameProgramWithLoops]

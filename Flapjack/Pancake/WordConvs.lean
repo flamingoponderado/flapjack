@@ -275,38 +275,50 @@ def instOkLess {width : Nat} (config : AsmConfig width) :
       asmFpRegOk config destination && asmFpRegOk config source
   | _ => true
 
-/-- HOL `wordConvs$full_inst_ok_less_def` (`wordConvsScript.sml:318-345`): the
-weaker per-instruction validity predicate lifted over the program, with the
-`ShareInst` address-expression restriction via `expToAddr`. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "full_inst_ok_less_def"]
-def fullInstOkLess {width : Nat} (config : AsmConfig width) :
+/-- Flapjack-only shared program traversal for the broad executed validity
+predicate and its exact-carrier counterpart. HOL has a fixed configuration
+argument, not these policy parameters; this infrastructure has no HOL original.
+The complete recursive clause order and Call/ShareInst behavior are shared. -/
+def fullInstOkLessWith {width : Nat}
+    (instructionOk : WordLangInst (BitVec width) → Bool)
+    (addressOk : HolMemop → BitVec width → Bool) :
     WordLangProgHOL (BitVec width) → Bool
-  | .inst value => instOkLess config value
+  | .inst value => instructionOk value
   | .seq first second =>
-      fullInstOkLess config first && fullInstOkLess config second
-  | .loop _ body _ => fullInstOkLess config body
+      fullInstOkLessWith instructionOk addressOk first && fullInstOkLessWith instructionOk addressOk second
+  | .loop _ body _ => fullInstOkLessWith instructionOk addressOk body
   | .ite _ _ _ thenBranch elseBranch =>
-      fullInstOkLess config thenBranch && fullInstOkLess config elseBranch
-  | .mustTerminate body => fullInstOkLess config body
+      fullInstOkLessWith instructionOk addressOk thenBranch && fullInstOkLessWith instructionOk addressOk elseBranch
+  | .mustTerminate body => fullInstOkLessWith instructionOk addressOk body
   | .call returns _ _ handler =>
       match returns with
       | none => true
       | some (_, _, returnHandler, _, _) =>
-          fullInstOkLess config returnHandler &&
+          fullInstOkLessWith instructionOk addressOk returnHandler &&
             match handler with
             | none => true
-            | some (_, handlerProg, _, _) => fullInstOkLess config handlerProg
+            | some (_, handlerProg, _, _) => fullInstOkLessWith instructionOk addressOk handlerProg
   | .shareInst operator _ address =>
       match expToAddrHOL address with
-      | some (.addr _ offset) =>
-          if operator == .load || operator == .store ||
-              operator == .load32 || operator == .store32 then
-            asmAddrOffsetOk config offset
-          else if operator == .load16 || operator == .store16 then
-            asmHwOffsetOk config offset
-          else asmByteOffsetOk config offset
+      | some (.addr _ offset) => addressOk operator offset
       | none => false
   | _ => true
+
+/-- Broad executed program-validity wrapper. It retains the original
+width-general behavior, including width zero, and uses AsmConfig whose encoder
+consumes AsmData and produces UInt8 lists. Those carriers differ from HOL's
+positive-width asm_config with HolAsm/word8 encoder, so this wrapper is untagged.
+The faithful full_inst_ok_less port is fullInstOkLessExact in the counterpart
+submodule; the shared recursive traversal avoids a duplicate program semantics. -/
+def fullInstOkLess {width : Nat} (config : AsmConfig width)
+    (program : WordLangProgHOL (BitVec width)) : Bool :=
+  fullInstOkLessWith (instOkLess config) (fun operator offset =>
+    if operator == .load || operator == .store ||
+        operator == .load32 || operator == .store32 then
+      asmAddrOffsetOk config offset
+    else if operator == .load16 || operator == .store16 then
+      asmHwOffsetOk config offset
+    else asmByteOffsetOk config offset) program
 
 /-- HOL `wordConvs$inst_arg_convention` (`wordConvsScript.sml:378-386`):
 per-instruction calling-convention argument placement.

@@ -23,9 +23,9 @@ example :
     wordSsaRenameProgram
       ({ current := [], next := 10 } : WordSsaState)
       (.locValue 3 100 : WordProg Nat) =
-      ({ current := [(3, 10)], next := 14 },
+      ({ current := sptToAList (sptFromAList [(3, 10)]), next := 14 },
         .locValue 10 100) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaFresh]
 
 example :
