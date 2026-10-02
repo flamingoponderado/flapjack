@@ -278,7 +278,20 @@ theorem isWord_thm {width : Nat} [NeZero width] :
 theorem lower_2w_eq {width : Nat} [NeZero width] :
     ∀ w : BitVec width, goodDimindex width → (w < 2 ↔ w = 0 ∨ w = 1) := by
   intro w hg
-  rcases hg with rfl | rfl <;> bv_decide
+  rcases hg with rfl | rfl
+  all_goals
+    constructor
+    · intro h
+      change w.toNat < 2 at h
+      have cases : w.toNat = 0 ∨ w.toNat = 1 := by omega
+      rcases cases with zero | one
+      · left
+        apply BitVec.eq_of_toNat_eq
+        simpa using zero
+      · right
+        apply BitVec.eq_of_toNat_eq
+        simpa using one
+    · rintro (rfl | rfl) <;> decide
 
 /-- Exact HOL `EL_LENGTH_ADD_LEMMA` (`stack_allocProofScript.sml:307-312`).
 `Nonempty α` renders HOL's inhabited type variables and makes the total

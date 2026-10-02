@@ -9,6 +9,10 @@
 # This file is a ceiling, not a target. Counts may go down freely; any
 # increase, or any use in a file not listed here, fails CI. When a count
 # drops the check says so and asks for this file to be lowered.
+# `bv_decide`, `ofReduceBool` and `trustCompiler` have no allowance. The same
+# CI entrypoint rejects those tokens outside Lean comments (including in
+# strings, conservatively); this file cannot authorize them. This source scan
+# does not replace inspection of the elaborated theorem's axiom dependencies.
 #
 # Before adding an entry, try in order: `decide`; then `decide +kernel`, which
 # unfolds many `termination_by` definitions the elaborator's `whnf` stalls on;
