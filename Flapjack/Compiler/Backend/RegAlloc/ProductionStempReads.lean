@@ -4,7 +4,9 @@ import Flapjack.Compiler.Backend.RegAlloc.StempColouring
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase
 
-private theorem tagMap_production (nodes : List Nat)
+/-- Complete ordered tag reads and colour projection for bounded neighbours.
+Flapjack actual/native infrastructure used by the concrete colouring phase. -/
+theorem tagMap_production (nodes : List Nat)
     {native : State} {production : CakeRaState}
     (related : ProductionStateRel native production) (good : goodRaState native)
     (bounds : ∀ node ∈ nodes, node < native.dim) :

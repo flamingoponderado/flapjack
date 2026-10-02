@@ -52,11 +52,12 @@ def sptIsEmpty {α : Type} : Spt α → Bool
   | .ln => true
   | _ => false
 
-/-- Retained Flapjack well-formedness check: no internal node has two empty
-children. The former wf_def tag/manifest row was withdrawn with the stack
-relation references in c662f3b64; external-source acceptance remains open on
-flapjack-pxn.18.5.15.3.29.2. The source counterpart is the pinned
-HOL/src/finite_maps/sptreeScript.sml:39-44, not a currently claimed tagged port. -/
+/-- HOL `sptree$wf`: all four original clauses over the literal Spt carrier.
+Both branch constructors require recursively well-formed children and reject
+two LN children, including BS nodes with a payload. The payload is never
+compared, so arbitrary types need no equality instance. The existing pinned
+hol4 snapshot supplies the source; no external-source policy changes apply. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "wf_def"]
 def sptWf {α : Type} : Spt α → Bool
   | .ln => true
   | .ls _ => true
