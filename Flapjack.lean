@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.MMU.Translate
 import Flapjack.RiscV.L3.Defs.MMU.Walk
 import Flapjack.RiscV.L3.Defs.MMU.Insert
 import Flapjack.RiscV.L3.Defs.MMU.TLB

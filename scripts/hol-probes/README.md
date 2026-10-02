@@ -6153,3 +6153,5 @@ atomic clock and `fix_clock_IMP` helpers. It uses the exported HOL evaluator
 rules after `allow_rebind`, and resolves `state_component_equality` with
 `DB.fetch` rather than a current-theory lookup. The Lean proof independently
 uses the faithful evaluator clauses before the clock-identity rewrite.
+
+`l3_mmu_translate_probe.out` records nine full original translate64 hit/miss observations: read, write-clean, write-dirty, denied hit, empty/invalid/ASID miss, global hit and full-table replacement. Replays observe optional physical address, all nine fields in all sixteen current-core TLB slots and the packed PTE memory word. Inputs preserve core7/totalCore1, original current-ASID selection and cycle age77; other state fields remain unobserved. Hit reads retain R=false and age3, hit writes set D only, while walk misses set R and insert age77. These observations check regressions and do not establish cross-language equivalence.

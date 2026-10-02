@@ -1,3 +1,4 @@
+import Flapjack.Test.L3MmuTranslateParity
 import Flapjack.Test.L3MmuWalkParity
 import Flapjack.Test.L3MmuInsertParity
 import Flapjack.Test.L3MmuTlbParity
