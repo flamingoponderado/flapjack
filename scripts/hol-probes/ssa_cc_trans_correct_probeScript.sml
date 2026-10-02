@@ -1,0 +1,10 @@
+load "preamble";
+load "word_allocProofTheory";
+open bossLib HolKernel Parse preamble word_allocProofTheory;
+val _ = Globals.linewidth := 1000;
+val _ = print "ssa_cc_trans_correct_full=";
+val _ = print_thm ssa_cc_trans_correct;
+val _ = print "\n";
+val _ = print "ssa_cc_trans_correct_type=";
+val _ = print_term (concl ssa_cc_trans_correct);
+val _ = print "\n";

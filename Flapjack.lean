@@ -1,4 +1,8 @@
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcGenerational
+import Flapjack.Compiler.Backend.LabToTarget.OffsetInvariant
+import Flapjack.Compiler.Backend.LabToTarget.CodeLabelPositionPadding
+import Flapjack.Compiler.Backend.LabToTarget.PrefixPaddingLength
+import Flapjack.Compiler.Backend.LabToTarget.LabelPositionPadding
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.SetNewTrigger
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionPrefix
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding
@@ -89,6 +93,10 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryWrites
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryStores
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ExpressionSimulation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Atoms
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Binary
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Arithmetic
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
@@ -247,6 +255,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackConventions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundRecursive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundFlat
@@ -1655,6 +1664,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallCase
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCorrect
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.FullSSACorrect
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
 import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
 import Flapjack.Compiler.Backend.LabToTarget.SecondPass
