@@ -3,11 +3,11 @@ import Flapjack.Test.LabToTargetProgramByteLengthsParity
 import Flapjack.Test.LabToTargetPositionExtensionParity
 import Flapjack.Test.LabToTargetFetchSuccessorParity
 import Flapjack.Test.LabToTargetRemoveLabelsCorrectnessParity
+import Flapjack.Test.L3FetchPrimitivesParity
 import Flapjack.Test.L3MmuTranslateAddrParity
 import Flapjack.Test.L3MmuTranslateParity
 import Flapjack.Test.L3MmuWalkParity
 import Flapjack.Test.L3MmuInsertParity
-import Flapjack.Test.LabToTargetRemoveLabelsCorrectnessParity
 import Flapjack.Test.LabToTargetInitialEncodingPreconditionsParity
 import Flapjack.Test.LabToTargetRemoveLabelsLoopParity
 import Flapjack.Test.LabToTargetComputedLabelPositionsParity
@@ -332,6 +332,7 @@ import Flapjack.Test.WordToStackExtractLabelsCompilerParity
 import Flapjack.Test.WordToStackInitializationParity
 import Flapjack.Test.ListLookupParity
 import Flapjack.Test.WordToStackListUpdateSlicesParity
+import Flapjack.Test.SptreeWfDefinitionParity
 import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.ParmoveAllDistinctPmovParity
 import Flapjack.Test.ParmoveTempPmovParity
@@ -1910,6 +1911,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordToStackInitializationParity.runChecks,
     Flapjack.Test.ListLookupParity.runChecks,
     Flapjack.Test.WordToStackListUpdateSlicesParity.runChecks,
+    Flapjack.Test.SptreeWfDefinitionParity.runChecks,
     Flapjack.Test.WordToStackIndexListParity.runChecks,
     Flapjack.Test.WordToStackAbsStackLengthsParity.runChecks,
     Flapjack.Test.WordToStackAbsStackPrefixParity.runChecks,

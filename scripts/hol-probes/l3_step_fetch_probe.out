@@ -1,0 +1,3 @@
+step_fetch_full_definition=∀s. Fetch s = (let (w,s) = translateAddr (PC s,Instruction,Read) s in rawReadInst (THE w) s)
+step_fetch_full_type=:riscv_state -> rawInstType # riscv_state
+step_fetch_generic_equation=Fetch s = (let (w,s1) = translateAddr (PC s,Instruction,Read) s in rawReadInst (THE w) s1)

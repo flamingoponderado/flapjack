@@ -1,5 +1,6 @@
 (* Export the elaborated HOL definition theorems of the L3 RISC-V model (riscv) and its step
-   theory (riscv_step) reached from riscv_step$NextRISCV, in dependency order, as S-expressions
+   theory (riscv_step) reached from riscv_step$NextRISCV and the original model
+   riscv$Fetch, in dependency order, as S-expressions
    for scripts/hol_terms_to_lean.py. Run with the pinned HOL (`hol run` from any directory);
    it writes defs.sexp in the working directory, which is committed as
    scripts/l3/riscv_defs.sexp.gz (gzip -9 -n). *)
@@ -29,6 +30,8 @@ fun visit c =
                       order := (Thy, Name, n, th) :: !order)
    | NONE => ()) end;
 val _ = visit (prim_mk_const {Thy = "riscv_step", Name = "NextRISCV"});
+(* Keep the full model Fetch distinct from the simplified step Fetch. *)
+val _ = visit (prim_mk_const {Thy = "riscv", Name = "Fetch"});
 fun q s = "\"" ^ String.toString s ^ "\"";
 fun ty t =
   if is_vartype t then "(tv " ^ q (dest_vartype t) ^ ")"

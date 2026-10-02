@@ -2225,7 +2225,10 @@ def cakeFirstMatchCol (state : CakeRaState) (ks : List Nat) : List Nat → Optio
   | v :: vs =>
       match state.nodeTag.get v with
       | some (.fixed m) => if ks.contains m then some m else cakeFirstMatchCol state ks vs
-      | _ => cakeFirstMatchCol state ks vs
+      | some _ => cakeFirstMatchCol state ks vs
+      -- The source biased preference catches Subscript at this lookup and
+      -- returns NONE immediately, rather than considering later partners.
+      | none => none
 
 /-- `coalesce_root` (`reg_allocScript.sml:1363-1378`): read-only parent
     traversal without path compression. -/
