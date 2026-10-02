@@ -1,6 +1,10 @@
 import Flapjack.Test.LabToTargetLabelValidityParity
 import Flapjack.Test.LabToTargetSimilarLabelsParity
 import Flapjack.Test.LabToTargetGoodCodeParity
+import Flapjack.Byte.WordOfBytes
+import Flapjack.Byte.WordSliceAlt
+import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+import Flapjack.Compiler.Backend.StackRemove.InitMemory
 import Flapjack.Test.LabToTargetByteLengthsParity
 import Flapjack.Test.LabPropsLabelSetsParity
 import Flapjack.Test.LabToTargetWordLocationParity
@@ -20,8 +24,6 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.ConstructedOracles
 import Flapjack.Compiler.Backend.Semantics.TargetProps.OracleEquality
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence
 import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
-import Flapjack.Compiler.Backend.StackRemove.InitMemory
 import Flapjack.Compiler.Backend.StackRemove.StoreInit
 import Flapjack.Compiler.Backend.StackRemove.StoreListCode
 import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity

@@ -7,6 +7,8 @@ import Flapjack.Test.TargetFindNextInterferenceParity
 import Flapjack.Test.MmioIndex
 import Flapjack.Test.LabInitialLabelSlots
 import Flapjack.Test.StackRemoveInitMemory
+import Flapjack.Test.ByteDecoder
+import Flapjack.Test.ByteWordSliceAlt
 import Flapjack.Test.StackRemoveStoreInit
 import Flapjack.Test.WordOverflowProduction
 import Flapjack.Test.StackRemoveStoreListCode
