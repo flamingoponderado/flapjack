@@ -5774,3 +5774,9 @@ run_probe lab_to_target_position_order_probeScript.sml lab_to_target_position_or
   fetch_bound unrestricted_lower encoder_positive strict_order inverse_unbounded_second bounded_injective physical_boundary unrestricted_saturation empty \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_memory_transport_probeScript.sml lab_to_target_memory_transport_probe.out \
+  bytes_in_memory_eq_mem bytes_in_memory_eq_mem_types bytes_in_memory_eq_mem_hypotheses \
+  wrap8 wrap1 wrap64 wrap80 outside_diff empty_domain missing_domain \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

@@ -313,6 +313,7 @@
     {"bytes": 762, "out": "lab_to_target_length_correctness_probe.out", "rows": 14, "sha256": "50de4064644d67108652074e4e5ec595ede47ccd0a96e0975da2c5c8d793e7e5"},
     {"bytes": 89, "out": "lab_to_target_line_len_probe.out", "rows": 5, "sha256": "767ce000d5991bf953db9bba278281a09f3e5e5758595dac05c509246ea7e143"},
     {"bytes": 376, "out": "lab_to_target_maplemmas_probe.out", "rows": 8, "sha256": "1da518560997b5de293625067b019f65719eec946ebfca00724a7a20d3d79186"},
+    {"bytes": 666, "out": "lab_to_target_memory_transport_probe.out", "rows": 10, "sha256": "3d1d29d006980b3ffb68ba73105bac352f29987d0fb7f240f73d633d801dc7eb"},
     {"bytes": 807, "out": "lab_to_target_navigation_bounds_probe.out", "rows": 10, "sha256": "6815cc2ec64a02aa73a0af87ce734b0e74ad5a05c6f3d0a88d8f62106984ff24"},
     {"bytes": 814, "out": "lab_to_target_nop_insert_encoding_probe.out", "rows": 11, "sha256": "ddb09a5544faa41dd7dce8d5c97607f954209eb82ffe170274df49ad57ddf2e1"},
     {"bytes": 8048, "out": "lab_to_target_nop_invariant_probe.out", "rows": 34, "sha256": "1b177003365af40a56c3d82d1d52ef347e9b579cfafd7454af45aff95c34b454"},

@@ -67554,5 +67554,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: Source6847: unrestricted pc/p/code with sole num_pcs≤pc guard; exact pos_val(num_pcs code)pcode=pos_valpcpcode. Invalid label annotations remain allowed. Original labLang sec/line constructors carry exactly native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec, fixed word8 bytes and canonical nested numeric Spt; word qualifier only, no arbitrary carrier specialization or fmap translation. Fresh original fulltypes with zero hypotheses and nine original/native closed cases plus full generic and actual arbitrary-query-position consumers. Kernel/oracle evidence supplements source review, not cross-language equivalence or full compiler/initializer/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/MemoryTransport.lean",
+    "lean_name": "bytesInMemory_eqMem",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "bytes_in_memory_eq_mem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source6948-6959 comparison: forall pc/bytes and free t1/mc_conf/ms1 retained. HOL alpha word addresses and alpha AsmState translate to the same positive BitVec width; beta machine state and gamma projection remain independent universe0 Type parameters on original MachineConfig. Fixed word8 bytes and word64 FP fields preserved. Exact domain-restricted target get_byte equality and source bytes_in_memory conjunction imply same region in target get_byte with unchanged source domain. No global-memory equality, target-evaluation premise, fixed machine/projection specialization or bytes-domain approximation. Original misc bytes_in_memory recursive byte-value/domain/wrapped-address clauses reviewed. Fresh original complete exported fulltype0hyp, seven original/native cases at widths1/8/64/80 including wrap, empty domain, missing domain and distinct outside memories; full generic kernel statement and actual arbitrary machine/projection consumer discharge source guards. No duplicate byte APPEND/UPDATE port. Kernel/oracle evidence supplements source review, not cross-language equivalence or full machine/compiler proof."
   }
 ]
