@@ -4824,3 +4824,9 @@ theorem specialization at Mem Store8 and complete native state/register/offset/
 SSA/table carriers. Opcode8155–8163, word-to-byte/data-type errors, byte-store
 domain/endianness update and unchanged-locals frame are manually compared; no
 standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_store32_probeScript.sml` captures the original kernel
+theorem specialization at Mem Store32 and complete native state/register/offset/
+SSA/table carriers. Opcode8164–8173, word-to-32-bit/data-type errors, alignment,
+domain and four-byte endianness update, and unchanged-locals frame are manually
+compared; no standalone tactic replay is claimed.
