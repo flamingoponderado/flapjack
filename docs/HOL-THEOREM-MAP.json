@@ -61725,5 +61725,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 author source comparison 2026-10-02: complete original padding-length group 3777/3793/4068/4300/4314 and all five full quantified types freshly captured in lab_to_target_padding_length_props_probe.out. Original nop guards, EVERY label_one/label_zero/line_length_leq, nonlabel/all-label accumulator alternatives, sum equality, full bounded label_prefix_zero and final MAP equality preserved exactly. HOL type-indexed alpha line retains actual HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString carriers and fixed byte8, with sole positive type-indexed word translation words_as_type_indexed_bitvec. No successful execution or desired-result premise added. Zero-label annotated theorem allows arbitrary including empty NOP and arbitrary accumulator; strong physical MAP theorem allows arbitrary positive NOP, not only one-byte NOP. Kernel induction follows original pad_section constructors, original add_nop sum/classifier and LENGTH_pad_bytes prerequisites. Eight original/native observations and five full arbitrary-width consumers cover nonlabel padding, all-label prefix case, empty/multibyte NOP, LabAsm and prefix/one-byte/bounds guard counterexamples. No production bodies changed, total HD/EL holds preserved, full encoding-with-NOP/remove_labels_loop and end-to-end correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LengthCorrectness.lean",
+    "lean_name": "lineLengthOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_length_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original3919-3937, all three full statements and quantified types freshly captured in lab_to_target_length_correctness_probe.out. Exactly LENGTH(line_bytes)=line_len, EVERY over original section lines, and full EVERY guard implies sec_length ls n = SUM(MAP physical line_length ls)+n with arbitrary n. Original actual native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed byte8 retained; sole words_as_type_indexed_bitvec positive dimension translation. Labels have empty bytes so original guard forces annotation0; no strengthened labelZero hypothesis added. Kernel list induction preserves both instruction constructors and arbitrary starting position. Eight original/native observations and full arbitrary-width theorem consumer test zero/nonzero labels, exact/mismatched instruction annotations, complete section and nonzero starting position, and guard counterexample. True prerequisite of full encoding-with-NOP length laws; no production body change or HD/EL hold dependency. Larger compiler correctness remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LengthCorrectness.lean",
+    "lean_name": "secLengthOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_length_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original3919-3937, all three full statements and quantified types freshly captured in lab_to_target_length_correctness_probe.out. Exactly LENGTH(line_bytes)=line_len, EVERY over original section lines, and full EVERY guard implies sec_length ls n = SUM(MAP physical line_length ls)+n with arbitrary n. Original actual native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed byte8 retained; sole words_as_type_indexed_bitvec positive dimension translation. Labels have empty bytes so original guard forces annotation0; no strengthened labelZero hypothesis added. Kernel list induction preserves both instruction constructors and arbitrary starting position. Eight original/native observations and full arbitrary-width theorem consumer test zero/nonzero labels, exact/mismatched instruction annotations, complete section and nonzero starting position, and guard counterexample. True prerequisite of full encoding-with-NOP length laws; no production body change or HD/EL hold dependency. Larger compiler correctness remains unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LengthCorrectness.lean",
+    "lean_name": "secLength_sumLineLength",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_length_sum_line_length",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 original3919-3937, all three full statements and quantified types freshly captured in lab_to_target_length_correctness_probe.out. Exactly LENGTH(line_bytes)=line_len, EVERY over original section lines, and full EVERY guard implies sec_length ls n = SUM(MAP physical line_length ls)+n with arbitrary n. Original actual native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed byte8 retained; sole words_as_type_indexed_bitvec positive dimension translation. Labels have empty bytes so original guard forces annotation0; no strengthened labelZero hypothesis added. Kernel list induction preserves both instruction constructors and arbitrary starting position. Eight original/native observations and full arbitrary-width theorem consumer test zero/nonzero labels, exact/mismatched instruction annotations, complete section and nonzero starting position, and guard counterexample. True prerequisite of full encoding-with-NOP length laws; no production body change or HD/EL hold dependency. Larger compiler correctness remains unfinished."
   }
 ]
