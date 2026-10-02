@@ -67052,5 +67052,20 @@
     "hol_name": "MIN_ADD",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Loop.lean",
+    "lean_name": "compCorrectLoop",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02, flapjack-sol-remove-loop: genuine original comp_correct Loop1703-1744/full theorem1481-1490. Same four actual source evaluation/nonError/full26state relation/register bound premises; original existential native target run at ck+target.clock and Halt/TimeOut/FinalFFI ffi equality versus full stateRelHOL result split. Only original source-fixed body IH and actual body-run/cont_loop/nonzero-middle-clock guarded reentry IH, both retain original arbitrary result/poststate/target/pointer/bounds/jump quantifiers. STOP identity and rewritten HOL evaluator equation represented using accepted unconditional native fixClockEvaluate. Source nonError excludes bodyError; contLoopImp derives body fullrelation and excludes TimeOut for real reentry. Zero-clock branch preserves timeout ffi through full relation/emptyEnv. Exit preserves original Break0 versus positive Break behavior. Reentry derives decClock stateRel, extends actual compiled body run via original evaluateAddClock, combines Nat allowances and proves exact decClock boosted-state equality from derived nonzero middle clock. No extra target-run, clock bound/success, target result, postrelation or unconditional simulation premise. Native comp Loop retains actual compiled body. Canonical native regs/fpRegs/store roundtrip witness reexported from imported owning state; Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh scopedHOL statement proved with literal original Loop case body prefixed only standalone rpt strip_tac."
   }
 ]
