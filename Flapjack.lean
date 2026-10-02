@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SequenceLaws
 import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionUnique
 import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionLaws
+import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionTail
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchConst
 import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchMono

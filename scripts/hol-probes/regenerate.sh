@@ -4316,3 +4316,7 @@ run_probe target_position_unique_probeScript.sml target_position_unique_probe.ou
 run_probe target_position_laws_probeScript.sml target_position_laws_probe.out \
   count_tail_full_statement pos_head_full_statement \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_position_tail_probeScript.sml target_position_tail_probe.out \
+  pos_tail_hit_full_statement pos_tail_miss_full_statement \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"

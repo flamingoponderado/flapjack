@@ -56345,5 +56345,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:449: same conjunction of successful nextInterference and P app0, conclusion interferencePos at count zero = SOME zero. Guarded choice existence is proved by zero witness; full position uniqueness excludes every other candidate, no added existence/uniqueness premise. Exact native generic MachineConfig/InterferenceApp/HolFfiState carriers, σ : Type and positive width NeZero retained. Kernel81jobs zero warnings. Original full statements captured by target_position_laws_probeScript.sml. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names preserves list element in range and shared opaque holHdNil/holArb out of range, no bounds premise or concrete fallback. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PositionTail.lean",
+    "lean_name": "interferencePosTailHit",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_pos_tail_hit",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:468: fresh complete compiled original statement captured in target_position_tail_probe.out. Same successful whole nextInterference result premise and P app0; initial position at SUC k, equals OPTION_MAP SUC suffix position at k in returned mcc/ffic/appPost. Option.map (n+1) is literal OPTION_MAP SUC; NONE and SOME both preserved. Complete generic MachineConfig/InterferenceApp/HolFfiState and independent σ : Type/positive width NeZero retained. Kernel82jobs zero warnings. Private Flapjack choice lemma premises are fully discharged by literal sequence/count tail, zero exclusion and interferencePosUnique; no extra choice/existence/uniqueness/bounds premise on port. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names preserves in-range list element and shared opaque holHdNil/holArb out of range, no fallback. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/PositionTail.lean",
+    "lean_name": "interferencePosTailMiss",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_pos_tail_miss",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:498: fresh complete compiled original statement captured in target_position_tail_probe.out. Same successful whole nextInterference result premise and not P app0; initial position at k, equals OPTION_MAP SUC suffix position at k in returned mcc/ffic/appPost. Option.map (n+1) is literal OPTION_MAP SUC; NONE and SOME both preserved. Complete generic MachineConfig/InterferenceApp/HolFfiState and independent σ : Type/positive width NeZero retained. Kernel82jobs zero warnings. Private Flapjack choice lemma premises are fully discharged by literal sequence/count tail, zero exclusion and interferencePosUnique; no extra choice/existence/uniqueness/bounds premise on port. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names preserves in-range list element and shared opaque holHdNil/holArb out of range, no fallback. No executed compiler change."
   }
 ]

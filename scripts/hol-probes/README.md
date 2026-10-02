@@ -4766,3 +4766,7 @@ The native Lean counterparts are in `TargetProps/PositionUnique.lean`.
 `interference_count_tail` and `interference_pos_head` statements and checks
 that the original compiled theorems have no undischarged hypotheses.
 Native counterparts are in `TargetProps/PositionLaws.lean`.
+
+`target_position_tail_probeScript.sml` captures complete original
+`interference_pos_tail_hit` and `interference_pos_tail_miss` statements,
+checking no undischarged hypotheses. Native ports are in `TargetProps/PositionTail.lean`.
