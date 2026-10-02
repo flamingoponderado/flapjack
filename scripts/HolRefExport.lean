@@ -152,6 +152,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopRecursive
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Pancake.WordConvs.LabelSafety
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
+import Flapjack.Compiler.Backend.StackProps.ExtractLabels
 import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
