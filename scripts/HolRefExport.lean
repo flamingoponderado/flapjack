@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSuffix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SourceFrameSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList

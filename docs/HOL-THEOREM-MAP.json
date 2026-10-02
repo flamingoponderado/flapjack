@@ -49546,5 +49546,53 @@
     "hol_name": "ALOOKUP_index_list",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-index-reconstruction): source414-422: arbitrary list/key/base, exactly original upper guard n<length+k retained with no lower-key guard; native first-match numeric sptAListLookup equals native optional getElem? at (length+k)-(n+1). Includes below-base keys yielding NONE; no lookup success or desired correspondence premise. HOL lists/products/natural arithmetic retained; generic arbitrary payloads need no equality or word qualifier. Fresh literal full original statements/proofs and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackSuffix.lean",
+    "lean_name": "lastNLengthId2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LASTN_LENGTH_ID2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-suffix-laws): source238-247: arbitrary list/index, original x+1=length equation and complete HD::LASTN decomposition. Nonempty input is derived from that original equation, so bounded native head implements source HD at this forced valid input without an extra premise, default or Inhabited instance. Native wordSemLastN exactly reverse/take/reverse and HOL lists retained, arbitrary element carriers need no word/representation qualifier. Six literal complete original proofs and natural/Boolean boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackSuffix.lean",
+    "lean_name": "lastNLengthBounds",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LASTN_LENGTH_BOUNDS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-suffix-laws): source259-266: arbitrary index/list with no premise, same let-bound suffix and both length<=index and length<=input conjuncts. Native wordSemLastN exactly reverse/take/reverse and HOL lists retained, arbitrary element carriers need no word/representation qualifier. Six literal complete original proofs and natural/Boolean boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackSuffix.lean",
+    "lean_name": "lastNConsId",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LASTN_CONS_ID",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-suffix-laws): source268-273: arbitrary index/tail/head, exact original n=length tail guard, full successor LASTN whole-list equality. Native wordSemLastN exactly reverse/take/reverse and HOL lists retained, arbitrary element carriers need no word/representation qualifier. Six literal complete original proofs and natural/Boolean boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackSuffix.lean",
+    "lean_name": "lastNDrop2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LASTN_DROP2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-suffix-laws): source276-285: arbitrary list/index without range condition, total reverse/take/reverse LASTN equals drop(length-index) including excess indices. Native wordSemLastN exactly reverse/take/reverse and HOL lists retained, arbitrary element carriers need no word/representation qualifier. Six literal complete original proofs and natural/Boolean boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackSuffix.lean",
+    "lean_name": "everyImpEveryLastN",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "EVERY_IMP_EVERY_LASTN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-suffix-laws): source287-291: arbitrary lists/predicate/index with original EVERY on input and actual suffix equality, complete EVERY on output. HOL predicate bool translated to logical Prop and EVERY to universal membership, original generic carriers/quantifiers preserved, no decidability or predicate-strength premise. Native wordSemLastN exactly reverse/take/reverse and HOL lists retained, arbitrary element carriers need no word/representation qualifier. Six literal complete original proofs and natural/Boolean boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackSuffix.lean",
+    "lean_name": "lastNLess",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LASTN_LESS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-suffix-laws): source2608-2626: arbitrary input/index/head/tail, exactly original successor-index<=length guard and actual successor suffix=head::tail equality, complete previous suffix=tail conclusion including n=0 boundary. Native wordSemLastN exactly reverse/take/reverse and HOL lists retained, arbitrary element carriers need no word/representation qualifier. Six literal complete original proofs and natural/Boolean boundary fixtures."
   }
 ]
