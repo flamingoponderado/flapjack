@@ -5980,3 +5980,11 @@ configuration-dependent immediate cases, performance mode, or all constructors.
 This is intermediate compiler-output parity, not target execution or full
 compiler correctness. Existing oracle rows and full quantified theorem are
 unchanged. Selector: `HOL_PROBE_ONLY=word_to_stack_reg_output_probeScript.sml`.
+
+`ssa_cc_trans_correct_probe.out` captures the complete original all-program
+statement and conclusion. The native assembly discharges constructor induction
+hypotheses internally and retains the six original premises.
+`full_ssa_cc_trans_correct_probe.out` captures the original wrapper statement
+and conclusion; its native port retains only the initial locals-domain premise.
+These are source-review regression captures, not cross-language equivalence.
+The executed SSA migration and end-to-end correctness remain open.

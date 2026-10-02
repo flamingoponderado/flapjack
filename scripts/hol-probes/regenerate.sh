@@ -5176,3 +5176,11 @@ run_probe word_to_stack_reg_output_probeScript.sml word_to_stack_reg_output_prob
 run_probe lab_to_target_offset_padding_probeScript.sml lab_to_target_offset_padding_probe.out \
   lines_offset_ok_pad_section lines_offset_ok_pad_section_types mixed_original_five_guards mixed_full_tuple mixed_output_offsets empty_nop_offsets multibyte_nop_offsets zero_label_head_accumulator empty_accumulator_mask head_guard_necessary input_parity_necessary all_seven_opcodes empty_width1 large_width80 \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_probeScript.sml ssa_cc_trans_correct_probe.out \
+  ssa_cc_trans_correct_full ssa_cc_trans_correct_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe full_ssa_cc_trans_correct_probeScript.sml full_ssa_cc_trans_correct_probe.out \
+  full_ssa_cc_trans_correct_full full_ssa_cc_trans_correct_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
