@@ -58258,5 +58258,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Source comparison: genuine FPMovToReg constructor in original Inst FP proof8174-8222, all six original premises/full Error-exempt source-permutation/result/frame/result-sensitive locals and no targetrun/success/poststate/IH assumption. Fixed64 FP read derived from original frame. Width64 compiler/evaluator use one fresh destination and w2w; otherwidth compiler sequentially nextVarRenames both destinations, evaluator writes low31:0 then high63:32 at native word width. Original localsSetVar and mapOKExtend derive both relations including destination aliases; complete postframe follows. Missingread retains sourceError exemption. Nat FP/general registers, positivewidth words/fixed64 FP/state/Spt/table/sharedType0 code-FFI compared with original kernel specialization. Canonical fpRegs/store finite-support and word translation explicit, inherits reals_as_rational_cuts Inst/evaluator SOUNDNESS8, transfer itself bit-only. Source proof manually reviewed; Q.SPEC capture/carriers and Lean kernelPASS, no isolatedtactic replay claim. FullInst remainsopen."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstFPMovFromReg.lean",
+  "lean_name": "ssaCcTransCorrectInstFPMovFromReg",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: genuine FPMovFromReg constructor and special Move subcase in original Inst FP8174-8209. Original six premises/full Error-exempt permutation/result/frame/result-sensitive locals, no targetrun/success/poststate/IH assumption. Width64 maps source word read and copies to fixed64 FP, otherwidth reads high/low words and concatenates at result64. If mapped inputs equal, compiler emits real fresh inputMove then FP opcode and extends right SSA/next. Original SSA getVar derives targetreads; map bound derives old input unequal fresh register, so Move preserves old read and supplies fresh read. Source-read reinsert lookup unchanged transports original fresh setVar locals relation back to unchanged source locals. Original fix_clock_evaluate derives exact Seq execution and final complete frame, including FP update and same clock. Missing/nonword reads Error-exempt. Native Nat register indices, fixed64 FP/positive indexed word/sharedType0 code-FFI/native state/Spt/table carriers compared to original Q.SPEC capture; capture first=n is FP destination, second=n0 left source, fp=n1 right source. Canonical fpRegs/store finite-support and word translation explicit; inherits reals_as_rational_cuts Inst/evaluator SOUNDNESS8, transfer is bit-only. Source proof manually compared; kernel/Q.SPEC PASS, no isolated tactic replay claim. Full Inst open."
 }
 ]

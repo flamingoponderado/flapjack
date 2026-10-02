@@ -4999,3 +4999,8 @@ manually reviewed; no standalone tactic replay is claimed.
 FPMovToReg specialization and native carriers. Original FP proof8174–8222,
 width64 one-write and otherwidth two-write low/high extraction and destination
 aliases are manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_fpmovfromreg_probeScript.sml` captures original kernel
+FPMovFromReg specialization and carriers (first=n FP destination, second=n0 left
+source, fp=n1 right source). Original FP proof8174–8209, width branches and real
+alias-input Move/fresh SSA locals are manually reviewed; no tactic replay claimed.
