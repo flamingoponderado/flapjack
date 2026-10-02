@@ -1,0 +1,10 @@
+load "riscvTheory";
+open HolKernel Parse bossLib Tactical boolSyntax Conv riscvTheory;
+val _ = Globals.linewidth := 100000;
+fun definition label th = if null(hyp th) then (print(label^"=");print_term(concl th);print "\n") else raise Fail "hypotheses";
+val _ = definition "pc_full_definition" PC_def;
+val _ = (print "pc_full_type=";print_type(type_of ``PC``);print "\n");
+val _ = definition "skip_full_definition" write'Skip_def;
+val _ = (print "skip_full_type=";print_type(type_of ``write'Skip``);print "\n");
+val _ = definition "pc_generic_equation" (prove(``PC s = s.c_PC s.procID``,SIMP_TAC(srw_ss())[PC_def]));
+val _ = definition "skip_generic_equation" (prove(``write'Skip v s = s with c_Skip := (s.procID =+ v) s.c_Skip``,SIMP_TAC(srw_ss())[write'Skip_def]));

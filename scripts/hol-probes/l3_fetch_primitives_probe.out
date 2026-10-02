@@ -1,0 +1,6 @@
+pc_full_definition=∀state. PC state = state.c_PC state.procID
+pc_full_type=:riscv_state -> word64
+skip_full_definition=∀value. write'Skip value = (λstate. state with c_Skip := state.c_Skip⦇state.procID ↦ value⦈)
+skip_full_type=:word64 -> riscv_state -> riscv_state
+pc_generic_equation=PC s = s.c_PC s.procID
+skip_generic_equation=write'Skip v s = s with c_Skip := s.c_Skip⦇s.procID ↦ v⦈
