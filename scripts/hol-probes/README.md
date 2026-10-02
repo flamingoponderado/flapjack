@@ -4740,3 +4740,12 @@ continuation, and nested `If`/`Loop`/`MustTerminate`. Kernel-replayed through a 
 observation in `WordUnreachDefParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_unreach_def_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+### Generic label-tree domain
+
+`lab_to_target_labs_domain_probeScript.sml` captures all three full original
+`labs_domain` declarations and its polymorphic nested-tree type. Six original
+EVAL observations of its literal defining `lab_lookup ≠ NONE` condition cover
+empty/hit/two-level misses and fresh insertion preserving old and adding new
+keys; Lean checks the corresponding actual domain memberships. Finite fixtures
+are not a cross-assistant proof.
