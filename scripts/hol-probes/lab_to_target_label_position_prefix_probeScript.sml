@@ -1,0 +1,18 @@
+load "bossLib";
+load "preamble";
+load "lab_to_targetProofTheory";
+open bossLib HolKernel Parse preamble lab_to_targetProofTheory lab_to_targetTheory labLangTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "="); print_term(concl th); print "\n");
+fun types label th = (print(label ^ "="); app (fn v => print(term_to_string v ^ ":" ^ type_to_string(type_of v) ^ ";")) (fst(strip_forall(concl th)) @ free_vars(concl th)); print "\n");
+val _ = capture "lab_len_pos_ok_even_prefix_zero" lab_len_pos_ok_even_prefix_zero;
+val _ = types "lab_len_pos_ok_even_prefix_zero_types" lab_len_pos_ok_even_prefix_zero;
+val _ = show_types := false;
+val prefix_nil = prove(``label_prefix_zero ([]:α labLang$line list)``,simp[label_prefix_zero_def]);
+fun observe label q = (print(label ^ "="); print_term(rconc(QCONV(SIMP_CONV(srw_ss())[]) (rconc(EVAL (rconc(REWRITE_CONV[label_prefix_zero_cons,prefix_nil] q)))))); print "\n");
+val _ = observe "zero_label_chain" ``lab_len_pos_ok 4 ([Label 1 2 0;Label 1 3 0;Asm(Asmi(Inst Skip)) [] 3;Label 1 4 1]:8 labLang$line list) /\ label_prefix_zero ([Label 1 2 0;Label 1 3 0;Asm(Asmi(Inst Skip)) [] 3;Label 1 4 1]:8 labLang$line list)``;
+val _ = observe "odd_guard_necessary" ``lab_len_pos_ok 3 ([Label 1 2 1]:8 labLang$line list) /\ ~label_prefix_zero ([Label 1 2 1]:8 labLang$line list)``;
+val _ = observe "parity_guard_necessary" ``~lab_len_pos_ok 4 ([Label 1 2 1]:8 labLang$line list) /\ ~label_prefix_zero ([Label 1 2 1]:8 labLang$line list)``;
+val _ = observe "empty_width1" ``lab_len_pos_ok 100 ([]:1 labLang$line list) /\ label_prefix_zero ([]:1 labLang$line list)``;
+val _ = observe "malformed_nonlabel" ``lab_len_pos_ok 0 ([Asm(Asmi(Inst Skip)) [] 99;Label 1 2 1]:8 labLang$line list) /\ label_prefix_zero ([Asm(Asmi(Inst Skip)) [] 99;Label 1 2 1]:8 labLang$line list)``;
+val _ = observe "large_width80" ``lab_len_pos_ok (2**80) ([Label 1 2 0;LabAsm Halt (n2w(2**70+3)) [7w] 3;Label 1 4 1]:80 labLang$line list) /\ label_prefix_zero ([Label 1 2 0;LabAsm Halt (n2w(2**70+3)) [7w] 3;Label 1 4 1]:80 labLang$line list)``;
