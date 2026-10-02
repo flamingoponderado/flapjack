@@ -4795,3 +4795,7 @@ run_probe balanced_map_balanceR_correct_probeScript.sml balanced_map_balanceR_co
 run_probe balanced_map_almost_balance_correct_probeScript.sml balanced_map_almost_balance_correct_probe.out \
   almost_balancedL_thm almost_balancedR_thm bmac_L_0_0 bmac_R_0_0 bmac_L_0_1 bmac_R_0_1 bmac_L_1_0 bmac_R_1_0 bmac_L_1_1 bmac_R_1_1 bmac_L_1_3 bmac_R_1_3 bmac_L_3_1 bmac_R_3_1 bmac_L_2_6 bmac_R_2_6 bmac_L_6_2 bmac_R_6_2 bmac_L_3_9 bmac_R_3_9 bmac_L_9_3 bmac_R_9_3 bmac_L_10_30 bmac_R_10_30 bmac_L_30_10 bmac_R_30_10 \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_cardinality_correct_probeScript.sml balanced_map_cardinality_correct_probe.out \
+  structure_size_thm structure_size_to_fmap size_thm bmcard_empty_size bmcard_empty_invariant bmcard_singleton_size bmcard_singleton_invariant bmcard_left_size bmcard_left_invariant bmcard_right_size bmcard_right_invariant bmcard_both_size bmcard_both_invariant bmcard_equivalent_invariant \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

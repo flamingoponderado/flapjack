@@ -60630,5 +60630,27 @@
     "lean_name": "almostBalancedRThm",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-b source comparison 2026-10-02: full original almost_balancedR_thm, same universally quantified Nat l/r, sole balanced premise, all THREE original conclusions including selected-side increment and opposite-side truncated subtraction. Literal original conditionals/delta/min/max and Nat subtraction retained, no positivity hypothesis or changed carrier. Full literal original proof replay hyp=[]; twelve zero/singleton/exact-delta-boundary pairs in each direction consume complete native conjunctions with matching original arithmetic observations. No executable definition change."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "structure_size_to_fmap",
+    "lean_path": "Flapjack/Misc/BalancedMap/CardinalityCorrect.lean",
+    "lean_name": "structureSizeToFmap",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02: full original generic comparator/tree statement with good_cmp and invariant premises only. HOL FCARD is CARD of FDOM; canonical card counts precisely the finite defined lookup domain, not support-list length. Comparator-equivalence Set keys and actual toFmap producer retained. Original invariant_eq derives disjoint domains and root absence; finite union and fresh-update cardinality reproduce original induction. Structural size and cached size retain original equations; no finite key carrier or cardinality hypothesis. Literal original complete proofs and local disjoint-union prerequisite replay closed hyp=[]. Only reviewed canonical producer observation representation differs; no executable change."
+  },
+  {
+    "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+    "hol_name": "size_thm",
+    "lean_path": "Flapjack/Misc/BalancedMap/CardinalityCorrect.lean",
+    "lean_name": "sizeThm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02: full original generic comparator/tree statement with good_cmp and invariant premises only. HOL FCARD is CARD of FDOM; canonical card counts precisely the finite defined lookup domain, not support-list length. Comparator-equivalence Set keys and actual toFmap producer retained. Original invariant_eq derives disjoint domains and root absence; finite union and fresh-update cardinality reproduce original induction. Structural size and cached size retain original equations; no finite key carrier or cardinality hypothesis. Literal original complete proofs and local disjoint-union prerequisite replay closed hyp=[]. Only reviewed canonical producer observation representation differs; no executable change."
   }
 ]

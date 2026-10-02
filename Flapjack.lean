@@ -1,3 +1,4 @@
+import Flapjack.Misc.BalancedMap.CardinalityCorrect
 import Flapjack.Misc.BalancedMap.AlmostBalanceCorrect
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceRCorrect
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceR

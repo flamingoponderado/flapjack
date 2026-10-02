@@ -5501,3 +5501,7 @@ capture both complete types and twelve zero/singleton/delta-boundary pairs
 in both directions. Native consumers use all three conclusions, retaining
 truncated subtraction at zero. Observations are regression evidence, not
 a cross-language equivalence theorem.
+
+### Balanced map full cardinality laws
+
+`balanced_map_cardinality_correct_probeScript.sml` replays the literal original local disjoint-union and three size/cardinality proofs, checking empty hypotheses. Typed statements retain generic comparator/tree carriers and original premises. Five valid numeric tree shapes capture size and invariant observations; the equivalent-key singleton checks a constant Equal comparator. Native consumers apply both full generic theorems. These rows support source review; they do not prove cross-assistant equivalence.
