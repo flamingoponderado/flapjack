@@ -4775,3 +4775,7 @@ run_probe word_to_stack_alookup_map_probeScript.sml word_to_stack_alookup_map_pr
 run_probe balanced_map_singleL_probeScript.sml balanced_map_singleL_probe.out \
   bmsl_full bmsl_tree bmsl_invariant bmsl_lookup0 bmsl_lookup1 bmsl_lookup2 bmsl_badsize \
   "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe balanced_map_doubleL_probeScript.sml balanced_map_doubleL_probe.out \
+  bmdl_full bmdl_tree bmdl_invariant bmdl_lookup0 bmdl_lookup1 bmdl_lookup2 bmdl_badsize \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"

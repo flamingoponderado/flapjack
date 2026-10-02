@@ -5456,3 +5456,12 @@ rotated tree, invariant, three lookups and invalid cached-size rejection.
 Native fixtures establish every premise and consume both conclusions and
 canonical map lookups. These observations are regression evidence, not a
 cross-language equivalence theorem.
+
+## Full double-left rotation correctness
+
+`balanced_map_doubleL_probeScript.sml` replays the literal original full
+`doubleL_thm` and checks its hypotheses are closed. Seven rows capture the full
+typed theorem, actual tree, invariant, three lookups and bad cached-size
+rejection. Native consumers establish every original premise and consume both
+invariant and map conclusions and all three canonical lookups. These fixtures
+are regression observations, not a cross-language equivalence theorem.
