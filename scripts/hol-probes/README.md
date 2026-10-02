@@ -4764,3 +4764,9 @@ original kernel-checked `ssa_cc_trans_correct` at native Div, including its
 full six-premise simulation and all state/register/SSA/table carriers. The
 opcode proof at 7919–7944 is manually compared; this probe does not claim a
 standalone replay of that tactic fragment.
+
+`ssa_cc_trans_correct_inst_longmul_probeScript.sml` captures the original
+kernel theorem specialization at LongMul, its full six-premise simulation and
+complete native state/register/SSA/table types. Source opcode7943–8004 and
+actual physical input/output moves are manually compared; no standalone tactic
+replay of the fragment is claimed.
