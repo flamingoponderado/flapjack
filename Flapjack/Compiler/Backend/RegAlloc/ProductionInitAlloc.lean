@@ -564,4 +564,161 @@ theorem initAllocPreparation_production (moves : List (Nat × (Nat × Nat))) (li
   · rw [← actual]
     exact resultRel
 
+/-- Both initializer partitions, all final worklist writes, and the returned
+allocatable-node count correspond in full. Membership in the preceding
+collection supplies the input bounds; partition membership derives all final
+worklist bounds. This is an implementation composition lemma, not a HOL port
+or an assumption about the desired initializer result. -/
+theorem initAllocFinish_production (limit : Nat) (allocs : List Nat)
+    {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native production) (good : goodRaState native)
+    (bounds : ∀ node ∈ allocs, node < native.dim) :
+    ∃ result : State,
+      bind (stExPartition (splitDegree native.dim limit) allocs [] []) (fun (low, high) =>
+        bind (stExPartition moveRelatedSub low [] []) (fun (freeze, simplify) =>
+          ignoreBind (setSpillWl high) (ignoreBind (setSimpWl simplify)
+            (ignoreBind (setFreezeWl freeze) (ret allocs.length))))) native =
+        (.success allocs.length, result) ∧
+      goodRaState result ∧ native.dim = result.dim ∧
+      ProductionStateRel result
+        (let (low, high) := partitionReversed
+          (fun node => cakeSplitDegree production production.dim limit node) allocs
+         let (freeze, simplify) := partitionReversed (cakeMoveRelatedSub production) low
+         {production with spillWl := high, simpWl := simplify, freezeWl := freeze}) := by
+  let degreePredicate := fun node => cakeSplitDegree production native.dim limit node
+  let first := holPartition degreePredicate allocs
+  have firstRun : stExPartition (splitDegree native.dim limit) allocs [] [] native =
+      (.success first, native) := by
+    dsimp only [first]
+    rw [← partitionReversed_production]
+    exact initAllocDegreePartition_production limit allocs related good
+  have lowBounds : ∀ node ∈ first.1, node < native.dim := by
+    intro node member
+    rcases (mem_holPart degreePredicate allocs [] [] node).1 member with member | member
+    · exact bounds node member
+    · cases member
+  have highBounds : ∀ node ∈ first.2, node < native.dim := by
+    intro node member
+    rcases (mem_holPart degreePredicate allocs [] [] node).2 member with member | member
+    · exact bounds node member
+    · cases member
+  let second := holPartition (cakeMoveRelatedSub production) first.1
+  have secondRun : stExPartition moveRelatedSub first.1 [] [] native =
+      (.success second, native) := by
+    dsimp only [second]
+    rw [← partitionReversed_production]
+    exact initAllocMovePartition_production first.1 related good lowBounds
+  have freezeBounds : ∀ node ∈ second.1, node < native.dim := by
+    intro node member
+    rcases (mem_holPart (cakeMoveRelatedSub production) first.1 [] [] node).1 member with member | member
+    · exact lowBounds node member
+    · cases member
+  have simplifyBounds : ∀ node ∈ second.2, node < native.dim := by
+    intro node member
+    rcases (mem_holPart (cakeMoveRelatedSub production) first.1 [] [] node).2 member with member | member
+    · exact lowBounds node member
+    · cases member
+  let result : State := {native with
+    spill_wl := first.2, simp_wl := second.2, freeze_wl := second.1}
+  refine ⟨result, ?_, ?_, rfl, ?_⟩
+  · simp only [Translator.Monadic.MonadBase.bind, firstRun, secondRun,
+      ignoreBind, setSpillWl, setSimpWl, setFreezeWl, ret]
+    rfl
+  · obtain ⟨a,b,c,d,e,f,g,h,_,_,_,l,m,n⟩ := good
+    exact ⟨a,b,c,d,e,f,g,h,simplifyBounds,highBounds,freezeBounds,l,m,n⟩
+  · simp only [related.dimension, partitionReversed_production]
+    exact {related with dimension := rfl, simplify := rfl, spill := rfl, freeze := rfl}
+
+private theorem initIgnoreBind_assoc {α β γ : Type}
+    (first : M State α StateException) (second : M State β StateException)
+    (third : M State γ StateException) :
+    ignoreBind (ignoreBind first second) third = ignoreBind first (ignoreBind second third) := by
+  funext state
+  rcases run : first state with ⟨outcome, next⟩
+  cases outcome <;> simp only [ignoreBind, run]
+
+/-- Complete executed fused heuristic initializer correspondence. The only
+premises are the represented original good state and original move bounds.
+Collection order, every native successful phase, final count, all represented
+state fields and the preserved invariant are proved. This theorem connects
+the actual optimized implementation to the already ported native initializer;
+it is Flapjack infrastructure, not another HOL declaration port. -/
+theorem initAlloc1Heu_production (moves : List (Nat × (Nat × Nat))) (limit : Nat)
+    {native : State} {production : CakeRaState}
+    (related : ProductionStateRel native production) (good : goodRaState native)
+    (bounds : ∀ move ∈ moves, move.2.1 < native.dim ∧ move.2.2 < native.dim) :
+    ∃ result : State,
+      initAlloc1Heu moves native.dim limit native =
+        (.success (cakeInitAlloc1Heu moves limit production).1, result) ∧
+      goodRaState result ∧ native.dim = result.dim ∧
+      ProductionStateRel result (cakeInitAlloc1Heu moves limit production).2 := by
+  let allocs := ((List.range native.dim).filter (fun node =>
+    (production.nodeTag.get node).getD .aTemp == .aTemp)).reverse
+  let prepared := cakeResetMoveRelated moves
+    {((List.range production.dim).foldl
+      (initAllocFusedStep production limit) ([], production)).2 with
+      availMovesWl := cakeSortMoves moves}
+  obtain ⟨phaseState, phaseRun, phaseGood, phaseDim, phaseRel⟩ :=
+    initAllocPreparation_production moves limit related good bounds
+  have allocBounds : ∀ node ∈ allocs, node < phaseState.dim := by
+    intro node member
+    rw [← phaseDim]
+    exact List.mem_range.mp (List.mem_filter.mp (List.mem_reverse.mp member)).1
+  obtain ⟨result, finishRun, resultGood, resultDim, resultRel⟩ :=
+    initAllocFinish_production limit allocs phaseRel phaseGood allocBounds
+  have preparedDim : prepared.dim = production.dim := by
+    dsimp only [prepared]
+    rw [resetMoveRelated_production_equation, initAllocFused_frame]
+  have actual : cakeInitAlloc1Heu moves limit production =
+      (allocs.length,
+        let (low, high) := partitionReversed
+          (fun node => cakeSplitDegree prepared prepared.dim limit node) allocs
+        let (freeze, simplify) := partitionReversed (cakeMoveRelatedSub prepared) low
+        {prepared with spillWl := high, simpWl := simplify, freezeWl := freeze}) := by
+    have collection : ((List.range production.dim).foldl
+        (initAllocFusedStep production limit) ([], production)).1 = allocs := by
+      rw [initAllocFused_collection]
+      simp only [List.append_nil, related.dimension]
+      rfl
+    rw [initAllocFused_equation]
+    conv =>
+      lhs
+      rw [← Prod.eta ((List.range production.dim).foldl
+        (initAllocFusedStep production limit) ([], production))]
+    dsimp only
+    rw [initAllocFused_marking moves limit related good]
+    rw [collection]
+    change (allocs.length,
+      let (low, high) := partitionReversed
+        (fun node => cakeSplitDegree prepared production.dim limit node) allocs
+      let (freeze, simplify) := partitionReversed (cakeMoveRelatedSub prepared) low
+      {prepared with spillWl := high, simpWl := simplify, freezeWl := freeze}) = _
+    rw [preparedDim]
+  have source : initAlloc1Heu moves native.dim limit native = (.success allocs.length, result) := by
+    let preparation := ignoreBind (stExForeach (List.range native.dim) (fun node =>
+      bind (adjLsSub node) (fun neighbours =>
+        bind (stExFilter (fun neighbour => consideredVar limit neighbour) neighbours [])
+          (fun fills => updateDegrees node fills.length))))
+      (ignoreBind (stExForeach (List.range native.dim) doUpdCoalesce)
+        (ignoreBind (setAvailMovesWl (sortMoves moves)) (resetMoveRelated moves)))
+    let continuation := fun state =>
+      bind (stExPartition (splitDegree native.dim limit) allocs [] []) (fun (low, high) =>
+        bind (stExPartition moveRelatedSub low [] []) (fun (freeze, simplify) =>
+          ignoreBind (setSpillWl high) (ignoreBind (setSimpWl simplify)
+            (ignoreBind (setFreezeWl freeze) (ret allocs.length))))) state
+    have finish : continuation phaseState = (.success allocs.length, result) := by
+      dsimp only [continuation]
+      rw [phaseDim]
+      exact finishRun
+    have composed : ignoreBind preparation continuation native = (.success allocs.length, result) := by
+      have run : preparation native = (.success (), phaseState) := phaseRun
+      simp only [ignoreBind, run]
+      exact finish
+    simp only [initAlloc1Heu, Translator.Monadic.MonadBase.bind, ret,
+      initAllocCollection_production related good]
+    simpa only [preparation, initIgnoreBind_assoc, continuation, allocs] using composed
+  refine ⟨result, ?_, resultGood, phaseDim.trans resultDim, ?_⟩
+  · simpa only [actual] using source
+  · simpa only [actual] using resultRel
+
 end Flapjack.RegAlloc
