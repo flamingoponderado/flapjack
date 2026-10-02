@@ -5639,6 +5639,15 @@ run_probe lab_to_target_computed_label_positions_probeScript.sml lab_to_target_c
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_position_extension_probeScript.sml lab_to_target_position_extension_probe.out \
+  pos_val_acc_sum pos_val_acc_sum_types pos_val_acc_sum_hypotheses \
+  pos_val_acc_0 pos_val_acc_0_types pos_val_acc_0_hypotheses \
+  pos_val_APPEND1 pos_val_APPEND1_types pos_val_APPEND1_hypotheses \
+  pos_val_APPEND2 pos_val_APPEND2_types pos_val_APPEND2_hypotheses \
+  acc_split acc_zero prefix_unrestricted prefix_boundary suffix_shift past_end invalid_prefix empty_prefix \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_program_byte_lengths_probeScript.sml lab_to_target_program_byte_lengths_probe.out \
   LENGTH_prog_to_bytes LENGTH_prog_to_bytes_types LENGTH_prog_to_bytes_hypotheses \
   LENGTH_prog_to_bytes2 LENGTH_prog_to_bytes2_types LENGTH_prog_to_bytes2_hypotheses \

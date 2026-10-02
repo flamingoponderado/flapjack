@@ -1964,6 +1964,12 @@
       "sha256": "cc1db71caddc8714d0132b8a83b4f7e02fb55e084d76fd73b3ff271e8e0f3d89"
     },
     {
+      "bytes": 1535,
+      "out": "lab_to_target_position_extension_probe.out",
+      "rows": 20,
+      "sha256": "7fa588627d51772e69928ee8cd245bf3b27625b83cec3381d59dcf75d2b45e8d"
+    },
+    {
       "bytes": 3753,
       "out": "lab_to_target_position_values_probe.out",
       "rows": 32,
