@@ -52524,5 +52524,23 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-cse-deletion-frames, original local341-405: Full original arbitrary arithmetic/register/value/state or memop/destination/address/offset/deletion/value/state binders and evaluation iff, not merely forward transport. Arithmetic original can_mem_arith and notMEM reads; load original non-store and address-distinct only. Destination/deletion alias permitted, no output evaluation/wf/clock/value-range premise. Native unset_var uses exact Spt delete; unconditional native lookup_delete proves input-value independence for arbitrary Spt shapes. Untagged arithmetic value factoring checked against actual faithful inst; native load support reused unchanged, including original Load16 impossible success. fmap_as_finite_support_relation names only imported reviewed WordSemStateFiniteExact.fpRegs/store with same-module DeletionFramesWitness genuine broad/exact roundtrip; locals/code stay native Spt. words_as_type_indexed_bitvec records positive width and universe-0 hosts only. Actual evaluate/inst inherits existing reals_as_rational_cuts SOUNDNESS item8. Two literal original complete proof replays hyp=[] and four original inferred types,152full original/kernel applications at1/32/64/80 including destination alias. Initial generated fixture incorrectly rewrote an outer set_var; repaired update generation and freshly regenerated before delivery. No complete data_inv/knowledge/pass/compiler claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StackFree.lean",
+    "lean_name": "singleStackFree",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "single_stack_free_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.1), stack_removeScript.sml 89-92: exact native Inst(Arith(Binop Add k k (Imm(word_offset n)))); arbitrary Nat pointer/count, no register range or word-fit premise, no macro constant/scratch register. Full native HolProg uses original constructor arities/asm payloads and faithful mlstring; standard positive BitVec width with NeZero translates HOL dimension, byte stride width DIV8 and n2w wraps at that same width. No changed quantified inputs/conditions/result. Native definition/equation proofs kernel checked. Production replacement and full recursive comp remain separately open on dependency-linked36ez.3; no compiler simulation asserted."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/StackFree.lean",
+    "lean_name": "stackFree",
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "stack_free_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 (36ez.3.1), stack_removeScript.sml 94-102: zero Skip, count<=255 single_stack_free, larger ordered Seq single255 then recursion(count-255); same Nat measure/termination, no output normalization or redundant terminal Skip. Uses reviewed max_stack_alloc255 and numeric word_offset. Full native HolProg uses original constructor arities/asm payloads and faithful mlstring; standard positive BitVec width with NeZero translates HOL dimension, byte stride width DIV8 and n2w wraps at that same width. No changed quantified inputs/conditions/result. Native definition/equation proofs kernel checked. Production replacement and full recursive comp remain separately open on dependency-linked36ez.3; no compiler simulation asserted."
   }
 ]

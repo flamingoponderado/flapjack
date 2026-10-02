@@ -1,3 +1,9 @@
+`stack_remove_stack_free_probe.out` records the two complete original
+builder definitions/types and exact native immediate constructors across
+zero/255/256/multiple chunks and widths1/8/64/80. Kernel parity preserves
+literal Seq association and word-offset wrapping; executable runtime-route
+replacement remains open on36ez.3, with no macro/peephole equivalence claim.
+
 `ssa_reconcile_get_vars_probe.out` replays the literal original full theorem
 and list-induction proof, and records all universally quantified binder types.
 The Lean counterpart keeps distinctness, native get_vars result existence,

@@ -1,0 +1,19 @@
+single_stack_free_full_def=∀k n. single_stack_free k n = Inst (Arith (Binop Add k k (Imm (word_offset n))))
+stack_free_full_def=∀n k. stack_free k n = if n = 0 then Skip else if n ≤ max_stack_alloc then single_stack_free k n else Seq (single_stack_free k max_stack_alloc) (stack_free k (n − max_stack_alloc))
+single_stack_free_equation=∀k n. T
+single_stack_free_type=:num -> num -> α prog
+stack_free_type=:num -> num -> α prog
+free_64_0=Skip
+free_64_1=Inst (Arith (Binop Add 24 24 (Imm 8w)))
+free_64_255=Inst (Arith (Binop Add 24 24 (Imm 2040w)))
+free_64_256=Seq (Inst (Arith (Binop Add 24 24 (Imm 2040w)))) (Inst (Arith (Binop Add 24 24 (Imm 8w))))
+free_64_510=Seq (Inst (Arith (Binop Add 24 24 (Imm 2040w)))) (Inst (Arith (Binop Add 24 24 (Imm 2040w))))
+free_64_511=Seq (Inst (Arith (Binop Add 24 24 (Imm 2040w)))) (Seq (Inst (Arith (Binop Add 24 24 (Imm 2040w)))) (Inst (Arith (Binop Add 24 24 (Imm 8w)))))
+free_64_512=Seq (Inst (Arith (Binop Add 24 24 (Imm 2040w)))) (Seq (Inst (Arith (Binop Add 24 24 (Imm 2040w)))) (Inst (Arith (Binop Add 24 24 (Imm 16w)))))
+free_8_256=Seq (Inst (Arith (Binop Add 24 24 (Imm 255w)))) (add_1_inst 24)
+free_1_256=Seq (Inst (Arith (Binop Add 24 24 (Imm 0w)))) (Inst (Arith (Binop Add 24 24 (Imm 0w))))
+free_80_511=Seq (Inst (Arith (Binop Add 24 24 (Imm 2550w)))) (Seq (Inst (Arith (Binop Add 24 24 (Imm 2550w)))) (Inst (Arith (Binop Add 24 24 (Imm 10w)))))
+single_8_256=Inst (Arith (Binop Add 1234 1234 (Imm 256w)))
+single_8_511=Inst (Arith (Binop Add 1234 1234 (Imm 511w)))
+single_1_255=Inst (Arith (Binop Add 1234 1234 (Imm 0w)))
+single_80_511=Inst (Arith (Binop Add 1234 1234 (Imm 5110w)))
