@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackRemove.StackAddress
 import Flapjack.Compiler.Backend.StackRemove.StackFree
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps

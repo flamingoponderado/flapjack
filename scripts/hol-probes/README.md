@@ -1,3 +1,5 @@
+`stack_remove_stack_address_probe.out` captures all four complete native address-builder definitions/types and forty original constructors at zero, 255/chunk boundaries, widths1/8/64/80 and arbitrary registers. Kernel fixtures preserve immediate instructions, word wrapping and nested Seq.
+
 `stack_remove_stack_free_probe.out` records the two complete original
 builder definitions/types and exact native immediate constructors across
 zero/255/256/multiple chunks and widths1/8/64/80. Kernel parity preserves
