@@ -5877,3 +5877,8 @@ run_probe stack_remove_memory_subset_probeScript.sml stack_remove_memory_subset_
 run_probe stack_remove_word_list_exists_probeScript.sml stack_remove_word_list_exists_probe.out \
   word_list_exists_statement word_list_exists_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_shmem_names_probeScript.sml lab_to_target_shmem_names_probe.out \
+  get_shmem_info_MappedRead_or_MappedWrite get_shmem_info_MappedRead_or_MappedWrite_types get_shmem_info_MappedRead_or_MappedWrite_hypotheses \
+  word8_names narrow_names wide_names extcall_prefix all_ops ffi_only empty \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

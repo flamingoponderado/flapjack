@@ -67913,5 +67913,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison original21-36 and native full Misc.wordListExists/SetSep sepExists/star/cond/emp/one/wordList definitions. Complete original zero and successor conjunction as heap-predicate equalities, arbitrary address/count/payload carrier and every heap retained. Source pure length condition remains a separated empty heap; local starCond proves its elimination without assuming a length or concrete list. Forward successor destructs actual existential list and reverse reconstructs value::values; full partition/frame retained, modular bytesInWord address increment unchanged. Positive-width BitVec translation only, no extra width/domain/alignment/nonempty/noalias/success assumption, no finite-map/evaluator/reals carrier. Fresh complete literal original proof replay PASS, two rows capture both original heap-predicate equalities and proof success; DataBuffer/fullpass assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemNames.lean",
+    "lean_name": "getShmemInfo_mappedNames",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "get_shmem_info_MappedRead_or_MappedWrite",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source7317 and exported fulltype0hyp comparison: all six universally quantified code/position/input names/info/output names/info binders retained; sole supplied extraction output equality premise; full existential appended list with output name equality and EVERY(x, exists op,x=SharedMem op) conclusion rendered through list membership. No all_enc_ok, enc_ok, byte-size, label-validity, callback or desired-classification guard. Exact native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString positive-width BitVec carriers with own NeZero and fixed word8 bytes/nbytes, Nat PCs/registers/unsigned offsets. Genuine constructor induction proves shared-only accumulators stay shared-only; full unguarded PREPEND identifies existential suffix. Fresh registered original fulltype0hyp and seven original/native observations allT cover widths1/8/80, invalid label/length annotations, zero-byte instructions, all eight memory operations, existing external-call prefixes, ignored CallFFI and empty code. Full generic and actual arbitrary prefix/query width80 consumers checked. This is a theorem, not a production replacement or full mmio/shared-memory/initializer/compiler/machine closure; no total HD/EL use. Kernel/oracle evidence supplements source review, not cross-language equivalence."
   }
 ]
