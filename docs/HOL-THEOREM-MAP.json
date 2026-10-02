@@ -51099,5 +51099,30 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead flapjack-word-stack-word-extraction: 4080-4087: independent arbitrary mapped-source carrier/function, conjunction of successful mapped extraction and member premise, existential exact SOME Word payload witness. Actual executed native theWords/WordLocW reused; only original word dimension becomes positive BitVec width with NeZero. Lists/options/Nat metadata and all quantified variables/guards retained; no extra bounds/equality/default-validity/target-run assumptions. Full literal original proofs and 136 independent original complete outputs replayed; Lean kernel/runtime fixture evidence does not prove cross-language equivalence. This is genuine complete-inventory work, not a claimed active comp_correct prerequisite: subsequent legacy consumers occur in a commented source block. Coordinator acceptance and full compiler goal remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapFrameUpdates.lean",
+    "lean_name": "listUpdateWriteBitmapNotNil",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "list_LUPDATE_write_bitmap_NOT_NIL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison: Original1032-1044 complete dimension8 guard and exclusion of singleton Word0 for arbitrary stack xs, num k/frame and independently polymorphic Spt payload retained. Fresh original full inferred types confirm names beta num_map and xs alpha word_loc list. Native writeBitmapExact and listUpdate are literal reviewed operations. Terminal and continuation sentinels prove nonzero head; empty destination remains empty. No totalEL/default or allocator/evaluator premise. Literal original proof replay is captured in word_to_stack_bitmap_frame_updates_probe.out.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapFrameUpdates.lean",
+    "lean_name": "dropListUpdateSameOffset",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_list_LUPDATE_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison: Original995-996 MATCH_MP DROP_list_LUPDATE at reflexive bound yields full same-offset drop equation, forall source/destination lists and offset. Lean directly specializes reviewed dropListUpdate at n=n; no changed guard or carrier. Literal original proof replay is captured in word_to_stack_bitmap_frame_updates_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapFrameUpdates.lean",
+    "lean_name": "appendFrameLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "APPEND_LEMMA",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison: Original1150-1163 full n1+n2+n3 <= LENGTH xs guard and two existential lists with drop decomposition and n2=LENGTH xs2 retained. Arbitrary List payload and all three Nat sizes; choose take/drop on original suffix. Third size remains in guard, no stronger prefix/length premises. Literal original proof replay is captured in word_to_stack_bitmap_frame_updates_probe.out."
   }
 ]
