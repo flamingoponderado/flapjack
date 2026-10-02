@@ -4731,6 +4731,12 @@ It captures the full statement and native list/value/map/bound carriers;
 source and target state captures establish their independent code/FFI hosts.
 The capture is source evidence, not a cross-assistant equivalence proof.
 
+### Balanced-map ordering/domain equivalence
+
+`balanced_map_keyordered_probeScript.sml` replays the original local
+`key_ordered_to_fmap` proof with its full statement and no open hypotheses.
+It retains arbitrary trees and only the original good comparator premise.
+This source capture does not assert cross-assistant equivalence or production wiring.
 ### Native SSA Return semantic case
 
 `ssa_cc_trans_correct_return_probeScript.sml` replays the literal resumed Return

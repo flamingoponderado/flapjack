@@ -4277,6 +4277,9 @@ run_probe ssa_locals_rel_get_vars_probeScript.sml ssa_locals_rel_get_vars_probe.
   get_vars_full get_vars_type_source get_vars_type_target get_vars_type_names get_vars_type_values get_vars_type_ssa get_vars_type_next \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe balanced_map_keyordered_probeScript.sml balanced_map_keyordered_probe.out \
+  bmko_full_theorem \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$hol_dir/examples/data-structures/balanced_bst"
 run_probe ssa_cc_trans_correct_return_probeScript.sml ssa_cc_trans_correct_return_probe.out \
   return_full return_type_st return_type_cst return_type_label_reg return_type_value_regs return_type_ssa return_type_next return_type_tables \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
