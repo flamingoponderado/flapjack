@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
 import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
