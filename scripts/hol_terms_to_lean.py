@@ -634,6 +634,25 @@ def special_i2w(r, c, args, env):
     return r.eta(c, args, env, 1, lambda xs, raw: f'(BitVec.ofInt {w} {xs[0]})')
 
 
+def special_int_to_fp(r, c, args, env):
+    """Literal machine_ieeeLib int_to_fp at both fixed formats.
+
+    Original real_of_int arguments are covered by Rat. Preserve every generic
+    rounding clause/choice, rather than the executable binary64 RTE specialization.
+    """
+    r.noncomputable = True
+    width = width_of_result(c)
+    if width == 64:
+        return r.eta(c, args, env, 2,
+                     lambda xs, raw: f'(holIntToFp64 {xs[0]} {xs[1]})')
+    if width != 32:
+        raise Unrenderable('int_to_fp requires fixed binary32 or binary64')
+    return r.eta(c, args, env, 2, lambda xs, raw:
+        f'((fun (a : HolFloat 23 8) => '
+        f'(a.sign ++ a.exponent ++ a.significand).cast (by decide)) '
+        f'(holRealToFloat {xs[0]} ({xs[1]} : Rat)))')
+
+
 def special_bit_field_insert(r, c, args, env):
     # HOL raw FCP indexing is unspecified outside the input width. Unlike
     # word_bit, bit_field_insert does not add that bound itself. Every call
@@ -674,6 +693,8 @@ def special_int_of_num(r, c, args, env):
 
 
 SPECIAL = {
+    ('machine_ieee', 'int_to_fp32'): special_int_to_fp,
+    ('machine_ieee', 'int_to_fp64'): special_int_to_fp,
     ('bool', 'COND'): special_cond,
     ('bool', 'LET'): special_let,
     ('bool', 'ARB'): special_arb,
@@ -710,7 +731,8 @@ def uses_ieee_real_rendering(text: str) -> bool:
     # Their real carrier is the existing rational-cut translation; do not
     # conceal it when mapping the generated machine_ieee wrappers.
     return any(re.search(r'\b' + name + r'\b', text)
-               for name in ('holFloatCompare', 'holFloatIsNan', 'holFloatToInt'))
+               for name in ('holFloatCompare', 'holFloatIsNan', 'holFloatToInt',
+                            'holRealToFloat', 'holIntToFp64'))
 
 
 CONSTANTS = {
