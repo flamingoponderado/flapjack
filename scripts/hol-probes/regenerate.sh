@@ -5099,3 +5099,7 @@ run_probe stack_remove_inst_memory_probeScript.sml stack_remove_inst_memory_prob
 run_probe stack_remove_inst_fp_probeScript.sml stack_remove_inst_fp_probe.out \
   ifp_statement ifp_types ifp_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_inst_full_probeScript.sml stack_remove_inst_full_probe.out \
+  ifull_statement ifull_types ifull_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
