@@ -116,9 +116,7 @@ theorem allocatorMemorySupported_wordSsaRenameProgramWithLoops
   all_goals simp_all (config := { zetaDelta := true }) [allocatorMemorySupported, wordSsaFresh,
       allocatorMemorySupported_wordSsaRenameInstProgram,
       allocatorMemorySupported_wordSsaSeq,
-      allocatorMemorySupported_wordSsaListNextVarRenameMove,
-      allocatorMemorySupported_wordSsaReconcileTo,
-      allocatorMemorySupported_wordSsaFixInconsistencies]
+      allocatorMemorySupported_wordSsaReconcileTo]
 
   all_goals grind only [allocatorMemorySupported_wordSsaListNextVarRenameMove,
     allocatorMemorySupported_wordSsaLoopSetup,

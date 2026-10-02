@@ -110,9 +110,7 @@ private theorem supportsCodec_wordSsaRenameProgramWithLoops
   all_goals simp_all (config := { zetaDelta := true }) [supportsCodec, wordSsaFresh,
       supportsCodec_wordSsaRenameInstProgram,
       supportsCodec_wordSsaSeq,
-      supportsCodec_wordSsaListNextVarRenameMove,
-      supportsCodec_wordSsaReconcileTo,
-      supportsCodec_wordSsaFixInconsistencies]
+      supportsCodec_wordSsaReconcileTo]
 
   all_goals grind only [supportsCodec_wordSsaListNextVarRenameMove,
     supportsCodec_wordSsaLoopSetup,
