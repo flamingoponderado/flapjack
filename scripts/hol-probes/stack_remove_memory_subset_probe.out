@@ -1,0 +1,2 @@
+memory_subset_statement=(memory m1 d1 * rest) (fun2set (m2,d2)) ⇒ d1 ⊆ d2
+memory_subset_proved=T
