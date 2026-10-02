@@ -3,6 +3,10 @@ import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
 import Flapjack.RiscV.L3.Defs.MMU.Translate
 import Flapjack.RiscV.L3.Defs.MMU.Walk
 import Flapjack.RiscV.L3.Defs.MMU.Insert
+import Flapjack.RiscV.L3.Defs.MMU.Translate
+import Flapjack.RiscV.L3.Defs.MMU.Walk
+import Flapjack.RiscV.L3.Defs.MMU.Insert
+import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
@@ -377,6 +381,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MapBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdate
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdateSlices
 import Flapjack.Compiler.Backend.WordToStack.Proofs.WordListLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
