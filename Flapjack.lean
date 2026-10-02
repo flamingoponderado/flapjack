@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.ZeroPreservation
 import Flapjack.Compiler.Backend.LabToTarget.UpdatePosition
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
 import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
