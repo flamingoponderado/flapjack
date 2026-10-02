@@ -1,0 +1,74 @@
+bf_full_drop=⊢ ∀ys xs. DROP m (list_LUPDATE ys m xs) = list_LUPDATE ys 0 (DROP m xs)
+bf_full_not_nil=⊢ 8 ≤ dimindex (:α) ⇒ list_LUPDATE (MAP Word (write_bitmap names k f')) 0 xs ≠ [Word 0w]
+bf_full_append=⊢ n1 + n2 + n3 ≤ LENGTH xs ⇒ ∃xs2 xs3. DROP n1 xs = xs2 ++ xs3 ∧ n2 = LENGTH xs2
+bf_not_nil_types=xs
+ : :α word_loc list
+f'
+ : :num
+k
+ : :num
+names
+ : :β sptree$num_map
+bf_overwrite_8_0_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 0)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_0_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 0)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_0_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 0)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_6_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 6)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_6_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 6)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_6_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 6)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_7_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 7)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_7_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 7)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_7_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 7)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_8_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 8)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_8_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 8)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_8_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 8)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_63_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 63)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_63_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 63)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_63_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 63)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_64_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 64)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_64_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 64)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_64_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 64)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_80_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 80)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_80_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 80)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_8_80_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 80)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_0_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 0)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_0_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 0)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_0_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 0)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_6_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 6)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_6_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 6)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_6_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 6)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_7_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 7)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_7_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 7)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_7_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 7)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_8_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 8)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_8_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 8)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_8_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 8)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_63_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 63)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_63_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 63)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_63_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 63)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_64_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 64)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_64_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 64)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_64_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 64)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_80_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 80)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_80_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 80)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_64_80_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 80)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_0_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 0)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_0_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 0)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_0_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 0)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_6_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 6)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_6_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 6)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_6_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 6)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_7_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 7)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_7_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 7)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_7_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 7)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_8_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 8)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_8_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 8)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_8_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 8)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_63_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 63)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_63_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 63)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_63_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 63)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_64_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 64)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_64_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 64)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_64_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 64)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_80_0=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 80)) 0 [] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_80_1=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 80)) 0 [Word 0w] ≠ [Word 0w] ⇔ T
+bf_overwrite_80_80_2=⊢ list_LUPDATE (MAP Word (write_bitmap (fromAList [(2,()); (4,())]) 1 80)) 0 [Loc 17 19; Word 0w; Loc 3 4] ≠ [Word 0w] ⇔ T

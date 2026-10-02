@@ -1,3 +1,6 @@
+import Flapjack.RiscV.L3.Defs.Reservation
+import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+import Flapjack.RiscV.L3.Defs.AddressException
 import Flapjack.RiscV.L3.Defs.Fetch
 import Flapjack.Misc.Sptree.Subspt
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
@@ -26,6 +29,8 @@ import Flapjack.Compiler.Backend.LabToTarget.MemoryTransport
 import Flapjack.Compiler.Backend.LabToTarget.LineInfo
 import Flapjack.Compiler.Backend.LabToTarget.ShmemExtraction
 import Flapjack.Compiler.Backend.LabToTarget.ShmemDistinct
+import Flapjack.Compiler.Backend.LabToTarget.ShmemPrefix
+import Flapjack.Compiler.Backend.LabToTarget.ShmemMembership
 import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
@@ -409,6 +414,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapFrameUpdates
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapDecode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
