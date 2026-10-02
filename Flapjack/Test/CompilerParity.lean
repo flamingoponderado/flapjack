@@ -1,3 +1,4 @@
+import Flapjack.Test.SetNewTriggerParity
 import Flapjack.Test.LabToTargetStrongEvenLabelsParity
 import Flapjack.Test.LabToTargetZeroPositionEvenLabelsParity
 import Flapjack.Test.LabToTargetEvenLabelsParity
