@@ -59823,5 +59823,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 author source comparison2026-10-02 original lab_to_targetProofScript3717–3775, coherent .89 group. Fresh complete original definitions/statements, quantified binder types and direct alpha line/sec predicate signatures captured in lab_to_target_label_one_probe.out. Alpha is original HOL word dimension, not arbitrary payload: native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 byte lists retained, arbitrary positive width BitVec sole reviewed qualifier. label_one is annotation<=1 only for Label, true for every Asm/LabAsm regardless of bytes/annotation; sec_label_one is EVERY. Full lines_upd theorem assumes ONLY accumulator label_one, no restriction on original source lines; full upd theorem establishes EVERY unconditionally. Full simple/section encoder theorems retain actual returned pair equality with arbitrary Bool and only original source EVERY guard; no encoder success, desired output or label-validity premises. Complete kernel proofs derive output facts; section proof consumes full reviewed simple-accumulator equality from .87, acceptance edge preserved. Thirteen original/native observations protect arbitrary nonlabel annotations, rejected annotation2, unrestricted input labels99/77/999, even/odd full update tuples, invalid accumulator counterexample demonstrating its necessary original premise, and exact false-flag grow output across sections. Four complete arbitrary-width theorem consumers plus thirteen fixtures kernel checked. Original proof-side predicates, no alternative executed compiler definition; no HD/EL/LOG2 hold dependency and full remove_labels_loop/end-to-end remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "alloc_correct_lemma_None",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/AllocNone.lean",
+    "lean_name": "alloc_correct_lemma_None",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.8.3), stack_allocProofScript.sml:5018-5076 alloc_correct_lemma_None: the same statement shape as alloc_correct_lemma_Simple with conf.gc_kind = None (premises alloc w s = (r,t), r <> SOME Error, s.gc_fun = word_gc_fun conf, gc_kind None, bitmap and stack bounds, FLOOKUP l 0/1; conclusion ?ck l2 with the evaluate equation over word_gc_code and the three side conjuncts), over the tagged StackSem alloc/evaluate. Free w s r t conf l ret c anything implicit; fromAList/toAList as sptFromAList/sptToAList, compile as the tagged stack_alloc compile, SUBMAP as HolFiniteMapExact.submap, dimword as 2 ^ width. Proved by unfolding gc_def and word_gc_fun's None clause (enc_dec_stack keeps the stack) and running the six-instruction word_gc_code, which halts unless w = 0w. The word_gc_fun constant closure also contains its Simple clause, which reaches holHd (HOL HD, HD (h::t) = h, holHdNil opaque), compared against the pinned HOL HD definition; the None clause used here does not apply it. 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
