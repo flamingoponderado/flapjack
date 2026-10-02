@@ -4175,3 +4175,12 @@ fields, missing-return Call handlers, Set BitmapBase, StoreConsts minimum bound,
 and first-slot StackLoad/StackStore bounds. `StackPropsRegisterBoundsParity.lean`
 checks matching cases and additional arbitrary-width equations. These predicates
 are prerequisites of StackRemove correctness, not its semantic simulation.
+
+`word_to_stack_bitmap_word_lemmas_probeScript.sml` replays five complete
+original WordToStack proof bodies (two even-register maxima and three bitmap
+OR/shift primitives), requiring no open hypotheses, plus three original inferred
+types. Its 267 further cases
+cover empty/singleton register sequences, widths 1/2/32/64/80, zero/all-ones,
+MSB values and discarded top bits. `WordToStackBitmapWordParity.lean` checks
+matching observations/full applications plus arbitrary width/count instances.
+These are full original helper theorems, not a bitmap decoder simulation.

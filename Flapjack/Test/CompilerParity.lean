@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackBitmapWordParity
 import Flapjack.Test.StackPropsRegisterBoundsParity
 import Flapjack.Test.WordCseListOrderRouting
 import Flapjack.Test.WordCseListOrderParity
