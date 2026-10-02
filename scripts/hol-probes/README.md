@@ -5891,3 +5891,5 @@ stop, data branch with zero/one fuel, and reference branch with zero/one fuel.
 `Flapjack/Test/GenGcMoveLoopParity.lean` replays these collector observations in
 the kernel. This capture does not replay the original simulation proof or claim
 coverage of unspecified nonword headers.
+
+Recursive register-bound probes capture seven full generic original cases and210 guard EVAL/whole-theorem application pairs at widths1/2/8/64/80 and three frames including70bit offset. Kernel fixtures apply each complete recursive case, discharging only proper-subprogram hypotheses through the checked Alloc case. Seq, If and returning/handler Calls retain actual bitmap threading; direct, empty-indirect, spilled-indirect, ignored invalid tail handlers and arbitrary configuration immediate acceptance/rejection are covered. No eager irrelevant bitmap EVAL, full original proof replay, cross-language equivalence or full compiler correctness is claimed. Full register-bound assembly remains open. Selector: HOL_PROBE_ONLY=word_to_stack_reg_recursive_probeScript.sml.
