@@ -5114,3 +5114,6 @@ run_probe stack_alloc_gen_loop_statement_probeScript.sml stack_alloc_gen_loop_st
   gen_loop_full_typed_statement gen_loop_free_vars gen_loop_stop gen_loop_data_fuel_zero \
   gen_loop_data_one gen_loop_refs_fuel_zero gen_loop_refs_one \
   "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_label_position_encoding_probeScript.sml lab_to_target_label_position_encoding_probe.out \
+  enc_lines_again_simp_pos_ok enc_lines_again_simp_pos_ok_types enc_secs_again_pos_ok enc_secs_again_pos_ok_types changed_full_tuple changed_parity growth_flag_false growth_breaks_parity unchanged_full_tuple invalid_input_not_repaired sections_full_tuple sections_parity empty_list_width1 empty_sections large_width80 large_width80_parity \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

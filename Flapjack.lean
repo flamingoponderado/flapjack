@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding
 import Flapjack.Compiler.Backend.LabToTarget.LabelPositionUpdates
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRefs
