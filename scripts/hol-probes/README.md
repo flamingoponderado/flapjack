@@ -6171,3 +6171,10 @@ Optional LLOOKUP probe captures six complete original closed re-exported stateme
 Optional LLOOKUP probe captures six complete original closed re-exported statements and480 independent full outputs:312 Nat and168 WordLoc rows at positive widths1/8/64/80,70bit index/offset metadata, empty/duplicate lists and complete TAKE/LUPDATE outputs. Kernel and compiled driver compare the same independently captured literals. Five optional-only declarations are ported; EL-facing THM/EQ_EL statements are audit captures only while totalHD/EL review remains held. No external-source trust expansion or HOL-to-Lean equivalence claim. Selector: HOL_PROBE_ONLY=list_lookup_probeScript.sml.
 
 `l3_fetch_primitives_probe.out` captures full original PC/write'Skip definitions/types and two assumption-free generic whole equations. Kernel fixtures retain arbitrary complete native state/core maps and fixed word64 values, without core bounds. Skip updates only c_Skip at procID; this is not an instruction decoder or a substitute for either model Fetch or step Fetch.
+
+The `l3_fetch_primitives_probeScript.sml` family also captures the complete original `rawReadInst_def` and its type, then evaluates all 256 first-byte values and address wraparound at the last three word64 addresses. Matching Lean kernel replays retain an arbitrary surrounding native state and observe the decoded width/value, current and other-core Skip, and unchanged memory byte. Probes are regression evidence; the full source equation is reviewed separately.
+
+`l3_step_fetch_probeScript.sml` captures the full original step Fetch definition,
+type and unconditional generic equation. It preserves THE NONE and does not
+claim to cover the separate model Fetch declaration. Its Lean replay is a generic
+kernel equality over the full native state.

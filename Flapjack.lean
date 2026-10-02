@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Step.Fetch
 import Flapjack.RiscV.L3.Defs.ReadInst
 import Flapjack.RiscV.L3.Defs.MMU.Translate
 import Flapjack.RiscV.L3.Defs.MMU.Walk
