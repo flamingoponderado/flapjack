@@ -5436,3 +5436,9 @@ run_probe word_to_stack_asm_name_compiler_probeScript.sml word_to_stack_asm_name
 run_probe stack_remove_comp_load_probeScript.sml stack_remove_comp_load_probe.out \
   cl_statement cl_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_odd_alignment_probeScript.sml lab_to_target_odd_alignment_probe.out \
+  has_odd_inst_def has_odd_inst_def_types line_ok_alignment line_ok_alignment_types has_odd_inst_alignment has_odd_inst_alignment_types \
+  contract_one_byte contract_two_byte contract_bad_alignment odd_padded_line odd_valid_code even_padded_line validity_guard_needed encoder_guard_needed physical_not_annotation empty_zero_label width1_odd_line width80_odd_code \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
