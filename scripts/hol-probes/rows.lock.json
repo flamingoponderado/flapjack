@@ -5588,6 +5588,12 @@
       "sha256": "2a39ae2aa52897d0875d7907738b558a6f50cb661f64e6da47b9e0887a5ab337"
     },
     {
+      "bytes": 1948,
+      "out": "stack_remove_comp_seq_probe.out",
+      "rows": 2,
+      "sha256": "908197fe4e93a9ab4dc6ea06549bbc6d75473bc41ca86a6f720d7296392d14f3"
+    },
+    {
       "bytes": 873,
       "out": "stack_remove_comp_set_probe.out",
       "rows": 3,
