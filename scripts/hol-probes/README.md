@@ -4394,3 +4394,9 @@ bounded `EVAL`; they do not simplify with the recursive evaluator as an unbounde
 rewrite. Every captured row has a kernel example in
 `Flapjack.Test.TargetSemEvaluateParity`. These are regression checks, not a
 cross-assistant equivalence proof. The compiler executable is not rerouted.
+
+The same shared-memory source probe now replays original `sh_mem_op_const`,
+records its full twelve-field statement and types, and proves fifteen actual
+success/final/failure applications with no undischarged hypotheses. The Lean
+fixture applies the full twelve-conjunct theorem to the same native cases,
+preserving arbitrary GC/compiler/domain functions as equalities.
