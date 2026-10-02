@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
 import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
 import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceDomain
 import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceEncoding
@@ -191,6 +192,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRaise
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticReturn
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAInstructionCodec
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGeneratedProgramCodec
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAControlCodec
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSADataCodec
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstConst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstBinop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstShift
@@ -274,6 +278,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameShare
 import Flapjack.Pancake.WordConvs.FullInstOkLess
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmRemoveCompiler

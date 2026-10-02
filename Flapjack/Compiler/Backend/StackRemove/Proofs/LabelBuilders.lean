@@ -7,12 +7,13 @@ HOL sets use predicate equality. Every count, register and positive word width
 is unrestricted; chunk recursion and both allocation branches are retained. -/
 namespace Flapjack.Compiler.Backend.StackRemove.LabelBuilders
 open Flapjack.Compiler.Backend.StackRemove
+open Flapjack.Compiler.Backend.StackLang
 open Flapjack.StackSem
 /-- Freeing any number of stack words introduces no continuation labels. -/
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "get_labels_stack_free"
   (words_as_type_indexed_bitvec)]
 theorem labelsStackFree {width : Nat} [NeZero width] (pointer count : Nat) :
-    getLabelsExact (stackFree (width := width) pointer count) = (fun _ => False) := by
+    getLabelsExact (stackFree pointer count : HolProg width) = (fun _ => False) := by
   induction count using Nat.strongRecOn with
   | ind count ih =>
     rw [stackFree]
@@ -27,7 +28,7 @@ theorem labelsStackFree {width : Nat} [NeZero width] (pointer count : Nat) :
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "get_labels_stack_alloc"
   (words_as_type_indexed_bitvec)]
 theorem labelsStackAlloc {width : Nat} [NeZero width] (jump : Bool) (pointer count : Nat) :
-    getLabelsExact (stackAlloc (width := width) jump pointer count) = (fun _ => False) := by
+    getLabelsExact (stackAlloc jump pointer count : HolProg width) = (fun _ => False) := by
   have single (n : Nat) : getLabelsExact (singleStackAlloc (width := width) jump pointer n) = (fun _ => False) := by
     cases jump <;> simp [singleStackAlloc, getLabelsExact, haltInst]
   induction count using Nat.strongRecOn with
@@ -44,7 +45,7 @@ theorem labelsStackAlloc {width : Nat} [NeZero width] (jump : Bool) (pointer cou
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "get_labels_upshift"
   (words_as_type_indexed_bitvec)]
 theorem labelsUpshift {width : Nat} [NeZero width] (register count : Nat) :
-    getLabelsExact (upshift (width := width) register count) = (fun _ => False) := by
+    getLabelsExact (upshift register count : HolProg width) = (fun _ => False) := by
   induction count using Nat.strongRecOn with
   | ind count ih =>
     rw [upshift]
@@ -57,7 +58,7 @@ theorem labelsUpshift {width : Nat} [NeZero width] (register count : Nat) :
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "get_labels_downshift"
   (words_as_type_indexed_bitvec)]
 theorem labelsDownshift {width : Nat} [NeZero width] (register count : Nat) :
-    getLabelsExact (downshift (width := width) register count) = (fun _ => False) := by
+    getLabelsExact (downshift register count : HolProg width) = (fun _ => False) := by
   induction count using Nat.strongRecOn with
   | ind count ih =>
     rw [downshift]
