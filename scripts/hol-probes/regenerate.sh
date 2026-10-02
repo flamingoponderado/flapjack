@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe stack_code_bitmaps_inst_probeScript.sml stack_code_bitmaps_inst_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_inst_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_code_bitmaps_if_probeScript.sml stack_code_bitmaps_if_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_if_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"

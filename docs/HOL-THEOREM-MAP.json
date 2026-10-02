@@ -67582,5 +67582,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 original421-440 genuine If case: actual source execution and only genuine first/second branch IHs, each arbitrary state/result/output with full original CodeBitmaps existential. Actual evaluate_ite reads register and immediate and applies original comparison; all missing/noncomparable cases return original state and count0, true/false selected branch applies its actual IH. No successful condition/register read, count/prefix/target/postrelation assumption. CodeBitmaps definitionally retains complete shifted oracle, original left code union fold and bitmapappendflatten. Canonical native imported state regs/fpRegs/store with same-module genuine codec witness; code Spt/List unchanged, positive words/Type0 hosts retained. Full evaluator closure inherits reals_as_rational_cuts assumption; no new real model. One case only, no runtime parity or fullassembly claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Inst.lean",
+    "lean_name": "evaluateCodeBitmapsInst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original421-440 genuine Inst case. Actual native evaluator equality sole premise, arbitrary instruction/fullstate/result. Successful dispatch derives oracle/code/bitmap preservation from original full inst_const; failure retains source state. Count0 proves complete original existential shift/codefold/bitmapappendflatten, not weakened field conjunction. No successful primitive/count/prefix/postrelation or target evaluation premise. Canonical native imported regs/fpRegs/store with same-module genuine state codec roundtrip; positive words/Type0 hosts, code Spt and List carriers retained. Full evaluator closure inherits reals_as_rational_cuts assumption, no new real rendering. Original full/Inst closed statements are statement evidence only, not runtime parity or fullassembly."
   }
 ]
