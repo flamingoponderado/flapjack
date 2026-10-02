@@ -5361,3 +5361,11 @@ run_probe word_to_stack_asm_name_inst_probeScript.sml word_to_stack_asm_name_ins
 run_probe stack_remove_single_free_probeScript.sml stack_remove_single_free_probe.out \
   sf_statement sf_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_recursive_free_probeScript.sml stack_remove_recursive_free_probe.out \
+  rf_statement rf_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_free_probeScript.sml stack_remove_comp_free_probe.out \
+  cf_statement cf_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
