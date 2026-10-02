@@ -4578,6 +4578,9 @@ live in `Flapjack/Test/StackPropsOrderedLabelsParity.lean`.
 
 `ssa_locals_get_var_probe.out` replays the complete original SSA get_var lookup transport and captures six original types, including independently arbitrary source/target configuration and FFI hosts. It supports expression-producing SSA semantic cases without adding a target-read-success premise.
 
+Native SSA register-writing probe replays original Assign/Get/LocValue exp_tac2 and its local prerequisites, omitting only the discarded recursive-induction assumption for primitive cases. Captures full statements and source carrier types. This HOL evidence supplements source review and Lean kernel checks.
+
+SSA state-writing probe replays original Set/Store semantic cases and local prerequisites, captures full statements and six original carrier types. Primitive Set omits only discarded recursive IH bookkeeping; Store substitutes its expression binder. Source errors and successful native store/memory updates are preserved.
 `stackprops_allocation_constants_probe.out` replays the five complete original
 StackProps allocation/GC/constant-store field and clock proofs, their full types,
 and the original generic-result `store_const_sem_def`. Six allocation and five
@@ -4595,6 +4598,7 @@ all 208 values/applications. This group does not establish external
 The production list-key comparator route is tracked separately.
 `target_props_io_events_probeScript.sml` replays the full original `evaluate_io_events_mono` quantified theorem with no open hypotheses. `TargetPropsIoEventsParity.lean` checks the same unrestricted statement over the full literal evaluator. Clock induction composes exact returning FFI append with recursive prefix preservation; all failed/final paths retain the original trace.
 
+Native SSA MustTerminate probe replays original recursive case with its specialized smaller-body IH, omitting already-discharged prog_size bookkeeping. Captures full recursive/original statements and six carrier types; no desired target evaluation or frame is assumed.
 `stack_props_register_bounds_probeScript.sml` captures all three original
 register-bound definitions and evaluates 504 constructor/boundary cases across
 widths 1/64/80, including all expression/asm/program constructors, ignored FP
@@ -4639,3 +4643,23 @@ long lists, empty prefixes, missing bits and true/false terminal bits.
 `WordToStackBitmapBitStructureParity.lean` checks matching observations and
 whole theorem applications. The HOL context replay uses original EL read-only;
 no new Lean total-EL port or provenance allowance is introduced.
+Native SSA Seq probe replays the original semantic case and local locals-more proof, with specialized legitimate first/second body IHs and already-discharged size bookkeeping omitted. Captures full recursive/original statements and seven carrier types; actual scheduler-swap and second-context validity are retained.
+
+### Native SSA semantic If case
+
+`ssa_cc_trans_correct_if_probeScript.sml` replays the literal resumed If
+proof with its complete two specialized smaller-branch IHs. It omits only
+structural size bookkeeping already discharged by specialization and selects
+the corresponding branch IH explicitly. Original non-exported getVar,
+map/locals bound, merge-move, and fix-inconsistencies local proofs are replayed.
+The capture records the recursive and original full statements and native
+state/program/map/fresh-bound/loop-table carriers. This is source evidence,
+not a cross-assistant equivalence proof; final assembly must discharge the IHs.
+
+### Native SSA OpCurrHeap semantic case
+
+`ssa_cc_trans_correct_heap_probeScript.sml` replays the literal resumed
+OpCurrHeap case and its original local variable/expression/fresh-update helpers.
+Only the discarded primitive induction bookkeeping is omitted. The capture
+records the complete original statement and native state/binop/register/table
+carriers; it is source evidence, not a cross-assistant equivalence proof.

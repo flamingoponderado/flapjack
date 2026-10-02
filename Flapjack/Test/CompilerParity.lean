@@ -146,6 +146,8 @@ import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
 import Flapjack.Test.TargetPropsInterferenceParity
+import Flapjack.Test.LabToTargetPositionAppendParity
+import Flapjack.Test.LabToTargetPositionValuesParity
 import Flapjack.Test.LabToTargetNavigationBoundsParity
 import Flapjack.Test.LabToTargetSectionLookupParity
 
@@ -1752,6 +1754,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackAllocGetBitsParity.runChecks,
     Flapjack.Test.StackAllocGcBitmapsParity.runChecks,
     Flapjack.Test.LabToTargetNavigationBoundsParity.runChecks,
+    Flapjack.Test.LabToTargetPositionAppendParity.runChecks,
+    Flapjack.Test.LabToTargetPositionValuesParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
     Flapjack.Test.AsmPropsPcCoverageParity.runChecks,
