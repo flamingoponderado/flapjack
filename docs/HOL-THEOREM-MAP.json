@@ -67100,5 +67100,77 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.12 genuine If case original292-305 of comp_correct134ff. Actual positive-width native HolProg.ite comparison/register/reg-or-imm/two branches and complete22field StackSem state/configuration/FFI. Original evaluate equality/nonError/literalstateRel are sole source premises; added firstIH/secondIH are ordinary comp-component induction hypotheses for exactly the two subprograms, universally over info/source/target/result/poststate, not a wholepass predicate or supplied targetresult. BranchIH unfolds exactly original simulation premise and comp existential component. SimulationResult unfolds literal existential clock/targetstate/stackspace, postrelation, actual native evaluation at target.clock+clock, same source result/target stackSpace update, original nonTimeOut/nonHalt Word2 guard. Both compTop/comp conclusion components retained; compTop equals comp for If. Full state relation derives target register and immediate reads at every clock; actual wordSemWordCmp determines source branch. Success comparison true/false uses corresponding branchIH; missing operands/comparison-none contradict original nonError. Returned targetexecution/postrelation/guard/extra clock are derived, not assumed as new source premises. Canonical regs/fpRegs/store relation qualifier, actual imported stateowner and same-module genuine codec roundtrips; code remains native Spt and lists remain lists. Full native evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; this word comparison proof introduces no real rendering. This is one genuine recursive case, not whole comp_correct/compile_semantics/runtime correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "dropDropEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_DROP_EQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "takeTakeMin",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "TAKE_TAKE_MIN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "takeDropEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "TAKE_DROP_EQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "dropTakeNil",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_TAKE_NIL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "takeLupdate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "TAKE_LUPDATE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "dropLupdateGe",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_LUPDATE_lemma1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "dropLupdateLt",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_LUPDATE_lemma2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "dropLupdate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "DROP_LUPDATE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ListUpdateSlices.lean",
+    "lean_name": "minAdd",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MIN_ADD",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, flapjack-sol2-list-update-slices: full original146-173/524-562 arbitrary payload List and Nat slice/single-write laws, source guard only for the two guarded drop cases, original operator/index order and out-of-range ignored List.set retained. No total HD/EL, additional bounds, inhabited payload or target-result assumption. Nine literal original full statements/proof bodies replayed with no hypotheses/free variables; 245 independently captured complete original outputs replayed in the kernel and runtime. Native List/List.set translation is identity."
   }
 ]
