@@ -1,0 +1,91 @@
+ffi_contract_full_definition=∀pc mc_conf.
+  ffi_interfer_ok pc mc_conf ⇔
+  ∀ms2 k index new_bytes t1 bytes bytes2 i.
+    index < LENGTH mc_conf.ffi_names ∧
+    mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+    mc_conf.prog_addresses = t1.mem_domain ⇒
+    (index < i ⇒
+     read_ffi_bytearrays mc_conf ms2 = (SOME bytes,SOME bytes2) ∧
+     LENGTH new_bytes = LENGTH bytes2 ∧
+     (mc_conf.ffi_names❲index❳ = ExtCall «» ⇒ new_bytes = bytes2) ∧
+     target_state_rel mc_conf.target
+       (t1 with pc := -n2w ((3 + index) * ffi_offset) + pc) ms2 ∧
+     aligned mc_conf.target.config.code_alignment
+       (t1.regs
+          (case mc_conf.target.config.link_reg of NONE => 0 | SOME n => n)) ⇒
+     (let
+        ms' = mc_conf.ffi_interfer k (index,new_bytes,ms2)
+      in
+        mc_conf.target.state_ok ms' ∧
+        mc_conf.target.get_pc ms' =
+        t1.regs
+          (case mc_conf.target.config.link_reg of NONE => 0 | SOME n => n) ∧
+        (∀a. a ∈ t1.mem_domain ⇒
+             mc_conf.target.get_byte ms' a =
+             asm_write_bytearray (t1.regs mc_conf.ptr2_reg) new_bytes t1.mem
+               a) ∧
+        ∀r. MEM r mc_conf.callee_saved_regs ∧
+            r < mc_conf.target.config.reg_count ∧
+            ¬MEM r mc_conf.target.config.avoid_regs ⇒
+            mc_conf.target.get_reg ms' r = t1.regs r)) ∧
+    (i ≤ index ∧
+     target_state_rel mc_conf.target
+       (t1 with pc := mc_conf.ffi_entry_pcs❲index❳) ms2 ⇒
+     ∃info.
+       ALOOKUP mc_conf.mmio_info index = SOME info ∧
+       (mc_conf.ffi_names❲index❳ = SharedMem MappedRead ⇒
+        ∀new_bytes.
+          target_state_rel mc_conf.target
+            (t1 with
+             <|pc := SND (SND (SND info));
+               regs :=
+                 (λn.
+                      if n = FST (SND (SND info)) then
+                        word_of_bytes F 0w new_bytes
+                      else t1.regs n)|>)
+            (mc_conf.ffi_interfer k (index,new_bytes,ms2))) ∧
+       (mc_conf.ffi_names❲index❳ = SharedMem MappedWrite ⇒
+        target_state_rel mc_conf.target (t1 with pc := SND (SND (SND info)))
+          (mc_conf.ffi_interfer k (index,new_bytes,ms2))))
+cache_contract_full_definition=∀pc mc_conf.
+  ccache_interfer_ok pc mc_conf ⇔
+  ∀ms2 t1 k a1 a2.
+    target_state_rel mc_conf.target
+      (t1 with pc := -n2w (2 * ffi_offset) + pc) ms2 ∧
+    aligned mc_conf.target.config.code_alignment
+      (t1.regs
+         (case mc_conf.target.config.link_reg of NONE => 0 | SOME n => n)) ⇒
+    (let
+       ms' = mc_conf.ccache_interfer k (a1,a2,ms2)
+     in
+       mc_conf.target.state_ok ms' ∧
+       mc_conf.target.get_pc ms' =
+       t1.regs
+         (case mc_conf.target.config.link_reg of NONE => 0 | SOME n => n) ∧
+       (∀a. a ∈ t1.mem_domain ⇒ mc_conf.target.get_byte ms' a = t1.mem a) ∧
+       ∀r. (MEM r mc_conf.callee_saved_regs ∨ r = mc_conf.ptr_reg) ∧
+           r < mc_conf.target.config.reg_count ∧
+           ¬MEM r mc_conf.target.config.avoid_regs ⇒
+           mc_conf.target.get_reg ms' r = t1.regs r)
+post_ffi_state_full_statement=ffi_interfer_ok pc mc_conf ∧ index < LENGTH mc_conf.ffi_names ∧
+mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧ index < i ∧
+mc_conf.prog_addresses = t1.mem_domain ∧
+read_ffi_bytearrays mc_conf ms2 = (SOME bytes,SOME bytes2) ∧
+LENGTH new_bytes = LENGTH bytes2 ∧
+(mc_conf.ffi_names❲index❳ = ExtCall «» ⇒ new_bytes = bytes2) ∧
+target_state_rel mc_conf.target
+  (t1 with pc := -n2w ((3 + index) * ffi_offset) + pc) ms2 ∧
+aligned mc_conf.target.config.code_alignment
+  (t1.regs (case mc_conf.target.config.link_reg of NONE => 0 | SOME n => n)) ⇒
+target_state_rel mc_conf.target
+  (post_ffi_asm mc_conf t1 new_bytes
+     (mc_conf.ffi_interfer k (index,new_bytes,ms2)))
+  (mc_conf.ffi_interfer k (index,new_bytes,ms2))
+post_cache_state_full_statement=ccache_interfer_ok pc mc_conf ∧
+target_state_rel mc_conf.target (t1 with pc := -n2w (2 * ffi_offset) + pc)
+  ms2 ∧
+aligned mc_conf.target.config.code_alignment
+  (t1.regs (case mc_conf.target.config.link_reg of NONE => 0 | SOME n => n)) ⇒
+target_state_rel mc_conf.target
+  (post_ccache_asm mc_conf t1 (mc_conf.ccache_interfer k (a1,a2,ms2)))
+  (mc_conf.ccache_interfer k (a1,a2,ms2))

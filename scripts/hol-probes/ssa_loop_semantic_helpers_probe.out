@@ -1,0 +1,8 @@
+collapse_full=⊢ evaluate (P,s) = (NONE,t) ⇒ evaluate (Seq P Q,s) = evaluate (Q,t)
+empty_cut_full=⊢ cut_env (a,fromAList (MAP g (toAList LN))) v = cut_env (a,LN) v
+collapse_type_first=:α prog
+collapse_type_source=:(α, β, γ) state
+collapse_type_after=:(α, β, γ) state
+empty_cut_type_names=:sptree$num_set
+empty_cut_type_locals=:α sptree$num_map
+empty_cut_type_map=:num # unit -> num # unit

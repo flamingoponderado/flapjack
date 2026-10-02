@@ -1,0 +1,19 @@
+bmlc_full=⊢ ∀(k :α) (v :β) (l :(α, β) balanced_map) (r :(α, β) balanced_map) (cmp :α -> α -> ordering). good_cmp cmp ∧ key_ordered cmp k l Greater ∧ key_ordered cmp k r Less ∧ almost_balancedL (size l) (size r) ∧ invariant cmp l ∧ invariant cmp r ⇒ invariant cmp (balanceL k v l r) ∧ to_fmap cmp (balanceL k v l r) = (to_fmap cmp l ⊌ to_fmap cmp r)⟨key_set cmp k ↦ v⟩
+bmlc_empty_tree=Bin (1 :num) (5 :num) (50 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)
+bmlc_empty_invariant=T
+bmlc_empty_lookup5=SOME (50 :num)
+bmlc_fallback_tree=Bin (3 :num) (5 :num) (50 :num) (Bin (1 :num) (0 :num) (0 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Bin (1 :num) (6 :num) (6 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map))
+bmlc_fallback_invariant=T
+bmlc_fallback_lookup5=SOME (50 :num)
+bmlc_single_tip_tree=Bin (4 :num) (1 :num) (1 :num) (Bin (1 :num) (0 :num) (0 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Bin (2 :num) (5 :num) (50 :num) (Bin (1 :num) (2 :num) (2 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Tip :(num, num) balanced_map))
+bmlc_single_tip_invariant=T
+bmlc_single_tip_lookup5=SOME (50 :num)
+bmlc_double_tip_tree=Bin (5 :num) (2 :num) (2 :num) (Bin (2 :num) (1 :num) (1 :num) (Bin (1 :num) (0 :num) (0 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Tip :(num, num) balanced_map)) (Bin (2 :num) (5 :num) (50 :num) (Bin (1 :num) (3 :num) (3 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Tip :(num, num) balanced_map))
+bmlc_double_tip_invariant=T
+bmlc_double_tip_lookup5=SOME (50 :num)
+bmlc_heavy_single_tree=Bin (6 :num) (2 :num) (2 :num) (Bin (2 :num) (1 :num) (1 :num) (Bin (1 :num) (0 :num) (0 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Tip :(num, num) balanced_map)) (Bin (3 :num) (5 :num) (50 :num) (Bin (1 :num) (3 :num) (3 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Bin (1 :num) (6 :num) (6 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)))
+bmlc_heavy_single_invariant=T
+bmlc_heavy_single_lookup5=SOME (50 :num)
+bmlc_heavy_double_tree=Bin (6 :num) (2 :num) (2 :num) (Bin (2 :num) (1 :num) (1 :num) (Bin (1 :num) (0 :num) (0 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Tip :(num, num) balanced_map)) (Bin (3 :num) (5 :num) (50 :num) (Bin (1 :num) (3 :num) (3 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Bin (1 :num) (6 :num) (6 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)))
+bmlc_heavy_double_invariant=T
+bmlc_heavy_double_lookup5=SOME (50 :num)

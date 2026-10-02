@@ -502,7 +502,7 @@ theorem localsRelOracleTargetRel :
   rw [crepToLoopLocalsRelExact]
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro x y n m hx hy _
-    simp only [FLOOKUP, HolFiniteMapExact.lookup_update, HolFiniteMapExact.lookup_empty,
+    simp only [HolFiniteMapExact.lookup_update, HolFiniteMapExact.lookup_empty,
       FUPDATE, beq_iff_eq] at hx hy
     split at hx
     · split at hy
@@ -511,7 +511,7 @@ theorem localsRelOracleTargetRel :
       · simp at hy
     · simp at hx
   · intro v m hv
-    simp only [FLOOKUP, HolFiniteMapExact.lookup_update, HolFiniteMapExact.lookup_empty,
+    simp only [HolFiniteMapExact.lookup_update, HolFiniteMapExact.lookup_empty,
       FUPDATE, beq_iff_eq] at hv
     split at hv
     · simp only [Option.some.injEq] at hv

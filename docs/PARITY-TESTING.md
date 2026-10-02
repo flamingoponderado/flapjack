@@ -99,6 +99,19 @@ runtime/entry/user sections without hiding byte differences, and succeeds only
 when every residual difference has an owning bead. This artifact audit
 complements the machine-execution fixture above; it does not replace it.
 
+The RV64 CLI runtime image now constructs its complete initializer through
+native `StackRemove.compileHOL` and `StackNames.compileHOL`, using Pancake's
+`GC = None` configuration override and `DataToWord.maxHeapLimit`. The linker
+uses the generated sections for addresses and relocation labels, and the
+formatter emits their bytes and symbol metadata. `RiscV.RuntimeBytes` retains
+an independent captured original prefix for regression comparison only.
+`Test.RiscVArtifactParity.initializedPrefixExact` checks all six runtime labels,
+addresses, lengths and bytes against that unchanged oracle. The legacy source
+namespace is normalized to original globals (GC4, Raise5, StoreConsts6,
+source functions64 onward); exported symbol suffixes remain section ordinals.
+Upstream broad allocation/raw-call/long-div preparation remains a separate
+compiler-port frontier; the runtime boundary does not establish its simulation.
+
 ## Differential fuzzing against `cake`
 
 `scripts/parity-difffuzz.py` is a deterministic differential fuzzer over the
@@ -300,3 +313,14 @@ python3 scripts/check-guest-parity.py guest-software.pp.pnk --variant software
 ```
 
 Any mismatch is a parity defect to track and repair, not an alternate golden.
+
+Native insertion-wf probes replay both complete original proofs and168 whole
+native Spt/input/output-wf fixtures. Matching kernel cases retain empty and
+unequal lists, repeated keys, Nat/Bool payloads and malformed trees.
+Regression evidence is not HOL-to-Lean equivalence.
+
+ALookupMap probes replay three complete original lookup mapping proofs and
+302 matching full Option/scoped-injection observations. Nat/Bool key
+and payload carriers, repeated/absent/large keys and noninjective sentinels
+retain the original injection boundary. Regression evidence does not establish
+cross-language equivalence.
