@@ -7,12 +7,12 @@ namespace Flapjack
 example :
     wordSsaRenameFunctionWithEntry [2, 3]
         (.return 0 [2, 3] : WordProg Nat) =
-        ({ current := [(3, 9), (2, 5)], next := 13 },
+        ({ current := sptToAList (sptFromAList [(3, 9), (2, 5)]), next := 13 },
         [5, 9],
         .seq (.move 1 [(5, 2), (9, 3)])
           (.seq (.move 0 [(2, 5), (4, 9)]) (.return 0 [2, 4]))) := by
   have hAbi : wordSsaCallAbiRegisters 1 2 = [2, 4] := by rfl
-  simp [wordSsaRenameFunctionWithEntry, wordSsaEntryMove,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameFunctionWithEntry, wordSsaEntryMove,
     wordSsaRenameFunction, wordSsaSetupParameters, wordSsaLimitVar,
     wordProgCakeMaxVar,
     wordSsaRenameProgram, wordSsaRenameProgramWithLoops, wordSsaRead,
@@ -29,11 +29,11 @@ example :
 example :
     wordSsaRenameProgram ({ current := [], next := 4 } : WordSsaState)
         (.inst (.arith (.longMul 1 2 2 3)) : WordProg Nat) =
-      ({ current := [(2, 8), (1, 4)], next := 12 },
+      ({ current := sptToAList (sptFromAList [(2, 8), (1, 4)]), next := 12 },
         .seq (.move 1 [(0, 0), (4, 0)])
         (.seq (.inst (.arith (.longMul 6 0 0 4)))
             (.move 1 [(8, 0), (4, 6)]))) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRead, wordSsaFresh, wordSsaSeq,
     lookupNatInfo]
 
@@ -46,11 +46,11 @@ example :
 example :
     wordSsaRenameProgram ({ current := [], next := 10 } : WordSsaState)
         (.inst (.arith (.longMul 1 2 3 4)) : WordProg Nat) =
-      ({ current := [(2, 14), (1, 10)], next := 18 },
+      ({ current := sptToAList (sptFromAList [(2, 14), (1, 10)]), next := 18 },
         .seq (.move 1 [(0, 0), (4, 0)])
             (.seq (.inst (.arith (.longMul 6 0 0 4)))
             (.move 1 [(14, 0), (10, 6)]))) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRead, wordSsaFresh, wordSsaSeq, lookupNatInfo]
 
 /- CakeML's fresh-name limit scans the body only, so unused ABI formals do not
@@ -58,10 +58,10 @@ example :
 example :
     wordSsaRenameFunctionWithEntry [0, 2, 4]
         (.skip : WordProg Nat) =
-      ({ current := [(4, 13), (2, 9), (0, 5)], next := 17 },
+      ({ current := sptToAList (sptFromAList [(4, 13), (2, 9), (0, 5)]), next := 17 },
         [5, 9, 13],
         .seq (.move 1 [(5, 0), (9, 2), (13, 4)]) .skip) := by
-  simp [wordSsaRenameFunctionWithEntry, wordSsaEntryMove,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameFunctionWithEntry, wordSsaEntryMove,
     wordSsaRenameFunction, wordSsaSetupParameters, wordSsaLimitVar,
     wordProgCakeMaxVar,
     wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
@@ -71,9 +71,9 @@ example :
 example :
     wordSsaRenameFunctionWithEntryAndDeadMoves [0, 2, 4]
         (.skip : WordProg Nat) =
-      ({ current := [(4, 13), (2, 9), (0, 5)], next := 17 },
+      ({ current := sptToAList (sptFromAList [(4, 13), (2, 9), (0, 5)]), next := 17 },
         [5, 9, 13], .skip) := by
-  simp [wordSsaRenameFunctionWithEntryAndDeadMoves,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameFunctionWithEntryAndDeadMoves,
     wordSsaRenameFunctionWithEntry, wordSsaEntryMove,
     wordSsaRenameFunction, wordSsaSetupParameters, wordSsaLimitVar,
     wordProgCakeMaxVar, wordProgReadVars,
@@ -111,12 +111,12 @@ def highLimitGuard : Bool :=
 example :
     wordSsaRenameProgram ({ current := [], next := 10 } : WordSsaState)
       (.ffi "f" 1 2 3 4 ([5], [6]) : WordProg Nat) =
-      ({ current := [(6, 26), (5, 22)], next := 30 },
+      ({ current := sptToAList (sptFromAList [(6, 26), (5, 22)]), next := 30 },
         .seq (.move 0 [(12, 0), (16, 0)])
           (.seq (.move 1 [(2, 0), (4, 0), (6, 0), (8, 0)])
             (.seq (.ffi "f" 2 4 6 8 ([12], [16]))
               (.move 0 [(22, 12), (26, 16)])))) := by
-  simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaListNextVarRenameMove, wordSsaReadCutsets, wordSsaFreshList,
     wordSsaFresh, wordSsaRead, wordSsaRestrict, wordSsaSeq, List.eraseDups,
     List.eraseDupsBy, List.eraseDupsBy.loop, lookupNatInfo,

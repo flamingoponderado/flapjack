@@ -1657,6 +1657,7 @@ import Flapjack.Compiler.Backend.RegAlloc.MovePrep
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
 import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMergeMoves
+import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAStateRoute
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
 import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
 import Flapjack.Compiler.Backend.WordAlloc.SSATransInst

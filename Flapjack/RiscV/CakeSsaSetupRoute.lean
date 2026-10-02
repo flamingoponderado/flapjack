@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAStateRoute
 import Flapjack.RiscV.CakeSsaSetup
 import Flapjack.Compiler.Backend.WordAlloc.SSASetup
 
@@ -22,42 +23,19 @@ namespace Flapjack.RiscV.CakeRegAlloc
 
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 
-private theorem lookupNatInfo_filter_ne (k name : Nat) :
-    ∀ (C : NatInfoMap Nat),
-      lookupNatInfo k (C.filter (fun entry => entry.1 != name)) =
-        if k = name then none else lookupNatInfo k C
-  | [] => by simp [lookupNatInfo]
-  | (c, v) :: C => by
-      by_cases hc : c = name
-      · subst hc
-        have ih := lookupNatInfo_filter_ne k c C
-        simp only [List.filter_cons, bne_self_eq_false, Bool.false_eq_true, if_false]
-        rw [ih]
-        by_cases hk : k = c
-        · simp [hk]
-        · simp [hk, lookupNatInfo, Ne.symm hk]
-      · have ih := lookupNatInfo_filter_ne k name C
-        have hne : (c != name) = true := by simpa using hc
-        simp only [List.filter_cons, hne, if_true, lookupNatInfo]
-        rw [ih]
-        by_cases hk : k = name
-        · subst hk
-          have : (c == k) = false := by simpa using hc
-          simp [this]
-        · simp [hk]
-
-/-- The executed fresh-name step and native `next_var_rename` keep agreeing
-lookups. -/
-private theorem lookup_fresh (k name next : Nat) (C : NatInfoMap Nat) (s : Spt Nat)
-    (h : ∀ k, lookupNatInfo k C = sptLookup k s) :
-    lookupNatInfo k ((name, next) :: C.filter (fun entry => entry.1 != name)) =
-      sptLookup k (sptInsert name next s) := by
-  by_cases hk : k = name
-  · subst hk
-    simp [lookupNatInfo, sptLookup_sptInsert_same]
-  · have hne : (name == k) = false := by simpa using Ne.symm hk
-    simp only [lookupNatInfo, hne, Bool.false_eq_true, if_false]
-    rw [lookupNatInfo_filter_ne, if_neg hk, h, sptLookup_sptInsert_ne name k next s hk]
+/-- Native fresh-map output keeps agreeing input lookups, without assuming
+association-list storage order. -/
+private theorem lookup_fresh (key name next : Nat) (entries : NatInfoMap Nat) (tree : Spt Nat)
+    (h : ∀ key, lookupNatInfo key entries = sptLookup key tree) :
+    lookupNatInfo key (sptToAList (sptInsert name next (sptFromAList entries))) =
+      sptLookup key (sptInsert name next tree) := by
+  rw [productionSsaDecodedLookup]
+  by_cases same : key = name
+  · subst key
+    rw [sptLookup_sptInsert_same,sptLookup_sptInsert_same]
+  · rw [sptLookup_sptInsert_ne name key next _ same,
+      sptLookup_sptInsert_ne name key next _ same,sptLookup_sptFromAList]
+    rw [← productionMergeMapLookup,h]
 
 /-- Flapjack API correspondence: `wordSsaFreshList` and the reviewed
 `listNextVarRename` return the same names and next counter, and keep agreeing
@@ -78,7 +56,7 @@ theorem wordSsaFreshList_listNextVarRename :
       intro C s next h
       have h' := fun k => lookup_fresh k name next C s h
       obtain ⟨h1, h2, h3⟩ := ih _ (sptInsert name next s) (next + 4) h'
-      simp only [wordSsaFreshList, wordSsaFresh, listNextVarRename, nextVarRename] at h1 h2 h3 ⊢
+      simp only [wordSsaFreshList, wordSsaFresh, ssaNextVarRenameExecutable, listNextVarRename, nextVarRename] at h1 h2 h3 ⊢
       exact ⟨by rw [h1], h2, h3⟩
 
 /-- The executed `cakeSetupSsa` agrees with the reviewed native `setup_ssa`

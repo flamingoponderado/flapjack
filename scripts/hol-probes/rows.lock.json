@@ -843,6 +843,7 @@
     {"bytes": 890, "out": "ssa_rename_shifted_properties_probe.out", "rows": 14, "sha256": "b285827c90016a194e8ebf9b12d44d1785bb8d0270fec5e66732b19257421cd6"},
     {"bytes": 1401, "out": "ssa_setup_probe.out", "rows": 16, "sha256": "37de8c367664510f56d1506592a74ed21182759e0221e236386e8269bab89602"},
     {"bytes": 394, "out": "ssa_setup_props_probe.out", "rows": 5, "sha256": "3ef232661afd31ed5ee2b26080fac1c49e14d0df2b69d9e3fe700f553cb90184"},
+    {"bytes": 407, "out": "ssa_state_map_route_probe.out", "rows": 8, "sha256": "b48c37ca2e940ea34cc17244d7df6ab1554a127b984737ef67407c9ca210ef76"},
     {"bytes": 286, "out": "stack_alloc_gc_bitmaps_probe.out", "rows": 5, "sha256": "c5b5a9586450a831a7420c46e6ef072775174455bd248f1a1916a13d6b80d004"},
     {"bytes": 50117, "out": "stack_alloc_gc_code_probe.out", "rows": 11, "sha256": "f5422788b0d230e522ee56919b59df1e5273de367532ac35cfc39e1d805bca58"},
     {"bytes": 3022, "out": "stack_alloc_gen_loop_statement_probe.out", "rows": 7, "sha256": "5faa3af39f758503d9523db763696ef6cc50b7c946b82fc4fb36180f80f82ed3"},
