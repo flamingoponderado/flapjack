@@ -573,4 +573,77 @@ theorem fp32DirectedNegative_choice (d : Fp32Direction) {X : Rat} (hX : 0 ≤ X)
     exact fp32DirectedPositive_finite _ hX hmax
   exact fp32_zero_sign_value_eq _ _ hf ha hv z
 
+/-- Computable signed in-range candidate for the directed modes. -/
+def fp32DirectedCandidate (d : Fp32Direction) (x : Rat) : HolFloat 23 8 :=
+  if x < 0 then
+    holFloatNegate (fp32DirectedPositive (fp32FlipDirection d) (-x * 2 ^ 149))
+  else fp32DirectedPositive d (x * 2 ^ 149)
+
+/-- Choice agrees with the computable signed candidate throughout the finite interval. -/
+theorem fp32DirectedCandidate_choice (d : Fp32Direction) (x : Rat)
+    (hlo : -holFloatLargest 23 8 ≤ x) (hhi : x ≤ holFloatLargest 23 8)
+    (z : HolFloat 23 8) :
+    let c := holClosest (fp32DirectedCandidates d x) x
+    let a := fp32DirectedCandidate d x
+    (if holFloatIsZero c then z else c) = (if holFloatIsZero a then z else a) := by
+  have hD := fp32_D_pos
+  unfold fp32DirectedCandidate
+  split
+  · next hx =>
+      have hX : 0 ≤ -x * 2 ^ 149 := by grind
+      have hM : -x * 2 ^ 149 ≤ ((fp32N fp32MaxPat : Nat) : Rat) := by
+        rw [← fp32_largest_scaled]
+        grind
+      have he : -((-x * 2 ^ 149) / 2 ^ 149) = x := by grind
+      have h := fp32DirectedNegative_choice d hX hM z
+      rw [he] at h
+      exact h
+  · next hx =>
+      have hX : 0 ≤ x * 2 ^ 149 := by grind
+      have hM : x * 2 ^ 149 ≤ ((fp32N fp32MaxPat : Nat) : Rat) := by
+        rw [← fp32_largest_scaled]
+        grind
+      have he : (x * 2 ^ 149) / 2 ^ 149 = x := by grind
+      have h := fp32DirectedPositive_choice d hX hM z
+      rw [he] at h
+      exact h
+
+/-- Original rounding mode corresponding to a directed case. -/
+def fp32DirectionMode : Fp32Direction → HolRounding
+  | .zero => .roundTowardZero
+  | .positive => .roundTowardPositive
+  | .negative => .roundTowardNegative
+
+/-- Full computable directed rounding, retaining HOL's strict overflow guards. -/
+def holFp32DirectedRound (d : Fp32Direction) (toneg : Bool) (x : Rat) : HolFloat 23 8 :=
+  let a := if x < -holFloatLargest 23 8 then
+      match d with
+      | .negative => holFloatMinusInfinity 23 8
+      | .zero | .positive => holFloatBottom 23 8
+    else if x > holFloatLargest 23 8 then
+      match d with
+      | .positive => holFloatPlusInfinity 23 8
+      | .zero | .negative => holFloatTop 23 8
+    else fp32DirectedCandidate d x
+  if holFloatIsZero a then
+    (if toneg then holFloatMinusZero 23 8 else holFloatPlusZero 23 8)
+  else a
+
+/-- Full-domain directed agreement for every rational input and requested zero sign. -/
+theorem holFloatRound_directed_fp32 (d : Fp32Direction) (toneg : Bool) (x : Rat) :
+    (holFloatRound (fp32DirectionMode d) toneg x : HolFloat 23 8) =
+      holFp32DirectedRound d toneg x := by
+  have hlow := fp32DirectedCandidate_choice d x
+  unfold holFloatRound holFp32DirectedRound
+  by_cases hl : x < -holFloatLargest 23 8
+  · cases d <;> simp only [fp32DirectionMode, holRound, hl, if_true]
+  · by_cases hh : x > holFloatLargest 23 8
+    · cases d <;> simp only [fp32DirectionMode, holRound, hl, hh, if_false, if_true]
+    · have hlo : -holFloatLargest 23 8 ≤ x := by grind
+      have hhi : x ≤ holFloatLargest 23 8 := by grind
+      have h := hlow hlo hhi
+        (if toneg then holFloatMinusZero 23 8 else holFloatPlusZero 23 8)
+      cases d <;> dsimp [fp32DirectionMode, holRound, fp32DirectedCandidates] at h ⊢ <;>
+        simp only [hl, hh, if_false] <;> exact h
+
 end Flapjack.Binary32Rounding
