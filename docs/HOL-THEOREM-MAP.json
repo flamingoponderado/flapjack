@@ -67742,7 +67742,7 @@
   },
   {
     "lean_path": "Flapjack/RiscV/L3/Defs/Reservation.lean",
-    "lean_name": "write'ReserveLoad",
+    "lean_name": "\u00abwrite'ReserveLoad\u00bb",
     "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
     "hol_name": "write'ReserveLoad_def",
     "statement_status": "reviewed_exact",
