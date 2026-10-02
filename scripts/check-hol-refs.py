@@ -287,7 +287,7 @@ REALS_RENDERING_GLOBS = (
     "Flapjack/Misc/BinaryIeee*/**/*.lean",
 )
 REALS_RENDERING_DECL_RE = re.compile(
-    r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial)\s+)*"
+    r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
     r"(?:def|abbrev|structure|inductive|opaque)\s+([A-Za-z_][A-Za-z0-9_'.]*)",
     re.M,
 )
@@ -3448,7 +3448,13 @@ def real_free_ieee_names(root: Path) -> set[str]:
         if not path.is_file():
             return set()
         source = strip_lean_comments(path.read_text(encoding="utf-8"))
-        # Attributes do not change the bit operation's signature or body.
+        # A logical-body whitelist must not silently admit compiled-body
+        # overrides. Check before stripping attributes: implemented_by/extern
+        # can leave the logical body unchanged while replacing execution.
+        # This remains a source-shape guard, not an execution-equivalence proof.
+        # Be conservative across each owning module, including unsafe helpers.
+        if re.search(r"\b(?:implemented_by|extern|unsafe)\b", source):
+            return set()
         source = re.sub(r"@\[[^\]]*\]\s*", "", source)
         matches = list(REALS_RENDERING_DECL_RE.finditer(source))
         for index, match in enumerate(matches):
@@ -3470,11 +3476,18 @@ def real_free_ieee_names(root: Path) -> set[str]:
     owners: dict[str, list[str]] = {}
     reviewed_names = {n for _, n in REAL_FREE_IEEE_FORMS}
     owner_re = re.compile(
-        r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial)\s+)*"
+        r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
         r"(?:def|abbrev|structure|inductive|opaque|theorem|lemma|axiom|constant)\s+"
         r"([A-Za-z_][A-Za-z0-9_'.]*)", re.M)
     for path in root.glob("Flapjack/**/*.lean"):
         source = strip_lean_comments(path.read_text(encoding="utf-8"))
+        # A later module can attach an implementation attribute to an imported
+        # codec. Fail closed when an override command and a reviewed short name
+        # occur together; this intentionally rejects ambiguous command layouts.
+        if (re.search(r"\battribute\s*\[[^\]]*\b(?:implemented_by|extern)\b", source)
+                and any(re.search(r"(?<![\w'])" + re.escape(name) + r"(?![\w'])", source)
+                        for name in reviewed_names)):
+            return set()
         for match in owner_re.finditer(source):
             name = match.group(1).rsplit(".", 1)[-1]
             if name in reviewed_names:

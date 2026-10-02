@@ -65511,5 +65511,95 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-02, flapjack-word-stack-asm-name-flat: genuine complete Ffi constructor case of original11007-11127, retaining all seven source guards and arbitrary original constructor fields, bitmap/frame and positive shared config/program word width. Actual compNative first projection; no target naming, successful scheduler, result or simulation premise. words_as_type_indexed_bitvec records only the standard positive word translation. Nineteen nonrecursive cases retain the exact fixed five-bit Temp and mlstring carriers; source Assign/Store fallbacks and ignored fields remain literal. Move proof covers arbitrary scheduled lists through original formatVar, including the scheduler temporary; OpCurrHeap extracts source conditional two-register equality without adding a premise. Fresh original general theorem has no open hypotheses;558 direct validity/guard/target naming observations (510T48F) and150 complete kernel case applications cover widths1/2/8/32/64/80, both policy flags across families,70bit natural fields, memory-free naming boundaries, zero frame tail, rejected physical/call conventions, empty bitmap/moves/constants and reduced-count underflow. Regression evidence is not original proof replay or HOL-to-Lean equivalence. Recursive cases, full naming assembly, stack_asm_convs and compiler correctness remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FADD_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FADD_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison 2026-10-02, bead .13.8.2.8: literal original line 8629; fixed rd/rs1/rs2 word5, rounding word3, native whole state->state. Complete round NONE->Illegal_Instr and SOME->writeFPRS/FPRD with original operands and state. Full binary_ieee arithmetic preserves ordered NaN/signalling tests, quiet-NaN choice, infinities, signed zero and all six rounding flags; machine lift selects SND and does not update NV/NX. Canonical72-definition original dependency closure reproduced0fail. Fresh140original regressions:132numeric ten-field state tuples and8closed whole-state FDIV zero/zero NaN equations, matched by140Lean kernel checks; symbolic choice payload remains unspecified. Writes preserve upper32 for S, replace64 for D, and exact MFS/MSD/delta/other-core behavior. The reals_as_rational_cuts rendering retains docs/SOUNDNESS.md item 8 assumption, not cross-assistant equivalence or full model/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FSUB_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSUB_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison 2026-10-02, bead .13.8.2.8: literal original line 8655; fixed rd/rs1/rs2 word5, rounding word3, native whole state->state. Complete round NONE->Illegal_Instr and SOME->writeFPRS/FPRD with original operands and state. Full binary_ieee arithmetic preserves ordered NaN/signalling tests, quiet-NaN choice, infinities, signed zero and all six rounding flags; machine lift selects SND and does not update NV/NX. Canonical72-definition original dependency closure reproduced0fail. Fresh140original regressions:132numeric ten-field state tuples and8closed whole-state FDIV zero/zero NaN equations, matched by140Lean kernel checks; symbolic choice payload remains unspecified. Writes preserve upper32 for S, replace64 for D, and exact MFS/MSD/delta/other-core behavior. The reals_as_rational_cuts rendering retains docs/SOUNDNESS.md item 8 assumption, not cross-assistant equivalence or full model/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FMUL_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMUL_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison 2026-10-02, bead .13.8.2.8: literal original line 8681; fixed rd/rs1/rs2 word5, rounding word3, native whole state->state. Complete round NONE->Illegal_Instr and SOME->writeFPRS/FPRD with original operands and state. Full binary_ieee arithmetic preserves ordered NaN/signalling tests, quiet-NaN choice, infinities, signed zero and all six rounding flags; machine lift selects SND and does not update NV/NX. Canonical72-definition original dependency closure reproduced0fail. Fresh140original regressions:132numeric ten-field state tuples and8closed whole-state FDIV zero/zero NaN equations, matched by140Lean kernel checks; symbolic choice payload remains unspecified. Writes preserve upper32 for S, replace64 for D, and exact MFS/MSD/delta/other-core behavior. The reals_as_rational_cuts rendering retains docs/SOUNDNESS.md item 8 assumption, not cross-assistant equivalence or full model/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FDIV_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FDIV_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison 2026-10-02, bead .13.8.2.8: literal original line 8707; fixed rd/rs1/rs2 word5, rounding word3, native whole state->state. Complete round NONE->Illegal_Instr and SOME->writeFPRS/FPRD with original operands and state. Full binary_ieee arithmetic preserves ordered NaN/signalling tests, quiet-NaN choice, infinities, signed zero and all six rounding flags; machine lift selects SND and does not update NV/NX. Canonical72-definition original dependency closure reproduced0fail. Fresh140original regressions:132numeric ten-field state tuples and8closed whole-state FDIV zero/zero NaN equations, matched by140Lean kernel checks; symbolic choice payload remains unspecified. Writes preserve upper32 for S, replace64 for D, and exact MFS/MSD/delta/other-core behavior. The reals_as_rational_cuts rendering retains docs/SOUNDNESS.md item 8 assumption, not cross-assistant equivalence or full model/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FADD_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FADD_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison 2026-10-02, bead .13.8.2.8: literal original line 9519; fixed rd/rs1/rs2 word5, rounding word3, native whole state->state. Complete round NONE->Illegal_Instr and SOME->writeFPRS/FPRD with original operands and state. Full binary_ieee arithmetic preserves ordered NaN/signalling tests, quiet-NaN choice, infinities, signed zero and all six rounding flags; machine lift selects SND and does not update NV/NX. Canonical72-definition original dependency closure reproduced0fail. Fresh140original regressions:132numeric ten-field state tuples and8closed whole-state FDIV zero/zero NaN equations, matched by140Lean kernel checks; symbolic choice payload remains unspecified. Writes preserve upper32 for S, replace64 for D, and exact MFS/MSD/delta/other-core behavior. The reals_as_rational_cuts rendering retains docs/SOUNDNESS.md item 8 assumption, not cross-assistant equivalence or full model/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FSUB_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSUB_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison 2026-10-02, bead .13.8.2.8: literal original line 9545; fixed rd/rs1/rs2 word5, rounding word3, native whole state->state. Complete round NONE->Illegal_Instr and SOME->writeFPRS/FPRD with original operands and state. Full binary_ieee arithmetic preserves ordered NaN/signalling tests, quiet-NaN choice, infinities, signed zero and all six rounding flags; machine lift selects SND and does not update NV/NX. Canonical72-definition original dependency closure reproduced0fail. Fresh140original regressions:132numeric ten-field state tuples and8closed whole-state FDIV zero/zero NaN equations, matched by140Lean kernel checks; symbolic choice payload remains unspecified. Writes preserve upper32 for S, replace64 for D, and exact MFS/MSD/delta/other-core behavior. The reals_as_rational_cuts rendering retains docs/SOUNDNESS.md item 8 assumption, not cross-assistant equivalence or full model/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FMUL_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMUL_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison 2026-10-02, bead .13.8.2.8: literal original line 9571; fixed rd/rs1/rs2 word5, rounding word3, native whole state->state. Complete round NONE->Illegal_Instr and SOME->writeFPRS/FPRD with original operands and state. Full binary_ieee arithmetic preserves ordered NaN/signalling tests, quiet-NaN choice, infinities, signed zero and all six rounding flags; machine lift selects SND and does not update NV/NX. Canonical72-definition original dependency closure reproduced0fail. Fresh140original regressions:132numeric ten-field state tuples and8closed whole-state FDIV zero/zero NaN equations, matched by140Lean kernel checks; symbolic choice payload remains unspecified. Writes preserve upper32 for S, replace64 for D, and exact MFS/MSD/delta/other-core behavior. The reals_as_rational_cuts rendering retains docs/SOUNDNESS.md item 8 assumption, not cross-assistant equivalence or full model/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FDIV_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FDIV_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison 2026-10-02, bead .13.8.2.8: literal original line 9597; fixed rd/rs1/rs2 word5, rounding word3, native whole state->state. Complete round NONE->Illegal_Instr and SOME->writeFPRS/FPRD with original operands and state. Full binary_ieee arithmetic preserves ordered NaN/signalling tests, quiet-NaN choice, infinities, signed zero and all six rounding flags; machine lift selects SND and does not update NV/NX. Canonical72-definition original dependency closure reproduced0fail. Fresh140original regressions:132numeric ten-field state tuples and8closed whole-state FDIV zero/zero NaN equations, matched by140Lean kernel checks; symbolic choice payload remains unspecified. Writes preserve upper32 for S, replace64 for D, and exact MFS/MSD/delta/other-core behavior. The reals_as_rational_cuts rendering retains docs/SOUNDNESS.md item 8 assumption, not cross-assistant equivalence or full model/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FSQRT_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSQRT_S_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.10: complete original line8733, fixed rd/rs word5 and rounding word3 with native state->state. Retains round NONE->Illegal_Instr and original SOME mode, exact FPRS/FPRD source and writeFPRS/FPRD destination. Full generic holFloatSqrt follows binary_ieeeScript574-585: positive-sign NaN signalling and quiet choice, positive infinity, finite sqrt rounding, negativezero identity and invalid other negative input. All six flags preserved by generic specification then original machine lift discards SND flags without NV/NX updates. Generic all-mode holFloatSqrt_agreement in BinaryIeeeSqrt/RoundAgreement covers both23/8 and52/11 carriers; binary64 numeric algorithm is not substituted for binary32. Canonical74definitionclosure0fail. Fresh56original state regressions:36numeric special/trap tuples +20complete symbolic finite/invalid equations, all matching Lean kernel checks. Finite choice equations retain the entire original round_with_flags result before SND; no finite numeric rounding claim or NaN payload choice. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external HOL carrier correspondence; internal Mathlib agreement is not HOL-to-Lean equivalence. Full Run/Next/model/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs.lean",
+    "lean_name": "«dfn'FSQRT_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSQRT_D_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source/body comparison2026-10-02, bead .13.8.2.10: complete original line9623, fixed rd/rs word5 and rounding word3 with native state->state. Retains round NONE->Illegal_Instr and original SOME mode, exact FPRS/FPRD source and writeFPRS/FPRD destination. Full generic holFloatSqrt follows binary_ieeeScript574-585: positive-sign NaN signalling and quiet choice, positive infinity, finite sqrt rounding, negativezero identity and invalid other negative input. All six flags preserved by generic specification then original machine lift discards SND flags without NV/NX updates. Generic all-mode holFloatSqrt_agreement in BinaryIeeeSqrt/RoundAgreement covers both23/8 and52/11 carriers; binary64 numeric algorithm is not substituted for binary32. Canonical74definitionclosure0fail. Fresh56original state regressions:36numeric special/trap tuples +20complete symbolic finite/invalid equations, all matching Lean kernel checks. Finite choice equations retain the entire original round_with_flags result before SND; no finite numeric rounding claim or NaN payload choice. reals_as_rational_cuts retains docs/SOUNDNESS.md item 8 external HOL carrier correspondence; internal Mathlib agreement is not HOL-to-Lean equivalence. Full Run/Next/model/compiler correctness remain open."
   }
 ]
