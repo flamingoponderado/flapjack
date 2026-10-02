@@ -219,6 +219,7 @@ import Flapjack.Compiler.Backend.WordAlloc.HeuMax
 import Flapjack.Compiler.Backend.RegAlloc.Carriers
 import Flapjack.Compiler.Backend.WordAlloc.HeuInst
 import Flapjack.Misc.Sptree.Map
+import Flapjack.Misc.Sptree.InterEq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
 import Flapjack.Compiler.Backend.Parmove.Independence
@@ -1429,6 +1430,7 @@ import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordUnreach
+import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Misc.Anub
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 

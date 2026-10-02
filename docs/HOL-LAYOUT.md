@@ -57,6 +57,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/word_allocScript.sml` | `Flapjack/Compiler/Backend/WordAlloc/` (`Expressions.lean` exact expression renaming and live sets) |
 | `compiler/backend/word_removeScript.sml` | `Flapjack/Compiler/Backend/WordRemove.lean` |
 | `compiler/backend/word_unreachScript.sml` | `Flapjack/Compiler/Backend/WordUnreach.lean` |
+| `compiler/backend/word_copyScript.sml` | `Flapjack/Compiler/Backend/WordCopy.lean` |
 | `misc/miscScript.sml` (`anub`) | `Flapjack/Misc/Anub.lean` |
 | `compiler/backend/data_to_wordScript.sml` | `Flapjack/Compiler/Backend/DataToWord/` (`Config.lean` gc_kind/config and pointer-layout helpers) |
 | `compiler/backend/proofs/word_gcFunctionsScript.sml` | `Flapjack/Compiler/Backend/WordGcFunctions.lean` (copying, generational and partial GC definitions and `word_gc_fun`); `WordGcFunctions/Roots.lean` (root `EVERY2`/`LENGTH` theorems) |
@@ -146,6 +147,10 @@ declarations remain in `Flapjack/Misc/LprefixLub.lean`.
 
 The pinned external `HOL/src/n-bit/byteScript.sml` counterpart is
 `Flapjack/Byte.lean` (byte extraction and arbitrary-count word serialization).
+
+The pinned external `hol4/src/finite_maps/sptreeScript.sml` counterpart is
+`Flapjack/Misc/Sptree.lean` with submodules under `Flapjack/Misc/Sptree/` (for example
+`Map.lean` for `map_def`/`lookup_map` and `InterEq.lean` for `inter_eq_def`).
 
 The pinned external `HOL/src/sort/mergesortScript.sml` counterpart is
 `Flapjack/Misc/Mergesort.lean` (the non-tail `sort2`/`sort3`/`merge`/`mergesortN`, their

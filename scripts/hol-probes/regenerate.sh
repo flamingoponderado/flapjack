@@ -3267,6 +3267,10 @@ run_probe word_unreach_def_probeScript.sml word_unreach_def_probe.out \
   wu_ru_type wu_mm_type wu_dsm_move wu_dsm_seq wu_dsm_other wu_mm_basic wu_mm_dup wu_ss_skip_r wu_ss_skip_l wu_ss_raise wu_ss_move_move wu_ss_move_rest wu_ss_move_other wu_ss_default wu_test wu_after_return wu_call_none wu_call_ret wu_if wu_loop \
   "$cake_dir/compiler/backend/word_unreachScript.sml" "$cake_dir/compiler/backend"
 
+run_probe word_copy_def_probeScript.sml word_copy_def_probe.out \
+  wc_cp_type wc_cpp_type wc_binop wc_binop_self wc_chain wc_chain_state wc_overlap wc_multi wc_nonalloc wc_const wc_shift wc_div wc_carry wc_carry_self wc_overflow wc_longmul wc_longdiv wc_mem wc_mem_kill wc_fp wc_fp_kill wc_skip_inst wc_set_get wc_get_same wc_get_none wc_set_class wc_set_nonalloc wc_set_exp wc_if wc_if_imm wc_loop wc_mt wc_share wc_heap wc_buffers wc_consts wc_consts_kill wc_locvalue_kill wc_call wc_alloc wc_assign wc_store wc_install \
+  "$cake_dir/compiler/backend/word_copyScript.sml" "$cake_dir/compiler/backend"
+
 
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
   sc_store sc_store8 sc_store16 sc_store32 sc_load sc_load8 sc_load16 sc_load32 \

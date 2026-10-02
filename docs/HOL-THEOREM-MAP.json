@@ -55868,5 +55868,138 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.32): word_unreachProofScript.sml:368-377: ∀p s res s1, premise evaluate (p, s) = (res, s1) ∧ res ≠ SOME Error, conclusion evaluate (remove_unreach p, s) = (res, s1) with the tagged removeUnreach. Finite maps via fmap_as_finite_support ([fpRegs, store]), width via words_as_type_indexed_bitvec with {width : Nat} [NeZero width] and C F : Type for the HOL 'b/'c state parameters. Inherited assumption: this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "inter_eq_def",
+    "lean_path": "Flapjack/Misc/Sptree/InterEq.lean",
+    "lean_name": "sptInterEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): sptreeScript.sml:294-316 (pinned HOL submodule), all four clauses literal with their inner case splits on the second tree: LN; LS a against LN/LS b/BN/BS (keeping LS a only when a = b); BN against LN/LS/BN/BS (mk_BN of the recursive intersections); BS against LN, LS a' (if a' = a then LS a), BN (mk_BN) and BS (mk_BS when a' = a, else mk_BN). mk_BN/mk_BS are the untagged sptMkBN/sptMkBS renderings of sptreeScript.sml:88-98; [DecidableEq α] decides HOL equality. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "copy_state",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "CopyState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:33-42, same four fields in order: to_eq : num num_map, from_eq : num num_map, store_to_eq : (store_name, num) alist (List (WordStoreHOL × Nat), the reviewed exact store_name carrier) and next : num. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "empty_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "emptyEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:44-48: to_eq := LN; from_eq := LN; store_to_eq := []; next := 0. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "lookup_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "lookupEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:52-60: the nested case on lookup v cs.to_eq and then lookup c cs.from_eq, returning v in both NONE branches and v' otherwise. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "lookup_eq_imm_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "lookupEqImm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:62-67: Reg v => Reg (lookup_eq cs v), any other reg_imm unchanged. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word payloads (reg_imm, inst, exp, prog) to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "remove_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "removeEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:73-77: NONE => cs, SOME c => empty_eq on lookup v cs.to_eq; the commented-out alternative is absent, as in HOL. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "remove_eqs_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "removeEqs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:89-93: remove_eqs cs [] = cs; remove_eqs cs (v::vs) = remove_eqs (remove_eq cs v) vs. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "copy_prop_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "copyPropInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:95-202, clause for clause: Skip gives (wordLang Skip, cs); Const removes reg; Binop and Shift use the ri'/n' self-reference guards against Reg r1; Div; AddCarry/AddOverflow/SubOverflow with remove_eqs [r1;r4] and the r3' = r1 guard; LongMul keeps the original registers and removes [r1;r2]; LongDiv rewrites r3 r4 r5 and removes [r2;r1]; the eight Mem Load/Store clauses on Addr a w (loads remove r, stores rewrite r); FPLess/FPLessEqual/FPEqual remove r; FPMovToReg removes [r1;r2]; FPMovFromReg uses the r1' = r2' guard; the FP x catch-all is unchanged. Two source-reviewed omissions with no behavioural effect: the LongMul clause's let-bound r3'/r4' are unused in HOL and omitted; HOL's final `_ => ARB` clause is unreachable because every Arith, Mem (whose address is always Addr) and FP constructor has an earlier clause, so the Lean match is exhaustive without it. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word payloads (reg_imm, inst, exp, prog) to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "set_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "setEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:204-225: if is_alloc_var x ∧ is_alloc_var y (the tagged Bool isAllocVar compared with true) then the nested case (lookup y cs.to_eq, then lookup c cs.from_eq = NONE) choosing the fresh-class record (to_eq inserts x and y at next, from_eq inserts next ↦ x, next + 1) or the existing-class record (to_eq inserts x ↦ c, from_eq inserts c ↦ x); else cs. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "set_store_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "setStoreEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:233-250: if is_alloc_var y then the same nested class case, creating a singleton class for y with (s,next) prepended to store_to_eq, or prepending (s,c) via record update; else empty_eq. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "lookup_store_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "lookupStoreEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:252-260: case ALOOKUP cs.store_to_eq s (Lean core List.lookup, first match, BEq from the derived DecidableEq of store_name) then case lookup c cs.from_eq, returning SOME v'. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "merge_eqs_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "mergeEqs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:263-271: to_eq and from_eq by sptree inter_eq (the tagged sptInterEq), store_to_eq by FILTER of cs.store_to_eq with the decided predicate ALOOKUP cs.store_to_eq s = SOME c ∧ ALOOKUP ds.store_to_eq s = SOME c (List.lookup), next := MAX cs.next ds.next (max). Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "copy_prop_move_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "copyPropMove",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:274-281: [] gives ([],cs); (x,y)::xs computes y' = lookup_eq cs y against the input state, recurses on xs with cs, then cs'' = set_eq (remove_eq cs' x) x y and returns ((x,y')::ms, cs''). Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "copy_prop_share_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "copyPropShare",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:283-290: Var r => Var (lookup_eq cs r); Op Add [Var r; Const c] => Op Add [Var (lookup_eq cs r); Const c]; anything else unchanged. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word payloads (reg_imm, inst, exp, prog) to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "copy_prop_prog_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "copyPropProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:292-384, clause for clause: Skip; Move with the EVERY (λt. ¬MEM t ss) tt disjointness test (bounded membership) running copy_prop_move, else (Move pri xs, empty_eq); Inst via copy_prop_inst; Return and Raise rewriting through lookup_eq; OpCurrHeap with the src' = dst guard and remove_eq dst; Tick; MustTerminate and Seq threading the state; If rewriting r/ri, running both branches from cs and merging with merge_eqs; Set on Var n with set_store_eq (other expressions give empty_eq); Get via lookup_store_eq (NONE: set_store_eq (remove_eq cs n) name n; SOME v: copy_prop_move [(n,v)] as Move 0 when v ≠ n, else Skip); Call, Alloc, Install and FFI reset to empty_eq; StoreConsts removes [a;b;c;d]; LocValue removes r; CodeBufferWrite and DataBufferWrite rewrite both registers; ShareInst via copy_prop_share and remove_eq v; Loop optimises its body from empty_eq and returns empty_eq; Break and Continue keep cs. HOL's final catch-all `prog => (prog, empty_eq)` covers exactly Assign and Store, which the Lean match lists explicitly. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word payloads (reg_imm, inst, exp, prog) to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_copyScript.sml",
+    "hol_name": "copy_prop_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordCopy.lean",
+    "lean_name": "copyProp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.2.33): word_copyScript.sml:386-388: copy_prop e = FST (copy_prop_prog e empty_eq). Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word payloads (reg_imm, inst, exp, prog) to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; no other difference. Original HOL probe word_copy_def_probe (41 EVAL rows of copy_prop/copy_prop_prog) kernel-replayed in Flapjack/Test/WordCopyDefParity.lean. Proof-side definition; the executed RiscV/WordCopyProp.lean is a separate untagged implementation (routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
   }
 ]
