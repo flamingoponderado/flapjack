@@ -6,6 +6,12 @@ import Flapjack.Misc.Sptree.Subspt
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.RawCall
 import Flapjack.Compiler.Backend.StackRemove.Proofs.BytearrayReads
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
+import Flapjack.Compiler.Backend.StackRemove.Proofs.MemorySubset
+import Flapjack.Compiler.Backend.StackRemove.Proofs.ProgCompEta
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnHandler
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnNone
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallTail
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.ControlLeaves
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.If
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.BasicLeaves
@@ -31,6 +37,7 @@ import Flapjack.Compiler.Backend.LabToTarget.ShmemExtraction
 import Flapjack.Compiler.Backend.LabToTarget.ShmemDistinct
 import Flapjack.Compiler.Backend.LabToTarget.ShmemPrefix
 import Flapjack.Compiler.Backend.LabToTarget.ShmemMembership
+import Flapjack.Compiler.Backend.LabToTarget.ShmemNames
 import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop

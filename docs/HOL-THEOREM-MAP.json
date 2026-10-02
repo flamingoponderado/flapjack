@@ -67272,7 +67272,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.12 genuine If case original292-305 of comp_correct134ff. Actual positive-width native HolProg.ite comparison/register/reg-or-imm/two branches and complete22field StackSem state/configuration/FFI. Original evaluate equality/nonError/literalstateRel are sole source premises; added firstIH/secondIH are ordinary comp-component induction hypotheses for exactly the two subprograms, universally over info/source/target/result/poststate, not a wholepass predicate or supplied targetresult. BranchIH unfolds exactly original simulation premise and comp existential component. SimulationResult unfolds literal existential clock/targetstate/stackspace, postrelation, actual native evaluation at target.clock+clock, same source result/target stackSpace update, original nonTimeOut/nonHalt Word2 guard. Both compTop/comp conclusion components retained; compTop equals comp for If. Full state relation derives target register and immediate reads at every clock; actual wordSemWordCmp determines source branch. Success comparison true/false uses corresponding branchIH; missing operands/comparison-none contradict original nonError. Returned targetexecution/postrelation/guard/extra clock are derived, not assumed as new source premises. Canonical regs/fpRegs/store relation qualifier, actual imported stateowner and same-module genuine codec roundtrips; code remains native Spt and lists remain lists. Full native evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; this word comparison proof introduces no real rendering. This is one genuine recursive case, not whole comp_correct/compile_semantics/runtime correctness."
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.12 genuine If case original292-305 of comp_correct134ff. Actual positive-width native HolProg.ite comparison/register/reg-or-imm/two branches and complete22field StackSem state/configuration/FFI. Original evaluate equality/nonError/literalstateRel are sole source premises; added firstIH/secondIH are ordinary comp-component induction hypotheses for exactly the two subprograms, at the fixed source, universally over info/target/result/poststate, not a wholepass predicate or supplied targetresult. BranchIH unfolds exactly original simulation premise and comp existential component. SimulationResult unfolds literal existential clock/targetstate/stackspace, postrelation, actual native evaluation at target.clock+clock, same source result/target stackSpace update, original nonTimeOut/nonHalt Word2 guard. Both compTop/comp conclusion components retained; compTop equals comp for If. Full state relation derives target register and immediate reads at every clock; actual wordSemWordCmp determines source branch. Success comparison true/false uses corresponding branchIH; missing operands/comparison-none contradict original nonError. Returned targetexecution/postrelation/guard/extra clock are derived, not assumed as new source premises. Canonical regs/fpRegs/store relation qualifier, actual imported stateowner and same-module genuine codec roundtrips; code remains native Spt and lists remain lists. Full native evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; this word comparison proof introduces no real rendering. This is one genuine recursive case, not whole comp_correct/compile_semantics/runtime correctness. flapjack-sol2 PR1203 source review: firstIH and secondIH are restricted to the fixed source, successful operand reads and comparison SOME true or SOME false respectively. Fresh original stack_rawcall_if_case_probe extracts the unique If obligation from stackSemTheory.evaluate_ind (stackSemScript.sml:1111), confirming these exact guards. No arbitrary-source branch IH remains."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ProgramByteLengths.lean",
@@ -67449,7 +67449,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.14 genuine Loop case original307-356 of comp_correct134ff. Original source evaluation equality/nonError/literalstateRel retained. Only genuine body-program IH and recursive same-Loop IH restricted to strictly smaller source clocks are added; no current-run/wholepass/target-result simulation premise. BranchIH/SimulationResult expand to original comp component hypothesis and existential clock,targetstate,stackspace, actual evaluation at target.clock+clock, fullpostrelation and original nonTimeOut/nonHalt Word2 guard. Both compTop/comp conclusions retained. Actual full evaluator loop dispatch uses existing unconditional fix_clock_evaluate identity, no assumed clocklaw. Source body nonError derived from original Loop run. Exit uses actual exit_loop, preserves guard, target execution derived from bodyIH. Continuing forces bodyResult NONE or Continue0 via faithful cont_loop_IMP, discharging body stackspace guard. Zero-clock case derives targetclock0 and emptyEnv postrelation and timeout. Nonzero case derives strict sourceclock decrease via evaluate_clock, uses recursiveIH only there, extends actual target body with evaluate_add_clock, derives arithmetic reentry state and sums extra clocks; no target execution/postrelation supplied as new premise. Positive-width native HolProg/full22field state/configuration/FFI preserved; actual imported canonical regs/fpRegs/store owner and same-module genuine broadcodec roundtrips, code Spt/list List unchanged. Full evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced. Genuine Loop case only, not assembled comp_correct/compile_semantics/runtime correctness."
+    "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.14 genuine Loop case original307-356 of comp_correct134ff. Original source evaluation equality/nonError/literalstateRel retained. Only the body-program IH at the fixed source and recursive same-Loop IH at decClock of the actual body poststate are added; no current-run/wholepass/target-result simulation premise. ProgramIH/SimulationResult expand to original comp component hypothesis and existential clock,targetstate,stackspace, actual evaluation at target.clock+clock, fullpostrelation and original nonTimeOut/nonHalt Word2 guard. Both compTop/comp conclusions retained. Actual full evaluator loop dispatch uses existing unconditional fix_clock_evaluate identity, no assumed clocklaw. Source body nonError derived from original Loop run. Exit uses actual exit_loop, preserves guard, target execution derived from bodyIH. Continuing forces bodyResult NONE or Continue0 via faithful cont_loop_IMP, discharging body stackspace guard. Zero-clock case derives targetclock0 and emptyEnv postrelation and timeout. Nonzero case uses recursiveIH under actual body evaluation, contLoop and nonzero post-clock guards, extends actual target body with evaluate_add_clock, derives arithmetic reentry state and sums extra clocks; no target execution/postrelation supplied as new premise. Positive-width native HolProg/full22field state/configuration/FFI preserved; actual imported canonical regs/fpRegs/store owner and same-module genuine broadcodec roundtrips, code Spt/list List unchanged. Full evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; no real rendering introduced. Genuine Loop case only, not assembled comp_correct/compile_semantics/runtime correctness. flapjack-sol2 PR1203 source review: fresh original stack_rawcall_loop_case_probe extracts the unique Loop obligation from stackSemTheory.evaluate_ind, rewritten by unconditional fix_clock_evaluate at stackSemScript.sml:1111. Body IH is P(c1,s); reentry IH uses the actual body evaluation, cont_loop and nonzero post-clock and concludes P(STOP(Loop c1),dec_clock s1). STOP is identity. No arbitrary reentry source or arbitrary smaller-clock IH remains."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/BytearrayReads.lean",
@@ -67842,5 +67842,85 @@
     "hol_name": "APPEND_LEMMA",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison: Original1150-1163 full n1+n2+n3 <= LENGTH xs guard and two existential lists with drop decomposition and n2=LENGTH xs2 retained. Arbitrary List payload and all three Nat sizes; choose take/drop on original suffix. Third size remains in guard, no stronger prefix/length premises. Literal original proof replay is captured in word_to_stack_bitmap_frame_updates_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/CallTail.lean",
+    "lean_name": "compCorrectCallTail",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original comp_correct retNONE Call branch1785-1804/full1481-1493 source comparison2026-10-03. Genuine original AST-option case: arbitrary destination and handler option, same four actual source run/nonError/full26stateRel/regBound premises. HandlerSOME and missing source code errors excluded by original nonError only, no global handlerNONE premise. Callee IH only actual source findCode success/handlerNONE/nonzero-clock guarded, retaining all original body simulation quantifiers and premises. Native unconditional fixClockEvaluate eliminates both faithful source/target clamps without a target-clock-success assumption. Full findCodeLemma proves target compiled callee lookup/body bound; stateRelDecClock plus original clock equality proves target boosted clock subtraction. Clock0 gives original timeout FFI equality; all original result alternatives and native target existential/full postrelation retained. Canonical owning state roundtrip reexport, qualified regs/fpRegs/store only, Spt code/List stack unchanged, positive type-indexed words/Type0 hosts; inherits reals_as_rational_cuts from faithful evaluator/relation. Fresh original scoped statement with same source-guarded IH and literal original retNONE case body/local lookup-decClock proofs; no full comp_correct assumed. This is tail AST case only, not full Call constructor or pass assembly."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/CallReturnNone.lean",
+    "lean_name": "compCorrectCallReturnNone",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original comp_correct returning Call1805-1931/full1481-1493 source comparison2026-10-03. Original ret=SOME(body,link,l1,l2), handler=NONE AST case, same four source evaluation/nonError/full26stateRel/regBound premises. Only actual erased-link source code lookup/nonzero-clock guarded callee IH and actual successful returnLoc guarded continuation IH; all simulation quantifiers and original result alternatives retained. Missing code, invalid callee NONE/Break/Continue/Error and wrong returnLoc errors excluded using original nonError, no successful-return or targetrun premise. Source/target clamp elimination uses unconditional fixClockEvaluate. Accepted erased lookup proves target compiled callee and bound; stateRelSetVar/decClock establish entry relation. evaluateAddClock on actual successful return result derives summed callee/continuation allowances and target existential. Propagated Exception retains full relation; Halt/TimeOut/FinalFFI preserve FFI. Canonical actual owning state roundtrip reexport, only qualified regs/fpRegs/store, Spt code/List stack unchanged, positive-width words/Type0 hosts; inherits reals_as_rational_cuts. Native evaluator generic byte-selector fidelity retains separate flapjack-wordsem-byte-align-total frontier; case proves genuine guarded-IH control simulation, not whole evaluator independence. Fresh scoped original HOL proof replay PASS with same actual source-guarded IHs: original returning prefix and handlerNONE exception branch tactics unchanged, specializing handlerNONE omits handlerSOME branch and its selector combinator. Original local erased-lookup/clock helpers recreated; full comp_correct not assumed. no full Call or pass assembly claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/CallReturnHandler.lean",
+    "lean_name": "compCorrectCallReturnHandler",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol original comp_correct returning Call1805-1931/full1481-1493 source comparison2026-10-03. Full original retSOME and handlerSOME AST case, arbitrary bodies/link/labels/destination and original4premises. Actual source erasedlookup/nonzero-clock guarded calleeIH and actual successful returnLoc/exceptionLoc guarded respective continuationIHs only, retaining full original simulation quantifiers. Missing code, invalid callee NONE/Break/Continue/Error and wrong return/exceptionLoc errors excluded by original nonError; no supplied targetrun/postrelation or successful-return assumption. Full targetexistential and every result alternative retained. Accepted erasedlookup proves compiled callee and bound; original regBound supplies both continuation bounds and link bound. stateRelSetVar/decClock and unconditional fixClock establish native entry; evaluateAddClock derives summed allowances for each actual successful continuation. Full26relation postcondition or original Halt/TimeOut/FinalFFI FFI equality. Canonical actual owning state roundtrip reexport, qualified regs/fpRegs/store only, Spt code/List stack unchanged, positive-width words/Type0 hosts; inherits reals_as_rational_cuts. Native genericbyte selector frontier flapjack-wordsem-byte-align-total retained; genuine guardedIH control simulation does not assert whole evaluator independence. Fresh original scoped replay PASS, original returning prefix and handlerSOME proof tactics unchanged, handlerNONE branch and selector omitted for fixed AST option; same actual source-guarded IHs, original local erasedlookup/clock helpers recreated, no full comp_correct assumed. full Call/pass assembly not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/ProgCompEta.lean",
+    "lean_name": "progCompEta",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "prog_comp_eta",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison original1244-1248 and prog_comp_def224-226: complete unconditional function equality over all jump/off/k and name/program pairs. Independent arbitrary section name beta preserved by Name:Type, no numeric-label specialization. Same native HolProg constructors and comp, identical pair projection/constructor equation; positive type-indexed words is the only qualifier. No evaluator, state relation, finite-map or reals carrier appears. Fresh original literal proof replay PASS, two rows capture the full original function equality and proof success; Install/fullpass assembly not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemorySubset.lean",
+    "lean_name": "memoryFun2SetSubset",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "memory_fun2set_SUBSET",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison original1473-1478 and full generic STAR/memory_def/fun2set_def/SPLIT_def. Same arbitrary independent address/value carriers, source and target functions/domain sets and arbitrary frame predicate. Full separated source graph assertion on target graph proves entire source domain subset target domain; predicate-set inclusion is forall address/domain implies targetDomain. No extra finite-domain, word-width, alignment, nonempty, target-value-equality or evaluator premise. Original local memoryHOL and actual full generic SetSep definitions retained, no representation qualifiers/reals dependencies. Fresh complete literal original proof replay PASS, two rows capture the full generic domain-inclusion statement and proof success; StoreConsts/fullpass assembly not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListExists.lean",
+    "lean_name": "wordListExistsThm",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_exists_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison original21-36 and native full Misc.wordListExists/SetSep sepExists/star/cond/emp/one/wordList definitions. Complete original zero and successor conjunction as heap-predicate equalities, arbitrary address/count/payload carrier and every heap retained. Source pure length condition remains a separated empty heap; local starCond proves its elimination without assuming a length or concrete list. Forward successor destructs actual existential list and reverse reconstructs value::values; full partition/frame retained, modular bytesInWord address increment unchanged. Positive-width BitVec translation only, no extra width/domain/alignment/nonempty/noalias/success assumption, no finite-map/evaluator/reals carrier. Fresh complete literal original proof replay PASS, two rows capture both original heap-predicate equalities and proof success; DataBuffer/fullpass assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemNames.lean",
+    "lean_name": "getShmemInfo_mappedNames",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "get_shmem_info_MappedRead_or_MappedWrite",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source7317 and exported fulltype0hyp comparison: all six universally quantified code/position/input names/info/output names/info binders retained; sole supplied extraction output equality premise; full existential appended list with output name equality and EVERY(x, exists op,x=SharedMem op) conclusion rendered through list membership. No all_enc_ok, enc_ok, byte-size, label-validity, callback or desired-classification guard. Exact native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString positive-width BitVec carriers with own NeZero and fixed word8 bytes/nbytes, Nat PCs/registers/unsigned offsets. Genuine constructor induction proves shared-only accumulators stay shared-only; full unguarded PREPEND identifies existential suffix. Fresh registered original fulltype0hyp and seven original/native observations allT cover widths1/8/80, invalid label/length annotations, zero-byte instructions, all eight memory operations, existing external-call prefixes, ignored CallFFI and empty code. Full generic and actual arbitrary prefix/query width80 consumers checked. This is a theorem, not a production replacement or full mmio/shared-memory/initializer/compiler/machine closure; no total HD/EL use. Kernel/oracle evidence supplements source review, not cross-language equivalence."
   }
 ]
