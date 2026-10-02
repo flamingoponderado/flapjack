@@ -62840,5 +62840,14 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-02 bead .6.8.1: actual StackSemStateFiniteExact evaluator state imported with canonical regs/fpRegs/store and Spt code, independent C/F Type0 and positive word width. Qualified relation fields cover exactly those three maps; same-module nested RelationLaws witness reexports genuine raw/exact codec roundtrips without duplicate/shadow state. Full stateRelHOL retains all original conjuncts, supported constructor codec for generic word selectors and no additional hypothesis. Original full statement/binder-type and kernel replay, Lean kernel theorem proof and full gates provide evidence. Original221-232 complete7conjunct conclusion: codeBuffer equality, shMdomain equality, target useStack false, source useStack true, ffi equality, target oracle mapped only middle list, and source compile transport. All quantifiers and directions retained; no dropped transport conjunct. Proof exact projections from full stateRel."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionNopEncoding.lean",
+    "lean_name": "linesEncWithNop_padSection1",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "lines_enc_with_nop_pad_section1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 author source comparison 2026-10-02 complete original4533-4570 and full quantified/free-variable types freshly captured in lab_to_target_section_nop_encoding_probe.out. All original enc/labs/ffis/nop/code/aux/pos binders and six guards retained: NOP identity, one-byte length, actual linesEncd at pos+SUM annotation aux, actual reverse-aux linesEncWithNop, nonlabel accumulator, EVERY labelOne code. Conclusion full actual padSection NOP invariant; no added physical/annotation sum, length-correctness, alignment, target result or callback premise. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/Spt and fixed word8 bytes retained; sole positive word dimension words_as_type_indexed_bitvec translation. Kernel induction over original code cases derives physical/annotation sum from original reverse-aux invariant through full lengthOk/section-sum laws, uses full reverse addNOP theorem and full generic byte-padding laws; Call retains original length-only NOP clause. Thirteen fresh original/native observations cover offset-sensitive mixed code/stored words/annotation padding, repeated one-label insertions, zero-label/empty cases and all seven LabAsm constructor successful source guards. Native consumer universally covers constructor payloads, plus full arbitrary-width original statement consumer. Real checked .98/.100/.101/.103/.105 dependencies retained, no production body or HD/EL hold change. Remaining positive-width aligned section groups/full remove_labels_loop/end-to-end remain unfinished."
   }
 ]
