@@ -1,0 +1,16 @@
+load "bossLib";
+load "lab_to_targetProofTheory";
+open HolKernel Parse bossLib lab_to_targetProofTheory;
+val _ = Globals.linewidth := 10000;
+fun capture name th = (if null(hyp th) then () else raise Fail "open HOL hypotheses"; print_thm th; print "\n");
+val _ = (print "ld_definition="; capture "" labs_domain_def );
+val _ = (print "ld_empty_theorem="; capture "" labs_domain_LN );
+val _ = (print "ld_insert_theorem="; capture "" labs_domain_insert );
+val _ = (print "ld_type="; print (type_to_string (type_of ``labs_domain``)); print "\n");
+fun row term = print_term(rand(concl(EVAL term)));
+val _ = (print "ld_empty="; row ``lab_lookup 1 2 (LN:num num_map num_map) <> NONE``; print "\n");
+val _ = (print "ld_hit="; row ``lab_lookup 1 2 (insert 1 (insert 2 99 LN) LN) <> NONE``; print "\n");
+val _ = (print "ld_inner_miss="; row ``lab_lookup 1 3 (insert 1 (insert 2 99 LN) LN) <> NONE``; print "\n");
+val _ = (print "ld_outer_miss="; row ``lab_lookup 3 2 (insert 1 (insert 2 99 LN) LN) <> NONE``; print "\n");
+val _ = (print "ld_insert_preserves="; row ``lab_lookup 1 2 (insert 3 (insert 4 5 LN) (insert 1 (insert 2 99 LN) LN)) <> NONE``; print "\n");
+val _ = (print "ld_insert_new="; row ``lab_lookup 3 4 (insert 3 (insert 4 5 LN) (insert 1 (insert 2 99 LN) LN)) <> NONE``; print "\n");

@@ -4811,3 +4811,11 @@ full six-premise simulation and all state/register/SSA/table carriers. The
 opcode proof at 7919–7944 is manually compared; this probe does not claim a
 standalone replay of that tactic fragment.
 `word_overflow_production_probeScript.sml` captures 150 original overflow observations: 12 CSE classifier/key tuples at 8/80 bits including arbitrary large register naturals; two SSA result/map/next projections; four copy-propagation outputs including the right-operand/destination collision; four full WordToStack outputs including two spilled inputs and a spilled destination; and 128 full asmSem result/flag/input/failure observations at widths 1/8/64/80 with signed boundaries and destination/flag aliases. `WordOverflowProduction.lean` replays actual executed consumers, including the validated RV64 byte dispatcher against the earlier original target capture. No pass simulation or new HOL datatype tag is asserted.
+### Generic label-tree domain
+
+`lab_to_target_labs_domain_probeScript.sml` captures all three full original
+`labs_domain` declarations and its polymorphic nested-tree type. Six original
+EVAL observations of its literal defining `lab_lookup ≠ NONE` condition cover
+empty/hit/two-level misses and fresh insertion preserving old and adding new
+keys; Lean checks the corresponding actual domain memberships. Finite fixtures
+are not a cross-assistant proof.

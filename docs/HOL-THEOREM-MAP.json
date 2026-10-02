@@ -56509,5 +56509,29 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 original source comparison 2026-10-02, coherent LabProps section12-80 .10.63 and declaration beads .64-.75. All twelve complete original statements/inferred carriers freshly captured in labprops_label_sets_probe.out. Original alpha line/sec/asm_with_lab retain native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed word8 byte lists and arbitrary positive word dimension, with only words_as_type_indexed_bitvec translation. extractLabels preserves original label fields/order/duplicates and ignores both instruction variants. labsOf returns singleton original Lab keys only for LocValue/Jump/JumpCmp; Call/FFI/Install/Halt return empty as original. line/section/program reference sets preserve complete BIGUNION(IMAGE(...)(set list)) membership; existential listed-element membership unfolds exactly this set equation and is not a changed representation. line code labels use only second Label coordinate, every section contributes its own implicit (sectionId,0), and explicit code labels are owned by sectionId rather than the stored first Label coordinate. Four original full append/cons/nil set/list equalities retain all source binders and no extra premises. Eighteen original constructor/list/set observations and matching kernel checks plus four arbitrary-width full theorem consumers cover ignored Call references, nonzero annotations, differing stored/section label coordinates, order/duplicates, actual references and empty section/code. No successful encoding/evaluation assumption, callback, fixed-width specialization or total HD/EL. Full good_code/state_rel and compiler simulation remain separate dependencies; no closure inferred."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabsDomain.lean",
+    "lean_name": "labsDomain",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "labs_domain_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL364-381: arbitrary alpha nested Spt values and native generic labLookup; labs_domain is set of pairs whose two-level lookup is not NONE, LN domain empty, fresh outer key insertion is image of inner domain union original domain. Full outside-domain guard retained; no Nat specialization, callback, representation qualifier, success or post-state premise. Spt/Nat pair/Set/Option carriers correspond literally; inner isSome membership is equivalent to lookup not NONE. Both directions of set image and union preserved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabsDomain.lean",
+    "lean_name": "labsDomain_ln",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "labs_domain_LN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL364-381: arbitrary alpha nested Spt values and native generic labLookup; labs_domain is set of pairs whose two-level lookup is not NONE, LN domain empty, fresh outer key insertion is image of inner domain union original domain. Full outside-domain guard retained; no Nat specialization, callback, representation qualifier, success or post-state premise. Spt/Nat pair/Set/Option carriers correspond literally; inner isSome membership is equivalent to lookup not NONE. Both directions of set image and union preserved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/LabsDomain.lean",
+    "lean_name": "labsDomain_insert",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "labs_domain_insert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 HOL364-381: arbitrary alpha nested Spt values and native generic labLookup; labs_domain is set of pairs whose two-level lookup is not NONE, LN domain empty, fresh outer key insertion is image of inner domain union original domain. Full outside-domain guard retained; no Nat specialization, callback, representation qualifier, success or post-state premise. Spt/Nat pair/Set/Option carriers correspond literally; inner isSome membership is equivalent to lookup not NONE. Both directions of set image and union preserved."
   }
 ]
