@@ -61443,5 +61443,35 @@
     "lean_name": "riscv_state",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.13.7): L3 Import Record at riscvScript.sml:348-362, field for field, in order. Fixed word widths are BitVec n (F n/FTy n); bTy Bool, nTy Nat, sTy (HOL string = char list) List HolChar, PTy ×, OTy Option, LTy List, ATy (L3 map = HOL function type) →. Generated mechanically from the L3 declaration and compared with it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_partial_move_ref_list_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenPartialMoveRefList.lean",
+    "lean_name": "word_gen_gc_partial_move_ref_list_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.18), stack_allocProofScript.sml:3899-3990 word_gen_gc_partial_move_ref_list_code_thm ([local] in HOL): HOL binder order !k r2a1 r1a1 r2a2 i1 pa1 ib1 pb1 old1 m1 dm1 c1 i2 pa2 ib2 pb2 m2 s explicit (r2a2, ib1, pb1, c1, ib2 and pb2 quantified but never mentioned by HOL's statement; retained as vacuous names), free conf, gs and rs implicit; the single premise conjunction kept in HOL order (word_gen_gc_partial_move_ref_list k conf (r1a1,i1,pa1,old1,m1,dm1,T,gs,rs,r2a1) = (i2,pa2,m2,T), shift_length/word_shift/2 < dimindex, len_size <> 0, len_size + 2 < dimindex, good_dimindex, !w. w << word_shift = w * bytes_in_word, FLOOKUP CurrHeap = Word old1, use_store, memory/mdomain, FLOOKUP Temp 0w = Word gs and Temp 1w = Word rs, 0,1,2 IN FDOM, get_var 3/4, 5,6,7 IN FDOM, get_var 8 = Word r1a1, get_var 9 = Word r2a1). Conclusion ?ck r0 r1 r2 r5 r6 r7 r8 r9 with memory m2, the ten-register |++ and an unchanged store, over the exact StackSem evaluate. Proved as HOL does by complete induction on k, using the tagged word_gen_gc_partial_move_ref_list_ok and composing word_gen_gc_partial_move_list_code_thm with the IH through the tagged evaluate_add_clock. Temp nw as WordStore.temp, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "word_gen_gc_move_data_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CodeThm/GenGcMoveData.lean",
+    "lean_name": "word_gen_gc_move_data_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.7.19), stack_allocProofScript.sml:3992-4122 word_gen_gc_move_data_code_thm ([local] in HOL): HOL binder order !k ha1 i1 pa1 ib1 pb1 old1 m1 dm1 c1 i2 pa2 ib2 pb2 m2 s explicit with free conf implicit, and HOL's four curried premise groups kept (word_gen_gc_move_data conf k (ha1,i1,pa1,ib1,pb1,old1,m1,dm1) = (i2,pa2,ib2,pb2,m2,T), shift_length/word_shift/2 < dimindex, len_size <> 0, len_size + 2 < dimindex, !w. w << word_shift = w * bytes_in_word, FLOOKUP CurrHeap = Word old1, use_store, memory/mdomain, Temp 0w/1w IN FDOM s.store, FLOOKUP Temp 2w = Word pb1 and Temp 3w = Word ib1, 0,1,2 IN FDOM, get_var 3/4, 5 IN FDOM ==> 6 IN FDOM ==> 7 IN FDOM ==> get_var 8 = Word ha1 /\\ c1, where HOL's c1 is not an argument of the definition call and is kept as a quantified Boolean premise). Conclusion ?ck r0 r1 r2 r5 r6 r7 t0 t1 with memory m2, the four-slot Temp store |++ and the nine-register |++ ((8,Word pa2)), over the exact StackSem evaluate. Proved as HOL does by complete induction on k: data objects are skipped (header bit 2), pointer objects' fields are moved by word_gen_gc_move_list_code_thm, composed with the IH through the tagged evaluate_add_clock. Temp nw as WordStore.temp, 'a word as positive-width BitVec with [NeZero width], canonical HolFiniteMapExact regs/fpRegs/store; no extra hypothesis or simulation premise. evaluate's Inst clause uses instHOL, so this row inherits the docs/SOUNDNESS.md item 8 reals_as_rational_cuts assumption; the marker only propagates the assumption through the constant closure and does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
