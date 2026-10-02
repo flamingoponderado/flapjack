@@ -1,3 +1,4 @@
+import Flapjack.Test.StackRawCallNativeParity
 import Flapjack.Test.WordToStackTailHandlerParity
 import Flapjack.Test.NumericFormattingParity
 import Flapjack.Test.WordReplicateParity
