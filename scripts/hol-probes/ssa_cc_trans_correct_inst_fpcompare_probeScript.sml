@@ -1,0 +1,38 @@
+load "preamble";
+load "word_allocProofTheory";
+open bossLib HolKernel Parse preamble word_allocProofTheory word_allocTheory wordSemTheory wordPropsTheory wordLangTheory sptreeTheory reg_allocTheory;
+val _ = Globals.linewidth := 1000;
+(* Capture original kernel theorem constructor specializations. No standalone
+   tactic replay is claimed; original FP opcode proof8174-8222 is compared. *)
+fun out label th = (print(label ^ "="); print_thm th; print "\n");
+fun ty label name th = let val v=valOf(List.find(fn t => fst(dest_var t)=name)(free_vars(concl(SPEC_ALL th)))) in print(label ^ "="); print_type(type_of v); print "\n" end;
+val less_case = Q.SPEC `Inst (FP (FPLess n n0 n1))` ssa_cc_trans_correct;
+val _ = out "fp_less_full" less_case;
+val _ = ty "fp_less_type_st" "st" less_case;
+val _ = ty "fp_less_type_cst" "cst" less_case;
+val _ = ty "fp_less_type_dst" "n" less_case;
+val _ = ty "fp_less_type_left" "n0" less_case;
+val _ = ty "fp_less_type_right" "n1" less_case;
+val _ = ty "fp_less_type_ssa" "ssa" less_case;
+val _ = ty "fp_less_type_next" "na" less_case;
+val _ = ty "fp_less_type_tables" "lt" less_case;
+val less_equal_case = Q.SPEC `Inst (FP (FPLessEqual n n0 n1))` ssa_cc_trans_correct;
+val _ = out "fp_less_equal_full" less_equal_case;
+val _ = ty "fp_less_equal_type_st" "st" less_equal_case;
+val _ = ty "fp_less_equal_type_cst" "cst" less_equal_case;
+val _ = ty "fp_less_equal_type_dst" "n" less_equal_case;
+val _ = ty "fp_less_equal_type_left" "n0" less_equal_case;
+val _ = ty "fp_less_equal_type_right" "n1" less_equal_case;
+val _ = ty "fp_less_equal_type_ssa" "ssa" less_equal_case;
+val _ = ty "fp_less_equal_type_next" "na" less_equal_case;
+val _ = ty "fp_less_equal_type_tables" "lt" less_equal_case;
+val equal_case = Q.SPEC `Inst (FP (FPEqual n n0 n1))` ssa_cc_trans_correct;
+val _ = out "fp_equal_full" equal_case;
+val _ = ty "fp_equal_type_st" "st" equal_case;
+val _ = ty "fp_equal_type_cst" "cst" equal_case;
+val _ = ty "fp_equal_type_dst" "n" equal_case;
+val _ = ty "fp_equal_type_left" "n0" equal_case;
+val _ = ty "fp_equal_type_right" "n1" equal_case;
+val _ = ty "fp_equal_type_ssa" "ssa" equal_case;
+val _ = ty "fp_equal_type_next" "na" equal_case;
+val _ = ty "fp_equal_type_tables" "lt" equal_case;
