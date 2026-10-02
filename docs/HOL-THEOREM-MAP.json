@@ -65918,5 +65918,55 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison: pinned HOL wordsScript587-590 FCP i. i<n*dimindex(:a) AND w raw-index(i MOD dimindex(:a)). Lean uses the reviewed holFcpWord and same guard/modulo/index; positive input width implies modulo index in range so getLsbD matches raw FCP access. Independent HOL input/output word dimensions translate to inputWidth/outputWidth with separate NeZero obligations under words_as_type_indexed_bitvec. No count/bound premise or fixed-width restriction; output truncation and bits beyond requested repeats match. Sixteen fresh original full word numeric observations and kernel fixtures cover distinct widths, zero/large counts, truncation and zero filling."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Numposrep.lean",
+    "lean_name": "holN2l",
+    "hol_path": "HOL/src/list/src/numposrepScript.sml",
+    "hol_name": "n2l_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source21: Nat base/numeral, n<b OR b<2 single n MOD b digit, otherwise prepend n MOD b and recurse on n DIV b. Termination follows n DIV b<n only in the recursive branch; no base positivity premise. Bases0/1 retained. Original numeric_formatting probe and70matching kernel fixtures cover all six stages."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ASCIInumbers.lean",
+    "lean_name": "holHex",
+    "hol_path": "HOL/src/string/ASCIInumbersScript.sml",
+    "hol_name": "HEX",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source22: n<10 CHR(ORD0+n), else n<16 CHR(ORDA+n-10), else CHR0. Reviewed canonical HolChar=BitVec8 matches original256-element character carrier. Literal codes48/65/0; valid branches stay below256, so no unspecified out-of-range CHR introduced. Original numeric_formatting probe and70matching kernel fixtures cover all six stages."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ASCIInumbers.lean",
+    "lean_name": "holN2s",
+    "hol_path": "HOL/src/string/ASCIInumbersScript.sml",
+    "hol_name": "n2s_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source18: arbitrary base, arbitrary Nat-to-HolChar function, numeral, reverse(map f(n2l b n)). Original character list and reviewed canonical256-element HolChar retained. Original numeric_formatting probe and70matching kernel fixtures cover all six stages."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ASCIInumbers.lean",
+    "lean_name": "holNumToDecString",
+    "hol_path": "HOL/src/string/ASCIInumbersScript.sml",
+    "hol_name": "num_to_dec_string_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: Source83: exact partial application n2s10HEX with full character-list result and arbitrary Nat input including zero and beyond machine width. Original numeric_formatting probe and70matching kernel fixtures cover all six stages."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Words/Formatting.lean",
+    "lean_name": "holW2s",
+    "hol_path": "HOL/src/n-bit/wordsScript.sml",
+    "hol_name": "w2s_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-c source comparison: Source76: arbitrary base/converter and unsigned word projection then n2s. words_as_type_indexed_bitvec translates positive HOL dimension to width/NeZero; no bounds premise. Reviewed canonical HolChar result. Original numeric_formatting probe and70matching kernel fixtures cover all six stages.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Misc/Words/Formatting.lean",
+    "lean_name": "holWordToHexString",
+    "hol_path": "HOL/src/n-bit/wordsScript.sml",
+    "hol_name": "word_to_hex_string_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-c source comparison: Source114: exact partial application w2s16HEX at arbitrary positive word dimension. words_as_type_indexed_bitvec records width/NeZero. Original character-list result and leading-zero behavior retained. Original numeric_formatting probe and70matching kernel fixtures cover all six stages.",
+    "words_as_type_indexed_bitvec": true
   }
 ]
