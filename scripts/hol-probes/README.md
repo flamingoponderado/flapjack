@@ -5009,3 +5009,8 @@ alias-input Move/fresh SSA locals are manually reviewed; no tactic replay claime
 Skip/Load16/Store16 specializations and carriers. Original initial Inst split
 7860–7865, unchanged Skip and original unsupported16 Error exemptions are
 manually reviewed; no standalone tactic replay is claimed.
+
+`ssa_cc_trans_correct_inst_probeScript.sml` captures original kernel arbitrary
+Inst specialization and native instruction/state/SSA/table carriers. Original
+Inst7860–8222 and all34 constructor cases are compared with the exhaustive
+Lean assembly; no standalone tactic replay is claimed.

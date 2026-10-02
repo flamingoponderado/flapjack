@@ -4512,3 +4512,7 @@ run_probe ssa_cc_trans_correct_inst_fpmovfromreg_probeScript.sml ssa_cc_trans_co
 run_probe ssa_cc_trans_correct_inst_common_probeScript.sml ssa_cc_trans_correct_inst_common_probe.out \
   inst_skip_full inst_skip_type_st inst_skip_type_cst inst_skip_type_ssa inst_skip_type_next inst_skip_type_tables inst_load16_full inst_load16_type_st inst_load16_type_cst inst_load16_type_ssa inst_load16_type_next inst_load16_type_tables inst_load16_type_data inst_load16_type_base inst_load16_type_offset inst_store16_full inst_store16_type_st inst_store16_type_cst inst_store16_type_ssa inst_store16_type_next inst_store16_type_tables inst_store16_type_data inst_store16_type_base inst_store16_type_offset \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_correct_inst_probeScript.sml ssa_cc_trans_correct_inst_probe.out \
+  inst_full inst_type_instruction inst_type_st inst_type_cst inst_type_ssa inst_type_next inst_type_tables \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

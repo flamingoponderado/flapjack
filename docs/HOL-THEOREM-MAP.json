@@ -58314,5 +58314,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Source comparison: genuine native Inst Store16 constructor covered by original initial constructor split7860-7865 before remaining opcode tactics. All six original premises/full Error-exempt permutation/result/frame/result-sensitive locals retained, no targetrun/success/poststate/IH assumption. Skip compiler and evaluator leave state/SSA/next unchanged; original frame/locals give conclusion. Load16/Store16 original and native inst return NONE unconditionally, evaluator returns Error and exact sourceError exemption proves original conclusion. Nat registers/positive indexed word offset/native state/Spt/table/sharedType0 code-FFI compared against original Q.SPEC specialization; Skip width remains inferred from state carrier. Canonical fpRegs/store finite-support and word translation explicit, inherits reals_as_rational_cuts Inst/evaluator SOUNDNESS8. Original source case manually reviewed; kernel specialization/carrier capture and Lean kernel PASS, no isolated tactic replay claimed. FullInst assembly remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInst.lean",
+  "lean_name": "ssaCcTransCorrectInst",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: full arbitrary Inst case original resumed Inst7860-8222, same six original premises and complete Error-exempt source-permutation/result/fullframe/result-sensitive locals, no targetrun/success/poststate/IH premise. Exhaustive native WordLangInst fixed word carrier: Skip/Const, eightArith, eightMem, sixteenFP, all34 source-reviewed case proofs give the same simulation. Native Nat registers, positivewidth BitVec and fixed64FP/native state/Spt/table/sharedType0 code-FFI match original genericInst Q.SPEC capture. Canonical fpRegs/store finite-support and indexedword qualifiers explicit. Inherits reals_as_rational_cuts evaluator/FP proofs including directqualified ToInt, SOUNDNESS8 rational/choice/quietNaN boundary; no stronger numerical agreement claimed. Original source case structure manually compared; kernel/capture PASS, no isolated tactic replay claim. FullSSA program theorem remainsopen."
 }
 ]
