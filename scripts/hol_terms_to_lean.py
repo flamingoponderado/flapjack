@@ -1007,6 +1007,14 @@ def main(argv):
                     selected.add(dep)
                     todo.append(dep)
         order = [rec for rec in order if rec[:2] in selected]
+    # A combined export can contain distinct declarations sharing a HOL name
+    # (model Fetch versus step Fetch). Disambiguate only the selected closure,
+    # so an isolated counterpart keeps its natural declaration names.
+    counts = {}
+    for _, name, _, _ in order:
+        counts[name] = counts.get(name, 0) + 1
+    for thy, name, _, _ in order:
+        defined[(thy, name)] = ident(thy + '_' + name if counts[name] > 1 else name)
     emitted, failed = [], []
     bad = set()
     noncomp = set()
