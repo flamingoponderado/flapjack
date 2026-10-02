@@ -6,7 +6,7 @@ private theorem fixtureEnumeration0 : sptToAList (sptFromAList [] : Spt Nat) = [
   rfl
 
 private theorem fixtureEnumeration1 : sptToAList (sptFromAList [(0,0)] : Spt Nat) = [(0,0)] := by
-  simp +decide [sptFromAList, sptInsert, sptToAList, sptFoldi] <;> decide +kernel
+  simp +decide [sptFromAList, sptToAList, sptFoldi] <;> decide +kernel
 
 private theorem fixtureEnumeration2 : sptToAList (sptFromAList [(2,7),(4,9)] : Spt Nat) = [(4,9),(2,7)] := by
   simp +decide [sptFromAList, sptInsert, sptToAList, sptFoldi, lrNext] <;> decide +kernel

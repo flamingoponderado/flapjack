@@ -5,7 +5,7 @@ open Flapjack Flapjack.Compiler.Backend.WordToStack
 example : StackSem.readBitmap (width := 1) (([] ++ appListAppend (.append (.nil : AppList (BitVec 1)) (.list [0]))).drop (0 % 2^1)) = StackSem.readBitmap (width := 1) [0] := by
   apply readBitmapInsertBitmap (width := 1) [0] (.nil) 0 _ (0+1) 0 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -13,7 +13,7 @@ example : StackSem.readBitmap (width := 1) (([] ++ appListAppend (.append (.nil 
 example : StackSem.readBitmap (width := 1) (([] ++ appListAppend (.append (.nil : AppList (BitVec 1)) (.list [1,0]))).drop (0 % 2^1)) = StackSem.readBitmap (width := 1) [1,0] := by
   apply readBitmapInsertBitmap (width := 1) [1,0] (.nil) 0 _ (0+2) 0 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -21,7 +21,7 @@ example : StackSem.readBitmap (width := 1) (([] ++ appListAppend (.append (.nil 
 example : StackSem.readBitmap (width := 1) (([0] ++ appListAppend (.append (.nil : AppList (BitVec 1)) (.list [0]))).drop (1 % 2^1)) = StackSem.readBitmap (width := 1) [0] := by
   apply readBitmapInsertBitmap (width := 1) [0] (.nil) 1 _ (1+1) 1 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -29,7 +29,7 @@ example : StackSem.readBitmap (width := 1) (([0] ++ appListAppend (.append (.nil
 example : StackSem.readBitmap (width := 1) (([0] ++ appListAppend (.append (.nil : AppList (BitVec 1)) (.list [1,0]))).drop (1 % 2^1)) = StackSem.readBitmap (width := 1) [1,0] := by
   apply readBitmapInsertBitmap (width := 1) [1,0] (.nil) 1 _ (1+2) 1 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -37,7 +37,7 @@ example : StackSem.readBitmap (width := 1) (([0] ++ appListAppend (.append (.nil
 example : StackSem.readBitmap (width := 1) (([] ++ appListAppend (.append (.list [0] : AppList (BitVec 1)) (.list [0]))).drop (1 % 2^1)) = StackSem.readBitmap (width := 1) [0] := by
   apply readBitmapInsertBitmap (width := 1) [0] (.list [0]) 1 _ (1+1) 1 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -45,7 +45,7 @@ example : StackSem.readBitmap (width := 1) (([] ++ appListAppend (.append (.list
 example : StackSem.readBitmap (width := 1) (([] ++ appListAppend (.append (.list [0] : AppList (BitVec 1)) (.list [1,0]))).drop (1 % 2^1)) = StackSem.readBitmap (width := 1) [1,0] := by
   apply readBitmapInsertBitmap (width := 1) [1,0] (.list [0]) 1 _ (1+2) 1 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -53,7 +53,7 @@ example : StackSem.readBitmap (width := 1) (([] ++ appListAppend (.append (.list
 example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.nil : AppList (BitVec 2)) (.list [0]))).drop (0 % 2^2)) = StackSem.readBitmap (width := 2) [0] := by
   apply readBitmapInsertBitmap (width := 2) [0] (.nil) 0 _ (0+1) 0 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -61,7 +61,7 @@ example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.nil 
 example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.nil : AppList (BitVec 2)) (.list [2,0]))).drop (0 % 2^2)) = StackSem.readBitmap (width := 2) [2,0] := by
   apply readBitmapInsertBitmap (width := 2) [2,0] (.nil) 0 _ (0+2) 0 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -69,7 +69,7 @@ example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.nil 
 example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.nil : AppList (BitVec 2)) (.list [0]))).drop (1 % 2^2)) = StackSem.readBitmap (width := 2) [0] := by
   apply readBitmapInsertBitmap (width := 2) [0] (.nil) 1 _ (1+1) 1 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -77,7 +77,7 @@ example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.nil
 example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.nil : AppList (BitVec 2)) (.list [2,0]))).drop (1 % 2^2)) = StackSem.readBitmap (width := 2) [2,0] := by
   apply readBitmapInsertBitmap (width := 2) [2,0] (.nil) 1 _ (1+2) 1 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -85,7 +85,7 @@ example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.nil
 example : StackSem.readBitmap (width := 2) (([3,0] ++ appListAppend (.append (.nil : AppList (BitVec 2)) (.list [0]))).drop (2 % 2^2)) = StackSem.readBitmap (width := 2) [0] := by
   apply readBitmapInsertBitmap (width := 2) [0] (.nil) 2 _ (2+1) 2 [3,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -93,7 +93,7 @@ example : StackSem.readBitmap (width := 2) (([3,0] ++ appListAppend (.append (.n
 example : StackSem.readBitmap (width := 2) (([3,0] ++ appListAppend (.append (.nil : AppList (BitVec 2)) (.list [2,0]))).drop (2 % 2^2)) = StackSem.readBitmap (width := 2) [2,0] := by
   apply readBitmapInsertBitmap (width := 2) [2,0] (.nil) 2 _ (2+2) 2 [3,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -101,7 +101,7 @@ example : StackSem.readBitmap (width := 2) (([3,0] ++ appListAppend (.append (.n
 example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.list [0] : AppList (BitVec 2)) (.list [0]))).drop (1 % 2^2)) = StackSem.readBitmap (width := 2) [0] := by
   apply readBitmapInsertBitmap (width := 2) [0] (.list [0]) 1 _ (1+1) 1 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -109,7 +109,7 @@ example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.list
 example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.list [0] : AppList (BitVec 2)) (.list [2,0]))).drop (1 % 2^2)) = StackSem.readBitmap (width := 2) [2,0] := by
   apply readBitmapInsertBitmap (width := 2) [2,0] (.list [0]) 1 _ (1+2) 1 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -117,7 +117,7 @@ example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.list
 example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.list [0] : AppList (BitVec 2)) (.list [0]))).drop (2 % 2^2)) = StackSem.readBitmap (width := 2) [0] := by
   apply readBitmapInsertBitmap (width := 2) [0] (.list [0]) 2 _ (2+1) 2 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -125,7 +125,7 @@ example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.lis
 example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.list [0] : AppList (BitVec 2)) (.list [2,0]))).drop (2 % 2^2)) = StackSem.readBitmap (width := 2) [2,0] := by
   apply readBitmapInsertBitmap (width := 2) [2,0] (.list [0]) 2 _ (2+2) 2 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -133,7 +133,7 @@ example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.lis
 example : StackSem.readBitmap (width := 2) (([3,0] ++ appListAppend (.append (.list [0] : AppList (BitVec 2)) (.list [0]))).drop (3 % 2^2)) = StackSem.readBitmap (width := 2) [0] := by
   apply readBitmapInsertBitmap (width := 2) [0] (.list [0]) 3 _ (3+1) 3 [3,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -141,7 +141,7 @@ example : StackSem.readBitmap (width := 2) (([3,0] ++ appListAppend (.append (.l
 example : StackSem.readBitmap (width := 2) (([3,0] ++ appListAppend (.append (.list [0] : AppList (BitVec 2)) (.list [2,0]))).drop (3 % 2^2)) = StackSem.readBitmap (width := 2) [2,0] := by
   apply readBitmapInsertBitmap (width := 2) [2,0] (.list [0]) 3 _ (3+2) 3 [3,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -149,7 +149,7 @@ example : StackSem.readBitmap (width := 2) (([3,0] ++ appListAppend (.append (.l
 example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 2)) (.list [0]))).drop (2 % 2^2)) = StackSem.readBitmap (width := 2) [0] := by
   apply readBitmapInsertBitmap (width := 2) [0] (.append (.list [0]) (.list [1])) 2 _ (2+1) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -157,7 +157,7 @@ example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.appe
 example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 2)) (.list [2,0]))).drop (2 % 2^2)) = StackSem.readBitmap (width := 2) [2,0] := by
   apply readBitmapInsertBitmap (width := 2) [2,0] (.append (.list [0]) (.list [1])) 2 _ (2+2) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -165,7 +165,7 @@ example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.appe
 example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 2)) (.list [0]))).drop (3 % 2^2)) = StackSem.readBitmap (width := 2) [0] := by
   apply readBitmapInsertBitmap (width := 2) [0] (.append (.list [0]) (.list [1])) 3 _ (3+1) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -173,7 +173,7 @@ example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 2)) (.list [2,0]))).drop (3 % 2^2)) = StackSem.readBitmap (width := 2) [2,0] := by
   apply readBitmapInsertBitmap (width := 2) [2,0] (.append (.list [0]) (.list [1])) 3 _ (3+2) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -181,7 +181,7 @@ example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 2)) (.list [0]))).drop (2 % 2^2)) = StackSem.readBitmap (width := 2) [0] := by
   apply readBitmapInsertBitmap (width := 2) [0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 2 _ (2+1) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -189,7 +189,7 @@ example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.appe
 example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 2)) (.list [2,0]))).drop (2 % 2^2)) = StackSem.readBitmap (width := 2) [2,0] := by
   apply readBitmapInsertBitmap (width := 2) [2,0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 2 _ (2+2) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -197,7 +197,7 @@ example : StackSem.readBitmap (width := 2) (([] ++ appListAppend (.append (.appe
 example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 2)) (.list [0]))).drop (3 % 2^2)) = StackSem.readBitmap (width := 2) [0] := by
   apply readBitmapInsertBitmap (width := 2) [0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 3 _ (3+1) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -205,7 +205,7 @@ example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 2)) (.list [2,0]))).drop (3 % 2^2)) = StackSem.readBitmap (width := 2) [2,0] := by
   apply readBitmapInsertBitmap (width := 2) [2,0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 3 _ (3+2) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -213,7 +213,7 @@ example : StackSem.readBitmap (width := 2) (([0] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.nil : AppList (BitVec 8)) (.list [0]))).drop (0 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.nil) 0 _ (0+1) 0 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -221,7 +221,7 @@ example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.nil 
 example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.nil : AppList (BitVec 8)) (.list [128,0]))).drop (0 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.nil) 0 _ (0+2) 0 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -229,7 +229,7 @@ example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.nil 
 example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.nil : AppList (BitVec 8)) (.list [0]))).drop (1 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.nil) 1 _ (1+1) 1 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -237,7 +237,7 @@ example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.nil
 example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.nil : AppList (BitVec 8)) (.list [128,0]))).drop (1 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.nil) 1 _ (1+2) 1 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -245,7 +245,7 @@ example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.nil
 example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (.nil : AppList (BitVec 8)) (.list [0]))).drop (2 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.nil) 2 _ (2+1) 2 [255,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -253,7 +253,7 @@ example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (
 example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (.nil : AppList (BitVec 8)) (.list [128,0]))).drop (2 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.nil) 2 _ (2+2) 2 [255,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -261,7 +261,7 @@ example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (
 example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.list [0] : AppList (BitVec 8)) (.list [0]))).drop (1 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.list [0]) 1 _ (1+1) 1 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -269,7 +269,7 @@ example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.list
 example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.list [0] : AppList (BitVec 8)) (.list [128,0]))).drop (1 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.list [0]) 1 _ (1+2) 1 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -277,7 +277,7 @@ example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.list
 example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.list [0] : AppList (BitVec 8)) (.list [0]))).drop (2 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.list [0]) 2 _ (2+1) 2 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -285,7 +285,7 @@ example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.lis
 example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.list [0] : AppList (BitVec 8)) (.list [128,0]))).drop (2 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.list [0]) 2 _ (2+2) 2 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -293,7 +293,7 @@ example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.lis
 example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (.list [0] : AppList (BitVec 8)) (.list [0]))).drop (3 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.list [0]) 3 _ (3+1) 3 [255,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -301,7 +301,7 @@ example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (
 example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (.list [0] : AppList (BitVec 8)) (.list [128,0]))).drop (3 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.list [0]) 3 _ (3+2) 3 [255,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -309,7 +309,7 @@ example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (
 example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 8)) (.list [0]))).drop (2 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.append (.list [0]) (.list [1])) 2 _ (2+1) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -317,7 +317,7 @@ example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.appe
 example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 8)) (.list [128,0]))).drop (2 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.append (.list [0]) (.list [1])) 2 _ (2+2) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -325,7 +325,7 @@ example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.appe
 example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 8)) (.list [0]))).drop (3 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.append (.list [0]) (.list [1])) 3 _ (3+1) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -333,7 +333,7 @@ example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 8)) (.list [128,0]))).drop (3 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.append (.list [0]) (.list [1])) 3 _ (3+2) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -341,7 +341,7 @@ example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 8)) (.list [0]))).drop (4 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.append (.list [0]) (.list [1])) 4 _ (4+1) 4 [255,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -349,7 +349,7 @@ example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (
 example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 8)) (.list [128,0]))).drop (4 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.append (.list [0]) (.list [1])) 4 _ (4+2) 4 [255,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -357,7 +357,7 @@ example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (
 example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 8)) (.list [0]))).drop (2 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 2 _ (2+1) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -365,7 +365,7 @@ example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.appe
 example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 8)) (.list [128,0]))).drop (2 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 2 _ (2+2) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -373,7 +373,7 @@ example : StackSem.readBitmap (width := 8) (([] ++ appListAppend (.append (.appe
 example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 8)) (.list [0]))).drop (3 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 3 _ (3+1) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -381,7 +381,7 @@ example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 8)) (.list [128,0]))).drop (3 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 3 _ (3+2) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -389,7 +389,7 @@ example : StackSem.readBitmap (width := 8) (([0] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 8)) (.list [0]))).drop (4 % 2^8)) = StackSem.readBitmap (width := 8) [0] := by
   apply readBitmapInsertBitmap (width := 8) [0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 4 _ (4+1) 4 [255,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -397,7 +397,7 @@ example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (
 example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 8)) (.list [128,0]))).drop (4 % 2^8)) = StackSem.readBitmap (width := 8) [128,0] := by
   apply readBitmapInsertBitmap (width := 8) [128,0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 4 _ (4+2) 4 [255,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -405,7 +405,7 @@ example : StackSem.readBitmap (width := 8) (([255,0] ++ appListAppend (.append (
 example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.nil : AppList (BitVec 64)) (.list [0]))).drop (0 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.nil) 0 _ (0+1) 0 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -413,7 +413,7 @@ example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.nil
 example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.nil : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (0 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.nil) 0 _ (0+2) 0 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -421,7 +421,7 @@ example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.nil
 example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.nil : AppList (BitVec 64)) (.list [0]))).drop (1 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.nil) 1 _ (1+1) 1 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -429,7 +429,7 @@ example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.ni
 example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.nil : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (1 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.nil) 1 _ (1+2) 1 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -437,7 +437,7 @@ example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.ni
 example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appListAppend (.append (.nil : AppList (BitVec 64)) (.list [0]))).drop (2 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.nil) 2 _ (2+1) 2 [18446744073709551615,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -445,7 +445,7 @@ example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appLis
 example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appListAppend (.append (.nil : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (2 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.nil) 2 _ (2+2) 2 [18446744073709551615,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -453,7 +453,7 @@ example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appLis
 example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.list [0] : AppList (BitVec 64)) (.list [0]))).drop (1 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.list [0]) 1 _ (1+1) 1 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -461,7 +461,7 @@ example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.lis
 example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.list [0] : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (1 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.list [0]) 1 _ (1+2) 1 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -469,7 +469,7 @@ example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.lis
 example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.list [0] : AppList (BitVec 64)) (.list [0]))).drop (2 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.list [0]) 2 _ (2+1) 2 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -477,7 +477,7 @@ example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.li
 example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.list [0] : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (2 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.list [0]) 2 _ (2+2) 2 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -485,7 +485,7 @@ example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.li
 example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appListAppend (.append (.list [0] : AppList (BitVec 64)) (.list [0]))).drop (3 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.list [0]) 3 _ (3+1) 3 [18446744073709551615,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -493,7 +493,7 @@ example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appLis
 example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appListAppend (.append (.list [0] : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (3 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.list [0]) 3 _ (3+2) 3 [18446744073709551615,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -501,7 +501,7 @@ example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appLis
 example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 64)) (.list [0]))).drop (2 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.append (.list [0]) (.list [1])) 2 _ (2+1) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -509,7 +509,7 @@ example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (2 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.append (.list [0]) (.list [1])) 2 _ (2+2) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -517,7 +517,7 @@ example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 64)) (.list [0]))).drop (3 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.append (.list [0]) (.list [1])) 3 _ (3+1) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -525,7 +525,7 @@ example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.ap
 example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (3 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.append (.list [0]) (.list [1])) 3 _ (3+2) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -533,7 +533,7 @@ example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.ap
 example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 64)) (.list [0]))).drop (4 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.append (.list [0]) (.list [1])) 4 _ (4+1) 4 [18446744073709551615,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -541,7 +541,7 @@ example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appLis
 example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (4 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.append (.list [0]) (.list [1])) 4 _ (4+2) 4 [18446744073709551615,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -549,7 +549,7 @@ example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appLis
 example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 64)) (.list [0]))).drop (2 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 2 _ (2+1) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -557,7 +557,7 @@ example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (2 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 2 _ (2+2) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -565,7 +565,7 @@ example : StackSem.readBitmap (width := 64) (([] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 64)) (.list [0]))).drop (3 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 3 _ (3+1) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -573,7 +573,7 @@ example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.ap
 example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (3 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 3 _ (3+2) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -581,7 +581,7 @@ example : StackSem.readBitmap (width := 64) (([0] ++ appListAppend (.append (.ap
 example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 64)) (.list [0]))).drop (4 % 2^64)) = StackSem.readBitmap (width := 64) [0] := by
   apply readBitmapInsertBitmap (width := 64) [0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 4 _ (4+1) 4 [18446744073709551615,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -589,7 +589,7 @@ example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appLis
 example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 64)) (.list [9223372036854775808,0]))).drop (4 % 2^64)) = StackSem.readBitmap (width := 64) [9223372036854775808,0] := by
   apply readBitmapInsertBitmap (width := 64) [9223372036854775808,0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 4 _ (4+2) 4 [18446744073709551615,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -597,7 +597,7 @@ example : StackSem.readBitmap (width := 64) (([18446744073709551615,0] ++ appLis
 example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.nil : AppList (BitVec 80)) (.list [0]))).drop (0 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.nil) 0 _ (0+1) 0 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -605,7 +605,7 @@ example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.nil
 example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.nil : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (0 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.nil) 0 _ (0+2) 0 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -613,7 +613,7 @@ example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.nil
 example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.nil : AppList (BitVec 80)) (.list [0]))).drop (1 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.nil) 1 _ (1+1) 1 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -621,7 +621,7 @@ example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.ni
 example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.nil : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (1 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.nil) 1 _ (1+2) 1 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -629,7 +629,7 @@ example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.ni
 example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ appListAppend (.append (.nil : AppList (BitVec 80)) (.list [0]))).drop (2 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.nil) 2 _ (2+1) 2 [1208925819614629174706175,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -637,7 +637,7 @@ example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ a
 example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ appListAppend (.append (.nil : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (2 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.nil) 2 _ (2+2) 2 [1208925819614629174706175,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -645,7 +645,7 @@ example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ a
 example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.list [0] : AppList (BitVec 80)) (.list [0]))).drop (1 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.list [0]) 1 _ (1+1) 1 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -653,7 +653,7 @@ example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.lis
 example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.list [0] : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (1 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.list [0]) 1 _ (1+2) 1 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -661,7 +661,7 @@ example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.lis
 example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.list [0] : AppList (BitVec 80)) (.list [0]))).drop (2 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.list [0]) 2 _ (2+1) 2 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -669,7 +669,7 @@ example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.li
 example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.list [0] : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (2 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.list [0]) 2 _ (2+2) 2 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -677,7 +677,7 @@ example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.li
 example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ appListAppend (.append (.list [0] : AppList (BitVec 80)) (.list [0]))).drop (3 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.list [0]) 3 _ (3+1) 3 [1208925819614629174706175,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -685,7 +685,7 @@ example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ a
 example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ appListAppend (.append (.list [0] : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (3 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.list [0]) 3 _ (3+2) 3 [1208925819614629174706175,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -693,7 +693,7 @@ example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ a
 example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 80)) (.list [0]))).drop (2 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.append (.list [0]) (.list [1])) 2 _ (2+1) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -701,7 +701,7 @@ example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (2 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.append (.list [0]) (.list [1])) 2 _ (2+2) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -709,7 +709,7 @@ example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 80)) (.list [0]))).drop (3 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.append (.list [0]) (.list [1])) 3 _ (3+1) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -717,7 +717,7 @@ example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.ap
 example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (3 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.append (.list [0]) (.list [1])) 3 _ (3+2) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -725,7 +725,7 @@ example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.ap
 example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 80)) (.list [0]))).drop (4 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.append (.list [0]) (.list [1])) 4 _ (4+1) 4 [1208925819614629174706175,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -733,7 +733,7 @@ example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ a
 example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ appListAppend (.append (.append (.list [0]) (.list [1]) : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (4 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.append (.list [0]) (.list [1])) 4 _ (4+2) 4 [1208925819614629174706175,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -741,7 +741,7 @@ example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ a
 example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 80)) (.list [0]))).drop (2 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 2 _ (2+1) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -749,7 +749,7 @@ example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (2 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 2 _ (2+2) 2 []
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -757,7 +757,7 @@ example : StackSem.readBitmap (width := 80) (([] ++ appListAppend (.append (.app
 example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 80)) (.list [0]))).drop (3 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 3 _ (3+1) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -765,7 +765,7 @@ example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.ap
 example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (3 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 3 _ (3+2) 3 [0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -773,7 +773,7 @@ example : StackSem.readBitmap (width := 80) (([0] ++ appListAppend (.append (.ap
 example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 80)) (.list [0]))).drop (4 % 2^80)) = StackSem.readBitmap (width := 80) [0] := by
   apply readBitmapInsertBitmap (width := 80) [0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 4 _ (4+1) 4 [1208925819614629174706175,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
@@ -781,7 +781,7 @@ example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ a
 example : StackSem.readBitmap (width := 80) (([1208925819614629174706175,0] ++ appListAppend (.append (.append (.append .nil (.list [1])) (.append (.list [0]) .nil) : AppList (BitVec 80)) (.list [604462909807314587353088,0]))).drop (4 % 2^80)) = StackSem.readBitmap (width := 80) [604462909807314587353088,0] := by
   apply readBitmapInsertBitmap (width := 80) [604462909807314587353088,0] (.append (.append .nil (.list [1])) (.append (.list [0]) .nil)) 4 _ (4+2) 4 [1208925819614629174706175,0]
   · decide
-  · simp +decide [StackSem.readBitmap] <;> decide +kernel
+  · simp +decide <;> decide +kernel
   · rfl
   · rfl
 
