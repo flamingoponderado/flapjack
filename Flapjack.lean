@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.CodeOffsetPadding
 import Flapjack.Compiler.Backend.LabToTarget.OffsetPadding
 import Flapjack.Compiler.Backend.LabToTarget.OffsetEstablishment
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcGenerational
@@ -261,6 +262,8 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameHelpers
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmRemoveCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmRemoveHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackConventions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundCompiler
@@ -879,6 +882,7 @@ import Flapjack.Misc.BinaryIeeeArith
 import Flapjack.Misc.BinaryIeeeRoundFp64
 import Flapjack.Misc.BinaryIeeeRoundFp32
 import Flapjack.Misc.BinaryIeeeDirectedFp32
+import Flapjack.Misc.BinaryIeeeDirectedFp64
 import Flapjack.Misc.BinaryIeeeArithFp64
 import Flapjack.Misc.BinaryIeeeConvert
 import Flapjack.Misc.BinaryIeeeSqrt
