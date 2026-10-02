@@ -1,0 +1,7 @@
+search_const_full_statement=∀k mc ffi ms app mc' ffi'.
+  find_next_interference mc ffi k ms = SOME (app,mc',ffi') ⇒
+  mc'.target = mc.target ∧ mc'.callee_saved_regs = mc.callee_saved_regs ∧
+  mc'.ptr_reg = mc.ptr_reg
+next_const_full_statement=next_interference mc ffi ms = SOME (app,mc',ffi') ⇒
+mc'.target = mc.target ∧ mc'.callee_saved_regs = mc.callee_saved_regs ∧
+mc'.ptr_reg = mc.ptr_reg
