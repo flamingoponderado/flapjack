@@ -50171,5 +50171,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison of complete word_to_stack_alloc_arg11316-11382: forall config/perf/source program/bitmap/frame, only perf=F implies allocArg of actual comp first projection. All26 constructors covered, every proper-subprogram IH discharged internally by sizeOf wellfounded recursion; return and handler use actual successive bitmap outputs. No desired predicate/output/evaluation/success or extra guard premise. Native source/target/config/cutset carriers retained, positive-width BitVec is the only words_as_type_indexed_bitvec translation. Fresh complete generic original theorem application and35 nested same-input original theorem applications/kernel fixtures across widths1/2/8/64/80. These are theorem-application regression evidence, not direct EVAL or full original proof replay/cross-language equivalence. Full pass simulation and compiler chain remain open; no held imports or HD/EL/GC policy changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnRegisterBounds.lean",
+    "lean_name": "stackMoveRegBound",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_reg_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of full stack_move_reg_bound11384-11408: actual native helpers and reviewed regBound retain original quantified counts/indices/offsets/continuations and exactly original temporary-register bound and continuation-bound premises. All Boolean modes and independent return-value/frame-tail Type0 carriers retained. Positive-width BitVec translation is the only qualifier, no count/bounds/width>=8/success restriction added. Fresh three literal complete original proof replays hyp=[] and330 same-input direct original EVAL/kernel whole-predicate observations, widths1/2/8/64/80, zero/nonzero/saturated returns, good and violated register bounds,70bit offsets. No hold release. Full word_to_stack_reg_bound and semantic compiler correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnRegisterBounds.lean",
+    "lean_name": "copyRetAuxRegBound",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_aux_reg_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of full copy_ret_aux_reg_bound11384-11408: actual native helpers and reviewed regBound retain original quantified counts/indices/offsets/continuations and exactly original temporary-register bound and continuation-bound premises. All Boolean modes and independent return-value/frame-tail Type0 carriers retained. Positive-width BitVec translation is the only qualifier, no count/bounds/width>=8/success restriction added. Fresh three literal complete original proof replays hyp=[] and330 same-input direct original EVAL/kernel whole-predicate observations, widths1/2/8/64/80, zero/nonzero/saturated returns, good and violated register bounds,70bit offsets. No hold release. Full word_to_stack_reg_bound and semantic compiler correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ReturnRegisterBounds.lean",
+    "lean_name": "copyRetRegBound",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_reg_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison of full copy_ret_reg_bound11384-11408: actual native helpers and reviewed regBound retain original quantified counts/indices/offsets/continuations and exactly original temporary-register bound and continuation-bound premises. All Boolean modes and independent return-value/frame-tail Type0 carriers retained. Positive-width BitVec translation is the only qualifier, no count/bounds/width>=8/success restriction added. Fresh three literal complete original proof replays hyp=[] and330 same-input direct original EVAL/kernel whole-predicate observations, widths1/2/8/64/80, zero/nonzero/saturated returns, good and violated register bounds,70bit offsets. No hold release. Full word_to_stack_reg_bound and semantic compiler correctness remain unfinished."
   }
 ]
