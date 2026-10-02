@@ -5954,3 +5954,4 @@ replayed by Lean kernel proofs. Finite upward/downward conversion is rejected
 by the pinned original binary_ieeeLib; six signed tie checks are explicitly
 Lean algorithm regressions. The independent certified-converter bead remains
 open for the complete144-row original int-to-FP oracle; no modes are dropped.
+`word_to_stack_asm_remove_helpers_probe` freshly replays the five complete original local proofs at word_to_stackProofScript.sml:11129-11182, then captures 95 cross-width helper predicates (five independent width pairs, direct/empty/register/spilled destinations, zero/nonzero live bitmaps, arbitrary-continuation movement equivalences, auxiliary copies and both handler modes). Lean fixtures replay all observations. Regression evidence does not prove HOL-to-Lean equivalence.
