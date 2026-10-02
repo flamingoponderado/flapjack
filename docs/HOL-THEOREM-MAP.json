@@ -57848,5 +57848,87 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:498: fresh complete compiled original statement captured in target_position_tail_probe.out. Same successful whole nextInterference result premise and not P app0; initial position at k, equals OPTION_MAP SUC suffix position at k in returned mcc/ffic/appPost. Option.map (n+1) is literal OPTION_MAP SUC; NONE and SOME both preserved. Complete generic MachineConfig/InterferenceApp/HolFfiState and independent σ : Type/positive width NeZero retained. Kernel82jobs zero warnings. Private Flapjack choice lemma premises are fully discharged by literal sequence/count tail, zero exclusion and interferencePosUnique; no extra choice/existence/uniqueness/bounds premise on port. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names preserves in-range list element and shared opaque holHdNil/holArb out of range, no fallback. No executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FrameOffsets.lean",
+    "lean_name": "absFrameEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_frame_eq_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-frame-offsets): source1809-1813: all three literal conjuncts, shared first/middle types and independent final list element types, HOL products to Lean products and lengths unchanged; no datatype representation difference. Fresh literal original replays and complete output-projection fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FrameOffsets.lean",
+    "lean_name": "listRelAbsFrameEqHandlerVal",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LIST_REL_abs_frame_eq_handler_val",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-frame-offsets): source1816-1824: full arbitrary two lists with native inductive List.Forall₂ of literal absFrameEq, same sole premise and full handlerVal equality, independent final element carriers preserved; normal/handler cases kernel proved. Fresh literal original replays and complete output-projection fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FrameOffsets.lean",
+    "lean_name": "absStackToStackLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_stack_to_stack_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-frame-offsets): source2464-2483: complete native successful absStack premise implies full handlerVal concrete-stack length equality, identical statement to reviewed abs_stack_LENGTH; proof reuses that full kernel theorem. Bitmap/target word dimension shared, ignored source-frame dimension independent as original. Fresh literal original replays and complete output-projection fixtures.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FrameOffsets.lean",
+    "lean_name": "absStackLen",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_stack_len",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-frame-offsets): source2575-2598: complete successful native absStack premise and arbitrary handler index, handlerVal of exact LASTN suffix bounded by concrete stack length. No index bound or stack relation assumed. LASTN is reverse/take/reverse including zero and excess indices. Independent saved-frame dimension retained. Kernel proof derives suffix monotonicity and full successful-abstraction length. Only positive-width words translation differs. Fresh literal original replays and complete output-projection fixtures.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/FrameOffsets.lean",
+    "lean_name": "lastNMore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LASTN_MORE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-frame-offsets), source249-254: arbitrary list/element carrier and index with exact sole not-less-than-length premise, total LASTN identity including empty and excess indices. Native reverse/take/reverse exactly matches LASTN_def, no default or bound strengthening. Literal unchanged original proof freshly replayed as prerequisite for abs_stack_len."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SortedAList.lean",
+    "lean_name": "sortedConsImp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "SORTED_CONS_IMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-sorted-alist), source2633-2680/5576-5584: same head/tail sortedness, absence and universal strict head-key bound in original conjunct order; uses full reviewed SORTED_FST_LESS_IMP with no extra premise. Spt native tree carrier, Nat keys, arbitrary payloads, HOL lists/products and adjacent strict sorting retained; no word or representation qualifier needed. Literal complete original theorem replay and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SortedAList.lean",
+    "lean_name": "sortedImpAllDistinctLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "SORTED_IMP_ALL_DISTINCT_LEMMA",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-sorted-alist), source2633-2680/5576-5584: same arbitrary Nat-key/payload list, exact descending adjacent sortedness premise and distinct-key-map conclusion; strict key inequality derives exclusion without payload equality instance. Spt native tree carrier, Nat keys, arbitrary payloads, HOL lists/products and adjacent strict sorting retained; no word or representation qualifier needed. Literal complete original theorem replay and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SortedAList.lean",
+    "lean_name": "memToAListFromAList",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MEM_toAList_fromAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-sorted-alist), source2633-2680/5576-5584: same sortedness guard and equality of arbitrary entry membership before/after actual native Spt association-list roundtrip; numeric first-match insertion and unrestricted mixed-order enumeration establish lookup correspondence, distinct keys derived from sortedness. Spt native tree carrier, Nat keys, arbitrary payloads, HOL lists/products and adjacent strict sorting retained; no word or representation qualifier needed. Literal complete original theorem replay and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SortedAList.lean",
+    "lean_name": "sortedFstPermImpAListEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "SORTED_FST_PERM_IMP_ALIST_EQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-sorted-alist), source2633-2680/5576-5584: same two arbitrary payload lists, both descending sortedness guards and actual native Spt roundtrip permutation premise, entire q=l conclusion derived using native membership and full reviewed sorted-list uniqueness; no desired equality/membership assumption. Spt native tree carrier, Nat keys, arbitrary payloads, HOL lists/products and adjacent strict sorting retained; no word or representation qualifier needed. Literal complete original theorem replay and native boundary fixtures."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SortedAList.lean",
+    "lean_name": "allDistinctMemToAListFromAList",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "ALL_DISTINCT_MEM_toAList_fromAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-sorted-alist), source2633-2680/5576-5584: same arbitrary list and entry, original distinct key map guard and native Spt roundtrip membership equivalence; no wf, sortedness, payload equality, observer, output lookup or reconstruction premise. Spt native tree carrier, Nat keys, arbitrary payloads, HOL lists/products and adjacent strict sorting retained; no word or representation qualifier needed. Literal complete original theorem replay and native boundary fixtures."
   }
 ]
