@@ -1,3 +1,4 @@
+import Flapjack.Test.SetNewTriggerParity
 import Flapjack.Test.LabToTargetStrongEvenLabelsParity
 import Flapjack.Test.LabToTargetZeroPositionEvenLabelsParity
 import Flapjack.Test.LabToTargetEvenLabelsParity
@@ -1956,4 +1957,3 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
 end Flapjack.Test.CompilerParity
 
 def main : IO Unit := Flapjack.Test.CompilerParity.main
-import Flapjack.Test.SetNewTriggerParity
