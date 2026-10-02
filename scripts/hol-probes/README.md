@@ -4925,3 +4925,7 @@ payload String; existing homogeneous observations remain unchanged.
 independent query/key/result/payload types; the latter forces a homogeneous
 Ordering comparator. `BalancedMapKeyOrderedTypes` checks generic constructors
 and Bool-query/Nat-key/String-result/Bool-payload examples, including malformed sizes.
+
+`target_oracle_equality_probeScript.sml` captures the complete original
+`interference_count_EQ` and `constructed_oracles_EQ` statements with no
+undischarged hypotheses. Native counterparts are in `TargetProps/OracleEquality.lean`.

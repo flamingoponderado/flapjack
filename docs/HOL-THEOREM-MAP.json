@@ -57866,5 +57866,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:563: full six-conjunct original statement freshly captured in target_constructed_oracles_probe.out. Same sole nextInterference whole-result premise, native constructor payloads, arbitrary k/r/i and HolFfiName name; no added bounds or simulation premise. Zero regs/FP use original post-state and register residue; successor same-class oracles and unchanged opposite-class oracles retain returned config/FFI/post. Callee list, target configuration and ptr field preserved by literal nextInterferenceConst; cache excludes ptr, FFI does not. Native state/projection/host carriers independent, σ : Type/positive width NeZero, machine registers BitVec width and FP BitVec64 exactly. Kernel85jobs zero warnings. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names keeps in-range list element and shared opaque holHdNil/holArb out of range, no fallback/indexbounds premise. No executed compiler body change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/OracleEquality.lean",
+    "lean_name": "interferenceCountEq",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "interference_count_EQ",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:599: same initial next-interference equality premise; arbitrary predicate and all n count equality, proved by literal count induction and sequence equality. Complete original compiled statements captured by target_oracle_equality_probeScript.sml. Full generic native MachineConfig/InterferenceApp/HolFfiState and HolFfiName, independent σ : Type, positive width NeZero, machine BitVec width and FP BitVec64. Kernel81jobs zero warnings; no additional bounds/choice/target evaluation premise. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and shared opaque holHdNil/holArb out of range; no concrete fallback. No executed compiler body changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/OracleEquality.lean",
+    "lean_name": "constructedOraclesEq",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "constructed_oracles_EQ",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-02 targetPropsScript.sml:609: same four conjuncts: next-interference equality, target equality, calleeSavedRegs equality, ptrReg equality; conclusion whole function equalities for IO regs/FP and cache regs/FP, not individual weakened outputs. Exact predicate equality establishes guarded choice equality, then original sequence/getter/exclusion equalities. Complete original compiled statements captured by target_oracle_equality_probeScript.sml. Full generic native MachineConfig/InterferenceApp/HolFfiState and HolFfiName, independent σ : Type, positive width NeZero, machine BitVec width and FP BitVec64. Kernel81jobs zero warnings; no additional bounds/choice/target evaluation premise. Inherited EL via nextInterference/findNextInterference source112-211: reviewed holEl ffi_names retains in-range list element and shared opaque holHdNil/holArb out of range; no concrete fallback. No executed compiler body changes."
   }
 ]

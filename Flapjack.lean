@@ -11,6 +11,7 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchMono
 import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
 import Flapjack.Compiler.Backend.Semantics.TargetProps.ConstructedOracles
+import Flapjack.Compiler.Backend.Semantics.TargetProps.OracleEquality
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence
 import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
 import Flapjack.Compiler.Backend.StackRemove.StoreInit
