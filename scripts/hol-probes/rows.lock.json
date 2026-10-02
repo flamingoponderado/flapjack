@@ -306,6 +306,7 @@
     {"bytes": 2712, "out": "lab_to_target_offset_invariant_probe.out", "rows": 20, "sha256": "2fece37d92a02e3de2b7acaae548a8e3505300da21c840beb1f0319c294d23a3"},
     {"bytes": 1113, "out": "lab_to_target_offset_padding_probe.out", "rows": 14, "sha256": "e469eba3c87697e07a24cbf5444d28c7fc66d7a00b2f5cee745a12a301a5ab3e"},
     {"bytes": 10474, "out": "lab_to_target_oracle_tie_probe.out", "rows": 17, "sha256": "5f8e531d18f1f79e9d5b40bbed54eafb5e382870cd73b95609049957b46ef37f"},
+    {"bytes": 1014, "out": "lab_to_target_padding_labels_probe.out", "rows": 16, "sha256": "a9ebe2a634a318a566ccbb606d6812ba1f67855c6174cd32d0e5088b110c5be2"},
     {"bytes": 228, "out": "lab_to_target_padding_length_probe.out", "rows": 7, "sha256": "70304debb60246023d2769ede81e0f93150585aa155251914f32e03f96b40c19"},
     {"bytes": 3013, "out": "lab_to_target_padding_length_props_probe.out", "rows": 18, "sha256": "b83b4ac9d4107ff3e649a32de437a960f651c0219e956c7e943370dcce789a78"},
     {"bytes": 877, "out": "lab_to_target_padding_probe.out", "rows": 27, "sha256": "a156edfa0de4264c3bc10a10e451fd57d34c1c198f319250e13e380cc797df18"},

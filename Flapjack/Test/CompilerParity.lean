@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetPaddingLabelsParity
 import Flapjack.Test.LabToTargetUpdatePadEndingParity
 import Flapjack.Test.LabToTargetZeroLabelExistenceParity
 import Flapjack.Test.BackendRestrictZeroParity
