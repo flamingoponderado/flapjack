@@ -201,6 +201,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGeneratedProgramCodec
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAControlCodec
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSADataCodec
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramCodec
+import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSA
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstConst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstBinop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstShift
