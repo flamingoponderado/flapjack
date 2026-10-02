@@ -65676,5 +65676,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-02; flapjack-sol-remove-shifts): original stack_removeProofScript.sml1037-1074 evaluate_upshift/evaluate_downshift. Identical sole word-register lookup premise, arbitrary count including zero, actual recursive native Add/Sub evaluation, NONE result and whole state unchanged except canonical register update. Positive-width word and canonical finite-support regs/fpRegs/store translations only. Seq clock clamp is proved unchanged. No dimension/safety/state-relation restriction or supplied target evaluation. Same-module imported-carrier roundtrip witness. Inherited reals_as_rational_cuts assumption from faithful total evaluator, no local real operation. Fresh original literal proof replays recorded."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "alloc_correct_lemma_Generational",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/AllocGenerational/Full.lean",
+    "lean_name": "alloc_correct_lemma_Generational_full",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02, bead .5.8.5.2: original full collector case 4833-5016 of theorem4592 only; parent assembly remains open. Literal full original typed statement captured by stack_alloc_generational_alloc_statement_probe, confirming c is stack_alloc config. Original allocation/non-error/gcFun/kind/bitmap and stack bounds/register premises retained; sole extra premise is negated original partial selector on AllocSize-updated source store. Actual wordGcCode, existential clock/register map, complete final state, non-none Halt Word1, original SUBMAP and normal return register conclusions retained. Source allocation derives full move/roots/loop success, word globals and strict frame bound; no target evaluation, successful pass, final relation or sufficient-space premise. Full original instruction list568-634 compared including global address shifts, heap swap, saved return restoration, SetNewTrigger2/3, all seven temporary clears and exact unsigned final space test; insufficient space preserves original emptyEnv Halt. Complete state and ordered store equality checked, including roots prefix, memory/domain and original clocks. Actual imported StackSemStateFiniteExact canonical regs/fpRegs/store owner and same-module genuine codec roundtrip; positive-width BitVec and Type host translation only. Instruction closure inherits SOUNDNESS item8 reals_as_rational_cuts limit; source comparison does not certify arbitrary untagged dependencies."
   }
 ]
