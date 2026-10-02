@@ -63586,5 +63586,33 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-02 bead .6.8.4.4: complete original687-750 native store law on actual imported StackSemStateFiniteExact, full26conjunct stateRelHOL and actual native store operator. Canonical regs/fpRegs/store fields qualify finite support with same-module genuine imported broad/exact roundtrip witness; Spt code not named. Positive BitVec width/NeZero, independent C/F Type0, fixed32/8 payload retained. Scalar original both successful stores preserved; byte/32 source-onlysuccess derives target memory/store success and full updated relation. No assumed frame preservation, target output in existential laws, finite domain, domain equality or relaxed relation. Full five left-associated heaps reassociated via exact STAR_ASSOC and updated via exact generic memory_write. Native/classical equality update functions proved pointwise equal. Byte/32 derive old aligned target word/domain with stateRelRead, derive endian equality, preserve alignment errors and native four byte-update ordering. Fresh full original statements/types/kernel replays and complete native proofs checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryLoads.lean",
+    "lean_name": "memLoad32Imp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "mem_load_32_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 bead .6.8.4.5: literal complete original288-312 fullstateRel plus successful source byte/32 native load implies identical target successful load. Actual imported StackSemStateFiniteExact canonical regs/fpRegs/store owner with same-module genuine broad/exact roundtrip witness; Spt code not named. Positive width BitVec/NeZero, independent C/F Type0, fixed BitVec32/8 result and native alignment/byte extraction order/endianness match HOL. Target aligned memory word and domain derived by accepted stateRelRead, endian derived from full relation. No target success/value/domain premise, finite heap restriction, extra word/carrier condition or changed native execution path. Fresh full original local theorem reproofs/types and complete native proofs kernel checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemoryLoads.lean",
+    "lean_name": "memLoadByteAuxImp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "mem_load_byte_aux_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-02 bead .6.8.4.5: literal complete original288-312 fullstateRel plus successful source byte/32 native load implies identical target successful load. Actual imported StackSemStateFiniteExact canonical regs/fpRegs/store owner with same-module genuine broad/exact roundtrip witness; Spt code not named. Positive width BitVec/NeZero, independent C/F Type0, fixed BitVec32/8 result and native alignment/byte extraction order/endianness match HOL. Target aligned memory word and domain derived by accepted stateRelRead, endian derived from full relation. No target success/value/domain premise, finite heap restriction, extra word/carrier condition or changed native execution path. Fresh full original local theorem reproofs/types and complete native proofs kernel checked."
   }
 ]

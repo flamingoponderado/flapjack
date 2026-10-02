@@ -5075,3 +5075,7 @@ run_probe set_sep_assoc_probeScript.sml set_sep_assoc_probe.out \
 run_probe stack_remove_memorystores_probeScript.sml stack_remove_memorystores_probe.out \
   ms_scalar ms_scalar_types ms_scalar_proved ms_32 ms_32_types ms_32_proved ms_byte ms_byte_types ms_byte_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_memoryloads_probeScript.sml stack_remove_memoryloads_probe.out \
+  ml_32 ml_32_types ml_32_proved ml_byte ml_byte_types ml_byte_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
