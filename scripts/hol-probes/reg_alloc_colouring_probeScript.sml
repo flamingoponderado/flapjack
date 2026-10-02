@@ -32,3 +32,5 @@ val _ = observe "fmc_hit" (s ``FST (first_match_col [1;0] [1;0] (S0:ra_state))``
 val _ = observe "fmc_not_in_ks" (s ``FST (first_match_col [5] [0;1] (S0:ra_state))``);
 val _ = observe "fmc_empty" (s ``FST (first_match_col [0] [] (S0:ra_state))``);
 val _ = observe "fmc_oob" (s ``FST (first_match_col [0] [36893488147419103232] (S0:ra_state))``);
+val _ = observe "fmc_oob_before_match" (s ``FST (first_match_col [0] [9;0] (S0:ra_state))``);
+val _ = observe "fmc_handled_oob_before_match" (s ``FST (handle_Subscript (first_match_col [0] [9;0]) (st_ex_return NONE) (S0:ra_state))``);

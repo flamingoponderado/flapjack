@@ -4364,10 +4364,10 @@
       "sha256": "9150484c7cd2addcce59a37f55aab5454f3eccd6be645ca4e8148bbaacf78a3c"
     },
     {
-      "bytes": 580,
+      "bytes": 665,
       "out": "reg_alloc_colouring_probe.out",
-      "rows": 18,
-      "sha256": "c273e7a1a5ad0a3f70bb5ea0fb5348e6e4e3a3b059aed54e8d33bc804f88b9bf"
+      "rows": 20,
+      "sha256": "fda65463ba813c4c53c0a4fe34b68d20b829a6c09211f5c1724ddb68c27c3148"
     },
     {
       "bytes": 455,
