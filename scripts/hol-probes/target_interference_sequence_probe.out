@@ -1,0 +1,42 @@
+next_interference_type=:(α, β, γ) machine_config ->
+δ ffi_state ->
+β ->
+((α, β) interference_app # (α, β, γ) machine_config # δ ffi_state) option
+next_interference_definition=∀mc ffi ms.
+  next_interference mc ffi ms =
+  some res. ∃k. find_next_interference mc ffi k ms = SOME res
+interference_app_seq_type=:(α, β, γ) machine_config ->
+δ ffi_state ->
+β ->
+num ->
+((α, β) interference_app # (α, β, γ) machine_config # δ ffi_state) option
+interference_app_seq_definition=(∀mc ffi ms. interference_app_seq mc ffi ms 0 = next_interference mc ffi ms) ∧
+∀mc ffi ms n.
+  interference_app_seq mc ffi ms (SUC n) =
+  case next_interference mc ffi ms of
+    NONE => NONE
+  | SOME (app,mc',ffi') => interference_app_seq mc' ffi' (app_post app) n
+interference_count_type=:((α, β) interference_app -> bool) ->
+(α, β, γ) machine_config -> δ ffi_state -> β -> num -> num
+interference_count_definition=(∀P mc ffi ms. interference_count P mc ffi ms 0 = 0) ∧
+∀P mc ffi ms n.
+  interference_count P mc ffi ms (SUC n) =
+  interference_count P mc ffi ms n +
+  case interference_app_seq mc ffi ms n of
+    NONE => 0
+  | SOME (v1,v2) => if P v1 then 1 else 0
+interference_pos_type=:((α, β) interference_app -> bool) ->
+(α, β, γ) machine_config -> δ ffi_state -> β -> num -> num option
+interference_pos_definition=∀P mc ffi ms k.
+  interference_pos P mc ffi ms k =
+  some n.
+    interference_count P mc ffi ms n = k ∧
+    ∃app mc' ffi'.
+      interference_app_seq mc ffi ms n = SOME (app,mc',ffi') ∧ P app
+sequence_zero=T
+count_zero=T
+sequence_absent=T
+sequence_present=T
+count_absent=T
+count_present_true=T
+count_present_false=T

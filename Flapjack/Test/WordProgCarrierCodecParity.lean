@@ -65,11 +65,11 @@ private def unsupportedFp : WordLangProgHOL (BitVec 8) :=
 example : wordLangProgFromHOL unsupportedFp = none := by
   simp [unsupportedFp, wordLangProgFromHOL, wordLangInstFromHOL]
 
-private def unsupportedOverflow : WordLangProgHOL (BitVec 8) :=
+private def generatedOverflow : WordLangProgHOL (BitVec 8) :=
   .inst (.arith (.addOverflow 1 2 3 4))
 
-example : wordLangProgFromHOL unsupportedOverflow = none := by
-  simp [unsupportedOverflow, wordLangProgFromHOL,
+example : wordLangProgFromHOL generatedOverflow = some (.inst (.arith (.addOverflow 1 2 3 4))) := by
+  simp [generatedOverflow, wordLangProgFromHOL,
     wordLangInstFromHOL, wordLangArithFromHOL]
 
 private def generatedAddCarry : WordLangProgHOL (BitVec 8) :=

@@ -248,6 +248,8 @@ def wordSimpInstConstants {α : Type} (constants : NatInfoMap α) :
   | .arith (.binOp _ destination _ _) => wordSimpMapDelete constants destination
   | .arith (.addCarry destination _ _ _ carryIn) =>
       wordSimpMapDelete (wordSimpMapDelete constants carryIn) destination
+  | .arith (.addOverflow destination _ _ carry)
+  | .arith (.subOverflow destination _ _ carry)
   | .arith (.cakeAddCarry destination _ _ carry) =>
       wordSimpMapDelete (wordSimpMapDelete constants carry) destination
   | .arith (.longMul destinationLeft destinationRight _ _) =>

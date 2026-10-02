@@ -19,8 +19,8 @@ example : arithToExecuted? (.longDiv 1 2 3 4 5 : HolArith 64) =
     some (.longDiv 1 2 3 4 5) := rfl
 example : arithToExecuted? (.addCarry 1 2 3 4 : HolArith 64) =
     some (.cakeAddCarry 1 2 3 4) := rfl
-example : arithToExecuted? (.addOverflow 1 2 3 4 : HolArith 64) = none := rfl
-example : arithToExecuted? (.subOverflow 1 2 3 4 : HolArith 64) = none := rfl
+example : arithToExecuted? (.addOverflow 1 2 3 4 : HolArith 64) = some (.addOverflow 1 2 3 4) := rfl
+example : arithToExecuted? (.subOverflow 1 2 3 4 : HolArith 64) = some (.subOverflow 1 2 3 4) := rfl
 example : arithFromExecuted? (.addCarry 1 2 3 4 5 : WordArith (BitVec 64)) = none := rfl
 
 example : instToExecuted? (.skip : HolInst 64) = some .tick := rfl
@@ -111,7 +111,9 @@ example : programFromExecuted? executed = some supported :=
 example : programToExecuted? ([] : List (Section (LabLineHOL 64))) = some [] := rfl
 example : programToExecuted? ([⟨17, [.label 17 0 0,
     .asm (.asmi (.inst (.arith (.addOverflow 1 2 3 4)))) [] 0,
-    .label 17 1 0]⟩] : List (Section (LabLineHOL 64))) = none := rfl
+    .label 17 1 0]⟩] : List (Section (LabLineHOL 64))) =
+    some [⟨17, [.label 17 0 0,
+      .asm (.word (.arith (.addOverflow 1 2 3 4))) [] 0, .label 17 1 0]⟩] := rfl
 example : programToExecuted? ([⟨17, []⟩,
     ⟨29, [.labAsm .halt 1 [] 0]⟩] : List (Section (LabLineHOL 64))) = none := rfl
 

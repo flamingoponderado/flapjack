@@ -1,0 +1,24 @@
+load "preamble";
+load "targetPropsTheory";
+open simpLib HolKernel Parse preamble targetPropsTheory;
+val _ = print("target_io_regs_type=" ^ type_to_string(type_of ``target_io_regs``) ^ "\n");
+val _ = if null(hyp target_io_regs_def) then (print "target_io_regs_definition="; print_term(concl target_io_regs_def); print "\n") else raise Fail "target_io_regs hypotheses";
+val _ = print("target_io_fp_regs_type=" ^ type_to_string(type_of ``target_io_fp_regs``) ^ "\n");
+val _ = if null(hyp target_io_fp_regs_def) then (print "target_io_fp_regs_definition="; print_term(concl target_io_fp_regs_def); print "\n") else raise Fail "target_io_fp_regs hypotheses";
+val _ = print("target_cc_regs_type=" ^ type_to_string(type_of ``target_cc_regs``) ^ "\n");
+val _ = if null(hyp target_cc_regs_def) then (print "target_cc_regs_definition="; print_term(concl target_cc_regs_def); print "\n") else raise Fail "target_cc_regs hypotheses";
+val _ = print("target_cc_fp_regs_type=" ^ type_to_string(type_of ``target_cc_fp_regs``) ^ "\n");
+val _ = if null(hyp target_cc_fp_regs_def) then (print "target_cc_fp_regs_definition="; print_term(concl target_cc_fp_regs_def); print "\n") else raise Fail "target_cc_fp_regs hypotheses";
+
+fun checked label q = let val th = prove(q,SIMP_TAC(srw_ss())[target_io_regs_def,target_io_fp_regs_def,target_cc_regs_def,target_cc_fp_regs_def]) in if null(hyp th) andalso aconv (concl th) q then print(label ^ "=T\n") else raise Fail label end;
+val _ = checked "target_io_absent" ``interference_pos is_ffi_app (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k = NONE ==> target_io_regs (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k name r = NONE``;
+val _ = checked "target_io_fp_absent" ``interference_pos is_ffi_app (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k = NONE ==> target_io_fp_regs (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k i = 0w``;
+val _ = checked "target_io_fp_present" ``interference_pos is_ffi_app (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k = SOME n /\ interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n = SOME(FfiApp index bytes pre post,mc',ffi') ==> target_io_fp_regs (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k i = mc.target.get_fp_reg post i``;
+val _ = checked "target_io_callee" ``interference_pos is_ffi_app (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k = SOME n /\ interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n = SOME(FfiApp index bytes pre post,mc',ffi') /\ MEM r mc.callee_saved_regs ==> target_io_regs (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k name r = NONE``;
+val _ = checked "target_io_allowed" ``interference_pos is_ffi_app (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k = SOME n /\ interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n = SOME(FfiApp index bytes pre post,mc',ffi') /\ ~MEM r mc.callee_saved_regs /\ r < mc.target.config.reg_count /\ ~MEM r mc.target.config.avoid_regs ==> target_io_regs (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k name r = SOME(mc.target.get_reg post r)``;
+val _ = checked "target_cc_absent" ``interference_pos (\app. ~is_ffi_app app) (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k = NONE ==> target_cc_regs (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k r = NONE``;
+val _ = checked "target_cc_fp_absent" ``interference_pos (\app. ~is_ffi_app app) (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k = NONE ==> target_cc_fp_regs (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k i = 0w``;
+val _ = checked "target_cc_fp_present" ``interference_pos (\app. ~is_ffi_app app) (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k = SOME n /\ interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n = SOME(CcApp a b pre post,mc',ffi') ==> target_cc_fp_regs (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k i = mc.target.get_fp_reg post i``;
+val _ = checked "target_cc_callee" ``interference_pos (\app. ~is_ffi_app app) (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k = SOME n /\ interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n = SOME(CcApp a b pre post,mc',ffi') /\ MEM r mc.callee_saved_regs ==> target_cc_regs (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k r = NONE``;
+val _ = checked "target_cc_allowed" ``interference_pos (\app. ~is_ffi_app app) (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k = SOME n /\ interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n = SOME(CcApp a b pre post,mc',ffi') /\ ~MEM r mc.callee_saved_regs /\ r <> mc.ptr_reg /\ r < mc.target.config.reg_count /\ ~MEM r mc.target.config.avoid_regs ==> target_cc_regs (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms k r = SOME(mc.target.get_reg post r)``;
+val _ = OS.Process.exit OS.Process.success;

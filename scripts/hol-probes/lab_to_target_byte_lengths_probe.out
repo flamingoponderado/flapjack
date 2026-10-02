@@ -1,0 +1,28 @@
+prog_to_bytes_APPEND=prog_to_bytes ((c1 :α sec list) ++ (c2 :α sec list)) =
+prog_to_bytes c1 ++ prog_to_bytes c2
+prog_to_bytes_APPEND_types=(c2 :α sec list)::α sec list;(c1 :α sec list)::α sec list;
+line_ok_line_byte_length=line_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+  (ffi :ffiname list) (n :num) (l :α line) ⇒
+LENGTH (line_bytes l) = line_length l
+line_ok_line_byte_length_types=(l :α line)::α line;(n :num)::num;(ffi :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+lines_ok_MAP_line_byte_length=∀(ls :α line list) (c :α asm_config)
+    (labs :num sptree$num_map sptree$num_map) (ffi :ffiname list) (n :num).
+  lines_ok c labs ffi n ls ⇒
+  MAP (LENGTH :word8 list -> num) (MAP (line_bytes :α line -> word8 list) ls) =
+  MAP (line_length :α line -> num) ls
+lines_ok_MAP_line_byte_length_types=(ls :α line list)::α line list;(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffi :ffiname list)::ffiname list;(n :num)::num;
+all_enc_ok_prog_to_bytes_EVEN=∀(code :α sec list) (n :β) (c :α asm_config)
+    (labs :num sptree$num_map sptree$num_map) (ffi :ffiname list) (pos :num).
+  EVEN pos ∧ all_enc_ok c labs ffi pos code ⇒
+  EVEN (LENGTH (prog_to_bytes code))
+all_enc_ok_prog_to_bytes_EVEN_types=(code :α sec list)::α sec list;(n :β)::β;(c :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffi :ffiname list)::ffiname list;(pos :num)::num;
+append_bytes=T
+label_bytes=T
+asm_bytes=T
+labasm_bytes=T
+map_lengths=T
+even_output=T
+invalid_label=T
+odd_start_valid=T
+odd_start_output=T
+even_start_rejects=T
