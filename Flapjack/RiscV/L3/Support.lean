@@ -7,10 +7,10 @@ import Flapjack.Misc.Alignment
 import Flapjack.HolArb
 
 /-! Flapjack library-rendering infrastructure required by the complete L3 FP
-section. These helpers implement UPDATE and the guarded in-range word operations
+section and source-reviewed MMU primitives. These helpers implement UPDATE and the guarded in-range word operations
 used by the original equations. ARB uses the single canonical Flapjack constant; no
-arbitrary record field is replaced with a chosen default. General model
-renderings outside this section are deliberately absent. -/
+arbitrary record field is replaced with a chosen default. Each caller retains its original operation bounds; helper availability does not
+certify unreviewed model equations. -/
 namespace Flapjack.RiscV.L3
 open Flapjack.Basis.Pure.MlString
 
