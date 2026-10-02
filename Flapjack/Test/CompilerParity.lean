@@ -1,3 +1,4 @@
+import Flapjack.Test.AsmPropsEncodingParity
 import Flapjack.Test.AsmPropsInterferenceParity
 import Flapjack.Test.TargetInterferenceAppParity
 import Flapjack.Test.TargetPropsClockIoEventsParity

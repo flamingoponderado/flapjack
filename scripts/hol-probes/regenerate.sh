@@ -4119,3 +4119,9 @@ run_probe target_props_interference_app_probeScript.sml target_props_interferenc
 run_probe asmprops_interference_ok_probeScript.sml asmprops_interference_ok_probe.out \
   interference_ok_full interference_ok_type interference_ok_identity interference_ok_changed \
   "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
+
+run_probe asmprops_encoding_ok_probeScript.sml asmprops_encoding_ok_probe.out \
+  offset_monotonic_type enc_ok_type target_ok_type offset_monotonic_full enc_ok_full target_ok_full \
+  signed_offsets_1 signed_offsets_2 signed_offsets_8 signed_offsets_32 signed_offsets_64 signed_offsets_80 \
+  offset_constant_payload enc_constant_valid enc_empty_invalid enc_alignment_invalid \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Encoders.AsmProps.Encoding
 import Flapjack.Compiler.Encoders.AsmProps.Interference
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono

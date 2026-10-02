@@ -4583,3 +4583,14 @@ These are full original helper theorems, not a bitmap decoder simulation.
 `target_props_interference_app_probeScript.sml` captures all four original constructor/projection types and simplifies the four unrestricted constructor equations with the literal definitions (targetProps:95-106). `TargetInterferenceAppParity.lean` checks the same generic equations. FFI byte width eight, phantom machine-word parameter, and arbitrary pre/post states are retained. Oracle search and compilation simulation remain separate prerequisites.
 
 `asmprops_interference_ok_probeScript.sml` checks the entire original projection-preservation predicate equation (asmProps:75-77), captures its independent polymorphic state/projection type, and checks identity and changed environments. `AsmPropsInterferenceParity.lean` replays the full generic equation and both cases. No oracle-search validity premise is assumed.
+
+### Native asmProps encoding predicates
+
+`asmprops_encoding_ok_probeScript.sml` captures the original inferred types and
+complete equations for `offset_monotonic`, `enc_ok`, and `target_ok`. Encoding
+payload and offset word dimension are independently polymorphic in the first
+predicate. Signed offset boundaries are checked at widths 1, 2, 8, 32, 64, and
+80; constant encoding, empty output, and alignment fixtures check the length
+conditions. `Flapjack.Test.AsmPropsEncodingParity` kernel-checks the corresponding
+Lean equations and conditions. These probes provide regressions, not a
+cross-language equivalence proof.

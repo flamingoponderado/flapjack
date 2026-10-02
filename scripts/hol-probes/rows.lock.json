@@ -9,6 +9,7 @@
     {"bytes": 1411, "out": "asmprops_arithmetic_preservation_probe.out", "rows": 15, "sha256": "19e56e1e794308f7f9fd28f86ff49d3d7c2688b65d0afa3c7f16cbcaf276e5ec"},
     {"bytes": 138, "out": "asmprops_assertions_iteration_probe.out", "rows": 6, "sha256": "d9cb3107a1be1904e98d2b2b31551d5b116778e8669d11cdf5fe0962e2b82452"},
     {"bytes": 374, "out": "asmprops_assertions_probe.out", "rows": 16, "sha256": "18139bed8a3d7cf5f3a74e01e06b9eb90f311177aa86ecbb461aa37d57120411"},
+    {"bytes": 452, "out": "asmprops_encoding_ok_probe.out", "rows": 16, "sha256": "bf77b32773c6cde8718f24f5b20d94adf89ed858ae0103dcf89ae9fcd08ad73d"},
     {"bytes": 138, "out": "asmprops_interference_ok_probe.out", "rows": 4, "sha256": "fac3dfbb13da8cd8d044462055765c9757f86dc2a69b148513498c17da483254"},
     {"bytes": 356, "out": "asmprops_pc_coverage_probe.out", "rows": 13, "sha256": "814f36970d25cf9562097638bda0f1bd91a023c11996586e3c567aeb306c129a"},
     {"bytes": 1640, "out": "asmsem_arithmetic_probe.out", "rows": 52, "sha256": "c4406552396a5b9fa262f53fa969456b1feeb7dd6d0139fd2d846efcce4343e3"},
