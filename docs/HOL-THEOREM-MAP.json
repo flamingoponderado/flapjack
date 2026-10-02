@@ -53951,5 +53951,37 @@
   "hol_name": "good_cmp_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol-b author source acceptance2026-10-02 HOL17-26: all seven universally quantified conjuncts preserved in order: Equal reflexivity, Equal symmetry, Greater iff reversed Less, Equal/Less and Less/Equal interactions, Equal transitivity and Less transitivity. Arbitrary key type and comparator; constructor-for-constructor Ordering translation only, no order/equality typeclass, no extra premise or antisymmetry identifying equivalent keys. Five original finite Bool outcomes plus full source predicate preserved; kernel fixture acceptance of all-Equal comparator demonstrates distinct keys may be equivalent. No lookup/insertion or production correctness claim."
+},
+{
+  "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+  "lean_name": "keySetEquiv",
+  "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+  "hol_name": "key_set_equiv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL194-201 all three components retained: self membership, symmetric membership with original key direction, membership transitivity with original pair conjuncts. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+},
+{
+  "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+  "lean_name": "keySetNonempty",
+  "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+  "hol_name": "key_set_nonempty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL204-209 local theorem keeps good_cmp only and concludes actual Set inequality with empty; proof uses self membership, with no extra nonempty carrier premise. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+},
+{
+  "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+  "lean_name": "keySetPartition",
+  "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+  "hol_name": "key_set_partition",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL211-219 same conjunctive hypothesis good_cmp AND unequal equivalence sets, conclusion Disjoint those sets. Set.disjoint_left is exact no-common-member characterization of HOL DISJOINT; no individual-key inequality replacement. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
+},
+{
+  "lean_path": "Flapjack/Misc/BalancedMap/KeySets.lean",
+  "lean_name": "keySetEq",
+  "hol_path": "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml",
+  "hol_name": "key_set_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-b author source acceptance2026-10-02: HOL220-229 actual key-class Set equality iff comparator Equal, same good_cmp hypothesis and arbitrary keys; no key-equality antisymmetry or relation hypothesis. Standard predicate-set and Ordering constructor translations, no representation qualifier. Full original statements captured with no open hypotheses, local nonempty proof replayed; all four unrestricted Lean proofs kernel-check. These are source-reviewed theorem ports, not cross-language equivalence or full map/production correctness."
 }
 ]

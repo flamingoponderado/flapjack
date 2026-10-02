@@ -17,6 +17,7 @@
     {"bytes": 637, "out": "balanced_map_core_probe.out", "rows": 14, "sha256": "47179c9717b562452997b489ace337d08d9cbbb1332ac76280c8492572483101"},
     {"bytes": 1319, "out": "balanced_map_insert_probe.out", "rows": 17, "sha256": "c89c4aeddfc721f2bfa934cbc0343788444238cda056610468bf6bf8c366fbe9"},
     {"bytes": 1048, "out": "balanced_map_invariants_probe.out", "rows": 38, "sha256": "288a599836a0816e3ca0ac032050cfce4c68cd9db92095015fd82e823e24414a"},
+    {"bytes": 506, "out": "balanced_map_keysets_probe.out", "rows": 4, "sha256": "bb5b902eab154145172938dc4e14345cbb0e1a0a36a664fa20dc789ac6007f43"},
     {"bytes": 4192, "out": "balanced_map_rotations_probe.out", "rows": 30, "sha256": "af64dad135eb0d92dea3ab76fe0d058f484d9dd1e2b07456417b0c41ffc10e77"},
     {"bytes": 383, "out": "balanced_map_semantics_probe.out", "rows": 8, "sha256": "987274322d2426f62a9b64f652d0fbbd489b73e0812754ef413142b3641c57d5"},
     {"bytes": 5784, "out": "binary_ieee_real_carrier_source_probe.out", "rows": 28, "sha256": "7145b829f4bed66ced675507b779c15d232b44bee6fb67e74e0a3102688c76ab"},

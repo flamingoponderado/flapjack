@@ -4603,3 +4603,7 @@ These are full original helper theorems, not a bitmap decoder simulation.
 ## Literal HOL comparator predicate
 
 `comparison_good_cmp_probe.out` captures five original finite Bool comparator outcomes and the complete seven-clause predicate. Kernel fixtures accept the comparator equating every key and both Bool orders, and reject constant Less/Greater. This is exact predicate evidence, not a proof of lookup or insertion correctness.
+
+## Full balanced-map key-class laws
+
+`balanced_map_keysets_probe.out` captures all four original equivalence/nonempty/partition/equality theorem statements and rejects open HOL hypotheses. The local nonempty theorem is replayed with its original EXTENSION/metis proof; other statements come directly from the original theory. Lean checks the unrestricted counterparts using only good_cmp, not key equality antisymmetry. This does not establish lookup or insertion correctness.

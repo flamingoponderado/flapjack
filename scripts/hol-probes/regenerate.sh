@@ -4131,3 +4131,7 @@ run_probe balanced_map_semantics_probeScript.sml balanced_map_semantics_probe.ou
 run_probe comparison_good_cmp_probeScript.sml comparison_good_cmp_probe.out \
   gcmp_equal gcmp_less gcmp_greater gcmp_bool_order gcmp_bool_reverse gcmp_definition \
   "$repo_dir/HOL/src/finite_maps/comparisonScript.sml" "$cake_dir/compiler/backend"
+
+run_probe balanced_map_keysets_probeScript.sml balanced_map_keysets_probe.out \
+  kse_equiv kse_nonempty kse_partition kse_eq \
+  "$repo_dir/HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "$cake_dir/compiler/backend"

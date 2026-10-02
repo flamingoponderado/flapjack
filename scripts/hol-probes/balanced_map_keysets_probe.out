@@ -1,0 +1,4 @@
+kse_equiv=⊢ ∀cmp. good_cmp cmp ⇒ (∀k. k ∈ key_set cmp k) ∧ (∀k1 k2. k1 ∈ key_set cmp k2 ⇒ k2 ∈ key_set cmp k1) ∧ ∀k1 k2 k3. k1 ∈ key_set cmp k2 ∧ k2 ∈ key_set cmp k3 ⇒ k1 ∈ key_set cmp k3
+kse_nonempty=⊢ good_cmp cmp ⇒ key_set cmp k ≠ ∅
+kse_partition=⊢ ∀cmp k1 k2. good_cmp cmp ∧ key_set cmp k1 ≠ key_set cmp k2 ⇒ DISJOINT (key_set cmp k1) (key_set cmp k2)
+kse_eq=⊢ ∀cmp k1 k2. good_cmp cmp ⇒ (key_set cmp k1 = key_set cmp k2 ⇔ cmp k1 k2 = Equal)
