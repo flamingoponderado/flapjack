@@ -5775,6 +5775,17 @@ at the18 declarations that directly use those operations. Remaining state
 access/update/rounding equations have individual complete source comparisons.
 The source-derived root selection validates dependencies; it does not prove
 HOL-to-Lean equivalence, and the broader pending model is not integrated here.
+Full compiler CallArgs probe captures the entire original generic theorem application,140direct post-allocation guard EVALs and140same-input full theorem applications, matched in kernel across widths1/2/8/64/80 and all source constructors/three Call branches. Includes nested allocations and malformed ignored tail handlers. Lean theorem retains the full original post_alloc_conventions/perf=F premises and discharges every recursive hypothesis internally. No direct target EVAL/full original proof replay/cross-language equivalence is claimed. Selector: HOL_PROBE_ONLY=word_to_stack_call_args_compiler_probeScript.sml.
+### Full StackRemove simulation Skip/Halt/Alloc cases
+
+`stack_remove_comp_atoms_probeScript.sml` reproves the first three genuine
+`comp_correct` cases from the pinned original compiler, evaluator and full
+state relation. Every case keeps all four original premises and the
+existential extra clock/target poststate, same-result evaluation and complete
+result-dependent FFI/state-relation conclusion. Full binder types are captured.
+Halt permits either Word or Loc payloads; Alloc is excluded by the original
+relation's allocation flag and original non-Error premise. No target run is
+assumed. The remaining constructor cases and assembly are still required.
 
 ## Full original L3 FCLASS state observations
 

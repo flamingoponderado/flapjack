@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRefs
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveData
 import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
 import Flapjack.Compiler.Backend.LabToTarget.NopInsertEncoding
@@ -74,6 +75,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
 import Flapjack.Compiler.Backend.StackToLab.InitializedProduction
 import Flapjack.Compiler.Backend.StackRemove.InitCode
@@ -229,6 +231,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CallArgsCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnCallArgs
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundMono
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnRegisterBounds
