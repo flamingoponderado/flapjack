@@ -6016,3 +6016,5 @@ sptree_wf_definition_probeScript.sml captures the full original wf_def and254 co
 `stack_code_bitmaps_if_probe` captures full original evaluate_code_bitmaps, zero external hypotheses, and If specialization. Native proof preserves all failed reads/comparisons and uses genuine selected-branch IHs; statement evidence only.
 
 `stack_code_bitmaps_inst_probe` captures full original evaluate_code_bitmaps, zero external hypotheses, and Inst specialization. Native proof derives successful instruction fields from full inst_const and retains failure; statement evidence only.
+
+`stack_code_bitmaps_alloc_probe` captures full original evaluate_code_bitmaps, zero external hypotheses, and Alloc specialization. Native proof includes failed dispatch and GC/allocation errors via full alloc_const; statement evidence only.

@@ -67597,5 +67597,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 original421-440 genuine Inst case. Actual native evaluator equality sole premise, arbitrary instruction/fullstate/result. Successful dispatch derives oracle/code/bitmap preservation from original full inst_const; failure retains source state. Count0 proves complete original existential shift/codefold/bitmapappendflatten, not weakened field conjunction. No successful primitive/count/prefix/postrelation or target evaluation premise. Canonical native imported regs/fpRegs/store with same-module genuine state codec roundtrip; positive words/Type0 hosts, code Spt and List carriers retained. Full evaluator closure inherits reals_as_rational_cuts assumption, no new real rendering. Original full/Inst closed statements are statement evidence only, not runtime parity or fullassembly."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Alloc.lean",
+    "lean_name": "evaluateCodeBitmapsAlloc",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original421-440 genuine Alloc case. Actual evaluate equality sole premise, full arbitrary native state/result/register. Disabled useAlloc and invalid register dispatch return original state; actual allocation branch applies original full alloc_const to actual result, including GC/space failures. Derive code/bitmap/oracle fields and count0 for all three original existential conjuncts, no successful allocation/GC/count/prefix/target or postrelation assumption. CodeBitmaps definitionally full original shift/fold/appendflatten, native canonical regs/fpRegs/store owner and same-module genuine codec witness; Spt code/List unchanged, positive widths/Type0 hosts retained. Full evaluator closure inherits reals_as_rational_cuts assumption; no new real translation. Original full/Alloc closed statements are statement evidence only, not runtime parity/fullassembly."
   }
 ]
