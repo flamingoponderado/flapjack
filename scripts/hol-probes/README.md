@@ -4167,3 +4167,11 @@ with arbitrary suffixes. The matching `WordCseListOrderParity.lean` checks
 all 208 values/applications. This group does not establish external
 `TotOrd`/`good_cmp`, the balanced-map carrier or full CSE correctness.
 The production list-key comparator route is tracked separately.
+
+`stack_props_register_bounds_probeScript.sml` captures all three original
+register-bound definitions and evaluates 504 constructor/boundary cases across
+widths 1/64/80, including all expression/asm/program constructors, ignored FP
+fields, missing-return Call handlers, Set BitmapBase, StoreConsts minimum bound,
+and first-slot StackLoad/StackStore bounds. `StackPropsRegisterBoundsParity.lean`
+checks matching cases and additional arbitrary-width equations. These predicates
+are prerequisites of StackRemove correctness, not its semantic simulation.
