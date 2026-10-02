@@ -54182,5 +54182,37 @@
     "lean_name": "goodNegPrefNegBiasedPref",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.10): reg_allocProofScript.sml:3221-3232, k t free in HOL (explicit parameters, t : num list num_map as Spt (List Nat)); neg_biased_pref and handle_Subscript the exact tagged negBiasedPref/handleSubscript. Statement compared clause by clause with the source text; free variables and binder types re-elaborated in HOL (reg_allocProofTheory, show_types; scratch wip/st_types.sml), since [local] theorems are not exported by DB.fetch. EVERY is ∀ x ∈ l, MEM list membership, LUPDATE List.set, M_success/M_failure Exc.success/Exc.failure, record update `s with f := v` the Lean structure update, SORTED/no_clash/good_neg_pref the exact tagged holSorted/noClash/goodNegPref. Kernel-checked; standard axioms; no extra premise. good_ra_state is the exact tagged goodRaState, and node_tag/adj_ls subscripts read through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_fromAList",
+    "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
+    "lean_name": "sptWfFromAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.11): pinned HOL submodule, sptreeScript.sml:1507-1515 ∀ls. wf (fromAList ls) over the existing untagged fromAList rendering sptFromAList (fold of the tagged sptInsert) and the wf rendering sptWf (Bool, as in the accepted wf_insert/wf_union rows). Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_map",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptWfMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.11): pinned HOL submodule, sptreeScript.sml:1575-1578 ∀t f. wf (map f t) = wf t over the exact tagged map_def sptMap; independent payload types as in HOL. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "extract_color_st_ex_MAP_lem",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/ColourExtraction.lean",
+    "lean_name": "extractColorStExMapLem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.11): reg_allocProofScript.sml:2038-2046 [local], ∀ls s; EVERY (λ(k,v). v < LENGTH s.node_tag) ls as ∀ p ∈ ls, p.2 < length; st_ex_MAP over HOL's pattern lambda λ(k,v). do t <- node_tag_sub v; return (k, extract_tag t) od rendered as the Lean pattern lambda with bind/ret; result MAP (λ(k,v). (k, extract_tag (EL v s.node_tag))) ls. st_ex_MAP, node_tag_sub and extract_tag are the exact tagged stExMap/nodeTagSub/extractTag; node_tag subscripts read through HOL EL as the exact holEl. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "extract_color_succeeds",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/ColourExtraction.lean",
+    "lean_name": "extractColorSucceeds",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.11): reg_allocProofScript.sml:2048-2066, s ta free in HOL (explicit parameters, ta : num num_map as Spt Nat); premises good_ra_state s ∧ (∀x y. lookup x ta = SOME y ⇒ y < s.dim) ∧ wf ta; conclusion extract_color ta s = (M_success (map (λv. extract_tag (EL v s.node_tag)) ta), s) with extract_color, lookup, map and wf the exact tagged extractColor/sptLookup/sptMap/sptWf. good_ra_state is the exact tagged goodRaState; node_tag subscripts read through HOL EL as the exact holEl. Kernel-checked; standard axioms; no extra premise."
   }
 ]
