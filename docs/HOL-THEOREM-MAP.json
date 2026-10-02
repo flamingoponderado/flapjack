@@ -67819,15 +67819,6 @@
     "reviewer": "flapjack-sol3 full original source9780/9852 and exported fulltypes0hyp comparison: Retains all c/labs/ffis/p-prime/code/p binders, sole complete all_enc_ok guard and exact equality of FST/SND lengths for empty-accumulator extraction. Query and validity starts remain independent Nat. Exact native Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/positive-width BitVec carriers with own NeZero, fixed word8 bytes/nbytes, Nat record PCs/registers/unsigned offsets. Genuine proof consumes checked full getShmemInfo characterization, original successful-fetch count bound and original position accumulator law, using ordered list flatten/map/unzip/zip correspondence. No targetrun/simulation callback or total HD/EL default. Fresh original two fulltypes0hyp and seven paired original/native observations allT cover load/store membership, successful actual fetch, exit expression, paired lengths/empty code and wrong name-record pairing. Full generic statements and arbitrary-query actual consumers kernel checked. Evidence supplements source review, not cross-language equivalence or full initializer/compiler/machine correctness."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExtractLabels.lean",
-    "lean_name": "extractLabels",
-    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
-    "hol_name": "extract_labels_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol2 source comparison 2026-10-02: complete source771-787 five clauses on reviewed HolProg with shared positive word dimension. Both optional tuple arities, return/handler label-before-body ordering, duplicates and ignored NONE-return handler retained; target/immediate/instruction/mlstring payloads ignored exactly as source. No finite map/list-array/default substitution. Fresh original56 ordered list observations at widths1/8/64/80 independently kernel replayed."
-  },
-  {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapFrameUpdates.lean",
     "lean_name": "listUpdateWriteBitmapNotNil",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
