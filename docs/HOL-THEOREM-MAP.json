@@ -54705,6 +54705,94 @@
     "reviewer": "flapjack-sol source/fulltype comparison 2026-10-02 (36ez.3.4), original224-226: bool -> alpha word pair -> num -> beta # alpha prog -> beta # alpha prog. Independent beta remains generic Name:Type, not specialized to Nat sectionlabels. Literal pair output preserves name and calls full reviewed native comp on program with unchanged jump/bounds/pointer; no source safety/success/targetrun/result premises. Only positive BitVec width/NeZero dimension translation qualified; faithful HolProg and MlString/asm payloads unchanged. Generic kernel pair/name-preservation fixtures plus fresh original Bool/ListBool/Nat names at five word widths. Actual production route remains dependency-linked36ez.3, no pass simulation or end-to-end correctness asserted."
   },
   {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_fromAList",
+    "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
+    "lean_name": "sptWfFromAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.11): pinned HOL submodule, sptreeScript.sml:1507-1515 ∀ls. wf (fromAList ls) over the existing untagged fromAList rendering sptFromAList (fold of the tagged sptInsert) and the wf rendering sptWf (Bool, as in the accepted wf_insert/wf_union rows). Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_map",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptWfMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.11): pinned HOL submodule, sptreeScript.sml:1575-1578 ∀t f. wf (map f t) = wf t over the exact tagged map_def sptMap; independent payload types as in HOL. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "extract_color_st_ex_MAP_lem",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/ColourExtraction.lean",
+    "lean_name": "extractColorStExMapLem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.11): reg_allocProofScript.sml:2038-2046 [local], ∀ls s; EVERY (λ(k,v). v < LENGTH s.node_tag) ls as ∀ p ∈ ls, p.2 < length; st_ex_MAP over HOL's pattern lambda λ(k,v). do t <- node_tag_sub v; return (k, extract_tag t) od rendered as the Lean pattern lambda with bind/ret; result MAP (λ(k,v). (k, extract_tag (EL v s.node_tag))) ls. st_ex_MAP, node_tag_sub and extract_tag are the exact tagged stExMap/nodeTagSub/extractTag; node_tag subscripts read through HOL EL as the exact holEl. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "extract_color_succeeds",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/ColourExtraction.lean",
+    "lean_name": "extractColorSucceeds",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.11): reg_allocProofScript.sml:2048-2066, s ta free in HOL (explicit parameters, ta : num num_map as Spt Nat); premises good_ra_state s ∧ (∀x y. lookup x ta = SOME y ⇒ y < s.dim) ∧ wf ta; conclusion extract_color ta s = (M_success (map (λv. extract_tag (EL v s.node_tag)) ta), s) with extract_color, lookup, map and wf the exact tagged extractColor/sptLookup/sptMap/sptWf. good_ra_state is the exact tagged goodRaState; node_tag subscripts read through HOL EL as the exact holEl. Kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "colouring_satisfactory_cliques",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/ColouringTransport.lean",
+    "lean_name": "colouringSatisfactoryCliques",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.7): reg_allocProofScript.sml:1307-1325, ∀ls g (f:num->num) with the four premises in HOL order. Statement compared clause by clause with the source text. ALL_DISTINCT is List.Nodup, EVERY bounded membership, MAP List.map, colouring_satisfactory/is_clique/is_subgraph/no_clash/has_edge the exact tagged colouringSatisfactory/isClique/isSubgraph/noClash/hasEdge, adjacency/tag subscripts through HOL EL as the exact holEl. Kernel-checked; standard axioms (propext, Classical.choice, Quot.sound); no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "colouring_satisfactory_subgraph",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/ColouringTransport.lean",
+    "lean_name": "colouringSatisfactorySubgraph",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.7): reg_allocProofScript.sml:1483-1491, f g h free in HOL (explicit parameters, f : num -> α at colouring_satisfactory's polymorphic colour type). Statement compared clause by clause with the source text. ALL_DISTINCT is List.Nodup, EVERY bounded membership, MAP List.map, colouring_satisfactory/is_clique/is_subgraph/no_clash/has_edge the exact tagged colouringSatisfactory/isClique/isSubgraph/noClash/hasEdge, adjacency/tag subscripts through HOL EL as the exact holEl. Kernel-checked; standard axioms (propext, Classical.choice, Quot.sound); no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "no_clash_colouring_satisfactory",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/ColouringTransport.lean",
+    "lean_name": "noClashColouringSatisfactory",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.7): reg_allocProofScript.sml:3024-3041, adjls node_tag free in HOL (explicit parameters); EVERY (λn. n ≠ Stemp ∧ n ≠ Atemp) node_tag as ∀ n ∈ node_tag; the colouring λf. if f < LENGTH node_tag then extract_tag (EL f node_tag) else 0 verbatim with the exact tagged extractTag. Statement compared clause by clause with the source text. ALL_DISTINCT is List.Nodup, EVERY bounded membership, MAP List.map, colouring_satisfactory/is_clique/is_subgraph/no_clash/has_edge the exact tagged colouringSatisfactory/isClique/isSubgraph/noClash/hasEdge, adjacency/tag subscripts through HOL EL as the exact holEl. Kernel-checked; standard axioms (propext, Classical.choice, Quot.sound); no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "mk_graph_check_clash_tree",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/MkGraphCheckClashTree.lean",
+    "lean_name": "mkGraphCheckClashTree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.7): reg_allocProofScript.sml:1565-1920, ∀ct ta livelist s livelist' s' col live flive with the nine premises in HOL order. HOL sets are predicates: {x | in_clash_tree ct x} ∪ domain live is inClashTree ct x ∨ sptDomain live x; INJ ta (that set) (count (LENGTH s.adj_ls)) is expanded as INJ_DEF (range conjunct ta x < s.adj_ls.length, then injectivity), as in the accepted injUnion/mk_graph_succeeds rows; IMAGE f s is λy. ∃x. s x ∧ f x = y and set l is λy. y ∈ l, the set equalities being equalities of these predicates (as in check_partial_col_success). col o ta is Function.comp. Conclusion ∃livein flivein with check_clash_tree the exact tagged checkClashTree and both image equations. mk_graph, in_clash_tree and check_clash_tree are the exact tagged mkGraph/inClashTree/checkClashTree; good_ra_state is the exact tagged goodRaState. Statement compared clause by clause with the source text. ALL_DISTINCT is List.Nodup, EVERY bounded membership, MAP List.map, colouring_satisfactory/is_clique/is_subgraph/no_clash/has_edge the exact tagged colouringSatisfactory/isClique/isSubgraph/noClash/hasEdge, adjacency/tag subscripts through HOL EL as the exact holEl. Kernel-checked; standard axioms (propext, Classical.choice, Quot.sound); no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "do_reg_alloc_correct",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/DoRegAllocCorrect.lean",
+    "lean_name": "doRegAllocCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.12): reg_allocProofScript.sml:3235-3453, ∀alg scost k moves ct forced fs st ta fa n (alg : algorithm as Algorithm, scost : num num_map option as Option (Spt Nat), moves : (num # num # num) list, forced : (num # num) list, fs : num_set) with all thirteen curried premises in HOL order: mk_bij ct = (ta,fa,n), the eleven initial-state field equations (REPLICATE as List.replicate, F as false; stack unconstrained as in HOL) and EVERY (λ(x,y). in_clash_tree ct x ∧ in_clash_tree ct y) forced. Conclusion ∃spcol st' livein flivein with the five HOL conjuncts in order: do_reg_alloc ... (ta,fa,n) st = (M_success spcol, st'); check_clash_tree (sp_default spcol) ct LN LN = SOME (livein, flivein); ∀x. in_clash_tree ct x ⇒ x ∈ domain spcol ∧ the is_phy_var/is_stack_var if-chain (DIV as /); ∀x. x ∈ domain spcol ⇒ in_clash_tree ct x; EVERY (λ(x,y). sp_default spcol x = sp_default spcol y ⇒ x = y) forced. do_reg_alloc, mk_bij, sp_default, check_clash_tree, in_clash_tree, is_phy_var and is_stack_var are the exact tagged doRegAlloc/mkBij/spDefault/checkClashTree/inClashTree/isPhyVar/isStackVar; good_ra_state reasoning reads node tags through HOL EL as the exact holEl. Kernel-checked; standard axioms (propext, Classical.choice, Quot.sound); no extra premise. The Lean proof follows the HOL proof's phase structure (mk_graph, extend_graph, mk_tags, move filter, do_alloc1, assign_Atemps, assign_Stemps, extract_color, then mk_graph_check_clash_tree and check_clash_tree_same_dom); the forced-pair conjunct is derived from the satisfactory colouring of the forced edge rather than via no_clash, which yields the same conclusion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "reg_alloc_correct",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/DoRegAllocCorrect.lean",
+    "lean_name": "regAllocCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10): reg_allocProofScript.sml:3460-3490, ∀alg scost k moves ct forced fs with the EVERY forced in_clash_tree premise; conclusion ∃spcol livein flivein with reg_alloc ... = M_success spcol and the four do_reg_alloc_correct conjuncts in HOL order; reg_alloc, reg_alloc_aux and run_ira_state are the exact tagged regAlloc/regAllocAux/runIraState (initial arrays as List.replicate). Free HOL variables and binder types as in the source statement; renderings as in the accepted do_reg_alloc_correct row (sets as predicates, DIV as /, EVERY over pattern lambdas as bounded membership with pair projections, LN as Spt.ln). Kernel-checked; standard axioms; no extra premise. Through do_reg_alloc_correct (resp. reg_alloc_correct and linear_scan_reg_alloc_correct) the allocator state reads node tags and adjacency lists through HOL EL as the exact holEl."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "select_reg_alloc_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SelectRegAllocCorrect.lean",
+    "lean_name": "selectRegAllocCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.9): word_allocProofScript.sml:3371-3396, ∀alg spillcosts k heu_moves tree forced fs (alg : num) with EVERY (λ(r1,r2). in_clash_tree tree r1 ∧ in_clash_tree tree r2) forced; conclusion ∃spcol livein flivein with select_reg_alloc ... = M_success spcol, check_clash_tree (sp_default spcol) tree LN LN = SOME (livein, flivein), the in_clash_tree/domain/convention clause, the domain-support clause and the forced-pair EVERY, in HOL order. select_reg_alloc is the exact tagged selectRegAlloc; proved, as in HOL, from linear_scan_reg_alloc_correct and reg_alloc_correct. Free HOL variables and binder types as in the source statement; renderings as in the accepted do_reg_alloc_correct row (sets as predicates, DIV as /, EVERY over pattern lambdas as bounded membership with pair projections, LN as Spt.ln). Kernel-checked; standard axioms; no extra premise. Through do_reg_alloc_correct (resp. reg_alloc_correct and linear_scan_reg_alloc_correct) the allocator state reads node tags and adjacency lists through HOL EL as the exact holEl."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NavigationBounds.lean",
     "lean_name": "secLocToPc_bound",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
