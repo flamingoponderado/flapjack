@@ -41,6 +41,8 @@ import Flapjack.Compiler.Backend.StackRemove.InitMemory
 import Flapjack.Test.LabToTargetByteLengthsParity
 import Flapjack.Test.LabPropsLabelSetsParity
 import Flapjack.Test.LabToTargetWordLocationParity
+import Flapjack.Compiler.Backend.LabToTarget.WordLocValByte
+import Flapjack.Test.LabToTargetWordLocValByteParity
 import Flapjack.Test.LabToTargetFetchValidityParity
 import Flapjack.Compiler.Backend.Semantics.TargetProps.SequenceLaws
 import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionUnique

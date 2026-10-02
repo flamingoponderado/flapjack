@@ -1,0 +1,30 @@
+word_loc_byte_full_definition=∀p labs m a be.
+  word_loc_val_byte p labs m a be =
+  case word_loc_val p labs (m (byte_align a)) of
+    NONE => NONE
+  | SOME w => SOME (get_byte a w be)
+word_loc_byte_full_definition_types=∀(p :α word) (labs :num sptree$num_map sptree$num_map)
+    (m :α word -> α word_loc) (a :α word) (be :bool).
+  word_loc_val_byte p labs m a be =
+  case word_loc_val p labs (m (byte_align a)) of
+    (NONE :α word option) => (NONE :word8 option)
+  | SOME w => SOME (get_byte a w be)
+word_loc_byte_word32_le=word_loc_val_byte 0w LN (λa. Word 0x44332211w) 1w F = SOME 34w
+word_loc_byte_word32_aligned_read=word_loc_val_byte 0w LN (λa. if a = 0w then Word 0x44332211w else Loc 7 3) 1w
+  F = SOME 34w
+word_loc_byte_word32_be=word_loc_val_byte 0w LN (λa. Word 0x44332211w) 1w T = SOME 51w
+word_loc_byte_loc32_hit=word_loc_val_byte 256w (insert 7 (insert 3 291 LN) LN) (λa. Loc 7 3) 0w F =
+SOME 35w
+word_loc_byte_loc32_outer_miss=word_loc_val_byte 0w LN (λa. Loc 7 3) 0w F = NONE
+word_loc_byte_loc32_inner_miss=word_loc_val_byte 0w (insert 7 LN LN) (λa. Loc 7 3) 0w F = NONE
+word_loc_byte_word1_le=word_loc_val_byte 0w LN (λa. Word 1w) 1w F = SOME 0w
+word_loc_byte_word1_be=word_loc_val_byte 0w LN (λa. Word 1w) 1w T = SOME 1w
+word_loc_byte_word1_symbolic_alignment=word_loc_val_byte 0w LN (λa. Word a) 1w T =
+SOME
+  (n2w
+     (BITS 0 0
+        (if numeral_bit$iMOD_2EXP (LOG2 0) (BIT1 ZERO) < BIT1 ZERO then
+           NUMERAL
+             (numeral$iSUB T (BIT1 ZERO)
+                (numeral_bit$iMOD_2EXP (LOG2 0) (BIT1 ZERO)))
+         else 0)))
