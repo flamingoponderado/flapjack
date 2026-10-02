@@ -1,0 +1,17 @@
+offset_monotonic_type=:(α asm -> β list) ->
+α asm_config -> γ word -> γ word -> α asm -> α asm -> bool
+enc_ok_type=:α asm_config -> bool
+target_ok_type=:(α, β, γ) target -> bool
+offset_monotonic_full=T
+enc_ok_full=T
+target_ok_full=T
+signed_offsets_1=T
+signed_offsets_2=T
+signed_offsets_8=T
+signed_offsets_32=T
+signed_offsets_64=T
+signed_offsets_80=T
+offset_constant_payload=T
+enc_constant_valid=T
+enc_empty_invalid=T
+enc_alignment_invalid=T

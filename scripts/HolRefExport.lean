@@ -1,3 +1,8 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRaise
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp
 import Flapjack.Compiler.Backend.StackRemove.CopyLoop
@@ -5,6 +10,7 @@ import Flapjack.Compiler.Backend.StackLang.InstBuilders
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStateWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRegisterWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileListProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileLookupProps
 import Flapjack.Compiler.Backend.StackRemove.StoreAddress
@@ -28,6 +34,15 @@ import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapDecode
+import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapSentinelLength
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapBitStructure
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWordLemmas
 import Flapjack.Compiler.Backend.StackProps.RegisterBounds
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder

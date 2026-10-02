@@ -1,0 +1,14 @@
+no_install_type=:α sec list -> bool
+no_share_mem_inst_type=:α sec list -> bool
+no_install_or_no_share_mem_type=:α sec list -> ffiname list -> bool
+no_install_full=T
+no_share_mem_inst_full=T
+no_install_or_no_share_mem_full=T
+no_install_empty=T
+no_share_mem_empty=T
+install_excluded=T
+shared_excluded=T
+safety_empty_any_names=T
+safety_install_extcall=T
+safety_install_shared_rejected=T
+safety_shared_any_names=T
