@@ -1,7 +1,8 @@
 import Flapjack.RiscV.L3.Defs.MMU.Exception
+import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
+import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
 import Flapjack.Misc.Words.Formatting
 import Flapjack.Misc.Words.Replicate
-import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
 import Flapjack.Compiler.Backend.LabToTarget.ZeroLabelExistence
 import Flapjack.Misc.StateTransformer
 import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness

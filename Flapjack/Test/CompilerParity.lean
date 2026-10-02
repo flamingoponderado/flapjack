@@ -1,9 +1,10 @@
+import Flapjack.Test.LabToTargetSecPosZeroParity
+import Flapjack.Test.LabToTargetPaddingCodeLabelsParity
+import Flapjack.Test.LabToTargetPaddingLabelsParity
 import Flapjack.Test.NumericFormattingParity
 import Flapjack.Test.WordReplicateParity
 import Flapjack.Test.L3RiscvMaddParity
-import Flapjack.Test.LabToTargetPaddingLabelsParity
 import Flapjack.Test.LabToTargetUpdatePadEndingParity
-import Flapjack.Test.LabToTargetPaddingCodeLabelsParity
 import Flapjack.Test.LabToTargetZeroLabelExistenceParity
 import Flapjack.Test.BackendRestrictZeroParity
 import Flapjack.Test.L3RiscvSqrtParity
