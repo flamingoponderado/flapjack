@@ -5063,3 +5063,7 @@ run_probe stack_remove_memoryreads_probeScript.sml stack_remove_memoryreads_prob
 run_probe stack_remove_wordexp_simulation_probeScript.sml stack_remove_wordexp_simulation_probe.out \
   we_source we_statement we_types we_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_memorywrite_probeScript.sml stack_remove_memorywrite_probe.out \
+  mw_source mw_statement mw_types mw_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
