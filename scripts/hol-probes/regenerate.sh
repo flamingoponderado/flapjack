@@ -5636,6 +5636,13 @@ run_probe lab_to_target_computed_label_positions_probeScript.sml lab_to_target_c
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_program_byte_lengths_probeScript.sml lab_to_target_program_byte_lengths_probe.out \
+  LENGTH_prog_to_bytes LENGTH_prog_to_bytes_types LENGTH_prog_to_bytes_hypotheses \
+  LENGTH_prog_to_bytes2 LENGTH_prog_to_bytes2_types LENGTH_prog_to_bytes2_hypotheses \
+  physical_sum independent_fold label_zero bad_annotation bad_label empty \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_encoding_validity_closure_probeScript.sml lab_to_target_encoding_validity_closure_probe.out \
   all_enc_ok_append all_enc_ok_append_types all_enc_ok_append_hypotheses \
   all_enc_ok_labs_mono all_enc_ok_labs_mono_types all_enc_ok_labs_mono_hypotheses \

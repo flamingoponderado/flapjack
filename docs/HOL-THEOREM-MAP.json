@@ -67273,5 +67273,23 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-02 .4.12 genuine If case original292-305 of comp_correct134ff. Actual positive-width native HolProg.ite comparison/register/reg-or-imm/two branches and complete22field StackSem state/configuration/FFI. Original evaluate equality/nonError/literalstateRel are sole source premises; added firstIH/secondIH are ordinary comp-component induction hypotheses for exactly the two subprograms, universally over info/source/target/result/poststate, not a wholepass predicate or supplied targetresult. BranchIH unfolds exactly original simulation premise and comp existential component. SimulationResult unfolds literal existential clock/targetstate/stackspace, postrelation, actual native evaluation at target.clock+clock, same source result/target stackSpace update, original nonTimeOut/nonHalt Word2 guard. Both compTop/comp conclusion components retained; compTop equals comp for If. Full state relation derives target register and immediate reads at every clock; actual wordSemWordCmp determines source branch. Success comparison true/false uses corresponding branchIH; missing operands/comparison-none contradict original nonError. Returned targetexecution/postrelation/guard/extra clock are derived, not assumed as new source premises. Canonical regs/fpRegs/store relation qualifier, actual imported stateowner and same-module genuine codec roundtrips; code remains native Spt and lists remain lists. Full native evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts; this word comparison proof introduces no real rendering. This is one genuine recursive case, not whole comp_correct/compile_semantics/runtime correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ProgramByteLengths.lean",
+    "lean_name": "allEncOk_foldSecLength",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "LENGTH_prog_to_bytes",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6270 retains arbitrary Nat fold start n independently of encoding start pos and complete original all_enc_ok guard; physical byte length plus n conclusion. Section recorded-length/physical-byte agreement derived from head validity, no extra annotation consistency premise. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or carrier specialization. Fresh original full statements/types with zero open hypotheses and six original/native cases; full generic binders and actual arbitrary-start consumer. Kernel/oracle evidence supplements source review and does not establish cross-language equivalence or full compiler simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ProgramByteLengths.lean",
+    "lean_name": "allEncOk_lengthProgToBytes",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "LENGTH_prog_to_bytes2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: Source6288 preserves complete all_enc_ok guard and exact physical prog_to_bytes length equals section line-length sum. Source fulltype confirms unused n:beta; retained explicitly as generic independent binder with no specialization or omission. No successful output or byte-consistency hypothesis added. Native original constructors, opaque mlstring, positive-width words and canonical nested numeric Spt reviewed; no fmap translation or carrier specialization. Fresh original full statements/types with zero open hypotheses and six original/native cases; full generic binders and actual arbitrary-start consumer. Kernel/oracle evidence supplements source review and does not establish cross-language equivalence or full compiler simulation."
   }
 ]
