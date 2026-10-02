@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Flat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Instructions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnAllocArgs
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnLabels

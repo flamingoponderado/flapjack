@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackAllocFlatParity
 import Flapjack.Test.WordToStackAllocInstructionsParity
 import Flapjack.Test.WordToStackReturnAllocArgsParity
 import Flapjack.Test.WordToStackReturnLabelsParity
