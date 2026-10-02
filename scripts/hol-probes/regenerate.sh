@@ -5692,3 +5692,7 @@ run_probe word_to_stack_list_update_slices_probeScript.sml word_to_stack_list_up
 run_probe stack_remove_find_code_probeScript.sml stack_remove_find_code_probe.out \
   find_code_lemma_statement find_code_lemma_proved find_code_lemma2_statement find_code_lemma2_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_jump_lower_probeScript.sml stack_remove_comp_jump_lower_probe.out \
+  cc_jump_lower_statement cc_jump_lower_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

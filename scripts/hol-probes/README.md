@@ -6168,3 +6168,5 @@ Optional LLOOKUP probe captures six complete original closed re-exported stateme
 word_to_stack_list_update_slices_probeScript.sml replays nine complete original Word-to-Stack slice/single-update proofs (146–173, 524–562) and captures 245 independent complete outputs, including empty/duplicate lists, ignored writes and 70-bit indices. The native kernel/runtime fixtures are in WordToStackListUpdateSlicesParity.lean; this list-only section does not use total HD/EL.
 
 `stack_remove_find_code_probeScript.sml` replays both complete original local callee lookup proofs (231–255), retaining arbitrary erased register and the full destination family. Its four rows record both original statements and kernel proof success.
+
+`stack_remove_comp_jump_lower_probeScript.sml` replays the literal original complete JumpLower case with actual source-guarded callee IH and original local register/dec-clock helpers, without assuming full `comp_correct`. Two rows record the scoped statement and proof success.

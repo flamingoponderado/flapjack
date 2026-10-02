@@ -67095,5 +67095,20 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol original231-255 source comparison: full stateRelHOL actual imported state carrier, canonical regs/fpRegs/store roundtrip reexport, arbitrary positive-width WordLocW, native Spt code unchanged. Same destination INL/INR guard and actual source findCode success; target lookup and regBound established conclusions. Arbitrary erasure register retained without alias/bound premise in lemma2. Native findCode matches only Loc(label,0); all word/none/nonzero-offset cases excluded by actual source success. Literal original proof replay and Lean kernel checks; no carrier duplicate or target-run hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/JumpLower.lean",
+    "lean_name": "compCorrectJumpLower",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-02 bead flapjack-sol-remove-jumplower: original comp_correct JumpLower1744-1765/full1481-1493. Same four source run/nonError/full26stateRel/regBound premises; only original actual source Word operands/lower comparison/Spt callee lookup/nonzero clock guarded body IH, retaining arbitrary result/poststate/target/pointer/bounds/jump quantifiers. Invalid source reads/lookup/bad return excluded by original nonError. Untaken branch preserves full relation; timeout proves FFI equality; callee uses codeRel-derived compiled lookup/body bound, stateRelDecClock and boosted-clock subtraction from source nonzero and clock equality. No target execution/lookup/postrelation assumption added. All result alternatives retained. Canonical owning-state codec reexport, regs/fpRegs/store qualified maps, Spt code/List stack unchanged, positive words/Type0 hosts, inherits reals_as_rational_cuts from faithful native evaluator/relation. Fresh scoped original HOL statement with same guarded IH, literal original case tactic body plus standalone strip prefix and original local getVar/decClock helpers; no full comp_correct assumed."
   }
 ]
