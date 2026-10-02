@@ -62489,5 +62489,21 @@
     "lean_name": "stubNames",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-b source comparison 2026-10-02 against original642-644: entire unit argument, singleton gc_stub_location/_GC pair retained; actual reviewed StackLang location evaluates4; exact native implode bytes. Full original unit->(num#mlstring)list type/equation captured; native MlString character list, no String carrier translation or additional premise. Original full values/bytes/count observations match kernel fixtures. Actual artifact-format symbol dispatch remains separately tracked parent production wiring; source table alone is not executed-route completion."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean",
+    "lean_name": "allocCollectorTransport",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal factoring of original Alloc9410-9558, no standalone HOL declaration. Existing actual native allocSim chooses the source permutation and proves result/frame equality from intermediate original scoped-cut relations and injectivity. Normal return derives full union-cut scoped locals and domain via allocNormalLocalsDomain; no target-run/result or desired post-relation premise. Depends on delivered flapjack-sola-alloc.2. Full six-premise SSA Alloc assembly remains open on flapjack-sola-alloc."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean",
+    "lean_name": "allocNonErrorShape",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific exhaustive actual alloc branch factoring from original Alloc9558-9606, no standalone HOL declaration. Excluding actual Error derives NONE or actual NotEnoughSpace with flush-empty locals; no target outcome or desired locals premise. Used to discharge full SSA result-sensitive failure branch. Full six-premise Alloc assembly remains open on flapjack-sola-alloc."
   }
 ]

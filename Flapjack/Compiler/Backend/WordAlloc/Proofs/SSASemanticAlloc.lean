@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
 
 namespace Flapjack.Compiler.Backend.WordAlloc
@@ -255,5 +256,65 @@ theorem allocRestoreLocals {width : Nat} [NeZero width] {C F : Type}
   generalize evaluated : WordSemStateFiniteExact.evaluate move target = run at restored ⊢
   rcases run with ⟨result,targetOut⟩
   exact ⟨restored.1,restored.2.1,restored.2.2.1⟩
+
+/-- Flapjack-specific original Alloc9410-9558 collector transport factoring.
+The existing native allocation simulation chooses the source permutation;
+actual results/frame agree, and normal return derives scoped locals and domain.
+No target allocation outcome or desired post-relation is assumed. There is no
+standalone HOL declaration; full SSA Alloc assembly remains open. -/
+theorem allocCollectorTransport {width : Nat} [NeZero width] {C F : Type}
+    (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat)
+    (first second : Spt Unit) (amount : BitVec width)
+    (frame : Flapjack.WordAlloc.wordStateEqRel source target)
+    (injective : ∀ a b, (sptDomain first a ∨ sptDomain second a) →
+      (sptDomain first b ∨ sptDomain second b) →
+      optionLookup ssa a = optionLookup ssa b → a = b)
+    (firstRelated : Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
+      (sptDomain first) source.locals target.locals)
+    (secondRelated : Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
+      (sptDomain second) source.locals target.locals) :
+    ∃ perm,
+      let sourceRun := WordSemStateFiniteExact.alloc amount (first,second)
+        {source with permute := perm};
+      let targetRun := WordSemStateFiniteExact.alloc amount
+        (Flapjack.WordAlloc.applyNummapsKey (optionLookup ssa) (first,second)) target;
+      sourceRun.1 ≠ some .error → sourceRun.1 = targetRun.1 ∧
+        Flapjack.WordAlloc.wordStateEqRel sourceRun.2 targetRun.2 ∧
+        (sourceRun.1 = none →
+          Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
+            (sptDomain (sptUnion first second)) sourceRun.2.locals targetRun.2.locals ∧
+          sptDomain sourceRun.2.locals = sptDomain (sptUnion first second)) := by
+  obtain ⟨perm,transport⟩ := Flapjack.WordAlloc.allocSim source target
+    (optionLookup ssa) first second amount (sptUnion first second) []
+    frame injective firstRelated secondRelated
+  refine ⟨perm,?_⟩
+  dsimp only
+  intro nonError
+  obtain ⟨result,shared,locals⟩ := transport nonError
+  refine ⟨result,shared,?_⟩
+  intro normal
+  have related : Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
+      (sptDomain (sptUnion first second))
+      (WordSemStateFiniteExact.alloc amount (first,second) {source with permute := perm}).2.locals
+      (WordSemStateFiniteExact.alloc amount
+        (Flapjack.WordAlloc.applyNummapsKey (optionLookup ssa) (first,second)) target).2.locals := by
+    simpa only [normal,Flapjack.WordAlloc.applyColourLocals] using locals
+  refine ⟨related,?_⟩
+  simpa only [sptDomain_sptUnion] using
+    allocNormalLocalsDomain amount first second {source with permute := perm} normal
+
+/-- Flapjack-specific exhaustive raw Alloc branch fact, used by the original
+9558-9606 SSA failure branch. Error exemption leaves only normal return or
+NotEnoughSpace, whose actual flush empties locals. No target outcome or locals
+shape is assumed; no standalone HOL declaration or full Alloc tag exists. -/
+theorem allocNonErrorShape {width : Nat} [NeZero width] {C F : Type}
+    (amount : BitVec width) (names : WordLangCutsetsHOL)
+    (source : WordSemStateFiniteExact width C F)
+    (nonError : (WordSemStateFiniteExact.alloc amount names source).1 ≠ some .error) :
+    (WordSemStateFiniteExact.alloc amount names source).1 = none ∨
+      ((WordSemStateFiniteExact.alloc amount names source).1 = some .notEnoughSpace ∧
+        (WordSemStateFiniteExact.alloc amount names source).2.locals = .ln) := by
+  unfold WordSemStateFiniteExact.alloc at nonError ⊢
+  repeat' split <;> simp_all [WordSemStateFiniteExact.flushState]
 
 end Flapjack.Compiler.Backend.WordAlloc
