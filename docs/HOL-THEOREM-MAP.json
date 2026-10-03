@@ -75374,5 +75374,32 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.152): Original derived semantics_make_init10524-10537 full statement and all original free variable types freshly queried/captured from HOL, 0hyp/kernel T. Every original machine/source/config/FFI/memory/domain/oracle/code/labels/clock/MMIO/name/buffer binder and all sixteen original guards retained: leading encoder_correct, fourteen full initializer guards, final source-initializer semantics!=Fail. Positive word dimension with NeZero, independent machine S/projection Q/FFI F Type, concrete Config, fixed byte8/FP64 and exact MlString. Original independent gamma value type of good_code config LN is explicitly retained as arbitrary G; a same-file unconditional full empty-tree guard equivalence derives the Nat-normalized guard consumed by accepted initializer helper. Both empty label domains vanish; every remaining goodCode conjunct is identical, so no arbitrary nonempty carrier specialization is used. Prior full151 declaration now locally documents its vacuous empty-LN normalization; its elaborated type/body and all prior manifest records remain unchanged. Exact source FFIname ExtCall existence predicate is constructor-tested Boolean filtering; all source list order/duplicates and full MMIO/buffer arithmetic are unchanged. Accepted full151 seventeen-case stateRel assembly and unconditional oracleTie_makeInit derive real initOk witnesses. Actual full31 machineSemEqSem derives exact singleton target machine behavior equality to complete actual initialized source semantics; initial.ffi=ffi is definitional, not a supplied hypothesis. No successful target run/simulation/desired initialized relation/default/clock-bound premise. Existing canonical total source conventions and inherited FP reals_as_rational_cuts (SOUNDNESS item8) are unchanged; no stronger real-number or cross-language equivalence claim. Full filtering/final semantics_compile composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/DecodeBits.lean",
+    "lean_name": "boolify8",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "boolify8_def",
+    "hol_line": 4536,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-03: BL(8) at line4536 invokes Import.sml443-450 bitify_boolify; bitstringLib406-412/482-503 generates word8 to right-associated 8-Bool product, descending word_bit(width-1-j,w). Lean fixed BitVec 8/getLsbD literal full tuple, arbitrary w, no extra hypotheses. Original DB.fetch full equation/type/zero hypotheses/full quantified bitorder proof captured in l3_boolify_provenance_probe.out. Generic fullEquation kernel check. Source/body comparison complete; fleet publication tracked separately on the three open beads."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/DecodeBits.lean",
+    "lean_name": "boolify32",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "boolify32_def",
+    "hol_line": 12179,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-03: BL(32) at line12179 invokes Import.sml443-450 bitify_boolify; bitstringLib406-412/482-503 generates word32 to right-associated 32-Bool product, descending word_bit(width-1-j,w). Lean fixed BitVec 32/getLsbD literal full tuple, arbitrary w, no extra hypotheses. Original DB.fetch full equation/type/zero hypotheses/full quantified bitorder proof captured in l3_boolify_provenance_probe.out. Generic fullEquation kernel check. Source/body comparison complete; fleet publication tracked separately on the three open beads."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/DecodeBits.lean",
+    "lean_name": "boolify16",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "boolify16_def",
+    "hol_line": 20507,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-03: BL(16) at line20507 invokes Import.sml443-450 bitify_boolify; bitstringLib406-412/482-503 generates word16 to right-associated 16-Bool product, descending word_bit(width-1-j,w). Lean fixed BitVec 16/getLsbD literal full tuple, arbitrary w, no extra hypotheses. Original DB.fetch full equation/type/zero hypotheses/full quantified bitorder proof captured in l3_boolify_provenance_probe.out. Generic fullEquation kernel check. Source/body comparison complete; fleet publication tracked separately on the three open beads."
   }
 ]
