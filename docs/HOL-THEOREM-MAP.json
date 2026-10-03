@@ -82058,7 +82058,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack private map proof plumbing, no independent HOL declaration; generic lookup extensionality, map/update commutation, executed-update transfer to reviewed equality neutrality, or pointwise field validity."
+    "reviewer": "Counterpart: extensionality direction of HOL `FLOOKUP_EXT` (`HOL/src/finite_maps/finite_mapScript.sml:1117`, equivalently `fmap_eq_flookup`); Lean statement is the canonical `HolFiniteMapExact` translation of HOL `|->`, so pointwise `lookup` equality is the image of HOL `FLOOKUP` equality. Private proof plumbing over the translated carrier, deliberately untagged (not claimed as an exact original declaration)."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAssign.lean",
@@ -82066,7 +82066,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack private map proof plumbing, no independent HOL declaration; generic lookup extensionality, map/update commutation, executed-update transfer to reviewed equality neutrality, or pointwise field validity."
+    "reviewer": "Counterpart: HOL `FMAP_MAP2_FUPDATE` (`HOL/src/finite_maps/finite_mapScript.sml:2332`): `FMAP_MAP2 f (m |+ (x,v)) = (FMAP_MAP2 f m) |+ (x, f (x,v))`, with `map2`=`FMAP_MAP2` and `update`=`|+` through the canonical `HolFiniteMapExact` translation of HOL `|->`. The `BEq α`/`LawfulBEq α` hypotheses are the decidable-equality adaptation absent from HOL's total `|+`; deliberately untagged, not claimed exact."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAssign.lean",
@@ -82074,7 +82074,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack private map proof plumbing, no independent HOL declaration; generic lookup extensionality, map/update commutation, executed-update transfer to reviewed equality neutrality, or pointwise field validity."
+    "reviewer": "Executed-update neutrality transferred from reviewed HOL generic equality-update neutrality `FupdateElim2.fupdateElim2` through lawful fixed `MlS` equality; private proof plumbing, no standalone original, untagged."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAssign.lean",
@@ -82082,7 +82082,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack private map proof plumbing, no independent HOL declaration; generic lookup extensionality, map/update commutation, executed-update transfer to reviewed equality neutrality, or pointwise field validity."
+    "reviewer": "Updated-map validity (`feveryHOL`) transport for the executed `HolFiniteMapExact.update`; private pointwise proof plumbing, no standalone original, untagged."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ImplementsIntro.lean",
@@ -82286,7 +82286,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack canonical state/map proof plumbing, no independent HOL declaration. Full owning-carrier roundtrip, lookup extensionality/map-update/pointwise validity, overwritten-local-context neutrality, or uniqueness of HOL key equality decisions; none introduces a public simulation/compatibility premise."
+    "reviewer": "Counterpart: extensionality direction of HOL `FLOOKUP_EXT` (`HOL/src/finite_maps/finite_mapScript.sml:1117`, equivalently `fmap_eq_flookup`); Lean statement is the canonical `HolFiniteMapExact` translation of HOL `|->`, so pointwise `lookup` equality is the image of HOL `FLOOKUP` equality. Private proof plumbing over the translated carrier, deliberately untagged (not claimed as an exact original declaration)."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDec.lean",
@@ -82294,7 +82294,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack canonical state/map proof plumbing, no independent HOL declaration. Full owning-carrier roundtrip, lookup extensionality/map-update/pointwise validity, overwritten-local-context neutrality, or uniqueness of HOL key equality decisions; none introduces a public simulation/compatibility premise."
+    "reviewer": "Counterpart: HOL `FMAP_MAP2_FUPDATE` (`HOL/src/finite_maps/finite_mapScript.sml:2332`): `FMAP_MAP2 f (m |+ (x,v)) = (FMAP_MAP2 f m) |+ (x, f (x,v))`, with `map2`=`FMAP_MAP2` and `update`=`|+` through the canonical `HolFiniteMapExact` translation of HOL `|->`. The `BEq α`/`LawfulBEq α` hypotheses are the decidable-equality adaptation absent from HOL's total `|+`; deliberately untagged, not claimed exact."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDec.lean",
@@ -82302,7 +82302,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack canonical state/map proof plumbing, no independent HOL declaration. Full owning-carrier roundtrip, lookup extensionality/map-update/pointwise validity, overwritten-local-context neutrality, or uniqueness of HOL key equality decisions; none introduces a public simulation/compatibility premise."
+    "reviewer": "Updated-map validity (`feveryHOL`) transport for the executed `HolFiniteMapExact.update`; private pointwise proof plumbing, no standalone original, untagged."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDec.lean",
@@ -84084,7 +84084,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Lookup extensionality."
+    "reviewer": "Counterpart: extensionality direction of HOL `FLOOKUP_EXT` (`HOL/src/finite_maps/finite_mapScript.sml:1117`, equivalently `fmap_eq_flookup`); Lean statement is the canonical `HolFiniteMapExact` translation of HOL `|->`, so pointwise `lookup` equality is the image of HOL `FLOOKUP` equality. Private proof plumbing over the translated carrier, deliberately untagged (not claimed as an exact original declaration)."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDecCall.lean",
@@ -84092,7 +84092,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Internal map2/update commutation."
+    "reviewer": "Counterpart: HOL `FMAP_MAP2_FUPDATE` (`HOL/src/finite_maps/finite_mapScript.sml:2332`): `FMAP_MAP2 f (m |+ (x,v)) = (FMAP_MAP2 f m) |+ (x, f (x,v))`, with `map2`=`FMAP_MAP2` and `update`=`|+` through the canonical `HolFiniteMapExact` translation of HOL `|->`. The `BEq α`/`LawfulBEq α` hypotheses are the decidable-equality adaptation absent from HOL's total `|+`; deliberately untagged, not claimed exact."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDecCall.lean",
@@ -84100,7 +84100,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Internal updated-map validity."
+    "reviewer": "Updated-map validity (`feveryHOL`) transport for the executed `HolFiniteMapExact.update`; private pointwise proof plumbing, no standalone original, untagged."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDecCall.lean",
@@ -84567,7 +84567,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Lookup extensionality."
+    "reviewer": "Counterpart: extensionality direction of HOL `FLOOKUP_EXT` (`HOL/src/finite_maps/finite_mapScript.sml:1117`, equivalently `fmap_eq_flookup`); Lean statement is the canonical `HolFiniteMapExact` translation of HOL `|->`, so pointwise `lookup` equality is the image of HOL `FLOOKUP` equality. Private proof plumbing over the translated carrier, deliberately untagged (not claimed as an exact original declaration)."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
@@ -84575,7 +84575,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Internal map2/update commutation."
+    "reviewer": "Counterpart: HOL `FMAP_MAP2_FUPDATE` (`HOL/src/finite_maps/finite_mapScript.sml:2332`): `FMAP_MAP2 f (m |+ (x,v)) = (FMAP_MAP2 f m) |+ (x, f (x,v))`, with `map2`=`FMAP_MAP2` and `update`=`|+` through the canonical `HolFiniteMapExact` translation of HOL `|->`. The `BEq α`/`LawfulBEq α` hypotheses are the decidable-equality adaptation absent from HOL's total `|+`; deliberately untagged, not claimed exact."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
@@ -84583,7 +84583,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Lawful MlS update agrees internally with HOL equality, existing binding update neutral."
+    "reviewer": "Executed-update neutrality transferred from reviewed HOL generic equality-update neutrality `FupdateElim2.fupdateElim2` through lawful fixed `MlS` equality; private proof plumbing, no standalone original, untagged."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
@@ -84591,7 +84591,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Internal updated-map validity."
+    "reviewer": "Updated-map validity (`feveryHOL`) transport for the executed `HolFiniteMapExact.update`; private pointwise proof plumbing, no standalone original, untagged."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Config.lean",
@@ -86280,7 +86280,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+    "reviewer": "Counterpart: extensionality direction of HOL `FLOOKUP_EXT` (`HOL/src/finite_maps/finite_mapScript.sml:1117`, equivalently `fmap_eq_flookup`); Lean statement is the canonical `HolFiniteMapExact` translation of HOL `|->`, so pointwise `lookup` equality is the image of HOL `FLOOKUP` equality. Private proof plumbing over the translated carrier, deliberately untagged (not claimed as an exact original declaration)."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
@@ -86288,7 +86288,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+    "reviewer": "Updated-map validity (`feveryHOL`) transport for the executed `HolFiniteMapExact.update`; private pointwise proof plumbing, no standalone original, untagged."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",

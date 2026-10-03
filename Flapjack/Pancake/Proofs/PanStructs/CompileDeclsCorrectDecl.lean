@@ -43,7 +43,11 @@ private theorem evalConverterGlobals {width : Nat} {σ : Type} [NeZero width]
     (convertStateExact context source)
     (fun address => Classical.propDecidable (source.memaddrs address)) expression
     (convertCodeExact { context with globals := globals } source.code)
-/-- Flapjack infrastructure for the Decl minor; no independent HOL declaration. -/
+/-- Lookup extensionality for proof plumbing. Counterpart: the extensionality
+direction of HOL `FLOOKUP_EXT` (`HOL/src/finite_maps/finite_mapScript.sml:1117`,
+equivalently `fmap_eq_flookup`), read through the canonical `HolFiniteMapExact`
+translation of HOL `|->`; the statement uses `HolFiniteMapExact.ext` on pointwise
+`lookup` equality. Private plumbing over the translated carrier, so untagged. -/
 private theorem mapExt {α β : Type} (a b : HolFiniteMapExact α β)
     (h : ∀ key, a.lookup key = b.lookup key) : a = b :=
   HolFiniteMapExact.ext (funext h)

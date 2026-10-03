@@ -25,7 +25,11 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
 
 
-/-- Lookup extensionality for proof plumbing; no independent HOL original. -/
+/-- Lookup extensionality for proof plumbing. Counterpart: the extensionality
+direction of HOL `FLOOKUP_EXT` (`HOL/src/finite_maps/finite_mapScript.sml:1117`,
+equivalently `fmap_eq_flookup`), read through the canonical `HolFiniteMapExact`
+translation of HOL `|->`; pointwise `lookup` equality is Lean's image of HOL
+`FLOOKUP` equality. Private plumbing over the translated carrier, so untagged. -/
 private theorem mapExt {α β : Type} (a b : HolFiniteMapExact α β)
     (h : ∀ k, a.lookup k = b.lookup k) : a = b := by
   cases a with | mk al af =>
@@ -34,7 +38,12 @@ private theorem mapExt {α β : Type} (a b : HolFiniteMapExact α β)
       subst bl
       rfl
 
-/-- Map/update commutation for proof plumbing; no independent HOL original. -/
+/-- Map/update commutation for proof plumbing. Counterpart: HOL
+`FMAP_MAP2_FUPDATE` (`HOL/src/finite_maps/finite_mapScript.sml:2332`), with
+`map2`=`FMAP_MAP2` and `update`=`|+` through the canonical `HolFiniteMapExact`
+translation of HOL `|->`. The `BEq α`/`LawfulBEq α` hypotheses are the
+decidable-equality adaptation making Lean `update` agree with HOL total
+`FUPDATE`; kept untagged rather than claimed as an exact original declaration. -/
 private theorem mapUpdate {α β γ : Type} [BEq α] [LawfulBEq α]
     (fm : HolFiniteMapExact α β) (f : α × β → γ) (k : α) (v : β) :
     (fm.update (k,v)).map2 f = (fm.map2 f).update (k,f (k,v)) := by
