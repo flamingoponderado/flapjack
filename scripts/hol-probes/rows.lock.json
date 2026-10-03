@@ -1688,6 +1688,12 @@
       "sha256": "405e910e0fda61b17875346b9461591a21401816c5428eee64977b7f54b5667e"
     },
     {
+      "bytes": 4778,
+      "out": "l3_system_signals_probe.out",
+      "rows": 90,
+      "sha256": "c9f78cdabc2d185359ee04a4d53843d48a37118404f8eaaa2e1d6a2bc3b97fdd"
+    },
+    {
       "bytes": 413,
       "out": "lab_code_safety_probe.out",
       "rows": 14,

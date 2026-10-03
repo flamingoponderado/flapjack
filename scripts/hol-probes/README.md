@@ -6383,3 +6383,9 @@ unrelated state; this does not establish whole Run/Next or compiler correctness.
 `stack_code_bitmaps_calltail_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Call NONE specialization. Callee IH follows actual lookup/absent handler/nonzero clock at decClock source; fixClock changes clock only, badFunReturn changes result only. Returning/exception branches and whole evaluator assembly remain open.
 
 `stack_remove_comp_install_probeScript.sml` replays the complete literal original `comp_correct` Install case (1932–1997) after introducing its original four premises; the local original `state_rel_get_var` is replayed unchanged. Two rows capture the full specialized statement and kernel proof success, with no open hypotheses or free variables. The native Lean case derives target execution and the full oracle/code/register/buffer/heap post-relation. This proof-only slice does not claim executed compiler parity or whole-pass completion.
+`l3_system_signals_probe.out` captures complete signalEnvCall, ECALL, EBREAK,
+ERET and UnknownInstruction definitions/types and 80 original state observations.
+The literal MPRV privilege selector, existing internal exception, core255 with
+totalCore1, overwritten Ereturn and unchanged other-core transfer are retained.
+Lean replays compare the whole frame outside only c_NextFetch; these regressions
+do not establish whole Run/Next or compiler correctness.

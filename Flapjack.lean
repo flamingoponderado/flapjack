@@ -1,5 +1,6 @@
 import Flapjack.Misc.BytesInMem.Imp
 import Flapjack.Compiler.Backend.LabToTarget.WordSearch
+import Flapjack.RiscV.L3.Defs.SystemSignals
 import Flapjack.RiscV.L3.Defs.AMOMinMax
 import Flapjack.RiscV.L3.Defs.AMOArithmetic
 import Flapjack.Misc.FindIndex.Shift
