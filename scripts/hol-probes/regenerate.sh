@@ -1583,6 +1583,9 @@ run_probe ret_to_tail_probeScript.sml ret_to_tail_probe.out \
   "$cake_dir/pancake/pan_simpScript.sml"
 run_probe pan_simp_compile_probeScript.sml pan_simp_compile_probe.out \
   skip seq_skip_tick tail_call "$cake_dir/pancake/pan_simpScript.sml"
+run_probe pan_simp_semantics_statement_probeScript.sml pan_simp_semantics_statement_probe.out \
+  compile_correct state_rel_imp_semantics_decls_types \
+  "$cake_dir/pancake/proofs/pan_simpProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe crep_exit_loop_probeScript.sml crep_exit_loop_probe.out \
   exit_loop_break exit_loop_error \
   "$cake_dir/pancake/semantics/crepSemScript.sml"
@@ -6666,3 +6669,11 @@ run_probe lab_sem_independent_navigation_probeScript.sml lab_sem_independent_nav
   get_lab_after_def get_lab_after_def_types get_lab_after_def_hypotheses get_lab_after_def_proved \
   get_ret_Loc_def get_ret_Loc_def_types get_ret_Loc_def_hypotheses get_ret_Loc_def_proved \
   "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_exp_rfield_faithful_probeScript.sml pan_structs_exp_rfield_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_rfield_statement compile_exp_correct_rfield_proved eval_ind_full_statement \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_exp_rstruct_faithful_probeScript.sml pan_structs_exp_rstruct_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_rstruct_statement compile_exp_correct_rstruct_proved eval_ind_full_statement \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
