@@ -2304,4 +2304,46 @@ theorem copyReturnPreservesPoppedLocals {width : Nat} [NeZero width] {C F : Type
   rw [Nat.add_comm target.stackSpace count] at slot
   simpa only [Nat.add_comm] using preserved.trans slot
 
+/-- Recover the actual returned value's position from first-match lookup
+in canonical return names. The source Return length test supplies lengthEq;
+no target placement or index bound is assumed. This is case-local source
+lookup infrastructure for the returned-value caller-local branch. -/
+theorem returnedCallerLookupIndex {width : Nat} [NeZero width]
+    (values : List Nat) (returned : List (WordLocW width)) (key : Nat) (value : WordLocW width)
+    (canonical : values = (List.range values.length).map (fun index => 2 * (index + 1)))
+    (lengthEq : returned.length = values.length)
+    (lookup : holAlookup (values.zip returned) key = some value) :
+    ∃ index, index < returned.length ∧ key = 2 * (index + 1) ∧ returned[index]? = some value := by
+  have membership : ∀ entries : List (Nat × WordLocW width),
+      holAlookup entries key = some value → (key, value) ∈ entries := by
+    intro entries
+    induction entries with
+    | nil => simp [holAlookup]
+    | cons entry entries ih =>
+      obtain ⟨name, item⟩ := entry
+      simp only [holAlookup]
+      by_cases same : name = key
+      · subst name
+        simp only [if_true, Option.some.injEq]
+        intro equality
+        subst item
+        exact List.mem_cons_self
+      · rw [if_neg same]
+        exact fun found => List.mem_cons_of_mem _ (ih found)
+  obtain ⟨index, indexBound, pair⟩ := List.mem_iff_getElem.mp (membership _ lookup)
+  have namesBound : index < values.length := by
+    rw [List.length_zip] at indexBound; omega
+  have returnedBound : index < returned.length := by omega
+  rw [List.getElem_zip] at pair
+  have name := congrArg Prod.fst pair
+  have item := congrArg Prod.snd pair
+  simp only at name item
+  have nameOption : values[index]? = some key :=
+    List.getElem?_eq_some_iff.mpr ⟨namesBound, name⟩
+  rw [canonical] at nameOption
+  simp only [List.getElem?_map, List.getElem?_range namesBound, Option.map_some,
+    Option.some.injEq] at nameOption
+  exact ⟨index, returnedBound, nameOption.symm,
+    List.getElem?_eq_some_iff.mpr ⟨returnedBound, item⟩⟩
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
