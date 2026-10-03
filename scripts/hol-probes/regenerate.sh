@@ -6111,3 +6111,10 @@ run_probe target_start_pc_ok_probeScript.sml target_start_pc_ok_probe.out \
   start_pc_ok_def start_pc_ok_def_types start_pc_ok_def_hypotheses \
   lengths entry_bound halt_cache \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe word_to_stack_semantics_helpers_probeScript.sml word_to_stack_semantics_helpers_probe.out \
+  state_rel_with_clock_statement state_rel_with_clock_proved state_rel_with_clock_hypotheses word_Call_NONE_not_Break_Continue_statement word_Call_NONE_not_Break_Continue_proved word_Call_NONE_not_Break_Continue_hypotheses stack_Call_NONE_not_Break_Continue_statement stack_Call_NONE_not_Break_Continue_proved stack_Call_NONE_not_Break_Continue_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_results_probeScript.sml word_to_stack_comp_results_probe.out \
+  compile_result_definition compile_result_hypotheses compile_result_type push_locals_definition push_locals_hypotheses push_locals_type halt_eq_compile_result_statement halt_eq_compile_result_proved halt_eq_compile_result_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
