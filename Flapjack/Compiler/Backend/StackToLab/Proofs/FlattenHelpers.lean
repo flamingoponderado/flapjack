@@ -165,6 +165,314 @@ theorem noRetCorrect {width : Nat} [NeZero width] {C F : Type} :
     all_goals first | rfl | exact ihRet hnr.1 _ | exact ihHandler hnr.2 _ | (simp_all; done) |
       exact Option.isSome_iff_ne_none.mpr ‹¬_ = none›
 
+private theorem appAppend {α : Type} (a b : AppList α) :
+    appListAppend (.append a b) = appListAppend a ++ appListAppend b :=
+  (appListAppend_thm a b []).1
+
+private theorem appList {α : Type} (l : List α) : appListAppend (.list l) = l :=
+  (appListAppend_thm .nil .nil l).2.1
+
+/-- The label-preservation invariant of `stack_to_lab_lab_pres`, for a
+flattening of a program with labels `E` from `nl` to `nl'` producing labels `L`. -/
+private def LabPres (n nl nl' : Nat) (E L : List (Nat × Nat)) : Prop :=
+  (∀ l ∈ L, l.1 = n ∧ l.2 ≠ 0 ∧ l.2 ≠ 1) ∧ L.Nodup ∧
+    (∀ lab ∈ L, lab ∈ E ∨ (nl ≤ lab.2 ∧ lab.2 < nl')) ∧ nl ≤ nl'
+
+private theorem labPresNil (n nl : Nat) (E : List (Nat × Nat)) : LabPres n nl nl E [] := by
+  simp [LabPres]
+
+private theorem labPresFresh {n k : Nat} (hk : 2 ≤ k) (E : List (Nat × Nat)) :
+    LabPres n k (k + 1) E [(n, k)] := by
+  refine ⟨?_, by simp, ?_, by omega⟩
+  · intro l hl; simp at hl; subst hl; simp; omega
+  · intro l hl; simp at hl; subst hl; right; simp
+
+private theorem labPresKnown {n nl : Nat} {E : List (Nat × Nat)} {x : Nat × Nat}
+    (hx : x ∈ E) (hgood : x.1 = n ∧ x.2 ≠ 0 ∧ x.2 ≠ 1) : LabPres n nl nl E [x] := by
+  refine ⟨?_, by simp, ?_, le_refl _⟩
+  · intro l hl; simp at hl; subst hl; exact hgood
+  · intro l hl; simp at hl; subst hl; left; exact hx
+
+private theorem labPresWeaken {n nl0 nl nl' : Nat} {E E' L : List (Nat × Nat)}
+    (h : LabPres n nl nl' E L) (hnl : nl0 ≤ nl) (hE : ∀ x ∈ E, x ∈ E') :
+    LabPres n nl0 nl' E' L := by
+  obtain ⟨h1, h2, h3, h4⟩ := h
+  refine ⟨h1, h2, ?_, by omega⟩
+  intro lab hl
+  rcases h3 lab hl with h | h
+  · exact .inl (hE _ h)
+  · exact .inr ⟨by omega, h.2⟩
+
+private theorem labPresPerm {n nl nl' : Nat} {E L L' : List (Nat × Nat)}
+    (h : LabPres n nl nl' E L) (hp : L.Perm L') : LabPres n nl nl' E L' := by
+  obtain ⟨h1, h2, h3, h4⟩ := h
+  exact ⟨fun l hl => h1 l (hp.mem_iff.mpr hl), hp.nodup_iff.mp h2,
+    fun l hl => h3 l (hp.mem_iff.mpr hl), h4⟩
+
+private theorem labPresAppend {n nl nl1 nl2 : Nat} {E E1 E2 L1 L2 : List (Nat × Nat)}
+    (h1 : LabPres n nl nl1 E1 L1) (h2 : LabPres n nl1 nl2 E2 L2)
+    (disj : ∀ x ∈ E1, x ∉ E2) (b1 : ∀ e ∈ E1, e.2 < nl) (b2 : ∀ e ∈ E2, e.2 < nl)
+    (s1 : ∀ x ∈ E1, x ∈ E) (s2 : ∀ x ∈ E2, x ∈ E) :
+    LabPres n nl nl2 E (L1 ++ L2) := by
+  obtain ⟨g1, d1, m1, o1⟩ := h1
+  obtain ⟨g2, d2, m2, o2⟩ := h2
+  refine ⟨?_, ?_, ?_, by omega⟩
+  · intro l hl
+    rcases List.mem_append.mp hl with hl | hl
+    · exact g1 l hl
+    · exact g2 l hl
+  · rw [List.nodup_append]
+    refine ⟨d1, d2, ?_⟩
+    intro x hx1 y hy2 hxy
+    subst hxy
+    rcases m1 x hx1 with e1 | f1 <;> rcases m2 x hy2 with e2 | f2
+    · exact disj x e1 e2
+    · have := b1 x e1; omega
+    · have := b2 x e2; omega
+    · omega
+  · intro lab hl
+    rcases List.mem_append.mp hl with hl | hl
+    · rcases m1 lab hl with e | f
+      · exact .inl (s1 _ e)
+      · exact .inr ⟨f.1, by omega⟩
+    · rcases m2 lab hl with e | f
+      · exact .inl (s2 _ e)
+      · exact .inr ⟨by omega, f.2⟩
+
+private theorem labPresNil' {n nl nl' : Nat} (E : List (Nat × Nat)) (h : nl ≤ nl') :
+    LabPres n nl nl' E [] := by
+  simp [LabPres, h]
+
+private theorem labPresApp {n nl nl1 nl2 : Nat} {E1 E2 L1 L2 : List (Nat × Nat)}
+    (h1 : LabPres n nl nl1 E1 L1) (h2 : LabPres n nl1 nl2 E2 L2)
+    (hD : (E1 ++ E2).Nodup) (hb : ∀ e ∈ E1 ++ E2, e.2 < nl) :
+    LabPres n nl nl2 (E1 ++ E2) (L1 ++ L2) := by
+  rw [List.nodup_append] at hD
+  exact labPresAppend h1 h2 (fun x hx hx2 => hD.2.2 x hx x hx2 rfl)
+    (fun e he => hb e (List.mem_append_left _ he)) (fun e he => hb e (List.mem_append_right _ he))
+    (fun x hx => List.mem_append_left _ hx) (fun x hx => List.mem_append_right _ hx)
+
+private theorem labPresFresh' {n k : Nat} (hk : 2 ≤ k) :
+    LabPres n k (k + 1) [] [(n, k)] := labPresFresh hk []
+
+private theorem labelsBound {width : Nat} [NeZero width] {p : HolProg width} {nl : Nat}
+    (h : StackAlloc.nextLabHOL p 2 ≤ nl) :
+    ∀ e ∈ StackPropsCodeLabels.extractLabels p, e.2 < nl := fun e he => by
+  have := StackAlloc.extract_labels_next_lab p 0 e he
+  omega
+
+private theorem nodupLeft {α : Type} {A B : List α} (h : (A ++ B).Nodup) : A.Nodup :=
+  (List.nodup_append.mp h).1
+
+private theorem nodupRight {α : Type} {A B : List α} (h : (A ++ B).Nodup) : B.Nodup :=
+  (List.nodup_append.mp h).2.1
+
+set_option maxHeartbeats 1000000 in
+private theorem labPresAux {width : Nat} [NeZero width] (n : Nat) :
+    ∀ (p : HolProg width) (nl : Nat) (cs bs : List Nat),
+      (∀ l ∈ StackPropsCodeLabels.extractLabels p, l.1 = n ∧ l.2 ≠ 0 ∧ l.2 ≠ 1) →
+      (StackPropsCodeLabels.extractLabels p).Nodup →
+      StackAlloc.nextLabHOL p 2 ≤ nl →
+      LabPres n nl (flattenHOL false p n nl cs bs).2.2 (StackPropsCodeLabels.extractLabels p)
+        (LabProps.LabelSets.extractLabels (appListAppend (flattenHOL false p n nl cs bs).1))
+  | .seq a b, nl, cs, bs, hE, hD, hnl => by
+    have two : 2 ≤ nl := le_trans (nextLabNonZero _) hnl
+    have bnd := labelsBound hnl
+    rw [StackAlloc.next_lab_thm] at hnl
+    dsimp only at hnl
+    simp only [StackPropsCodeLabels.extractLabels] at hE hD bnd ⊢
+    rcases h1 : flattenHOL false a n nl cs bs with ⟨ys1, nr1, nl1⟩
+    have pa := labPresAux n a nl cs bs (fun l h => hE l (List.mem_append_left _ h))
+      (nodupLeft hD) (by omega)
+    rw [h1] at pa; dsimp only at pa
+    rcases h2 : flattenHOL false b n nl1 cs bs with ⟨ys2, nr2, nl2⟩
+    have pb := labPresAux n b nl1 cs bs (fun l h => hE l (List.mem_append_right _ h))
+      (nodupRight hD) (by have := pa.2.2.2; omega)
+    rw [h2] at pb; dsimp only at pb
+    rw [flattenHOL]
+    simp only [h1, h2, Bool.false_eq_true, if_false, appAppend, LabProps.LabelSets.extractLabels_append]
+    exact labPresApp pa pb hD bnd
+  | .ite c r ri a b, nl, cs, bs, hE, hD, hnl => by
+    have two : 2 ≤ nl := le_trans (nextLabNonZero _) hnl
+    have bnd := labelsBound hnl
+    rw [StackAlloc.next_lab_thm] at hnl
+    dsimp only at hnl
+    simp only [StackPropsCodeLabels.extractLabels] at hE hD bnd ⊢
+    rcases h1 : flattenHOL false a n nl cs bs with ⟨ys1, nr1, nl1⟩
+    have pa := labPresAux n a nl cs bs (fun l h => hE l (List.mem_append_left _ h))
+      (nodupLeft hD) (by omega)
+    rw [h1] at pa; dsimp only at pa
+    rcases h2 : flattenHOL false b n nl1 cs bs with ⟨ys2, nr2, nl2⟩
+    have pb := labPresAux n b nl1 cs bs (fun l h => hE l (List.mem_append_right _ h))
+      (nodupRight hD) (by have := pa.2.2.2; omega)
+    rw [h2] at pb; dsimp only at pb
+    have le1 := pa.2.2.2
+    have le2 := pb.2.2.2
+    have fr : LabPres n nl2 (nl2 + 1) [] [(n, nl2)] := labPresFresh' (by omega)
+    have fr2 : LabPres n (nl2 + 1) (nl2 + 1 + 1) [] [(n, nl2 + 1)] := labPresFresh' (by omega)
+    have both := labPresApp pa pb hD bnd
+    have hD' : (StackPropsCodeLabels.extractLabels a ++ StackPropsCodeLabels.extractLabels b ++
+        []).Nodup := by simpa using hD
+    have bnd' : ∀ e ∈ StackPropsCodeLabels.extractLabels a ++ StackPropsCodeLabels.extractLabels b
+        ++ [], e.2 < nl := by simpa using bnd
+    rw [flattenHOL]
+    simp only [h1, h2]
+    split_ifs with s1 s2 s3 s4 s5
+    · simp only [appList, LabProps.LabelSets.extractLabels]
+      exact labPresNil' _ (by omega)
+    · have := labPresApp (labPresApp (labPresNil' (StackPropsCodeLabels.extractLabels a) le1) pb
+        hD bnd) fr hD' bnd'
+      simpa [appAppend, appList, LabProps.LabelSets.extractLabels_append,
+        LabProps.LabelSets.extractLabels] using this
+    · have := labPresApp (labPresApp pa (labPresNil' (StackPropsCodeLabels.extractLabels b) le2)
+        hD bnd) fr hD' bnd'
+      simpa [appAppend, appList, LabProps.LabelSets.extractLabels_append,
+        LabProps.LabelSets.extractLabels] using this
+    · have := labPresApp both fr hD' bnd'
+      simp only [List.append_nil] at this
+      simp only [appAppend, appList, LabProps.LabelSets.extractLabels_append,
+        LabProps.LabelSets.extractLabels, List.nil_append]
+      refine labPresPerm this ?_
+      rw [List.perm_iff_count]; intro x; simp only [List.count_append]; omega
+    · have := labPresApp both fr hD' bnd'
+      simp only [List.append_nil] at this
+      simp only [appAppend, appList, LabProps.LabelSets.extractLabels_append,
+        LabProps.LabelSets.extractLabels, List.nil_append]
+      refine labPresPerm this ?_
+      rw [List.perm_iff_count]; intro x; simp only [List.count_append]; omega
+    · have hD'' : (StackPropsCodeLabels.extractLabels a ++ StackPropsCodeLabels.extractLabels b ++
+          [] ++ []).Nodup := by simpa using hD
+      have bnd'' : ∀ e ∈ StackPropsCodeLabels.extractLabels a ++
+          StackPropsCodeLabels.extractLabels b ++ [] ++ [], e.2 < nl := by simpa using bnd
+      have := labPresApp (labPresApp both fr hD' bnd') fr2 hD'' bnd''
+      simp only [List.append_nil] at this
+      simp only [appAppend, appList, LabProps.LabelSets.extractLabels_append,
+        LabProps.LabelSets.extractLabels, List.nil_append]
+      refine labPresPerm this ?_
+      rw [List.perm_iff_count]; intro x; simp only [List.count_append]; omega
+  | .loop body, nl, cs, bs, hE, hD, hnl => by
+    have two : 2 ≤ nl := le_trans (nextLabNonZero _) hnl
+    rw [StackAlloc.next_lab_thm] at hnl
+    dsimp only at hnl
+    simp only [StackPropsCodeLabels.extractLabels] at hE hD ⊢
+    rcases h1 : flattenHOL false body n (nl + 2) (nl :: cs) ((nl + 1) :: bs) with ⟨ys, nr, nl1⟩
+    have pb := labPresAux n body (nl + 2) (nl :: cs) ((nl + 1) :: bs) hE hD (by omega)
+    rw [h1] at pb; dsimp only at pb
+    have f1 : LabPres n nl (nl + 1) [] [(n, nl)] := labPresFresh' two
+    have f2 : LabPres n (nl + 1) (nl + 2) [] [(n, nl + 1)] := labPresFresh' (by omega)
+    have := labPresApp (labPresApp f1 f2 (by simp) (by simp)) pb (by simpa using hD)
+      (by simpa using labelsBound (p := body) (by omega))
+    simp only [List.nil_append] at this
+    rw [flattenHOL]
+    simp only [h1, appAppend, appList, LabProps.LabelSets.extractLabels_append,
+      LabProps.LabelSets.extractLabels]
+    refine labPresPerm this ?_
+    rw [List.perm_iff_count]; intro x; simp only [List.count_append, List.count_cons]; omega
+  | .call none d h, nl, cs, bs, hE, hD, hnl => by
+    rw [flattenHOL]
+    cases d <;> simp only [compileJumpHOL, appList, LabProps.LabelSets.extractLabels] <;>
+      exact labPresNil' _ le_rfl
+  | .call (some (rp, lr, l1, l2)) d none, nl, cs, bs, hE, hD, hnl => by
+    have bnd := labelsBound hnl
+    rw [StackAlloc.next_lab_thm] at hnl
+    dsimp only at hnl
+    simp only [StackPropsCodeLabels.extractLabels] at hE hD bnd ⊢
+    have k : LabPres n nl nl [(l1, l2)] [(l1, l2)] :=
+      labPresKnown (by simp) (hE (l1, l2) (by simp))
+    rcases h1 : flattenHOL false rp n nl cs bs with ⟨xs, nr, nl1⟩
+    have pr := labPresAux n rp nl cs bs (fun l h => hE l (List.mem_append_right _ h))
+      (nodupRight hD) (by omega)
+    rw [h1] at pr; dsimp only at pr
+    have := labPresApp k pr hD bnd
+    rw [flattenHOL]
+    cases d <;> simpa [h1, compileJumpHOL, appAppend, appList,
+      LabProps.LabelSets.extractLabels_append, LabProps.LabelSets.extractLabels] using this
+  | .call (some (rp, lr, l1, l2)) d (some (hp, k1, k2)), nl, cs, bs, hE, hD, hnl => by
+    have two : 2 ≤ nl := le_trans (nextLabNonZero _) hnl
+    have bnd := labelsBound hnl
+    rw [StackAlloc.next_lab_thm] at hnl
+    dsimp only at hnl
+    simp only [StackPropsCodeLabels.extractLabels] at hE hD bnd ⊢
+    have ka : LabPres n nl nl [(l1, l2)] [(l1, l2)] :=
+      labPresKnown (by simp) (hE (l1, l2) (by simp))
+    have kb : LabPres n nl nl [(k1, k2)] [(k1, k2)] :=
+      labPresKnown (by simp) (hE (k1, k2) (by simp))
+    rcases h1 : flattenHOL false rp n nl cs bs with ⟨xs, nr1, nl1⟩
+    have pr := labPresAux n rp nl cs bs (fun l h => hE l (by simp [h]))
+      (by have := nodupLeft hD; simp only [List.nodup_append] at this; exact this.2.1) (by omega)
+    rw [h1] at pr; dsimp only at pr
+    rcases h2 : flattenHOL false hp n nl1 cs bs with ⟨ys, nr2, nl2⟩
+    have ph := labPresAux n hp nl1 cs bs (fun l h => hE l (by simp [h])) (nodupRight hD)
+      (by have := pr.2.2.2; omega)
+    rw [h2] at ph; dsimp only at ph
+    have le2 : nl ≤ nl2 := by have := pr.2.2.2; have := ph.2.2.2; omega
+    have fr : LabPres n nl2 (nl2 + 1) [] [(n, nl2)] := labPresFresh' (by omega)
+    have hD1 : ([(l1, l2)] ++ [(k1, k2)]).Nodup := by
+      have := nodupLeft (nodupLeft hD); simpa using this
+    have hD2 : ([(l1, l2)] ++ [(k1, k2)] ++ StackPropsCodeLabels.extractLabels rp).Nodup := by
+      have := nodupLeft hD; simpa using this
+    have hD3 : ([(l1, l2)] ++ [(k1, k2)] ++ StackPropsCodeLabels.extractLabels rp ++
+        StackPropsCodeLabels.extractLabels hp).Nodup := by simpa using hD
+    have hD4 : ([(l1, l2)] ++ [(k1, k2)] ++ StackPropsCodeLabels.extractLabels rp ++
+        StackPropsCodeLabels.extractLabels hp ++ []).Nodup := by simpa using hD
+    have sub : ∀ (P : Nat × Nat → Prop), (∀ e, e ∈ [(l1, l2), (k1, k2)] ++
+        StackPropsCodeLabels.extractLabels rp ++ StackPropsCodeLabels.extractLabels hp → P e) →
+        ∀ e, (e = (l1, l2) ∨ e = (k1, k2) ∨ e ∈ StackPropsCodeLabels.extractLabels rp ∨
+          e ∈ StackPropsCodeLabels.extractLabels hp) → P e := by
+      intro P h e he
+      apply h
+      simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false]
+      tauto
+    have b1 : ∀ e ∈ [(l1, l2)] ++ [(k1, k2)], e.2 < nl := fun e he =>
+      sub _ bnd e (by simp at he; tauto)
+    have b2 : ∀ e ∈ [(l1, l2)] ++ [(k1, k2)] ++ StackPropsCodeLabels.extractLabels rp,
+        e.2 < nl := fun e he => sub _ bnd e (by simp at he; tauto)
+    have b3 : ∀ e ∈ [(l1, l2)] ++ [(k1, k2)] ++ StackPropsCodeLabels.extractLabels rp ++
+        StackPropsCodeLabels.extractLabels hp, e.2 < nl := fun e he =>
+      sub _ bnd e (by simp at he; tauto)
+    have b4 : ∀ e ∈ [(l1, l2)] ++ [(k1, k2)] ++ StackPropsCodeLabels.extractLabels rp ++
+        StackPropsCodeLabels.extractLabels hp ++ [], e.2 < nl := fun e he =>
+      sub _ bnd e (by simp at he; tauto)
+    have this := labPresApp (labPresApp (labPresApp (labPresApp ka kb hD1 b1)
+      pr hD2 b2) ph hD3 b3) fr hD4 b4
+    simp only [List.append_nil, List.cons_append] at this
+    rw [flattenHOL]
+    cases d <;>
+    · simp only [h1, h2, compileJumpHOL, appAppend, appList,
+        LabProps.LabelSets.extractLabels_append, LabProps.LabelSets.extractLabels,
+        List.nil_append, List.cons_append]
+      refine labPresPerm this ?_
+      rw [List.perm_iff_count]; intro x
+      simp only [List.count_append, List.count_cons, List.count_nil]
+      split_ifs <;> omega
+  | .ffi f a b c d ret, nl, cs, bs, hE, hD, hnl => by
+    have two : 2 ≤ nl := le_trans (nextLabNonZero _) hnl
+    rw [flattenHOL]
+    simp only [appList, LabProps.LabelSets.extractLabels, StackPropsCodeLabels.extractLabels]
+    exact labPresFresh two []
+  | .install a b c d ret, nl, cs, bs, hE, hD, hnl => by
+    have two : 2 ≤ nl := le_trans (nextLabNonZero _) hnl
+    rw [flattenHOL]
+    simp only [appList, LabProps.LabelSets.extractLabels, StackPropsCodeLabels.extractLabels]
+    exact labPresFresh two []
+  | .skip, nl, cs, bs, _, _, _ | .inst _, nl, cs, bs, _, _, _ | .get _ _, nl, cs, bs, _, _, _
+  | .set _ _, nl, cs, bs, _, _, _ | .opCurrHeap _ _ _, nl, cs, bs, _, _, _
+  | .jumpLower _ _ _, nl, cs, bs, _, _, _ | .alloc _, nl, cs, bs, _, _, _
+  | .storeConsts _ _ _, nl, cs, bs, _, _, _ | .raise _, nl, cs, bs, _, _, _
+  | .ret _, nl, cs, bs, _, _, _ | .break _, nl, cs, bs, _, _, _
+  | .continue _, nl, cs, bs, _, _, _ | .tick, nl, cs, bs, _, _, _
+  | .locValue _ _ _, nl, cs, bs, _, _, _ | .shMemOp _ _ _, nl, cs, bs, _, _, _
+  | .codeBufferWrite _ _, nl, cs, bs, _, _, _ | .dataBufferWrite _ _, nl, cs, bs, _, _, _
+  | .rawCall _, nl, cs, bs, _, _, _ | .stackAlloc _, nl, cs, bs, _, _, _
+  | .stackFree _, nl, cs, bs, _, _, _ | .stackStore _ _, nl, cs, bs, _, _, _
+  | .stackStoreAny _ _, nl, cs, bs, _, _, _ | .stackLoad _ _, nl, cs, bs, _, _, _
+  | .stackLoadAny _ _, nl, cs, bs, _, _, _ | .stackGetSize _, nl, cs, bs, _, _, _
+  | .stackSetSize _, nl, cs, bs, _, _, _ | .bitmapLoad _ _, nl, cs, bs, _, _, _
+  | .halt _, nl, cs, bs, _, _, _ => by
+    simp only [flattenHOL, appList, LabProps.LabelSets.extractLabels]
+    exact labPresNil' _ le_rfl
+termination_by p => sizeOf p
+
 /-- A fetched compiled jump to an installed destination takes one LabSem
 step to the destination position. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "compile_jump_correct"
