@@ -72954,5 +72954,49 @@
     "lean_name": "wordAlloc_cases",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only exhaustive input-or-colouring branch factorization, not a separate HOL declaration. Derived from original oracle rejection/success and allocator failure/success without any assumed result validity; used to factor the four source preservation proofs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_alloc_flat_exp_conventions_lem",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordAlloc.lean",
+    "lean_name": "applyColour_flatExpConventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison2026-10-03 wordConvsProofScript2801-2853: original arbitrary colouring/program implication or arbitrary fc/config/algorithm/register count/program/colour option allocator implication. Original flat expression and every_inst two_reg_inst predicates and full native applyColour/wordAlloc. WordLangInst arithmetic/address/memory/FP constructors compared with asmScript85-136, including Load16/Store16 catchall and unchanged float-register clauses. Width-general twoRegInst helper is instantiated only at this theorem positive BitVec width with NeZero; sole word translation, no added premise or narrowed constructors. Source Call flat predicate traverses both handlers even tail-call; everyInst tail-call ignores handler. Both retained, along with OpCurrHeap synthetic instruction and ShareInst Add variable/constant flat shape."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_alloc_two_reg_inst_lem",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordAlloc.lean",
+    "lean_name": "applyColour_twoRegInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison2026-10-03 wordConvsProofScript2801-2853: original arbitrary colouring/program implication or arbitrary fc/config/algorithm/register count/program/colour option allocator implication. Original flat expression and every_inst two_reg_inst predicates and full native applyColour/wordAlloc. WordLangInst arithmetic/address/memory/FP constructors compared with asmScript85-136, including Load16/Store16 catchall and unchanged float-register clauses. Width-general twoRegInst helper is instantiated only at this theorem positive BitVec width with NeZero; sole word translation, no added premise or narrowed constructors. Source Call flat predicate traverses both handlers even tail-call; everyInst tail-call ignores handler. Both retained, along with OpCurrHeap synthetic instruction and ShareInst Add variable/constant flat shape."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_alloc_flat_exp_conventions",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordAlloc.lean",
+    "lean_name": "wordAlloc_flatExpConventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison2026-10-03 wordConvsProofScript2801-2853: original arbitrary colouring/program implication or arbitrary fc/config/algorithm/register count/program/colour option allocator implication. Original flat expression and every_inst two_reg_inst predicates and full native applyColour/wordAlloc. WordLangInst arithmetic/address/memory/FP constructors compared with asmScript85-136, including Load16/Store16 catchall and unchanged float-register clauses. Width-general twoRegInst helper is instantiated only at this theorem positive BitVec width with NeZero; sole word translation, no added premise or narrowed constructors. Source Call flat predicate traverses both handlers even tail-call; everyInst tail-call ignores handler. Both retained, along with OpCurrHeap synthetic instruction and ShareInst Add variable/constant flat shape."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_alloc_two_reg_inst",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordAlloc.lean",
+    "lean_name": "wordAlloc_twoRegInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison2026-10-03 wordConvsProofScript2801-2853: original arbitrary colouring/program implication or arbitrary fc/config/algorithm/register count/program/colour option allocator implication. Original flat expression and every_inst two_reg_inst predicates and full native applyColour/wordAlloc. WordLangInst arithmetic/address/memory/FP constructors compared with asmScript85-136, including Load16/Store16 catchall and unchanged float-register clauses. Width-general twoRegInst helper is instantiated only at this theorem positive BitVec width with NeZero; sole word translation, no added premise or narrowed constructors. Source Call flat predicate traverses both handlers even tail-call; everyInst tail-call ignores handler. Both retained, along with OpCurrHeap synthetic instruction and ShareInst Add variable/constant flat shape."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordAlloc.lean",
+    "lean_name": "twoRegInst_applyColourInst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only instruction case factorization for original word_alloc_two_reg_inst_lem. Arbitrary renaming preserves destination-source equality by congruence; injectivity not required. No separate HOL declaration is claimed."
   }
 ]
