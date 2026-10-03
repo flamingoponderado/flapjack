@@ -13969,6 +13969,38 @@
     "reviewer": "flapjack-deepseek-three (source comparison): HOL word_num_stubs = stack_num_stubs + 1 + 1; Lean wordNumStubs : Nat := stackNumStubs + 1 + 1; direct HOL row bc_word in scripts/hol-probes/word_to_stack_call_dest_probe.out."
   },
   {
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "data_num_stubs_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon.lean",
+    "lean_name": "dataNumStubs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original backend_commonScript.sml:132-134: data_num_stubs = word_num_stubs + 32 + 23, verbatim over the reviewed wordNumStubs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "AllocGlobal_location_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi.lean",
+    "lean_name": "allocGlobalLocation",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original bvl_to_bviScript.sml:104-106: AllocGlobal_location = data_num_stubs, verbatim."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "CopyGlobals_location_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi.lean",
+    "lean_name": "copyGlobalsLocation",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original bvl_to_bviScript.sml:107-109: CopyGlobals_location = AllocGlobal_location + 1, verbatim."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "InitGlobals_location_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi.lean",
+    "lean_name": "initGlobalsLocation",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original bvl_to_bviScript.sml:110-112: InitGlobals_location = CopyGlobals_location + 1, verbatim."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
     "hol_name": "raise_stub_location_def",
     "lean_path": "Flapjack/Pancake/WordLang.lean",
@@ -49022,6 +49054,40 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:131-136: pair input (n,p), flatten T p n (next_lab p2) [][]; Section n appends the resulting app_list plus exactly one Label n (m if root Seq else1)0. Native nextLab specialization compared against stack_allocScript649-662: complete source traversal and MAX label seed clauses retained. Same native line carrier, exact section field order and list extraction; no extra safety premise. Positive-width BitVec/[NeZero width] is the sole HOL word-dimension translation.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "is_gen_gc_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Compile.lean",
+    "lean_name": "isGenGc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labScript.sml:138-141: is_gen_gc (Generational l) = T, otherwise F, over the reviewed data_to_word gc_kind (DataToWord.GcKind); constructors None/Simple covered by the wildcard as in HOL."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "config",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Compile.lean",
+    "lean_name": "Config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labScript.sml:143-149 Datatype config: three fields in HOL order, reg_names : num num_map (Spt Nat), jump : bool, perf_calls : bool (probe config_accessors shows the field types)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Compile.lean",
+    "lean_name": "compile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labScript.sml:151-159: parameters stack_conf data_conf max_heap sp offset prog in order; the let chain verbatim: stack_rawcall$compile, stack_alloc$compile data_conf, stack_remove$compile stack_conf.jump offset (is_gen_gc data_conf.gc_kind) max_heap sp InitGlobals_location, stack_names$compile stack_conf.reg_names, then MAP prog_to_section, each over the reviewed tagged Lean definition (StackRawCall.compile, StackAlloc.compile, StackRemove.compileHOL, StackNames.compileHOL, progToSectionHOL). The offset pair is BitVec width with NeZero. Proof-side definition; the executed compiler's own routing is separate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "compile_no_stubs_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Compile.lean",
+    "lean_name": "compileNoStubs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labScript.sml:161-167: MAP prog_to_section (stack_names$compile f (MAP (stack_remove$prog_comp jump offset sp) (MAP stack_alloc$prog_comp prog))), verbatim over the reviewed Lean definitions; BitVec width offset with NeZero."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenamePropertyWrappers.lean",
@@ -84918,5 +84984,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3161-3192. Free code coracle regs save_regs s implicit. Iff between state_rel (make_init code coracle regs save_regs s) s and the sixteen right-hand conjuncts in source order: installed procedures of code, ¬s.failed, s.compile_oracle = (λn. (λ(c,p,_). (c, MAP prog_to_section p)) (coracle n)) and the per-k oracle conditions (tuple lambdas rendered by projections as in the reviewed state_rel_def), four link-register distinctness facts, link_reg ∉ save_regs, domain code = set (MAP Section_num s.code) pointwise, EVERY sec_labels_ok, io_regs/cc_regs NONE on save_regs, both domain alignments and good_dimindex. Canonical regs/fpRegs via the imported owner and same-module relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "good_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/GoodCode.lean",
+    "lean_name": "goodCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3349-3358: parameters sp code; five conjuncts verbatim in order: ALL_DISTINCT (MAP FST code), EVERY (λ(k,prog). stack_num_stubs ≤ k ∧ alloc_arg prog) code, EVERY (λp. call_args p 1 2 3 4 0) (MAP SND code), EVERY (λp. reg_bound p sp) (MAP SND code), EVERY (λ(n,p). EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0 ∧ l2 ≠ 1) (extract_labels p) ∧ ALL_DISTINCT (extract_labels p)) code; EVERY as membership quantifiers, tuple lambdas by projections, over the reviewed stackProps alloc_arg/call_args/reg_bound/extract_labels and backend_common stack_num_stubs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "contain_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/GoodCode.lean",
+    "lean_name": "contain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3360-3362: contain b = Abbrev b, where markerTheory Abbrev is the identity (Abbrev x = x); rendered as the identity on Prop."
   }
 ]
