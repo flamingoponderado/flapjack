@@ -7651,3 +7651,9 @@ run_probe pan_to_target_compile_prog_max_source_replay_probeScript.sml pan_to_ta
 run_probe word_to_stack_inst_binary_probeScript.sml word_to_stack_inst_binary_probe.out \
   binaryReg_typed binaryReg_proved binaryReg_hypotheses binaryImm_typed binaryImm_proved binaryImm_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_const_probeScript.sml riscv_target_const_probe.out \
+  riscv_encoder_correct_const_statement riscv_encoder_correct_const_types \
+  riscv_encoder_correct_const_hypotheses riscv_encoder_correct_const_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
