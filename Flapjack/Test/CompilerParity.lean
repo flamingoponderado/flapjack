@@ -22,6 +22,7 @@ import Flapjack.Test.StackRawCallMemoryFfiParity
 import Flapjack.Test.StackRawCallAllocationStoreParity
 import Flapjack.Test.StackRawCallInstallParity
 import Flapjack.Test.StackRawCallSeqStandardParity
+import Flapjack.Test.StackRawCallSeqParity
 import Flapjack.Test.StackRawCallCaseParity
 import Flapjack.Test.StackEvaluateMonoParity
 import Flapjack.Test.StackEvaluateClockNeutralParity
