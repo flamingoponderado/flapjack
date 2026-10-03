@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.Divide
 import Flapjack.RiscV.L3.Defs.Multiply
 import Flapjack.RiscV.L3.Defs.WordArithmetic
 import Flapjack.RiscV.L3.Defs.ImmediateShift

@@ -6759,3 +6759,13 @@ and states. Signed/unsigned/mixed high products, word widths, zero/aliases,
 RV32 Illegal_Instr and symbolic invalid-mode branches with both prior-exception
 seeds are covered. The complete definitions retain all three mode queries for
 high products and leave canonical ARB unspecified.
+
+### Native division and remainder
+
+`l3_divide_probeScript.sml` captures 1456 whole-state equations for
+DIV/REM/DIVU/REMU/DIVW/REMW/DIVUW/REMUW. `check-l3-divide.py` requires
+exact label coverage and every value T; `L3DivideParity` kernel-checks the same
+inputs and states. Coverage includes zero divisors, signed truncation/overflow,
+word widths, register zero/aliases, RV32 illegal routes through the reviewed
+helper, and sixteen symbolic invalid-mode equations with both prior-exception
+seeds. Canonical ARB stays unspecified; full original equations are preserved.
