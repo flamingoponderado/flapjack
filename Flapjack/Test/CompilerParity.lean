@@ -1,3 +1,4 @@
+import Flapjack.Test.L3ImmediateShiftParity
 import Flapjack.Test.LabToTargetInitializerDomainParity
 import Flapjack.Test.L3SetLessParity
 import Flapjack.Test.L3ImmediateALUParity
@@ -1149,6 +1150,7 @@ import Flapjack.Test.AsmPropsEncoderCorrectParity
 import Flapjack.Test.MachineIeeeCrossFormatParity
 import Flapjack.Test.L3RiscvCrossFormatParity
 import Flapjack.Test.WordGcFunOkParity
+import Flapjack.Test.L3RegisterShiftParity
 
 
 
@@ -2103,7 +2105,3 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
 end Flapjack.Test.CompilerParity
 
 def main : IO Unit := Flapjack.Test.CompilerParity.main
-
-import Flapjack.Test.L3RegisterShiftParity
-
-import Flapjack.Test.L3ImmediateShiftParity

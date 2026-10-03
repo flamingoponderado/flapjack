@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.ImmediateShift
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.DomainCodeCase
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.MemorySeparationCases
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
@@ -2027,14 +2028,15 @@ import Flapjack.Misc.Alignment
 import Flapjack.Misc.Alignment.Production
 import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
 import Flapjack.Compiler.Backend.LabToTarget.ShareMemState
-
-
 import Flapjack.Misc.BalancedMap.NullSemantics
 import Flapjack.Misc.BalancedMap.InvariantSemantics
 import Flapjack.Misc.BalancedMap.LookupSemantics
 import Flapjack.Misc.BalancedMap.RotationAux
 import Flapjack.Misc.BalancedMap.Membership
 import Flapjack.Misc.BalancedMap.BalanceArithmetic
+import Flapjack.RiscV.L3.Defs.RegisterShift
+
+
 
 -- Tagged modules required by the HOL reference coverage gate.
 
@@ -2050,7 +2052,3 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
-
-import Flapjack.RiscV.L3.Defs.RegisterShift
-
-import Flapjack.RiscV.L3.Defs.ImmediateShift
