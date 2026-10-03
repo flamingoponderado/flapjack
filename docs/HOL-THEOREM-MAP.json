@@ -52209,6 +52209,96 @@
     "reviewer": "flapjack-sol3 source comparison (dshl): pinned machine_ieeeScript.sml factory line 16, machine_ieeeLib lift1 and mk_fp_encoding instantiate binary_ieee float_sqrt at significand 52/exponent 11 and pack its SND as word64. holFp64SqrtR preserves every rounding mode, flags projection, negative-zero, infinity and unspecified NaN branch. The literal Mathlib Real.sqrt carrier preserves binary_ieee float_to_real, float_value, is_closest/closest_such/closest, largest/threshold, all-mode round, signed-zero float_round and flags clauses. holFp64Sqrt_eq_holFp64SqrtR proves unconditional kernel equality for every mode and word64; no external cut-criterion premise. Generic t/w helpers remain untagged because their zero-width domain exceeds HOL's positive type dimensions. Fixed BitVec 64 matches HOL word64 directly; no generic word-dimension qualifier applies. reals_as_rational_cuts is conservatively retained for reviewed legacy IEEE helper dependencies, as required by the current checker; SOUNDNESS item 8 still records external HOL-to-Lean real correspondence, distinct from the kernel-proven cut-to-Mathlib-real equality. No whole-inst qualifier removal or formal cross-assistant equivalence is claimed."
   },
   {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holIsClosestR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "is_closest_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: a IN s /\\ !b. b IN s ==> abs (float_to_real a - x) <= abs (float_to_real b - x); HOL sets as predicates; float_to_real over ℝ by holFloatToRealR (same clauses as the tagged float_to_real_def rendering). HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]; HOL real is Mathlib ℝ (arbitrary real argument, no Rat restriction); HOL @ is Classical.epsilon and propositions are decided classically. reals_as_rational_cuts is carried because the declaration names the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holClosestSuchR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "closest_such_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: @a. is_closest s x a /\\ !b. is_closest s x b /\\ p b ==> p a. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]; HOL real is Mathlib ℝ (arbitrary real argument, no Rat restriction); HOL @ is Classical.epsilon and propositions are decided classically. reals_as_rational_cuts is carried because the declaration names the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holClosestR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "closest_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: closest = closest_such (K T), applied to s x. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]; HOL real is Mathlib ℝ (arbitrary real argument, no Rat restriction); HOL @ is Classical.epsilon and propositions are decided classically. reals_as_rational_cuts is carried because the declaration names the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holRoundR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "round_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: all four modes with HOL thresholds (threshold for roundTiesToEven, largest otherwise; rendered over ℝ by the untagged holFloatThresholdR/holFloatLargestR with HOL's formulas), the same comparisons, results (float_minus_infinity/plus_infinity/bottom/top=FLT_MAX) and closest predicates; roundTiesToEven prefers ~word_lsb a.Significand (getLsbD 0 = false) over float_is_finite. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]; HOL real is Mathlib ℝ (arbitrary real argument, no Rat restriction); HOL @ is Classical.epsilon and propositions are decided classically. reals_as_rational_cuts is carried because the declaration names the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holFloatRoundR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_round_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: let x = round mode r in if float_is_zero x then (if toneg then NEG0 else POS0) else x. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]; HOL real is Mathlib ℝ (arbitrary real argument, no Rat restriction); HOL @ is Classical.epsilon and propositions are decided classically. reals_as_rational_cuts is carried because the declaration names the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holFloatRoundWithFlagsR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_round_with_flags_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: x = float_round mode to_neg r, a = abs r, inexact = float_value x <> Float r (over ℝ via holFloatValueR); Overflow float_is_infinite x \\/ 2 pow INT_MIN(:'w) <= a; Underflow_BeforeRounding inexact /\\ a < 2 / 2 pow INT_MAX(:'w); Underflow_AfterRounding inexact /\\ (float_round mode to_neg r : ('t,'w+1) float).Exponent <=+ n2w (INT_MIN(:'w)); Precision inexact; other flags clear. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]; HOL real is Mathlib ℝ (arbitrary real argument, no Rat restriction); HOL @ is Classical.epsilon and propositions are decided classically. reals_as_rational_cuts is carried because the declaration names the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holRealToFloatR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "real_to_float_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.3.1.1) against the pinned HOL source and the definition captured with types by binary_ieee_real_probe: real_to_float m = float_round m (m = roundTowardNegative), HOL's point-free equation applied to an arbitrary real r. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]; HOL real is Mathlib ℝ (arbitrary real argument, no Rat restriction); HOL @ is Classical.epsilon and propositions are decided classically. reals_as_rational_cuts is carried because the declaration names the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holRealToFloatWithFlagsR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "real_to_float_with_flags_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.3.1.1) against the pinned HOL source and the definition captured with types by binary_ieee_real_probe: real_to_float_with_flags m = float_round_with_flags m (m = roundTowardNegative), applied to an arbitrary real r. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]; HOL real is Mathlib ℝ (arbitrary real argument, no Rat restriction); HOL @ is Classical.epsilon and propositions are decided classically. reals_as_rational_cuts is carried because the declaration names the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holFloatSqrtR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_sqrt_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.3.2.3) against the pinned HOL source and the definition captured with types by binary_ieee_real_probe: sign 0w: NaN gives (check_for_signalling [x], float_some_qnan (FP_Sqrt mode x)), Infinity gives (clear_flags, float_plus_infinity), Float r gives float_round_with_flags mode F (sqrt r); else x = NEG0 gives (clear_flags, NEG0); else (invalidop_flags, float_some_qnan (FP_Sqrt mode x)). HOL sqrt is Real.sqrt; it is applied only to the nonnegative value of a sign-0w float, where both are the nonnegative root. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]; HOL real is Mathlib ℝ (arbitrary real argument, no Rat restriction); HOL @ is Classical.epsilon and propositions are decided classically. reals_as_rational_cuts is carried because the declaration names the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "ssa_reconcile_moves_eq",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",

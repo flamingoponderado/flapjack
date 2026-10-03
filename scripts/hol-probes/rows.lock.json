@@ -59,6 +59,7 @@
     {"bytes": 2219, "out": "binary_ieee_directed_fp32_probe.out", "rows": 50, "sha256": "ec76a876ca85d7a4aa134059e9831f242d48f779f17203d9f5f7be6a40d800b5"},
     {"bytes": 1457, "out": "binary_ieee_directed_fp64_probe.out", "rows": 30, "sha256": "c2e8ee178bce1e39f71ef9bb7fe9769e5edce89c467a7bf853185fcfe8cd54be"},
     {"bytes": 5784, "out": "binary_ieee_real_carrier_source_probe.out", "rows": 28, "sha256": "7145b829f4bed66ced675507b779c15d232b44bee6fb67e74e0a3102688c76ab"},
+    {"bytes": 815, "out": "binary_ieee_real_probe.out", "rows": 3, "sha256": "ee1bcb9a7f40d75e314077d881ac33e945ea38e414e91f455f55e59c3f06ad2a"},
     {"bytes": 665, "out": "binary_ieee_round_constants_probe.out", "rows": 3, "sha256": "f53f389810396ba1a0088944c8507d23c285cfa8841cdeaa6ba216637a5f6e71"},
     {"bytes": 2219, "out": "binary_ieee_round_fp32_probe.out", "rows": 50, "sha256": "19e24c73e0e55ee370a8ea24878a88b79708a5fce03b65e5f455713a32ff5818"},
     {"bytes": 563, "out": "binary_ieee_round_fp64_probe.out", "rows": 20, "sha256": "f07dbddbf44e96eae72f3d6a25feab61aeaead0a558b65848aef4d39768ad4ca"},
