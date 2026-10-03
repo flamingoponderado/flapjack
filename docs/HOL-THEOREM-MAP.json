@@ -75534,5 +75534,41 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:11374-11413: all original fc/c/alg/prog/k/col_opt variables, sole full pre_alloc_conventions program premise and complete post_alloc_conventions k (word_alloc ...) conclusion. Literal native allocator oracle/selection/failure clauses retained; select_reg_alloc_correct discharges actual success using actual forced endpoints, complete every_var_in_get_clash_tree supplies occurrence support, every_stack_var conjunction/colouring proves target bound, and original call preservation derives fixation from actual selector conventions. No caller-supplied target convention, success, support or post-state assumption. words_as_type_indexed_bitvec records the sole positive HOL word-dimension translation; other list/Spt/wordLang fields match the original carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "fakeMoves_conventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_moves_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10377-10393: arbitrary priority, list, SSA maps and next register; full stack-variable and call-argument conventions for both literal native fakeMoves outputs; no additional freshness, validity or bound premise. words_as_type_indexed_bitvec records positive HOL word width only; native List/Spt/WordLang carriers and all quantified variables preserved. Used instArgConvention clauses match original for the positive width bound here, despite its broader untagged helper domain."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "fixInconsistencies_conventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fix_inconsistencies_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10395-10411: all original maps, next register and priority; full four output conjunctions from literal mergeMoves/fakeMoves composition without extra hypotheses. words_as_type_indexed_bitvec records positive HOL word width only; native List/Spt/WordLang carriers and all quantified variables preserved. Used instArgConvention clauses match original for the positive width bound here, despite its broader untagged helper domain."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "fakeSeq_preAllocConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_seq_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10434-10440: arbitrary list, literal MAP fake_move followed by FOLDR Seq Skip; complete pre_alloc_conventions result with no premises. words_as_type_indexed_bitvec records positive HOL word width only; native List/Spt/WordLang carriers and all quantified variables preserved. Used instArgConvention clauses match original for the positive width bound here, despite its broader untagged helper domain."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "loopSetup_preAllocConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "loop_setup_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10456-10468: original names/exit_names/maps/next register and actual loop_setup output equation; entire pre_alloc_conventions conclusion. Actual rename/fake sequence/move output projections discharged, no added bounds or validity premises. words_as_type_indexed_bitvec records positive HOL word width only; native List/Spt/WordLang carriers and all quantified variables preserved. Used instArgConvention clauses match original for the positive width bound here, despite its broader untagged helper domain."
   }
 ]
