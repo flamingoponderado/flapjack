@@ -78884,5 +78884,85 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvEncodeFail",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_encode_fail_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: full singleton native ADDI(0,0,0) list. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvEncode",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_encode_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: complete native instruction input, original Encode word32, allfour byte extractions7:0,15:8,23:16,31:24 in original little-endian list order. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvBopR",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_bop_r_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: complete five-constructor binop table to uncurried native ArithR constructors, original fixedword5 triple. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvBopIClauses",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_bop_i_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: the tagged theorem is exactly the original four function-equality conjuncts Add/And/Or/Xor to ADDI/ANDI/ORI/XORI. Untagged total helper extension uses canonical holArb for source-unspecified Sub, with no claimed source equation there; original EVAL stays unreduced. Full executable AST handles Sub separately and directly splits the four defined cases. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvShClauses",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_sh_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: the tagged theorem is exactly the three original function-equality conjuncts Lsl/Lsr/Asr to SLLI/SRLI/SRAI on word5/5/6. Untagged total extension leaves missing Ror canonical arbitrary; original EVAL stays unreduced. Complete AST has the separate original rotation expansion. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvShvClauses",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_shv_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: the tagged theorem is exactly the three original function-equality conjuncts Lsl/Lsr/Asr to SLL/SRL/SRA on word5/5/5. Untagged total extension leaves missing Ror canonical arbitrary; original EVAL stays unreduced. Complete AST keeps full original register rotation expansion. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvMemop",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_memop_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: complete eight-constructor memop table: LD/LWU/LHU/LBU left constructors and SD/SW/SH/SB right constructors, original uncurried word5/5/12 function payloads. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvConst32",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_const32_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: word5 register/word32 input, original bit11 conditional: complemented high20 LUI plus XORI when set, high20 LUI plus ADDI otherwise. Original list order and low12 retained. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvAst",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_ast_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: entire exact HolAsm64 carrier to complete native instruction lists. All inst/arith/reg-imm/mem/FP/Jump/JumpCmp/Call/JumpReg/Loc branches retained. Fixed signed min21/max21 and -0xFFC/0xFFF tests use BitVec.sle; >>> uses signed shift; casts use exact extract/setWidth/signExtend; n2w registers wrap at5bits without bound premise. Full constant build/sign-bit branches, original overflow/carry/rotation sequences and all32 comparison/reg-imm/short-far cases retained. Operator case splitting avoids evaluating underspecified helper cases without restricting inputs. Unsupported source FP/LongDiv emit original NOP list, not new failures. No target-run, source-validity or post-evaluation premise. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvEnc",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_enc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: original combin C LIST_BIND riscv_encode composed with complete riscv_ast rendered as flatMap over whole AST result. Full HolAsm64 input and original List(BitVec8) output; no asm_ok/range/target-run hypothesis. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
   }
 ]
