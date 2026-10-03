@@ -68337,6 +68337,99 @@
     "reviewer": "flapjack-sol3 full original source1259 and fulltype0hyp comparison: generic alpha list/target and arbitrary k/j offsets retained, original successful find_index=SOME guard implies complete conjunction j>=k and forall n successful find_index=SOME(j-k+n). Propositional equality with DecidableEq preserves original equality; no Nodup, bound, target execution or assumed desired shifted result. Original zero-offset theorem and Option case inversion plus Nat arithmetic prove both source conclusions, with no HD/EL/default/provenance dependency. Fresh original generic fulltype0hyp and eight closed observations cover nonzero/large offsets, duplicate first-match, missing/empty searches and generic string carrier; generic native statement and actual arbitrary-query extracted shared-memory PC consumer use full150 actual fetch witness. Evidence is regression/source review, not cross-language equivalence or full initializer/compiler closure."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CopyLoop.lean",
+    "lean_name": "copyLoopThm",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "copy_loop_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; flapjack-sol-remove-copy-loop), stack_removeProofScript.sml1334-1471: complete original copy_words induction and statement. Retains arbitrary index/address/offset/bitmap list/domain/source memory/frame/base/native target, the original unused i1 quantified as _unusedIndex, successful source copy_words, distinct [1,2,3,t1,t2], dm equality, good_dimindex, d subset dm, all three original register reads and the complete word_list MAP Word bs * rest * memory m d heap. Derives existential extra clock, Bool temporary-register alternative, both output words and target memory; native NONE execution and full unchanged-state-field/register update; same separated frame for source final memory. Nonnegative branch uses accepted full CopyEach; negative branch uses that theorem, original next bitmap bound from recursive source success, and the actual recursive source IH. Signed comparison equals the native bitmap MSB; unconditional fix_clock_evaluate and evaluate_add_clock supply clock composition. Native Bool mdomain denotes its true set. Imported StackSemStateFiniteExact owns canonical regs/fpRegs/store and the local witness reexports its genuine roundtrip; Spt code untouched. Arbitrary positive type-indexed words retain original good_dimindex and arbitrary compiler/FFI Type carriers. No target evaluation, result, clock law, postrelation, extra successful compiler pass or narrowed width/alias assumption. Qualifiers record only the reviewed finite maps and positive-width BitVec/FFI translation. Native evaluator closure inherits reviewed reals_as_rational_cuts FP carrier (SOUNDNESS item 8), although only integer instructions execute. No native_decide and no claim of full compiler correctness or executed parity.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/FFI.lean",
+    "lean_name": "compCorrectFFI",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison2026-10-03 original comp_correct1481-1490 and FFI2081-2098: all original name/ptr/len/ptr2/len2/ret/source-result-post/target/bound/config binders retained, actual native mlstring byte-list carrier (not String), arbitrary positive word width and independent compile/FFI host types. Exactly four original premises: actual source evaluation, non-Error, complete state relation and all five original register bounds. Proves original target existential with zero added clock and original complete result-dependent postcondition; no target read/run/frame/register preservation assumed. Four successful source word lookups imply target lookups, both target byte reads derived by accepted original read_bytearray_IMP_read_bytearray. Shared original FFI state and call yield identical final/return result. Returning FFI clears both FP maps, restricts both register maps to equal saved-register predicates, preserves every original reserved pointer/base/heap lookup using state_rel saved-register conjunct, updates both actual memory functions and FFI. Original read length and call_FFI_LENGTH derive successful source read at replacement length; full write_bytearray_lemma with original nested STAR_ASSOC frame supplies complete updated separated memory. No extra alignment/domain/no-wrap/target-success hypothesis, no runtime/default/qualifier policy change. Local roundtrip reexports actual canonical owning StackSemStateFiniteExact carrier for all three finite maps. Elaborated evaluator/compiler closure inherits existing reals_as_rational_cuts external assumption (SOUNDNESS item8); no new floating-point or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Install.lean",
+    "lean_name": "evaluateCodeBitmapsInstall",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.1: original evaluate_code_bitmaps421-440 Install case. Literal complete three-conjunct existential shifted compile_oracle/code FOLDL union of GENLIST fromALists/bitmap append FLAT retained. Actual native full evaluate equation sole premise. All failed register/nonword reads, code/data buffer flush, compiler NONE, empty progs and bytes/data/nextconfig comparison failures return source/count0; actual success updates oracle shift1/code left-accumulator union/bitmap append, deriving count1 without count/prefix/target/postfield assumptions. Original buffer/useStack/compiler/equality branches unchanged. Imported canonical regs/fpRegs/store same-module codec witness; positive BitVec/NeZero,C/F Type0, Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numeric alignment/FP equivalence claim or runtime rewrite. Full parent assembly remains open.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/FFI.lean",
+    "lean_name": "evaluateCodeBitmapsFFI",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.8: original evaluate_code_bitmaps421-440 FFI induction case retains full existential oracle shift/code FOLDL left union of GENLIST fromALists/bitmap append FLAT. Sole actual full native evaluate equality premise. Original stackSem FFI clause943-960 compared: same four word reads/order, both bytearray reads, call_FFI final and return outcomes; all errors/final unchanged and return changes only memory, DRESTRICT regs, empty fpRegs, ffi. Derive count0 in every branch without target/count/prefix/postfield/name or alignment assumptions. Native MlString ffiIndex retained, no String translation. Imported canonical regs/fpRegs/store, local genuine codec witness, positive BitVec/NeZero,C/F Type0; Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numerical alignment/FP equivalence or runtime rewrite claim. Whole theorem assembly remains open.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/RawCall.lean",
+    "lean_name": "evaluateCodeBitmapsRawCall",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.9: original evaluate_code_bitmaps421-440 recursive RawCall case retains literal CodeBitmaps full existential shift/code FOLDL left union/bitmap FLAT. Original stackSem850-861 compared to native evaluate_rawCall: actual code lookup/destSeq/nonzero clock guard, body evaluated at actual decClock source, bad_fun_return changes result only; failed lookup/nonSeq/timeout emptyEnv preserve fields/count0. Only source-path guarded body IH, no arbitrary-state IH or supplied target/count/prefix/poststate fact. decClock preserves all three inputs definitionally. Canonical imported regs/fpRegs/store with local genuine codec witness, positive BitVec/NeZero,C/F Type0, Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numerical alignment/FP equivalence claim. Parent assembly open.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/WordSearch.lean",
+    "lean_name": "findIndex_mapToNat",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "find_index_MAP_w2n",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original local source10127 and literal statement/proof replay fulltypes0hyp: local HOL declaration not exported in theory DB (DB.fetch fails), so registered original probe replays exactly its source statement AND proof in pinned HOL before capturing full type. Complete forall same-dimension word list/target/arbitrary Nat offset, unconditional exact Option equality between natural-projection search and original word search. Positive BitVec width with own NeZero is sole words_as_type_indexed_bitvec carrier translation; no success/Nodup/length bound or totalHD/EL/default premise. Native structural induction with BitVec.toNat injectivity mirrors original w2n injectivity. Fresh original seven closed observations/native cases cover first/mapped/duplicate/missing/empty/wrapped8/wide80 searches; full generic consumer and arbitrary base/listDROP/offset initializer-facing consumer. Regression/source comparison evidence, not HOL-to-Lean equivalence or full initializer/compiler closure."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BytesInMem/Imp.lean",
+    "lean_name": "bytesInMem_impliesMemory",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "bytes_in_mem_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source4256 and fresh fulltype0hyp comparison: fixed word8 values/memory retained even though bytes_in_mem definition has generic Value; arbitrary positive address-word dimension with own NeZero, memory/domain/excluded/list/address binders and sole original bytes_in_mem guard imply full bytes_in_memory at same inputs and domain. words_as_type_indexed_bitvec permits standard positive address-word translation only. Recursive native proof preserves wrapped address+1, drops excluded conjunct without strengthening domain/value relation. Fresh original seven observations cover empty/vacuous excluded domains, singleton, wrap255->0, excluded/missing-domain/wrong-value guards and dimension1. Generic native full consumer and actual wrapped/one-bit consumers discharge source memory premises, no desired target/success/default or hold change. Regression evidence is not cross-language equivalence or FFI/initializer/full compiler correctness."
+  },
+  {
     "lean_path": "Flapjack/RiscV/L3/Defs/AMOArithmetic.lean",
     "lean_name": "«dfn'AMOADD_W»",
     "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
