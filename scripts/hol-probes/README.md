@@ -6229,6 +6229,13 @@ This is the full model Fetch, distinct from riscv_step Fetch; probes are
 regression evidence, not cross-assistant equivalence or full modelRun coverage.
 
 `stack_remove_write_bytearray_probe` replays the three full original IGNORE_non_aligned/IGNORE/EQ proofs (324–370), captures 50 complete original reads and paired writes at seven observed keys, and records the original LOG specification plus its symbolic `LOG2 0` boundary. Widths 8/64/80 cover both endiannesses, empty writes, wraparound, Loc/domain failures and differing memories; width 1 has empty writes only. Nonempty width-one observations remain symbolic and are not assigned invented numeric expectations. Kernel/runtime checks compare only values decoded from the original outputs. The original support proofs use byte alignment symbolically: its unspecified zero-logarithm value does not itself require changing the executable Lean implementation. Native theorem instances and their dependencies still require independent proof and source review; these fixtures establish neither cross-language equivalence nor compiler correctness.
+
+The final `write_full_write_bytearray_lemma` row replays the complete original
+frame proof (372–393), with its local EQ/IGNORE prerequisites generalized as
+they are when saved in the original theory. It retains the arbitrary frame
+predicate and the complete separated-heap conclusion. The native counterpart
+uses the reviewed `memoryHOL` and SetSep carriers; the capture is regression
+evidence, not a cross-language equivalence proof.
 `l3_address_exception_probe.out` captures the complete original native
 `signalAddressException` definition/type and four fault-kind/address/current-core
 observations. The corresponding Lean guard proves an unconditional full-state
