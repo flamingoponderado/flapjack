@@ -1514,6 +1514,12 @@
       "sha256": "9c6277d4596ccd4107db7c9c19b84f4ad480407bff2fa6b29133689cf6cb36df"
     },
     {
+      "bytes": 6614,
+      "out": "l3_conditional_branch_probe.out",
+      "rows": 162,
+      "sha256": "9923328b83b9d07de0985da09a40955e4168ec46852ce8e92eae505296d259eb"
+    },
+    {
       "bytes": 17276,
       "out": "l3_csr_access_probe.out",
       "rows": 317,
@@ -1674,6 +1680,12 @@
       "out": "l3_raise_exception_probe.out",
       "rows": 2,
       "sha256": "6181faf5e9a5922047c91178514f4638d35b95d29ffccb387afe875cc1b00c3c"
+    },
+    {
+      "bytes": 3648,
+      "out": "l3_register_alu_probe.out",
+      "rows": 160,
+      "sha256": "5c2d1e1e8bd31473882164bb38f64f1cc23277a1dc29f81dd41fac68a26c4045"
     },
     {
       "bytes": 1132,

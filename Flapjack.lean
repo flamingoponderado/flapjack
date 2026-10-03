@@ -1,5 +1,9 @@
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases
+import Flapjack.RiscV.L3.Defs.RegisterALU
+import Flapjack.RiscV.L3.Defs.ConditionalBranch
+import Flapjack.RiscV.L3.Defs.UpperJump
+import Flapjack.RiscV.L3.Defs.CSRInstructions
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitClock
@@ -9,9 +13,7 @@ import Flapjack.Compiler.Backend.WordUnreach.ProductionEncoderDomain
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
 import Flapjack.RiscV.L3.Defs.CSRDispatch
-import Flapjack.RiscV.L3.Defs.CSRInstructions
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.JumpLower
-import Flapjack.RiscV.L3.Defs.UpperJump
 import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization

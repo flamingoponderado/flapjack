@@ -70624,5 +70624,93 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol full source/body comparison2026-10-03 original2953-2978: complete actual native initializer precondition, all arbitrary k/bitmaps/data_sp/source parameters and four existential word pointers retained. Original good_dimindex32-or64, k>=8, code label1 membership, three-element ffi_save_regs subset and negated use_stack/store/alloc; exact lookups2/3/4 and five memory header positions with original word-scaled bitmap/data lengths and code buffer bounds. Both unsigned comparisons retain word arithmetic before toNat, including modular1024w*bytes_in_word and ptr4-ptr2; all three original byte alignments, empty code buffer and complete three-factor LEFT-associated STAR retained, original bitmaps mapped Word, heap existential length w2n(ptr4-ptr2) DIV w2n(bytes_in_word). Actual Bool domain/save-register characteristic functions used via true membership; no finite-domain, alignment, successful-evaluation, target-state or separation premise added/omitted. Original List/Spt/WordLoc/word-buffer carriers retained. Positive word translation and actual imported canonical regs/fpRegs/store owner StackSemStateFiniteExact with local genuine broad/exact codec roundtrip; Spt code and sets excluded from map qualifier. Fresh original complete kernel definition/type/zero stored hypotheses exported. Proof-side precondition only, full init_code_thm/init semantics and executed compiler correctness remain dependency-linked open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ConditionalBranch.lean",
+    "lean_name": "«dfn'BEQ»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BEQ_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.22: literal source6879-6911, full fixedword5rs1/rs2, word12offs, originalword64/state fields. Sequential in32BitMode calls thread firsts then seconds0; firstoperand readfroms, secondfroms0; selector0 signextends low32 to64 and other valid selectors use full64. BEQ/BNE equality/negation, BLT signedlt, BGE reversed signedle, BLTU unsignedlt and BGEU unsignedltnegation match original operators. Taken paths use PC s0 plus signedoffs shifted1 modulo64 and direct branchTo on s0 evenoddtarget; no address trap check; untaken returns s0. No GPR/PC/Delta change beyond reviewed mode-error state. Canonical ARB unspecified architecture and exact first-exception retained, no successfulmode/core/targetrun premise. Fresh original156 independent whole-state guards and kernel counterparts cover signed/unsigned/RV32-vs64/128, taken/untaken, PCwrap, oddtarget, invalidselector1 exactmessage/priorretention using zero operands without resolving ARB. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ConditionalBranch.lean",
+    "lean_name": "«dfn'BNE»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BNE_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.22: literal source6912-6947, full fixedword5rs1/rs2, word12offs, originalword64/state fields. Sequential in32BitMode calls thread firsts then seconds0; firstoperand readfroms, secondfroms0; selector0 signextends low32 to64 and other valid selectors use full64. BEQ/BNE equality/negation, BLT signedlt, BGE reversed signedle, BLTU unsignedlt and BGEU unsignedltnegation match original operators. Taken paths use PC s0 plus signedoffs shifted1 modulo64 and direct branchTo on s0 evenoddtarget; no address trap check; untaken returns s0. No GPR/PC/Delta change beyond reviewed mode-error state. Canonical ARB unspecified architecture and exact first-exception retained, no successfulmode/core/targetrun premise. Fresh original156 independent whole-state guards and kernel counterparts cover signed/unsigned/RV32-vs64/128, taken/untaken, PCwrap, oddtarget, invalidselector1 exactmessage/priorretention using zero operands without resolving ARB. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ConditionalBranch.lean",
+    "lean_name": "«dfn'BLT»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BLT_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.22: literal source6948-6981, full fixedword5rs1/rs2, word12offs, originalword64/state fields. Sequential in32BitMode calls thread firsts then seconds0; firstoperand readfroms, secondfroms0; selector0 signextends low32 to64 and other valid selectors use full64. BEQ/BNE equality/negation, BLT signedlt, BGE reversed signedle, BLTU unsignedlt and BGEU unsignedltnegation match original operators. Taken paths use PC s0 plus signedoffs shifted1 modulo64 and direct branchTo on s0 evenoddtarget; no address trap check; untaken returns s0. No GPR/PC/Delta change beyond reviewed mode-error state. Canonical ARB unspecified architecture and exact first-exception retained, no successfulmode/core/targetrun premise. Fresh original156 independent whole-state guards and kernel counterparts cover signed/unsigned/RV32-vs64/128, taken/untaken, PCwrap, oddtarget, invalidselector1 exactmessage/priorretention using zero operands without resolving ARB. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ConditionalBranch.lean",
+    "lean_name": "«dfn'BLTU»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BLTU_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.22: literal source6982-7015, full fixedword5rs1/rs2, word12offs, originalword64/state fields. Sequential in32BitMode calls thread firsts then seconds0; firstoperand readfroms, secondfroms0; selector0 signextends low32 to64 and other valid selectors use full64. BEQ/BNE equality/negation, BLT signedlt, BGE reversed signedle, BLTU unsignedlt and BGEU unsignedltnegation match original operators. Taken paths use PC s0 plus signedoffs shifted1 modulo64 and direct branchTo on s0 evenoddtarget; no address trap check; untaken returns s0. No GPR/PC/Delta change beyond reviewed mode-error state. Canonical ARB unspecified architecture and exact first-exception retained, no successfulmode/core/targetrun premise. Fresh original156 independent whole-state guards and kernel counterparts cover signed/unsigned/RV32-vs64/128, taken/untaken, PCwrap, oddtarget, invalidselector1 exactmessage/priorretention using zero operands without resolving ARB. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ConditionalBranch.lean",
+    "lean_name": "«dfn'BGE»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BGE_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.22: literal source7016-7049, full fixedword5rs1/rs2, word12offs, originalword64/state fields. Sequential in32BitMode calls thread firsts then seconds0; firstoperand readfroms, secondfroms0; selector0 signextends low32 to64 and other valid selectors use full64. BEQ/BNE equality/negation, BLT signedlt, BGE reversed signedle, BLTU unsignedlt and BGEU unsignedltnegation match original operators. Taken paths use PC s0 plus signedoffs shifted1 modulo64 and direct branchTo on s0 evenoddtarget; no address trap check; untaken returns s0. No GPR/PC/Delta change beyond reviewed mode-error state. Canonical ARB unspecified architecture and exact first-exception retained, no successfulmode/core/targetrun premise. Fresh original156 independent whole-state guards and kernel counterparts cover signed/unsigned/RV32-vs64/128, taken/untaken, PCwrap, oddtarget, invalidselector1 exactmessage/priorretention using zero operands without resolving ARB. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ConditionalBranch.lean",
+    "lean_name": "«dfn'BGEU»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'BGEU_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.22: literal source7050-7083, full fixedword5rs1/rs2, word12offs, originalword64/state fields. Sequential in32BitMode calls thread firsts then seconds0; firstoperand readfroms, secondfroms0; selector0 signextends low32 to64 and other valid selectors use full64. BEQ/BNE equality/negation, BLT signedlt, BGE reversed signedle, BLTU unsignedlt and BGEU unsignedltnegation match original operators. Taken paths use PC s0 plus signedoffs shifted1 modulo64 and direct branchTo on s0 evenoddtarget; no address trap check; untaken returns s0. No GPR/PC/Delta change beyond reviewed mode-error state. Canonical ARB unspecified architecture and exact first-exception retained, no successfulmode/core/targetrun premise. Fresh original156 independent whole-state guards and kernel counterparts cover signed/unsigned/RV32-vs64/128, taken/untaken, PCwrap, oddtarget, invalidselector1 exactmessage/priorretention using zero operands without resolving ARB. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterALU.lean",
+    "lean_name": "«dfn'ADD»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ADD_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison 2026-10-03 bead .8.1.23: literal ADD at 6010, full word5 register tuple and exact native state. Both GPR sources from original prestate, full word64 modular arithmetic/bitwise operator, write GPR current-core update with zero suppression. No architecture query/truncation; arbitrary mode/prior exception preserved. No target-run/success/core premise. Independent whole-state numeric, wrap, source0, rd0, both source aliases, frame fixtures cover literal equation. Full Run remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterALU.lean",
+    "lean_name": "«dfn'SUB»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SUB_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison 2026-10-03 bead .8.1.23: literal SUB at 6052, full word5 register tuple and exact native state. Both GPR sources from original prestate, full word64 modular arithmetic/bitwise operator, write GPR current-core update with zero suppression. No architecture query/truncation; arbitrary mode/prior exception preserved. No target-run/success/core premise. Independent whole-state numeric, wrap, source0, rd0, both source aliases, frame fixtures cover literal equation. Full Run remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterALU.lean",
+    "lean_name": "«dfn'AND»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AND_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison 2026-10-03 bead .8.1.23: literal AND at 6168, full word5 register tuple and exact native state. Both GPR sources from original prestate, full word64 modular arithmetic/bitwise operator, write GPR current-core update with zero suppression. No architecture query/truncation; arbitrary mode/prior exception preserved. No target-run/success/core premise. Independent whole-state numeric, wrap, source0, rd0, both source aliases, frame fixtures cover literal equation. Full Run remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterALU.lean",
+    "lean_name": "«dfn'OR»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'OR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison 2026-10-03 bead .8.1.23: literal OR at 6183, full word5 register tuple and exact native state. Both GPR sources from original prestate, full word64 modular arithmetic/bitwise operator, write GPR current-core update with zero suppression. No architecture query/truncation; arbitrary mode/prior exception preserved. No target-run/success/core premise. Independent whole-state numeric, wrap, source0, rd0, both source aliases, frame fixtures cover literal equation. Full Run remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterALU.lean",
+    "lean_name": "«dfn'XOR»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'XOR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison 2026-10-03 bead .8.1.23: literal XOR at 6198, full word5 register tuple and exact native state. Both GPR sources from original prestate, full word64 modular arithmetic/bitwise operator, write GPR current-core update with zero suppression. No architecture query/truncation; arbitrary mode/prior exception preserved. No target-run/success/core premise. Independent whole-state numeric, wrap, source0, rd0, both source aliases, frame fixtures cover literal equation. Full Run remains open."
   }
 ]

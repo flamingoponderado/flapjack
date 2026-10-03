@@ -6645,3 +6645,18 @@ supplement source review; full Run/Next correctness remains open.
 `stack_remove_init_code_relation_probeScript.sml` replays the complete unchanged original local `IMP_code_rel` proof (3988–4010), including the original compiled association-list table and both code-relation clauses. It captures the generalized statement, zero stored hypotheses and successful proof sentinel.
 
 `stack_remove_init_code_pre_probeScript.sml` exports the complete original kernel definition and generic type of the initializer precondition (2953–2978), with zero stored hypotheses. The native port retains all four pointer witnesses, header words, characteristic-function sets, unsigned word capacity checks and the original three separated heap factors. This is the precondition definition, not the initializer execution proof.
+### Native conditional branches
+
+`l3_conditional_branch_probeScript.sml` captures the full BEQ/BNE/BLT/BGE/
+BLTU/BGEU equations and 156 independent whole-state fixtures.
+`check-l3-conditional-branches.py` requires every unique expected row to be T.
+Kernel counterparts in L3ConditionalBranchParity cover RV32 selector0, RV64
+selector2, RV128 selector3, signed/unsigned and truncated comparisons, target
+wrap and direct odd-target BranchTo. Selector1 fixtures preserve exact error
+bytes/prior exceptions using zero operands without choosing architecture ARB.
+Both mode checks and returned states are retained. The original conditional
+clauses contain no JAL-style alignment trap. Full Run/Next remains open.
+
+### Native register arithmetic and bitwise equations
+
+`l3_register_alu_probeScript.sml` checks 160 independent whole-state ADD/SUB/AND/OR/XOR equations on the pinned original model. Eight input groups cover zero, full64 wraparound, signed boundaries, alternating bits, values exceeding32bits and either source register zero; four destinations cover suppression, both source aliases and a separate destination. All other fields and prior exceptions remain arbitrary. `check-l3-register-alu.py` requires the complete unique label set and every captured equation to reduce to T. Matching Lean fixtures use kernel-checked closed numeric certificates and whole-state equations. These original clauses have no architecture check. Full Run correctness remains open.
