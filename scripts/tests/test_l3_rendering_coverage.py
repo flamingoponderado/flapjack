@@ -51,6 +51,19 @@ class NativeRenderingCoverage(unittest.TestCase):
         actual[key]="noncomputable " + actual[key] if not actual[key].startswith("noncomputable ") else actual[key].removeprefix("noncomputable ")
         with self.assertRaises(ValueError):m.check(actual,self.generated,self.lock)
 
+    def test_next_uses_step_fetch_and_all_transfer_alternatives(self):
+        key="Flapjack/RiscV/L3/Step/Next.lean:NextRISCV"
+        original=self.generated["riscv_step","NextRISCV"][0]
+        self.assertIn("riscv_step_Fetch",original)
+        rendered,_=m.rendered_for(key,self.generated)
+        self.assertIn("Fetch s",rendered)
+        self.assertNotIn("riscv_Fetch",rendered)
+        for constructor in ("BranchTo", "Ereturn", "Mrts", "Trap"):
+            self.assertIn("."+constructor,self.actual[key])
+        actual=dict(self.actual)
+        actual[key]=actual[key].replace("Fetch s", "riscv_Fetch s",1)
+        with self.assertRaises(ValueError):m.check(actual,self.generated,self.lock)
+
     def test_quoted_whitespace_not_erased(self):
         self.assertNotEqual(m.normalize('def f := "a b"'),m.normalize('def f := "ab"'))
         self.assertEqual(m.normalize('def f := 1'),m.normalize('def  f :=\n1'))

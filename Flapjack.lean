@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Step.Next
 import Flapjack.RiscV.L3.Step.UpdatePC
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
@@ -1221,6 +1222,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpVar
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpRField
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpRStruct
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpNField
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
@@ -2118,6 +2120,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Allocation
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Calls
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Program
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Full
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
