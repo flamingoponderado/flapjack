@@ -88431,5 +88431,21 @@
     ],
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-03: pinned binary_ieeeScript361-365, fresh original type and complete typed equation in binary_ieee_two_dimensions_probe.out. HOL (alpha # beta) itself -> real has two independent word-free dimensions. word_dimensions_as_widths maps precision dimindex(:t) to explicit t:Nat/NeZero t and exponent dimension(:w) to independent w:Nat/NeZero w. Literal formula (2^(UINT_MAX(:w)-1) / 2^INT_MAX(:w)) * (2 - inverse(2^(t + 1))) retains natural subtraction, multiplication/division grouping and SUC only in threshold precision. Native holUintMax w = 2^w-1 and holFloatBias w = 2^(w-1)-1 match UINT_MAX/INT_MAX; output is arbitrary Mathlib Real, no Rat restriction, word carrier, fixed dimension or added bound. reals_as_rational_cuts is the conservative reviewed IEEE-family marker, SOUNDNESS item 8; the qualifier does not establish independent HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/InitialComposition.lean",
+    "lean_name": "initialPassSemantics",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only initial three-pass proof assembly for pan_to_wordProofScript.sml:529-595; no independent HOL declaration and no claim to the full state_rel_imp_semantics theorem. Original source initial-state, size, allocation and memory premises derive the pass equalities."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/InitialComposition.lean",
+    "lean_name": "initialToGlobalsSemantics",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only initial three-pass proof assembly for pan_to_wordProofScript.sml:529-595; no independent HOL declaration and no claim to the full state_rel_imp_semantics theorem. Original source initial-state, size, allocation and memory premises derive the pass equalities."
   }
 ]
