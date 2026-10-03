@@ -1,0 +1,10 @@
+load "bossLib";
+load "preamble";
+load "pan_to_wordProofTheory";
+open bossLib HolKernel Parse preamble pan_to_wordProofTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "=");print_term(concl th);print "\n");
+val _ = capture "function_names_structs_compile_top" (DB.fetch "pan_to_wordProof" "function_names_structs_compile_top");
+val _ = capture "functions_FILTER_nil" (DB.fetch "pan_to_wordProof" "functions_FILTER_nil");
+val _ = capture "semantics_decls_decl_structs" (DB.fetch "pan_to_wordProof" "semantics_decls_decl_structs");
+val _ = capture "functions_compile_decs_exns" (DB.fetch "pan_to_wordProof" "functions_compile_decs_exns");

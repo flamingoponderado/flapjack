@@ -77050,5 +77050,67 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Imported-owner canonical pan_globals context roundtrip, re-exported for the fmap_as_finite_support_relation [PanGlobalsContextExact.globals] qualifier; no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "expIdsStructsCompileHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "exp_ids_structs_compile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !ctxt prog. exp_ids (pan_structs$compile ctxt prog) = exp_ids prog over compileProgExact, by compile_ind (Lean functional induction over context and program). [local] in HOL, so not exported to the theory database; compared against the source text (pan_to_wordProofScript.sml)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionNamesStructsCompileDecsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "function_names_structs_compile_decs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !ctxt pan_code. MAP FST (functions (FST (pan_structs$compile_decs ctxt pan_code))) = MAP FST (functions pan_code) over compileDeclsExact. [local] in HOL, so not exported to the theory database; compared against the source text (pan_to_wordProofScript.sml)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionNamesStructsCompileTopHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "function_names_structs_compile_top",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !pan_code. MAP FST (functions (pan_structs$compile_top pan_code)) = MAP FST (functions pan_code). Statement captured with types by pan_to_word_structs_names_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionsFilterNilHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "functions_FILTER_nil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): functions (FILTER is_exn_decl xs) = [] with the free xs bound explicitly. Statement captured with types by pan_to_word_structs_names_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "semanticsDeclsDeclStructsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "semantics_decls_decl_structs",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): semantics_decls s start pan_code <> Fail ==> ?s_ctxt. decs_stcnames [] pan_code = SOME s_ctxt; the free s start pan_code are bound explicitly. Statement captured with types by pan_to_word_structs_names_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionsCompileDecsExnsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "functions_compile_decs_exns",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): functions (FST (SND (SND (compile_decs ctxt prog)))) = [], with the free ctxt prog bound explicitly; only the pan_globals context globals |-> field is translated. Statement captured with types by pan_to_word_structs_names_probe."
   }
 ]
