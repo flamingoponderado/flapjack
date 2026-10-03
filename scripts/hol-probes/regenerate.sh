@@ -6894,3 +6894,7 @@ run_probe stack_remove_store_list_code_probeScript.sml stack_remove_store_list_c
 run_probe stack_remove_word_list_exists_add_probeScript.sml stack_remove_word_list_exists_add_probe.out \
   word_list_exists_ADD_statement word_list_exists_ADD_hypotheses \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_code_thm_probeScript.sml stack_remove_init_code_thm_probe.out \
+  init_code_thm_statement init_code_thm_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

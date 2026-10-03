@@ -7315,3 +7315,5 @@ uses canonical finite-support maps with HOL equality and no comparison premise.
 `stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.
 
 `stack_remove_word_list_exists_add_probeScript.sml` prints the stored original `word_list_exists_ADD` (stack_removeProofScript.sml:38-47) with zero hypotheses; the Lean port keeps arbitrary payloads and modular addresses.
+
+`stack_remove_init_code_thm_probeScript.sml` prints the stored original `init_code_thm` (stack_removeProofScript.sml:3225-3837) in full with zero hypotheses. The Lean port `Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeCorrect.initCodeThm` proves the complete statement over the native stackSem evaluator by symbolically executing the actual `init_code` (InitCodeThm.lean) and establishing the original `state_rel`/`init_prop` conclusions; it adds no premise.
