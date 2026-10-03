@@ -79494,6 +79494,16 @@
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the one-line Datatype at binary_ieeeScript.sml:41: float_value = Float real | Infinity | NaN, constructors in HOL order with the Float payload HOL real as Mathlib ℝ (the Rat-payload HolFloatValue stays untagged). reals_as_rational_cuts is carried because check-hol-refs requires it for the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
   },
   {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holFloatToIntR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_to_int_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-y19g.11.3.3) against the pinned HOL source and the definition captured with types by binary_ieee_convert_probe: case float_value x of Float r => SOME (roundTiesToEven: f = INT_FLOOR r, df = abs (r - real_of_int f), f if df < 1/2 \\/ df = 1/2 /\\ EVEN (Num (ABS f)) else INT_CEILING r; roundTowardPositive INT_CEILING r; roundTowardNegative INT_FLOOR r; roundTowardZero if x.Sign = 1w then INT_CEILING r else INT_FLOOR r) | _ => NONE, over Mathlib ℝ (float_value via holFloatValueR; INT_FLOOR/INT_CEILING are Int.floor/Int.ceil on ℝ; EVEN (Num (ABS f)) is f.natAbs % 2 = 0). HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because the declaration names the reviewed rendering family (SOUNDNESS item 8). holFloatToIntR_eq proves equality with the executed Rat holFloatToInt. No other difference."
+  },
+  {
     "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
     "lean_name": "holFp32ToFloat",
     "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
@@ -79550,6 +79560,16 @@
     "statement_status": "reviewed_reals_as_rational_cuts",
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.3.1.1) against the machine_ieeeLib definition generated at machine_ieeeScript.sml:16, captured by machine_ieee_fp64_defs_probe: real_to_fp64 mode = float_to_fp64 o real_to_float mode at (52,11), applied to an arbitrary real r; real_to_float is the tagged arbitrary-real holRealToFloatR over Mathlib ℝ. reals_as_rational_cuts is carried because the declaration names the reviewed rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/ConvertReal.lean",
+    "lean_name": "holFp64ToIntR",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_to_int_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-y19g.11.3.3) against the machine_ieeeLib definition generated at machine_ieeeScript.sml:16, captured by machine_ieee_fp64_defs_probe: fp64_to_int mode = float_to_int mode o fp64_to_float at (52,11), applied to a, with float_to_int the tagged Mathlib-ℝ holFloatToIntR. reals_as_rational_cuts is carried because the declaration names the reviewed rendering family (SOUNDNESS item 8). holFp64ToInt_eq_real proves equality with the executed holFp64ToInt. No other difference."
   },
   {
     "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
