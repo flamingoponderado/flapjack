@@ -330,6 +330,132 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
           simp only [miscThe] at hmaxS
           simp only [Option.getD_some]
           omega
-    · sorry
+    · -- the callee's frame fits: the body runs under the induction hypothesis
+      set t5 : StackSemStateFiniteExact width C F :=
+        {t4 with stackSpace := t4.stackSpace + nfree - m, clock := t4.clock - 1} with ht5
+      have hrelC : stateRel ac k fs svc
+          (WordSemStateFiniteExact.callEnv args1 ss (WordSemStateFiniteExact.decClock source))
+          t5 lens 0 := by
+        have hrel4'' := hrel4
+        unfold stateRel at hrel4''
+        obtain ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18,
+          g19, g20, g21, g22, g23, g24, g25, g26, g27, g28, g29, g30, g31, g32, g33, g34, -, -,
+          g37, g38, gloc⟩ := hrel4''
+        have hsacf2 : args1.length - k ≤ f := by rw [← hsac1]; exact hsacf
+        have hspace : t5.stackSpace = t4.stackSpace + f - fs := by
+          simp only [t5]; omega
+        have hpre1 : args1.IsPrefix xs := by
+          by_cases hd : dest = none
+          · rw [hnone hd]; exact List.dropLast_prefix xs
+          · rw [hsome hd]; exact List.prefix_refl xs
+        unfold stateRel
+        refine ⟨?_, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18,
+          g19, g20, g21, g22, g23, g24, g25, g26, g27, g28, g29, g30, g31, g32, ?_, g34, ?_,
+          wfFromList2 args1, ?_, ?_, ?_⟩
+        · show source.clock - 1 = t4.clock - 1
+          rw [g1]
+        · show t5.stackSpace + fs ≤ t4.stack.length
+          omega
+        · show if svc = 0 then fs = 0 else fs = svc + 1
+          by_cases h : svc = 0
+          · rw [if_pos h] at hfsdef ⊢; exact hfsdef.symm
+          · rw [if_neg h] at hfsdef ⊢; exact hfsdef.symm
+        · show stackSizeRel fs ss source.stackLimit
+            (wordSemOptionMax source.stackMax (wordSemOptionAdd (wordSemStackSize source.stack) ss))
+            source.stack t4.stack t5.stackSpace 0
+          obtain ⟨-, glim, gmax⟩ := g37
+          refine ⟨fun _ => hss, glim, ?_⟩
+          intro M hM
+          rcases hsm : source.stackMax with _ | a
+          · rw [hsm] at hM; simp [wordSemOptionMax] at hM
+          obtain ⟨hle0, -, b, hb, hbv⟩ := gmax a hsm
+          rcases hssc : ss with _ | c
+          · rw [hsm, hssc, hb] at hM; simp [wordSemOptionMax, wordSemOptionAdd] at hM
+          rw [hssc] at hss
+          simp only [Option.getD_some] at hss
+          subst hss
+          rw [hsm, hb, hssc] at hM
+          simp only [wordSemOptionMax, wordSemOptionAdd, Option.some.injEq] at hM
+          have := Nat.le_max_right a (b + c)
+          refine ⟨by omega, rfl, b, hb, by omega⟩
+        · show stackRel k source.handler source.stack (t4.store.lookup .handler)
+            ((t4.stack.drop (t5.stackSpace + 0)).drop fs) t4.stack.length t4.bitmaps lens
+          have e1 : (t4.stack.drop (t5.stackSpace + 0)).drop fs =
+              (t4.stack.drop (t4.stackSpace + 0)).drop f := by
+            rw [List.drop_drop, List.drop_drop]
+            congr 1
+            omega
+          rw [e1]
+          exact g38
+        · intro nn v hn
+          change sptLookup nn (sptFromList2 args1) = some v at hn
+          have hidx : nn / 2 < args1.length := by
+            have h := fromList2Lookup args1 nn
+            rw [h] at hn
+            split at hn
+            · exact (List.getElem?_eq_some_iff.mp hn).1
+            · cases hn
+          have hsrc : sptLookup nn source.locals = some v :=
+            getVarsFromList2Eq args source xs nn v (by rw [← hargs]; exact hgv)
+              (lookupFromList2Prefix args1 xs nn v hpre1 hn)
+          obtain ⟨he, hif⟩ := gloc nn v hsrc
+          refine ⟨he, ?_⟩
+          by_cases hlt : nn / 2 < k
+          · rw [if_pos hlt] at hif ⊢
+            exact hif
+          · rw [if_neg hlt] at hif ⊢
+            obtain ⟨hslot, -⟩ := hif
+            refine ⟨?_, ?_⟩
+            · rw [Nat.add_zero, List.getElem?_take, List.getElem?_drop] at hslot ⊢
+              rw [if_pos (by omega)] at hslot ⊢
+              rw [show t5.stackSpace + (fs - 1 - (nn / 2 - k)) =
+                t4.stackSpace + (f - 1 - (nn / 2 - k)) by omega]
+              exact hslot
+            · have := Nat.le_max_right (maxVarHOL prog / 2 + 1 - k) (args1.length - k)
+              rw [← hsvc] at this
+              omega
+      have hrel0 := related
+      unfold stateRel at hrel0
+      obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, h25, -⟩ := hrel0
+      obtain ⟨hpa, hflatp, -⟩ := h25 pLoc prog args1.length hpLoc
+      have hlabels : ∀ loc, StackSem.getLabelsExact body loc → StackSem.locCheckExact t5.code loc :=
+        fun loc hl => StackPropsCodeLabels.findCodeImpGetLabels dest' t4.regs t4.code _ hfind loc
+          (by unfold StackSem.getLabelsExact; exact Or.inr hl)
+      have hmaxv : maxVarHOL prog < 2 * svc + 2 * k := by
+        have := Nat.le_max_left (maxVarHOL prog / 2 + 1 - k) (args1.length - k)
+        rw [← hsvc] at this
+        omega
+      obtain ⟨ck, tpost, tres, hrunb, hresb⟩ := ih xs args1 prog ss ⟨hgv, hbad, hfc, rfl, hclk⟩
+        k fs svc s' t5 res' bs0 bs2 i0 i2 body lens
+        ⟨hbody, notError, hrelC, hpa, hflatp, hbc, hb1, by rw [hbm4]; exact hb2,
+          by rw [hbm4]; exact hb3, hlabels, hmaxv⟩
+      have hbadT : StackSemControl.badFunReturn tres = false := by
+        unfold compCorrectResult at hresb
+        split_ifs at hresb with hne
+        · rw [hresb.1]; rfl
+        · rw [← not_not.mp hne]
+          rcases res' with _ | r
+          · simp [wordSemBadFunReturn] at hbf
+          · cases r <;> first | rfl | simp [wordSemBadFunReturn] at hbf
+      have hle : tpost.clock ≤ t4.clock - 1 + ck := by
+        have := StackSemEvaluateClock.evaluateClock body _ tres tpost hrunb
+        exact this
+      refine ⟨ck, tpost, tres, ?_, ?_⟩
+      · rw [hreach ck, show t4.clock + ck - 1 = t4.clock - 1 + ck by omega,
+          StackSemEvaluate.evaluate_seq (Prog.stackAlloc m) body,
+          StackSemEvaluate.evaluate_stackAlloc, if_neg (by simp [r5]),
+          if_neg (by simp only; omega)]
+        simp only [StackSemControl.fixClock, Nat.min_self]
+        rw [hrunb]
+        simp only [Nat.min_eq_right hle, hbadT, Bool.false_eq_true, if_false]
+      · unfold compCorrectResult at hresb ⊢
+        split_ifs at hresb ⊢ with hne
+        · exact hresb
+        · rcases res' with _ | r
+          · simp [wordSemBadFunReturn] at hbf
+          · cases r with
+            | «break» l => simp [wordSemBadFunReturn] at hbf
+            | «continue» l => simp [wordSemBadFunReturn] at hbf
+            | _ => exact hresb
 
 end Flapjack.WordToStackProofs.CompCorrect.CallTail
