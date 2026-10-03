@@ -6851,3 +6851,11 @@ or full Raise correctness.
 specializations at widths 1/8/64/80. Full Lean consumers retain only the three
 original source premises; no induction hypotheses are supplied. These captures
 are regression evidence, not a HOL-to-Lean equivalence proof.
+
+`word_to_stack_call_return_handler_probeScript.sml` replays the literal original
+local proofs for handler frame length/removal, setup evaluation and clock law,
+including their original local prerequisite proofs. It captures all seven full
+statements with zero HOL hypotheses and the full setup theorem at64/80 widths.
+Lean consumers apply all seven full statements at arbitrary/1/8/64/80 widths.
+The complete final state relation is derived; these captures are regression
+evidence, not a HOL-to-Lean equivalence proof or whole compiler completion.
