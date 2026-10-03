@@ -70577,5 +70577,52 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original 4431-4441 strict form premise the (s1.stack_limit+1) s1.stack_max > s1.stack_limit, same conclusion on s2, exactly as used by Word-to-Stack Seq. Fresh literal proof replay. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement mentions the native evaluate whose Inst clause calls the reals_as_rational_cuts-qualified inst; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitClock.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "clockNeutralStoreListCode",
+    "hol_name": "clock_neutral_store_list_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol source comparison2026-10-03 original3874-3880: arbitrary HOL word-or-register list xs and arbitrary natural n/k, unconditional original clock_neutral(store_list_code n k xs). Literal native sum/list recursion and Inst/Seq/Skip constructors; original predicate and list_Seq retained. Positive-width HolProg/BitVec translation only, no bounds/register-alias/heap premise. Proof induction covers both word/register variants and terminal Skip. Full unchanged original proof replay records generalized statement and zero hypotheses. Initializer-specific prerequisite, not full initializer semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitClock.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "evaluateInitCodeClock",
+    "hol_name": "evaluate_init_code_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original3882-3891 local theorem: all gen_gc/max_heap/k/source/result/post/replacement-clock parameters, sole actual evaluate(init_code,s)=(res,t) premise and original same result/post with replaced clock conclusion. Uses source-reviewed actual native initializer and evaluator, arbitrary positive word width and independent compile/FFI host types. Initializer structural neutrality proved from literal full instruction list, both conditional branches, init_memory and full store-list neutrality; accepted original generic evaluate_clock_neutral supplies commutation, not an assumed target run. regs/fpRegs/store canonical owner StackSemStateFiniteExact is imported and same-module real broad/exact roundtrip checked; code remains Spt. Inherits reals_as_rational_cuts SOUNDNESS item8 through actual evaluator; no new FP correspondence. Complete unchanged original local proof replay, generalized statement0hyp. Full initialization and compiler theorem remain on dependency-linked beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitCodeRelation.lean",
+    "lean_name": "impCodeRel",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "IMP_code_rel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol full source comparison2026-10-03 original local3988-4010: arbitrary actual source association list and target Spt, original EVERY(reg_bound p k AND stack_num_stubs<=name+1) and target=fromAList(compile...) conjunction; conclusion full code_rel, both lookup program bounds/actual comp result and complete domain equality with {0,1,2}. Actual native compileHOL/initStubs/progComp/codeRelHOL/Spt used. Original num_stubs is stackNumStubs (5), not three initializer entries or wordNumStubs. First-match duplicate/unsorted-label behavior retained with no distinctness or wf premise; original bound excludes initializer labels internally. Domain equality derives from full actual prefix plus value-map keys, not assumed as hypothesis. Only positive-word qualifier, no finite-map qualifier for Spt code tables and no evaluator/FP carrier involved. Full unchanged original local proof replay and generalized zero-hypothesis statement recorded. Initializer/compiler theorem remains dependency-linked and open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitCodePre.lean",
+    "lean_name": "initCodePre",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "init_code_pre_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol full source/body comparison2026-10-03 original2953-2978: complete actual native initializer precondition, all arbitrary k/bitmaps/data_sp/source parameters and four existential word pointers retained. Original good_dimindex32-or64, k>=8, code label1 membership, three-element ffi_save_regs subset and negated use_stack/store/alloc; exact lookups2/3/4 and five memory header positions with original word-scaled bitmap/data lengths and code buffer bounds. Both unsigned comparisons retain word arithmetic before toNat, including modular1024w*bytes_in_word and ptr4-ptr2; all three original byte alignments, empty code buffer and complete three-factor LEFT-associated STAR retained, original bitmaps mapped Word, heap existential length w2n(ptr4-ptr2) DIV w2n(bytes_in_word). Actual Bool domain/save-register characteristic functions used via true membership; no finite-domain, alignment, successful-evaluation, target-state or separation premise added/omitted. Original List/Spt/WordLoc/word-buffer carriers retained. Positive word translation and actual imported canonical regs/fpRegs/store owner StackSemStateFiniteExact with local genuine broad/exact codec roundtrip; Spt code and sets excluded from map qualifier. Fresh original complete kernel definition/type/zero stored hypotheses exported. Proof-side precondition only, full init_code_thm/init semantics and executed compiler correctness remain dependency-linked open."
   }
 ]

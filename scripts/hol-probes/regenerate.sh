@@ -6147,6 +6147,9 @@ run_probe word_to_stack_comp_clock_probeScript.sml word_to_stack_comp_clock_prob
   comp_correct_tick_statement comp_correct_tick_proved comp_correct_tick_hypotheses comp_correct_mustterminate_statement comp_correct_mustterminate_proved comp_correct_mustterminate_hypotheses state_rel_dec_clock_statement state_rel_dec_clock_proved state_rel_dec_clock_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_remove_compile_semantics_full_probeScript.sml stack_remove_compile_semantics_full_probe.out \
+  compile_semantics_full_statement compile_semantics_full_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_code_safety_transport_probeScript.sml lab_to_target_code_safety_transport_probe.out \
   code_similar_IMP_both_no_share_mem code_similar_IMP_both_no_share_mem_types code_similar_IMP_both_no_share_mem_hypotheses \
   code_similar_IMP_both_no_install_or_no_share_mem code_similar_IMP_both_no_install_or_no_share_mem_types code_similar_IMP_both_no_install_or_no_share_mem_hypotheses \
@@ -6278,3 +6281,14 @@ run_probe wordsem_evaluate_stack_max_probeScript.sml wordsem_evaluate_stack_max_
   option_le_max_right_statement option_le_max_right_hypotheses \
   option_le_def \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stack_remove_init_clock_probeScript.sml stack_remove_init_clock_probe.out \
+  store_list_neutral_statement store_list_neutral_hypotheses store_list_neutral_proved init_clock_statement init_clock_hypotheses init_clock_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_code_relation_probeScript.sml stack_remove_init_code_relation_probe.out \
+  init_code_relation_statement init_code_relation_hypotheses init_code_relation_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_code_pre_probeScript.sml stack_remove_init_code_pre_probe.out \
+  init_code_pre_definition init_code_pre_type init_code_pre_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
