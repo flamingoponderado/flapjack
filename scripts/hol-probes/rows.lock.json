@@ -416,6 +416,12 @@
       "sha256": "2568949fab64d29bfc38e41c18259047e2eb05e90ab7ec663383fd61600dcf9e"
     },
     {
+      "out": "binary_ieee_two_dimensions_probe.out",
+      "sha256": "dac324b1ba6bab4a5f355e7a8aa5ef7ede95445de4ac5b3d27ab2fe956196373",
+      "bytes": 424,
+      "rows": 4
+    },
+    {
       "bytes": 4729,
       "out": "bvi_syntax_probe.out",
       "rows": 2,
@@ -5958,6 +5964,12 @@
       "out": "riscv_const_decode_probe.out",
       "rows": 20,
       "sha256": "b9650b527d94b68ea367eeb2863383e81af20d62a0e3436a624525ba047ccf1d"
+    },
+    {
+      "bytes": 463,
+      "out": "riscv_const_next_probe.out",
+      "rows": 16,
+      "sha256": "ade42c6fb84b72c53ba06fa2368cd8189115c18ff5df0b4ca31783a3763e9f57"
     },
     {
       "bytes": 328,

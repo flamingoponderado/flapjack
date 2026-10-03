@@ -7513,9 +7513,6 @@ run_probe backend_config_attach_bitmaps_probeScript.sml backend_config_attach_bi
 run_probe pan_structs_semantics_eq_probeScript.sml pan_structs_semantics_eq_probe.out \
   semantics_eq_statement semantics_eq_proved semantics_eq_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
-run_probe pan_props_pan_sem_is_wrapper_probeScript.sml pan_props_pan_sem_is_wrapper_probe.out \
-  pan_sem_is_wrapper_statement pan_sem_is_wrapper_proved pan_sem_is_wrapper_types \
-  "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
 run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.out \
   const_wide_value_zero const_wide_value_low_positive_max const_wide_value_low_sign_bit const_wide_value_low_all_ones const_wide_value_high_one const_wide_value_high_one_low_sign const_wide_value_positive_max const_wide_value_negative_min const_wide_value_negative_min_low_sign const_wide_value_negative_high_low_positive const_wide_value_negative_high_low_sign const_wide_value_all_ones \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
@@ -7523,9 +7520,6 @@ run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.ou
 run_probe backend_lower_pipeline_probeScript.sml backend_lower_pipeline_probe.out \
   from_lab_type from_lab_def_typed from_stack_type from_stack_def_typed from_word_type from_word_def_typed \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
-run_probe pan_structs_semantics_eq_probeScript.sml pan_structs_semantics_eq_probe.out \
-  semantics_eq_statement semantics_eq_proved semantics_eq_types \
-  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe word_to_stack_inst_const_probeScript.sml word_to_stack_inst_const_probe.out \
   evaluateWInstConst_typed evaluateWInstConst_proved evaluateWInstConst_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7548,3 +7542,19 @@ run_probe pan_structs_compile_top_semantics_decls_probeScript.sml pan_structs_co
 run_probe word_to_stack_inst_long_arithmetic_probeScript.sml word_to_stack_inst_long_arithmetic_probe.out \
   longMul_typed longMul_proved longMul_hypotheses longDiv_typed longDiv_proved longDiv_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_compile_top_semantics_decls_probeScript.sml pan_structs_compile_top_semantics_decls_probe.out \
+  compile_top_semantics_decls_statement compile_top_semantics_decls_proved compile_top_semantics_decls_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe word_to_stack_inst_carry_overflow_probeScript.sml word_to_stack_inst_carry_overflow_probe.out \
+  carry_typed carry_proved carry_hypotheses addOverflow_typed addOverflow_proved addOverflow_hypotheses subOverflow_typed subOverflow_proved subOverflow_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_const_next_probeScript.sml riscv_const_next_probe.out \
+  const_next_wrapper_type const_next_fetch_type const_next_lui_zero const_next_lui_all_ones const_next_addi_zero const_next_addi_all_ones const_next_ori_zero const_next_ori_all_ones const_next_xori_zero const_next_xori_all_ones const_next_slli_zero const_next_slli_all_ones const_next_or_zero const_next_or_all_ones const_next_xor_zero const_next_xor_all_ones \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+
+run_probe binary_ieee_two_dimensions_probeScript.sml binary_ieee_two_dimensions_probe.out \
+  largest_type largest_def_typed threshold_type threshold_def_typed \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" "$hol_dir/src/floating-point"

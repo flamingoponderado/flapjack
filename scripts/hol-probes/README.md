@@ -7860,3 +7860,22 @@ kernel truth and quantified types. Its Lean port retains four original premises,
 faithful declaration semantics and the original eshapes update. Executed routing
 is independent. Regenerate with
 `HOL_PROBE_ONLY=pan_structs_compile_top_semantics_decls_probeScript.sml`.
+
+## Native Const instruction Next family
+
+`CorrectnessEncoding/ConstNext.lean` derives actual native NextRISCV equations
+for LUI, ADDI, ORI, XORI, SLLI, OR, and XOR from the four literal encoding bytes,
+original riscv_ok, and a nonzero destination. All intrinsic immediate/register
+values are retained. Native Run and Decode equations are proved internally;
+none of the seven specialized statements assumes target execution.
+
+`InstructionStep.lean` reuses the accepted Loc byte-fetch, PC-update, and
+complete native write-state proofs. Loc retains its original tagged statement.
+These composition helpers have no separately named HOL declarations and remain
+untagged. Full Const instruction-list interference/assertions are still open.
+
+`riscv_const_next_probeScript.sml` captures original typed NextRISCV/Fetch
+wrappers and fourteen original encoding boundary EVALs establishing the full
+word-instruction low bits. These width oracles are not Next execution replays.
+The already captured whole native Const Run observations and unrestricted
+Lean fetch/decode/Next proofs supply separate evidence for their own scopes.
