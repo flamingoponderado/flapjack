@@ -6043,3 +6043,7 @@ run_probe lab_to_target_mmio_classification_probeScript.sml lab_to_target_mmio_c
 run_probe stack_code_bitmaps_call_probeScript.sml stack_code_bitmaps_call_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_call_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_full_probeScript.sml stack_code_bitmaps_full_probe.out \
+  bitmap_full_statement bitmap_full_proved bitmap_full_hypotheses bitmap_full_type \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
