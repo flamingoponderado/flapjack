@@ -72,7 +72,8 @@ end
     over the exact `panSem$v` carrier `ValueHOL` (MlString names and an indexed
     word payload). The `NStruct` branch drops the record and field names, so the
     exact `mlstring` name carrier is carried but never inspected. -/
-@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "convert_v_def"]
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "convert_v_def"
+  (words_as_type_indexed_bitvec)]
 def convertV {width : Nat} [NeZero width] : ValueHOL width → ValueHOL width
   | .val value => .val value
   | .rStruct fields => .rStruct (fields.map convertV)

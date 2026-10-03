@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.DecodeBits
 import Flapjack.RiscV.L3.Defs.MMU.Primitives
 namespace Flapjack.RiscV.L3
 
@@ -10,10 +11,6 @@ def PC (state : riscv_state) : (BitVec 64) :=
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "write'Skip_def"]
 def «write'Skip» (value : (BitVec 64)) : (riscv_state → riscv_state) :=
   (fun (state : riscv_state) => (let r := state; { r with c_Skip := ((fun (_eta1 : ((BitVec 8) → (BitVec 64))) => (holUpdate state.procID value state.c_Skip))) r.c_Skip }))
-
-/-- Flapjack rendering infrastructure for HOL BL(8): all eight fixed indices are in range. This helper has no standalone declaration in the original model script. -/
-def boolify8 (w : (BitVec 8)) : (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × Bool))))))) :=
-  ((w.getLsbD 7), (((w.getLsbD 6), (((w.getLsbD 5), (((w.getLsbD 4), (((w.getLsbD 3), (((w.getLsbD 2), (((w.getLsbD 1), (w.getLsbD 0))))))))))))))
 
 /-- Source review: riscvScript4530-4570 tests low-byte bits 1 and 0, writes Skip 4 for Word32 or 2 for Half16, then concatenates bytes in little-endian order from the updated full state. Address additions wrap at 64 bits; no alignment or core-bound premise. -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "rawReadInst_def"]

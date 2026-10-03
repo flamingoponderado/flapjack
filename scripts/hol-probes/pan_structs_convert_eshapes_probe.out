@@ -1,0 +1,5 @@
+convert_eshapes_definition=∀str_ctxt. convert_eshapes str_ctxt = FMAP_MAP2 (λ(eid,sh). compile_shape str_ctxt sh)
+convert_eshapes_type=:(mlstring # (α # shape) list) list -> (β |-> shape) -> (β |-> shape)
+convert_eshapes_hypotheses=0
+convert_eshapes_lookup_statement=∀ctxt eshapes eid. FLOOKUP (convert_eshapes ctxt eshapes) eid = OPTION_MAP (compile_shape ctxt) (FLOOKUP eshapes eid)
+convert_eshapes_lookup_proved=T

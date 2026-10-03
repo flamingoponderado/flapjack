@@ -1,0 +1,18 @@
+loc_to_pc_eq_NONE=∀(n1 :num) (n2 :num) (code :α sec list).
+  loc_to_pc n1 n2 (filter_skip code) = (NONE :num option) ⇒
+  loc_to_pc n1 n2 code = (NONE :num option)
+loc_to_pc_eq_NONE_types=(n1 :num)::num;(n2 :num)::num;(code :α sec list)::α sec list;
+loc_to_pc_eq_NONE_hypotheses=0
+loc_to_pc_eq_NONE_proved=T
+loc_to_pc_eq_SOME=∀(n1 :num) (n2 :num) (code :α sec list) (pc :num).
+  loc_to_pc n1 n2 (filter_skip code) = SOME pc ⇒
+  ∃(pc' :num). loc_to_pc n1 n2 code = SOME pc' ∧ adjust_pc pc' code = pc
+loc_to_pc_eq_SOME_types=(n1 :num)::num;(n2 :num)::num;(code :α sec list)::α sec list;(pc :num)::num;
+loc_to_pc_eq_SOME_hypotheses=0
+loc_to_pc_eq_SOME_proved=T
+loc_to_pc_adjust_pc_append=∀(n1 :num) (n2 :num) (code :α sec list) (pc :num) (ls :α sec list).
+  loc_to_pc n1 n2 code = SOME pc ⇒
+  adjust_pc pc code = adjust_pc pc (code ++ ls)
+loc_to_pc_adjust_pc_append_types=(n1 :num)::num;(n2 :num)::num;(code :α sec list)::α sec list;(pc :num)::num;(ls :α sec list)::α sec list;
+loc_to_pc_adjust_pc_append_hypotheses=0
+loc_to_pc_adjust_pc_append_proved=T

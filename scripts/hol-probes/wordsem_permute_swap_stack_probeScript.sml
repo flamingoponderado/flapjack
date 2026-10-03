@@ -33,6 +33,9 @@ val all_distinct_mem_imp_alookup_some_replay = GEN_ALL(prove(concl ALL_DISTINCT_
   \\ res_tac \\ full_simp_tac(srw_ss())[MEM_MAP,FORALL_PROD]
   \\ rev_full_simp_tac(srw_ss())[]));
 val _ = check "ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME" all_distinct_mem_imp_alookup_some_replay ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME;
+val _ = show_types := true;
+val _ = (print "ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME_types="; print_term(concl all_distinct_mem_imp_alookup_some_replay); print "\n");
+val _ = show_types := false;
 val _ = (print "ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME_statement="; print_term(concl all_distinct_mem_imp_alookup_some_replay); print "\n");
 val _ = print("ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME_hypotheses=" ^ Int.toString(length(hyp all_distinct_mem_imp_alookup_some_replay)) ^ "\n");
 val env_to_list_all_distinct_replay = GEN_ALL(prove(concl env_to_list_ALL_DISTINCT,

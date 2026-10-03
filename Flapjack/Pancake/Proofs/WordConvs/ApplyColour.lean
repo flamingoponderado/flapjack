@@ -9,8 +9,8 @@ import Flapjack.Pancake.WordConvs.CodeLabels
 The `apply_colour` theorems of the `word_alloc` section of
 `cakeml/compiler/backend/proofs/wordConvsProofScript.sml` (2781-2898): colouring
 preserves labels, created subprograms, code labels and handler labels. The
-`word_alloc_*` theorems of that section need an exact `word_alloc_def` and are
-not ported here.
+`word_alloc_*` theorems of that section are ported in the adjacent
+`WordConvs.WordAlloc` module using the reviewed native allocator.
 -/
 
 namespace Flapjack.WordConvs

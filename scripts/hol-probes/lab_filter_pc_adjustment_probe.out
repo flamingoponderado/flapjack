@@ -1,0 +1,11 @@
+adjust_pc_all_skips=∀(k :num) (pc :num) (code :α sec list).
+  all_skips pc code k ⇒
+  adjust_pc pc code + (1 :num) = adjust_pc (pc + k + (1 :num)) code
+adjust_pc_all_skips_types=(k :num)::num;(pc :num)::num;(code :α sec list)::α sec list;
+adjust_pc_all_skips_hypotheses=0
+adjust_pc_all_skips_proved=T
+all_skips_initial_adjust=∀(code :α sec list). ∃(k :num).
+  all_skips (0 :num) code k ∧ adjust_pc k code = (0 :num)
+all_skips_initial_adjust_types=(code :α sec list)::α sec list;
+all_skips_initial_adjust_hypotheses=0
+all_skips_initial_adjust_proved=T

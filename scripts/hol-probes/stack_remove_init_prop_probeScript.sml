@@ -1,0 +1,10 @@
+load "preamble";
+load "stack_removeProofTheory";
+open HolKernel Parse bossLib preamble stack_removeProofTheory;
+val _ = Globals.linewidth := 20000;
+val _ = print ("init_prop_definition=" ^ term_to_string(concl init_prop_def) ^ "\n");
+val _ = print ("init_prop_type=" ^ type_to_string(type_of ``init_prop``) ^ "\n");
+val _ = print ("init_prop_hypotheses=" ^ Int.toString(length(hyp init_prop_def)) ^ "\n");
+val (witnesses, body) = strip_exists (rhs (snd (strip_forall (concl init_prop_def))));
+val _ = print ("init_prop_witness_count=" ^ Int.toString(length witnesses) ^ "\n");
+val _ = print ("init_prop_conjunct_count=" ^ Int.toString(length(strip_conj body)) ^ "\n");

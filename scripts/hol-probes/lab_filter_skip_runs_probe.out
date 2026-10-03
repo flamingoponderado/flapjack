@@ -1,0 +1,55 @@
+adjust_pc_def=∀(xs :α sec list) (p :num).
+  adjust_pc p xs =
+  if p = (0 :num) then (0 :num)
+  else
+    case xs of
+      ([] :α sec list) => p
+    | Section n ([] :α line list)::rest => adjust_pc p rest
+    | Section n (l::lines)::rest =>
+      if is_Label l then adjust_pc p (Section n lines::rest)
+      else if not_skip l then
+        adjust_pc (p − (1 :num)) (Section n lines::rest) + (1 :num)
+      else adjust_pc (p − (1 :num)) (Section n lines::rest)
+adjust_pc_def_types=(xs :α sec list)::α sec list;(p :num)::num;
+adjust_pc_def_hypotheses=0
+adjust_pc_def_proved=T
+all_skips_def=∀(pc :num) (code :α sec list) (k :num).
+  all_skips pc code k ⇔
+  (∀(x :word8 list) (y :num).
+     asm_fetch_aux (pc + k) code ≠
+     SOME (Asm (Asmi (Inst (Skip :α inst) :α asm)) x y)) ∧
+  ∀(i :num).
+    i < k ⇒
+    ∃(x :word8 list) (y :num).
+      asm_fetch_aux (pc + i) code =
+      SOME (Asm (Asmi (Inst (Skip :α inst) :α asm)) x y)
+all_skips_def_types=(pc :num)::num;(code :α sec list)::α sec list;(k :num)::num;
+all_skips_def_hypotheses=0
+all_skips_def_proved=T
+is_Label_not_skip=is_Label (y :α line) ⇒ not_skip y
+is_Label_not_skip_types=(y :α line)::α line;
+is_Label_not_skip_hypotheses=0
+is_Label_not_skip_proved=T
+asm_fetch_aux_eq=∀(pc :num) (code :α sec list). ∃(k :num).
+  asm_fetch_aux (pc + k) code =
+  asm_fetch_aux (adjust_pc pc code) (filter_skip code) ∧ all_skips pc code k
+asm_fetch_aux_eq_types=(pc :num)::num;(code :α sec list)::α sec list;
+asm_fetch_aux_eq_hypotheses=0
+asm_fetch_aux_eq_proved=T
+state_rw=(s :(α, β, γ) labSem$state) with clock := s.clock = s ∧
+s with pc := s.pc = s ∧
+s with <|pc := s.pc; clock := s.clock + (k' :num)|> =
+s with clock := s.clock + k'
+state_rw_types=(k' :num)::num;(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+state_rw_hypotheses=0
+state_rw_proved=T
+all_skips_evaluate=∀(k :num) (s :(α, β, γ) labSem$state).
+  all_skips s.pc s.code k ∧ ¬s.failed ⇒
+  ∀(k' :num).
+    (evaluate (s with clock := s.clock + k' + k) :
+     machine_result # (α, β, γ) labSem$state) =
+    (evaluate (s with <|pc := s.pc + k; clock := s.clock + k'|>) :
+     machine_result # (α, β, γ) labSem$state)
+all_skips_evaluate_types=(k :num)::num;(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+all_skips_evaluate_hypotheses=0
+all_skips_evaluate_proved=T

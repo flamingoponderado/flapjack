@@ -1,0 +1,3 @@
+compile_decs_structs_statement=∀ctxt decs decs' ctxt'. compile_decs ctxt decs = (decs',ctxt') ⇒ ctxt'.structs = ctxt.structs
+compile_decs_structs_proved=T
+compile_decs_structs_hypotheses=0
