@@ -1706,6 +1706,12 @@
       "sha256": "405e910e0fda61b17875346b9461591a21401816c5428eee64977b7f54b5667e"
     },
     {
+      "bytes": 50495,
+      "out": "l3_supervisor_csr_probe.out",
+      "rows": 877,
+      "sha256": "79016f37fed542b36c8125afbebc4834b904919a83d37c49e4a61f5ef695dbfb"
+    },
+    {
       "bytes": 4778,
       "out": "l3_system_signals_probe.out",
       "rows": 90,
@@ -8250,6 +8256,12 @@
       "out": "word_to_stack_index_reconstruction_probe.out",
       "rows": 253,
       "sha256": "9f10c97622d8c87d406c886c2ca7e7ebde57e52ab5531f80e1fb18ce455b4e14"
+    },
+    {
+      "out": "word_to_stack_initial_state_rel_probe.out",
+      "bytes": 2064,
+      "rows": 6,
+      "sha256": "443d677012f49945c0cb79c4fd55fe3b6017a3a68a94a005f341479efca9098a"
     },
     {
       "bytes": 186,
