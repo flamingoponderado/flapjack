@@ -799,6 +799,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionThreeToTwoMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionUnreachMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorCleanupMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeAllocatorCaller
+import Flapjack.Pancake.LoopToWord.ProductionAllocatorMemoryImage
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorWrapperInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionForced
