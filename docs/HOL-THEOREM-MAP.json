@@ -81786,5 +81786,37 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison57-60: both exact original wStackStore_def clauses on List(register,slot) and arbitrary faithful HolProg continuation. Empty returns continuation; cons is Seq(recursive tail continuation)(StackStore register slot), preserving reverse store order including repeated slots/registers and arbitrary continuations. Positive native program word carrier qualified. Original source reference audit finds definition only in production word_to_stackScript; compiler wRegWrite1/2 contain direct literal StackStore clauses and are retained. Helper is proof-side original source support, no claimed executed routing change/performance exception. Fresh original constructor/order captures; no evaluator/statement weakening or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StoreRegister.lean",
+    "lean_name": "evaluateWRegWrite1Seq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wRegWrite1_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source compared complete original4527-4548/4656-4670: all guards and conclusions retained, canonical fmap_as_finite_support_relation codecs and positive-width word translation only; fresh literal proof replay tracked in store_register probe. Evaluator inherits reals_as_rational_cuts; these laws do not claim independent real-analysis agreement.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StoreRegister.lean",
+    "lean_name": "evaluateWStackStoreWReg1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackStore_wReg1",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source compared complete original4527-4548/4656-4670: all guards and conclusions retained, canonical fmap_as_finite_support_relation codecs and positive-width word translation only; fresh literal proof replay tracked in store_register probe. Evaluator inherits reals_as_rational_cuts; these laws do not claim independent real-analysis agreement.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
