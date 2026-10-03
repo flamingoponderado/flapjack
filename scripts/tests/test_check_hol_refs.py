@@ -771,8 +771,8 @@ End
                     # The HOL dimindex positivity binders are part of the pinned carrier.
                     target = root / "Flapjack/Misc/BinaryIeee.lean"
                     target.write_text(target.read_text().replace(
-                        "structure HolFloat (t w : Nat) [NeZero t] [NeZero w] where",
-                        "structure HolFloat (t w : Nat) where"))
+                        "structure HolFloat (t : Nat) (w : Nat) [NeZero t] [NeZero w] where",
+                        "structure HolFloat (t : Nat) (w : Nat) where"))
                 else:
                     target = root / "Flapjack/Misc/BinaryIeee.lean"
                     target.write_text(target.read_text().replace("x.exponent ≠ 0", "x.exponent = 0"))

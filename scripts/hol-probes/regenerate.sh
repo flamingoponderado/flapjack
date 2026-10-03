@@ -1525,6 +1525,9 @@ run_probe dup_exn_eids_probeScript.sml dup_exn_eids_probe.out \
 run_probe compile_prog_probeScript.sml compile_prog_probe.out \
   empty inline_call global_dest handled_missing_dest done \
   "$cake_dir/pancake/pan_to_crepScript.sml"
+run_probe binary_ieee_carrier_probeScript.sml binary_ieee_carrier_probe.out \
+  float_to_real_def float_minus_min_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
 run_probe pan_to_crep_first_compile_oracle_probeScript.sml pan_to_crep_first_compile_oracle_probe.out \
   distinct_names duplicate_names \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml"

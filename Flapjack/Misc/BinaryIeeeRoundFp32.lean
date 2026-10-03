@@ -612,7 +612,7 @@ section Negate
 
 theorem fp32Pat_negate (f : HolFloat 23 8) : fp32Pat (holFloatNegate f) = fp32Pat f := rfl
 
-theorem holFloatNegate_negate {t w : Nat} [NeZero t] [NeZero w] (f : HolFloat t w) :
+theorem holFloatNegate_negate {t : Nat} {w : Nat} [NeZero t] [NeZero w] (f : HolFloat t w) :
     holFloatNegate (holFloatNegate f) = f := by
   unfold holFloatNegate; simp
 
