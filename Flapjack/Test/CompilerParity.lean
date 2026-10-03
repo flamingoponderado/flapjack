@@ -113,11 +113,6 @@ import Flapjack.Test.LabToTargetUpdateSimilarityParity
 import Flapjack.Test.LabToTargetEndingLabelsParity
 import Flapjack.Test.LabToTargetPositionalEncodingParity
 import Flapjack.Test.LabToTargetLabelAnnotationsParity
-import Flapjack.Test.LabToTargetSimpleEncoderParity
-import Flapjack.Test.LabToTargetEncd0Parity
-import Flapjack.Test.LabToTargetLabelValidityParity
-import Flapjack.Test.LabToTargetSimilarLabelsParity
-import Flapjack.Test.LabToTargetGoodCodeParity
 import Flapjack.Test.SetSepFun2Set
 import Flapjack.Test.SetSepElementary
 import Flapjack.Test.StackRemoveWordSelector
@@ -142,10 +137,6 @@ import Flapjack.Test.StackRemoveStoreInit
 import Flapjack.Test.WordOverflowProduction
 import Flapjack.Test.StackRemoveStoreListCode
 import Flapjack.Test.RiscVOverflowTargetParity
-import Flapjack.Test.LabToTargetByteLengthsParity
-import Flapjack.Test.LabPropsLabelSetsParity
-import Flapjack.Test.LabToTargetWordLocationParity
-import Flapjack.Test.LabToTargetWordLocValByteParity
 import Flapjack.Test.WordCseProductionRegisterClassifiers
 import Flapjack.Test.WordCseProductionInstructionKeys
 import Flapjack.Test.WordCseProductionLoadHeapKeys
@@ -181,14 +172,6 @@ import Flapjack.Test.RiscVBranchPolarity
 import Flapjack.Test.LabImplicitSectionZero
 import Flapjack.Test.TargetSemMachineSemParity
 import Flapjack.Test.TargetSemEvaluateParity
-import Flapjack.Test.WordAllocLiveExpressionParity
-import Flapjack.Test.WordCompileExpExactParity
-import Flapjack.Test.StackSemLoopControlParity
-import Flapjack.Test.StackSemJumpLowerParity
-import Flapjack.Test.PanGlobalsFpermCodeParity
-import Flapjack.Test.CrepToLoopCompFuncParity
-import Flapjack.Test.WordAllocGetDeltaInstParity
-import Flapjack.Test.WordAllocGetClashTreeParity
 import Flapjack.Test.LabToTargetLineLenParity
 import Flapjack.Test.LabToTargetSectionLengthParity
 import Flapjack.Test.ByteWordToBytesAuxParity
@@ -227,6 +210,7 @@ import Flapjack.Test.FiniteMapUnionExact
 import Flapjack.Test.ComparisonGoodCmp
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordGcFunOkParity
 import Flapjack.Test.WordToStackAsmConventionsParity
 import Flapjack.Test.WordToStackAsmNameCompilerParity
 import Flapjack.Test.WordToStackAsmNameFlatParity
@@ -310,7 +294,6 @@ import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
 import Flapjack.Test.TargetPropsInterferenceParity
-import Flapjack.Test.LabToTargetFetchValidityParity
 import Flapjack.Test.LabToTargetEncodingValidityParity
 import Flapjack.Test.LabToTargetPositionAppendParity
 import Flapjack.Test.LabToTargetPositionValuesParity

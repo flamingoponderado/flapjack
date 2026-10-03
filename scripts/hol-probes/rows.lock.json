@@ -7430,6 +7430,12 @@
       "sha256": "b258cfa3c0173474fb6bf43ce19328c2e63ba30f5e0c5a4d355b88cf440c69f2"
     },
     {
+      "bytes": 417,
+      "out": "word_props_gc_fun_ok_probe.out",
+      "rows": 4,
+      "sha256": "42133ae3d63c87b6cc03c831f32443abbbf1db3198655891900aecd1dadf104f"
+    },
+    {
       "bytes": 521,
       "out": "word_props_no_install_code_probe.out",
       "rows": 20,

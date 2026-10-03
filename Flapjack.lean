@@ -376,6 +376,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcFunOk
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmConventions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameFlat

@@ -68026,5 +68026,27 @@
     "hol_name": "dfn'LR_D_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal pinned source7506-7554: full fixed word1 aq/rl and word5 rd/rs1 arguments, arbitrary complete riscv_state; original unused order bits retained. in32BitMode first and forwards returned state to Illegal_Instr or subsequent GPR virtual address calculation; low3 virtual alignment failure AMO_Misaligned precedes any translation. Aligned route exact Data/Read; fault Load_Fault retains returned translation state and original virtual address; success rawReadData entire64word from returned state, writeGPR then reserve original virtual address on resulting state. No mode/alignment/success/core premise. Mechanically rendered full40-declaration closure0failed; definition and unconditional complete-state normal form kernel checked. Fresh pinned original definition/type+18 whole-state observations independently matched, all7misalignment residues, earlyRV32/RV128, orderbit combinations, register0/core255,totalCore1/Sv32 fault retention/Sv39 PTE3111 returned read, complete reservation/frame. No whole atomic/Run/Next or compiler theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExtractLabels.lean",
+    "lean_name": "extractLabels",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "extract_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02: complete source771-787 five clauses on reviewed HolProg with shared positive word dimension. Both optional tuple arities, return/handler label-before-body ordering, duplicates and ignored NONE-return handler retained; target/immediate/instruction/mlstring payloads ignored exactly as source. No finite map/list-array/default substitution. Fresh original56 ordered list observations at widths1/8/64/80 independently kernel replayed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/GcFunOk.lean",
+    "lean_name": "wordGcFunOk",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "gc_fun_ok_def",
+    "statement_status": "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_function": [
+      "argument_4",
+      "result_3"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, beads .29.1/.31: original wordPropsScript3869-3878 preserves f and all seven universal wl/m/d/s/wl1/m1/s1 binders, Handler domain and successful erased-store callback antecedent, and all three consequent conjuncts: root lengths, no returned Handler, same callback on original store returning outputstore updated with original Handler. Existing reviewed WordSemGcFun from WordSem.State matches original gc_fun_type193-197, canonical store at argument_4/result_3, Lists remain Lists, memory total, domain reviewed Bool-predicate word set, positive width. Narrow approved function qualifier inherits exactly that alias translation and words qualifier, not a new callback or predicate policy. FDOM is lookup nonabsence, FDOMSUB eraseEq and FUPDATE updateEq use HOL equality. Original FAPPLY occurs only under Handler in FDOM; wordGcHandlerValue derives unique SOME value and wordGcHandlerFallback proves arbitrary fallback independence under that original guard, so getD Loc0 0 introduces no out-of-domain semantics or premise. Fresh original probe captures complete definition with zero hypotheses, HOL FLOOKUP/FAPPLY correspondence under original domain guard, and always-fail contract theorem. Generic kernel examples include rejecting successful callbacks that keep Handler and location-valued Handler fallback. This ports the predicate only, not initialization/state_rel/full pass simulation."
   }
 ]
