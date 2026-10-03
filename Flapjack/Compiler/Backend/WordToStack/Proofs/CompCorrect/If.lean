@@ -264,7 +264,7 @@ register, accepted-immediate and materialized-immediate routes are executed;
 clock/prefix/code/frame obligations are derived, not additional premises.
 Canonical finite maps and positive word carriers are explicitly qualified.
 Inherits evaluator reals_as_rational_cuts assurance, without numerical FP
-correspondence. Fleet acceptance is tracked separately on the open bead. -/
+correspondence. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
