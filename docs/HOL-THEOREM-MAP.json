@@ -81985,5 +81985,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison original labProps1064-1173 and fresh all4 fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_shared_probe.out: complete original good_dimindex-guarded domain membership iff or conjunction of NONE equivalence and SOME-result/poststate preservation. Generic native word/address/register/arbitrary request size/state/C/FFI result carriers retained. Load/store NONE orientation aligned-state first, dispatcher original-state first preserved. Actual native mapped FFI request bytes, all returned bytes, final outcomes, register/FFI/PC/clock updates and all8 load/store sizes retained. Private unconditional native transition projection equations derive full source laws without success callback or desired-result premises. Numerical/canonical alignment agreement uses only original32/64 guard, no LOG2zero choice/runtime changes. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Set.lean",
+    "lean_name": "compCorrectSet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison6356-6374 original comp_correct5756/motive5719-5751: complete Seq.Simulation over arbitrary original store name/expression/source/config/width. All original premises and full existential actual targetrun/result/resource conclusion retained. Original flatness implies Var; source nonerror excludes Handler/BitmapBase and missing local read. Original conventions derive even source register, full Reg1 theorem provides actual compiled stack loads and exact value/full relation; literal native Set transition and general state_rel_set_store prove postrelation. Clock fixing derives unchanged clock from load theorem. No added successful read/run/label/postrelation/bounds assumption. Named five canonical finite maps/positive words and same-module genuine codecs; inherited reals_as_rational_cuts retained. Fresh whole original Set evaluate_ind obligation and arbitrary specialization hyp0/T statement evidence, not literal local-case proof replay or cross-language equivalence.",
+    "inherits_reals_as_rational_cuts": true,
+    "hol_line": 5756
   }
 ]
