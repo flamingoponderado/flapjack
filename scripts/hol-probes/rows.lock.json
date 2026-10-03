@@ -6266,10 +6266,10 @@
       "sha256": "ce1469356760239739d4f68eb0b1a71104710ee16424d716df287fca79509c46"
     },
     {
-      "bytes": 32471,
+      "bytes": 32762,
       "out": "stack_remove_write_bytearray_probe.out",
-      "rows": 55,
-      "sha256": "3cee9546d0af6c619746598e337c0152ca8fae9e34351933b406e559b842c103"
+      "rows": 56,
+      "sha256": "c50a09f84276d8a11e9541b47c3dd923c554f2b16b100b7de7e1a1c76732cb49"
     },
     {
       "bytes": 560,
