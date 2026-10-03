@@ -7372,3 +7372,7 @@ run_probe pan_structs_compiled_shapes_wf_probeScript.sml pan_structs_compiled_sh
 run_probe word_to_stack_move_aux_probeScript.sml word_to_stack_move_aux_probe.out \
   wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe bvl_to_bvi_default_probeScript.sml bvl_to_bvi_default_probe.out \
+  bvl_num_stubs_def bvl_to_bvi_namespaces_def bvl_num_stub_MOD bvl_num_stub_MOD_hypotheses default_config_def default_config_type bvl_stub_count_value bvl_namespace_count_value default_next_name1 default_next_name2 default_next_name3 \
+  "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"

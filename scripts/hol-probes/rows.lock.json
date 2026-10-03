@@ -422,6 +422,12 @@
       "sha256": "83f2b048e742b8aa20fd372ef07f386f03d885bd857bee655ee00e5a675f0596"
     },
     {
+      "bytes": 910,
+      "out": "bvl_to_bvi_default_probe.out",
+      "rows": 11,
+      "sha256": "1201a0bda2efb4420a1bf8d3bb50db918f8f3f2a191fb195c23deae9d2b7a6d3"
+    },
+    {
       "bytes": 50,
       "out": "byte_align_probe.out",
       "rows": 5,
