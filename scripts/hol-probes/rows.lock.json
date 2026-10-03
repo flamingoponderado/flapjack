@@ -8030,6 +8030,12 @@
       "sha256": "3374eb8913a91eafd5d0bd9437c46ee955da07791a12994768b5799c2d8b60be"
     },
     {
+      "bytes": 10281,
+      "out": "stack_to_lab_no_shmemop_probe.out",
+      "rows": 66,
+      "sha256": "3bcaafdec4c2e3687b45e4abf3d581dce698d73d9ed413d32468467545d3f6a7"
+    },
+    {
       "bytes": 241,
       "out": "stack_to_lab_nonrecursive_validity_probe.out",
       "rows": 3,
