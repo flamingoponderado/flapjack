@@ -16,7 +16,8 @@ private theorem relatedShiftIo {width : Nat} [NeZero width] {C : Type} {F : Type
 
 /-- Full original SharedMem evaluator constructor: NONE, final FFI and returning
 FFI outcomes. Only the actual returning source successor supplies an induction
-hypothesis; target primitive/execution, clock and successor relation are derived. -/
+hypothesis; target primitive/execution, clock and successor relation are derived.
+The IH includes the original evaluator's nonzero source-clock path guard. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
   (words_as_type_indexed_bitvec)]
 theorem filterCorrectSharedMemory {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -27,7 +28,7 @@ theorem filterCorrectSharedMemory {width : Nat} [NeZero width] {C : Type} {F : T
     (heval : evaluate s1 = (res, s2)) (hrel : stateRel s1 t1)
     (hfailed : t1.failed = false)
     (hfetch : asmFetch s1 = some (.asm (.shareMem operator register address) bytes len))
-    (ih : ∀ (ffi : HolFfiState F) (returned : List (BitVec 8))
+    (ih : s1.clock ≠ 0 → ∀ (ffi : HolFfiState F) (returned : List (BitVec 8))
         (next : Flapjack.Compiler.Backend.LabSem.State width C F),
       shareMemOp operator register address s1 = some (.ret ffi returned, next) →
       ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -95,7 +96,7 @@ theorem filterCorrectSharedMemory {width : Nat} [NeZero width] {C : Type} {F : T
       conv at he => lhs; rw [evaluate]
       simp only [hc, ↓reduceIte, hfetch] at he
       rw [hp] at he
-      obtain ⟨extra, t2, hrun, hffi⟩ := ih ffi returned next hp _ res s2 he hn hn.2
+      obtain ⟨extra, t2, hrun, hffi⟩ := ih hc ffi returned next hp _ res s2 he hn hn.2
       have hskipRun := allSkipsEvaluate count {t1 with clock := t1.clock + extra} ⟨hskips, hfailed⟩ 0
       refine ⟨extra + count, t2, ?_, hffi⟩
       simp only [Nat.add_zero] at hskipRun

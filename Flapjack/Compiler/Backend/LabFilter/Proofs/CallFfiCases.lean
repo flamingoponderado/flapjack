@@ -39,7 +39,8 @@ private theorem relatedCallFfiReturn {width : Nat} [NeZero width] {C : Type} {F 
 
 /-- Full original CallFFI evaluator constructor. Every register/read/locator
 failure and FFI final/return outcome is retained. The only IH is the original
-simulation for the actual returned source successor, guarded by its source path. -/
+simulation for the actual returned source successor, guarded by its source path.
+The IH includes the original evaluator's nonzero source-clock path guard. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
   (words_as_type_indexed_bitvec)]
 theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -50,7 +51,7 @@ theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
     (heval : evaluate s1 = (res, s2)) (hrel : stateRel s1 t1)
     (hfailed : t1.failed = false)
     (hfetch : asmFetch s1 = some (.labAsm (.callFFI function) position encoded len))
-    (ih : ∀ (start2 : BitVec width) (pc : Nat) (ffi : HolFfiState F) (returned : List (BitVec 8)),
+    (ih : s1.clock ≠ 0 → ∀ (start2 : BitVec width) (pc : Nat) (ffi : HolFfiState F) (returned : List (BitVec 8)),
       (∃ (length start length2 : BitVec width) (sectionId labelId : Nat)
           (configuration bytes : List (BitVec 8)),
         s1.regs s1.lenReg = .word length ∧ s1.regs s1.ptrReg = .word start ∧
@@ -222,7 +223,7 @@ theorem filterCorrectCallFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
                       callFFIHOL s1.ffi (.extCall function) configuration bytes = .ret ffi returned := by
                       refine ⟨length, start, length2, sectionId, labelId, configuration, bytes, ?_⟩
                       simpa only [hs] using And.intro hr0 (And.intro hr1 (And.intro hr2 (And.intro hr3 (And.intro hr4 (And.intro hread1 (And.intro hread2 (And.intro hsourceLoc hffi)))))))
-                    obtain ⟨extra, t2, hrun, hresultFfi⟩ := ih start2 pc ffi returned hpath _ res s2 he hn hn.2
+                    obtain ⟨extra, t2, hrun, hresultFfi⟩ := ih hc start2 pc ffi returned hpath _ res s2 he hn hn.2
                     have hskipRun := allSkipsEvaluate count {t1 with clock := t1.clock + extra} ⟨hskips, hfailed⟩ 0
                     refine ⟨extra + count, t2, ?_, hresultFfi⟩
                     simp only [Nat.add_zero] at hskipRun

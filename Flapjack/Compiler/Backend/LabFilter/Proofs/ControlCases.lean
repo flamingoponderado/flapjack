@@ -41,7 +41,8 @@ private theorem relatedJumpSuccessor {width : Nat} [NeZero width] {C F : Type}
   · exact hfailed
 
 /-- Original labelled-Jump branch with its actual guarded recursive induction
-hypothesis. Missing targets and all result constructors are retained. -/
+hypothesis. Missing targets and all result constructors are retained.
+The IH includes the original evaluator's nonzero source-clock path guard. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
   (words_as_type_indexed_bitvec)]
 theorem filterCorrectJump {width : Nat} [NeZero width] {C F : Type}
@@ -51,7 +52,7 @@ theorem filterCorrectJump {width : Nat} [NeZero width] {C F : Type}
     (heval : evaluate s1 = (res, s2)) (hrel : stateRel s1 t1)
     (hfailed : t1.failed = false)
     (hfetch : asmFetch s1 = some (.labAsm (.jump label) position bytes len))
-    (ih : ∀ pc, getPcValue label s1 = some pc →
+    (ih : s1.clock ≠ 0 → ∀ pc, getPcValue label s1 = some pc →
       ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
         (result : MachineResult) (final : Flapjack.Compiler.Backend.LabSem.State width C F),
       evaluate (updPc pc (decClock s1)) = (result, final) →
@@ -94,7 +95,7 @@ theorem filterCorrectJump {width : Nat} [NeZero width] {C F : Type}
     have he := heval
     conv at he => lhs; rw [evaluate]
     simp only [hc, ↓reduceIte, hfetch, hp] at he
-    obtain ⟨extra, t2, hrun, hffi⟩ := ih pc hp _ res s2 he hn hn.2
+    obtain ⟨extra, t2, hrun, hffi⟩ := ih hc pc hp _ res s2 he hn hn.2
     have hskipRun := allSkipsEvaluate count {t1 with clock := t1.clock + extra} ⟨hskips, hfailed⟩ 0
     refine ⟨extra + count, t2, ?_, hffi⟩
     simp only [Nat.add_zero] at hskipRun
@@ -114,7 +115,8 @@ theorem filterCorrectJump {width : Nat} [NeZero width] {C F : Type}
     exact hrun
 
 /-- Original JumpReg location-valued branch with its actual guarded recursive induction
-hypothesis. Missing targets and all result constructors are retained. -/
+hypothesis. Missing targets and all result constructors are retained.
+The IH includes the original evaluator's nonzero source-clock path guard. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
   (words_as_type_indexed_bitvec)]
 theorem filterCorrectJumpRegLoc {width : Nat} [NeZero width] {C F : Type}
@@ -125,7 +127,7 @@ theorem filterCorrectJumpRegLoc {width : Nat} [NeZero width] {C F : Type}
     (hfailed : t1.failed = false)
     (hfetch : asmFetch s1 = some (.asm (.asmi (.jumpReg register)) bytes len))
     (hreg : s1.regs register = .loc sectionId labelId)
-    (ih : ∀ pc, locToPc sectionId labelId s1.code = some pc →
+    (ih : s1.clock ≠ 0 → ∀ pc, locToPc sectionId labelId s1.code = some pc →
       ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
         (result : MachineResult) (final : Flapjack.Compiler.Backend.LabSem.State width C F),
       evaluate (updPc pc (decClock s1)) = (result, final) →
@@ -170,7 +172,7 @@ theorem filterCorrectJumpRegLoc {width : Nat} [NeZero width] {C F : Type}
     have he := heval
     conv at he => lhs; rw [evaluate]
     simp only [hc, ↓reduceIte, hfetch, hreg, hp] at he
-    obtain ⟨extra, t2, hrun, hffi⟩ := ih pc hp _ res s2 he hn hn.2
+    obtain ⟨extra, t2, hrun, hffi⟩ := ih hc pc hp _ res s2 he hn hn.2
     have hskipRun := allSkipsEvaluate count {t1 with clock := t1.clock + extra} ⟨hskips, hfailed⟩ 0
     refine ⟨extra + count, t2, ?_, hffi⟩
     simp only [Nat.add_zero] at hskipRun
@@ -243,7 +245,8 @@ private theorem relatedLocValueSuccessor {width : Nat} [NeZero width] {C F : Typ
   · exact hfailed
 
 /-- Original LocValue branch with its actual guarded recursive induction
-hypothesis. Missing targets and all result constructors are retained. -/
+hypothesis. Missing targets and all result constructors are retained.
+The IH includes the original evaluator's nonzero source-clock path guard. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
   (words_as_type_indexed_bitvec)]
 theorem filterCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
@@ -253,7 +256,7 @@ theorem filterCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
     (heval : evaluate s1 = (res, s2)) (hrel : stateRel s1 t1)
     (hfailed : t1.failed = false)
     (hfetch : asmFetch s1 = some (.labAsm (.locValue register label) position bytes len))
-    (ih : getPcValue label s1 ≠ none →
+    (ih : s1.clock ≠ 0 → getPcValue label s1 ≠ none →
       ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
         (result : MachineResult) (final : Flapjack.Compiler.Backend.LabSem.State width C F),
       evaluate (incPc (decClock (updReg register (labToLoc label) s1))) = (result, final) →
@@ -301,7 +304,7 @@ theorem filterCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
       intro h
       rw [hp] at h
       cases h
-    obtain ⟨extra, t2, hrun, hffi⟩ := ih hpresent _ res s2 he hn hn.2
+    obtain ⟨extra, t2, hrun, hffi⟩ := ih hc hpresent _ res s2 he hn hn.2
     have hskipRun := allSkipsEvaluate count {t1 with clock := t1.clock + extra} ⟨hskips, hfailed⟩ 0
     refine ⟨extra + count, t2, ?_, hffi⟩
     simp only [Nat.add_zero] at hskipRun
@@ -347,7 +350,8 @@ private theorem relatedCallSuccessor {width : Nat} [NeZero width] {C F : Type}
   · exact hfailed
 
 /-- Original Call branch with its actual guarded recursive induction
-hypothesis. Missing targets and all result constructors are retained. -/
+hypothesis. Missing targets and all result constructors are retained.
+The IH includes the original evaluator's nonzero source-clock path guard. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
   (words_as_type_indexed_bitvec)]
 theorem filterCorrectCall {width : Nat} [NeZero width] {C F : Type}
@@ -357,7 +361,7 @@ theorem filterCorrectCall {width : Nat} [NeZero width] {C F : Type}
     (heval : evaluate s1 = (res, s2)) (hrel : stateRel s1 t1)
     (hfailed : t1.failed = false)
     (hfetch : asmFetch s1 = some (.labAsm (.call label) position bytes len))
-    (ih : ∀ pc (location : WordLocW width), getPcValue label s1 = some pc →
+    (ih : s1.clock ≠ 0 → ∀ pc (location : WordLocW width), getPcValue label s1 = some pc →
       getRetLoc s1 = some location →
       ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
         (result : MachineResult) (final : Flapjack.Compiler.Backend.LabSem.State width C F),
@@ -424,7 +428,7 @@ theorem filterCorrectCall {width : Nat} [NeZero width] {C F : Type}
       have he := heval
       conv at he => lhs; rw [evaluate]
       simp only [hc, ↓reduceIte, hfetch, hp, hr] at he
-      obtain ⟨extra, t2, hrun, hffi⟩ := ih pc location hp hr _ res s2 he hn hn.2
+      obtain ⟨extra, t2, hrun, hffi⟩ := ih hc pc location hp hr _ res s2 he hn hn.2
       have hskipRun := allSkipsEvaluate count {t1 with clock := t1.clock + extra} ⟨hskips, hfailed⟩ 0
       refine ⟨extra + count, t2, ?_, hffi⟩
       simp only [Nat.add_zero] at hskipRun
@@ -470,7 +474,8 @@ private theorem relatedIncSuccessor {width : Nat} [NeZero width] {C F : Type}
   · exact hfailed
 
 /-- Original JumpCmp taken branch with its actual guarded recursive induction
-hypothesis. Missing targets and all result constructors are retained. -/
+hypothesis. Missing targets and all result constructors are retained.
+The IH includes the original evaluator's nonzero source-clock path guard. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
   (words_as_type_indexed_bitvec)]
 theorem filterCorrectJumpCmpTrue {width : Nat} [NeZero width] {C F : Type}
@@ -482,7 +487,7 @@ theorem filterCorrectJumpCmpTrue {width : Nat} [NeZero width] {C F : Type}
     (hfailed : t1.failed = false)
     (hfetch : asmFetch s1 = some (.labAsm (.jumpCmp comparison register operand label) position bytes len))
     (hcmp : wordSemWordCmp comparison (s1.regs register) (regImm operand s1) = some true)
-    (ih : ∀ pc, getPcValue label s1 = some pc →
+    (ih : s1.clock ≠ 0 → ∀ pc, getPcValue label s1 = some pc →
       ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
         (result : MachineResult) (final : Flapjack.Compiler.Backend.LabSem.State width C F),
       evaluate (updPc pc (decClock s1)) = (result, final) →
@@ -530,7 +535,7 @@ theorem filterCorrectJumpCmpTrue {width : Nat} [NeZero width] {C F : Type}
     have he := heval
     conv at he => lhs; rw [evaluate]
     simp only [hc, ↓reduceIte, hfetch, hcmp, hp] at he
-    obtain ⟨extra, t2, hrun, hffi⟩ := ih pc hp _ res s2 he hn hn.2
+    obtain ⟨extra, t2, hrun, hffi⟩ := ih hc pc hp _ res s2 he hn hn.2
     have hskipRun := allSkipsEvaluate count {t1 with clock := t1.clock + extra} ⟨hskips, hfailed⟩ 0
     refine ⟨extra + count, t2, ?_, hffi⟩
     simp only [Nat.add_zero] at hskipRun
@@ -599,7 +604,8 @@ theorem filterCorrectJumpCmpNone {width : Nat} [NeZero width] {C F : Type}
 
 
 /-- Original JumpCmp fall-through branch. The only induction hypothesis concerns
-its actual native source successor; no label lookup or success premise is added. -/
+its actual native source successor; no label lookup or success premise is added.
+The IH includes the original evaluator's nonzero source-clock path guard. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
   (words_as_type_indexed_bitvec)]
 theorem filterCorrectJumpCmpFalse {width : Nat} [NeZero width] {C F : Type}
@@ -611,7 +617,7 @@ theorem filterCorrectJumpCmpFalse {width : Nat} [NeZero width] {C F : Type}
     (hfailed : t1.failed = false)
     (hfetch : asmFetch s1 = some (.labAsm (.jumpCmp comparison register operand label) position bytes len))
     (hcmp : wordSemWordCmp comparison (s1.regs register) (regImm operand s1) = some false)
-    (ih : ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
+    (ih : s1.clock ≠ 0 → ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
         (result : MachineResult) (final : Flapjack.Compiler.Backend.LabSem.State width C F),
       evaluate (incPc (decClock s1)) = (result, final) →
       stateRel (incPc (decClock s1)) target → target.failed = false →
@@ -634,7 +640,7 @@ theorem filterCorrectJumpCmpFalse {width : Nat} [NeZero width] {C F : Type}
   have he := heval
   conv at he => lhs; rw [evaluate]
   simp only [hc, ↓reduceIte, hfetch, hcmp] at he
-  obtain ⟨extra, t2, hrun, hffi⟩ := ih _ res s2 he hn hn.2
+  obtain ⟨extra, t2, hrun, hffi⟩ := ih hc _ res s2 he hn hn.2
   have hskipRun := allSkipsEvaluate count {t1 with clock := t1.clock + extra} ⟨hskips, hfailed⟩ 0
   refine ⟨extra + count, t2, ?_, hffi⟩
   simp only [Nat.add_zero] at hskipRun
