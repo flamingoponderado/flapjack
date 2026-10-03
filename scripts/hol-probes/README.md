@@ -6424,3 +6424,10 @@ or full evaluator/pass/compiler correctness.
 `stack_code_bitmaps_call_probe.out` captures the original full theorem, zero hypotheses and arbitrary-ret Call specialization. The Lean constructor case assembles actual NONE/SOME branch proofs with source-path guarded recursive IHs and all three existential conjuncts. Whole evaluator assembly is separate.
 
 `stack_code_bitmaps_full_probe.out` freshly replays the complete original evaluate_code_bitmaps proof, checks absence of hypotheses/free variables, and records full theorem/type. The Lean whole theorem retains the sole actual source execution premise and all three existential conjuncts; native clock-first induction discharges every recursive case internally. This structural preservation theorem does not establish full compiler or floating-point correspondence.
+`l3_csr_access_probe.out` captures seven complete CSR privilege/access definitions
+and types, 285 boundary observations across RV32/RV64/RV128 with eight privilege/
+access combinations each, and 18 unspecified-mode exception/frame observations.
+Original signed word12 range comparisons, unsigned privilege comparison, MPRV,
+ignored rs1 and returned states are preserved. Arbitrary architecture remains
+arbitrary. These regressions do not establish whole Run/Next/compiler correctness.
+
