@@ -6422,3 +6422,5 @@ These captures provide source regression evidence, not cross-language equivalenc
 or full evaluator/pass/compiler correctness.
 
 `stack_code_bitmaps_call_probe.out` captures the original full theorem, zero hypotheses and arbitrary-ret Call specialization. The Lean constructor case assembles actual NONE/SOME branch proofs with source-path guarded recursive IHs and all three existential conjuncts. Whole evaluator assembly is separate.
+
+`stack_code_bitmaps_full_probe.out` freshly replays the complete original evaluate_code_bitmaps proof, checks absence of hypotheses/free variables, and records full theorem/type. The Lean whole theorem retains the sole actual source execution premise and all three existential conjuncts; native clock-first induction discharges every recursive case internally. This structural preservation theorem does not establish full compiler or floating-point correspondence.

@@ -359,6 +359,7 @@ import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.JumpLower
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallTail
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallReturn
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Call
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp

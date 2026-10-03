@@ -1,0 +1,4 @@
+bitmap_full_statement=∀c s r s1. evaluate (c,s) = (r,s1) ⇒ ∃n. s1.compile_oracle = shift_seq n s.compile_oracle ∧ s1.code = FOLDL union s.code (MAP (fromAList ∘ FST ∘ SND) (GENLIST s.compile_oracle n)) ∧ s1.bitmaps = s.bitmaps ++ FLAT (MAP (SND ∘ SND) (GENLIST s.compile_oracle n))
+bitmap_full_proved=T
+bitmap_full_hypotheses=0
+bitmap_full_type=:bool

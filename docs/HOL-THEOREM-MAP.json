@@ -69066,5 +69066,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 .17.10.3: original stackProps421-440 full Call constructor, assembling accepted NONE/SOME branch proofs. All ret/dest/handler/state/result variables retained; recursive IHs have actual ret selection, lookup, handler, clock, link and callee/continuation execution guards from evaluate induction. No global arbitrary-state IH, target evaluation or poststate prefix assumption. CodeBitmaps retains all three literal existential conjuncts. Canonical regs/fpRegs/store codec witness re-export reviewed; code remains native sptree; positive word translation and inherited reals_as_rational_cuts retained. This is only a Call induction case, not the assembled whole theorem.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps.lean",
+    "lean_name": "evaluateCodeBitmaps",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .17.13: full original stackProps421-440 arbitrary c/s/r/s1, sole evaluate equality, existential n with all original oracle shift, left-fold sptree union of fromAList prefix and bitmap append/flatten conjuncts. No count/prefix/target/poststate/IH premise in final theorem. Native clock-first LexNat induction handles every constructor; genuine recursive case IHs discharged by structural descent or actual decrement/clamp descent, independent of publication metadata. CodeBitmaps is definitionally the literal three conjuncts. GENLIST vs range.map, original composition/fromAList/FOLDL union order and FLAT/append compared; sptree unchanged. Canonical regs/fpRegs/store codec re-export and positive-width words reviewed; inherited reals_as_rational_cuts explicitly retained. Fresh literal complete HOL proof replay has no hypotheses/free variables. This establishes structural preservation only, not floating-point equivalence or full compiler correctness.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
