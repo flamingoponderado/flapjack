@@ -8,6 +8,7 @@ import Flapjack.RiscV.WordDiagnostics
 import Flapjack.RiscV.CakeRegAlloc
 import Flapjack.RiscV.WordFuseConditions
 import Flapjack.RiscV.WordDeadCode
+import Flapjack.Compiler.Backend.WordRemove.Production
 import Flapjack.RiscV.WordInstSelect
 import Flapjack.RiscV.WordSimp
 import Flapjack.RiscV.WordUnreach
@@ -344,7 +345,12 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsFromWordCheckedA
       match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA
           label wordParameters unallocatedBody with
       | none => .error (.allocationFailure label)
-      | some (_, _renamedParameters, renamedProgram, allocation) =>
+      | some (_, _renamedParameters, allocatedProgram, allocation) =>
+        -- HOL `full_compile_single`: reviewed `remove_must_terminate` after
+        -- allocation; codec rejection is an explicit allocation-boundary failure.
+        match RiscV.wordRemoveMustTerminateViaHOL? allocatedProgram with
+        | none => .error (.allocationFailure label)
+        | some renamedProgram =>
           let frameSlots :=
             RiscV.cakeWordFrameSlots allocation wordParameters renamedProgram
           -- x23 stays clear of every Cake colour (x29 is colour 12 and can
