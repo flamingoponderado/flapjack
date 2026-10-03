@@ -90266,5 +90266,95 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst4688 Binop branch4863-4919. All five original guards retained, full actual native wInst existential, entire stateRel and target stack length/space. Source Binop success derives actual word reads and original successful wordOpHOL. Actual Reg1/Reg2 loads and register/spill destination write derived for all operators, aliases, positive widths and arbitrary immediate words. Physical same-register Or shortcut derives equal actual words from lookups and the idempotent original Or result; no nonalias guard. Canonical source fpRegs/store and target regs/fpRegs/store qualified; sptree locals/code unchanged, common source/instruction/target/result word width, independent host/FFI. Inherited reals_as_rational_cuts remains SOUNDNESS item8 external boundary. Fresh typed original kernel specializations regenerated and reviewed: both T/hypotheses0, all five guards/full result, shared word width and independent host/FFI. No literal local proof replay or HOL-to-Lean equivalence claim.",
     "hol_line": 4688
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_seq_every_inst_distinct_tar_reg",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean",
+    "lean_name": "fakeSeq_distinctTarReg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "loop_setup_every_inst_distinct_tar_reg",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean",
+    "lean_name": "loopSetup_distinctTarReg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_moves_distinct_tar_reg",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean",
+    "lean_name": "fakeMoves_distinctTarReg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_distinct_tar_reg",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean",
+    "lean_name": "ssaCcTrans_distinctInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_distinct_tar_reg",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean",
+    "lean_name": "ssaCcTrans_distinctOpCurrHeap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_distinct_tar_reg",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean",
+    "lean_name": "ssaCcTrans_distinctIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_distinct_tar_reg",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean",
+    "lean_name": "ssaCcTrans_distinctLoop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_distinct_tar_reg",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean",
+    "lean_name": "ssaCcTrans_distinctReturningCall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_distinct_tar_reg",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean",
+    "lean_name": "ssaCcTrans_distinctTarReg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "full_ssa_cc_trans_distinct_tar_reg",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean",
+    "lean_name": "fullSsaCcTrans_distinctTarReg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
   }
 ]

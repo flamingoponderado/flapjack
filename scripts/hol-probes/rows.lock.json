@@ -8810,6 +8810,12 @@
       "sha256": "562ceb88968e9fcc43ae3ed33eef344ff54732b051c9f5e11911b908ec739ba6"
     },
     {
+      "bytes": 867,
+      "out": "word_alloc_distinct_tar_reg_probe.out",
+      "rows": 6,
+      "sha256": "b5bd1e4baca5257a427964d51ba21bf96a32e9a8b71ebac6efa33ccc4afda79e"
+    },
+    {
       "bytes": 535,
       "out": "word_alloc_even_colour_probe.out",
       "rows": 20,
