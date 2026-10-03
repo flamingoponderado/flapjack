@@ -6651,3 +6651,17 @@ actual remaining buffer; the native full-guard consumer observes that exclusion.
 No extra successful lookup, overflow bound, exclusion premise or arbitrary
 EL/default policy is used. ISR16 and the full initializer remain open.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_memory_separation_probeScript.sml`.
+
+### Full initializer shared-memory code domain
+
+`lab_to_target_initializer_domain_probeScript.sml` captures the complete
+original initializer theorem/types0hyp and original fullguard state relation
+conjunct51 (ISR16), with zero hypotheses and kernel proof T. The original
+pre-Suspend proof replay in the basic-cases probe confirms its case mapping.
+Native proof retains all fourteen guards and derives actual full FFI search,
+name, MMIO descriptor and complete nonshared-byte exclusion from the reviewed
+extraction/offset/word-search/prefix-exclusion dependencies. All bounds and
+no-wrap facts follow from original guards; no default/EL policy is changed.
+Native fullguard consumers observe valid FFI index/descriptor and all fetched
+nonshared byte exclusions. Full initializer assembly remains open.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_domain_probeScript.sml`.
