@@ -6095,3 +6095,6 @@ run_probe lab_to_target_compiler_oracle_ok_probeScript.sml lab_to_target_compile
   compiler_oracle_ok_def compiler_oracle_ok_def_types compiler_oracle_ok_def_hypotheses \
   full_contract all_good_code all_no_share_mem zero_config \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_props_evaluate_io_events_mono_probeScript.sml stack_props_evaluate_io_events_mono_probe.out \
+  single_run_events_statement single_run_events_proved \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"

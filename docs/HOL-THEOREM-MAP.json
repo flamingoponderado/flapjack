@@ -69560,5 +69560,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison9588-9598 and original complete fulltype0hyp: all five arguments retained, actual concrete word-free Config oracle and independent natural-valued nested Spt initial labels, arbitrary positive source word width, fixed word8 code bytes and exact HolFfiName list. Every index keeps good_code and no_share_mem_inst, index zero keeps labels/pos/SOME ffi-name equalities. Imported reviewed goodCode generic label-value carrier is genuinely instantiated at Nat by the original concrete Config labels, not arbitrarily specialized. Pair destructuring and unused zero code component preserved; no extra successful compiler/desired target state premise or default/hold change. Fresh original definition and four full generic kernel consumers are compared with native generic consumers. Full151 initializer simulation remains open; this source comparison does not close that theorem. This is a proof-script contract, not an executed compiler replacement or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateIoEventsMono.lean",
+    "lean_name": "evaluateIoEventsMono",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_io_events_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-sol-stack-io-events-mono): full stackPropsScript.sml454-475 original !program source result post. evaluate(program,source)=(result,post) implies source.ffi.io_events prefix post.ffi.io_events. Native evaluate, arbitrary original carriers/quantifiers, all result outcomes and sole source-run equation retained; HOL IS_PREFIX is List.IsPrefix. Full clock-first evaluator induction covers all34constructors; successful instructions/alloc/constant stores preserve FFI, external FFI and all8shared-memory operations use the checked exact callFFIHOL return append law. Seq/Loop/call return/exception prefixes are composed from actual recursive source runs; original fixClock/decClock preserve FFI and supply genuine measure decreases. No target-run, desired trace, clock/simulation, oracle-extension, non-Error, domain or success premise added. Canonical owning native StackSemStateFiniteExact regs/fpRegs/store finite maps and positive type-indexed BitVec/FFI Type carriers use reviewed combined qualifiers with a genuine imported-state broad/exact roundtrip witness. Code remains Spt, not named as finite map. Inherits reviewed reals_as_rational_cuts through evaluator FP closure (SOUNDNESS item8); event monotonicity is independent of numeric FP result and does not claim numerical parity. Complete unchanged original HOL proof replay produces a closed theorem with two fresh statement/proved rows. This is the single-run law, not the extra-clock theorem or full StackRemove observational semantics."
   }
 ]
