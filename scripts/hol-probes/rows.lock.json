@@ -7370,6 +7370,12 @@
       "sha256": "61919c67cf5332803c82eab5243ad7a1a3cba20a80855dab9d7e82d7d45fd8fe"
     },
     {
+      "bytes": 3286,
+      "out": "stack_remove_asm_name_probe.out",
+      "rows": 6,
+      "sha256": "51c724c0cde4db96dce28d6c738e2aeb3e073ac4e998e7fda3d3df2a89192011"
+    },
+    {
       "bytes": 280,
       "out": "stack_remove_bytearray_read_probe.out",
       "rows": 2,

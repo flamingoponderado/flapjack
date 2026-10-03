@@ -86862,6 +86862,24 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_removeProofScript.sml:4320-4349: compile jump off gen_gc n k pos p = p' ∧ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND p) ⇒ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND p'), free variables implicit in order, over StackRemove.compileHOL (argument order jump off gen_gc max_heap pointer start). Proof: init stubs (init_code, halt_inst) and comp-preservation via untagged helper lemmas mirroring the source EVAL/completeInduct steps."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "stack_remove_comp_stack_asm_name",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/AsmName.lean",
+    "lean_name": "stackRemoveCompStackAsmName",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_removeProofScript.sml:4209-4278. Statement as captured by the stack_remove_asm_name probe: ∀jump off k p. the eleven premises in HOL order (stack_asm_name c p, stack_asm_remove c p, addr_offset_ok c 0w, good_dimindex, the max_stack_alloc valid_imm family, ∀s. addr_offset_ok c (store_offset s), reg_name (k+2)/(k+1)/k, k ≠ 0, off = c.addr_offset) ⇒ stack_asm_name c (comp jump off k p). addr_offset_ok c w is asmAddrOffsetOkExact c w = true, good_dimindex (:'a) is goodDimindex width, n2w (n * (dimindex (:'a) DIV 8)) is BitVec.ofNat width (n * (width / 8)), INL Add/Sub are Sum.inl .add/.sub, valid_imm/addr_offset are the AsmConfigExact fields; c : 'a asm_config shares the program width (probe types); free variables implicit; definitions are the reviewed StackProps.stackAsmName/stackAsmRemove/regName and StackRemove.comp/compileHOL/storeOffset. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "stack_remove_stack_asm_name",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/AsmName.lean",
+    "lean_name": "stackRemoveStackAsmName",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_removeProofScript.sml:4280-4300. Statement as captured by the probe: the thirteen premises in HOL order (EVERY stack_asm_name / stack_asm_remove over prog as membership quantifiers, addr_offset_ok c 0w, good_dimindex, the valid_imm family, valid_imm (INL Add) 4w and 8w, store offsets, reg_name 7, reg_name (k+2)/(k+1)/k, k ≠ 0) ⇒ EVERY (λ(n,p). stack_asm_name c p) (compile jump c.addr_offset gen_gc max_heap k start prog). addr_offset_ok c w is asmAddrOffsetOkExact c w = true, good_dimindex (:'a) is goodDimindex width, n2w (n * (dimindex (:'a) DIV 8)) is BitVec.ofNat width (n * (width / 8)), INL Add/Sub are Sum.inl .add/.sub, valid_imm/addr_offset are the AsmConfigExact fields; c : 'a asm_config shares the program width (probe types); free variables implicit; definitions are the reviewed StackProps.stackAsmName/stackAsmRemove/regName and StackRemove.comp/compileHOL/storeOffset. No added premise."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
     "hol_name": "full_make_init_semantics",
     "hol_line": 3365,
