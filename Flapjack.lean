@@ -4,6 +4,8 @@ import Flapjack.RiscV.L3.Defs.RegisterALU
 import Flapjack.RiscV.L3.Defs.ConditionalBranch
 import Flapjack.RiscV.L3.Defs.UpperJump
 import Flapjack.RiscV.L3.Defs.CSRInstructions
+import Flapjack.RiscV.L3.Defs.SetLess
+import Flapjack.RiscV.L3.Defs.ImmediateALU
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitClock

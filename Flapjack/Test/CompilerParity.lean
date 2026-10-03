@@ -1,3 +1,5 @@
+import Flapjack.Test.L3SetLessParity
+import Flapjack.Test.L3ImmediateALUParity
 import Flapjack.Test.L3RegisterALUParity
 import Flapjack.Test.L3ConditionalBranchParity
 import Flapjack.Test.L3UpperJumpParity
