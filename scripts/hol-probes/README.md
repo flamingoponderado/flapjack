@@ -7125,10 +7125,15 @@ source lookup derive the shape-list and actual converted index correspondence.
 
 `l3_next_step_probeScript.sml` proves the universal original NextRISCV equation over arbitrary native state, with zero hypotheses. It retains the complete step Fetch and full Run/DecodeAny calls, exception result, PC+Skip continuation, BranchTo control clear/update, and every remaining TransferControl constructor returning NONE. `check-l3-next-step.py` pins the full multiline equation and type/proof rows. Drift coverage compares the literal generated body, explicitly resolving the combined export’s `riscv_step_Fetch` alias to the Step namespace owner. Full Run inherits the rational-cuts IEEE assumption (SOUNDNESS item 8). This ports the step theory definition; the model’s stronger Next trap/interrupt dispatcher and compiler correctness remain separate obligations.
 `lab_filter_full_simulation_probeScript.sml` captures the entire original filter_correct theorem, full types, zero hypotheses and kernel reproof. Native clock-zero and absent-fetch cases retain the full simulation conclusion and original branch guards; whole case assembly remains open.
+`pan_structs_reorder_faithful_probe` captures the original full theorem, kernel
+quantified types, zero hypotheses and kernel proof. Ignored info-field payload
+remains independently polymorphic; native theorem uses faithful MlS, ContextExact
+and actual compileFieldsExact, preserving both original premises.
 
 ## Original native Next evaluation theorem group
 
 `l3_next_evaluation_probeScript.sml` proves universally quantified copies of original `NextRISCV`, `NextRISCV_branch` and `NextRISCV_cond_branch` using the pinned original theorems. Captures include every binder type, all original conjunction premises and complete result records, zero proof assumptions and proof markers. Lean preserves those literal premises; it does not assume the resulting Next transition. The conditional false path derives the full control-update identity from the original empty-control premise. `check-l3-next-evaluation.py` rejects carrier narrowing, circular-premise substitution, dropped premises or lost record updates. Original stepLib uses all three rules; encoder and compiler correctness remain further work. Full Run/Next inherit the rational-cuts IEEE assumption (SOUNDNESS item 8).
+
 
 ## Original native decoder transport rules
 
