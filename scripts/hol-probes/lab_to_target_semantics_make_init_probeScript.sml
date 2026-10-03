@@ -1,0 +1,15 @@
+load "bossLib";
+load "preamble";
+load "lab_to_targetProofTheory";
+open bossLib HolKernel Parse preamble lab_to_targetProofTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "=");print_term(concl th);print "\n");
+fun types label th = (print(label ^ "=");app(fn v=>print(term_to_string v ^ ":" ^ type_to_string(type_of v) ^ ";"))(fst(strip_forall(concl th)) @ free_vars(concl th));print "\n");
+fun checked label th = (print(label ^ "="); print_term(rhs(concl(EQT_INTRO (prove(concl th,ACCEPT_TAC th)))));print "\n");
+val th = DB.fetch "lab_to_targetProof" "semantics_make_init";
+val _ = show_types := true;
+val _ = capture "semantics_make_init" th;
+val _ = types "semantics_make_init_types" th;
+val _ = print("semantics_make_init_hypotheses=" ^ Int.toString(length(hyp th)) ^ "\n");
+val _ = show_types := false;
+val _ = checked "semantics_make_init_proved" th;

@@ -1,5 +1,13 @@
 import Flapjack.Test.StackRawCallCompileSemanticsParity
 import Flapjack.Test.WordToStackCallReturnHandlerParity
+import Flapjack.Test.L3DecodeImmediatesParity
+import Flapjack.Test.L3FPMemoryParity
+import Flapjack.Test.L3ControlFetchParity
+import Flapjack.Test.L3FPBitsParity
+import Flapjack.Test.L3DivideParity
+import Flapjack.Test.L3MultiplyParity
+import Flapjack.Test.L3WordArithmeticParity
+import Flapjack.Test.L3ImmediateShiftParity
 import Flapjack.Test.StackRawCallCompCorrectParity
 import Flapjack.Test.LabToTargetInitializerFullStateRelParity
 import Flapjack.Test.LabToTargetInitializerDomainParity

@@ -1,0 +1,3 @@
+word_list_inj_statement=∀xs a u u'. word_list a xs u ∧ word_list a xs u' ⇒ u = u'
+word_list_inj_proved=T
+word_list_inj_hypotheses=0

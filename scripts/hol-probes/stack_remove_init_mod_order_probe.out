@@ -1,0 +1,3 @@
+init_mod_order_statement=∀n m k. m MOD k ≤ n ∧ m < k ⇒ m ≤ n
+init_mod_order_proved=T
+init_mod_order_hypotheses=0
