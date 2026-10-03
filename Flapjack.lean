@@ -1121,6 +1121,8 @@ import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
 import Flapjack.Pancake.Proofs.WordConvs.WordAlloc
 import Flapjack.Pancake.Proofs.WordConvs.SSAFlatHelpers
 import Flapjack.Pancake.Proofs.WordConvs.SSAFlatInst
+import Flapjack.Pancake.Proofs.WordConvs.SSAFlatProgram
+import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
