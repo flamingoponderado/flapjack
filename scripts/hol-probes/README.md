@@ -7167,3 +7167,20 @@ original operation is evaluated on the converted list.
 ## Original complete native Fetch16 and Fetch32 theorems
 
 `l3_fetch_theorems_probeScript.sml` proves universally quantified copies of both complete original theorems, preserving the full native state, bool list, all16/32 Boolean binders, bare-VM and each memory-byte premise, low-bit selector and entire Skip-update result. Typed captures record all binders, word8/16/32 list carriers, statements, zero proof assumptions and proof markers. Lean derives translation and raw-read outcomes from these exact original premises, with generic bit extensionality assembling the little-endian bytes; no additional successful fetch/translation, alignment or core bound is assumed. The original symbolic step fetch route consumes these results; full encoder/compiler correctness remains further work.
+
+## Complete native Encode
+
+`l3_encode_probeScript.sml` captures the original full `Encode` and nine
+fixed-width format helper types with zero assumptions. It evaluates all 163
+accepted instruction constructors: zero, maximal, nonuniform and sign-bit
+payloads (one observation for nullary constructors), for 634 fully reduced
+word32 results. The probe registers the complete original definitions and
+rejects nonnumeric residual terms. `scripts/l3/check-encode-fixtures.py`
+checks exact labels, types, result range, complete AST payload widths and the
+Lean kernel replay fixture. `check-l3-encode.py` joins the central native gate.
+
+Regenerate with `HOL_PROBE_ONLY=l3_encode_probeScript.sml` using the pinned
+original HOL model route. Finite fixtures and literal rendering drift checks
+are regression/transcription evidence, not a universal HOL-to-Lean proof.
+The native executed encoder configuration and final encoder correctness are
+separate downstream beads; this batch does not replace the compiler route.

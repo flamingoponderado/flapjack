@@ -78201,5 +78201,85 @@
     "hol_name": "Fetch32",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c complete source comparison2026-10-03 original step670-702: arbitrary full native riscv_state s, bool list xs and all32 arbitrary source Boolean binders; literal list equality, current-core MCSR VM=0 at word5, all4 exact little-endian byte memory equalities at original wrapping word64 addresses, and original low-bit selection premise. Exact raw constructor/word32 v2w result and complete same-state c_Skip function update to word64 4 at unrestricted word8 procID. No added alignment, core bound, successful translation/fetch or target-run premise. Original bare VM premise derives full translateAddr(some PC,s) and THE elimination; original word_bit_1_0 derives selector, generic all-bit extensionality assembles bytes without restricted payloads. Canonical holV2w follows original testbit/FCP index ordering. Fresh complete universal original proof/type/binder capture and Lean kernel statement/proof checked."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/EncodeFormats.lean",
+    "lean_name": "opc",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "opc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 pinned riscvScript18983-20500: word8 input, word7 result; concatenate bits4..0 with literal two-bit3. Whole elaborated original-body rendering checked without exceptions; BitVec fixed-width slicing/concatenation corresponds to original words. Fresh original types/hyp0 and634 numerical observations replayed in Lean, finite regression evidence rather than universal cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/EncodeFormats.lean",
+    "lean_name": "Itype",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Itype_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 pinned riscvScript18983-20500: word7/3/5/5/12 argument product; concatenate imm,rs1,f3,rd,o to word32. Whole elaborated original-body rendering checked without exceptions; BitVec fixed-width slicing/concatenation corresponds to original words. Fresh original types/hyp0 and634 numerical observations replayed in Lean, finite regression evidence rather than universal cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/EncodeFormats.lean",
+    "lean_name": "Stype",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Stype_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 pinned riscvScript18983-20500: word7/3/5/5/12 argument product; concatenate imm11..5,rs2,rs1,f3,imm4..0,o. Whole elaborated original-body rendering checked without exceptions; BitVec fixed-width slicing/concatenation corresponds to original words. Fresh original types/hyp0 and634 numerical observations replayed in Lean, finite regression evidence rather than universal cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/EncodeFormats.lean",
+    "lean_name": "Rtype",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Rtype_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 pinned riscvScript18983-20500: word7/3/5/5/5/7 argument product; concatenate f7,rs2,rs1,f3,rd,o to word32. Whole elaborated original-body rendering checked without exceptions; BitVec fixed-width slicing/concatenation corresponds to original words. Fresh original types/hyp0 and634 numerical observations replayed in Lean, finite regression evidence rather than universal cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/EncodeFormats.lean",
+    "lean_name": "R4type",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "R4type_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 pinned riscvScript18983-20500: word7/3/5/5/5/5/2 argument product; concatenate rs3,f2,rs2,rs1,f3,rd,o to word32. Whole elaborated original-body rendering checked without exceptions; BitVec fixed-width slicing/concatenation corresponds to original words. Fresh original types/hyp0 and634 numerical observations replayed in Lean, finite regression evidence rather than universal cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/EncodeFormats.lean",
+    "lean_name": "UJtype",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "UJtype_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 pinned riscvScript18983-20500: word7/5/20 argument product; concatenate imm19,imm9..0,imm10,imm18..11,rd,o. Whole elaborated original-body rendering checked without exceptions; BitVec fixed-width slicing/concatenation corresponds to original words. Fresh original types/hyp0 and634 numerical observations replayed in Lean, finite regression evidence rather than universal cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/EncodeFormats.lean",
+    "lean_name": "SBtype",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "SBtype_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 pinned riscvScript18983-20500: word7/3/5/5/12 argument product; concatenate imm11,imm9..4,rs2,rs1,f3,imm3..0,imm10,o. Whole elaborated original-body rendering checked without exceptions; BitVec fixed-width slicing/concatenation corresponds to original words. Fresh original types/hyp0 and634 numerical observations replayed in Lean, finite regression evidence rather than universal cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/EncodeFormats.lean",
+    "lean_name": "Utype",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Utype_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 pinned riscvScript18983-20500: word7/5/20 argument product; concatenate imm,rd,o. Whole elaborated original-body rendering checked without exceptions; BitVec fixed-width slicing/concatenation corresponds to original words. Fresh original types/hyp0 and634 numerical observations replayed in Lean, finite regression evidence rather than universal cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/EncodeFormats.lean",
+    "lean_name": "amofunc",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "amofunc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 pinned riscvScript18983-20500: right-associated word5/word1/word1 argument product; concatenate code,aq,rl to word7. Whole elaborated original-body rendering checked without exceptions; BitVec fixed-width slicing/concatenation corresponds to original words. Fresh original types/hyp0 and634 numerical observations replayed in Lean, finite regression evidence rather than universal cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Encode.lean",
+    "lean_name": "Encode",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Encode_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 pinned riscvScript18983-20500: complete accepted instruction AST to word32; all163 constructor clauses across17 outer families, original format selectors/opcode/function literals, immediate widths/splits, register order, aq/rl bits and rounding fields retained. UnknownInstruction and both Internal payload cases return original literal word32 zero, with no accepted-opcode or target-run premise. No floating execution or rational-cut dependency in this encoder body. Whole elaborated original-body rendering checked without exceptions; BitVec fixed-width slicing/concatenation corresponds to original words. Fresh original types/hyp0 and634 numerical observations replayed in Lean, finite regression evidence rather than universal cross-language equivalence."
   }
 ]
