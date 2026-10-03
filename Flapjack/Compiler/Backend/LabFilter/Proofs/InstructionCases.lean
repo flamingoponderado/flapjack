@@ -137,7 +137,8 @@ private theorem stateRelInstSuccessor {width : Nat} [NeZero width] {C F : Type}
   · simpa only [incPc, decClock, retime, filterAt] using hok
 
 /-- Original ordinary-instruction branch. The only induction hypothesis is the
-full original simulation for the actual recursive source successor. -/
+full original simulation for the actual recursive source successor.
+The IH includes the original evaluator's nonzero source-clock path guard. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
   (words_as_type_indexed_bitvec)]
 theorem filterCorrectInstruction {width : Nat} [NeZero width] {C F : Type}
@@ -147,7 +148,7 @@ theorem filterCorrectInstruction {width : Nat} [NeZero width] {C F : Type}
     (heval : evaluate s1 = (res, s2)) (hrel : stateRel s1 t1)
     (hfailed : t1.failed = false)
     (hfetch : asmFetch s1 = some (.asm (.asmi (.inst instruction)) bytes len))
-    (ih : ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
+    (ih : s1.clock ≠ 0 → ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
         (result : MachineResult) (final : Flapjack.Compiler.Backend.LabSem.State width C F),
       (asmInst instruction s1).failed = false →
       evaluate (incPc (decClock (asmInst instruction s1))) = (result, final) →
@@ -180,7 +181,7 @@ theorem filterCorrectInstruction {width : Nat} [NeZero width] {C F : Type}
     have he := heval
     conv at he => lhs; rw [evaluate]
     simp only [hc, ↓reduceIte, hfetch, hok, Bool.false_eq_true] at he
-    obtain ⟨extra, t2, hrun, hffi⟩ := ih _ res s2 hok he hn hn.2
+    obtain ⟨extra, t2, hrun, hffi⟩ := ih hc _ res s2 hok he hn hn.2
     have hsourceClock : (incPc (decClock (asmInst instruction s1))).clock = t1.clock - 1 := by
       simp only [incPc, decClock, (asmInstConsts instruction s1).2.2.1, hsclock]
     have hstep : incPc (decClock (asmInst instruction (retime (t1.pc + count) (t1.clock + extra) t1))) =
