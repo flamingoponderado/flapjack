@@ -561,4 +561,126 @@ theorem labsCorrectHd {width : Nat} [NeZero width] (n : Nat) (code : LabProgHOL 
     · rw [if_neg lab]
       simpa [List.filter_append, lab] using shifted
 
+open Flapjack.Compiler.Backend.LabProps.LabelSets
+
+/-- Complete original label well-formedness of a section list: distinct
+section names, and per section distinct positive labels of that section. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labels_ok_def"
+  (words_as_type_indexed_bitvec)]
+def labelsOk {width : Nat} [NeZero width] (code : LabProgHOL width) : Prop :=
+  (code.map (·.sectionId)).Nodup ∧
+    ∀ s ∈ code, (∀ p ∈ extractLabels s.lines, p.1 = s.sectionId ∧ p.2 ≠ 0) ∧
+      (extractLabels s.lines).Nodup
+
+theorem label_mem_extractLabels {width : Nat} [NeZero width] (a b c : Nat) :
+    ∀ lines : List (LabLineHOL width), Line.label a b c ∈ lines → (a, b) ∈ extractLabels lines := by
+  intro lines
+  induction lines with
+  | nil => simp
+  | cons x xs ih =>
+    intro m
+    rcases List.mem_cons.mp m with h | h
+    · subst h; simp [extractLabels]
+    · cases x <;> simp [extractLabels, ih h]
+
+/-- Complete original consequences of label well-formedness. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labels_ok_imp"
+  (words_as_type_indexed_bitvec)]
+theorem labelsOkImp {width : Nat} [NeZero width] :
+    ∀ code : LabProgHOL width, labelsOk code →
+      (∀ s ∈ code, LabProps.secLabelsOk s) ∧ (code.map (·.sectionId)).Nodup ∧
+        ∀ s ∈ code, (extractLabels s.lines).Nodup := by
+  intro code ⟨nodup, every⟩
+  refine ⟨fun s m line lm => ?_, nodup, fun s m => (every s m).2⟩
+  cases line with
+  | label a b c =>
+    have := (every s m).1 (a, b) (label_mem_extractLabels a b c _ lm)
+    exact this
+  | _ => trivial
+
+/-- Shifting label correctness past a leading section whose labels cannot
+match. Local factoring of `labels_ok_labs_correct`. -/
+theorem labsCorrectSkip {width : Nat} [NeZero width] (n : Nat) (l : List (LabLineHOL width))
+    (code : LabProgHOL width)
+    (sectionLabels : ∀ p ∈ extractLabels l, p.1 = n) :
+    ∀ (l' : List (LabLineHOL width)) (pc : Nat),
+      (∀ p ∈ extractLabels l', p.1 ≠ n) → labsCorrect pc l' code →
+      labsCorrect (pc + (l.filter fun x => !isLabelHOL x).length) l' (⟨n, l⟩ :: code) := by
+  intro l'
+  induction l' with
+  | nil => intros; trivial
+  | cons x xs ih =>
+    intro pc other h
+    simp only [labsCorrect] at h ⊢
+    have tailOther : ∀ p ∈ extractLabels xs, p.1 ≠ n := fun p m => other p (by
+      cases x <;> simp [extractLabels, m])
+    by_cases lab : isLabelHOL x = true
+    · rw [if_pos lab] at h ⊢
+      refine ⟨ih pc tailOther h.1, ?_⟩
+      cases x with
+      | label a b c =>
+        have an : a ≠ n := other (a, b) (by simp [extractLabels])
+        have hl := h.2
+        show locToPc a b (⟨n, l⟩ :: code) = some (pc + _)
+        rw [locToPcSkip a b n (Ne.symm an) l code ?_]
+        · show Option.map _ (locToPc a b code) = _
+          rw [show locToPc a b code = some pc from hl]; rfl
+        · intro line m a' b' c' eq
+          subst eq
+          have := sectionLabels (a', b') (label_mem_extractLabels a' b' c' l m)
+          simp only at this
+          omega
+      | _ => trivial
+    · rw [if_neg lab] at h ⊢
+      have := ih (pc + 1) tailOther h
+      rwa [show pc + 1 + (l.filter fun x => !isLabelHOL x).length =
+        pc + (l.filter fun x => !isLabelHOL x).length + 1 by omega] at this
+
+/-- A section entry resolves to the start of its own section. -/
+theorem locToPcSelf {width : Nat} [NeZero width] (n : Nat) (lines : List (LabLineHOL width))
+    (code : LabProgHOL width) : locToPc n 0 (⟨n, lines⟩ :: code) = some 0 := by
+  cases lines with
+  | nil => simp [locToPc.eq_2]
+  | cons x xs =>
+    cases x
+    · rw [locToPc.eq_3, if_pos ⟨rfl, rfl⟩]
+    · rw [locToPc.eq_4, if_pos ⟨rfl, rfl⟩]; intro _ _ _ h; cases h
+    · rw [locToPc.eq_4, if_pos ⟨rfl, rfl⟩]; intro _ _ _ h; cases h
+
+/-- Complete original label correctness of every section from well-formedness. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labels_ok_labs_correct"
+  (words_as_type_indexed_bitvec)]
+theorem labelsOkLabsCorrect {width : Nat} [NeZero width] :
+    ∀ code : LabProgHOL width, labelsOk code →
+      ∀ s ∈ code, match locToPc s.sectionId 0 code with
+        | some pc => labsCorrect pc s.lines code
+        | none => True := by
+  intro code
+  induction code with
+  | nil => intro _ s m; simp at m
+  | cons hd code ih =>
+    obtain ⟨n, l⟩ := hd
+    intro ⟨nodup, every⟩ s m
+    have headEvery := every _ List.mem_cons_self
+    simp only [List.map_cons, List.nodup_cons] at nodup
+    rcases List.mem_cons.mp m with rfl | m
+    · show match locToPc n 0 (⟨n, l⟩ :: code) with
+        | some pc => labsCorrect pc l (⟨n, l⟩ :: code) | none => True
+      rw [locToPcSelf]
+      exact labsCorrectHd n code [] _ ⟨headEvery.2, headEvery.1⟩
+    · have tailOk : labelsOk code :=
+        ⟨nodup.2, fun s' m' => every s' (List.mem_cons_of_mem _ m')⟩
+      have recur := ih tailOk s m
+      have sne : s.sectionId ≠ n := fun h => nodup.1 (h ▸ List.mem_map_of_mem m)
+      rw [locToPcSkip s.sectionId 0 n (Ne.symm sne) l code (fun _ _ _ _ _ _ h => h.2.2 rfl)]
+      revert recur
+      cases locToPc s.sectionId 0 code with
+      | none => intro _; trivial
+      | some pc =>
+        intro recur
+        exact labsCorrectSkip n l code (fun p mp => (headEvery.1 p mp).1) s.lines pc
+          (fun p mp => by
+            have := ((every s (List.mem_cons_of_mem _ m)).1 p mp).1
+            rw [this]; exact sne) recur
+
 end Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
