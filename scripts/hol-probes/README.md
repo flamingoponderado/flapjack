@@ -7249,6 +7249,7 @@ induction and exactly simplified reversed shape-conversion theorems, binder
 types and closed kernel proofs. Local statements and original unchanged proof
 text are replayed. The whole unused binder is polymorphic; induction n is num.
 Native proofs retain original guards and derive named lookup/field shapes.
+
 `lab_filter_semantics_probe.out` mechanically replays the literal original local `state_rel_IMP_sem_EQ_sem` proof from source1039-1152, with native quantified state types, zero hypotheses and kernel reproof. It does not assume local theorems are exported by HOL. The native Lean lift derives failure and terminating-choice predicate equivalences and whole divergence LUB equality from full evaluator simulation and original clock/prefix laws; no target run or semantic equality is supplied as a premise. This is source-review evidence, not HOL-to-Lean equivalence.
 ## Full native RISC-V configuration
 
@@ -7282,3 +7283,4 @@ Seq/If specializations, closed binder types and kernel proofs, together with
 the original evaluator induction principle. Native cases preserve all ten
 premises/seven conclusions and the genuine source-guarded recursive IHs.
 Seq derives intermediate invariants; If uses the source-word-selected branch.
+`lab_to_target_make_init_filter_probe.out` captures full original10540 initializer skip-filter semantics equality, every independent free-variable type, zero hypotheses and kernel reproof. The native port keeps literal compileLab, all eleven original machine/FFI/memory/domain/program/buffer/oracle arguments and whole semantics equality, deriving both filtered-state compiler/oracle relation and both nonfailed guards from the actual initializer.

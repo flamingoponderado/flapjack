@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabFilter.Proofs.Semantics
 import Flapjack.Compiler.Backend.LabToTarget.MachineSemantics
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem
@@ -69,4 +70,24 @@ theorem semanticsMakeInit {width : Nat} [NeZero width] {S Q G : Type} {F : Type}
     (makeInit mc ffi t m dm sdm ms code (compileLab mc.target.config)
       (mc.target.getPc ms + BitVec.ofNat width (progToBytes code2).length) cbspace coracle)
     ⟨hencoder, hentry, hnonfail⟩
+
+/-- Full original skip-filter initialization semantics equality. The actual
+compileLab and complete memory, domain, machine, buffer and oracle arguments
+are retained; both initial states discharge the original filter guards. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "make_init_filter_skip"
+  (words_as_type_indexed_bitvec)]
+theorem makeInitFilterSkip {width : Nat} [NeZero width] {S Q : Type} {F : Type}
+    (mc : MachineConfig width S Q) (ffi : HolFfiState F) (t : AsmState width)
+    (m : BitVec width → WordLocW width) (dm sdm : BitVec width → Bool)
+    (ms : S) (code : LabProgHOL width) (cbpos : BitVec width) (cbspace : Nat)
+    (coracle : Nat → Config × LabProgHOL width) :
+    semantics (makeInit mc ffi t m dm sdm ms (Flapjack.Compiler.Backend.LabFilter.filterSkip code)
+      (compileLab mc.target.config) cbpos cbspace
+      (fun n => ((coracle n).1, Flapjack.Compiler.Backend.LabFilter.filterSkip (coracle n).2))) =
+    semantics (makeInit mc ffi t m dm sdm ms code
+      (fun configuration program => compileLab mc.target.config configuration
+        (Flapjack.Compiler.Backend.LabFilter.filterSkip program)) cbpos cbspace coracle) := by
+  apply Flapjack.Compiler.Backend.LabFilter.Proofs.filterSkipSemantics
+  exact ⟨rfl, rfl, ⟨compileLab mc.target.config, rfl, rfl⟩, rfl⟩
+
 end Flapjack.Compiler.Backend.LabToTarget
