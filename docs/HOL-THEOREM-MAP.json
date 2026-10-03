@@ -68673,5 +68673,13 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.10.2: original evaluate_code_bitmaps421-440 Call SOME branch and stackSem returning/exception clause compared. Full literal CodeBitmaps existential oracle shift/code FOLDL left union/bitmap append FLAT retained. Callee IH only actual erased-link find_code success/nonzero clock/native decClock(set_var link Loc source). Return IH only native callee execution Result matching actual return label; exception IH only actual handler and native callee execution Exception matching handler label. Both continuations evaluated at actual min-clamped callee poststate; compose derived callee and continuation prefixes with trans, no arbitrary-state/global IH or target/postfield/count/prefix premise. All label mismatches, absent handler, NONE/Break/Continue/error/timeout/final/halt outcomes preserved. Canonical imported regs/fpRegs/store with local genuine codec witness, positive BitVec/NeZero,C/F Type0,Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numeric alignment/FP correspondence/runtime rewrite claim. Full Call/whole bitmap assembly remains open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Misc/FindIndex/SuccessfulMembership.lean",
+    "lean_name": "findIndex_isMem",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "find_index_is_MEM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison miscScript.sml1227 and fresh fulltype0hyp: full generic target/list/offset/result, sole successful-search premise and original membership conclusion. Generic alpha retained; DecidableEq supplies propositional equality. No fixed word specialization, Nodup, index bound or HD/EL/default dependency. Fresh original complete theorem instances discharge actual successful-search guards; kernel structural proof and arbitrary MachineConfig.ffiEntryPcs consumer. Source/regression evidence does not establish cross-language equivalence or full FFI/initializer/compiler correctness."
   }
 ]
