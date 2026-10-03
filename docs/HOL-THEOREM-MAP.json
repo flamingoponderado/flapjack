@@ -89344,5 +89344,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-w08gc): HOL full_inst_ok_less_word_common_subexp_elim (word_cseProof:4031). The full original statement is kept: binders in HOL order, the same premise conjunction, and the same conclusion, over the tagged wordCse/wordCommonSubexpElim and the tagged convention predicates fullInstOkLessExact (HOL asm_config as AsmConfigExact), preAllocConventionsHOL, and everyInst with distinctTarRegExact/twoRegInstExact. HOL every_inst P over 'a inst is everyInst (fun i => P (HolInst.ofWordLangInst i)) over the reviewed instruction mirror, as in the accepted inst_select convention theorems. The proof goes through a CseOut output-shape relation (each instruction-level program is kept or becomes a move; structure is preserved), matching HOL's remark that word_cse emits only original instructions or Moves. Kernel-checked; the word_cse_conventions probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/InitialComposition.lean",
+    "lean_name": "initialPassSemantics",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only initial three-pass proof assembly for pan_to_wordProofScript.sml:529-595; no independent HOL declaration and no claim to the full state_rel_imp_semantics theorem. Original source initial-state, size, allocation and memory premises derive the pass equalities."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/InitialComposition.lean",
+    "lean_name": "initialToGlobalsSemantics",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only initial three-pass proof assembly for pan_to_wordProofScript.sml:529-595; no independent HOL declaration and no claim to the full state_rel_imp_semantics theorem. Original source initial-state, size, allocation and memory premises derive the pass equalities."
   }
 ]
