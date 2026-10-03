@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
+import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
+import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization
 import Flapjack.RiscV.L3.Defs.SupervisorCSR
 import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
@@ -11,11 +13,13 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreConsts
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Call
 import Flapjack.RiscV.L3.Defs.LRSC
 import Flapjack.RiscV.L3.Defs.IntegerLoad
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.StackAccess
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
+import Flapjack.Compiler.Backend.StackProps.EvaluateMono
+import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
 import Flapjack.Misc.FindIndex.SuccessfulMembership
 import Flapjack.RiscV.L3.Defs.MMU.Flush
 import Flapjack.Misc.FindIndex.Membership
-import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
-import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
 import Flapjack.Misc.BytesInMemory.Domain
 import Flapjack.Misc.BytesInMem.Imp
@@ -304,6 +308,10 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InitializationStateRel
+import Flapjack.Compiler.Backend.WordToStack.Proofs.SemanticsHelpers
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Clock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
@@ -641,6 +649,7 @@ import Flapjack.Misc.Sptree.InterEq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
 import Flapjack.Misc.Sptree.MapiLookup
+import Flapjack.Misc.Sptree.MapiWf
 import Flapjack.Misc.ListLookup
 import Flapjack.Compiler.Backend.Parmove.Independence
 import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
@@ -764,6 +773,9 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCosts
 import Flapjack.Compiler.Backend.WordAlloc.ProductionTreeMapMerge
 import Flapjack.Compiler.Backend.WordAlloc.ProductionActualInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallCache
+import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCountMap
+import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCounterJoin
+import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicInstructions
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec

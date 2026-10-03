@@ -1,0 +1,19 @@
+compiler_oracle_ok_def=∀(coracle :num -> config # α sec list)
+    (init_labs :num sptree$num_map sptree$num_map) (init_pos :num)
+    (c :α asm_config) (ffis :ffiname list).
+  compiler_oracle_ok coracle init_labs init_pos c ffis ⇔
+  (∀(k :num).
+     (let
+        ((cfg :config),(code :α sec list)) = coracle k
+      in
+        good_code c cfg.labels code ∧ no_share_mem_inst code)) ∧
+  (let
+     ((cfg :config),(code :α sec list)) = coracle (0 :num)
+   in
+     cfg.labels = init_labs ∧ cfg.pos = init_pos ∧ cfg.ffi_names = SOME ffis)
+compiler_oracle_ok_def_types=(coracle :num -> config # α sec list)::num -> config # α sec list;(init_labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(init_pos :num)::num;(c :α asm_config)::α asm_config;(ffis :ffiname list)::ffiname list;
+compiler_oracle_ok_def_hypotheses=0
+full_contract=T
+all_good_code=T
+all_no_share_mem=T
+zero_config=T
