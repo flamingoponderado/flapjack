@@ -10178,6 +10178,12 @@
       "rows": 3
     },
     {
+      "out": "word_to_stack_inst_division_probe.out",
+      "sha256": "06cca17897adb30d3531ca651046c652dd06f8552cf3292be49cc58e8b5a480b",
+      "bytes": 1127,
+      "rows": 3
+    },
+    {
       "out": "word_to_stack_inst_long_arithmetic_probe.out",
       "sha256": "7615f314589ad1834f14791f519e32e55ee303d144ffbb38ffacff83051b65c2",
       "bytes": 2651,
