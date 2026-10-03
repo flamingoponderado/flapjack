@@ -6264,12 +6264,6 @@ NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 
 `stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.
 
-`word_alloc_instruction_producer_probe.out` captures four original
-`get_delta_inst` 16-bit memory catchall equations at widths 8/64 and zero/255
-offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
-and executed deltas; the complete accepted-instruction producer relation uses
-the real instruction encoder, retaining every ordered operand. No whole
-allocator or source-program producer correctness is claimed.
 `stackprops_code_bitmaps_probe.out` captures the complete original existential oracle/code/bitmap theorem and explicitly checks zero theorem hypotheses. The StoreConsts case retains all dispatch guards and primitive errors, deriving count zero from the full preservation theorem. This is source evidence, not runtime parity or full theorem assembly.
 `l3_lrw_probe.out` captures the complete original LR_W definition/type and
 14 whole-state observations. These retain all aq/rl payloads, early virtual
@@ -6302,3 +6296,20 @@ the current reservation, while faults/misalignment retain it. All order bits,
 rd/rs2 zero, core255 with totalCore1, RV32/RV128 and returned Sv39 walk updates
 are covered. Independent byte-wise expectations and arbitrary-base Lean state
 frames provide regressions only, not whole atomic/runtime correctness.
+<<<<<<< HEAD
+=======
+
+`l3_scd_probe.out` captures the complete original SC_D definition/type and
+24 whole-state observations: RV32 rejects before address/reservation/VM checks,
+all seven virtual misalignment residues, all order bits, reservation failures
+skipping translation, literal Data/Read on read-only pages, eight-byte stores,
+zero registers, core255/totalCore1, RV128, Sv32 faults and returned Sv39 state.
+Complete unaffected frames and other-core reservations are retained. This is
+source-clause regression evidence, not whole atomic/runtime/compiler correctness.
+`word_alloc_instruction_producer_probe.out` captures four original
+`get_delta_inst` 16-bit memory catchall equations at widths 8/64 and zero/255
+offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
+and executed deltas; the complete accepted-instruction producer relation uses
+the real instruction encoder, retaining every ordered operand. No whole
+allocator or source-program producer correctness is claimed.
+>>>>>>> 99fe107a6
