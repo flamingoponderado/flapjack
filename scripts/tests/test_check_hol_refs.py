@@ -2225,6 +2225,51 @@ class HolDatatypeDeclarationsTest(unittest.TestCase):
         self.assertIsNone(REF_ERROR(path, "foo", 2, cache))
         self.assertIsNone(REF_ERROR(path, "foo", 5, cache))
 
+    def test_one_line_datatype_header_is_indexed(self):
+        path = self._write_sml(
+            "Datatype: float_value = Float real | Infinity | NaN\nEnd\n\n"
+            "Datatype:  float_compare = LT | EQ | GT | UN\nEnd\n"
+        )
+        names = DECL(path, {})
+        self.assertEqual(names["float_value"], [1])
+        self.assertEqual(names["float_compare"], [4])
+        for constructor in ("Float", "Infinity", "NaN", "LT", "UN"):
+            self.assertNotIn(constructor, names)
+
+    def test_one_line_datatype_header_keeps_block_until_end(self):
+        path = self._write_sml(
+            "Datatype: ring = <| buffer : num ;\n"
+            "  size : num |>\n"
+            "End\n"
+            "Definition after_def:\n  after = 0\nEnd\n"
+        )
+        names = DECL(path, {})
+        self.assertEqual(names["ring"], [1])
+        self.assertNotIn("buffer", names)
+        self.assertNotIn("size", names)
+        self.assertEqual(names["after_def"], [4])
+
+    def test_one_line_datatype_header_rejects_near_misses(self):
+        path = self._write_sml(
+            "Datatypes: alpha = A\n"
+            "(* Datatype: beta = B *)\n"
+            "  Datatype: gamma = C\n"
+            "Datatype: delta\n"
+        )
+        names = DECL(path, {})
+        for name in ("alpha", "beta", "gamma", "delta"):
+            self.assertNotIn(name, names)
+
+    def test_binary_ieee_one_line_datatypes_are_resolvable(self):
+        path = (
+            Path(__file__).resolve().parents[2]
+            / "HOL/src/floating-point/binary_ieeeScript.sml"
+        )
+        cache = {}
+        self.assertIsNone(REF_ERROR(path, "float_value", None, cache))
+        self.assertIsNone(REF_ERROR(path, "float_compare", None, cache))
+        self.assertIn("not at line", REF_ERROR(path, "float_compare", 754, cache))
+
     def test_record_field_is_not_a_datatype_name(self):
         path = self._write_sml(
             "Datatype:\n  expr = Rec <| field : num |>\nEnd\n"
@@ -3752,10 +3797,6 @@ class FmapResultObservationAmbiguityTest(unittest.TestCase):
             self.assertTrue(any("ambiguous" in error for error in errors))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class PanSemGeneratedEvalIndTest(unittest.TestCase):
     def test_real_source_and_bounded_negative_cases(self):
         path = CHECKER["ROOT"] / CHECKER["PANSEM_EVAL_IND_PATH"]
@@ -3774,3 +3815,7 @@ class PanSemGeneratedEvalIndTest(unittest.TestCase):
         self.assertIsNone(recognize(Path("other/pancake/semantics/panSemScript.sml"), source))
         block = source[source.index("Definition eval_def:"):]
         self.assertIsNone(recognize(path, source + "\n" + block))
+
+
+if __name__ == "__main__":
+    unittest.main()
