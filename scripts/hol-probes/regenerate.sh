@@ -5997,3 +5997,7 @@ run_probe stack_code_bitmaps_jumplower_probeScript.sml stack_code_bitmaps_jumplo
 run_probe stack_code_bitmaps_calltail_probeScript.sml stack_code_bitmaps_calltail_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_calltail_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_callreturn_probeScript.sml stack_code_bitmaps_callreturn_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_callreturn_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -68586,5 +68586,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.10.1: original evaluate_code_bitmaps421-440 Call NONE induction branch and stackSem865-873 compared. Full literal CodeBitmaps existential shift/code FOLDL left union/bitmap append FLAT retained. Actual native evaluator sole execution premise, arbitrary destination and handler. Callee IH only after actual find_code success, handler NONE and nonzero source clock at actual decClock source. Failed lookup/present handler/timeout emptyEnv count0; fix_clock alters clock only and bad_fun_return alters result only, deriving field transport without poststate/count/prefix/target assumption or global IH. Canonical imported regs/fpRegs/store with local genuine codec witness; positive BitVec/NeZero,C/F Type0,Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numeric alignment/FP correspondence/runtime rewrite claim. Returning/exception Call branch and whole assembly open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/CallReturn.lean",
+    "lean_name": "evaluateCodeBitmapsCallReturn",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.10.2: original evaluate_code_bitmaps421-440 Call SOME branch and stackSem returning/exception clause compared. Full literal CodeBitmaps existential oracle shift/code FOLDL left union/bitmap append FLAT retained. Callee IH only actual erased-link find_code success/nonzero clock/native decClock(set_var link Loc source). Return IH only native callee execution Result matching actual return label; exception IH only actual handler and native callee execution Exception matching handler label. Both continuations evaluated at actual min-clamped callee poststate; compose derived callee and continuation prefixes with trans, no arbitrary-state/global IH or target/postfield/count/prefix premise. All label mismatches, absent handler, NONE/Break/Continue/error/timeout/final/halt outcomes preserved. Canonical imported regs/fpRegs/store with local genuine codec witness, positive BitVec/NeZero,C/F Type0,Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numeric alignment/FP correspondence/runtime rewrite claim. Full Call/whole bitmap assembly remains open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
