@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.LabFilter.Map
+import Flapjack.Compiler.Backend.LabFilter.Proofs.PlainAsmErrorCases
 import Flapjack.Compiler.Backend.LabFilter.Proofs.CallFfiCases
 import Flapjack.Compiler.Backend.LabFilter.Proofs.SharedMemoryCases
 import Flapjack.Compiler.Backend.LabFilter.Proofs.BufferTerminalCases

@@ -78821,5 +78821,45 @@
     "lean_name": "ssaLabels",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only private factoring of native structural induction and literal reconciliation projections inside original full_ssa_cc_trans_lab_pres proof. HOL has no separately named declaration for this step; no hypothesis added to final unconditional original theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PlainAsmErrorCases.lean",
+    "lean_name": "filterCorrectPlainJump",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-main source comparison 2026-10-03: original669-696 complete simulation statement, original labSem evaluate default Asmi Jump/JumpCmp/Call/Loc clauses (distinct from labAsm control). Arbitrary full source/target states/result/final, source evaluate/state_rel/nonfailed hypotheses and literal fetch constructor guard; exact original existential target run with source clock plus derived skips and full FFI equality. No induction, target-run, successful-result or unreachable-code premise. Native all-width HolAsm carriers and real-rendering inheritance unchanged. Shared private constructor predicate/proof factoring is Flapjack infrastructure; four public pieces are actual original default-error cases. Full original closed typed filter_correct capture and kernel reproof replayed; full evaluator assembly remains separate. The imported evaluator inherits reals_as_rational_cuts (SOUNDNESS item8); these default branches perform no FP operation and do not discharge that broader rendering assumption."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PlainAsmErrorCases.lean",
+    "lean_name": "filterCorrectPlainJumpCmp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-main source comparison 2026-10-03: original669-696 complete simulation statement, original labSem evaluate default Asmi Jump/JumpCmp/Call/Loc clauses (distinct from labAsm control). Arbitrary full source/target states/result/final, source evaluate/state_rel/nonfailed hypotheses and literal fetch constructor guard; exact original existential target run with source clock plus derived skips and full FFI equality. No induction, target-run, successful-result or unreachable-code premise. Native all-width HolAsm carriers and real-rendering inheritance unchanged. Shared private constructor predicate/proof factoring is Flapjack infrastructure; four public pieces are actual original default-error cases. Full original closed typed filter_correct capture and kernel reproof replayed; full evaluator assembly remains separate. The imported evaluator inherits reals_as_rational_cuts (SOUNDNESS item8); these default branches perform no FP operation and do not discharge that broader rendering assumption."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PlainAsmErrorCases.lean",
+    "lean_name": "filterCorrectPlainCall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-main source comparison 2026-10-03: original669-696 complete simulation statement, original labSem evaluate default Asmi Jump/JumpCmp/Call/Loc clauses (distinct from labAsm control). Arbitrary full source/target states/result/final, source evaluate/state_rel/nonfailed hypotheses and literal fetch constructor guard; exact original existential target run with source clock plus derived skips and full FFI equality. No induction, target-run, successful-result or unreachable-code premise. Native all-width HolAsm carriers and real-rendering inheritance unchanged. Shared private constructor predicate/proof factoring is Flapjack infrastructure; four public pieces are actual original default-error cases. Full original closed typed filter_correct capture and kernel reproof replayed; full evaluator assembly remains separate. The imported evaluator inherits reals_as_rational_cuts (SOUNDNESS item8); these default branches perform no FP operation and do not discharge that broader rendering assumption."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PlainAsmErrorCases.lean",
+    "lean_name": "filterCorrectPlainLoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-main source comparison 2026-10-03: original669-696 complete simulation statement, original labSem evaluate default Asmi Jump/JumpCmp/Call/Loc clauses (distinct from labAsm control). Arbitrary full source/target states/result/final, source evaluate/state_rel/nonfailed hypotheses and literal fetch constructor guard; exact original existential target run with source clock plus derived skips and full FFI equality. No induction, target-run, successful-result or unreachable-code premise. Native all-width HolAsm carriers and real-rendering inheritance unchanged. Shared private constructor predicate/proof factoring is Flapjack infrastructure; four public pieces are actual original default-error cases. Full original closed typed filter_correct capture and kernel reproof replayed; full evaluator assembly remains separate. The imported evaluator inherits reals_as_rational_cuts (SOUNDNESS item8); these default branches perform no FP operation and do not discharge that broader rendering assumption."
   }
 ]
