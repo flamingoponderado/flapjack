@@ -1,4 +1,4 @@
-import Flapjack.RiscV.WordDeadCode
+import Flapjack.Compiler.Backend.WordToStack.ProductionThreeToTwoDomain
 
 namespace Flapjack.WordAlloc
 open RiscV
