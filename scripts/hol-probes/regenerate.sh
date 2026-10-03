@@ -6286,3 +6286,7 @@ run_probe wordsem_evaluate_stack_max_probeScript.sml wordsem_evaluate_stack_max_
 run_probe word_to_stack_comp_seq_full_probeScript.sml word_to_stack_comp_seq_full_probe.out \
   comp_correct_seq_full_statement comp_correct_seq_full_proved comp_correct_seq_full_hypotheses comp_correct_seq_first_none_statement comp_correct_seq_first_none_proved comp_correct_seq_first_none_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_stack_rel_aux_size_probeScript.sml word_to_stack_stack_rel_aux_size_probe.out \
+  stack_rel_aux_stack_size_statement stack_rel_aux_stack_size_proved stack_rel_aux_stack_size_hypotheses stack_rel_aux_type \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
