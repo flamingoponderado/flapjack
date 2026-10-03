@@ -6807,3 +6807,7 @@ run_probe lab_filter_semantics_probeScript.sml lab_filter_semantics_probe.out \
 run_probe lab_filter_skip_semantics_probeScript.sml lab_filter_skip_semantics_probe.out \
   filter_skip_semantics filter_skip_semantics_types filter_skip_semantics_hypotheses filter_skip_semantics_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_make_init_filter_probeScript.sml lab_to_target_make_init_filter_probe.out \
+  make_init_filter_skip make_init_filter_skip_types make_init_filter_skip_hypotheses make_init_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

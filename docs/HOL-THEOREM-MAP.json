@@ -79157,5 +79157,15 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.10): Full original1154 forall s t, pc=0 and BOTH nonfailed conjuncts and existential sourceCompile record equality plus target compiler/filterSkip clause imply whole native semantics equality. Original code and compile-oracle transformations, arbitrary compiler configuration and FFI state, all state fields and duplicate nonfailed guard retained exactly; lambda/product-projection oracle notation is source pair-map composition, no behavioral difference. Complete native semantics equality derives from full original state_rel_IMP_sem_EQ_sem1039 and actual adjustPc zero equation; no additional success, target execution, semantic equality or oracle/compiler premise. Positive-width words_as_type_indexed_bitvec is sole carrier translation, fixed bytes unchanged. Fresh original full1154 statement/type/hyp0/kernel capture retains both original guards. Native semantics inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. make_init_filter_skip10540 and full compiler composition remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "make_init_filter_skip",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/Semantics.lean",
+    "lean_name": "makeInitFilterSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.11): Full original10540 semantics equality between literal make_init on filtered code with compile_lab mc.target.config and pair-filtered compile oracle, and make_init on original code with lambda configuration program compile_lab mc.target.config configuration (filter_skip program) and original oracle. Fresh full original free-variable types confirm independent HOL word dimension alpha, FFI beta, machine state gamma and projection delta; native width/S/Q/F retain all eleven original arguments mc/ffi/t/m/dm/sdm/ms/code/cbpos/cbspace/coracle, exact fixed Config, word memory, Bool-valued domain predicates, word-loc and fixed byte carriers. Literal compileLab retained, no arbitrary compiler replacement, guard or desired semantics premise added. Actual makeInit records discharge pc=0, BOTH nonfailed conjuncts and full existential compiler/oracle transformation of accepted filter_skip_semantics1154; entire native semantics equality follows, including fail/termination/divergence behavior. Positive-width words_as_type_indexed_bitvec is sole carrier translation; imported full native initializer/compiler/carriers unchanged. Fresh original full statement/types/hyp0/kernel T four-row capture. Native semantics/evaluator inherit reals_as_rational_cuts, SOUNDNESS item8 unchanged; no full compiler or end-to-end correctness claim."
   }
 ]
