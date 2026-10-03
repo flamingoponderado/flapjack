@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LoopHandler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelCutState
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.OpCurrHeap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
@@ -661,6 +662,8 @@ import Flapjack.Compiler.Backend.WordCse.CanonicalMove
 import Flapjack.Compiler.Backend.WordCse.CanonicalArith
 import Flapjack.Compiler.Backend.WordCse.CanonicalFp
 import Flapjack.Compiler.Backend.WordCse.ProductionStoreFacts
+import Flapjack.Compiler.Backend.WordCse.ProductionStoreErase
+import Flapjack.Compiler.Backend.WordCse.ProductionGet
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
