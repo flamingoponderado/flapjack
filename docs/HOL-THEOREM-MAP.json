@@ -80847,16 +80847,6 @@
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
   },
   {
-    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
-    "lean_name": "holFp64SqrtR",
-    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
-    "hol_name": "fp64_sqrt_def",
-    "hol_line": 16,
-    "statement_status": "reviewed_reals_as_rational_cuts",
-    "reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (dshl): pinned machine_ieeeScript.sml factory line 16, machine_ieeeLib lift1 and mk_fp_encoding instantiate binary_ieee float_sqrt at significand 52/exponent 11 and pack its SND as word64. holFp64SqrtR preserves every rounding mode, flags projection, negative-zero, infinity and unspecified NaN branch. The literal Mathlib Real.sqrt carrier preserves binary_ieee float_to_real, float_value, is_closest/closest_such/closest, largest/threshold, all-mode round, signed-zero float_round and flags clauses. holFp64Sqrt_eq_holFp64SqrtR proves unconditional kernel equality for every mode and word64; no external cut-criterion premise. Generic t/w helpers remain untagged because their zero-width domain exceeds HOL's positive type dimensions. Fixed BitVec 64 matches HOL word64 directly; no generic word-dimension qualifier applies. reals_as_rational_cuts is conservatively retained for reviewed legacy IEEE helper dependencies, as required by the current checker; SOUNDNESS item 8 still records external HOL-to-Lean real correspondence, distinct from the kernel-proven cut-to-Mathlib-real equality. No whole-inst qualifier removal or formal cross-assistant equivalence is claimed."
-  },
-  {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Call.lean",
     "lean_name": "compCorrectCall",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
