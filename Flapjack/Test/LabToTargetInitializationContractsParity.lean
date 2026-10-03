@@ -33,4 +33,32 @@ example {width : Nat} [NeZero width]
     (oracle 0).1.labels = labs ∧ (oracle 0).1.pos = pos ∧
       (oracle 0).1.ffiNames = some ffis := h.2
 
+example {width : Nat} [NeZero width] {S Q : Type}
+    (mc : MachineConfig width S Q) :
+    mcConfOk mc ↔
+      goodDimindex width ∧
+      Flapjack.Compiler.Encoders.AsmProps.encoderCorrect mc.target ∧
+      asmRegOkExact mc.ptrReg mc.target.config = true ∧
+      asmRegOkExact mc.lenReg mc.target.config = true ∧
+      asmRegOkExact mc.ptr2Reg mc.target.config = true ∧
+      asmRegOkExact mc.len2Reg mc.target.config = true ∧
+      asmRegOkExact (mc.target.config.linkReg.getD 0) mc.target.config = true ∧
+      encOk mc.target.config := by
+  unfold mcConfOk
+  cases mc.target.config.linkReg <;> rfl
+
+-- Intrinsic positive dimensions alone must not discharge the source guard.
+example {S Q : Type} (mc : MachineConfig 8 S Q) : ¬ mcConfOk mc := by
+  intro h
+  simpa [goodDimindex] using h.1
+
+example {S Q : Type} (mc : MachineConfig 128 S Q) : ¬ mcConfOk mc := by
+  intro h
+  simpa [goodDimindex] using h.1
+
+example {width : Nat} [NeZero width] {S Q : Type}
+    (mc : MachineConfig width S Q) (h : mcConfOk mc) :
+    targetOk mc.target :=
+  Flapjack.Compiler.Encoders.AsmProps.encoderCorrect_targetOk h.2.1
+
 end Flapjack.Test.LabToTargetInitializationContractsParity

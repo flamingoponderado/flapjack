@@ -69590,5 +69590,24 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-03 original382-407/full135-149: genuine RawCall case preserves both compTop/comp existential results and original source evaluation/nonError/stateRel premises. Actual fixed-source callee IH is guarded only by original Seq code lookup and nonzero source clock; unused compTop motive component omitted. Target lookup and per-entry info derived from literal stateRel; compTop Seq preserves compiled first/body. Timeout derives emptyEnv relation and equal clocks. Nonzero case derives actual decClock target run from callee IH, original bad_fun_return dispatch from source nonError, and decClock additive-clock identity. Outer postframe stateOk derived using full evaluateMono and subsptLookup, not supplied as premise. Original stackSpace guard retained unchanged. Canonical actual owning regs/fpRegs/store roundtrip witness; code native Spt, stacks native List, positive type-indexed words and Type0 configuration/FFI; inherited reals_as_rational_cuts SOUNDNESS8. No target-run/postrelation/success assumption or individual hold release."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InitializationContracts.lean",
+    "lean_name": "mcConfOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "mc_conf_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison9602-9614 and original full typed definition0hyp: arbitrary positive word dimension and independent native MachineConfig state/projection types retained. Complete eight conjuncts: original good_dimindex32-or64, actual full encoderCorrect simulation, all four pointer/length register validities, exact source Option link register NONE0/SOME n validity, full encOk. Reviewed Boolean asmRegOkExact validity enters Prop as equality to true, preserving both register bound and avoided-register membership; no new register guards, default or target evaluation premise. Intrinsic NeZero does not replace original dimension clause. Fresh original fullbody/types0hyp, full iff, encoder/target projections and universal dimension8/128 rejection allT, with corresponding generic native consumers. Inherited reals_as_rational_cuts through encoderCorrect/asmStep and FP instruction semantics, docs/SOUNDNESS.md item8; definition uses no real rendering itself. Full151 initializer remains open; no whole machine correctness or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/InitializationContracts.lean",
+    "lean_name": "startPcOk",
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "start_pc_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 complete original279-309 and fresh HOL fullbody/fulltype0hyp: both actual MachineConfig and word PC binders, arbitrary positive word dimension and independent target state/projection carriers. Literal four program/shared halt/cache exclusions, both fixed ffi_offset16 subtraction equations, bit0 alignment, existential actual mmioPcsMinIndex boundary, all external prefix program/shared/halt/cache exclusions and findIndex zero-offset equality, shared suffix halt/cache inequalities using original EL, final whole FFI-name/entry-PC length equality inside existential retained. No successful compiler/evaluation/desired state or extra boundary premise. Reviewed native Spt/ASM/word/FFI carriers and exact first-match propositional findIndex reused. Original suffix index<names.length plus final lengths equality bounds every entry-PC EL; native untagged projections derive that bound and ordinary getElem suffix inequalities, without changing the full source predicate or past-end default/individual hold. Fresh original full definition/types0hyp and generic length/bound/halt-cache projections allT; native arbitrary-width/config consumers retain full source guards. Full175/151 and end-to-end remain open; no cross-language equivalence claim."
   }
 ]

@@ -1,0 +1,32 @@
+start_pc_ok_def=∀(mc_conf :(α, β, γ) machine_config) (pc :α word).
+  start_pc_ok mc_conf pc ⇔
+  mc_conf.halt_pc ∉ mc_conf.prog_addresses ∧
+  mc_conf.ccache_pc ∉ mc_conf.prog_addresses ∧
+  mc_conf.halt_pc ∉ mc_conf.shared_addresses ∧
+  mc_conf.ccache_pc ∉ mc_conf.shared_addresses ∧
+  pc − (n2w ffi_offset :α word) = mc_conf.halt_pc ∧
+  pc − (n2w ((2 :num) * ffi_offset) :α word) = mc_conf.ccache_pc ∧
+  (1w :α word) && pc = (0w :α word) ∧
+  ∃(i :num).
+    mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+    (∀(index :num).
+       index < i ⇒
+       pc − (n2w (((3 :num) + index) * ffi_offset) :α word) ∉
+       mc_conf.prog_addresses ∧
+       pc − (n2w (((3 :num) + index) * ffi_offset) :α word) ∉
+       mc_conf.shared_addresses ∧
+       pc − (n2w (((3 :num) + index) * ffi_offset) :α word) ≠ mc_conf.halt_pc ∧
+       pc − (n2w (((3 :num) + index) * ffi_offset) :α word) ≠
+       mc_conf.ccache_pc ∧
+       find_index (pc − (n2w (((3 :num) + index) * ffi_offset) :α word))
+         mc_conf.ffi_entry_pcs (0 :num) = SOME index) ∧
+    (∀(index :num).
+       index < LENGTH mc_conf.ffi_names ∧ i ≤ index ⇒
+       mc_conf.halt_pc ≠ mc_conf.ffi_entry_pcs❲index❳ ∧
+       mc_conf.ccache_pc ≠ mc_conf.ffi_entry_pcs❲index❳) ∧
+    LENGTH mc_conf.ffi_names = LENGTH mc_conf.ffi_entry_pcs
+start_pc_ok_def_types=(mc_conf :(α, β, γ) machine_config)::(α, β, γ) machine_config;(pc :α word)::α word;
+start_pc_ok_def_hypotheses=0
+lengths=T
+entry_bound=T
+halt_cache=T

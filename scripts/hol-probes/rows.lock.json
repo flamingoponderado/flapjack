@@ -2018,6 +2018,12 @@
       "sha256": "1da518560997b5de293625067b019f65719eec946ebfca00724a7a20d3d79186"
     },
     {
+      "bytes": 726,
+      "out": "lab_to_target_mc_conf_ok_probe.out",
+      "rows": 8,
+      "sha256": "f89954c9e05bdfe054dd855e870f6b6e742ea85039f248da901aa032212319d9"
+    },
+    {
       "bytes": 666,
       "out": "lab_to_target_memory_transport_probe.out",
       "rows": 10,
@@ -7110,6 +7116,12 @@
       "out": "target_sequence_laws_probe.out",
       "rows": 3,
       "sha256": "814069687670cfe8bfaa2781d63533b4ca482be2586acf30071d39a8ff0142cb"
+    },
+    {
+      "bytes": 1563,
+      "out": "target_start_pc_ok_probe.out",
+      "rows": 6,
+      "sha256": "11babc279a766c4bbf7bcdba59a1ec54dbc2ad79ea7c4a402214672c83a3f5ab"
     },
     {
       "bytes": 327,

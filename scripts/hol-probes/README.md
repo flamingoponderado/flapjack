@@ -6480,3 +6480,23 @@ HOL-to-Lean equivalence. Selector:
 `stack_props_evaluate_io_events_mono_probeScript.sml` replays the complete unchanged original StackProps `evaluate_io_events_mono` proof (454–475), including evaluator induction and both external/shared-memory FFI cases. Two rows record the full closed statement and kernel proof success. The native Lean theorem keeps the sole source-run premise and every original result. This single-run prefix law does not claim extra-clock monotonicity, FP numerical parity or whole compiler correctness.
 
 `stack_rawcall_rawcall_case_probe` freshly captures the original full paired `comp_correct`, zero external hypotheses, width64 RawCall specialization and original evaluate_ind RawCall obligation. The Lean case retains arbitrary positive width and only the actual callee IH; this is source-statement evidence, not a HOL-to-Lean equivalence proof.
+
+The machine-configuration initializer contract probe captures the full original
+`mc_conf_ok_def` at9602, its independent state/projection carriers and zero
+hypotheses. Five kernel observations check all eight clauses, actual encoder
+and target validity projections, and rejection of arbitrary configurations at
+positive but unsupported dimensions8 and128. Native generic consumers retain
+the original dimension guard separately from intrinsic word positivity. The
+encoder relation inherits the existing FP real-rendering assumption in
+SOUNDNESS item8; no initializer or machine simulation closure is inferred.
+Selector: `HOL_PROBE_ONLY=lab_to_target_mc_conf_ok_probeScript.sml`.
+
+The target start-PC contract probe captures the complete original
+`start_pc_ok_def` at279, both typed inputs and zero hypotheses, with original
+kernel projections for lengths, entry-PC bounds and halt/cache constraints.
+Native generic consumers derive the shared-suffix ordinary list lookup from
+those original bounds and reject unequal FFI-name/entry-PC lengths. No extra
+bound or past-end default is introduced; the individual total-HD/EL hold stays
+unchanged. This contract is a prerequisite of still-open target initialization
+and compiler correctness, not their completion. Selector:
+`HOL_PROBE_ONLY=target_start_pc_ok_probeScript.sml`.
