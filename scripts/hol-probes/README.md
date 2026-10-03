@@ -7005,3 +7005,7 @@ statements with zero HOL hypotheses and the full setup theorem at64/80 widths.
 Lean consumers apply all seven full statements at arbitrary/1/8/64/80 widths.
 The complete final state relation is derived; these captures are regression
 evidence, not a HOL-to-Lean equivalence proof or whole compiler completion.
+
+### Full native Lab evaluator clock stability
+
+`labprops_evaluate_ADD_clock_probeScript.sml` captures the original full theorem312, all quantified carriers, zero hypotheses and a kernel reproof of its entire statement. Four rows preserve the sole non-TimeOut guard and complete result/poststate clock equality.

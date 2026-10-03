@@ -1,0 +1,10 @@
+evaluate_ADD_clock=∀(s :(α, β, γ) labSem$state) (res :machine_result)
+    (r :(α, β, γ) labSem$state) (k :num).
+  (evaluate s :machine_result # (α, β, γ) labSem$state) = (res,r) ∧
+  res ≠ TimeOut ⇒
+  (evaluate (s with clock := s.clock + k) :
+   machine_result # (α, β, γ) labSem$state) =
+  (res,r with clock := r.clock + k)
+evaluate_ADD_clock_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(res :machine_result)::machine_result;(r :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(k :num)::num;
+evaluate_ADD_clock_hypotheses=0
+evaluate_ADD_clock_proved=T
