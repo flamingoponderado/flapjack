@@ -7142,3 +7142,7 @@ and actual compileFieldsExact, preserving both original premises.
 ## Original native step word-bit rewrite group
 
 `l3_step_bit_rewrites_probeScript.sml` proves full universally quantified copies of `word_bit_1_0`, `word_bit_0_lemmas`, `v2w_0_rwts` and `word_bit_add_lsl_simp`. Captures preserve all binder types, word8/word5 list carriers, original conjunctions, zero proof assumptions and proof markers. Lean retains each source domain and conjunction, uses kernel low-bit arithmetic/FCP lemmas and exhaustive Boolean cases, and adds no opcode fixture premise. `holV2w` follows the original most-significant-first testbit/FCP definitions. The original step library uses these rewrites; the whole encoder and compiler theorem remain open.
+
+## Original complete native Fetch16 and Fetch32 theorems
+
+`l3_fetch_theorems_probeScript.sml` proves universally quantified copies of both complete original theorems, preserving the full native state, bool list, all16/32 Boolean binders, bare-VM and each memory-byte premise, low-bit selector and entire Skip-update result. Typed captures record all binders, word8/16/32 list carriers, statements, zero proof assumptions and proof markers. Lean derives translation and raw-read outcomes from these exact original premises, with generic bit extensionality assembling the little-endian bytes; no additional successful fetch/translation, alignment or core bound is assumed. The original symbolic step fetch route consumes these results; full encoder/compiler correctness remains further work.

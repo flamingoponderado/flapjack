@@ -6704,3 +6704,7 @@ run_probe l3_decode_transport_probeScript.sml l3_decode_transport_probe.out \
 run_probe l3_step_bit_rewrites_probeScript.sml l3_step_bit_rewrites_probe.out \
   bit10_binders bit10_statement bit10_hypotheses bit10_proof bit0_binders bit0_statement bit0_hypotheses bit0_proof v2w0_binders v2w0_statement v2w0_hypotheses v2w0_proof bitShift_binders bitShift_statement bitShift_hypotheses bitShift_proof v2w8_type v2w5_type \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+
+run_probe l3_fetch_theorems_probeScript.sml l3_fetch_theorems_probe.out \
+  Fetch16_binders Fetch16_statement Fetch16_hypotheses Fetch16_proof Fetch32_binders Fetch32_statement Fetch32_hypotheses Fetch32_proof v2w8_type v2w16_type v2w32_type \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
