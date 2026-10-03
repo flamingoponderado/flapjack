@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.FullStateRel
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.DomainCodeCase
+import Flapjack.RiscV.L3.Defs.RegisterShift
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.MemorySeparationCases
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases
@@ -37,6 +38,7 @@ import Flapjack.RiscV.L3.Defs.IntegerLoad
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.StackAccess
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.MemoryFfi
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.AllocationStore
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Install
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
@@ -330,6 +332,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAuxStackSize
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InterUnionLeft
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InitializationStateRel
@@ -816,6 +819,8 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionThreeToTwoMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionUnreachMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorCleanupMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeAllocatorCaller
+import Flapjack.Pancake.LoopToWord.ProductionAllocatorMemoryImage
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorWrapperInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionForced

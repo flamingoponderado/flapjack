@@ -43634,62 +43634,6 @@
     "reviewer": "flapjack-sol source comparison2026-10-01 w1a4.15: full original1121-1178 forall source/target states, source primitive Step then inj_on_state f source imply mapped Step. Independent Option alpha to Option beta retained; no DecidableEq, global injectivity, wf, simulation, target result or safety premise. Same six literal Step constructors/carriers. Source-endpoint scoped injectivity derives mapped no-read conditions and head/last-source inequality; global NONE iff derives f NONE=NONE for save. Membership uses exact state_to_list pending/active/emitted order. Fresh exported DB.fetch original full theorem, six complete mapped source/target states Bool-to-Nat, and original proof of scoped injectivity for globally collapsing Option Nat-to-Option Bool map on singleton source support. Eleven kernel fixtures replay all six mapped pairs, all six genuine theorem applications, scoped-collapse/proof/application, and arbitrary input carrier identity with no equality instance. No external splitAtPki or unreviewed library theorem prerequisite, proof-only unchanged scheduler. External PR review #1190 confirmed no statement mismatch."
   },
   {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
-    "hol_name": "steps_inj_on_state",
-    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
-    "lean_name": "steps_inj_on_state",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1115-1119. ∀s1 s2. inj_on_state f s1 ∧ s1 ▷* s2 ⇒ inj_on_state f s2; f implicit with independent Option α → Option β carriers as in the tagged inj_on_state; ▷* is Steps = ReflTransGen Step. Proof by RTC induction with step_inj_on_state (HOL RTC_lifts_invariants)."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
-    "hol_name": "steps_MAP_INJ",
-    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
-    "lean_name": "steps_MAP_INJ",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1179-1189 ([local]). ∀s1 s2. s1 ▷* s2 ⇒ inj_on_state f s1 ⇒ map_state f s1 ▷* map_state f s2; f implicit; RTC induction with step_MAP_INJ and step_inj_on_state as HOL."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
-    "hol_name": "pmov_MAP_INJ",
-    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
-    "lean_name": "pmov_MAP_INJ",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1257-1292. ∀p. ⊢ p ∧ inj_on_state f p ⇒ pmov (map_state f p) = map_state f (pmov p); ⊢ is the tagged wf; f implicit; DecidableEq on both register carriers is the executable pmov's requirement (HOL equality). Proof by pmov's own functional induction (HOL pmov_ind) with fstep_dstep, dsteps_steps, wf_steps, steps_inj_on_state, fstep_MAP_INJ."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
-    "hol_name": "parmove_MAP_INJ",
-    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
-    "lean_name": "parmove_MAP_INJ",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1294-1333. (let ls1 = MAP FST ls ++ MAP SND ls in ∀x y. MEM x ls1 ∧ MEM y ls1 ∧ f x = f y ⇒ x = y) ∧ windmill ls ⇒ parmove (MAP (f ## f) ls) = MAP (OPTION_MAP f ## OPTION_MAP f) (parmove ls); let kept literally; ## as Prod.map, OPTION_MAP as Option.map; f ls implicit. Proof as HOL via wf_init, pmov_MAP_INJ, pmov_final."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
-    "hol_name": "path_imp_mem",
-    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
-    "lean_name": "path_imp_mem",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:81-87 ([local]). path (x::y) ⇒ ¬NULL y ⇒ MEM (SND x) (MAP FST y); NULL y as y = []; x y implicit."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
-    "hol_name": "path_imp_mem2",
-    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
-    "lean_name": "path_imp_mem2",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:89-100 ([local]). path x ⇒ ∀y. MEM y (MAP SND x) ∧ y ≠ SND (LAST x) ⇒ MEM y (MAP FST x); LAST is the tagged holLast port of HOL LAST_DEF; x implicit."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
-    "hol_name": "NoRead_path",
-    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
-    "lean_name": "NoRead_path",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:102-117 ([local]). ∀σ. path σ ∧ windmill σ ∧ LENGTH σ ≥ 2 ∧ FST (HD σ) ≠ SND (LAST σ) ⇒ NoRead (TL σ) (FST (HD σ)); the local overload NoRead μ dn = ¬MEM dn (MAP SND μ) unfolded; HD/TL/LAST as holHd/List.tail/holLast."
-  },
-  {
     "lean_path": "Flapjack/Compiler/Backend/Parmove/FstepMapInj.lean",
     "lean_name": "fstepMapInj",
     "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
@@ -48668,14 +48612,6 @@
     "lean_name": "holHd",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.3.38.1), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: listScript.sml:128-130 Definition HD: HD (h::t) = h, the only clause, so HD [] is unspecified; type 'a list -> 'a. Lean: the h::t clause and, for [], the opaque holHdNil (no Lean proof can learn anything about it, matching HOL). HOL types are inhabited; Lean requires [Nonempty α] for the opaque value. Original type confirmed by type_of; original in-range EVAL rows (scripts/hol-probes/hol_list_el_probe.out) kernel-replayed in Flapjack.Test.HolListElParity. No extra premise."
-  },
-  {
-    "hol_path": "HOL/src/list/src/listScript.sml",
-    "hol_name": "LAST_DEF",
-    "lean_path": "Flapjack/Misc/ListEl.lean",
-    "lean_name": "holLast",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03: HOL/src/list/src/listScript.sml:2052-2054 LAST (h::t) = if t = [] then h else LAST t; the if rendered by matching t ([h] and h::(_::_)); the missing [] clause is the same unspecified holHdNil used for HD (no theorem relies on its value)."
   },
   {
     "hol_path": "HOL/src/list/src/listScript.sml",
@@ -72109,6 +72045,141 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/Install.lean",
+    "lean_name": "compCorrectInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original520-539/full135-149: full paired compTop/comp Install simulations retain precisely actual source evaluation/nonError/stateRel three premises and existential added clock/target/stackspace guard. Native Install reads four word registers, samples actual oracle, flushes both buffers with original useStack branch, tests compile result and nonempty programs, compares bytes/data/next configuration, then preserves all original register/fpRegs/bitmap/buffer/oracle updates. No DecidableEq configuration premise: classical equality remains internal. Original left-biased union preserves OLD code entries, without a disjointness guard. Derived stateOk_union retains old frame witnesses; domain equality ensures old source lookup NONE iff old target NONE, so newly visible entries use LN/compLn. No desired target execution/postrelation or extra success premise. Actual imported canonical regs/fpRegs/store owner and local nonvacuous roundtrip; literal List/Spt carriers; arbitrary positive words and C/F:Type. Inherits reals_as_rational_cuts SOUNDNESS8. Fresh original statement specializations and independent union observations are regression evidence only; no cross-language equivalence, production/default/individual HOLD change."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SLL»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLL_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SLL_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SLLW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLLW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SLLW_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SRL»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRL_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SRL_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SRLW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRLW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SRLW_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SRA»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRA_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SRA_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SRAW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRAW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SRAW_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InterUnionLeft.lean",
+    "lean_name": "interUnionLeft",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "inter_union_left",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.6.2.2: original2678-2685 arbitrary s,t Spt payload, sole wf s hypothesis, conclusion inter(union s t)s=s. Native exact four-constructor Spt, sptWf Boolean truth retains original predicate, sptUnion left bias and sptInter mkBN/mkBS normalization compared clause-wise. No BEq/DecidableEq or extra target equality premise. Structural induction proves full equation including original empty-branch exclusion. Original literal proof replay captured in word_to_stack_inter_union_left_probe.out. Source comparison recorded by flapjack-sol-b; acceptance tracked on shared bead .6.2.2."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "steps_inj_on_state",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "steps_inj_on_state",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1115-1119. ∀s1 s2. inj_on_state f s1 ∧ s1 ▷* s2 ⇒ inj_on_state f s2; f implicit with independent Option α → Option β carriers as in the tagged inj_on_state; ▷* is Steps = ReflTransGen Step. Proof by RTC induction with step_inj_on_state (HOL RTC_lifts_invariants)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "steps_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "steps_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1179-1189 ([local]). ∀s1 s2. s1 ▷* s2 ⇒ inj_on_state f s1 ⇒ map_state f s1 ▷* map_state f s2; f implicit; RTC induction with step_MAP_INJ and step_inj_on_state as HOL."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "pmov_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "pmov_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1257-1292. ∀p. ⊢ p ∧ inj_on_state f p ⇒ pmov (map_state f p) = map_state f (pmov p); ⊢ is the tagged wf; f implicit; DecidableEq on both register carriers is the executable pmov's requirement (HOL equality). Proof by pmov's own functional induction (HOL pmov_ind) with fstep_dstep, dsteps_steps, wf_steps, steps_inj_on_state, fstep_MAP_INJ."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "parmove_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "parmove_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1294-1333. (let ls1 = MAP FST ls ++ MAP SND ls in ∀x y. MEM x ls1 ∧ MEM y ls1 ∧ f x = f y ⇒ x = y) ∧ windmill ls ⇒ parmove (MAP (f ## f) ls) = MAP (OPTION_MAP f ## OPTION_MAP f) (parmove ls); let kept literally; ## as Prod.map, OPTION_MAP as Option.map; f ls implicit. Proof as HOL via wf_init, pmov_MAP_INJ, pmov_final."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "path_imp_mem",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
+    "lean_name": "path_imp_mem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:81-87 ([local]). path (x::y) ⇒ ¬NULL y ⇒ MEM (SND x) (MAP FST y); NULL y as y = []; x y implicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "path_imp_mem2",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
+    "lean_name": "path_imp_mem2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:89-100 ([local]). path x ⇒ ∀y. MEM y (MAP SND x) ∧ y ≠ SND (LAST x) ⇒ MEM y (MAP FST x); LAST is the tagged holLast port of HOL LAST_DEF; x implicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "NoRead_path",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
+    "lean_name": "NoRead_path",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:102-117 ([local]). ∀σ. path σ ∧ windmill σ ∧ LENGTH σ ≥ 2 ∧ FST (HD σ) ≠ SND (LAST σ) ⇒ NoRead (TL σ) (FST (HD σ)); the local overload NoRead μ dn = ¬MEM dn (MAP SND μ) unfolded; HD/TL/LAST as holHd/List.tail/holLast."
+  },
+  {
+    "hol_path": "HOL/src/list/src/listScript.sml",
+    "hol_name": "LAST_DEF",
+    "lean_path": "Flapjack/Misc/ListEl.lean",
+    "lean_name": "holLast",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-03 bead flapjack-hol-list-last, exact inherited source203515b2b9a17c5db8a653cd843b27f6615d0c8a repaired in its ONE existing Misc/ListEl counterpart: listScript2052-2054 LAST_DEF constrains cons lists by LAST(h::t)=if t=[] then h else LAST t. Native singleton/longer-cons pattern matching and structural recursion preserve that equation on generic inhabited HOL element types as List α with α:Type/[Nonempty α], with no decidable element equality assumption. Original Defn.non_wfrec_defn calls Prim_rec.new_recursive_definition, whose new_recursive_definition0259-268 proves existence then calls Rsyntax.new_specification on this cons equation alone; it does not establish LAST[]=HD[]=ARB. Dedicated opaque holLastNil preserves the independently unspecified original LAST[] value and per-type identity, removing the inherited shared holHdNil assignment without inventing a concrete default or nil equality. LAST_CONS2063-2068 retains both universally quantified singleton/longer-cons conjuncts without extra hypotheses. Original kernel definition/type/zero-hypothesis capture, complete unchanged REWRITE_TAC LAST_CONS proof, and total case equation retaining symbolic original LAST[] are captured in list_last_probe.out. No word/fmap/array/name translation, target evaluation, postrelation or desired-bound premise; no production-path change or guest/FP parity claim."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackHeapLimitOk.lean",
     "lean_name": "stackHeapLimitOk",
     "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
@@ -72121,5 +72192,13 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol full source/body/type comparison2026-10-03 original2906-2911: actual native state then PAIR(stack_lim,heap_lim), all original parameters retained, exactly three original conjunctions. FLOOKUP store HeapLength=SOME(Word(n2w heap_lim*bytes_in_word)) retains modular word construction/multiplication in original order; independent natural heap_lim*(dimindex/8)<dimword becomes heapLimit*(width/8)<2^width without word-modular capacity comparison; stack_lim=LENGTH actual native List stack. No extra good_dimindex, register, separation, evaluation, bound or relation hypothesis. Owning imported StackSemStateFiniteExact canonical regs/fpRegs/store (code still Spt and untouched), same-module genuine imported broad/exact roundtrip and positive-word qualifier. No state duplicate, raw map or BEq assumption. Fresh complete original kernel definition/generic type/zero stored hypotheses3rows; proof-side predicate used by missing full init_prop/init_code_thm, not whole initializer/compiler correctness or executed change."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListEl.lean",
+    "lean_name": "holLastCons",
+    "hol_path": "HOL/src/list/src/listScript.sml",
+    "hol_name": "LAST_CONS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-03 bead flapjack-hol-list-last, exact inherited source203515b2b9a17c5db8a653cd843b27f6615d0c8a repaired in its ONE existing Misc/ListEl counterpart: listScript2052-2054 LAST_DEF constrains cons lists by LAST(h::t)=if t=[] then h else LAST t. Native singleton/longer-cons pattern matching and structural recursion preserve that equation on generic inhabited HOL element types as List α with α:Type/[Nonempty α], with no decidable element equality assumption. Original Defn.non_wfrec_defn calls Prim_rec.new_recursive_definition, whose new_recursive_definition0259-268 proves existence then calls Rsyntax.new_specification on this cons equation alone; it does not establish LAST[]=HD[]=ARB. Dedicated opaque holLastNil preserves the independently unspecified original LAST[] value and per-type identity, removing the inherited shared holHdNil assignment without inventing a concrete default or nil equality. LAST_CONS2063-2068 retains both universally quantified singleton/longer-cons conjuncts without extra hypotheses. Original kernel definition/type/zero-hypothesis capture, complete unchanged REWRITE_TAC LAST_CONS proof, and total case equation retaining symbolic original LAST[] are captured in list_last_probe.out. No word/fmap/array/name translation, target evaluation, postrelation or desired-bound premise; no production-path change or guest/FP parity claim."
   }
 ]
