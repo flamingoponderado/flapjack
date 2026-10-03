@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.LabToTarget.ShmemOffset
 import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame
 import Flapjack.RiscV.L3.Defs.IntegerStore
 import Flapjack.RiscV.L3.Defs.LRSC

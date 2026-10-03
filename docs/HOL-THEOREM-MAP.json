@@ -68272,5 +68272,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 full original source9864-9903 and fulltypes0hyp comparison: both line projection equations preserve independent alpha code/beta fetched positive word dimensions with separate NeZero, arbitrary Nat offset/accumulator and entire name/record maps. Record updates change only entryPc and exitPc by original Nat offset. Extraction full conjunction preserves all source binders and sole allEncOk guard with independent validity/query starts, original zero/query orientation and empty accumulators. Exact Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/BitVec carriers, fixed word8 bytes/nbytes, Nat info fields. words_as_type_indexed_bitvec permits only standard positive word translation. Structural constructor proofs, original position offset law and full extraction characterization/map/flatten/unzip supply genuine proof, no target/result callback or total HD/EL/default policy change. Fresh full original types0hyp and eight original observations cover independent8/80 dimensions, actual extracted names/records, absent fetch, empty code, actual validity and invalid length guard; full generic and arbitrary-query actual consumers. Regression evidence does not prove cross-language equivalence or full initializer/compiler closure."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/ShMemOp.lean",
+    "lean_name": "compCorrectShMemOp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 complete source comparison2026-10-03 original comp_correct1481-1490 and ShMemOp1998-2022: genuine constructor case at arbitrary positive word width and independent compile/FFI host types. Retains source evaluation, non-Error, full state_rel and reg_bound as exactly four premises; proves existential added clock and target poststate with original Halt/TimeOut/FinalFFI FFI equality versus full state relation for other results. All eight HOL memop constructors and Addr base/offset retained. Actual StackSem.evaluate and unchanged StackRemove.comp used; address expression success derived by original state_rel_word_exp, timeout by equal original clocks/FFI, native FFI domain and register guards by state_rel_const/get_var. Successful loads update same bounded register and FFI; stores update only FFI, final leaves state unchanged. Full relation reconstructed including reserved regs/compile transport/separated memory; source dec_clock implies target dec_clock relation. Zero clock witness derived, never target success assumed. Canonical finite-map owning carrier is actual evaluator StackSemStateFiniteExact, local checked roundtrip re-export, all three original map fields translated. No runtime/default/qualifier-policy change or held HD/EL/dispatch dependency. The elaborated native declaration closure inherits reals_as_rational_cuts through imported full evaluator/comp definitions and their binary IEEE renderings (SOUNDNESS item 8); this propagates the existing external assumption and is not a new floating-point transition or cross-language equivalence proof.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

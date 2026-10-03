@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
 import Flapjack.Misc.Sptree.Subspt
