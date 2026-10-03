@@ -78026,5 +78026,32 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure: exact pan_to_crep compile_prog keeps source function names in order; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/DecsStcnamesNames.lean",
+    "lean_name": "compileDecsNoNames",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_decs_no_names",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78): (local in HOL, compared against the source text 1570-1572) !ctxt decs. EVERY (\\d. is_function d \\/ is_decl d \\/ is_exn_decl d) (FST (compile_decs ctxt decs)); EVERY rendered as membership quantification over the Bool classifiers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/DecsStcnamesNames.lean",
+    "lean_name": "compileTopNoNames",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_top_no_names",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78): EVERY (\\d. is_function d \\/ is_decl d \\/ is_exn_decl d) (pan_structs$compile_top pan_code), free pan_code bound explicitly; statement captured with types by pan_structs_leaves_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopNames.lean",
+    "lean_name": "allDistinctCompileTopHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "ALL_DISTINCT_compile_top",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.2.37): !start code. ALL_DISTINCT (MAP FST (functions code)) ==> ALL_DISTINCT (MAP FST (functions (compile_top code start))) over the reviewed compileTopExactHOL; statement captured with types by pan_globals_compile_top_names_probe."
   }
 ]
