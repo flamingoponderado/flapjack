@@ -72467,5 +72467,38 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.1): source 3315-3415: HOL free ret/ac/k/f/f'/lens explicit (ret at HOL's add_ret_loc carrier, Option (List Nat x cutsets x prog x Nat x Nat)); premises ~bad_dest_args, state_rel, native call_dest compile equation, get_vars success; conclusion: exists t4 with native StackSem evaluate (q0, t) = (NONE, t4), state_rel s t4, equal stack length and stack_space, and for all real_args/prog/ssize with native WordSem find_code dest (add_ret_loc ret args') = SOME, the compile_prog/bitmap-bound/isPREFIX facts, the fs ssize = fs as ssize.getD fs, and StackSem find_code dest' t4.regs t4.code = SOME stack_prog. Proof follows HOL's three call_dest branches (direct label, register, stack slot via StackLoad k+1). Full literal stateRel over imported carriers; positive BitVec width with NeZero. Statement names the StackSem evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallHelpers.lean",
+    "lean_name": "evaluateSeqStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_SeqStackFree",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.2): source 960-972: premises t.use_stack and t.stack_space <= LENGTH t.stack; conclusion evaluate (SeqStackFree f p, t) = evaluate (Seq (StackFree f) p, t) over the native StackSem evaluator and native seqStackFreeNative; arbitrary f/p/t. Imported canonical regs/fpRegs/store translation with same-module witness. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallHelpers.lean",
+    "lean_name": "compileResultNot2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_result_NOT_2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.2): source 3423-3429: good_dimindex premise; compile_result x <> Halt (Word 2w) for arbitrary native WordSem result x, over the reviewed compileResult."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallHelpers.lean",
+    "lean_name": "compileProgStackSize",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_prog_stack_size",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.2): source 7546-7551: native compile_prog equation implies x - k <= fs; all free variables (ac, perf, word_prog, x, k, bs, stack_prog, fs, bs2) arbitrary."
   }
 ]
