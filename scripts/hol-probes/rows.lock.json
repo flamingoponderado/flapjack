@@ -9374,6 +9374,12 @@
       "rows": 6
     },
     {
+      "out": "word_to_stack_chunk_msb_full_probe.out",
+      "sha256": "b85f19f324ccb64135265917176175e7fc182650b82aab98ab72b6b4d1393474",
+      "bytes": 184,
+      "rows": 3
+    },
+    {
       "bytes": 202,
       "out": "word_to_stack_chunk_to_bitmap_probe.out",
       "rows": 7,

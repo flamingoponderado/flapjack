@@ -83890,5 +83890,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5881-5937 complete native evaluator equality. Arbitrary words/xs/address/offset/ys/domain/memory; original LENGTH words < dimindex and const_addresses guards only. Result retains SOME of prefix length+word length, address+bytes_in_word*n2w length and full const_writes memory. Domain set represented by Prop with DecidablePred, mapped through decide for the existing Bool-set const_addresses; neither representation imposes an address restriction. Memory remains total word_loc lookup, lists remain List. Original arbitrary positive HOL word dimension translated by words_as_type_indexed_bitvec. No good_dimindex, target-run or final-state hypotheses. Native writes preserve lowbit relocation word+offset and native byte stride. Inline shift-recovery follows original bit-bound proof. Kernel checked and original literal HOL proof replayed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ChunkBitsMsb.lean",
+    "lean_name": "wordMsbChunkToBits",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_msb_chunk_to_bits",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5938-5946. Complete word_msb equality with LENGTH words = dimindex-1; preserves both LENGTH words < dimindex and good_dimindex guards. Arbitrary payload word list and native chunkToBitsW retained. Bool decide renders HOL boolean equality. Only words_as_type_indexed_bitvec carrier translation, using standard goodDimindex32-or64. Kernel checked; literal original HOL proof replay."
   }
 ]
