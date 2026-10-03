@@ -6481,3 +6481,7 @@ run_probe word_to_stack_handler_transition_probeScript.sml word_to_stack_handler
 run_probe word_to_stack_raise_stub_false_probeScript.sml word_to_stack_raise_stub_false_probe.out \
   raise_stub_false_statement raise_stub_false_proved raise_stub_false_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_mod_order_probeScript.sml stack_remove_init_mod_order_probe.out \
+  init_mod_order_statement init_mod_order_proved init_mod_order_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
