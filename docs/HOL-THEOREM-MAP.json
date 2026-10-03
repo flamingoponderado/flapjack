@@ -75346,5 +75346,14 @@
     "hol_name": "asSImm12_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.4.1 literal line12167: complete fixedword field widths7/5, right-associated tuple shape and concatenation order match CC exactly; standard nested append/setWidth yields original total12/20 bits. Encoded sign bits retained without signed arithmetic/offset shift, no hypothesis. Independent numerical field split plus original103 T/kernel rows covers every output position onehot/onecold, sign/max/wrap-adjacent and alternating boundaries. These definitions are actual original Decode prerequisites; no fullDecode/Run/Next/equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CallArgumentConventions.lean",
+    "lean_name": "callArgConvention_preservation",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "call_arg_convention_preservation",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11182-11197: original arbitrary prog and f, occurrence-local physical-register implication conjoined with source call_arg_convention, and full coloured-program conclusion. Boolean implication !isPhyVar x || f x == x preserves the HOL premise. Native positive-width program/instruction carriers and everyVarHOL include all source fields; instArgConvention has exactly the original arithmetic clauses at positive width. Canonical GENLIST arguments use List.range.map, retaining list length; returning Call checks both bodies and tail Call ignores handlers exactly as source. No global fixation, target convention, injectivity or allocation success assumption. words_as_type_indexed_bitvec records the positive HOL word dimension only."
   }
 ]
