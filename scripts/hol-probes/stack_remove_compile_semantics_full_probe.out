@@ -1,0 +1,2 @@
+compile_semantics_full_statement=∀start s2 s1 off k jump. state_rel jump off k s1 s2 ∧ semantics start s1 ≠ Fail ⇒ semantics start s2 = semantics start s1
+compile_semantics_full_proved=T
