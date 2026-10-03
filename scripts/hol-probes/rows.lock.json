@@ -140,6 +140,12 @@
       "sha256": "9e7a6e3bab7cd7bd395f9888d3047b1f46d58bd1bfc9d5c903c7aeb7d392ad5f"
     },
     {
+      "bytes": 1698,
+      "out": "backend_lower_pipeline_probe.out",
+      "rows": 6,
+      "sha256": "0ed2469e403995e9e75a886329bd33f9b0dca3a9a991ed39fedc070551363e1f"
+    },
+    {
       "bytes": 203,
       "out": "backend_restrict_zero_probe.out",
       "rows": 8,
@@ -4448,6 +4454,12 @@
       "sha256": "106e2981d0108fd013a5d58cd8826df7f9deade175f9d68de2617673c09d47b5"
     },
     {
+      "bytes": 556,
+      "out": "pan_props_pan_sem_is_wrapper_probe.out",
+      "rows": 3,
+      "sha256": "aa3b9c508a604d5fb3444c629eeb5e49ce9b9438045c5d8c68076c9cf9c4ff94"
+    },
+    {
       "bytes": 754,
       "out": "pan_props_semantics_wrapper_eq_probe.out",
       "rows": 3,
@@ -5252,6 +5264,12 @@
       "sha256": "92e4339353b9d6916810b72da6093aaf27e8f7b3e9a1e79a3f00ded5054d12fe"
     },
     {
+      "bytes": 539,
+      "out": "pan_structs_semantics_eq_probe.out",
+      "rows": 3,
+      "sha256": "1f6e7b3066a5fd78e753b08e2b6309f30617d9ce441e9dc0f3fb07f92b387b4e"
+    },
+    {
       "bytes": 115,
       "out": "pan_structs_shape_context_drop_probe.out",
       "rows": 3,
@@ -5934,6 +5952,18 @@
       "out": "riscv_const_decode_probe.out",
       "rows": 20,
       "sha256": "b9650b527d94b68ea367eeb2863383e81af20d62a0e3436a624525ba047ccf1d"
+    },
+    {
+      "bytes": 328,
+      "out": "riscv_const_run_probe.out",
+      "rows": 12,
+      "sha256": "d3d15bc4bd24057561c00de5830e94832a6344535c3d09069792b6b112eef229"
+    },
+    {
+      "bytes": 410,
+      "out": "riscv_const_wide_value_probe.out",
+      "rows": 12,
+      "sha256": "5497c1363cc17094cf426fa6bd2621e856fd7e9b4bac00f959db21fe12e413c5"
     },
     {
       "bytes": 290,
@@ -9198,6 +9228,12 @@
       "out": "word_cse_evaluation_frames_probe.out",
       "rows": 264,
       "sha256": "959721009f64369c72eb8cbed19d2c895d55fca46407479c0c792c189bb04559"
+    },
+    {
+      "bytes": 3979,
+      "out": "word_cse_fact_insert_probe.out",
+      "rows": 15,
+      "sha256": "4801e764ce7ed437dc87304ec19a21eba38ff6f731a125d428a1b605f124fe96"
     },
     {
       "bytes": 312,
