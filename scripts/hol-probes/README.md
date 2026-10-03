@@ -6550,6 +6550,20 @@ regenerated in full; prior shared-memory transport rows remain unchanged.
 
 
 `word_to_stack_location_labels_probe.out` freshly replays the unchanged full `state_rel_code_domain`, `get_labels_wStackLoad` and `loc_check_SUBSET` proofs. All statements are closed with proof=T/hypotheses=0. Arbitrary states/frames/lists/continuations/code trees are retained; location inclusion has only the original subspt premise and covers both membership and label-lookup branches. The load-label equality is reused from the existing full `LoadContinuations.lean` port, verified by this fresh replay; no duplicate port is added. The new code-domain/location inclusion results remove the location prerequisite of the full Seq simulation; native WordSem resource monotonicity remains a separate blocking obligation.
+The l3_csr_dispatch/read_value/direct_write/special_write/unknown/counter probes
+cover the complete native CSR read/write section. All66 read clauses and41 write
+clauses retain literal counter widths, masks, supervisor lowering, timer clears,
+FP Dirty effects, truncated-core IPI bounds, byte messages and post-write Delta
+readback. Original equations and arbitrary-state kernel regressions complement
+independent numeric FPCSR and counter expectations. The l3_fpcsr_codec probe
+checks every decoded field including reserved31..8; check-l3-fpcsr-codec.py and
+check-l3-csr-counters.py independently validate their captured values. check-l3-csr-equations.py also
+requires all generic equations to evaluate to true and checks exact error bytes. High-counter
+writes shift word32 by32, clearing high32 rather than performing a widened shift;
+CSR3 replaces fullword32 although its read exposes low8. These are model-section
+regressions; fullRun/Next/pass correctness remains open.
+
+`word_to_stack_comp_flat_probe.out` replays the complete original Assign/Store cases against the full source `comp_correct` goal. Six closed statement/proof/hypothesis rows retain every simulation premise and the full target-run/resource/result conclusion. The proofs use HOL's own flat-expression convention contradiction, not an added guard or supplied target execution. The full pass assembly remains unfinished.
 
 ### Complete native CSR instructions
 

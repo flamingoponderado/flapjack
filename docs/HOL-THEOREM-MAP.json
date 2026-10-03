@@ -70105,6 +70105,42 @@
     "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.19: literal full FPCSR source867-892, sendIPI1484-1510, CSRMap1785-2336 all66 clauses, writeCSRMap2338-3226 all41 clauses, wrappers4080-4138. Fixed words32/64/12/8 and canonical original reviewed records/function maps retained. Full old-state updates, first-exception retention/canonical ARB, exact hex byte messages, counter word64 wrap and signextended high32 reads, word32 shift32 zero insertion, CSR3 complete word32 replacement/CSR1flags/CSR2FRM, MFS Dirty/MSD, supervisor lowering, timer pending-bit clear, exception-PC alignment, truncated8 IPI bound, and Delta addr then actual postwrite CSR readback reviewed without knownCSR/validcore/success premise. Full original definitions captured in l3_csr_dispatch_probe; independent original/kernel read/write/counter/FPCSR/Delta/unknown/IPI regressions. Full Run/Next correctness remains open."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Flat.lean",
+    "lean_name": "compCorrectAssign",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "hol_line": 5756,
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.5 full original goal5719-5751/Assign6328-6331: fresh complete constructor-specialized original statement and literal unchanged source proof T/hyp0/closed. All original arbitrary payload/state/result/bitmap/compiler/frame parameters, native execution/errorfree/stateRel/postalloc/flat convention/perf=false compile equation/both bitmap bounds/prefix/full labelsubset/maxvar bound retained. Full target clock/poststate/result existential and complete compCorrectResult resource/Return/Exception/NONE/Break/Continue/other-result conclusion unchanged. Original flat_exp_conventions_def rejects this native constructor for every payload, so the original flat premise proves contradiction exactly as HOL; no new impossible guard, narrowed evaluator, supplied targetrun/postrelation or successful-run-only result. No actual target-run example is asserted for the unreachable branch. Original source config Nat#C/target C and F:Type, positive word width/NeZero and faithful WordLangExpHOL(BitVec width) payload retained. All5 original fmap fields use actual imported canonical owners/genuine same-module roundtrip witnesses; Spt code/locals unchanged. Evaluator closure inherits reals_as_rational_cuts; no numeric FP assertion. Proof-only, no executable compiler changes or full assembly completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Flat.lean",
+    "lean_name": "compCorrectStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "hol_line": 5756,
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.5 full original goal5719-5751/Store6405-6408: fresh complete constructor-specialized original statement and literal unchanged source proof T/hyp0/closed. All original arbitrary payload/state/result/bitmap/compiler/frame parameters, native execution/errorfree/stateRel/postalloc/flat convention/perf=false compile equation/both bitmap bounds/prefix/full labelsubset/maxvar bound retained. Full target clock/poststate/result existential and complete compCorrectResult resource/Return/Exception/NONE/Break/Continue/other-result conclusion unchanged. Original flat_exp_conventions_def rejects this native constructor for every payload, so the original flat premise proves contradiction exactly as HOL; no new impossible guard, narrowed evaluator, supplied targetrun/postrelation or successful-run-only result. No actual target-run example is asserted for the unreachable branch. Original source config Nat#C/target C and F:Type, positive word width/NeZero and faithful WordLangExpHOL(BitVec width) payload retained. All5 original fmap fields use actual imported canonical owners/genuine same-module roundtrip witnesses; Spt code/locals unchanged. Evaluator closure inherits reals_as_rational_cuts; no numeric FP assertion. Proof-only, no executable compiler changes or full assembly completion claim."
+  },
+  {
     "lean_path": "Flapjack/RiscV/L3/Defs/CSRInstructions.lean",
     "lean_name": "«dfn'CSRRW»",
     "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
