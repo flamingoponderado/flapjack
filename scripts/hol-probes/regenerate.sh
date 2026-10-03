@@ -6800,3 +6800,7 @@ run_probe pan_structs_value_shape_conversion_probeScript.sml pan_structs_value_s
 run_probe pan_structs_program_return_raise_probeScript.sml pan_structs_program_return_raise_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_return_statement compile_correct_return_proved compile_correct_raise_statement compile_correct_raise_proved compile_correct_full_types compile_correct_return_types compile_correct_raise_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_structs_code_invariant_probeScript.sml pan_structs_structs_code_invariant_probe.out \
+  evaluate_structs_code_inv_statement evaluate_structs_code_inv_types evaluate_structs_code_inv_hypotheses evaluate_structs_code_inv_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

@@ -78881,5 +78881,28 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/EvaluateStructsCodeInvariant.lean",
+    "lean_name": "evaluateStructsCodeInv",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "evaluate_structs_code_inv",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original793-798: arbitrary program/source/post/result, sole actual evaluate result-pair equality, both post structs and code equal source fields. No success/error/resource/compatibility or extra invariant assumption. Full original evaluate_invariants supplies both conjuncts via field-for-field canonical PanProps ofPanSemFinite codec and genuine total finite evaluator; codec roundtrip discharges evaluator translation internally. Canonical code equality uses reviewed finite-support map extensional carrier, all four imported owner maps and positive-width Type0 word/FFI translations only. Same-module complete two-way carrier witness. Fresh original local statement and unchanged rw/imp_res_tac proof replayed with closed binder types and kernel T."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/EvaluateStructsCodeInvariant.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]

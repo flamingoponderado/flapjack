@@ -809,6 +809,7 @@
     {"bytes": 115, "out": "pan_structs_shape_context_drop_probe.out", "rows": 3, "sha256": "f690dcb7814ac9d94fdf393e624941da70fdc7f461357cbd256f07df46d8e935"},
     {"bytes": 804, "out": "pan_structs_shape_field_polymorphism_probe.out", "rows": 6, "sha256": "2782ae36f09b979fc5320793779fd1c17533e82a2db5a4a2dfd89a6fd1fa82d5"},
     {"bytes": 316, "out": "pan_structs_shape_map_codec_probe.out", "rows": 7, "sha256": "5ad064943706d8f62e4fc9d36731f55a742b991b32bacf1714d34c4c51f42ab4"},
+    {"bytes": 309, "out": "pan_structs_structs_code_invariant_probe.out", "rows": 4, "sha256": "64b6b50dd598b95fda275321085c8e69111c77daaf5fc27ba74d6f67956f74f1"},
     {"bytes": 1183, "out": "pan_structs_value_shape_conversion_probe.out", "rows": 10, "sha256": "3554ff69c11f86edb398d21eaf8541ce818d3386dc6d0b9df20ed6fd91258023"},
     {"bytes": 411, "out": "pan_structs_value_validity_probe.out", "rows": 15, "sha256": "5920bd2c77b143b184fac5b81524e62d8e3d1dbcefee1ae5e7fcd0f3b2acdf2a"},
     {"bytes": 120, "out": "pan_to_crep_comp_func_probe.out", "rows": 3, "sha256": "2fead1ae3b94458488de41606f67d5ed979e9253f3f52fd78177dd5cb52d7d9f"},

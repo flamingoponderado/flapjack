@@ -7238,3 +7238,9 @@ Native cases retain all ten hypotheses and seven conclusions. Original source
 size guards, Raise exception-shape lookup/equality and error branches are
 preserved; target guards follow from full faithful expression correctness,
 value well-formedness, shape conversion and compiled-shape size preservation.
+
+`pan_structs_structs_code_invariant_probe` replays the original local
+`evaluate_structs_code_inv` statement and unchanged source proof. It records
+closed binder types, zero hypotheses and kernel proof. The native theorem
+preserves both structs and code for arbitrary evaluation results, using the
+full faithful invariant theorem through the field-for-field PanProps codec.
