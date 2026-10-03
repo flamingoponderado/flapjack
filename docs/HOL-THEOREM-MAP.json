@@ -79192,5 +79192,50 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.10): Full original1154 forall s t, pc=0 and BOTH nonfailed conjuncts and existential sourceCompile record equality plus target compiler/filterSkip clause imply whole native semantics equality. Original code and compile-oracle transformations, arbitrary compiler configuration and FFI state, all state fields and duplicate nonfailed guard retained exactly; lambda/product-projection oracle notation is source pair-map composition, no behavioral difference. Complete native semantics equality derives from full original state_rel_IMP_sem_EQ_sem1039 and actual adjustPc zero equation; no additional success, target execution, semantic equality or oracle/compiler premise. Positive-width words_as_type_indexed_bitvec is sole carrier translation, fixed bytes unchanged. Fresh original full1154 statement/type/hyp0/kernel capture retains both original guards. Native semantics inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. make_init_filter_skip10540 and full compiler composition remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ThreeToTwo.lean",
+    "lean_name": "threeToTwoRegProg_labPres",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "three_to_two_reg_prog_lab_pres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2195: full native three_to_two_reg_prog over arbitrary Bool/program/configuration; original native transform word_instScript510-544 checked including register/immediate arithmetic, carry/overflow register positions, both nested handler families, loops and identity fallback. Labels unconditional; two_reg_inst retains only original enabled Bool premise; pre-allocation, flat and fullInst retain exactly original source convention premise. Native twoRegInst literal five arithmetic clauses match wordConvsScript287-295; preAllocConventionsHOL uses faithful Spt cut sets and call argument clauses, with explicit returning-handler induction. No target assumptions, narrowed constructors or added configuration restriction. Positive type-indexed word translation only; proof-only original convention results, executable-route completeness not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ThreeToTwo.lean",
+    "lean_name": "threeToTwoRegProg_twoRegInst",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "three_to_two_reg_prog_two_reg_inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2215: full native three_to_two_reg_prog over arbitrary Bool/program/configuration; original native transform word_instScript510-544 checked including register/immediate arithmetic, carry/overflow register positions, both nested handler families, loops and identity fallback. Labels unconditional; two_reg_inst retains only original enabled Bool premise; pre-allocation, flat and fullInst retain exactly original source convention premise. Native twoRegInst literal five arithmetic clauses match wordConvsScript287-295; preAllocConventionsHOL uses faithful Spt cut sets and call argument clauses, with explicit returning-handler induction. No target assumptions, narrowed constructors or added configuration restriction. Positive type-indexed word translation only; proof-only original convention results, executable-route completeness not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ThreeToTwo.lean",
+    "lean_name": "threeToTwoRegProg_preAllocConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "three_to_two_reg_prog_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2238: full native three_to_two_reg_prog over arbitrary Bool/program/configuration; original native transform word_instScript510-544 checked including register/immediate arithmetic, carry/overflow register positions, both nested handler families, loops and identity fallback. Labels unconditional; two_reg_inst retains only original enabled Bool premise; pre-allocation, flat and fullInst retain exactly original source convention premise. Native twoRegInst literal five arithmetic clauses match wordConvsScript287-295; preAllocConventionsHOL uses faithful Spt cut sets and call argument clauses, with explicit returning-handler induction. No target assumptions, narrowed constructors or added configuration restriction. Positive type-indexed word translation only; proof-only original convention results, executable-route completeness not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ThreeToTwo.lean",
+    "lean_name": "threeToTwoRegProg_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "three_to_two_reg_prog_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2253: full native three_to_two_reg_prog over arbitrary Bool/program/configuration; original native transform word_instScript510-544 checked including register/immediate arithmetic, carry/overflow register positions, both nested handler families, loops and identity fallback. Labels unconditional; two_reg_inst retains only original enabled Bool premise; pre-allocation, flat and fullInst retain exactly original source convention premise. Native twoRegInst literal five arithmetic clauses match wordConvsScript287-295; preAllocConventionsHOL uses faithful Spt cut sets and call argument clauses, with explicit returning-handler induction. No target assumptions, narrowed constructors or added configuration restriction. Positive type-indexed word translation only; proof-only original convention results, executable-route completeness not claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ThreeToTwo.lean",
+    "lean_name": "threeToTwoRegProg_fullInstOkLess",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "three_to_two_reg_prog_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2264: full native three_to_two_reg_prog over arbitrary Bool/program/configuration; original native transform word_instScript510-544 checked including register/immediate arithmetic, carry/overflow register positions, both nested handler families, loops and identity fallback. Labels unconditional; two_reg_inst retains only original enabled Bool premise; pre-allocation, flat and fullInst retain exactly original source convention premise. Native twoRegInst literal five arithmetic clauses match wordConvsScript287-295; preAllocConventionsHOL uses faithful Spt cut sets and call argument clauses, with explicit returning-handler induction. No target assumptions, narrowed constructors or added configuration restriction. Positive type-indexed word translation only; proof-only original convention results, executable-route completeness not claimed."
   }
 ]
