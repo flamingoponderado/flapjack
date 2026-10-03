@@ -1,0 +1,4 @@
+init_limits_double_definition=∀h2 h3 h4. get_stack_heap_limit'' h2 h3 h4 = (h4 − h3 − LENGTH store_list,(h3 − h2) DIV 2)
+init_limits_double_type=:num -> num -> num -> num # num
+init_limits_double_hypotheses=0
+init_limits_double_store_count=48
