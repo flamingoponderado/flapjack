@@ -85911,5 +85911,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 bead14.2.1: full original wMoveSingle_thm2995-3109. Arbitrary optional source/destination, entire state_rel, actual source or scratch read and original optional destination frame bound imply existential actual native wMoveSingle evaluate NONE/post, complete state_rel after original optional source set_var, both NONE/nonNONE scratch observations and target stack length/space equalities. SourceRead is precisely the original optional get_var case, not an additional premise; no bound on source added. All register/register, spill/register, register/spill, spill/spill and temporary choices retained, Word/Loc values arbitrary; same-register OR copies both carriers via accepted literal evaluator. Spill read and all index bounds derived from full locals/frame relation using native getElem?, no total HD/EL default use. Only original canonical five finite-map fields qualified with actual imported owners/genuine same-module codec witnesses, positive type-indexed words and Type0 host. Inherits reals_as_rational_cuts evaluator closure assurance; no new IEEE or cross-language equivalence claim. Literal original local proof replay retained in fresh capture. No targetrun/finalrelation/successfulresult premise, compiler goal remains unfinished.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MoveAux.lean",
+    "lean_name": "wMoveAuxThm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wMoveAux_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 Move evaluator prerequisite: full original wMoveAux_thm2856-2867. Both original empty and cons evaluator equalities retain arbitrary formatted moves/frame/targetstate and every result including failure. Native singleton is literal wMoveSingle; trailing Skip equality derives actual evaluateClock bound, not a supplied successful evaluation or postclock premise. Canonical imported target finite-map fields with same-module genuine codec roundtrip; List/Sum/Nat products unchanged, positive type-indexed words/Type0 host. Inherits reals_as_rational_cuts evaluator closure limit, no new FP correspondence or cross-language equivalence. Fresh literal original whole HOL proof replay with full statement/closed hypotheses. Entire move-list simulation remains open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

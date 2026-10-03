@@ -7317,3 +7317,7 @@ run_probe clos_to_bvl_config_probeScript.sml clos_to_bvl_config_probe.out \
 run_probe word_to_stack_move_single_probeScript.sml word_to_stack_move_single_probe.out \
   wMoveSingle_statement wMoveSingle_proved wMoveSingle_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_move_aux_probeScript.sml word_to_stack_move_aux_probe.out \
+  wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

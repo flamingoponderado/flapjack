@@ -9998,6 +9998,12 @@
       "sha256": "e53cb678e1fdbd30b25d31353606b3625bace978dcb211004bf07d2db5dabf93"
     },
     {
+      "out": "word_to_stack_move_aux_probe.out",
+      "sha256": "fe5139f7754e6f481b09947a69d883b22e5b52a8008178f4c0a370629090f479",
+      "bytes": 204,
+      "rows": 3
+    },
+    {
       "out": "word_to_stack_move_div2_probe.out",
       "sha256": "164ae8067d90dba6b9ce7c9567150f59d2977b0917391bdda7de9c4c96015205",
       "bytes": 716,
