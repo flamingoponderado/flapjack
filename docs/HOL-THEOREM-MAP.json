@@ -88922,5 +88922,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-w08gc): HOL full_inst_ok_less_word_common_subexp_elim (word_cseProof:4031). The full original statement is kept: binders in HOL order, the same premise conjunction, and the same conclusion, over the tagged wordCse/wordCommonSubexpElim and the tagged convention predicates fullInstOkLessExact (HOL asm_config as AsmConfigExact), preAllocConventionsHOL, and everyInst with distinctTarRegExact/twoRegInstExact. HOL every_inst P over 'a inst is everyInst (fun i => P (HolInst.ofWordLangInst i)) over the reviewed instruction mirror, as in the accepted inst_select convention theorems. The proof goes through a CseOut output-shape relation (each instruction-level program is kept or becomes a move; structure is preserved), matching HOL's remark that word_cse emits only original instructions or Moves. Kernel-checked; the word_cse_conventions probe captures the statement (0 hypotheses)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_wordScript.sml",
+    "hol_name": "compile_single_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Compile.lean",
+    "lean_name": "compileSingle",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.37): HOL compile_single_def (word_to_wordScript.sml:21-35). The let-chain over the tagged pass definitions in HOL order: compileExp, maxVarHOL+1, instSelect, fullSsaCcTrans arg_count, removeDeadProg, wordCommonSubexpElim, copyProp, threeToTwoRegProg, removeUnreach, removeDeadProg, wordAlloc name_num c alg reg_count rm_prog col_opt; same argument order and result triple. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a prog / 'a asm_config to WordLangProgHOL (BitVec width) / AsmConfigExact width with [NeZero width] discharging dimindex(:'a) >= 1; num num_map is the reviewed Spt Nat. Typed statement captured by the word_to_word_compile probe. Proof-side definition; the executed compiler is not routed through it (production routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_wordScript.sml",
+    "hol_name": "full_compile_single_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Compile.lean",
+    "lean_name": "fullCompileSingle",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.37): HOL full_compile_single_def (word_to_wordScript.sml:37-41). compileSingle then removeMustTerminate on the program component. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a prog / 'a asm_config to WordLangProgHOL (BitVec width) / AsmConfigExact width with [NeZero width] discharging dimindex(:'a) >= 1; num num_map is the reviewed Spt Nat. Typed statement captured by the word_to_word_compile probe. Proof-side definition; the executed compiler is not routed through it (production routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_wordScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Compile.lean",
+    "lean_name": "compile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.37): HOL compile_def (word_to_wordScript.sml:51-57). two_reg_arith and the truncated num reg_count - (5 + LENGTH avoid_regs); nextNOracle (LENGTH progs) col_oracle; ZIP as List.zip, equal lengths by nextNOracle_length (HOL ZIP is only specified there); MAP fullCompileSingle; result (col, ...). Sole carrier translation words_as_type_indexed_bitvec: HOL 'a prog / 'a asm_config to WordLangProgHOL (BitVec width) / AsmConfigExact width with [NeZero width] discharging dimindex(:'a) >= 1; num num_map is the reviewed Spt Nat. Typed statement captured by the word_to_word_compile probe. Proof-side definition; the executed compiler is not routed through it (production routing tracked separately).",
+    "words_as_type_indexed_bitvec": true
   }
 ]
