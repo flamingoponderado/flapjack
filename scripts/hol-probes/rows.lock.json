@@ -2000,6 +2000,12 @@
       "sha256": "93feff59d140d2929278342696cc1d26a62f81eb1411bfb801d01beb020db6c4"
     },
     {
+      "bytes": 2511,
+      "out": "lab_to_target_initial_entry_contracts_probe.out",
+      "rows": 12,
+      "sha256": "577f2e2dfd519e4527fa6f6d444b370aa7737418a41a9e6b84efdecf4b38f239"
+    },
+    {
       "bytes": 36091,
       "out": "lab_to_target_initializer_basic_cases_probe.out",
       "rows": 52,

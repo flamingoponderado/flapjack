@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.Initialization.InitialStateContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.FullStateRel
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.DomainCodeCase
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.MemorySeparationCases

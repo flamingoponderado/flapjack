@@ -6351,3 +6351,9 @@ run_probe lab_to_target_initializer_full_relation_probeScript.sml lab_to_target_
   IMP_state_rel_make_init IMP_state_rel_make_init_types IMP_state_rel_make_init_hypotheses state_rel_conjuncts \
   IMP_state_rel_make_init_proved state_rel_def state_rel_def_types state_rel_def_hypotheses \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_initial_entry_contracts_probeScript.sml lab_to_target_initial_entry_contracts_probe.out \
+  init_ok_def init_ok_def_types init_ok_def_hypotheses init_ok_def_proved \
+  oracle_tie_make_init oracle_tie_make_init_types oracle_tie_make_init_hypotheses oracle_tie_make_init_proved \
+  make_init_simp make_init_simp_types make_init_simp_hypotheses make_init_simp_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -71322,5 +71322,32 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 complete source comparison (2026-10-03; bead .15.10.151): original local complete IMP_state_rel_make_init10134-10514 including all17 Suspend/Resume cases and Finalise. Whole original state_rel53conjunct conclusion at actual makeInit, every original binder and all14 conjunctive guards retained. Four checked coherent original case groups (ten basic, four interference, two MMIO/buffer, full ISR16) are applied inside the proof from the same original guard; caller supplies no case theorem/callback, target evaluation, successful compiler output beyond original remove_labels equation, postrelation, new bounds or output facts. Remaining definitional fields and original dimension/configuration/initial-state/removal guards establish exact register/FP/memory/buffer/oracle/clock-independent/config/label/safety clauses. Optional link-register cases preserve original fallback; original SOME boundary discharges holThe without inspecting or choosing NONE default. Source Boolean domains use existing reviewed truth predicates, no changed membership; generic positive-width BitVec words, fixed byte8/FP64, separate universe0 FFI host and native AST/config/state/projection carriers retained. No totalHD/EL provenance hold/default policy change. Fresh original complete theorem/types0hyp/kernelT plus complete original state_rel definition/types0hyp and53conjunct count captured; native fullguard whole-relation consumer derives actual compile interface and aligned target-memory bytes. Inherits reals_as_rational_cuts SOUNDNESS item8 through original mcConfOk/encoderCorrect, no own rendering and no faithful real-carrier closure inferred. This is full initializer relation only; original semantics_make_init152/machine semantics/compile semantics153 and end-to-end correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/InitialStateContracts.lean",
+    "lean_name": "initOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "init_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type/body comparison 2026-10-03; bead183 source9357-9362, complete existential semantic entry over original concrete Config: arbitrary pair(mc,p), source state/target state, existential whole code2/labs/asm state and full stateRel AND oracleTie. Fresh full HOL type confirms Config is fixed here, no arbitrary compiler-carrier specialization. Body retains both entire relations and unrestricted witnesses, no successful simulation premise. Positive-width BitVec width/NeZero, fixed byte8/FP64, original native AST/state/config/projection and separate universe0 FFI host retained. No HD/EL/default or provenance policy change. Fresh complete original declaration/types0hyp/kernelT captured; same-module untagged makeInit_initOk consumer derives actual semantic entry with concrete code2/labs/t from full original151 guards and unconditional native oracle theorem, no desired initialized relation supplied. This is initializer contract group only; full machine_sem_EQ_sem31/semantics_make_init152/semantics_compile153/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/InitialStateContracts.lean",
+    "lean_name": "oracleTie_makeInit",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_make_init",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type/body comparison 2026-10-03; bead184 source9579-9584, unconditional entire four-function oracle tie for actual initializer. Fresh full HOL type confirms arbitrary compiler configuration C independent of machine/state/projection/FFI host and all twelve original input families. Definitional actual constructed-oracle equality proves all4clauses with no assumed oracle/targetrun/result fact. Positive-width BitVec width/NeZero, fixed byte8/FP64, original native AST/state/config/projection and separate universe0 FFI host retained. No HD/EL/default or provenance policy change. Fresh complete original declaration/types0hyp/kernelT captured; same-module untagged makeInit_initOk consumer derives actual semantic entry with concrete code2/labs/t from full original151 guards and unconditional native oracle theorem, no desired initialized relation supplied. This is initializer contract group only; full machine_sem_EQ_sem31/semantics_make_init152/semantics_compile153/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/InitialStateContracts.lean",
+    "lean_name": "makeInit_simp",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "make_init_simp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type/body comparison 2026-10-03; bead185 source10516-10522, whole unconditional conjunction actual FFI equality AND PC=0 AND code equality. All twelve original inputs/generic independent compiler configuration remain; no conjunct dropped or selected source state. Actual makeInit body supplies all3equations. Positive-width BitVec width/NeZero, fixed byte8/FP64, original native AST/state/config/projection and separate universe0 FFI host retained. No HD/EL/default or provenance policy change. Fresh complete original declaration/types0hyp/kernelT captured; same-module untagged makeInit_initOk consumer derives actual semantic entry with concrete code2/labs/t from full original151 guards and unconditional native oracle theorem, no desired initialized relation supplied. This is initializer contract group only; full machine_sem_EQ_sem31/semantics_make_init152/semantics_compile153/end-to-end remain open."
   }
 ]

@@ -6720,3 +6720,17 @@ and aligned target-memory bytes through the complete relation.
 Machine/compile semantics and end-to-end correctness remain open; inherited
 real-rendering assurance and totalHD/EL holds are unchanged.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_full_relation_probeScript.sml`.
+
+### Original initializer semantic entry contracts
+
+`lab_to_target_initial_entry_contracts_probeScript.sml` freshly captures all
+three original `init_ok_def`, `oracle_tie_make_init` and `make_init_simp`
+statements, complete variable types, zero hypotheses and kernel proof T.
+The original semantic entry fixes compiler Config, while the two initializer
+theorems keep arbitrary compiler configuration and all twelve inputs.
+Native ports retain the unrestricted code/labels/asm-state witnesses, whole
+relation/oracle tie, four oracle functions and all three field equations.
+The same-module native composition derives actual initOk from full original
+initializer guards with concrete witnesses; it receives no initialized relation
+or desired machine run. Full machine/compile semantics remain open.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initial_entry_contracts_probeScript.sml`.
