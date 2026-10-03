@@ -1,0 +1,4 @@
+compile_exp_correct_statement=∀ctxt s e v. eval s e = SOME v ∧ alist_to_fmap ctxt.locals = FMAP_MAP2 (shape_of ∘ SND) s.locals ∧ alist_to_fmap ctxt.globals = FMAP_MAP2 (shape_of ∘ SND) s.globals ∧ ctxt.structs = MAP (λ(nm,info). (nm,info.fields)) s.structs ∧ FEVERY (λ(nm,v). v_flds_ok s.structs v) s.locals ∧ FEVERY (λ(nm,v). v_flds_ok s.structs v) s.globals ∧ struct_infos_ok s.structs ⇒ old_exp_shape ctxt e = shape_of v ∧ v_flds_ok s.structs v ∧ eval (convert_s ctxt s) (compile_exp ctxt e) = SOME (convert_v v)
+compile_exp_correct_types=ctxt::context;s::(α, β) state;e::α panLang$exp;v::α v
+compile_exp_correct_hypotheses=0
+compile_exp_correct_proved=T

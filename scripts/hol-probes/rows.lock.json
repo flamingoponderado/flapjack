@@ -1904,6 +1904,12 @@
       "sha256": "c9f78cdabc2d185359ee04a4d53843d48a37118404f8eaaa2e1d6a2bc3b97fdd"
     },
     {
+      "bytes": 2043229,
+      "out": "l3_target_encoder_probe.out",
+      "rows": 626,
+      "sha256": "a44b9cd6f8019a4738c62a50d150ebcaace62db40ad91c6c473f8d3386ef31a2"
+    },
+    {
       "bytes": 9516,
       "out": "l3_tlb_flush_probe.out",
       "rows": 68,
@@ -4718,6 +4724,12 @@
       "sha256": "ac6e91eab736ae83d2f0d3aec684fa79304117e359c27009c5f8da781a162a23"
     },
     {
+      "bytes": 689,
+      "out": "pan_structs_exp_correct_full_probe.out",
+      "rows": 4,
+      "sha256": "0997dc95b64abd3e3ae2393daf57f84e3ceac462308761354e0c1ba05e16000c"
+    },
+    {
       "bytes": 2361,
       "out": "pan_structs_exp_load32_faithful_probe.out",
       "rows": 5,
@@ -4794,6 +4806,18 @@
       "out": "pan_structs_opt_mmap_probe.out",
       "rows": 2,
       "sha256": "e9b6280324b2ec31edfca1481d05655782945dd94d49d06b8f54ffe754a98de9"
+    },
+    {
+      "bytes": 4244,
+      "out": "pan_structs_program_atomic_probe.out",
+      "rows": 8,
+      "sha256": "b3024de29c59ee7decbf435e91f1acf28515a2822e70a6b137a31662c47d6240"
+    },
+    {
+      "bytes": 3200,
+      "out": "pan_structs_program_tick_annot_probe.out",
+      "rows": 6,
+      "sha256": "ee3f0815f15bfa5a6e6bf68326935e4e056874c56f6296463594a36fdb44d874"
     },
     {
       "bytes": 499,
