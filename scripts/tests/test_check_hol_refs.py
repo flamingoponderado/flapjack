@@ -3754,3 +3754,23 @@ class FmapResultObservationAmbiguityTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PanSemGeneratedEvalIndTest(unittest.TestCase):
+    def test_real_source_and_bounded_negative_cases(self):
+        path = CHECKER["ROOT"] / CHECKER["PANSEM_EVAL_IND_PATH"]
+        source = path.read_text()
+        recognize = CHECKER["pansem_eval_ind_declaration"]
+        line = recognize(path, source)
+        self.assertIsNotNone(line)
+        self.assertEqual(CHECKER["hol_declaration_lines"](path, {})["eval_ind"], [line])
+        self.assertIsNotNone(REF_ERROR(path, "other_ind", None, {}))
+        for changed in [source.replace("Definition eval_def:", "Definition other_def:"),
+                        source.replace("Termination\n  wf_rel_tac `measure (exp_size ARB o SND)`", "Termination\n  cheat"),
+                        source.replace("(eval s BytesInWord =", "(eval s TopAddr =")]:
+            with self.subTest(source=changed[-100:]):
+                self.assertIsNone(recognize(path, changed))
+        self.assertIsNone(recognize(path.with_name("otherScript.sml"), source))
+        self.assertIsNone(recognize(Path("other/pancake/semantics/panSemScript.sml"), source))
+        block = source[source.index("Definition eval_def:"):]
+        self.assertIsNone(recognize(path, source + "\n" + block))
