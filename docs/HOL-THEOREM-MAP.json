@@ -86002,5 +86002,47 @@
     "hol_name": "lookup_register_reads",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-r1n8q): HOL lookup_register_reads (word_cseProof:816-824). For all rs, data and x, lookup x (register_reads data rs).to_canonical = if MEM x rs and not EVEN x and lookup x data.to_canonical = NONE then SOME x else lookup x data.to_canonical, with MEM as list membership and not-EVEN as x % 2 != 0 (as above). Proof by HOL's induction on rs via lookup_register_read. Kernel-checked; the word_cse_knowledge_lemmas probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/SemanticInvariant.lean",
+    "lean_name": "semInv",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "sem_inv_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-semantic-invariant): faithful imported WordSemStateFiniteExact retains exact Spt locals/code, original full WordLocW, native lists/sets and canonical HolFiniteMapExact fpRegs/store. Same-module canonical roundtrip re-exports the owning broad/exact state witness without duplicate state carriers. The field-based fmap qualifier records the full state map representation only; positive BitVec width/NeZero and C:Type/F:Type preserve original word/configuration/FFI carriers. word_cseProof57-86 all eight conjuncts in source order: canonical/latest register-value equalities; arbitrary Const fact implies original locals Word; full arbitrary arith fact implies existential full word_loc holder and original total evaluate pair/post-set_var; CurrHeap expression result and holder; [48,label] fact implies Loc label0; ordered store ALOOKUP implies canonical FLOOKUP and holder; arbitrary non-store memop/address/offset fact implies holder and forall destination original total evaluate pair/post-set_var. Arith toWordLangArith is the reviewed constructor-for-constructor codec, retaining all native operations. No outer Option evaluate, opcode/offset/destination narrowing, target run, successful conversion or output relation is assumed. The elaborated declaration closure inherits the existing reals_as_rational_cuts IEEE rendering assumption through the full imported WordSem evaluate/inst, recorded under docs/SOUNDNESS.md item 8; it introduces no new hypothesis or narrowed evaluator.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/SemanticInvariant.lean",
+    "lean_name": "dataInv",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-semantic-invariant): faithful imported WordSemStateFiniteExact retains exact Spt locals/code, original full WordLocW, native lists/sets and canonical HolFiniteMapExact fpRegs/store. Same-module canonical roundtrip re-exports the owning broad/exact state witness without duplicate state carriers. The field-based fmap qualifier records the full state map representation only; positive BitVec width/NeZero and C:Type/F:Type preserve original word/configuration/FFI carriers. word_cseProof89-92 is exactly wf_data at the same word dimension conjoined with the complete sem_inv over the same arbitrary knowledge and faithful state; no premise or semantic conjunct is dropped. The elaborated declaration closure inherits the existing reals_as_rational_cuts IEEE rendering assumption through the full imported WordSem evaluate/inst, recorded under docs/SOUNDNESS.md item 8; it introduces no new hypothesis or narrowed evaluator.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/SemanticInvariant.lean",
+    "lean_name": "dataInvEmpty",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_empty",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-semantic-invariant): faithful imported WordSemStateFiniteExact retains exact Spt locals/code, original full WordLocW, native lists/sets and canonical HolFiniteMapExact fpRegs/store. Same-module canonical roundtrip re-exports the owning broad/exact state witness without duplicate state carriers. The field-based fmap qualifier records the full state map representation only; positive BitVec width/NeZero and C:Type/F:Type preserve original word/configuration/FFI carriers. word_cseProof493-496 universally quantifies an arbitrary faithful state and concludes full data_inv empty_data. Lean proves both complete predicates by literal empty sparse trees, native balanced trees and store list, with no run/invariant/output premise. This supplies an unconditional non-vacuous empty-knowledge instance, not whole CSE correctness. The elaborated declaration closure inherits the existing reals_as_rational_cuts IEEE rendering assumption through the full imported WordSem evaluate/inst, recorded under docs/SOUNDNESS.md item 8; it introduces no new hypothesis or narrowed evaluator.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
