@@ -7163,3 +7163,9 @@ Op/Panop specializations and eval_ind. Both native cases retain all seven
 hypotheses and three conclusions, using only original per-member IHs. Source
 success supplies the word guard, discharging conversion identity before the
 original operation is evaluated on the converted list.
+
+`lab_filter_map_probeScript.sml` captures the original complete filter_skip_MAP21
+and both direct definitions, full native word-indexed line/section binder types,
+zero hypotheses and kernel reproofs (12 rows). It confirms the actual Install
+proof's map prerequisite without specializing arbitrary generic Line carriers.
+The derived Lean append law is Flapjack infrastructure, not another HOL claim.
