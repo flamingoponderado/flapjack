@@ -6644,3 +6644,9 @@ run_probe lab_filter_return_labels_probeScript.sml lab_filter_return_labels_prob
   all_skips_get_lab_after all_skips_get_lab_after_types all_skips_get_lab_after_hypotheses all_skips_get_lab_after_proved \
   get_lab_after_adjust get_lab_after_adjust_types get_lab_after_adjust_hypotheses get_lab_after_adjust_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_sem_independent_navigation_probeScript.sml lab_sem_independent_navigation_probe.out \
+  next_label_def next_label_def_types next_label_def_hypotheses next_label_def_proved \
+  get_lab_after_def get_lab_after_def_types get_lab_after_def_hypotheses get_lab_after_def_proved \
+  get_ret_Loc_def get_ret_Loc_def_types get_ret_Loc_def_hypotheses get_ret_Loc_def_proved \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/proofs"

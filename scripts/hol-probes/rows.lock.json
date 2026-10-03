@@ -1952,6 +1952,12 @@
       "sha256": "152d6742e65b67592b63a097593a4a131602feb98553eba932290ab7156f521b"
     },
     {
+      "bytes": 2084,
+      "out": "lab_sem_independent_navigation_probe.out",
+      "rows": 12,
+      "sha256": "d8959c09791d87460c845b1c3faa1a6286a27cabafa013b22e3ae992596b710b"
+    },
+    {
       "bytes": 2421,
       "out": "lab_to_target_add_nop_props_probe.out",
       "rows": 25,

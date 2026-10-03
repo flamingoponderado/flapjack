@@ -5,13 +5,13 @@ open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabFilter
 open Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 
-/-- Flapjack same-width specialization. The original has an independent result word carrier;
-faithful full port remains blocked on .187.5.3. No HOL tag is claimed. -/
-theorem nextLabelFilterSkip {width : Nat} [NeZero width]
+@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "next_label_filter_skip"
+  (words_as_type_indexed_bitvec)]
+theorem nextLabelFilterSkip {width : Nat} {resultWidth : Nat} [NeZero width] [NeZero resultWidth]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
       (BitVec width)))) :
-    nextLabel code = nextLabel (filterSkip code) := by
+    nextLabel (resultWidth := resultWidth) code = nextLabel (resultWidth := resultWidth) (filterSkip code) := by
   induction code with
   | nil => simp [nextLabel, filterSkip]
   | cons sect rest ih =>
@@ -23,13 +23,13 @@ theorem nextLabelFilterSkip {width : Nat} [NeZero width]
       · cases line <;> simp_all [nextLabel, filterSkip]
       · cases line <;> simp_all [nextLabel, filterSkip, notSkip]
 
-/-- Flapjack same-width specialization. The original has an independent result word carrier;
-faithful full port remains blocked on .187.5.3. No HOL tag is claimed. -/
-theorem allSkipsGetLabAfter {width : Nat} [NeZero width]
+@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "all_skips_get_lab_after"
+  (words_as_type_indexed_bitvec)]
+theorem allSkipsGetLabAfter {width : Nat} {resultWidth : Nat} [NeZero width] [NeZero resultWidth]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
       (BitVec width)))) (count : Nat) :
-    allSkips 0 code count → getLabAfter count code = getLabAfter 0 (filterSkip code) := by
+    allSkips 0 code count → getLabAfter (resultWidth := resultWidth) count code = getLabAfter (resultWidth := resultWidth) 0 (filterSkip code) := by
   induction code generalizing count with
   | nil => simp [getLabAfter, filterSkip]
   | cons sect rest ih =>
@@ -51,7 +51,7 @@ theorem allSkipsGetLabAfter {width : Nat} [NeZero width]
             have h := hs.1 bytes len
             simp [asmFetchAux, isLabelHOL] at h
           simpa [getLabAfter, filterSkip, hn, hl] using
-            nextLabelFilterSkip (⟨k, lines⟩ :: rest)
+            nextLabelFilterSkip (resultWidth := resultWidth) (⟨k, lines⟩ :: rest)
         | succ count =>
           obtain ⟨bytes, len, hf⟩ := hs.2 0 (Nat.succ_pos count)
           have he : line = .asm (.asmi (.inst .skip)) bytes len := by
@@ -69,14 +69,14 @@ theorem allSkipsGetLabAfter {width : Nat} [NeZero width]
 private theorem adjustPcZero {width : Nat} [NeZero width] (code : LabProgHOL width) :
     adjustPc 0 code = 0 := by rw [adjustPc.eq_def]; simp
 
-/-- Flapjack same-width specialization. The original has an independent result word carrier;
-faithful full port remains blocked on .187.5.3. No HOL tag is claimed. -/
-theorem getLabAfterAdjust {width : Nat} [NeZero width] (pc : Nat)
+@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "get_lab_after_adjust"
+  (words_as_type_indexed_bitvec)]
+theorem getLabAfterAdjust {width : Nat} {resultWidth : Nat} [NeZero width] [NeZero resultWidth] (pc : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
       (BitVec width)))) (count : Nat) :
     allSkips pc code count →
-    getLabAfter (pc + count) code = getLabAfter (adjustPc pc code) (filterSkip code) := by
+    getLabAfter (resultWidth := resultWidth) (pc + count) code = getLabAfter (resultWidth := resultWidth) (adjustPc pc code) (filterSkip code) := by
   induction code generalizing pc count with
   | nil => simp [getLabAfter, filterSkip]
   | cons sect rest ih =>
@@ -91,7 +91,7 @@ theorem getLabAfterAdjust {width : Nat} [NeZero width] (pc : Nat)
     | cons line lines ih =>
       intro hs
       cases pc with
-      | zero => simpa [adjustPcZero] using allSkipsGetLabAfter _ count hs
+      | zero => simpa [adjustPcZero] using allSkipsGetLabAfter (resultWidth := resultWidth) _ count hs
       | succ pc =>
         by_cases hl : isLabelHOL line = true
         · have hn := isLabelNotSkip line hl

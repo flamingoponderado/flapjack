@@ -7078,3 +7078,5 @@ keys keep the first binding; other, missing and empty lookups are recorded.
 `lab_filter_location_lookup_probeScript.sml` replays the unchanged original local proofs310/345/522 using the exact original temporary simplifier setup (script10/12). Twelve rows capture complete NONE, existential SOME/adjustment, and append theorems, all binder types, zero hypotheses and kernel reproofs. Every original guard and existential conclusion is retained.
 
 `lab_filter_return_labels_probeScript.sml` replays unchanged original local proofs416/425/468 with original simplifier setup. Twelve rows capture complete next-label and guarded skipped-run return-label equalities, full binder types, zero hypotheses and kernel reproofs.
+
+`lab_sem_independent_navigation_probeScript.sml` captures full original next-label, after-label and return-location definitions, including independent code/state and result word dimensions, zero hypotheses and kernel reproofs. Native navigation binds both positive widths independently.
