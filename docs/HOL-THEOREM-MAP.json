@@ -90388,5 +90388,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison: Original3836-3845: conjunction of original full stateRel and successful source mem_store implies existential actual target mem_store and full post-state relation. Actual domain equality/membership and memory equality are derived from the original guards, arbitrary positive width/address/Word-or-Loc payload/extra; internally constructed memory update, no targetpost assumption. Canonical source fpRegs/store and target regs/fpRegs/store qualified; native sptree locals/code unchanged. Common source/target/payload word dimension, source host Nat\u00d7C vs target C and independent FFI type retained. Same-module canonical codec witnesses reexported. Structural relation establishes no new numerical FP or HOL-to-Lean equivalence. Fresh original full typed kernel captures regenerated and reviewed: both T/hypotheses0, complete guards/conclusions and common word dimension with independent host/FFI; not local literal proof replay or cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegisterOffset.lean",
+    "lean_name": "evaluateWStackLoadWReg1WithConst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackLoad_wReg1_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: original local4447-4469 all four guards/seven-conjunct conclusion. Actual compiled wReg1/even/source Add[Var r;Const c] word expression success/full stateRel derive actual native load run, unchanged clock, full relation/stack length/space, original physical-register-not-k+1 and actual target Add expression success. Source read and wordOpHOL calculation derived internally; arbitrary constant/result, physical or spill source, positive width, independent host/FFI. Native sptree locals/code preserved; canonical five map fields qualified and genuine same-module codec witnesses. No targetexpression/run/postrelation hypothesis or numerical FP claim. Fresh literal original local proof replay with unchanged original Reg1 support and full typed statement regenerated and reviewed: T/hypotheses0, all four guards/seven result conjuncts, common word dimension/independent host-FFI; no cross-language equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

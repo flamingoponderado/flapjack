@@ -10346,6 +10346,12 @@
       "sha256": "5d98aaf9cf54bd2f91a2a3c4acda0754b54cfc7a15ebdfede7942b15ccfc422f"
     },
     {
+      "out": "word_to_stack_load_register_offset_probe.out",
+      "sha256": "1cf0cdb4f83dbe49b03e07c2ae9e5340dad9b2356af57b897d039a362436893e",
+      "bytes": 904,
+      "rows": 3
+    },
+    {
       "bytes": 845,
       "out": "word_to_stack_load_register_probe.out",
       "rows": 4,

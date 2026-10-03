@@ -7635,3 +7635,7 @@ run_probe word_to_stack_inst_binary_probeScript.sml word_to_stack_inst_binary_pr
 run_probe word_to_stack_memory_relations_probeScript.sml word_to_stack_memory_relations_probe.out \
   stateRelMemStore_typed stateRelMemStore_proved stateRelMemStore_hypotheses stateRelWithMemory_typed stateRelWithMemory_proved stateRelWithMemory_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_load_register_offset_probeScript.sml word_to_stack_load_register_offset_probe.out \
+  loadReg1Offset_typed loadReg1Offset_proved loadReg1Offset_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
