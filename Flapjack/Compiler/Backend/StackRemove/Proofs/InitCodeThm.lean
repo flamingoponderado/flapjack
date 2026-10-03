@@ -341,4 +341,197 @@ theorem runSegmentRound (k : Nat) (rest : List (HolProg width)) (nonempty : rest
   simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, roundedThird]
   split_ifs <;> simp_all
 
+/-- Original segment loading the five header words. -/
+def segmentLoads (width : Nat) [NeZero width] (k : Nat) : List (HolProg width) :=
+  [loadInst 3 (k + 2), rightShiftInst 3 (wordShiftAmount width),
+    moveHOL 0 (k + 2), addBytesInWordInst 0,
+    loadInst 4 0, addBytesInWordInst 0, loadInst 6 0,
+    addBytesInWordInst 0, loadInst 7 0, addBytesInWordInst 0,
+    loadInst 1 0]
+
+theorem memLoad_of {s : StackSemStateFiniteExact width C F} {address : BitVec width}
+    {value : WordLocW width} (domain : s.mdomain address = true)
+    (memory : s.memory address = value) : StackSemStateOps.memLoad address s = some value := by
+  simp [StackSemStateOps.memLoad, domain, memory]
+
+theorem runSegmentLoads (k : Nat) (rest : List (HolProg width)) (nonempty : rest ≠ [])
+    (s : StackSemStateFiniteExact width C F) (p2 bitmapPointer : BitVec width)
+    (v1 v2 v3 v4 : WordLocW width) (good : goodDimindex width) (k8 : 8 ≤ k)
+    (readBase : s.regs.lookup (k + 2) = some (.word p2))
+    (domain : ∀ i, i < 5 → s.mdomain (p2 + BitVec.ofNat width i * bytesInWord width) = true)
+    (load0 : s.memory p2 = .word bitmapPointer)
+    (load1 : s.memory (p2 + bytesInWord width) = v1)
+    (load2 : s.memory (p2 + bytesInWord width + bytesInWord width) = v2)
+    (load3 : s.memory (p2 + bytesInWord width + bytesInWord width + bytesInWord width) = v3)
+    (load4 : s.memory (p2 + bytesInWord width + bytesInWord width + bytesInWord width +
+      bytesInWord width) = v4) :
+    StackSemEvaluate.evaluate (listSeqHOL (segmentLoads width k ++ rest), s) =
+      StackSemEvaluate.evaluate (listSeqHOL rest,
+        {s with regs := ((((((s.regs.updateEq
+          (3, .word (bitmapPointer >>> wordShiftAmount width))).updateEq
+          (0, .word (p2 + bytesInWord width + bytesInWord width + bytesInWord width +
+            bytesInWord width))).updateEq (4, v1)).updateEq (6, v2)).updateEq (7, v3)).updateEq
+          (1, v4))}) := by
+  have small := shiftSmall good
+  have b := bytesInWord width
+  have dom : ∀ i, i < 5 → ∀ address, address = p2 + BitVec.ofNat width i * bytesInWord width →
+      s.mdomain address = true := fun i hi address eq => eq ▸ domain i hi
+  have d0 := dom 0 (by omega) p2 (by simp)
+  have d1 := dom 1 (by omega) (p2 + bytesInWord width) (by simp)
+  have succ : ∀ i : Nat, p2 + BitVec.ofNat width (i + 1) * bytesInWord width =
+      p2 + BitVec.ofNat width i * bytesInWord width + bytesInWord width := by
+    intro i
+    rw [BitVec.ofNat_add, BitVec.add_mul, BitVec.add_assoc]
+    simp
+  have d2 := dom 2 (by omega) (p2 + bytesInWord width + bytesInWord width) (by
+    rw [succ 1]; simp)
+  have d3 := dom 3 (by omega) (p2 + bytesInWord width + bytesInWord width + bytesInWord width) (by
+    rw [succ 2, succ 1]; simp)
+  have d4 := dom 4 (by omega) (p2 + bytesInWord width + bytesInWord width + bytesInWord width +
+      bytesInWord width) (by rw [succ 3, succ 2, succ 1]; simp)
+  simp only [segmentLoads, List.cons_append, List.nil_append]
+  rw [stepCons _ _ _ _ (by simp) (stepLoad 3 (k + 2) p2 _ s readBase (memLoad_of d0 load0)) rfl]
+  rw [stepCons _ _ _ _ (by simp)
+    (stepLsr 3 (wordShiftAmount width) bitmapPointer _ (by simp [FUPDATE_HOL]) (by omega)) rfl]
+  rw [stepCons _ _ _ _ (by simp)
+    (stepMove 0 (k + 2) (.word p2) _
+      (by simp [FUPDATE_HOL, readBase, show k ≠ 1 by omega])) rfl]
+  rw [stepCons _ _ _ _ (by simp) (stepAddBytes 0 p2 _ (by simp [FUPDATE_HOL])) rfl]
+  rw [stepCons _ _ _ _ (by simp)
+    (stepLoad 4 0 (p2 + bytesInWord width) v1 _ (by simp [FUPDATE_HOL])
+      (by simp [StackSemStateOps.memLoad, d1, load1])) rfl]
+  rw [stepCons _ _ _ _ (by simp) (stepAddBytes 0 (p2 + bytesInWord width) _ (by simp [FUPDATE_HOL])) rfl]
+  rw [stepCons _ _ _ _ (by simp)
+    (stepLoad 6 0 (p2 + bytesInWord width + bytesInWord width) v2 _ (by simp [FUPDATE_HOL])
+      (by simp [StackSemStateOps.memLoad, d2, load2])) rfl]
+  rw [stepCons _ _ _ _ (by simp)
+    (stepAddBytes 0 (p2 + bytesInWord width + bytesInWord width) _ (by simp [FUPDATE_HOL])) rfl]
+  rw [stepCons _ _ _ _ (by simp)
+    (stepLoad 7 0 (p2 + bytesInWord width + bytesInWord width + bytesInWord width) v3 _
+      (by simp [FUPDATE_HOL]) (by simp [StackSemStateOps.memLoad, d3, load3])) rfl]
+  rw [stepCons _ _ _ _ (by simp)
+    (stepAddBytes 0 (p2 + bytesInWord width + bytesInWord width + bytesInWord width) _
+      (by simp [FUPDATE_HOL])) rfl]
+  rw [stepCons _ _ _ _ nonempty
+    (stepLoad 1 0 (p2 + bytesInWord width + bytesInWord width + bytesInWord width +
+      bytesInWord width) v4 _ (by simp [FUPDATE_HOL])
+      (by simp [StackSemStateOps.memLoad, d4, load4])) rfl]
+  congr 3
+  apply HolFiniteMapExact.ext_lookup
+  intro key
+  simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
+  split_ifs <;> simp_all
+
+/-! ### Layout arithmetic of the computed pointers -/
+
+theorem middleNat (good : goodDimindex width) (p2 p4 : BitVec width)
+    (le : p2.toNat ≤ p4.toNat) :
+    (middleWord p2 p4).toNat =
+      p2.toNat + (p4.toNat - p2.toNat) / (2 * (width / 8)) * (width / 8) := by
+  rcases good with rfl | rfl <;>
+  · simp only [middleWord, wordShiftAmount]; norm_num; bv_omega
+
+theorem lowNat (good : goodDimindex width) (p2 : BitVec width)
+    (small : p2.toNat + 255 * (width / 8) < 2 ^ width) :
+    (p2 + marginWord width).toNat = p2.toNat + 255 * (width / 8) := by
+  rcases good with rfl | rfl <;>
+  · simp only [marginWord, bytesInWord, maxStackAlloc] at *; norm_num at *; bv_omega
+
+theorem highNat (good : goodDimindex width) (p4 : BitVec width)
+    (large : 255 * (width / 8) ≤ p4.toNat) :
+    (p4 - marginWord width).toNat = p4.toNat - 255 * (width / 8) := by
+  rcases good with rfl | rfl <;>
+  · simp only [marginWord, bytesInWord, maxStackAlloc] at *; norm_num at *; bv_omega
+
+omit [NeZero width] in
+theorem adjustedBounds (p3 middle low high : BitVec width)
+    (lowMid : low.toNat ≤ middle.toNat) (midHigh : middle.toNat ≤ high.toNat) :
+    low.toNat ≤ (adjustedThird p3 middle low high).toNat ∧
+      (adjustedThird p3 middle low high).toNat ≤ high.toNat := by
+  unfold adjustedThird
+  split_ifs with h1 h2
+  · exact ⟨lowMid, midHigh⟩
+  · exact ⟨lowMid, midHigh⟩
+  · rw [BitVec.lt_def] at h1 h2
+    omega
+
+omit [NeZero width] in
+theorem adjustedInRange (p3 middle low high : BitVec width)
+    (lowP : low.toNat ≤ p3.toNat) (pHigh : p3.toNat ≤ high.toNat) :
+    adjustedThird p3 middle low high = p3 := by
+  unfold adjustedThird
+  rw [if_neg (by rw [BitVec.lt_def]; omega), if_neg (by rw [BitVec.lt_def]; omega)]
+
+/-- Heap offset chosen by the shrink conditional. -/
+theorem shrunkNat (good : goodDimindex width) (p2 adjusted : BitVec width) (maxHeap : Nat)
+    (le : p2.toNat ≤ adjusted.toNat) :
+    (shrunkThird p2 adjusted (maxHeapWord width maxHeap)).toNat =
+      p2.toNat + (if maxHeap * (width / 8) < 2 ^ width ∧
+          maxHeap * (width / 8) < adjusted.toNat - p2.toNat
+        then maxHeap * (width / 8) else adjusted.toNat - p2.toNat) := by
+  rcases good with rfl | rfl <;>
+  · simp only [shrunkThird, maxHeapWord, bytesInWord] at *
+    norm_num at *
+    split_ifs <;> bv_omega
+
+theorem roundedNat (good : goodDimindex width) (p2 shrunk : BitVec width)
+    (le : p2.toNat ≤ shrunk.toNat) :
+    (roundedThird p2 shrunk).toNat =
+      p2.toNat + (shrunk.toNat - p2.toNat) / (2 * (width / 8)) * (2 * (width / 8)) := by
+  rcases good with rfl | rfl <;>
+  · simp only [roundedThird, wordShiftAmount]; norm_num; bv_omega
+
+theorem halfNat (good : goodDimindex width) (p2 reg3 : BitVec width)
+    (le : p2.toNat ≤ reg3.toNat) (even : (reg3.toNat - p2.toNat) % (2 * (width / 8)) = 0) :
+    ((reg3 - p2) >>> (1 : Nat)).toNat = (reg3.toNat - p2.toNat) / 2 := by
+  rcases good with rfl | rfl <;>
+  · norm_num at *; bv_omega
+
+/-- The heap/store/stack layout fixed by the initializer's pointer arithmetic:
+the original `heap_length`/`stack_length` decomposition (source 3446-3550). -/
+theorem initLayout (good : goodDimindex width) (maxHeap : Nat) (hm : maxStackAlloc ≤ maxHeap)
+    (p2 p3 p4 : BitVec width) (le : p2.toNat ≤ p4.toNat)
+    (big : 1024 * (width / 8) ≤ p4.toNat - p2.toNat)
+    (a2 : p2.toNat % (width / 8) = 0) (a4 : p4.toNat % (width / 8) = 0) :
+    let adjusted := adjustedThird p3 (middleWord p2 p4) (p2 + marginWord width)
+      (p4 - marginWord width)
+    let shrunk := shrunkThird p2 adjusted (maxHeapWord width maxHeap)
+    let reg3 := roundedThird p2 shrunk
+    p2.toNat ≤ adjusted.toNat ∧ p2.toNat ≤ shrunk.toNat ∧
+    ∃ heapLength stackLength : Nat,
+      reg3.toNat = p2.toNat + heapLength * (width / 8) ∧
+      p4.toNat = reg3.toNat + stackLength * (width / 8) ∧
+      heapLength % 2 = 0 ∧ heapLength ≤ maxHeap ∧
+      maxStackAlloc ≤ heapLength + storeList.length ∧ maxStackAlloc ≤ stackLength := by
+  intro adjusted shrunk reg3
+  have p4lt : p4.toNat < 2 ^ width := p4.isLt
+  have low := lowNat good p2 (by omega)
+  have high := highNat good p4 (by omega)
+  have mid := middleNat good p2 p4 le
+  have sl : storeList.length = 48 := rfl
+  have hm' : 255 ≤ maxHeap := hm
+  have hcase : (width / 8 = 4 ∧ 2 ^ width = 2 ^ 32) ∨ (width / 8 = 8 ∧ 2 ^ width = 2 ^ 64) := by
+    rcases good with h | h <;> subst h <;> norm_num
+  rcases hcase with ⟨hB, hpow⟩ | ⟨hB, hpow⟩ <;>
+  · norm_num at hpow
+    rw [hB] at mid low high a2 a4 big
+    rw [hpow] at p4lt
+    have bounds : (p2 + marginWord width).toNat ≤ adjusted.toNat ∧
+        adjusted.toNat ≤ (p4 - marginWord width).toNat :=
+      adjustedBounds p3 (middleWord p2 p4) (p2 + marginWord width)
+        (p4 - marginWord width) (by omega) (by omega)
+    have adjLe : p2.toNat ≤ adjusted.toNat := bounds.1.trans' (by omega)
+    have shr := shrunkNat good p2 adjusted maxHeap adjLe
+    rw [hB, hpow] at shr
+    have shr' : shrunk.toNat = _ := shr
+    clear shr
+    have shrLe : p2.toNat ≤ shrunk.toNat := by rw [shr']; split_ifs <;> omega
+    have rnd := roundedNat good p2 shrunk shrLe
+    rw [hB] at rnd
+    have rnd' : reg3.toNat = _ := rnd
+    clear rnd mid
+    refine ⟨adjLe, shrLe, (shrunk.toNat - p2.toNat) / (2 * (width / 8)) * 2,
+      (p4.toNat - reg3.toNat) / (width / 8), ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+      simp only [hB, sl, maxStackAlloc] <;> split_ifs at shr' <;> omega
+
 end Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeThm
