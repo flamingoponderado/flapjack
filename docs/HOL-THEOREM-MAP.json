@@ -79725,5 +79725,43 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-03 original888-899: unconditional forall value, flatten(convert_v value)=flatten value, identical actual convertV/flattenHOL definitions and ValueHOL constructors. Arbitrary nested records/named structs retained, no size/context/info/wf or source-evaluation premise. Original named-field MAP SND and conversion erase names but preserve order; nested native recursor and membership IHs establish each map equality before flattening. Positive type-indexed word carrier is the only translation, no finite-map qualifier or String carrier. Fresh original closed whole statement/binder/hyp0/kernelT reviewed. Memory/shared-memory compiler cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectStoreWords.lean",
+    "lean_name": "compileCorrectStore32",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 and final constructor proof1338-1342 Store32 case: full ten source premises/seven conclusions, no recursive IH/additional target-memory/run/width/domain/compatibility premise. Faithful source evaluateHOLFiniteState success requires both destination and source expressions to produce Val Word and original memory operation to return SOME memory; all other source branches contradict original no-Error premise. FullExpr proves actual target child evaluations, convertV retains word payloads. Imported converter preserves source memory/domain/endianness exactly, so original panMemStore32HOL or panMemStoreByteWord8HOL operation and BitVec.ofNat32/8 word.toNat cast have identical arguments; target memory outcome follows definitionally from source operation, with no width>=32/8 restriction. State memory update commutes with canonical converter; locals/globals/structs unchanged, both FEVERY and shape-map conclusions from original premises, NONE result has no result values. Same imported canonical owner/full two-way state witness and four-map/positive-word/Type0 qualifiers only. Fresh original whole/case statement/types/kernelT reviewed. General Store and executed compiler route remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectStoreWords.lean",
+    "lean_name": "compileCorrectStoreByte",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 and final constructor proof1338-1342 StoreByte case: full ten source premises/seven conclusions, no recursive IH/additional target-memory/run/width/domain/compatibility premise. Faithful source evaluateHOLFiniteState success requires both destination and source expressions to produce Val Word and original memory operation to return SOME memory; all other source branches contradict original no-Error premise. FullExpr proves actual target child evaluations, convertV retains word payloads. Imported converter preserves source memory/domain/endianness exactly, so original panMemStore32HOL or panMemStoreByteWord8HOL operation and BitVec.ofNat32/8 word.toNat cast have identical arguments; target memory outcome follows definitionally from source operation, with no width>=32/8 restriction. State memory update commutes with canonical converter; locals/globals/structs unchanged, both FEVERY and shape-map conclusions from original premises, NONE result has no result values. Same imported canonical owner/full two-way state witness and four-map/positive-word/Type0 qualifiers only. Fresh original whole/case statement/types/kernelT reviewed. General Store and executed compiler route remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectStoreWords.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]

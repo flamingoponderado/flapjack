@@ -1248,6 +1248,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectReturnRaise
 import Flapjack.Pancake.Proofs.PanStructs.EvaluateStructsCodeInvariant
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSeqIf
 import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode

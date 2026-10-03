@@ -7289,3 +7289,9 @@ Seq derives intermediate invariants; If uses the source-word-selected branch.
 `flatten_convert_v`, its binder type, zero hypotheses and closed kernel proof.
 The native theorem preserves flattened words for arbitrary nested records and
 named structs; erasing names retains field order and requires no validity guard.
+
+`pan_structs_program_store_words_probe` captures the full original program
+correctness theorem and Store32/StoreByte specializations, closed binder types
+and kernel proofs. Native cases keep all ten premises/seven conclusions, actual
+source memory-domain/error/endian/cast behavior and arbitrary positive width.
+The target memory operation is the same source operation, derived internally.
