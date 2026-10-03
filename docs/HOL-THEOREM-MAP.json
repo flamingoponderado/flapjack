@@ -70025,6 +70025,86 @@
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.4.1: fresh complete original statements/literal unchanged proofs T/hyp0/closed9rows. Original5601-5607 arbitrary actual source/target code trees and full location-set inclusion. Sole original subspt premise; native lookup/domain characterization preserves both domain/zero-offset and successful lookup/get_labels existential branches. No wf/success/membership/targetrun extra premise; no raw-map/TreeMap substitute. Entire imported HolProg/getLabelsExact/locCheckExact carrier compared, exact Spt and propositional sets retained. Positive type-indexed alpha words use width/NeZero. No executable compiler/evaluator changes, simulation assumption or numerical FP assertion; no full pass completion claim."
   },
   {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRDispatch.lean",
+    "lean_name": "«reg'FPCSR»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'FPCSR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.19: literal full FPCSR source867-892, sendIPI1484-1510, CSRMap1785-2336 all66 clauses, writeCSRMap2338-3226 all41 clauses, wrappers4080-4138. Fixed words32/64/12/8 and canonical original reviewed records/function maps retained. Full old-state updates, first-exception retention/canonical ARB, exact hex byte messages, counter word64 wrap and signextended high32 reads, word32 shift32 zero insertion, CSR3 complete word32 replacement/CSR1flags/CSR2FRM, MFS Dirty/MSD, supervisor lowering, timer pending-bit clear, exception-PC alignment, truncated8 IPI bound, and Delta addr then actual postwrite CSR readback reviewed without knownCSR/validcore/success premise. Full original definitions captured in l3_csr_dispatch_probe; independent original/kernel read/write/counter/FPCSR/Delta/unknown/IPI regressions. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRDispatch.lean",
+    "lean_name": "CSRMap",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "CSRMap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.19: literal full FPCSR source867-892, sendIPI1484-1510, CSRMap1785-2336 all66 clauses, writeCSRMap2338-3226 all41 clauses, wrappers4080-4138. Fixed words32/64/12/8 and canonical original reviewed records/function maps retained. Full old-state updates, first-exception retention/canonical ARB, exact hex byte messages, counter word64 wrap and signextended high32 reads, word32 shift32 zero insertion, CSR3 complete word32 replacement/CSR1flags/CSR2FRM, MFS Dirty/MSD, supervisor lowering, timer pending-bit clear, exception-PC alignment, truncated8 IPI bound, and Delta addr then actual postwrite CSR readback reviewed without knownCSR/validcore/success premise. Full original definitions captured in l3_csr_dispatch_probe; independent original/kernel read/write/counter/FPCSR/Delta/unknown/IPI regressions. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRDispatch.lean",
+    "lean_name": "CSR",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "CSR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.19: literal full FPCSR source867-892, sendIPI1484-1510, CSRMap1785-2336 all66 clauses, writeCSRMap2338-3226 all41 clauses, wrappers4080-4138. Fixed words32/64/12/8 and canonical original reviewed records/function maps retained. Full old-state updates, first-exception retention/canonical ARB, exact hex byte messages, counter word64 wrap and signextended high32 reads, word32 shift32 zero insertion, CSR3 complete word32 replacement/CSR1flags/CSR2FRM, MFS Dirty/MSD, supervisor lowering, timer pending-bit clear, exception-PC alignment, truncated8 IPI bound, and Delta addr then actual postwrite CSR readback reviewed without knownCSR/validcore/success premise. Full original definitions captured in l3_csr_dispatch_probe; independent original/kernel read/write/counter/FPCSR/Delta/unknown/IPI regressions. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRDispatch.lean",
+    "lean_name": "sendIPI",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "sendIPI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.19: literal full FPCSR source867-892, sendIPI1484-1510, CSRMap1785-2336 all66 clauses, writeCSRMap2338-3226 all41 clauses, wrappers4080-4138. Fixed words32/64/12/8 and canonical original reviewed records/function maps retained. Full old-state updates, first-exception retention/canonical ARB, exact hex byte messages, counter word64 wrap and signextended high32 reads, word32 shift32 zero insertion, CSR3 complete word32 replacement/CSR1flags/CSR2FRM, MFS Dirty/MSD, supervisor lowering, timer pending-bit clear, exception-PC alignment, truncated8 IPI bound, and Delta addr then actual postwrite CSR readback reviewed without knownCSR/validcore/success premise. Full original definitions captured in l3_csr_dispatch_probe; independent original/kernel read/write/counter/FPCSR/Delta/unknown/IPI regressions. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRDispatch.lean",
+    "lean_name": "«rec'FPCSR»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'FPCSR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.19: literal full FPCSR source867-892, sendIPI1484-1510, CSRMap1785-2336 all66 clauses, writeCSRMap2338-3226 all41 clauses, wrappers4080-4138. Fixed words32/64/12/8 and canonical original reviewed records/function maps retained. Full old-state updates, first-exception retention/canonical ARB, exact hex byte messages, counter word64 wrap and signextended high32 reads, word32 shift32 zero insertion, CSR3 complete word32 replacement/CSR1flags/CSR2FRM, MFS Dirty/MSD, supervisor lowering, timer pending-bit clear, exception-PC alignment, truncated8 IPI bound, and Delta addr then actual postwrite CSR readback reviewed without knownCSR/validcore/success premise. Full original definitions captured in l3_csr_dispatch_probe; independent original/kernel read/write/counter/FPCSR/Delta/unknown/IPI regressions. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRDispatch.lean",
+    "lean_name": "«write'reg'FPCSR»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'reg'FPCSR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.19: literal full FPCSR source867-892, sendIPI1484-1510, CSRMap1785-2336 all66 clauses, writeCSRMap2338-3226 all41 clauses, wrappers4080-4138. Fixed words32/64/12/8 and canonical original reviewed records/function maps retained. Full old-state updates, first-exception retention/canonical ARB, exact hex byte messages, counter word64 wrap and signextended high32 reads, word32 shift32 zero insertion, CSR3 complete word32 replacement/CSR1flags/CSR2FRM, MFS Dirty/MSD, supervisor lowering, timer pending-bit clear, exception-PC alignment, truncated8 IPI bound, and Delta addr then actual postwrite CSR readback reviewed without knownCSR/validcore/success premise. Full original definitions captured in l3_csr_dispatch_probe; independent original/kernel read/write/counter/FPCSR/Delta/unknown/IPI regressions. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRDispatch.lean",
+    "lean_name": "«write'CSRMap»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'CSRMap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.19: literal full FPCSR source867-892, sendIPI1484-1510, CSRMap1785-2336 all66 clauses, writeCSRMap2338-3226 all41 clauses, wrappers4080-4138. Fixed words32/64/12/8 and canonical original reviewed records/function maps retained. Full old-state updates, first-exception retention/canonical ARB, exact hex byte messages, counter word64 wrap and signextended high32 reads, word32 shift32 zero insertion, CSR3 complete word32 replacement/CSR1flags/CSR2FRM, MFS Dirty/MSD, supervisor lowering, timer pending-bit clear, exception-PC alignment, truncated8 IPI bound, and Delta addr then actual postwrite CSR readback reviewed without knownCSR/validcore/success premise. Full original definitions captured in l3_csr_dispatch_probe; independent original/kernel read/write/counter/FPCSR/Delta/unknown/IPI regressions. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRDispatch.lean",
+    "lean_name": "«write'CSR»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'CSR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.19: literal full FPCSR source867-892, sendIPI1484-1510, CSRMap1785-2336 all66 clauses, writeCSRMap2338-3226 all41 clauses, wrappers4080-4138. Fixed words32/64/12/8 and canonical original reviewed records/function maps retained. Full old-state updates, first-exception retention/canonical ARB, exact hex byte messages, counter word64 wrap and signextended high32 reads, word32 shift32 zero insertion, CSR3 complete word32 replacement/CSR1flags/CSR2FRM, MFS Dirty/MSD, supervisor lowering, timer pending-bit clear, exception-PC alignment, truncated8 IPI bound, and Delta addr then actual postwrite CSR readback reviewed without knownCSR/validcore/success premise. Full original definitions captured in l3_csr_dispatch_probe; independent original/kernel read/write/counter/FPCSR/Delta/unknown/IPI regressions. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRDispatch.lean",
+    "lean_name": "writeCSR",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "writeCSR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.19: literal full FPCSR source867-892, sendIPI1484-1510, CSRMap1785-2336 all66 clauses, writeCSRMap2338-3226 all41 clauses, wrappers4080-4138. Fixed words32/64/12/8 and canonical original reviewed records/function maps retained. Full old-state updates, first-exception retention/canonical ARB, exact hex byte messages, counter word64 wrap and signextended high32 reads, word32 shift32 zero insertion, CSR3 complete word32 replacement/CSR1flags/CSR2FRM, MFS Dirty/MSD, supervisor lowering, timer pending-bit clear, exception-PC alignment, truncated8 IPI bound, and Delta addr then actual postwrite CSR readback reviewed without knownCSR/validcore/success premise. Full original definitions captured in l3_csr_dispatch_probe; independent original/kernel read/write/counter/FPCSR/Delta/unknown/IPI regressions. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRDispatch.lean",
+    "lean_name": "«write'rec'FPCSR»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'rec'FPCSR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.19: literal full FPCSR source867-892, sendIPI1484-1510, CSRMap1785-2336 all66 clauses, writeCSRMap2338-3226 all41 clauses, wrappers4080-4138. Fixed words32/64/12/8 and canonical original reviewed records/function maps retained. Full old-state updates, first-exception retention/canonical ARB, exact hex byte messages, counter word64 wrap and signextended high32 reads, word32 shift32 zero insertion, CSR3 complete word32 replacement/CSR1flags/CSR2FRM, MFS Dirty/MSD, supervisor lowering, timer pending-bit clear, exception-PC alignment, truncated8 IPI bound, and Delta addr then actual postwrite CSR readback reviewed without knownCSR/validcore/success premise. Full original definitions captured in l3_csr_dispatch_probe; independent original/kernel read/write/counter/FPCSR/Delta/unknown/IPI regressions. Full Run/Next correctness remains open."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Flat.lean",
     "lean_name": "compCorrectAssign",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",

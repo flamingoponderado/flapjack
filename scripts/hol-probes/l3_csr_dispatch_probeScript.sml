@@ -1,0 +1,14 @@
+load "riscvTheory";
+open HolKernel Parse bossLib riscvTheory;
+val _ = Globals.linewidth := 100000;
+fun definition label th = if null(hyp th) then (print(label^"=");print_term(concl th);print "\n") else raise Fail "hypotheses";
+val _ = definition "csr_dispatch_definition_0" rec'FPCSR_def;
+val _ = definition "csr_dispatch_definition_1" reg'FPCSR_def;
+val _ = definition "csr_dispatch_definition_2" write'reg'FPCSR_def;
+val _ = definition "csr_dispatch_definition_3" write'rec'FPCSR_def;
+val _ = definition "csr_dispatch_definition_4" CSRMap_def;
+val _ = definition "csr_dispatch_definition_5" write'CSRMap_def;
+val _ = definition "csr_dispatch_definition_6" CSR_def;
+val _ = definition "csr_dispatch_definition_7" write'CSR_def;
+val _ = definition "csr_dispatch_definition_8" writeCSR_def;
+val _ = definition "csr_dispatch_definition_9" sendIPI_def;
