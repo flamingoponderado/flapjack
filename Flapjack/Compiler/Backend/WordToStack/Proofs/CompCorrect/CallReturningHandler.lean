@@ -1695,4 +1695,175 @@ theorem handlerReturnCountBound {width : Nat} [NeZero width]
   unfold Compiler.Backend.WordToStack.numStackRet
   split at frameShape <;> omega
 
+/-- Recover the actual SOME-handler caller frame after the source callee
+returns. Full evaluate_stack_swap supplies frame keys, saved handler labels,
+non-GC values and size; native pop_env then computes restored locals and
+handler. No returned frame or desired relation is assumed. Flapjack factoring
+of the original handler normal-return branch, distinct from the NONE case. -/
+theorem returnedHandlerCallerFrame {width : Nat} [NeZero width] {C F : Type}
+    (prog : WordLangProgHOL (BitVec width))
+    (source bodyPost : WordSemStateFiniteExact width C F)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (args1 : List (WordLocW width)) (ss : Option Nat)
+    (handlerVar h1 h2 : Nat) (handlerCode : WordLangProgHOL (BitVec width))
+    (location : WordLocW width) (returned : List (WordLocW width))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))) =
+      (some (.result location returned), bodyPost)) :
+    ∃ (gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width)),
+      bodyPost.stack = .stackFrame source.localsSize (sptToAList envs.1) gc (some (source.handler,h1,h2)) :: tail ∧
+      ((wordSemEnvToList envs.2 source.permute).1).map Prod.fst = gc.map Prod.fst ∧
+      WordSemStackEq.sKeyEq source.stack tail ∧ bodyPost.handler = source.stack.length ∧
+      WordSemStateFiniteExact.popEnv bodyPost = some {bodyPost with
+        locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList envs.1)),
+        stack := tail, localsSize := source.localsSize, handler := source.handler} ∧
+      sptDomainEqUnion
+        (sptUnion (sptFromAList gc) (sptFromAList (sptToAList envs.1))) envs.1 envs.2 := by
+  have invariant := WordSemStackEq.evaluateStackSwap prog
+    (WordSemStateFiniteExact.callEnv args1 ss
+      (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source)))
+  unfold WordSemStackEq.stackSwapPost at invariant
+  rw [bodyRun] at invariant
+  obtain ⟨keys, handler, _⟩ := invariant
+  have pushedKeys : WordSemStackEq.sKeyEq
+      (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+        (WordSemStateFiniteExact.decClock source)).stack bodyPost.stack := keys
+  obtain ⟨_, _, _, _, _, popped, poppedRun, _, domain, _⟩ :=
+    WordSemStackEq.pushEnvPopEnvSKeyEq envs (some (handlerVar,handlerCode,h1,h2))
+      (WordSemStateFiniteExact.decClock source) bodyPost pushedKeys
+  change WordSemStackEq.sKeyEq
+    (.stackFrame source.localsSize (sptToAList envs.1)
+      (wordSemEnvToList envs.2 source.permute).1 (some (source.handler,h1,h2)) :: source.stack) bodyPost.stack at keys
+  cases stackEq : bodyPost.stack with
+  | nil => simp only [stackEq, WordSemStackEq.sKeyEq] at keys
+  | cons frame tail =>
+    cases frame with
+    | stackFrame size nonGc gc opt =>
+      rw [stackEq] at keys
+      obtain ⟨tailKeys, frameKeys⟩ := keys
+      rw [WordSemStackEq.sFrameKeyEqDef2] at frameKeys
+      obtain ⟨gcKeys, rfl, rfl, rfl⟩ := frameKeys
+      have popRun : WordSemStateFiniteExact.popEnv bodyPost = some {bodyPost with
+          locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList envs.1)),
+          stack := tail, localsSize := source.localsSize, handler := source.handler} := by
+        rw [WordSemStateFiniteExact.popEnv, stackEq]
+      have same := Option.some.inj (poppedRun.symm.trans popRun)
+      subst popped
+      refine ⟨gc, tail, rfl, gcKeys, tailKeys, handler, popRun, ?_⟩
+      intro key
+      have equality := congrFun domain key
+      simpa only [sptMem, sptDomain, or_comm] using (Eq.to_iff equality.symm)
+
+/-- The actual non-error handler Call and callee normal result derive the
+return location/length checks, restored source environment, domain check,
+actual continuation run and original guarded continuation IH. No target
+restoration or simulation conclusion is supplied. Flapjack assembly for the
+original handler normal-return branch; the full case remains unfinished. -/
+theorem sourceHandlerReturningContinuation {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (handlerVar h1 h2 : Nat) (handlerCode : WordLangProgHOL (BitVec width))
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result : Option (WordSemResult width))
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (location : WordLocW width) (returned : List (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (ih : InductionHypotheses ac values names retCode l1 l2 dest args handlerVar h1 h2 handlerCode source)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar,handlerCode,h1,h2))) source =
+      (result, sourcePost)) (notError : result ≠ some .error)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))) =
+      (some (.result location returned), bodyPost)) :
+    ∃ (gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width))
+      (popped : WordSemStateFiniteExact width (Nat × C) F),
+      bodyPost.stack = .stackFrame source.localsSize (sptToAList envs.1) gc (some (source.handler,h1,h2)) :: tail ∧
+      ((wordSemEnvToList envs.2 source.permute).1).map Prod.fst = gc.map Prod.fst ∧
+      WordSemStackEq.sKeyEq source.stack tail ∧ bodyPost.handler = source.stack.length ∧
+      popped = {bodyPost with
+        locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList envs.1)),
+        stack := tail, localsSize := source.localsSize, handler := source.handler} ∧
+      WordSemStateFiniteExact.popEnv bodyPost = some popped ∧
+      sptDomainEqUnion popped.locals envs.1 envs.2 ∧
+      ¬ (location ≠ .loc l1 l2 ∨ returned.length ≠ values.length) ∧
+      WordSemStateFiniteExact.evaluate retCode (WordSemStateFiniteExact.setVars values returned popped) =
+        (result, sourcePost) ∧
+      Seq.Simulation ac retCode (WordSemStateFiniteExact.setVars values returned popped) := by
+  obtain ⟨gc, tail, frame, gcKeys, tailKeys, handler, popRun, domain⟩ :=
+    returnedHandlerCallerFrame prog source bodyPost envs args1 ss
+      handlerVar h1 h2 handlerCode location returned bodyRun
+  let popped : WordSemStateFiniteExact width (Nat × C) F := {bodyPost with
+    locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList envs.1)),
+    stack := tail, localsSize := source.localsSize, handler := source.handler}
+  have originalGuards := guards
+  obtain ⟨get, bad, find, valid, cut⟩ := originalGuards
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only at execution
+  by_cases invalid : location ≠ .loc l1 l2 ∨ returned.length ≠ values.length
+  · rw [if_pos invalid] at execution
+    exact False.elim (notError (Prod.mk.inj execution).1.symm)
+  rw [if_neg invalid, popRun] at execution
+  simp only at execution
+  rw [if_pos domain] at execution
+  refine ⟨gc, tail, popped, frame, gcKeys, tailKeys, handler, rfl, popRun, domain,
+    invalid, execution, ?_⟩
+  exact ih.1 xs args1 prog ss envs location returned bodyPost popped
+    ⟨guards, nonzero, bodyRun, invalid, popRun, domain⟩
+
+/-- The non-error whole handler Call derives exception location/domain
+checks and its actual handler continuation run. Instantiating the original
+guarded exception IH supplies its simulation, without any target run or
+restoration premise. Flapjack source-case assembly, not the full comp_correct
+handler theorem. -/
+theorem sourceHandlerExceptionContinuation {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (handlerVar h1 h2 : Nat) (handlerCode : WordLangProgHOL (BitVec width))
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result : Option (WordSemResult width))
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (location value : WordLocW width)
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (ih : InductionHypotheses ac values names retCode l1 l2 dest args
+      handlerVar h1 h2 handlerCode source)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) source = (result,sourcePost))
+    (notError : result ≠ some .error)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+          (WordSemStateFiniteExact.decClock source))) =
+      (some (.exception location value),bodyPost)) :
+    ¬ location ≠ .loc h1 h2 ∧ sptDomainEqUnion bodyPost.locals envs.1 envs.2 ∧
+    WordSemStateFiniteExact.evaluate handlerCode
+      (WordSemStateFiniteExact.setVar handlerVar value bodyPost) = (result,sourcePost) ∧
+    Seq.Simulation ac handlerCode (WordSemStateFiniteExact.setVar handlerVar value bodyPost) := by
+  have originalGuards := guards
+  obtain ⟨get,bad,find,valid,cut⟩ := originalGuards
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  simp only [get,bad,Bool.false_eq_true,if_false,find,valid,cut] at execution
+  rw [dif_neg nonzero,WordSemStateFiniteExact.fix_clock_evaluate,bodyRun] at execution
+  simp only at execution
+  by_cases invalid : location ≠ .loc h1 h2
+  · rw [if_pos invalid] at execution
+    exact False.elim (notError (Prod.mk.inj execution).1.symm)
+  rw [if_neg invalid] at execution
+  by_cases domain : sptDomainEqUnion bodyPost.locals envs.1 envs.2
+  · rw [if_pos domain] at execution
+    exact ⟨invalid,domain,execution,ih.2.1 xs args1 prog ss envs location value bodyPost
+      ⟨guards,nonzero,bodyRun,invalid,domain⟩⟩
+  · rw [if_neg domain] at execution
+    exact False.elim (notError (Prod.mk.inj execution).1.symm)
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
