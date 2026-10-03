@@ -1,0 +1,4 @@
+riscv_target_ok_statement=target_ok riscv_target
+riscv_target_ok_types=:(64, riscv_state, word5 # word2 # TransferControl option # exception # (word5 -> word64) # (word64 # word8 -> bool) # word64) target
+riscv_target_ok_hypotheses=0
+riscv_target_ok_proved=T
