@@ -1,12 +1,13 @@
 import Flapjack.RiscV.L3.Defs.RegisterShift
-import Flapjack.RiscV.L3.Defs.SetLess
-import Flapjack.RiscV.L3.Defs.ImmediateALU
+import Flapjack.Compiler.Backend.LabToTarget.Initialization.MemorySeparationCases
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases
 import Flapjack.RiscV.L3.Defs.RegisterALU
 import Flapjack.RiscV.L3.Defs.ConditionalBranch
 import Flapjack.RiscV.L3.Defs.UpperJump
 import Flapjack.RiscV.L3.Defs.CSRInstructions
+import Flapjack.RiscV.L3.Defs.SetLess
+import Flapjack.RiscV.L3.Defs.ImmediateALU
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitClock
@@ -790,6 +791,10 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionTotalColourOutput
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNormalizedMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionDecodedSSAMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadFallbackMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadNativeMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCseMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorWrapperInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionForced
@@ -1047,6 +1052,9 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.MemStoreConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.JumpExcConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.AllocConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallEvaluate
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame
@@ -1874,6 +1882,9 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Full
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocNone
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocCorrect
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.ProgComp
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.InstCorrect
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMove
