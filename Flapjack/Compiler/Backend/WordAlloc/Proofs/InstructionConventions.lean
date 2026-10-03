@@ -157,5 +157,3 @@ theorem wordAlloc_fullInstOkLess {width : Nat} [NeZero width]
           ⟨separated, getForcedPairwiseDistinct c prog [] (by simp)⟩⟩
 
 end Flapjack.WordAlloc
-
-

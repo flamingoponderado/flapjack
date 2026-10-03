@@ -75186,5 +75186,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-sol-a source comparison2026-10-03 original11199-11296/11332-11353: full original quantified Boolean predicates P/Q, colouring f and native instruction/expression/program or Unit Spt tree; original input occurrence plus pointwise implication conjunction, or original unconditional constantly-true/physical-total-colour result. Literal everyVarInstHOL/everyVarExpHOL/everyVarHOL/everyStackVarHOL/everyNameHOL, applyColour and totalColour clauses. No injectivity, tree well-formedness, output validity, oracle or allocator success premise. All constructor fields, original 64-bit FP move occurrence branch, Move ZIP projections, both expression Shift operands, list arguments, native Spt key collisions and return-dependent Call handler traversal retained. Unconditional applyNummapKeyDomain and sptMemMapFstToAList establish key transport; original maxVarMax yields everyVarTrue. Sole carrier translation is positive type-indexed BitVec with NeZero; dimension remains source positive.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CallArgumentConventions.lean",
+    "lean_name": "callArgConvention_preservation",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "call_arg_convention_preservation",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11182-11197: original arbitrary prog and f, occurrence-local physical-register implication conjoined with source call_arg_convention, and full coloured-program conclusion. Boolean implication !isPhyVar x || f x == x preserves the HOL premise. Native positive-width program/instruction carriers and everyVarHOL include all source fields; instArgConvention has exactly the original arithmetic clauses at positive width. Canonical GENLIST arguments use List.range.map, retaining list length; returning Call checks both bodies and tail Call ignores handlers exactly as source. No global fixation, target convention, injectivity or allocation success assumption. words_as_type_indexed_bitvec records the positive HOL word dimension only."
   }
 ]
