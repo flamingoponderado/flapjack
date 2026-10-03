@@ -1,0 +1,9 @@
+lem4_statement=∀c. 0xFFFFFFFFFFFFF800w ≤ c ∧ c ≤ 2047w ⇒ sw2sw (v2w [c ' 11; c ' 10; c ' 9; c ' 8; c ' 7; c ' 6; c ' 5; c ' 4; c ' 3; c ' 2; c ' 1; c ' 0]) = c
+lem4_types=c : :word64
+lem4_hypotheses=0
+lem4_proved=T
+lem12b_statement=∀c. 0xFFFFFFFF80000000w ≤ c ∧ c ≤ 0x7FFFF7FFw ∧ (1 >< 0) c = 0w ⇒ sw2sw ((31 >< 12) (c + -1w * sw2sw ((11 >< 0) c)) @@ 0w) + sw2sw ((11 >< 0) c && ¬2w) = c
+lem12b_types=c : :word64
+lem12b_hypotheses=0
+lem12b_proved=T
+lem12b_intermediate_types=(11 >< 0) c : :word12; sw2sw ((11 >< 0) c && ¬2w) : :word64; (11 >< 0) c : :word12; sw2sw ((11 >< 0) c) : :word64; (31 >< 12) (c + -1w * sw2sw ((11 >< 0) c)) : :word20; (31 >< 12) (c + -1w * sw2sw ((11 >< 0) c)) @@ 0w : :word32; sw2sw ((31 >< 12) (c + -1w * sw2sw ((11 >< 0) c)) @@ 0w) : :word64; (1 >< 0) c : :word64
