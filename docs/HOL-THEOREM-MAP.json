@@ -79734,5 +79734,109 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-03 original888-899: unconditional forall value, flatten(convert_v value)=flatten value, identical actual convertV/flattenHOL definitions and ValueHOL constructors. Arbitrary nested records/named structs retained, no size/context/info/wf or source-evaluation premise. Original named-field MAP SND and conversion erase names but preserve order; nested native recursor and membership IHs establish each map equality before flattening. Positive type-indexed word carrier is the only translation, no finite-map qualifier or String carrier. Fresh original closed whole statement/binder/hyp0/kernelT reviewed. Memory/shared-memory compiler cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "everyInst_simpSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_inst_SimpSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2705: original complete arbitrary native programmes and accumulator; every_inst retains arbitrary instruction predicate and both source premises; flat/fullInst retain both source validity premises for Seq_assoc_right and sole source premise for remove_unreach. Native WordUnreach SimpSeq terminal/skip/move merging and recursive Seq_assoc_right returning/exception handler, If, Loop and MustTerminate clauses compared with word_unreachScript12-73. Positive-word native AST, exact assembler configuration and fullInst Share address policies retained. No target-run assumptions, extra configuration restrictions or narrowed constructors. Native recursive induction derives target accumulator validity; it is not a theorem premise. Proof-side conventions only; separate executable production route bead remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "flatExpConventions_simpSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "flat_exp_conventions_SimpSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2743: original complete arbitrary native programmes and accumulator; every_inst retains arbitrary instruction predicate and both source premises; flat/fullInst retain both source validity premises for Seq_assoc_right and sole source premise for remove_unreach. Native WordUnreach SimpSeq terminal/skip/move merging and recursive Seq_assoc_right returning/exception handler, If, Loop and MustTerminate clauses compared with word_unreachScript12-73. Positive-word native AST, exact assembler configuration and fullInst Share address policies retained. No target-run assumptions, extra configuration restrictions or narrowed constructors. Native recursive induction derives target accumulator validity; it is not a theorem premise. Proof-side conventions only; separate executable production route bead remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "everyInst_seqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_inst_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2718: original complete arbitrary native programmes and accumulator; every_inst retains arbitrary instruction predicate and both source premises; flat/fullInst retain both source validity premises for Seq_assoc_right and sole source premise for remove_unreach. Native WordUnreach SimpSeq terminal/skip/move merging and recursive Seq_assoc_right returning/exception handler, If, Loop and MustTerminate clauses compared with word_unreachScript12-73. Positive-word native AST, exact assembler configuration and fullInst Share address policies retained. No target-run assumptions, extra configuration restrictions or narrowed constructors. Native recursive induction derives target accumulator validity; it is not a theorem premise. Proof-side conventions only; separate executable production route bead remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "flatExpConventions_seqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "flat_exp_conventions_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2756: original complete arbitrary native programmes and accumulator; every_inst retains arbitrary instruction predicate and both source premises; flat/fullInst retain both source validity premises for Seq_assoc_right and sole source premise for remove_unreach. Native WordUnreach SimpSeq terminal/skip/move merging and recursive Seq_assoc_right returning/exception handler, If, Loop and MustTerminate clauses compared with word_unreachScript12-73. Positive-word native AST, exact assembler configuration and fullInst Share address policies retained. No target-run assumptions, extra configuration restrictions or narrowed constructors. Native recursive induction derives target accumulator validity; it is not a theorem premise. Proof-side conventions only; separate executable production route bead remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "everyInst_removeUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_inst_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2734: original complete arbitrary native programmes and accumulator; every_inst retains arbitrary instruction predicate and both source premises; flat/fullInst retain both source validity premises for Seq_assoc_right and sole source premise for remove_unreach. Native WordUnreach SimpSeq terminal/skip/move merging and recursive Seq_assoc_right returning/exception handler, If, Loop and MustTerminate clauses compared with word_unreachScript12-73. Positive-word native AST, exact assembler configuration and fullInst Share address policies retained. No target-run assumptions, extra configuration restrictions or narrowed constructors. Native recursive induction derives target accumulator validity; it is not a theorem premise. Proof-side conventions only; separate executable production route bead remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "flatExpConventions_removeUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "flat_exp_conventions_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2772: original complete arbitrary native programmes and accumulator; every_inst retains arbitrary instruction predicate and both source premises; flat/fullInst retain both source validity premises for Seq_assoc_right and sole source premise for remove_unreach. Native WordUnreach SimpSeq terminal/skip/move merging and recursive Seq_assoc_right returning/exception handler, If, Loop and MustTerminate clauses compared with word_unreachScript12-73. Positive-word native AST, exact assembler configuration and fullInst Share address policies retained. No target-run assumptions, extra configuration restrictions or narrowed constructors. Native recursive induction derives target accumulator validity; it is not a theorem premise. Proof-side conventions only; separate executable production route bead remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "fullInstOkLess_seqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "full_inst_ok_less_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2646: original complete arbitrary native programmes and accumulator; every_inst retains arbitrary instruction predicate and both source premises; flat/fullInst retain both source validity premises for Seq_assoc_right and sole source premise for remove_unreach. Native WordUnreach SimpSeq terminal/skip/move merging and recursive Seq_assoc_right returning/exception handler, If, Loop and MustTerminate clauses compared with word_unreachScript12-73. Positive-word native AST, exact assembler configuration and fullInst Share address policies retained. No target-run assumptions, extra configuration restrictions or narrowed constructors. Native recursive induction derives target accumulator validity; it is not a theorem premise. Proof-side conventions only; separate executable production route bead remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "fullInstOkLess_removeUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "full_inst_ok_less_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2659: original complete arbitrary native programmes and accumulator; every_inst retains arbitrary instruction predicate and both source premises; flat/fullInst retain both source validity premises for Seq_assoc_right and sole source premise for remove_unreach. Native WordUnreach SimpSeq terminal/skip/move merging and recursive Seq_assoc_right returning/exception handler, If, Loop and MustTerminate clauses compared with word_unreachScript12-73. Positive-word native AST, exact assembler configuration and fullInst Share address policies retained. No target-run assumptions, extra configuration restrictions or narrowed constructors. Native recursive induction derives target accumulator validity; it is not a theorem premise. Proof-side conventions only; separate executable production route bead remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "everyInst_ofDestSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor/policy factoring inside the original unreach convention proofs; no separately named HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "flatExpConventions_ofDestSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor/policy factoring inside the original unreach convention proofs; no separately named HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "fullInstPolicy_ofDestSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor/policy factoring inside the original unreach convention proofs; no separately named HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "fullInstPolicy_simpSeq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor/policy factoring inside the original unreach convention proofs; no separately named HOL declaration."
   }
 ]
