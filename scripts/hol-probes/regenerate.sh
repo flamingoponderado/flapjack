@@ -6901,3 +6901,7 @@ run_probe stack_remove_store_list_code_probeScript.sml stack_remove_store_list_c
 run_probe lab_to_target_filter_safety_probeScript.sml lab_to_target_filter_safety_probe.out \
   no_install_or_no_share_mem_filter_skip no_install_or_no_share_mem_filter_skip_types no_install_or_no_share_mem_filter_skip_hypotheses no_install_or_no_share_mem_filter_skip_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_assign_probeScript.sml pan_structs_program_assign_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_assign_statement compile_correct_assign_proved compile_correct_full_types compile_correct_assign_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

@@ -129,7 +129,7 @@ private theorem encodeBNative {width : Nat} [NeZero width] (f3 : BitVec 3) (a b 
   simp [EncodingReference.encodeB, EncodingReference.encodeWord32, EncodingReference.lowBits, EncodingReference.registerBits, nativeRegister_toNat,
     Nat.shiftRight_eq_div_pow]
   have hmod : 1 % 2 ^ width = 1 := Nat.mod_eq_of_lt (Nat.one_lt_two_pow (NeZero.ne width))
-  simp only [hmod, Nat.reducePow] 
+  simp only [hmod, Nat.reducePow]
   simp only [Nat.mod_mul_right_div_self i.toNat 4096 2,
     Nat.mod_mul_right_div_self i.toNat 32 256,
     Nat.mod_mul_right_div_self i.toNat 2 4096,
@@ -161,7 +161,7 @@ private theorem encodeJNative {width : Nat} [NeZero width] (d : Fin 32) (i : Bit
   simp [EncodingReference.encodeJ, EncodingReference.encodeWord32, EncodingReference.lowBits, EncodingReference.registerBits, nativeRegister_toNat,
     Nat.shiftRight_eq_div_pow]
   have hmod : 1 % 2 ^ width = 1 := Nat.mod_eq_of_lt (Nat.one_lt_two_pow (NeZero.ne width))
-  simp only [hmod, Nat.reducePow] 
+  simp only [hmod, Nat.reducePow]
   simp only [Nat.mod_mul_right_div_self i.toNat 4096 512,
     Nat.mod_mul_right_div_self i.toNat 2048 1024,
     Nat.mod_mul_right_div_self i.toNat 2 1048576,

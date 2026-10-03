@@ -4916,6 +4916,12 @@
       "sha256": "e9b6280324b2ec31edfca1481d05655782945dd94d49d06b8f54ffe754a98de9"
     },
     {
+      "bytes": 2404,
+      "out": "pan_structs_program_assign_probe.out",
+      "rows": 6,
+      "sha256": "6daffc4feb115caaf1cbea20895bcc49bb76c80a76053ac6c45baa99fb86c014"
+    },
+    {
       "bytes": 4244,
       "out": "pan_structs_program_atomic_probe.out",
       "rows": 8,
