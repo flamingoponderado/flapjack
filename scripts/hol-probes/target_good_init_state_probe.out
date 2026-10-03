@@ -1,0 +1,30 @@
+good_init_state_def=∀(mc_conf :(α, 'state, β) machine_config) (ms :'state) (bytes :word8 list)
+    (cbspace :num) (t :α asm_state) (m :α word -> α word_loc)
+    (dm :α word -> bool) (sdm :α word -> bool).
+  good_init_state mc_conf ms bytes cbspace t m dm sdm ⇔
+  target_state_rel mc_conf.target t ms ∧ target_configured t mc_conf ∧
+  t.pc = mc_conf.target.get_pc ms ∧ start_pc_ok mc_conf t.pc ∧
+  (n2w ((2 :num) ** t.align − (1 :num)) :α word) && t.pc = (0w :α word) ∧
+  interference_ok mc_conf.next_interfer
+    (mc_conf.target.proj mc_conf.prog_addresses) ∧
+  ffi_interfer_ok t.pc mc_conf ∧ ccache_interfer_ok t.pc mc_conf ∧
+  code_loaded bytes mc_conf ms ∧
+  bytes_in_mem t.pc bytes t.mem t.mem_domain dm ∧ dm ⊆ t.mem_domain ∧
+  (∀(a :α word). byte_align a ∈ dm ⇒ a ∈ dm) ∧
+  sdm = mc_conf.shared_addresses ∧
+  (∀(a :α word). byte_align a ∈ sdm ⇒ a ∈ sdm) ∧
+  DISJOINT mc_conf.prog_addresses mc_conf.shared_addresses ∧
+  (∀(a :α word). ∃(w :α word).
+     t.mem a = get_byte a w mc_conf.target.config.big_endian ∧
+     m (byte_align a) = Word w) ∧
+  (∀(n :num).
+     n < cbspace ⇒
+     (n2w (n + LENGTH bytes) :α word) + t.pc ∈ t.mem_domain ∧
+     (n2w (n + LENGTH bytes) :α word) + t.pc ∉ dm) ∧
+  cbspace + LENGTH bytes < dimword (:α)
+good_init_state_def_types=(mc_conf :(α, 'state, β) machine_config)::(α, 'state, β) machine_config;(ms :'state)::'state;(bytes :word8 list)::word8 list;(cbspace :num)::num;(t :α asm_state)::α asm_state;(m :α word -> α word_loc)::α word -> α word_loc;(dm :α word -> bool)::α word -> bool;(sdm :α word -> bool)::α word -> bool;
+good_init_state_def_hypotheses=0
+word_memory=T
+entry_bound=T
+space_bound=T
+space_overflow_rejected=T
