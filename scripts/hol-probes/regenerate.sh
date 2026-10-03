@@ -6589,3 +6589,7 @@ run_probe pan_structs_shape_field_polymorphism_probeScript.sml pan_structs_shape
 run_probe pan_structs_convert_code_probeScript.sml pan_structs_convert_code_probe.out \
   convert_code_definition convert_code_type convert_code_hypotheses \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_convert_state_probeScript.sml pan_structs_convert_state_probe.out \
+  convert_state_definition convert_state_type convert_state_hypotheses convert_value_definition convert_value_type convert_value_hypotheses \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

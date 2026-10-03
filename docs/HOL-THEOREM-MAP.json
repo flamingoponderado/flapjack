@@ -9367,8 +9367,9 @@
     "hol_name": "convert_v_def",
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
     "lean_name": "convertV",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-pxn.18.3.5.8.19): exact port of HOL convert_v_def (pan_structsProofScript.sml:31-37) over the exact panSem$v carrier ValueHOL (panSemScript.sml:22), whose constructor arities 1/1/2, Val payload HolWordLab width, and MlStringHOL stcname/fldname names match HOL; the [NeZero width] binder mirrors HOL's positive dimindex. The clauses convertV (Val x) = Val x, convertV (RStruct xs) = RStruct (MAP convertV xs), convertV (NStruct nm flds) = RStruct (MAP (\\(nm,v). convertV v) flds) match clause-for-clause; the NStruct record and field names are discarded, so the exact mlstring carrier is carried but never inspected. Regressions: Flapjack.Test.PanStructsCompileCorrect exactConvertNamedRecord reproduces the pan_structs_compile_correct_probe.out:1 row convert_named_record=RStruct [ValWord 3w; ValWord 5w]; the kernel-checked production bridge convertV_toPanValue goes through the Flapjack-specific ValueHOL.toPanValue map."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-pxn.18.3.5.8.19): exact port of HOL convert_v_def (pan_structsProofScript.sml:31-37) over the exact panSem$v carrier ValueHOL (panSemScript.sml:22), whose constructor arities 1/1/2, Val payload HolWordLab width, and MlStringHOL stcname/fldname names match HOL; the [NeZero width] binder mirrors HOL's positive dimindex. The clauses convertV (Val x) = Val x, convertV (RStruct xs) = RStruct (MAP convertV xs), convertV (NStruct nm flds) = RStruct (MAP (\\(nm,v). convertV v) flds) match clause-for-clause; the NStruct record and field names are discarded, so the exact mlstring carrier is carried but never inspected. Regressions: Flapjack.Test.PanStructsCompileCorrect exactConvertNamedRecord reproduces the pan_structs_compile_correct_probe.out:1 row convert_named_record=RStruct [ValWord 3w; ValWord 5w]; the kernel-checked production bridge convertV_toPanValue goes through the Flapjack-specific ValueHOL.toPanValue map. flapjack-sol2026-10-03 full state conversion dependency audit: retain all original clauses/constructor carriers, explicitly qualify the positive word-dimension translation already present in ValueHOL/HolWordLab width with NeZero width. Original entire kernel definition/type/hyp0 captured alongside convert_s. This records only dimension representation; no added premise or body change.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
@@ -75542,5 +75543,28 @@
     "lean_name": "holFmapAsFiniteSupportResultWitness_convertCodeExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical-to-raw lookup codec witness. Unconditional independent Option.map expression, no relation premise or self-equality; not an independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "convert_s_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ConvertState.lean",
+    "lean_name": "convertStateExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 full original58-67 kernel equation/type. Actual imported PanSemStateFiniteExact owns all four canonical HOL finite maps; no local duplicate carrier, raw function map, array or tree-map substitution. Locals/globals map exact convertV on present values without inspecting keys; structs becomes []; code uses full convertCodeExact with original body parameter scopes; eshapes uses full convertEshapesExact. All other fields memory/memaddrs/shMemaddrs/clock/be/ffi/baseAddr/topAddr preserved by record update. Exact ContextExact/MlS/ShapeHOL/ValueHOL lists, positive width and sigma:Type original FFI host carrier. Canonical finite-map/positive-word qualifiers only; no target evaluation, support, rangedness, postrelation or success premise. Same-module re-export of actual owning-carrier two-way roundtrip with broad finite-support counterpart, not type-only/vacuous witness. Complete original definition/type/hyp0 captured; source definitions do not close whole compile_correct/compile_decls_correct."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ConvertState.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical owning-carrier roundtrip representation witness re-exporting the imported PanSemStateFiniteExact witness. Genuine two-way ofExact/toExact equations with broad finite-support counterpart; not an independent HOL theorem."
   }
 ]
