@@ -5930,6 +5930,12 @@
       "sha256": "762ffd3c2927f08374a27d6cc1a03343a5d9cad35ac80c7f420200be5bd58abc"
     },
     {
+      "bytes": 761,
+      "out": "stack_remove_comp_install_probe.out",
+      "rows": 2,
+      "sha256": "c74ad6752461397604b7b3d7862ec90ae147109d045cd3aee2747c87d7b8d95d"
+    },
+    {
       "bytes": 1548,
       "out": "stack_remove_comp_jump_lower_probe.out",
       "rows": 2,

@@ -6,6 +6,7 @@ import Flapjack.RiscV.L3.Defs.AMOSwap
 import Flapjack.RiscV.L3.Defs.IntegerStore
 import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Install
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyEach
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyLoop
