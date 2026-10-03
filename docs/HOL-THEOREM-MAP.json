@@ -75507,5 +75507,14 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only same-module re-export of the canonical PanSemStateFiniteExact finite-support roundtrip witness required by the theorems' finite-map qualifier. No separate HOL declaration; no evaluator or theorem premise added."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Run.lean",
+    "lean_name": "Run",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Run_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c 2026-10-03 complete source comparison riscvScript10755: full exact instruction/riscv_state function; every original nested constructor dispatches its complete unchanged payload to same named dfn handler; FENCE/FENCE_I/WFI identity, UnknownInstruction original handler. Full carrier constructors/payload widths reviewed. Arbitrary payload/state clause checks cover all163 constructors. Calls real-dependent FP handlers, inherits reals_as_rational_cuts external SOUNDNESS item 8 assumption through those handlers; no extra premise on Run, no direct real-rendering call. Source dependency group review remains separately tracked."
   }
 ]

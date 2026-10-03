@@ -6980,3 +6980,18 @@ statement, closed kernel proof, and zero hypotheses.
 and unchanged induction proof. It universally closes the source's free accumulator
 and records the closed statement, kernel proof and zero hypotheses.
 The same probe now also fetches the exported original `max_var_intro` kernel theorem: full arbitrary predicate and program, original P0/occurrence premise, proved=T and zero hypotheses (three additional rows). Lean `WordConvs.maxVarIntro` retains every constructor and the return-dependent Call handler scope, both Spt cut-set lists, and dimension-64 instruction clauses. No numeric-bound or execution premise is added.
+
+## Complete native Run dispatcher
+
+`l3_run_dispatch_probeScript.sml` captures the original full `Run` type and
+zero hypotheses, then proves all 163 constructor dispatch equations for
+arbitrary payloads and native states using the original `Run_def` only.
+`check-l3-run-dispatch.py` requires all 328 exact rows, including FENCE,
+FENCE_I and WFI identity clauses. The Lean counterpart is
+`Flapjack/RiscV/L3/Defs/Run.lean`, with generic kernel clause checks for
+every constructor. This checks dispatch, not independent correctness of
+the reviewed handler bodies or end-to-end compilation. FP handler calls
+inherit the documented SOUNDNESS item 8 real-rendering assumption.
+
+Regenerate with `HOL_PROBE_ONLY=l3_run_dispatch_probeScript.sml` through
+`regenerate.sh`, then run the strict checker.
