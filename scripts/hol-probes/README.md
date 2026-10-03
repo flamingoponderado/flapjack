@@ -7447,3 +7447,5 @@ This is source statement/proof evidence, not a cross-assistant equivalence
 theorem or completion of the full compiler proof.
 
 `stack_remove_init_semantics_probeScript.sml` replays the unchanged local original `IMP_code_rel` (stack_removeProofScript.sml:3988-4005, with the script-local `num_stubs` overload to `stack_num_stubs`) and prints the stored `evaluate_init_code`, `init_semantics`, `make_init_opt_SOME_semantics` and `make_init_semantics` theorems (3856-4086), all closed with zero hypotheses.
+
+`stack_remove_init_ffi_probeScript.sml` prints the stored original `evaluate_init_code_ffi` and `make_init_any_ffi` (stack_removeProofScript.sml:3893-3902, 4088-4098) with zero hypotheses; the Lean ports derive them from the accepted `evaluate_ffi_neutral` and the initializer's clock-neutrality.

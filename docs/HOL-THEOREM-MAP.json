@@ -81501,5 +81501,35 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4069-4086: discharge_these jump off gen_gc max_heap k start coracle code s2 and propagate_these s2 bitmaps data_sp imply exists s1. make_init_opt gen_gc max_heap bitmaps data_sp coracle jump off k (fromAList code) s2 = SOME s1 and (semantics start s1 <> Fail ==> semantics 0 s2 = semantics start s1); uses the accepted discharge/propagate definitions, impCodeRel and makeInitOptSomeSemantics. State carrier is the imported StackSemStateFiniteExact with same-module re-exported holFmapAsFiniteSupportWitness; HOL num_stubs is stack_num_stubs; compile_oracle equation uses the pointwise triple rendering of (I ## MAP prog_comp ## I) o coracle as in accepted state_rel. Inherited assumption: the statement reaches the native stackSem evaluate (directly or through make_init_opt/semantics) whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_semantics_probe.out. Kernel proof; no target run, relation or semantics assumption. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitFfi.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluateInitCodeFfi",
+    "hol_name": "evaluate_init_code_ffi",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3893-3902: for arbitrary gen_gc max_heap k s t res c, evaluate (init_code ...,s) = (res,t) implies evaluate (init_code ...,s with ffi := c) = (res,t with ffi := c); FFI replacement keeps the host type as in HOL; derived from accepted evaluate_ffi_neutral and init_code clock neutrality. Inherited assumption: the statement reaches the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Stored original captured with zero hypotheses in scripts/hol-probes/stack_remove_init_ffi_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitFfi.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "makeInitAnyFfi",
+    "hol_name": "make_init_any_ffi",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4088-4098: (make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).ffi = s.ffi for arbitrary arguments; fallback branch is a record update of s, success branch init_reduce of the initializer post-state whose ffi equals s.ffi by evaluateInitCodeFfi. Inherited assumption: the statement reaches the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Stored original captured with zero hypotheses in scripts/hol-probes/stack_remove_init_ffi_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
   }
 ]
