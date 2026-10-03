@@ -7202,6 +7202,30 @@ run_probe stack_to_lab_make_init_probeScript.sml stack_to_lab_make_init_probe.ou
   make_init_def_statement make_init_semantics_statement memory_assumption_def_statement halt_assum_lemma_statement FLOOKUP_regs_statement state_rel_make_init_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_to_lab_compile_probeScript.sml stack_to_lab_compile_probe.out \
+  is_gen_gc_def_statement config_accessors_statement compile_def_statement compile_no_stubs_def_statement data_num_stubs_def_statement AllocGlobal_location_def_statement CopyGlobals_location_def_statement InitGlobals_location_def_statement \
+  "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_to_lab_good_code_probeScript.sml stack_to_lab_good_code_probe.out \
+  good_code_def_statement contain_def_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_full_make_init_probeScript.sml stack_to_lab_full_make_init_probe.out \
+  full_make_init_def_statement full_make_init_buffer_statement full_make_init_ffi_statement full_make_init_compile_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_compile_lab_pres_probeScript.sml stack_to_lab_compile_lab_pres_probe.out \
+  MAP_FST_compile_compile_statement next_lab_non_zero_3211_statement MAP_prog_to_section_FST_3272_statement extract_label_store_list_code_statement stack_to_lab_compile_lab_pres_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_lab_pres_probeScript.sml stack_remove_lab_pres_probe.out \
+  stack_remove_lab_pres_statement \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_rawcall_extract_labels_comp_probeScript.sml stack_rawcall_extract_labels_comp_probe.out \
+  extract_labels_comp_statement \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe stack_to_lab_flatten_helpers_probeScript.sml stack_to_lab_flatten_helpers_probe.out \
   flatten_leq_statement no_ret_correct_statement compile_jump_correct_statement result_view_nchotomy_statement result_view_def_statement halt_word_view_def_statement halt_view_def_statement stack_to_lab_lab_pres_statement stack_to_lab_lab_pres_T_statement flatten_T_F_statement prog_to_section_labels_ok_statement NOT_MEM_find_lab_IMP_statement is_some_loc_to_pc_prefix_statement every_is_some_loc_to_pc_prefix_statement NOT_bad_fun_return_IMP_SOME_statement next_lab_non_zero_1022_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"

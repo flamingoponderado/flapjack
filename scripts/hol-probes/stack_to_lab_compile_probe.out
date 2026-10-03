@@ -1,0 +1,8 @@
+is_gen_gc_def_statement=(is_gen_gc (Generational l) ⇔ T) ∧ (is_gen_gc None ⇔ F) ∧ (is_gen_gc Simple ⇔ F)
+config_accessors_statement=(∀(s :num sptree$num_map) (b :bool) (b0 :bool). (config s b b0 :config).reg_names = s) ∧ (∀(s :num sptree$num_map) (b :bool) (b0 :bool). (config s b b0 :config).jump ⇔ b) ∧ ∀(s :num sptree$num_map) (b :bool) (b0 :bool). (config s b b0 :config).perf_calls ⇔ b0
+compile_def_statement=∀stack_conf data_conf max_heap sp offset prog. compile stack_conf data_conf max_heap sp offset prog = (let prog = compile prog; prog = compile data_conf prog; prog = compile stack_conf.jump offset (is_gen_gc data_conf.gc_kind) max_heap sp InitGlobals_location prog; prog = compile stack_conf.reg_names prog in MAP prog_to_section prog)
+compile_no_stubs_def_statement=∀f jump offset sp prog. compile_no_stubs f jump offset sp prog = MAP prog_to_section (compile f (MAP (prog_comp jump offset sp) (MAP prog_comp prog)))
+data_num_stubs_def_statement=data_num_stubs = word_num_stubs + 32 + 23
+AllocGlobal_location_def_statement=AllocGlobal_location = data_num_stubs
+CopyGlobals_location_def_statement=CopyGlobals_location = AllocGlobal_location + 1
+InitGlobals_location_def_statement=InitGlobals_location = CopyGlobals_location + 1
