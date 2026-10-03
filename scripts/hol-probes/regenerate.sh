@@ -5942,3 +5942,14 @@ run_probe l3_amoswap_probeScript.sml l3_amoswap_probe.out \
 run_probe stack_code_bitmaps_alloc_probeScript.sml stack_code_bitmaps_alloc_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_alloc_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_shmem_entry_max_probeScript.sml lab_to_target_shmem_entry_max_probe.out \
+  genlist_line_to_info_entry_pc_max genlist_line_to_info_entry_pc_max_types genlist_line_to_info_entry_pc_max_hypotheses \
+  actual_max actual_entries actual_end empty valid_guard strict_failure \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe misc_find_index_shift_probeScript.sml misc_find_index_shift_probe.out \
+  find_index_shift find_index_shift_types find_index_shift_hypotheses \
+  first nonzero shift duplicate empty missing large strings \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
