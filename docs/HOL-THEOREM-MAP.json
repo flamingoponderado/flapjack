@@ -72845,5 +72845,62 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.4): original lab_to_targetProofScript.sml:3068-3080: !l s. has_io_name s l ==> ?y. find_index (ExtCall s) (find_ffi_names l) 0 = SOME y. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, read_bytearray/mem_load_byte_aux/write_bytearray/asm_write_bytearray as readBytearrayWordHOL/memLoadByteAuxExact/writeBytearrayExact/asmWriteBytearrayHOL. No hypothesis added or conclusion weakened. Original statement and inferred types captured in lab_to_target_ffi_bytearray_probe.out (has_io_name_def emitted; [local] theorems re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "evaluate_io_events_mono",
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/EvaluateIoEventsMono.lean",
+    "lean_name": "evaluateIoEventsMono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.6): Original labPropsScript279 full type freshly queried: forall s1 r s2 over arbitrary (alpha,beta,gamma) labSem state and machine_result, evaluate s1=(r,s2) implies initial ffi.io_events prefix final ffi.io_events. Native positive BitVec width with NeZero, separate arbitrary C Type and F Type, fixed byte8/FP64, all three explicit binders and sole original evaluation equality preserved. Full native evaluator functional induction covers all36 source branches, all8 shared operators and both Install validity branches; asmInstConsts and actual callFFIHOL prefix consequence discharge local steps with no extra hypotheses. Inherits reals_as_rational_cuts through evaluate/asmInst/fpUpd (SOUNDNESS item8); no stronger real-carrier assurance. Full original theorem/types/zero hypotheses/kernelT captured."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "reg_imm_with_clock",
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/ClockSupport.lean",
+    "lean_name": "regImmWithClock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.5.1): Original complete statements/full types/zero hypotheses/kernelT freshly captured. Native positive BitVec width with NeZero, arbitrary C Type and F Type, fixed byte8/FP64. Full arbitrary alpha reg_imm and arbitrary replacement z; source reg and immediate clauses ignore the clock. Native HolRegImm/WordLocW carriers retain both source constructors and every state binder."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "asm_inst_with_clock",
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/ClockSupport.lean",
+    "lean_name": "asmInstWithClock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.5.1): Original complete statements/full types/zero hypotheses/kernelT freshly captured. Native positive BitVec width with NeZero, arbitrary C Type and F Type, fixed byte8/FP64. Full arbitrary alpha inst and arbitrary replacement z; exact whole-state equality asm_inst i(s with clock:=z)=(asm_inst i s)with clock:=z. Native all5 instruction branches/all8 arithmetic/all8 memory/all16FP constructors are checked, including invalid operands/assertions and aliased register writes. Inherits reals_as_rational_cuts through asmInst/fpUpd (SOUNDNESS item8); no stronger real assurance.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "addr_add_clock_eq",
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/ClockSupport.lean",
+    "lean_name": "addrAddClockEq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.5.1): Original complete statements/full types/zero hypotheses/kernelT freshly captured. Native positive BitVec width with NeZero, arbitrary C Type and F Type, fixed byte8/FP64. Full arbitrary alpha addr, state and extra; exact left-associated original extra+s.clock clock update and addr result retained, no validity/nonzero-clock premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "share_mem_op_add_clock_same",
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/ClockSupport.lean",
+    "lean_name": "shareMemOpAddClockSame",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.5.1): Original complete statements/full types/zero hypotheses/kernelT freshly captured. Native positive BitVec width with NeZero, arbitrary C Type and F Type, fixed byte8/FP64. Complete original THREE conjuncts for NONE, FFI_return f bytes r and FFI_final f2 r2. Every original state/operator/register/address/extra/f/bytes/r/f2/r2 binder retained; every conjunct keeps its own s.clock<>0 and exact source result equation antecedent. All8 shared operators and NONE/final/return paths commute by direct native equations and source nonzero guard derives arithmetic extra+s.clock-1=extra+(s.clock-1). Clock updates preserve original extra+clock order; byte payload fixed word8. No oracle policy or successful transition premise beyond each original clause."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "evaluate_add_clock_io_events_mono",
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/EvaluateAddClockIoEventsMono.lean",
+    "lean_name": "evaluateAddClockIoEventsMono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.5): Full original labPropsScript358 theorem/full type queried and freshly captured: forall arbitrary (alpha,beta,gamma) labSem state s and arbitrary extra, (SND evaluate s).ffi.io_events prefix (SND evaluate(s with clock:=s.clock+extra)).ffi.io_events. Native positive BitVec width with NeZero, separate C Type/F Type, fixed byte8/FP64; original order s.clock+extra, all binders and unconditional conclusion retained. Native functional induction covers all36 evaluator branches; actual full IOmono handles zero-clock timeout, exact instruction/frame facts and nonzero-guard-derived predecessor arithmetic align every recursive clock, all3 full shared clock clauses discharge NONE/return/final, and literal Install/FFI branches retain original behavior. Concrete final-event literals instantiate only vacuous binders of other shared conjunction clauses, never execute and impose no FFI/default policy. Inherits reals_as_rational_cuts through evaluate/asmInst/fpUpd (SOUNDNESS item8), no stronger real assurance. Untagged derived trace-comparability lemma consumes this checked theorem at arbitrary two clocks; no machine/compile simulation claimed."
   }
 ]

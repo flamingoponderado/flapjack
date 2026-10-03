@@ -6422,3 +6422,18 @@ run_probe list_last_probeScript.sml list_last_probe.out \
   last_definition last_type last_hypotheses last_cons_statement last_cons_hypotheses last_cons_proved \
   last_total_statement last_total_hypotheses last_total_proved \
   "$hol_dir/src/list/src/listScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe labprops_evaluate_io_events_mono_probeScript.sml labprops_evaluate_io_events_mono_probe.out \
+  evaluate_io_events_mono evaluate_io_events_mono_types evaluate_io_events_mono_hypotheses evaluate_io_events_mono_proved \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe labprops_clock_support_probeScript.sml labprops_clock_support_probe.out \
+  reg_imm_with_clock reg_imm_with_clock_types reg_imm_with_clock_hypotheses reg_imm_with_clock_proved \
+  asm_inst_with_clock asm_inst_with_clock_types asm_inst_with_clock_hypotheses asm_inst_with_clock_proved \
+  addr_add_clock_eq addr_add_clock_eq_types addr_add_clock_eq_hypotheses addr_add_clock_eq_proved \
+  share_mem_op_add_clock_same share_mem_op_add_clock_same_types share_mem_op_add_clock_same_hypotheses share_mem_op_add_clock_same_proved \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe labprops_evaluate_add_clock_io_events_mono_probeScript.sml labprops_evaluate_add_clock_io_events_mono_probe.out \
+  evaluate_add_clock_io_events_mono evaluate_add_clock_io_events_mono_types evaluate_add_clock_io_events_mono_hypotheses evaluate_add_clock_io_events_mono_proved \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
