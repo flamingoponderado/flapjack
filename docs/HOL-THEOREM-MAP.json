@@ -87141,5 +87141,383 @@
     "hol_name": "attach_bitmaps_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison 2026-10-03: original backendScript15-43, full inferred field/signature and definition captures in backend_config_attach_bitmaps_probe.out. Full eleven-field config retains reviewed source_to_flat/clos_to_bvl/bvl_to_bvi/data_to_word/word_to_word/word_to_stack/stack_to_lab/lab_to_target/tap_config carriers, List(MlString*Nat*Nat) symbols and List MlString exported names; no omitted field or arbitrary placeholder. Original attach_bitmaps independently quantifies byte and bitmap payloads; Lean Bytes/Bitmaps are independent Type parameters with literal SOME/NONE, original lab_conf update, ordered MAP over all sec_pos_len triples, reviewed lookupAny over exact Spt MlString and fixed ASCII NOTFOUND. Native mlstrings/lists/sptrees require no representation qualifier; no type-indexed word or array field occurs. No added premise or runtime-policy change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRawcallCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4732-4742: ∀i p. no_shmemop p ⇒ no_shmemop (stack_rawcall$comp i p). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_comp_top_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRawcallCompTopNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4744-4750: ∀p. no_shmemop p ⇒ no_shmemop (comp_top i p). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_compile_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRawcallCompileNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4752-4769: whole stack_rawcall$compile preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackAllocCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4771-4780: ∀n m p. no_shmemop p ⇒ no_shmemop (FST (stack_alloc$comp n m p)). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_prog_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackAllocProgCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4782-4791: MAP stack_alloc$prog_comp preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_compile_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackAllocCompileNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4793-4800: stack_alloc$compile data preserves EVERY no_shmemop (GC stub by an untagged EVAL-step lemma). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "upshift_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "upshiftNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4802-4808: ∀k n. no_shmemop (upshift k n). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "downshift_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "downshiftNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4810-4816: ∀k n. no_shmemop (downshift k n). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_free_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackFreeNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4818-4824: ∀k n. no_shmemop (stack_free k n). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackAllocNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4826-4833: ∀jump k n. no_shmemop (stack_remove$stack_alloc jump k n). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRemoveCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4835-4849: ∀jump off k p. no_shmemop p ⇒ no_shmemop (stack_remove$comp jump off k p). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_prog_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRemoveProgCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4851-4856: ∀p. no_shmemop p ⇒ no_shmemop (SND (prog_comp jump off k (n,p))). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_compile_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRemoveCompileNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4858-4872: stack_remove$compile jump offset gckind mh sp loc preserves EVERY no_shmemop (init_code stub by an untagged EVAL-step lemma). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackNamesCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4874-4883: ∀f p. no_shmemop p ⇒ no_shmemop (stack_names$comp f p). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_prog_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackNamesProgCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4885-4894: MAP (stack_names$prog_comp f) preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_compile_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackNamesCompileNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4896-4902: stack_names$compile names preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_no_share_mem_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "flattenNoShareMemInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4904-4917: ∀t p n m cs bs. no_shmemop p ⇒ EVERY (λln. ∀op re a inst len. ln ≠ Asm (ShareMem op re a) inst len) (append (FST (flatten t p n m cs bs))); proof via an untagged Boolean List.all form. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "asm_fetch_aux_no_share_mem_inst_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "asmFetchAuxNoShareMemInstCons",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4919-4928: ∀xs. EVERY (no ShareMem) xs ∧ no_share_mem_inst ls ⇒ no_share_mem_inst (Section k xs::ls). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "prog_to_section_no_share_mem_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "progToSectionNoShareMemInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4930-4945: ∀prog. EVERY no_shmemop ⇒ no_share_mem_inst (MAP prog_to_section prog). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "compile_no_share_mem_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "compileNoShareMemInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4947-4959: ∀prog prog'. EVERY no_shmemop prog ∧ stack_to_lab$compile stack_conf data_conf max_heap sp offset prog = prog' ⇒ no_share_mem_inst prog', over the reviewed StackToLab.compile. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_prog_comp_no_shmemop_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRemoveProgCompNoShmemopMap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4961-4971: MAP (stack_remove$prog_comp jump offset sp) preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "compile_no_stubs_no_share_mem_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "compileNoStubsNoShareMemInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4973-4985: EVERY no_shmemop prog ∧ compile_no_stubs f jump offset sp prog = prog' ⇒ no_share_mem_inst prog', over the reviewed StackToLab.compileNoStubs. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRawcallCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4987-4997. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_comp_top_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRawcallCompTopNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4999-5006. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_compile_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRawcallCompileNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5008-5025. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackAllocCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5027-5036. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_prog_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackAllocProgCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5038-5047. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_compile_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackAllocCompileNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5049-5056. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "upshift_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "upshiftNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5058-5064. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "downshift_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "downshiftNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5066-5072. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_free_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackFreeNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5074-5081. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackAllocNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5083-5092. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRemoveCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5094-5110. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_prog_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRemoveProgCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5112-5117. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_compile_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRemoveCompileNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5119-5133. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackNamesCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5135-5144. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_prog_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackNamesProgCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5146-5155. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_compile_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackNamesCompileNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5157-5163. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "flattenNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5165-5179. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "asm_fetch_aux_no_install_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "asmFetchAuxNoInstallCons",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5181-5190. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "prog_to_section_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "progToSectionNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5192-5207. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_to_lab_compile_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "compileNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5209-5221. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
   }
 ]
