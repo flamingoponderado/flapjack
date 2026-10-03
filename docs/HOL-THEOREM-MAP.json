@@ -81889,5 +81889,31 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack representation proof plumbing, no independent HOL declaration. Full canonical imported-state two-way roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "bytes_in_memory_thm",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BytesInMemory.lean",
+    "lean_name": "bytes_in_memory_thm",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03 full literal original14-54: native fixedword64/8 and exactAsmState/targetStateRel/bytesInMemoryHOL. First preserves unused polymorphic w:α as {α:Type}(_w:α); second w:word64. Original sole antecedent conjunction unchanged. Every13(first)/8(second) conclusion in exact order, no extra premise/domain restriction/target evaluation. Four wrapped byte offsets and descending domain conclusions derived from recursive bytes and original relation; full5validity conjuncts derived from target stateOK. Fresh unchanged original term/proof replay, full binder types,hyp0,T. Inherits reals_as_rational_cuts SOUNDNESS item8 via riscvTarget.next -> Step.NextRISCV -> Run; this marker records carrier/model dependency, not narrowed correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "bytes_in_memory_thm2",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BytesInMemory.lean",
+    "lean_name": "bytes_in_memory_thm2",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03 full literal original14-54: native fixedword64/8 and exactAsmState/targetStateRel/bytesInMemoryHOL. First preserves unused polymorphic w:α as {α:Type}(_w:α); second w:word64. Original sole antecedent conjunction unchanged. Every13(first)/8(second) conclusion in exact order, no extra premise/domain restriction/target evaluation. Four wrapped byte offsets and descending domain conclusions derived from recursive bytes and original relation; full5validity conjuncts derived from target stateOK. Fresh unchanged original term/proof replay, full binder types,hyp0,T. Inherits reals_as_rational_cuts SOUNDNESS item8 via riscvTarget.next -> Step.NextRISCV -> Run; this marker records carrier/model dependency, not narrowed correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "bytes_in_memory_IMP_all_pcs_MEM8",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BytesInMemory.lean",
+    "lean_name": "bytes_in_memory_IMP_all_pcs_MEM8",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full source comparison2026-10-03 original384-394: all5outerquantifiers env:num→riscv_state→riscv_state,a:word64,xs:word8list,m:word64→word8,dm:word64set. Original antecedent bytes_in_memory AND forall i/ms/address domain→nativeMEM8agreement retained, fullforall i/ms/pc in all_pcs(LENGTHxs)a0 conclusion. No target-run result/assumption, extra premise, finitebyte count or restricted environment. Existing fullgeneric tagged bytesInMemory_allPcs derives membershipindomain. Fresh unchanged original term/proof full binder types,hyp0,T, retaining previous8probe rows/labels. Carrier constructor-for-constructor fixed64/8 and predicate sets, no qualifier needed."
   }
 ]
