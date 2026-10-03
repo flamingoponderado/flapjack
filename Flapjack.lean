@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.FullStateRel
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.DomainCodeCase
+import Flapjack.RiscV.L3.Defs.RegisterShift
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.MemorySeparationCases
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases

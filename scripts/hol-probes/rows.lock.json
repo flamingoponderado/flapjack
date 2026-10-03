@@ -1694,6 +1694,12 @@
       "sha256": "5c2d1e1e8bd31473882164bb38f64f1cc23277a1dc29f81dd41fac68a26c4045"
     },
     {
+      "bytes": 20289,
+      "out": "l3_register_shift_probe.out",
+      "rows": 735,
+      "sha256": "bb40f2c007281d61974abf0834f6df8bc4b4f095ffe2cde472746877edf7974c"
+    },
+    {
       "bytes": 1132,
       "out": "l3_reservation_probe.out",
       "rows": 14,
