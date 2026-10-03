@@ -1,3 +1,5 @@
+import Flapjack.RiscV.Encoding.NativeInstruction
+import Flapjack.Test.RiscVNativeInstructionParity
 import Flapjack.RiscV.L3.Step.FetchTheorems
 import Flapjack.RiscV.L3.Defs.Encode
 import Flapjack.Test.L3EncodeParity
@@ -412,6 +414,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.FFI
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallTail
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHandler
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning.Execution
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LocationLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
@@ -1132,6 +1135,7 @@ import Flapjack.Pancake.Proofs.WordConvs.SSALabelHelpers
 import Flapjack.Pancake.Proofs.WordConvs.SSALabelFull
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
+import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
