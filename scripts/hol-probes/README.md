@@ -7138,3 +7138,7 @@ and actual compileFieldsExact, preserving both original premises.
 ## Original native decoder transport rules
 
 `l3_decode_transport_probeScript.sml` proves universally quantified copies of original `Decode_IMP_DecodeAny` and `DecodeRVC_IMP_DecodeAny`, with full word32/word16 and instruction binder types, literal decoder equality premises and complete raw-selector conclusions. Strict captures record all binder types, statements, zero proof assumptions and proof markers. Lean uses the original equality premise after definitional selector reduction; no accepted-opcode or simplified decoder premise is added. Both rules are called by the original symbolic step library; target encoder and compiler correctness remain separate work.
+
+## Original native step word-bit rewrite group
+
+`l3_step_bit_rewrites_probeScript.sml` proves full universally quantified copies of `word_bit_1_0`, `word_bit_0_lemmas`, `v2w_0_rwts` and `word_bit_add_lsl_simp`. Captures preserve all binder types, word8/word5 list carriers, original conjunctions, zero proof assumptions and proof markers. Lean retains each source domain and conjunction, uses kernel low-bit arithmetic/FCP lemmas and exhaustive Boolean cases, and adds no opcode fixture premise. `holV2w` follows the original most-significant-first testbit/FCP definitions. The original step library uses these rewrites; the whole encoder and compiler theorem remain open.

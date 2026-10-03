@@ -77031,5 +77031,37 @@
     "hol_name": "DecodeRVC_IMP_DecodeAny",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison2026-10-03 original step541-551: arbitrary word16 and full native instruction i, exactly original DecodeRVC equality premise and DecodeAny(Half) equality conclusion; literal fixed-width source carrier and complete source-reviewed decoder, no opcode restrictions or extra hypotheses. Fresh universal original proof capture includes all binder types and zero open proof assumptions; Lean proof is direct definitional selector reduction using precisely the original premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/BitRewrites.lean",
+    "lean_name": "word_bit_1_0",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "word_bit_1_0",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original line130: all eight Boolean binders, fixed word8 v2w and both exact index1/index0 conjuncts. Complete original no-premise statement, no restricted opcode/state or concrete-fixture replacement. holV2w compared with original bitstring testbit_def/v2w_def: in-range i indexes list at LENGTH-1-i and false outside list length, full FCP width. getLsbD renders in-range word_bit; fixed theorem indices are within original word widths. Fresh generic HOL proofs/types/hyp0 captured and native Lean kernel proof checked without trusted bit tactics."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/BitRewrites.lean",
+    "lean_name": "word_bit_0_lemmas",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "word_bit_0_lemmas",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original line149: arbitrary word64 w and v, both complete low-bit mask/low-bit addition conjuncts; Boolean negation rendered as false equality. Complete original no-premise statement, no restricted opcode/state or concrete-fixture replacement. holV2w compared with original bitstring testbit_def/v2w_def: in-range i indexes list at LENGTH-1-i and false outside list length, full FCP width. getLsbD renders in-range word_bit; fixed theorem indices are within original word widths. Fresh generic HOL proofs/types/hyp0 captured and native Lean kernel proof checked without trusted bit tactics."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/BitRewrites.lean",
+    "lean_name": "v2w_0_rwts",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "v2w_0_rwts",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original line173: all four arbitrary Boolean binders and all seven fixed word5 equality/Boolean-equality conjuncts, preserved true bit at each original position. Complete original no-premise statement, no restricted opcode/state or concrete-fixture replacement. holV2w compared with original bitstring testbit_def/v2w_def: in-range i indexes list at LENGTH-1-i and false outside list length, full FCP width. getLsbD renders in-range word_bit; fixed theorem indices are within original word widths. Fresh generic HOL proofs/types/hyp0 captured and native Lean kernel proof checked without trusted bit tactics."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/BitRewrites.lean",
+    "lean_name": "word_bit_add_lsl_simp",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "word_bit_add_lsl_simp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original line559: arbitrary word64 x/w and exact low bit of x plus (w shifted left1), preserving original operator associativity. Complete original no-premise statement, no restricted opcode/state or concrete-fixture replacement. holV2w compared with original bitstring testbit_def/v2w_def: in-range i indexes list at LENGTH-1-i and false outside list length, full FCP width. getLsbD renders in-range word_bit; fixed theorem indices are within original word widths. Fresh generic HOL proofs/types/hyp0 captured and native Lean kernel proof checked without trusted bit tactics."
   }
 ]

@@ -6700,3 +6700,7 @@ run_probe l3_next_evaluation_probeScript.sml l3_next_evaluation_probe.out \
 run_probe l3_decode_transport_probeScript.sml l3_decode_transport_probe.out \
   decodeWord_binders decodeWord_statement decodeWord_hypotheses decodeWord_proof decodeHalf_binders decodeHalf_statement decodeHalf_hypotheses decodeHalf_proof \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+
+run_probe l3_step_bit_rewrites_probeScript.sml l3_step_bit_rewrites_probe.out \
+  bit10_binders bit10_statement bit10_hypotheses bit10_proof bit0_binders bit0_statement bit0_hypotheses bit0_proof v2w0_binders v2w0_statement v2w0_hypotheses v2w0_proof bitShift_binders bitShift_statement bitShift_hypotheses bitShift_proof v2w8_type v2w5_type \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
