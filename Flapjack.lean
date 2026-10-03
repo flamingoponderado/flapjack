@@ -398,6 +398,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.GcSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegister
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnEval
