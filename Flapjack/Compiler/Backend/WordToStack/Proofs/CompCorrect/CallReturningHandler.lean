@@ -937,7 +937,8 @@ theorem prepareHandlerCalleeDestination {width : Nat} [NeZero width] {C F : Type
       StackSemControl.findCode destination (moved.regs.eraseEq 0) moved.code = some calleeCode ∧
       saved.store.lookup .handler = some savedHandler ∧
       header = pushedHandlerState saved h1 h2 k savedHandler ∧
-      saved.stackSpace = target.stackSpace := by
+      saved.stackSpace = target.stackSpace ∧
+      moved.clock = target.clock ∧ moved.ffi = source.ffi := by
   have plainConventions := conventionsWithoutHandler k values names retCode l1 l2 dest args
     (some (handlerVar,handlerCode,h1,h2)) conventions
   have plainMaximum := lt_of_le_of_lt
@@ -1002,11 +1003,15 @@ theorem prepareHandlerCalleeDestination {width : Nat} [NeZero width] {C F : Type
       plainConventions destinationCompile)
     registers (sptSubsptTrans _ _ _ ⟨savedGrowth,
       sptSubsptTrans _ _ _ ⟨headerGrowth,movedGrowth⟩⟩) found
-  exact ⟨destinationTarget, saved, header, moved, calleeCode, calleeSize, calleeBs, calleeBsPost,
+  refine ⟨destinationTarget, saved, header, moved, calleeCode, calleeSize, calleeBs, calleeBsPost,
     calleeIndex, calleeIndexPost, savedHandler, destinationRun, savedRun, pushRun, moveRun,
     savedRelation, pushedRelation, headerRelation,
     calleeCompile, calleeBitmapLength, calleeBitmapBound, calleeBitmapPrefix, calleeLocalsSize, finalFound, savedLookup, rfl,
-    savedSpace.trans destinationSpace⟩
+    savedSpace.trans destinationSpace, ?_, ?_⟩
+  · rw [movedState]
+    exact savedRelation.1.symm.trans related.1
+  · rw [movedState]
+    exact savedRelation.2.2.2.1
 
 /-- Handler callee resource overflow from the full actual pushed-frame
 relation, with all Option size/max cases. This factors the original handler
@@ -1317,7 +1322,7 @@ theorem simulateHandlerCalleeBody {width : Nat} [NeZero width] {C F : Type}
     calleeIndex,calleeIndexPost,savedHandler,destinationRun,savedRun,pushRun,moveRun,
     savedRelation,prePushRelation,headerRelation,calleeCompile,calleeBitmapLength,
     calleeBitmapBound,calleeBitmapPrefix,calleeLocalsSize,found,savedLookup,headerState,
-    savedSpace⟩ := prepareHandlerCalleeDestination ac k f frame values names retCode l1 l2
+    savedSpace,_,_⟩ := prepareHandlerCalleeDestination ac k f frame values names retCode l1 l2
       dest args handlerVar h1 h2 handlerCode source target lens xs args1 prog ss envs bs
       savedBitmaps n savedIndex destinationCode savedCode destination guards related conventions
       maximum destinationCompile savedCompile bitmapLength bitmapBound bitmapPrefix room
