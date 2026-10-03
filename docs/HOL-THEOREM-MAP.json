@@ -90230,5 +90230,41 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-04: literal original pan_to_targetProofScript1147-1155 complete definition. Full inferred source config -> (alpha,beta,gamma) machine_config -> alpha decl list -> (word8 list # alpha word list # config) option # num option retained as native Backend.Config, MachineConfig width State Projection with independent arbitrary State/Projection, positive shared word-indexed DeclHOL, exact two-option result pair and fixed bytes BitVec8. Direct original source program passed to panToWord with machine.target.config.ISA; no main reorder/default main. Native WordToWord compile binds oracle/program tuple; native WordToStack.compile False binds bitmap/word-config/frame-list/stack-program tuple. Exact maxDepth wordConfig.stackFrameSize(fullCallGraph InitGlobals_location(sptFromAList wordProgram)). Original backend config unchanged in fromStack with empty Spt MlString name map and actual stack/bitmap outputs. Only source-unused oracle tail/frame list use underscore binders. No supplied pass result, target run or stack bound, and no fallback for NONE. All native pass/carrier dependencies audited. Original proof theory is unbuilt; registered probe explicitly records local literal full-definition replay in separate HOL theory with loaded original pass/machine theories, complete inferred type/equation, not fake DB fetch/exported original theorem or independent cross-language equivalence. words_as_type_indexed_bitvec covers only positive word dimensions and machine host translation. Definition is proof-side; full semantic theorem, production route and API acceptance remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/Binary.lean",
+    "lean_name": "evaluateWInstBinopReg",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst4688 Binop branch4863-4919. All five original guards retained, full actual native wInst existential, entire stateRel and target stack length/space. Source Binop success derives actual word reads and original successful wordOpHOL. Actual Reg1/Reg2 loads and register/spill destination write derived for all operators, aliases, positive widths and arbitrary immediate words. Physical same-register Or shortcut derives equal actual words from lookups and the idempotent original Or result; no nonalias guard. Canonical source fpRegs/store and target regs/fpRegs/store qualified; sptree locals/code unchanged, common source/instruction/target/result word width, independent host/FFI. Inherited reals_as_rational_cuts remains SOUNDNESS item8 external boundary. Fresh typed original kernel specializations regenerated and reviewed: both T/hypotheses0, all five guards/full result, shared word width and independent host/FFI. No literal local proof replay or HOL-to-Lean equivalence claim.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/Binary.lean",
+    "lean_name": "evaluateWInstBinopImm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst4688 Binop branch4863-4919. All five original guards retained, full actual native wInst existential, entire stateRel and target stack length/space. Source Binop success derives actual word reads and original successful wordOpHOL. Actual Reg1/Reg2 loads and register/spill destination write derived for all operators, aliases, positive widths and arbitrary immediate words. Physical same-register Or shortcut derives equal actual words from lookups and the idempotent original Or result; no nonalias guard. Canonical source fpRegs/store and target regs/fpRegs/store qualified; sptree locals/code unchanged, common source/instruction/target/result word width, independent host/FFI. Inherited reals_as_rational_cuts remains SOUNDNESS item8 external boundary. Fresh typed original kernel specializations regenerated and reviewed: both T/hypotheses0, all five guards/full result, shared word width and independent host/FFI. No literal local proof replay or HOL-to-Lean equivalence claim.",
+    "hol_line": 4688
   }
 ]
