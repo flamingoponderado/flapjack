@@ -75019,5 +75019,28 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 original582-621: domain_fromAList_compile retains unconditional equality of literal Spt domains for actual native compile/fromAList, including duplicate keys; lookup_collect_info retains exactly ALL_DISTINCT(MAP FST code), arbitrary key and arbitrary supplied rest tree, first-match ALOOKUP selecting singleton collectInfo outcome or unchanged rest lookup; state_ok_collect_info retains exactly same distinct-key guard and every original leading Seq(StackAlloc size) entry witness, including zero size and arbitrary body. Native collectInfo left-to-right overwrite behavior and ignored bare/nonleading allocations unchanged. List/Spt carriers identical, arbitrary positive type-indexed BitVec translation only; no fmap qualifier needed for native tree maps. Proof derives absent ALOOKUP from actual membership and handles every head/tail/key/recognition branch, no additional premise. Source compiler/evaluator behavior untouched; no targetrun, restricted code list, executable broad producer or numeric FP correspondence claim. Fresh full original statement/zero hypotheses/64-80 specializations and independent original lookup/compiler-key observations plus actual original state_ok theorem applications are regression evidence, not cross-language equivalence or whole-pass completion. No allowlist/default/individual HOLD change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitProp.lean",
+    "lean_name": "initProp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "init_prop_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol complete source/body/type comparison2026-10-03 bead flapjack-stackremove-init-def-prop: original stack_removeProofScript2913-2951 init_prop has gen_gc:bool, max_heap/data_sp:num, stack_heap_lim:num#num and the actual word/configuration/FFI state. Native Bool/Nat/pair and positive-width BitVec/state with C,F:Type retain these inputs; the imported owning StackSemStateFiniteExact uses reviewed HolFiniteMapExact for regs/fpRegs/store, while code remains Spt and stack/bitmaps/buffers remain Lists. Same-module canonical StateOps roundtrip is genuine and no imported carrier is duplicated. Full four witnesses curr/other/bitmap_base words and len natural, and all32 conjuncts match: seventeen literal store lookups (including modular n2w/multiplication order and both buffer-end formulas), reviewed pair limits, empty code/data lists, use_stack/use_store only, reg0 Loc1 0, bitmap/data+1 and stack natural dimword bounds, other=curr+bytes*n2wlen, byte_aligned curr, LAST stack=Word0, LENGTH stack=SUC stack_space, natural LENGTH*(dimindex DIV8) bound, len+len<=max_heap, and full STAR of two word_list_exists factors over original memory/domain graph. Native Bool characteristic domain is used as equality-to-true in fun2Set, and byte_aligned Bool as truth. Native local Nonempty WordLocW witness supplies inherent HOL inhabitance only; the source-reviewed single ListEl.holLast retains independent opaque LAST[] identity, and the predicate's own original LENGTH=SUC clause ensures nonempty stacks without adding a premise. No good_dimindex/use_alloc guard, target evaluation, postrelation, separation/resource premise or successful-pass condition is added. Original complete kernel definition/type/zero-hypothesis/four-witness/32-conjunct capture is in stack_remove_init_prop_probe.out. Original proof-script state predicate; no new executed compiler, guest or FP parity claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitReadMemory.lean",
+    "lean_name": "wordListImpReadMem",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_IMP_read_mem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol whole source/statement comparison2026-10-03 bead flapjack-stackremove-init-read-memory: original local stack_removeProof2837-2844 states forall xs a p, (p STAR word_list a xs)(fun2set(m,dm)) implies read_mem a m (LENGTH xs)=xs; original free m/dm are generalized outside those binders. Native memory/domain and forall values/base/frame preserve that order and full framed assertion/conclusion on arbitrary payload beta:Type, actual function/domain graph, original forward list and original native readMem. Only HOL type-indexed positive word addresses become BitVec width/[NeZero width]; there is no extra element equality, no-wrap, good_dimindex, finite-domain, target run or desired-result premise. The full original local proof Induct/fs read_mem_def word_list_def STAR_ASSOC/rw/res_tac/SEP_R_TAC is replayed unchanged with original upstream helperLib and GEN_ALL, yielding zero hypotheses and T. Native induction uses existing faithful wordListNth graph membership for head and full STAR_ASSOC for the framed tail; reads are derived, not supplied. No finite-map/array/name representation change or new executable compiler/guest/FP parity claim."
   }
 ]

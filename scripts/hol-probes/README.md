@@ -6764,6 +6764,8 @@ their existential witnesses. This independently supplies the lazy-list image
 chain used by original machine_sem_EQ_sem; full compiler simulation and machine
 semantics remain open. Regenerate with
 `HOL_PROBE_ONLY=lprefix_lub_finite_prefix_chain_probeScript.sml`.
+
+`stack_remove_init_limits_double_probeScript.sml` captures the complete original word-free numeric initializer limit definition, its curried natural input/product output type, zero hypotheses, and the actual store-list length. The native counterpart retains left-associated truncated natural subtraction and total division by two; it adds no address bound or word-dimension premise.
 `list_last_probeScript.sml` captures the complete original `LAST_DEF`, its generic type and zero hypotheses, replays the complete `LAST_CONS` proof, and checks the total case equation retaining the original unspecified `LAST []`. The primitive-recursive specification constrains cons lists only; the single shared `holLast` in `Flapjack/Misc/ListEl.lean` uses a dedicated opaque residual value, without asserting an equality to `HD []` or `ARB` or choosing a concrete missing value. This accessor is a prerequisite of the full StackRemove initializer state predicate.
 
 
@@ -6803,6 +6805,8 @@ consequence supplies actual observational trace-chain inputs. This retains
 inherited real rendering (SOUNDNESS item8); whole machine/compile simulation
 and end-to-end correctness remain open. Regenerate with
 `HOL_PROBE_ONLY=labprops_evaluate_add_clock_io_events_mono_probeScript.sml`.
+
+`stack_remove_init_prop_probeScript.sml` captures the complete original initialized-state predicate, generic word/configuration/FFI type and zero hypotheses. Its kernel body has four existential witnesses and 32 conjuncts, including all seventeen store lookups, exact pair limits, buffers/flags/register zero, natural and modular word resource clauses, symbolic `LAST`, and the two-heap separated memory/domain assertion. `Proofs/InitProp.lean` retains this entire body on the reviewed native canonical state, using the single independent-nil `holLast`; its local inhabitedness witness chooses no undefined value.
 
 `stack_rawcall_seq_standard_probe` captures the original full comp_correct, zero hypotheses, and full Seq specializations at64/80 plus standard Skip/Skip compiler observations. Five native standard-composition consumers cover arbitrary positive and1/8/64/80 widths; a generic kernel compiler observation and two executable guards replay the concrete rows. The source-local helper retains the actual fixed-source first and NONE-run guarded second induction hypotheses, derives intermediate stackspace equality, and composes added clocks. It has no separate HOL declaration/tag: optimized equal/less/greater frame branches and full Seq assembly remain open. Captures are regression/statement evidence, not cross-language equivalence.
 
@@ -6883,3 +6887,5 @@ TLB/pagewalk updates and invalid-mode ARB; these are outside this finite sample.
 `check-l3-fp-memory.py` requires every unique label and original value T.
 This regression evidence supplements source review, not full equivalence.
 `stack_rawcall_compile_code_info_probe` captures all three full original code-domain, lookup-collection and collected-frame theorems, zero hypotheses, 64/80 specializations, ten concrete original compiler-key/lookup observations and two actual closed original frame-theorem applications. Fifteen full arbitrary positive/1/8/64/80 consumers and independent executable guards cover duplicate compiler keys, absent/rest lookups, ignored bare allocations, zero frames and a70-bit frame size. Domain preservation is unconditional; lookup/frame laws retain the original distinct-key guard and arbitrary rest tree. This is native proof support for compile_semantics, not production replacement, full-pass completion or cross-language equivalence.
+
+`stack_remove_init_read_memory_probeScript.sml` replays the complete original local `word_list_IMP_read_mem` proof with upstream `helperLib.SEP_R_TAC`. The captured theorem is fully generalized over memory, domain, values, base and frame and has zero hypotheses. The native proof derives head reads from actual separated graph membership and inducts on the original list; it introduces no no-wrap, good-dimension or desired-output premise.

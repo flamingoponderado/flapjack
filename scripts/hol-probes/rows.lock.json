@@ -6638,6 +6638,18 @@
       "sha256": "396eb1419d740f0a752665ebe836e06ac7c55f9a870f73fff9c764e1bcf6c5c2"
     },
     {
+      "bytes": 1922,
+      "out": "stack_remove_init_prop_probe.out",
+      "rows": 5,
+      "sha256": "ae72ca6348225dd21289ef22a823162db23a9f5c774cf46d52c6b9620d1886af"
+    },
+    {
+      "bytes": 171,
+      "out": "stack_remove_init_read_memory_probe.out",
+      "rows": 3,
+      "sha256": "4b1737fd25ff2edfd95e540e4ba7d7616715b1db909e3852a13543d6b957469c"
+    },
+    {
       "bytes": 1601,
       "out": "stack_remove_init_reduce_probe.out",
       "rows": 6,

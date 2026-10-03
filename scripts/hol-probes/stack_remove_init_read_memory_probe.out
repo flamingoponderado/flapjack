@@ -1,0 +1,3 @@
+init_read_memory_statement=∀m dm xs a p. (p * word_list a xs) (fun2set (m,dm)) ⇒ read_mem a m (LENGTH xs) = xs
+init_read_memory_hypotheses=0
+init_read_memory_proved=T
