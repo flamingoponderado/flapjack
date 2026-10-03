@@ -1525,6 +1525,9 @@ run_probe dup_exn_eids_probeScript.sml dup_exn_eids_probe.out \
 run_probe compile_prog_probeScript.sml compile_prog_probe.out \
   empty inline_call global_dest handled_missing_dest done \
   "$cake_dir/pancake/pan_to_crepScript.sml"
+run_probe pan_to_crep_first_compile_oracle_probeScript.sml pan_to_crep_first_compile_oracle_probe.out \
+  distinct_names duplicate_names \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml"
 run_probe excp_rel_probeScript.sml excp_rel_probe.out \
   empty_maps noninjective_compiler_codes \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
@@ -1586,6 +1589,12 @@ run_probe pan_simp_compile_probeScript.sml pan_simp_compile_probe.out \
 run_probe pan_structs_leaves_probeScript.sml pan_structs_leaves_probe.out \
   compile_shape_n_def size_of_shape_compile_pass_eq_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_globals_localised_probeScript.sml pan_globals_localised_probe.out \
+  compile_exp_localised compile_top_localised \
+  "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_globals_compile_top_names_probeScript.sml pan_globals_compile_top_names_probe.out \
+  ALL_DISTINCT_compile_top \
+  "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_to_crep_first_compile_probeScript.sml pan_to_crep_first_compile_probe.out \
   first_compile_prog_all_distinct \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" "$cake_dir/pancake/proofs"
