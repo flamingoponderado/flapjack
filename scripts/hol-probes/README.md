@@ -7640,3 +7640,12 @@ types and closed kernel truth. Lean retains all eight original hypotheses and
 the full target evaluation/existential globals/context/fields/WF/structs/locals/
 shape-map conclusion; Name uses precisely the same-state tail IH. Whole
 declaration correctness and production compiler routing remain open.
+
+`pan_lang_generic_wf_shape_probe` captures original payload-polymorphic
+`is_wf_shape_def`, complete quantified types, closed kernel truth and four
+Nat/Bool payload observations plus original independently polymorphic
+`is_wf_flds_def` and two generic Nat/Bool field-key observations. Zero/false
+payloads still give true name presence; nested missing names fail. The executed faithful source predicate is
+the same generalized definition used by existing StructInfoHOLExact states,
+with explicit prior payload types at empty-context calls. The separate
+full generic compiled-shape theorem and production inventory remain open.

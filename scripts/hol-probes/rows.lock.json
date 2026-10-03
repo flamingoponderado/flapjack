@@ -700,6 +700,7 @@
     {"bytes": 268, "out": "pan_lang_free_var_ids_probe.out", "rows": 10, "sha256": "eaadb6f02fe75e4b2fb288c9e1bc13d78b17f07718df97d333178d138b1a329d"},
     {"bytes": 69, "out": "pan_lang_fun_ids_probe.out", "rows": 4, "sha256": "4b4ff42fabb48753d32e6b21f606986b4bef70834da2749d36724be6dd5414ad"},
     {"bytes": 61, "out": "pan_lang_functions_probe.out", "rows": 3, "sha256": "e1b9398076d6936e9cf1273ff4944fb9277a0d637a83a2606ad0409568ccbddd"},
+    {"bytes": 847, "out": "pan_lang_generic_wf_shape_probe.out", "rows": 12, "sha256": "52cfcc3c608826322183ad4fce88361d1c64aaab54c8b72153632f9b8294bb1a"},
     {"bytes": 44, "out": "pan_lang_inlinable_probe.out", "rows": 3, "sha256": "c0f7e9dd171ed365ae28b43cb39b6dab65c900ab925cbded4714474f90df1fc5"},
     {"bytes": 20, "out": "pan_lang_is_function_probe.out", "rows": 2, "sha256": "b2ffd9e6feadc8f455a3e4a86bf6b2f65204e87f29e31d27581dc16d546ffd46"},
     {"bytes": 135, "out": "pan_lang_is_wf_shape_probe.out", "rows": 9, "sha256": "ecdf21f8bd92aacffed3001d3f50535c5725482f9348e7b8edcb8f2a67792f27"},

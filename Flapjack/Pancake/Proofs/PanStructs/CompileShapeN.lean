@@ -60,10 +60,10 @@ end
 @[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "compile_shape_n_no_name"]
 theorem compileShapeNNoName {α : Type} :
     ∀ (ctxt : List (MlS × List (α × ShapeHOL))) (n : Nat) (sh : ShapeHOL),
-      isWfShapeExactHOL [] (compileShapeNHOL ctxt n sh) = true := by
+      isWfShapeExactHOL ([] : StructContextExact) (compileShapeNHOL ctxt n sh) = true := by
   intro ctxt n sh
   induction n, sh using compileShapeNHOL.induct ctxt
-    (motive2 := fun n shs => isWfShapesExactHOL [] (compileShapesNHOL ctxt n shs) = true) with
+    (motive2 := fun n shs => isWfShapesExactHOL ([] : StructContextExact) (compileShapesNHOL ctxt n shs) = true) with
   | case1 n => simp [compileShapeNHOL]
   | case2 n shs ih => rw [compileShapeNHOL]; simpa [isWfShapeExactHOL] using ih
   | case3 n nm h =>
@@ -147,7 +147,7 @@ theorem compileShapeNEq {α : Type} :
 @[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "compile_shape_no_name"]
 theorem compileShapeNoName {α : Type} :
     ∀ (ctxt : List (MlS × List (α × ShapeHOL))) (sh : ShapeHOL),
-      isWfShapeExactHOL [] (compileShapeExact ctxt sh) = true := by
+      isWfShapeExactHOL ([] : StructContextExact) (compileShapeExact ctxt sh) = true := by
   intro ctxt sh
   have h := compileShapeNEq ctxt 0 sh
   rw [List.drop_zero] at h

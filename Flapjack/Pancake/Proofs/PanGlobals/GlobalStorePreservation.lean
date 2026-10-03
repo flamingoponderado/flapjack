@@ -37,7 +37,7 @@ theorem stateRel_storePreserves {width : Nat} {σ : Type} [NeZero width]
     rw [hcontext] at hc0
     exact (congrArg Prod.snd (Option.some.inj hc0)).symm
   subst address0
-  have hwf' : isWfShapeExactHOL [] (shapeOfHOLExact value) = true := by
+  have hwf' : isWfShapeExactHOL ([] : Flapjack.Pancake.PanLang.StructContextExact) (shapeOfHOLExact value) = true := by
     simpa [hshape, isWfShapeNilHOL] using hwf
   have hlength : (flattenHOL value).length = sizeOfShapeHOL (shapeOfHOLExact oldValue) := by
     simpa [hshape] using flattenHOL_length_eq_sizeOfShapeHOL value hwf'
