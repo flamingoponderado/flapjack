@@ -1,4 +1,4 @@
-import Flapjack.Test.L3RegisterShiftParity
+import Flapjack.Test.LabToTargetInitializerDomainParity
 import Flapjack.Test.L3SetLessParity
 import Flapjack.Test.L3ImmediateALUParity
 import Flapjack.Test.L3RegisterALUParity
@@ -2103,5 +2103,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
 end Flapjack.Test.CompilerParity
 
 def main : IO Unit := Flapjack.Test.CompilerParity.main
+
+import Flapjack.Test.L3RegisterShiftParity
 
 import Flapjack.Test.L3ImmediateShiftParity
