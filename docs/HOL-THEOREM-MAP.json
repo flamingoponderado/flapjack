@@ -78421,5 +78421,50 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.6): Full genuine original filter_correct669 external CallFFI branch962-981, native labSem Evaluate callFFI constructor. Retains full source s1/t1/res/s2 evaluate/stateRel/nonfailed and literal native fetch guard, existential target execution/result/extra clock/FFI conclusion, all generic native word/configuration/FFI and exact MlString carriers. Covers all five actual register matches, both native bytearray read NONE/SOME cases, locator NONE/SOME, and FFI final/ret without success narrowing. IH only for literal actual returned source successor: its path guard packages original five register, two memory-read, source locator and FFI-return choices existentially; no target evaluation, desired result/postrelation, or universally vacuous context supplied. Local private callFfiReturnState merely names exact inline native record update, no independent HOL declaration: returned memory/FFI, IO/register/FP/PC/clock clauses unchanged. Full target successor relation and source/target return locator derive from original stateRel plus accepted loc_to_pc_eq_NONE/SOME; actual skipped-run and target evaluation derived. Positive-width words translation only; exact fixed bytes preserved. Original full669 capture/type/hyp0/kernel reproof freshly replayed. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Install/full evaluator assembly/semantic lift remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "fakeSeq_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "fake_seq_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1005: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "ssaReconcile_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_reconcile_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1035: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "loopSetup_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "loop_setup_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1080: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "fakeMoves_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "flat_exp_conventions_fake_moves",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1402: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean",
+    "lean_name": "ssaCcTrans_flatExpInst",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_cc_trans_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1417-1430, original complete Inst constructor case. Retains original source flat_exp_conventions premise and literal SSA output conclusion for all native instruction constructors, FP width branches and fallback. No target premise or restricted instruction subset. Native WordLang/Spt/List and positive word carrier; words_as_type_indexed_bitvec records only HOL dimension translation."
   }
 ]
