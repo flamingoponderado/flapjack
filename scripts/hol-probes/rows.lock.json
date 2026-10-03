@@ -1760,6 +1760,12 @@
       "sha256": "90624f1131519978c0c920713d37932eca2e8f50ae33ac8efb3646df8d7f50b2"
     },
     {
+      "bytes": 2772,
+      "out": "l3_native_config_probe.out",
+      "rows": 103,
+      "sha256": "7f2f60b7fa75d3500b68b1c42d47969724b6bde19ee4d53ec05ddcedaeffc53f"
+    },
+    {
       "bytes": 1380,
       "out": "l3_next_evaluation_probe.out",
       "rows": 12,
@@ -1976,6 +1982,12 @@
       "sha256": "8529a95e2b964f082d5ce9f123dd41787fc414e5f93103d67681df57a24a6386"
     },
     {
+      "bytes": 383,
+      "out": "lab_filter_semantics_probe.out",
+      "rows": 4,
+      "sha256": "13b696bb353ab3f1a861cdb9fc3ad5dc1c54d527394fbd7b526beddb88834d99"
+    },
+    {
       "bytes": 1495,
       "out": "lab_filter_shared_return_probe.out",
       "rows": 4,
@@ -1992,6 +2004,12 @@
       "out": "lab_filter_skip_runs_probe.out",
       "rows": 24,
       "sha256": "6d03ade79081a40096e1050bc528d2116e757ccdcbe8ad420be814cda9c358a1"
+    },
+    {
+      "bytes": 746,
+      "out": "lab_filter_skip_semantics_probe.out",
+      "rows": 4,
+      "sha256": "3af5dab8757fbbd5ec21a8f897d20bbacd6ae7f0bbdf4abf7a38849b7e87a094"
     },
     {
       "bytes": 2138,
@@ -4848,6 +4866,12 @@
       "out": "pan_structs_shape_map_codec_probe.out",
       "rows": 7,
       "sha256": "5ad064943706d8f62e4fc9d36731f55a742b991b32bacf1714d34c4c51f42ab4"
+    },
+    {
+      "bytes": 1183,
+      "out": "pan_structs_value_shape_conversion_probe.out",
+      "rows": 10,
+      "sha256": "3554ff69c11f86edb398d21eaf8541ce818d3386dc6d0b9df20ed6fd91258023"
     },
     {
       "bytes": 411,
