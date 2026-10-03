@@ -304,4 +304,248 @@ theorem allocImpAlloc {width : Nat} [NeZero width] {C F : Type}
     simp only [if_true, true_and]
     exact ⟨hclaim, by rw [ht2len]; rfl, by rw [ht2sp]; rfl⟩
 
+/-- Exact HOL `word_gc_empty_frame` (`word_to_stackProofScript.sml:2320-2332`):
+collecting under an empty frame without a handler, then popping it, is
+collecting without it. HOL's free `n` is explicit. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "word_gc_empty_frame"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem wordGcEmptyFrame {width : Nat} [NeZero width] {C F : Type}
+    (s x y : WordSemStateFiniteExact width C F) (n : Option Nat) :
+    gc { s with stack := .stackFrame n [] [] none :: s.stack } = some x ∧ popEnv x = some y →
+      y.locals = .ln ∧ gc s = some { y with locals := s.locals, localsSize := s.localsSize } := by
+  rintro ⟨hgc, hpop⟩
+  simp only [gc, wordSemEncStack, List.map_nil, List.nil_append] at hgc ⊢
+  rcases hf : s.gcFun (wordSemEncStack s.stack, s.memory, s.mdomain, s.store) with _ | ⟨wl, m, st⟩
+  · simp [hf] at hgc
+  simp only [hf] at hgc ⊢
+  simp only [wordSemDecStack, List.length_nil, Nat.not_lt_zero, if_false, List.drop_zero] at hgc
+  rcases hd : wordSemDecStack wl s.stack with _ | st'
+  · simp [hd] at hgc
+  simp only [hd, Option.some.injEq] at hgc
+  subst hgc
+  simp only [popEnv, Option.some.injEq] at hpop
+  subst hpop
+  exact ⟨by simp [sptFromAList, sptUnion], rfl⟩
+
+/-- Exact HOL `inter_eq_empty_2` (`word_to_stackProofScript.sml:2327-2332`). HOL
+`domain t = {}` is the empty characteristic predicate. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "inter_eq_empty_2"]
+theorem interEqEmpty2 {α β : Type} (s : Spt α) (t : Spt β) :
+    sptDomain t = (fun _ => False) → sptInter s t = .ln := by
+  intro h
+  have hn : ∀ n, sptLookup n t = none := by
+    intro n
+    have := congrFun h n
+    simp only [sptDomain, eq_iff_iff, iff_false, Option.isSome_iff_ne_none, ne_eq,
+      Decidable.not_not] at this
+    exact this
+  clear h
+  induction s generalizing t with
+  | ln => simp [sptInter]
+  | ls v =>
+      cases t with
+      | ln => simp [sptInter]
+      | ls _ => simpa [sptLookup] using hn 0
+      | bn _ _ => simp [sptInter]
+      | bs _ _ _ => simpa [sptLookup] using hn 0
+  | bn a b iha ihb =>
+      cases t with
+      | ln => simp [sptInter]
+      | ls _ => simp [sptInter]
+      | bn a' b' =>
+          simp only [sptInter]
+          rw [iha a' (fun m => by
+              have h := hn (2 * m + 2); simp [sptLookup] at h
+              rwa [show (2 * m + 1) / 2 = m by omega] at h),
+            ihb b' (fun m => by simpa [sptLookup] using hn (2 * m + 1))]
+          rfl
+      | bs _ _ _ => simpa [sptLookup] using hn 0
+  | bs a v b iha ihb =>
+      cases t with
+      | ln => simp [sptInter]
+      | ls _ => simpa [sptLookup] using hn 0
+      | bn a' b' =>
+          simp only [sptInter]
+          rw [iha a' (fun m => by
+              have h := hn (2 * m + 2); simp [sptLookup] at h
+              rwa [show (2 * m + 1) / 2 = m by omega] at h),
+            ihb b' (fun m => by simpa [sptLookup] using hn (2 * m + 1))]
+          rfl
+      | bs _ _ _ => simpa [sptLookup] using hn 0
+
+theorem gc_stackMax {width : Nat} [NeZero width] {C F : Type}
+    {s s' : WordSemStateFiniteExact width C F} (h : gc s = some s') :
+    s'.stackMax = s.stackMax ∧ s'.handler = s.handler := by
+  simp only [gc] at h
+  split at h
+  · cases h
+  · split at h
+    · cases h
+    · cases h; exact ⟨rfl, rfl⟩
+
+/-- Exact HOL `alloc_IMP_alloc2` (`word_to_stackProofScript.sml:2334-2380`). HOL's
+free `c`, `names`, `k` and `lens` are explicit; `domain t = {}` is the empty
+characteristic predicate. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "alloc_IMP_alloc2"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
+    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem allocImpAlloc2 {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k : Nat) (c : BitVec width) (names : WordLangCutsetsHOL)
+    (s s1 : WordSemStateFiniteExact width (Nat × C) F) (res : Option (WordSemResult width))
+    (t : StackSemStateFiniteExact width C F) (lens : List Nat) :
+    alloc c names s = (res, s1) ∧ stateRel ac k 0 0 s t lens 0 ∧
+      sptDomain names.1 = (fun _ => False) ∧ sptDomain names.2 = (fun _ => False) ∧
+      res ≠ some .error →
+    ∃ t1 res1, StackSemAllocation.alloc c t = (res1, t1) ∧
+      if res = none then
+        res1 = none ∧ stateRel ac k 0 0 s1 t1 lens 0 ∧ t1.stack.length = t.stack.length ∧
+          t1.stackSpace = t.stackSpace
+      else
+        res = some .notEnoughSpace ∧ res1 = some (.halt (.word 1)) ∧ s1.clock = t1.clock ∧
+          s1.ffi = t1.ffi := by
+  rintro ⟨halloc, hrel, hd1, hd2, hnerr⟩
+  have hres : (alloc c names s).1 ≠ some .error := by rw [halloc]; exact hnerr
+  rw [AllocSimulation.allocAlt c names s hres] at halloc
+  rcases hcut : wordSemCutEnvs names s.locals with _ | envs
+  · simp only [hcut, Prod.mk.injEq] at halloc
+    exact absurd halloc.1.symm hnerr
+  simp only [hcut] at halloc
+  obtain ⟨he1, he2⟩ := cutEnvs_eq hcut
+  rw [interEqEmpty2 _ _ hd1] at he1
+  rw [interEqEmpty2 _ _ hd2] at he2
+  obtain ⟨e1, e2⟩ := envs
+  simp only at he1 he2
+  subst he1 he2
+  have htoal : sptToAList (.ln : Spt (WordLocW width)) = [] := by
+    rw [List.eq_nil_iff_forall_not_mem]
+    rintro ⟨a, b⟩ h
+    rw [sptToAList_mem_iff_lookup] at h
+    simp [sptLookup] at h
+  have henv : (wordSemEnvToList (.ln : Spt (WordLocW width)) s.permute).1 = [] := by
+    rw [List.eq_nil_iff_forall_not_mem]
+    intro e h
+    rw [wordSemEnvToList_mem_iff, htoal] at h
+    simp at h
+  let B' : WordSemStateFiniteExact width (Nat × C) F := { s with
+    locals := .ln
+    localsSize := some 0
+    permute := (wordSemEnvToList (.ln : Spt (WordLocW width)) s.permute).2
+    stackMax := (pushEnv (.ln, .ln) none s).stackMax }
+  have hS0 : setStore .allocSize (.word c)
+      { pushEnv (.ln, .ln) none s with locals := .ln, localsSize := some 0 } =
+      { setStore .allocSize (.word c) B' with
+        stack := .stackFrame s.localsSize [] [] none :: (setStore .allocSize (.word c) B').stack } := by
+    simp only [setStore, pushEnv, htoal, henv, B']
+  rw [hS0] at halloc
+  rcases hgc : gc { setStore .allocSize (.word c) B' with
+      stack := .stackFrame s.localsSize [] [] none :: (setStore .allocSize (.word c) B').stack }
+      with _ | s2
+  · simp only [hgc, Prod.mk.injEq] at halloc
+    exact absurd halloc.1.symm hnerr
+  simp only [hgc] at halloc
+  rcases hpop : popEnv s2 with _ | y
+  · simp only [hpop, Prod.mk.injEq] at halloc
+    exact absurd halloc.1.symm hnerr
+  simp only [hpop] at halloc
+  obtain ⟨hyl, hgcB⟩ := wordGcEmptyFrame _ s2 y s.localsSize ⟨hgc, hpop⟩
+  -- the popped frame restores the original size prediction
+  have hkey := WordSemStackEq.gcSKeyEq _ _ hgc
+  have hyls : y.localsSize = s.localsSize := by
+    simp only at hkey
+    simp only [popEnv] at hpop
+    rcases hst : s2.stack with _ | ⟨⟨n', l0', l', opt'⟩, rest⟩
+    · rw [hst] at hkey; simp [sKeyEq] at hkey
+    rw [hst] at hkey hpop
+    rcases opt' with _ | ⟨h1, _, _⟩
+    · simp only [sKeyEq, sFrameKeyEq] at hkey
+      simp only [Option.some.injEq] at hpop
+      rw [← hpop]
+      exact hkey.2.2.2.symm
+    · simp [sKeyEq, sFrameKeyEq] at hkey
+  -- B' is related to t
+  have hrel' := hrel
+  unfold stateRel at hrel'
+  obtain ⟨r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18,
+    r19, r20, r21, r22, r23, r24, r25, r26, r27, r28, r29, r30, r31, r32, r33, r34, r35, -,
+    r37, r38, -⟩ := hrel'
+  have hB' : stateRel ac k 0 0 B' t lens 0 := by
+    unfold stateRel
+    refine ⟨r1, r2, ?_, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18,
+      r19, r20, r21, r22, r23, r24, r25, r26, r27, r28, r29, r30, r31, r32, r33, r34, r35,
+      sptWf_ln, ?_, r38, ?_⟩
+    · show (wordSemEnvToList (.ln : Spt (WordLocW width)) s.permute).2 = fun _ => id
+      simp [wordSemEnvToList, r3]
+    · obtain ⟨-, rlim, rmax⟩ := r37
+      refine ⟨by simp, rlim, ?_⟩
+      intro m hm
+      simp only [B', pushEnv, wordSemOptionMax] at hm
+      split at hm
+      · rename_i a b ha hb
+        simp only [Option.some.injEq] at hm
+        obtain ⟨hle, -, size, hsize, hsz⟩ := rmax a ha
+        exact ⟨by omega, rfl, size, hsize, hsz⟩
+      · cases hm
+    · intro n v hn
+      change sptLookup n Spt.ln = some v at hn
+      simp [sptLookup] at hn
+  have hsetB := AllocSimulation.stateRelSetStore0 ac k B' t lens 0 (.word c) hB'
+  obtain ⟨t2, ht2gc, hR2, ht2len, ht2sp⟩ :=
+    GcSimulation.gcStateRel ac k _ _ _ lens ⟨hgcB, hsetB⟩
+  have hymax := (gc_stackMax hgcB).1
+  have hR2' := hR2
+  unfold stateRel at hR2'
+  obtain ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18,
+    g19, g20, g21, g22, g23, g24, g25, g26, g27, g28, g29, g30, g31, g32, g33, g34, g35, -,
+    g37, g38, -⟩ := hR2'
+  have hy : stateRel ac k 0 0 y t2 lens 0 := by
+    unfold stateRel
+    refine ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18,
+      g19, g20, g21, g22, g23, g24, g25, g26, g27, g28, g29, g30, g31, g32, g33, g34, g35,
+      by rw [hyl]; exact sptWf_ln, ?_, g38, ?_⟩
+    · obtain ⟨-, glim, gmax⟩ := g37
+      refine ⟨by simp, glim, ?_⟩
+      intro m hm
+      obtain ⟨hle, -, size, hsize, hsz⟩ := gmax m hm
+      refine ⟨hle, ?_, size, hsize, hsz⟩
+      rw [hyls]
+      have hm' : (pushEnv (.ln, .ln) none s).stackMax = some m := by
+        rw [← hm]; exact hymax.symm
+      simp only [pushEnv, wordSemOptionMax] at hm'
+      split at hm'
+      · rename_i a b ha hb
+        exact (r37.2.2 a ha).2.1
+      · cases hm'
+    · intro n v hn
+      rw [hyl] at hn
+      simp [sptLookup] at hn
+  have hstore : y.store = t2.store.eraseEq .handler := by
+    unfold stateRel at hy; exact hy.2.2.2.2.2.2.2.2.2.2.2.1
+  have hclock : y.clock = t2.clock := by
+    unfold stateRel at hy; exact hy.1
+  have hffi : t2.ffi = y.ffi := by
+    unfold stateRel at hy; exact hy.2.2.2.1
+  have hget : getStore .allocSize y = t2.store.lookup .allocSize := by
+    simp [getStore, hstore, HolFiniteMapExact.eraseEq, FDOMSUB_HOL]
+  rw [hget] at halloc
+  rcases hw : t2.store.lookup .allocSize with _ | w
+  · simp only [hw, Prod.mk.injEq] at halloc
+    exact absurd halloc.1.symm hnerr
+  simp only [hw] at halloc
+  rw [hasSpace_eraseHandler y t2.store hstore] at halloc
+  rcases hb : StackSemAllocation.hasSpace w t2.store with _ | _ | _
+  · simp only [hb, Prod.mk.injEq] at halloc
+    exact absurd halloc.1.symm hnerr
+  · simp only [hb, Prod.mk.injEq] at halloc
+    obtain ⟨rfl, rfl⟩ := halloc
+    refine ⟨StackSemStateOps.emptyEnv t2, some (.halt (.word 1)),
+      by simp only [StackSemAllocation.alloc, ht2gc, hw, hb], ?_⟩
+    simp only [reduceCtorEq, if_false, true_and]
+    exact ⟨hclock, hffi.symm⟩
+  · simp only [hb, Prod.mk.injEq] at halloc
+    obtain ⟨rfl, rfl⟩ := halloc
+    refine ⟨t2, none, by simp only [StackSemAllocation.alloc, ht2gc, hw, hb], ?_⟩
+    simp only [if_true, true_and]
+    exact ⟨hy, by rw [ht2len]; rfl, by rw [ht2sp]; rfl⟩
+
 end Flapjack.WordToStackProofs.AllocStateRel
