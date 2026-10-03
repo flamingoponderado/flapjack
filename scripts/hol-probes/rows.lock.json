@@ -5030,6 +5030,12 @@
       "sha256": "b3024de29c59ee7decbf435e91f1acf28515a2822e70a6b137a31662c47d6240"
     },
     {
+      "bytes": 5952,
+      "out": "pan_structs_program_call_probe.out",
+      "rows": 9,
+      "sha256": "4acc98d4431085bfab15044939f36ed58e03a149e4860b14ce287345484d5fd6"
+    },
+    {
       "bytes": 5879,
       "out": "pan_structs_program_dec_probe.out",
       "rows": 9,
@@ -9470,6 +9476,12 @@
       "sha256": "fbe6440d1b91c04c25a1047f94c52885beed89862a78ae0c038ac0bb3617b857"
     },
     {
+      "out": "word_to_stack_comp_loop_probe.out",
+      "sha256": "59440777eef4f7a270825baf9bf87aa60a780bf41f08f721ae49d289bdcc66ec",
+      "bytes": 7153,
+      "rows": 6
+    },
+    {
       "bytes": 305,
       "out": "word_to_stack_comp_native_probe.out",
       "rows": 19,
@@ -10254,6 +10266,12 @@
       "out": "word_to_stack_wshareinst_probe.out",
       "rows": 8,
       "sha256": "20f9ac3ebbddbe0fa0ee2f2a3ed87844803c7fce44d2c8e742efacc6bbfd64b5"
+    },
+    {
+      "bytes": 671,
+      "out": "word_to_word_config_probe.out",
+      "rows": 10,
+      "sha256": "e700fdc21d0827491eadc67838daa6a74a4be787fe6ad887a13323818ebd866d"
     },
     {
       "bytes": 827,

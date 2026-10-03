@@ -7141,3 +7141,14 @@ run_probe riscv_target_skip_probeScript.sml riscv_target_skip_probe.out \
   riscv_encoder_correct_skip_hypotheses riscv_encoder_correct_skip_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe pan_structs_program_call_probeScript.sml pan_structs_program_call_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_call_statement compile_correct_call_proved compile_correct_full_types compile_correct_call_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe word_to_word_config_probeScript.sml word_to_word_config_probe.out \
+  next_n_oracle next_n_oracle_types next_n_oracle_hypotheses next_n_oracle_proved config_reg_alg_type config_col_oracle_type oracle_zero oracle_equal oracle_short oracle_long \
+  "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_comp_loop_probeScript.sml word_to_stack_comp_loop_probe.out \
+  comp_correct_loop_full_statement comp_correct_loop_full_proved comp_correct_loop_full_hypotheses \
+  comp_correct_loop_whole_statement comp_correct_loop_whole_proved comp_correct_loop_whole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
