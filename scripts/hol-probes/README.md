@@ -7263,3 +7263,16 @@ emitted-byte routing remains a separate blocking bead. These finite regressions
 and source-reviewed record equations are not universal HOL-to-Lean equivalence.
 
 `lab_filter_skip_semantics_probe.out` captures the full original1154 theorem, both nonfailed guards, existential compiler/oracle transformation, native quantified state types, zero hypotheses and kernel reproof. The native Lean statement keeps the complete source shape and derives semantics equality from the full local semantics lift and zero-PC adjustment.
+
+`pan_structs_program_return_raise_probe` captures the original whole program
+correctness theorem and Return/Raise specializations as closed kernel theorems.
+Native cases retain all ten hypotheses and seven conclusions. Original source
+size guards, Raise exception-shape lookup/equality and error branches are
+preserved; target guards follow from full faithful expression correctness,
+value well-formedness, shape conversion and compiled-shape size preservation.
+
+`pan_structs_structs_code_invariant_probe` replays the original local
+`evaluate_structs_code_inv` statement and unchanged source proof. It records
+closed binder types, zero hypotheses and kernel proof. The native theorem
+preserves both structs and code for arbitrary evaluation results, using the
+full faithful invariant theorem through the field-for-field PanProps codec.
