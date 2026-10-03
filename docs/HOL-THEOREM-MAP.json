@@ -81481,5 +81481,21 @@
     "lean_name": "slice_bit_eleven",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c author source comparison2026-10-03: literal val lem6 all THREE conjuncts in original order, arbitrary fixedword64 c, extracts31..0 and63..32 at word32, bit11 maps to11/43, word complement bit maps to Boolean complement. No premise, narrowed port, target evaluation or omitted conjunct. Kernel simp proves generic64/32 statement. Original literal BBLAST_PROVE replay captured universally closed term/types/hyp0/T; probe evidence is not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelRegisterUpdate.lean",
+    "lean_name": "wordToStackStateRelSetVar2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_var2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2962-2997: full original state_rel_set_var2, extra0, not x<k, x<frame+k, explicit st=stack and sp=stackSpace equalities retained. Source setVar(2*x)value versus target List.set at sp+(f+k-(x+1)). Arbitrary positive width, Word/Loc payload, all stateRel conjuncts; frame shape and slot bounds derived. Rest-of-stack unchanged, locals wf and every lookup preserved. Same-module canonical owner codecs and five named finite-map fields plus words_as_type_indexed_bitvec. Fresh unchanged HOL statement AND literal proof replay hyp0/T. No numerical FP or cross-language equivalence claim; structural closure has no reals_as_rational_cuts evaluator dependency."
   }
 ]

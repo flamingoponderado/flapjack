@@ -7431,6 +7431,7 @@ The strict checker validates complete statements/types/zero hypotheses/kernel
 generic consumers preserve these carriers and conclusions. These two original
 rewrite prerequisites do not discharge target-state/step correctness or assert
 HOL-to-Lean equivalence from a finite fixture.
+
 `word_to_stack_register_update_probeScript.sml` replays the unchanged original
 state_rel_set_var statement and literal proof2930–2951, with closed hypothesis
 and proved sentinels. This is regression evidence, not cross-language equivalence.
@@ -7472,3 +7473,7 @@ rows retain the universally closed three-conjunct statement, arbitrary
 word64 binder, zero hypotheses and original kernel proof. Lean uses fixed
 BitVec64/32 carriers and proves all three equations without premises.
 This is regression evidence; it does not prove HOL-to-Lean equivalence.
+`word_to_stack_register_spill_update_probeScript.sml` freshly replays the full
+original state_rel_set_var2 statement and literal proof2962–2997, including
+st/sp equalities, with zero open hypotheses and proved sentinel. This is
+regression evidence rather than HOL-to-Lean equivalence.

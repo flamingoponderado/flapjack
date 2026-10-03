@@ -9812,6 +9812,12 @@
       "sha256": "b9bb14bb79be72c5d83ae4f8b1f00a0beb7092529dd537b2fcc094f8d9bb0c78"
     },
     {
+      "bytes": 340,
+      "out": "word_to_stack_register_spill_update_probe.out",
+      "rows": 3,
+      "sha256": "bd3deca7c1ed202985358e07d8d3970ff63b68d3f53d9e81d22dc84147c3eb3c"
+    },
+    {
       "bytes": 230,
       "out": "word_to_stack_register_update_probe.out",
       "rows": 3,
