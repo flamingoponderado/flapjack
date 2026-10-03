@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LoopHandler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelCutState
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.OpCurrHeap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister

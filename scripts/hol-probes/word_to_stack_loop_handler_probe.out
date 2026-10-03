@@ -1,0 +1,3 @@
+loop_handler_full=⊢ ∀s1 s res c. evaluate (c,s) = (res,s1) ∧ cont_loop res ⇒ s1.handler = s.handler
+loop_handler_hypotheses=0
+loop_handler_proved=T

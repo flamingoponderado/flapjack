@@ -9782,6 +9782,12 @@
       "sha256": "341a8717102da29521c97872549df8b1ace5bf732c64aee5cf9a4693ce9fa859"
     },
     {
+      "out": "word_to_stack_loop_handler_probe.out",
+      "sha256": "2ab7d261399b40b8bd7546379adabd5487734d59a3a26f5a15fae202dde1236c",
+      "bytes": 156,
+      "rows": 3
+    },
+    {
       "bytes": 11249,
       "out": "word_to_stack_make_init_probe.out",
       "rows": 125,
