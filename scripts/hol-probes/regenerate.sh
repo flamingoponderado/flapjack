@@ -7249,3 +7249,7 @@ run_probe word_to_stack_comp_storeconsts_probeScript.sml word_to_stack_comp_stor
 run_probe word_to_stack_comp_returning_full_probeScript.sml word_to_stack_comp_returning_full_probe.out \
   comp_correct_returning_full_statement comp_correct_returning_full_proved comp_correct_returning_full_hypotheses comp_correct_returning_induction_obligation \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_move_div2_probeScript.sml word_to_stack_move_div2_probe.out \
+  times2_div2_statement times2_div2_proved times2_div2_hypotheses parsem_parmove_div2_statement parsem_parmove_div2_proved parsem_parmove_div2_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
