@@ -87418,5 +87418,201 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL evaluate_Move1 (word_cseProof:1154). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "data_inv_insert_instrs_Const",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_instrs_Const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL data_inv_insert_instrs_Const (word_cseProof:1204). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "data_inv_insert_instrs_Arith",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_instrs_Arith",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL data_inv_insert_instrs_Arith (word_cseProof:1252). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "data_inv_insert_instrs_OpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_instrs_OpCurrHeap",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL data_inv_insert_instrs_OpCurrHeap (word_cseProof:1316). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "data_inv_insert_instrs_LocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_instrs_LocValue",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL data_inv_insert_instrs_LocValue (word_cseProof:1364). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_data_aux_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_data_aux_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_data_aux_correct (word_cseProof:1416). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "canonicalRegs_self_or_fresh",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs_self_or_fresh",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL canonicalRegs_self_or_fresh (word_cseProof:1479). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "canonicalRegs'_self_or_fresh",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs'_self_or_fresh",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL canonicalRegs'_self_or_fresh (word_cseProof:1496). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_data_const_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_data_const_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_data_const_correct (word_cseProof:1523). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_data_LocValue_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_data_LocValue_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_data_LocValue_correct (word_cseProof:1591). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_data_OpCurrHeap_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_data_OpCurrHeap_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_data_OpCurrHeap_correct (word_cseProof:1626). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_data_Arith_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_data_Arith_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_data_Arith_correct (word_cseProof:1691). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "data_inv_insert_loads",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_loads",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL data_inv_insert_loads (word_cseProof:1785). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_load_aux_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_load_aux_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_load_aux_correct (word_cseProof:1816). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_load_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_load_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_load_correct (word_cseProof:1879). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
