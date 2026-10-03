@@ -84132,5 +84132,77 @@
     "hol_name": "opw",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison: backend_commonScript12-14 literal opw=Andw|Orw|Xor|Add|Sub. Same five nullary constructors in same order; no word carrier or width side condition, no partial enum."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "Const",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "const",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 const datatype, all 4 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "ConstPart",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "const_part",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 const_part datatype, all 4 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "IntOp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "int_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 int_op datatype, all 11 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "WordOp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "word_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 word_op datatype, all 10 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "BlockOp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "block_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 block_op datatype, all 16 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "GlobOp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "glob_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 glob_op datatype, all 5 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "MemOp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "mem_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 mem_op datatype, all 23 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "Op",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 op datatype, all 9 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "Exp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "exp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 exp datatype, all 11 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
   }
 ]

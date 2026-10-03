@@ -7195,3 +7195,7 @@ run_probe ast_backend_operators_probeScript.sml ast_backend_operators_probe.out 
 run_probe backend_common_operators_probeScript.sml backend_common_operators_probe.out \
   opw_case_def opw_nchotomy \
   "$cake_dir/compiler/backend/backend_commonScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_lang_syntax_probeScript.sml clos_lang_syntax_probe.out \
+  const_case_def const_nchotomy const_part_case_def const_part_nchotomy int_op_case_def int_op_nchotomy word_op_case_def word_op_nchotomy block_op_case_def block_op_nchotomy glob_op_case_def glob_op_nchotomy mem_op_case_def mem_op_nchotomy op_case_def op_nchotomy exp_case_def exp_nchotomy \
+  "$cake_dir/compiler/backend/closLangScript.sml" "$cake_dir/compiler/backend"

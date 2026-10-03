@@ -452,6 +452,12 @@
       "sha256": "6008ea6cbd045b498a9b2ab282fbd0734ddd6c4760faa5e59cd7aa29a438f184"
     },
     {
+      "bytes": 35713,
+      "out": "clos_lang_syntax_probe.out",
+      "rows": 18,
+      "sha256": "2e8e6be1b0056b188b8fe43b370a9b53ada45ba12641d9476f9d3e0d37e75d31"
+    },
+    {
       "bytes": 1359,
       "out": "code_rel_probe.out",
       "rows": 12,
