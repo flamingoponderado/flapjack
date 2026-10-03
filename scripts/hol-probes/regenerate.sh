@@ -7097,3 +7097,8 @@ run_probe word_to_stack_cut_state_probeScript.sml word_to_stack_cut_state_probe.
 run_probe word_to_stack_loop_handler_probeScript.sml word_to_stack_loop_handler_probe.out \
   loop_handler_full loop_handler_hypotheses loop_handler_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_loop_probeScript.sml word_to_stack_comp_loop_probe.out \
+  comp_correct_loop_full_statement comp_correct_loop_full_proved comp_correct_loop_full_hypotheses \
+  comp_correct_loop_whole_statement comp_correct_loop_whole_proved comp_correct_loop_whole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
