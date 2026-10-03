@@ -78053,5 +78053,115 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.2.37): !start code. ALL_DISTINCT (MAP FST (functions code)) ==> ALL_DISTINCT (MAP FST (functions (compile_top code start))) over the reviewed compileTopExactHOL; statement captured with types by pan_globals_compile_top_names_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "compileExpLocalisedHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_localised",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.2.37) against the statement captured with types by pan_globals_localised_probe: !ctxt e. localised_exp (compile_exp ctxt e) over compileExpExactHOL. Only the pan_globals context globals |-> field is translated."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "compileLocalisedHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_localised",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.2.37) against the statement captured with types by pan_globals_localised_probe: !ctxt body. localised_prog (compile ctxt body) over compileProgExactHOL, by compile_ind (Lean functional induction; the catch-all case is discharged per constructor). Only the pan_globals context globals |-> field is translated."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "compileDecsLocalisedHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decs_localised",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.2.37) against the statement captured with types by pan_globals_localised_probe: !ctxt code. EVERY (...) (functions (FST (SND (compile_decs ctxt code)))). EVERY (localised_prog o FST o SND o SND) is membership quantification over each function body. Only the pan_globals context globals |-> field is translated."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "compileDecsLocalisedPrimeHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decs_localised'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.2.37) against the statement captured with types by pan_globals_localised_probe: !ctxt code. EVERY (...) (functions (FST (SND (SND (compile_decs ctxt code))))). EVERY (localised_prog o FST o SND o SND) is membership quantification over each function body. Only the pan_globals context globals |-> field is translated."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "compileDecsLocalisedMainHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decs_localised_main",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.2.37) against the statement captured with types by pan_globals_localised_probe: !ctxt code. EVERY localised_prog (FST (compile_decs ctxt code)); EVERY rendered as membership quantification. Only the pan_globals context globals |-> field is translated."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "nestedSeqsLocalisedHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "nested_seqs_localised",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.2.37) against the statement captured with types by pan_globals_localised_probe: !ps. localised_prog (nested_seq ps) <=> EVERY localised_prog ps, as Bool equality with List.all."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "compileTopLocalisedHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_top_localised",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.2.37) against the statement captured with types by pan_globals_localised_probe: !pan_code main. EVERY (...) (functions (compile_top pan_code main)) over compileTopExactHOL. EVERY (localised_prog o FST o SND o SND) is membership quantification over each function body."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "localisedExpHOL_eq_every",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: localised_exp is every_exp of the named predicate localisedExpPredHOL; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "compileExpListEveryLocalised",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: every subexpression of a compiled argument list is localised (localised_prog's EVERY localised_exp argument folds); no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "shapeValLocalised",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: shape_val expressions are localised; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical pan_globals context roundtrip re-exported for this module's relation qualifiers; no HOL original."
   }
 ]

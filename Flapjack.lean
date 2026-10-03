@@ -1589,6 +1589,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopNames
+import Flapjack.Pancake.Proofs.PanGlobals.CompileLocalised
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsDecls
