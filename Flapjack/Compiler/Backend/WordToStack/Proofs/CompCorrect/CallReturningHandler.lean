@@ -1562,4 +1562,43 @@ theorem poppedTailRelation {width : Nat} [NeZero width] {C F : Type}
   simpa [poppedHandlerState, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
     List.drop_drop, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using tail
 
+/-- Execute the original normal-return copy with its three-word handler offset.
+The saved handler slot is derived from the copy operation's untouched prefix;
+no successful target execution or restoration relation is supplied. This is
+Flapjack case factoring for the original normal-return branch, not a separate
+HOL theorem. -/
+theorem copyHandlerReturn {width : Nat} [NeZero width] {C F : Type}
+    (target : StackSemStateFiniteExact width C F) (register frame count : Nat)
+    (enabled : target.useStack = true)
+    (room : frame + 3 ≤ target.stack.length - (target.stackSpace + count))
+    (countBound : count ≤ frame) :
+    ∃ copied : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (copyRetAuxNative register (frame + 3) count, target) =
+        (none, copied) ∧
+      copied.stack.length = target.stack.length ∧
+      copied.stackSpace = target.stackSpace ∧
+      copied.store = target.store ∧ copied.ffi = target.ffi ∧
+      copied.clock = target.clock ∧
+      holEl 2 (copied.stack.drop (copied.stackSpace + count)) =
+        holEl 2 (target.stack.drop (target.stackSpace + count)) ∧
+      copied.stack.drop (copied.stackSpace + count + (frame + 3)) =
+        target.stack.drop (target.stackSpace + count + (frame + 3)) ∧
+      (∀ other, other ≠ register →
+        StackSemStateOps.getVar other copied = StackSemStateOps.getVar other target) ∧
+      (∀ index, index < count →
+        holEl (index + (frame + 3)) (copied.stack.drop copied.stackSpace) =
+          holEl index (target.stack.drop target.stackSpace)) := by
+  obtain ⟨copied, execution, stack, regs, state, length, space, tail,
+    registers, untouched, values⟩ := CallReturnEval.evaluateCopyRetAux
+      register (frame + 3) count target ⟨enabled, by omega, room⟩
+  have saved := untouched 2 (by omega)
+  refine ⟨copied, execution, ?_, space, ?_, ?_, ?_, ?_, ?_, registers, ?_⟩
+  · simpa only [state] using length
+  · simp only [state]
+  · simp only [state]
+  · simp only [state]
+  · simpa only [state, Nat.add_comm] using saved
+  · simpa only [state, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using tail
+  · simpa only [state] using values
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
