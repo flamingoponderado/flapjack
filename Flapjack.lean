@@ -57,6 +57,7 @@ import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Seq.Standard
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Seq
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Call.Tail
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Call
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompileCodeInfo
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
