@@ -2234,6 +2234,12 @@
       "sha256": "c2a6ec189c27ace02b78e1a36e17c7bf48d527f7cb7fab8f317efe47b2cfeecc"
     },
     {
+      "bytes": 1940,
+      "out": "lab_to_target_shmem_offset_probe.out",
+      "rows": 17,
+      "sha256": "3233d45a8fae304ae0e54f6049a543a35fef32e8fd2f1b55c5613930c413e98e"
+    },
+    {
       "bytes": 1919,
       "out": "lab_to_target_shmem_prefix_probe.out",
       "rows": 13,

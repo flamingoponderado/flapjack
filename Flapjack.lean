@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.ShmemOffset
 import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
 import Flapjack.RiscV.L3.Defs.LRSC
 import Flapjack.RiscV.L3.Defs.IntegerLoad

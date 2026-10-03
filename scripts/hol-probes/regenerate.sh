@@ -5902,3 +5902,11 @@ run_probe lab_to_target_shmem_correctness_probeScript.sml lab_to_target_shmem_co
   full_instance first_index last_index prefixed_load_name prefixed_store_name load_record store_record nonshared_intervals \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_shmem_offset_probeScript.sml lab_to_target_shmem_offset_probe.out \
+  line_to_info_offset_FST_eq line_to_info_offset_FST_eq_types line_to_info_offset_FST_eq_hypotheses \
+  line_to_info_offset_SND_eq line_to_info_offset_SND_eq_types line_to_info_offset_SND_eq_hypotheses \
+  get_shmem_info_init_pc_offset get_shmem_info_init_pc_offset_types get_shmem_info_init_pc_offset_hypotheses \
+  independent_names independent_records none empty_offset actual_names actual_records valid_guard negative_length \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
