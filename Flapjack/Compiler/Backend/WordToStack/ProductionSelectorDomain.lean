@@ -32,6 +32,12 @@ theorem supportsCodec_wordInstSelectProgram {α : Type u}
   have address (e : WordExp α) (t : Nat) (p : WordProg α) (s : WordExp α)
       (equation : wordInstSelectAddressAtom t e = (p,s)) : supportsCodec p = true := by
     simpa only [equation, Prod.fst] using supportsCodec_wordInstSelectAddressAtom t e
+  have store (t : Nat) (e : WordExp α) (v : Nat) :
+      supportsCodec (wordInstSelectStoreCake t e v) = true := by
+    unfold wordInstSelectStoreCake
+    dsimp only
+    split <;> (try split) <;>
+      simp [selectSeqDomain, supportsCodec, supportsCodec_wordInstSelectAtom]
   fun_induction wordInstSelectProgram temporary program
   all_goals try dsimp +zetaDelta only at *
   all_goals repeat' split

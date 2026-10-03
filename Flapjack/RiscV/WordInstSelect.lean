@@ -494,15 +494,14 @@ def wordInstSelectShareOffsetAllowed [WordInstSelectImmediate α]
     (_operator : WordMemOp) (offset : α) : Bool :=
   WordInstSelectImmediate.validSharedMemoryOffset _operator offset
 
-/-! Cake-faithful standalone Store boundary.
+/-! Executed source-shaped Store boundary.
 
-`wordInstSelectProgram` retains the source-shaped positive-offset carrier for
-the currently parity-green Word-to-Stack path.  This separate boundary mirrors
-the `Store` clause of Cake's `inst_select_def`: a valid address offset is kept
-in `Mem Store ... (Addr temp offset)`, while every other address is selected
-into `temp` and emitted with a zero-offset memory instruction.  It is intended
-for checked theorem/API clients until the downstream carrier integration can
-be migrated without changing accepted artifacts. -/
+The Store caller below uses this complete original address-case split.
+Valid offsets become Mem Store with that offset; every other address is
+selected as a whole expression into temp and stored with zero offset.
+Selecting the entire invalid-offset expression preserves the original
+CurrHeap special case as well as generic constant materialization.
+-/
 def wordInstSelectStoreCake [Sub α] [Add α] [AndOp α] [OrOp α]
     [HXor α α α] [DecidableEq α] [OfNat α 0] [OfNat α 1]
     [WordInstSelectImmediate α] [WordInstSelectConstants α]
@@ -515,12 +514,8 @@ def wordInstSelectStoreCake [Sub α] [Add α] [AndOp α] [OrOp α]
         wordDeadSelectSeq prelude
           (.inst (.memOffset .store value temp offset))
       else
-        let (prelude, _) := wordInstSelectAtom temp base
-        let materialized :=
-          .seq prelude
-            (.seq (.inst (.const (temp + 1) offset))
-              (.inst (.arith (.binOp .add temp temp (.reg (temp + 1))))))
-        .seq materialized (.inst (.mem .store value temp))
+        let (prelude, _) := wordInstSelectAtom temp address
+        wordDeadSelectSeq prelude (.inst (.mem .store value temp))
   | _ =>
       let (prelude, _) := wordInstSelectAtom temp address
       wordDeadSelectSeq prelude (.inst (.mem .store value temp))
@@ -680,24 +675,7 @@ def wordInstSelectProgram [Sub α] [Add α] [AndOp α] [OrOp α] [HXor α α α]
             (wordDeadSelectSeq rightPrelude body)
       | .var source => .move 0 [(destination, source)]
       | value => .assign destination value
-  | .store address value =>
-      let (prelude, selectedAddress) :=
-        wordInstSelectAddressAtom temp (wordInstNormalizeExp address)
-      match selectedAddress with
-      | .var address =>
-          /- Keep the source-shaped Store carrier until Word-to-Stack.  This
-             is the carrier that the parity-green compiler used: for ordinary
-             addresses the later lowering emits the same sequence as Cake's
-             selected Mem instruction, while preserving the allocator-visible
-             move shape. -/
-          wordDeadSelectSeq prelude (.inst (.mem .store value address))
-      | .op .add [.var address, .const offset] =>
-          if WordInstSelectImmediate.negativeAddressOffset offset then
-            wordDeadSelectSeq prelude
-              (.inst (.memOffset .store value address offset))
-          else
-            wordDeadSelectSeq prelude (.store selectedAddress value)
-      | _ => wordDeadSelectSeq prelude (.store selectedAddress value)
+  | .store address value => wordInstSelectStoreCake temp address value
   | .ite operator condition right thenBranch elseBranch =>
       .ite operator condition right
         (wordInstSelectProgram temp thenBranch)
