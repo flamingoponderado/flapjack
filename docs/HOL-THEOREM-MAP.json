@@ -83067,5 +83067,39 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original737-740: forall i s1 s2 t1, inst i s1 = SOME s2 and state_rel s1 t1 imply state_rel s2 (asm_inst i t1), over the accepted native StackSem instHOL (stackSem inst_def) and LabSem asmInst (labSem asm_inst_def) and the reviewed stateRel. Proved for every constructor: Skip, Const, all eight Arith (incl. Or self-copy, shift range via word_sh_word_shift, signed Div after the bead pxn.18.5.12.13 word_quot fix, AddCarry/LongMul/LongDiv/overflow), all eight Mem opcodes (aligned word load/store via state_rel alignment and domain, byte and 32-bit ops through the shared WordSem helpers, Load16/Store16 vacuous) and all sixteen FP opcodes (FPSqrt via holFp64Sqrt_agreement, FPFma via fpSemFpfma operand order, 64/non-64 register transfers and conversions). Canonical maps: only s.regs and s.fp_regs, same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact. Inherited assumption: instHOL/asmInst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call in the statement. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_inst_correct_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.8."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/OpCurrHeap.lean",
+    "lean_name": "compCorrectOpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison original6376-6406 and complete comp_correct5756 motive5719-5751. All original premises and full existential/result/resource conclusion retained; source nonerror derives Word operands and operator success, actual Reg1 loads preserve full relation, erased Handler store relation supplies CurrHeap, actual native callback and full register write establish target run/full postrelation. No target evaluation premise. Canonical fmap_as_finite_support_relation and positive-width word translation only; evaluator inherits reals_as_rational_cuts. Fresh original whole obligation capture is statement evidence, not literal case proof replay.",
+    "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelCutState.lean",
+    "lean_name": "stateRelCutState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_cut_state",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison7750-7765: arbitrary original names native unit Spt; full original state_rel and actual cut_state(names,LN)=SOME post imply entire same-target relation. Cut preserves all other fields, native inter/union wf and lookup laws preserve every local placement. Original two premises only, no added wf/lookup/target-run assumptions. Canonical fmap_as_finite_support_relation codecs and positive-width word translation reviewed; structural theorem introduces no real evaluator assumption. Fresh literal original proof replay."
   }
 ]

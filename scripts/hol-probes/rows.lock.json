@@ -9464,6 +9464,12 @@
       "sha256": "790a3f9f1afa4001820a89e788378d6810229137318edab8f8bcba22be0780ab"
     },
     {
+      "out": "word_to_stack_comp_opcurrheap_probe.out",
+      "sha256": "13a79a6113a83979113d7b329c1e65127ebbc6042c45d2af8f708bae4ce0cb81",
+      "bytes": 3653,
+      "rows": 6
+    },
+    {
       "bytes": 95,
       "out": "word_to_stack_comp_prefix_probe.out",
       "rows": 9,
@@ -9552,6 +9558,12 @@
       "out": "word_to_stack_cse_codec_probe.out",
       "rows": 16,
       "sha256": "26b5b30b79b24ccf1c8d6e6d02b4eda9f3a307ae3c2da7cef374195900c45552"
+    },
+    {
+      "out": "word_to_stack_cut_state_probe.out",
+      "sha256": "1775cd6951d81d7a9f045d7c840f7c65e54357de838a81d3205cd0557c3e6df4",
+      "bytes": 197,
+      "rows": 3
     },
     {
       "bytes": 155,
