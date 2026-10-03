@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnStackMoveClock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.Pancake.WordConvs.MaxVarIntro
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
+import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 
 namespace Flapjack.WordToStackProofs.CompCorrect.CallReturning
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
@@ -1796,5 +1797,235 @@ theorem sourceReturningContinuation {width : Nat} [NeZero width] {C F : Type}
     invalid, execution, ?_⟩
   exact ih.1 xs args1 prog ss envs location returned bodyPost popped
     ⟨guards, nonzero, bodyRun, invalid, popRun, domain⟩
+
+/-- Flapjack execution of the actual no-handler return copy/free wrapper.
+This composes evaluate_copy_ret_aux and SeqStackFree, retaining cold fields,
+registers, the frame tail, live frame slots and copied return slots. Its
+bounds are the original copy-aux bounds, discharged from the callee result
+relation in the Call case; no target run is assumed. There is no separate
+HOL declaration for this wrapper specialization. -/
+theorem evaluateReturnCopyFree {width : Nat} [NeZero width] {C F : Type}
+    (k f frame : Nat) (values : List Nat) (target : StackSemStateFiniteExact width C F)
+    (useStack : target.useStack = true) (positive : f ≠ 0)
+    (bound : f ≤ target.stack.length -
+      (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values)) :
+    let count := Compiler.Backend.WordToStack.numStackRet k values
+    ∃ (restored : StackSemStateFiniteExact width C F)
+      (stack : List (WordLocW width)) (regs : HolFiniteMapExact Nat (WordLocW width)),
+      StackSemEvaluate.evaluate (copyRetNative false false (k, f, frame) values .skip, target) =
+        (none, restored) ∧
+      restored = {target with stack := stack, regs := regs, stackSpace := target.stackSpace + count} ∧
+      stack.length = target.stack.length ∧
+      stack.drop (f + count + target.stackSpace) = target.stack.drop (f + count + target.stackSpace) ∧
+      (∀ register, register ≠ k →
+        regs.lookup register = target.regs.lookup register) ∧
+      (∀ index, index < f - count →
+        holEl index (stack.drop (count + target.stackSpace)) =
+          holEl index (target.stack.drop (count + target.stackSpace))) ∧
+      (∀ index, index < count →
+        holEl (index + f) (stack.drop target.stackSpace) =
+          holEl index (target.stack.drop target.stackSpace)) := by
+  dsimp only
+  let count := Compiler.Backend.WordToStack.numStackRet k values
+  obtain ⟨copied, copyRun, stack, regs, copiedState, length, _, tail, registers, live, returns⟩ :=
+    CallReturnEval.evaluateCopyRetAux k f count target ⟨useStack, positive, bound⟩
+  subst copied
+  let restored : StackSemStateFiniteExact width C F := {target with
+    stack := stack, regs := regs, stackSpace := target.stackSpace + count}
+  refine ⟨restored, stack, regs, ?_, rfl, length, tail, registers, live, returns⟩
+  by_cases zero : count = 0
+  · have unchanged : {target with stack := stack, regs := regs} = target := by
+      have run := copyRun
+      rw [zero, copyRetAuxNative, StackSemEvaluate.evaluate_skip] at run
+      exact (Prod.mk.inj run).2.symm
+    have restoredEq : restored = target := by
+      dsimp [restored]
+      rw [zero, Nat.add_zero]
+      exact unchanged
+    rw [copyRetNative, if_pos zero, StackSemEvaluate.evaluate_skip, restoredEq]
+  · rw [copyRetNative, if_neg zero]
+    simp only [Bool.false_eq_true, if_false]
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, copyRun]
+    simp only
+    rw [CallHelpers.evaluateSeqStackFree count .skip {target with stack := stack, regs := regs}
+      ⟨useStack, by change target.stackSpace ≤ stack.length; rw [length]; omega⟩,
+      StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
+      StackSemEvaluate.evaluate_stackFree, if_neg (by simp [useStack]),
+      if_neg (by change ¬ stack.length < target.stackSpace + count; rw [length]; omega)]
+    simp only
+    rw [StackSemEvaluate.evaluate_skip]
+
+/-- Flapjack normal-return target assembly from the actual original guarded
+callee IH. The full body result contract retains all resource outcomes;
+its original matching-Return branch derives the copy/free bounds from the
+recovered source frame and target stack_rel, then executes the actual return
+wrapper. No postrelation or successful target run is a premise. Final caller
+state_rel and continuation execution remain open; no separate HOL declaration. -/
+theorem simulateCalleeAndCopyReturn {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerSize callerFrame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result : Option (WordSemResult width))
+    (returnedLocation : WordLocW width) (returned : List (WordLocW width))
+    (saved : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (destinationCode : HolProg width) (destination : Sum Nat Nat)
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (callerRelation : stateRel ac k callerSize callerFrame source saved lens 0)
+    (pushedRelation : stateRel ac k 0 0
+      {WordSemStateFiniteExact.pushEnv envs none source with locals := .ln, localsSize := some 0}
+      saved (callerFrame :: lens) 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args none) < 2 * callerFrame + 2 * k)
+    (destinationCompile : callDestNative dest args (k, callerSize, callerFrame) =
+      (destinationCode, destination))
+    (ih : InductionHypotheses ac values names retCode l1 l2 dest args source)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (result, sourcePost))
+    (notError : result ≠ some .error)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (some (.result returnedLocation returned), bodyPost)) :
+    ∃ (calleeSize calleeFrame : Nat) (body : HolProg width) (codeLocation : Nat),
+      sptLookup codeLocation source.code = some (args1.length, prog) ∧
+      sptLookup codeLocation saved.code = some
+        (.seq (.stackAlloc (calleeSize - (args1.length - k))) body) ∧
+      ss.getD calleeSize = calleeSize ∧
+      (if calleeFrame = 0 then calleeSize = 0 else calleeSize = calleeFrame + 1) ∧
+      (calleeSize ≤ saved.stackSpace →
+        ∃ (moved entry : StackSemStateFiniteExact width C F)
+          (extraClock : Nat) (targetPost : StackSemStateFiniteExact width C F)
+          (targetResult : Option (StackSemResult width)),
+          StackSemEvaluate.evaluate (stackArgsNative destination (args.length + 1)
+            (k, callerSize, callerFrame), saved) = (none, moved) ∧
+          StackSemEvaluate.evaluate
+            (.stackAlloc (calleeSize - (args1.length - k)),
+              StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved)) =
+            (none, entry) ∧
+          StackSemEvaluate.evaluate (body, {entry with clock := entry.clock + extraClock}) =
+            (targetResult, targetPost) ∧
+          StackSemEvaluate.evaluate
+            (.seq (.stackAlloc (calleeSize - (args1.length - k))) body,
+              {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved) with
+                clock := (StackSemStateOps.decClock moved).clock + extraClock}) =
+            (targetResult, targetPost) ∧
+          compCorrectResult ac k calleeSize calleeFrame
+            (WordSemStateFiniteExact.callEnv args1 ss
+              (WordSemStateFiniteExact.pushEnv envs none
+                (WordSemStateFiniteExact.decClock source)))
+            bodyPost targetPost (some (.result returnedLocation returned)) targetResult
+            (callerFrame :: lens) ∧
+          (targetResult = some (.result returnedLocation) →
+            let count := Compiler.Backend.WordToStack.numStackRet k values
+            ∃ (restored : StackSemStateFiniteExact width C F)
+              (stack : List (WordLocW width)) (regs : HolFiniteMapExact Nat (WordLocW width)),
+              StackSemEvaluate.evaluate
+                (copyRetNative false false (k, callerSize, callerFrame) values .skip, targetPost) =
+                (none, restored) ∧
+              restored = {targetPost with
+                stack := stack, regs := regs, stackSpace := targetPost.stackSpace + count} ∧
+              stack.length = targetPost.stack.length ∧
+              stack.drop (callerSize + count + targetPost.stackSpace) =
+                targetPost.stack.drop (callerSize + count + targetPost.stackSpace) ∧
+              (∀ register, register ≠ k → regs.lookup register = targetPost.regs.lookup register) ∧
+              (∀ index, index < callerSize - count →
+                holEl index (stack.drop (count + targetPost.stackSpace)) =
+                  holEl index (targetPost.stack.drop (count + targetPost.stackSpace))) ∧
+              (∀ index, index < count →
+                holEl (index + callerSize) (stack.drop targetPost.stackSpace) =
+                  holEl index (targetPost.stack.drop targetPost.stackSpace)))) := by
+  obtain ⟨calleeSize, calleeFrame, body, codeLocation, sourceCode, targetCode,
+    calleeLocalsSize, calleeShape, simulate⟩ :=
+    simulateCalleeBody ac k callerSize callerFrame values names retCode l1 l2 dest args source
+      sourcePost bodyPost result (some (.result returnedLocation returned)) saved lens xs args1
+      prog ss envs destinationCode destination guards callerRelation pushedRelation conventions
+      maximum destinationCompile ih nonzero execution notError bodyRun
+  refine ⟨calleeSize, calleeFrame, body, codeLocation, sourceCode, targetCode,
+    calleeLocalsSize, calleeShape, ?_⟩
+  intro space
+  obtain ⟨moved, entry, extraClock, targetPost, targetResult, moveRun, allocationRun,
+    bodyTargetRun, calleeRun, conclusion⟩ := simulate space
+  refine ⟨moved, entry, extraClock, targetPost, targetResult, moveRun, allocationRun,
+    bodyTargetRun, calleeRun, conclusion, ?_⟩
+  intro targetReturn
+  obtain ⟨gc, tail, _, sourceFrame, _, _, _, _, _, _, valid, _, _⟩ :=
+    sourceReturningContinuation ac values names retCode l1 l2 dest args source sourcePost
+      bodyPost result xs args1 prog ss envs returnedLocation returned guards ih nonzero
+      execution notError bodyRun
+  have positive := positiveCallerFrame k callerFrame values names retCode l1 l2 dest args
+    source xs args1 prog ss envs guards conventions maximum
+  have callerShape : if callerFrame = 0 then callerSize = 0 else callerSize = callerFrame + 1 := by
+    have relation := callerRelation
+    unfold stateRel at relation
+    aesop (config := { enableSimp := false })
+  have callerSizeEq : callerSize = callerFrame + 1 := by
+    split_ifs at callerShape <;> omega
+  have kBound : 4 < k := by
+    have relation := callerRelation
+    unfold stateRel at relation
+    aesop (config := { enableSimp := false })
+  have countEq : Compiler.Backend.WordToStack.numStackRet k values = returned.length - (k - 1) := by
+    unfold Compiler.Backend.WordToStack.numStackRet
+    have lengthEq := (not_or.mp valid).2
+    omega
+  have matching := conclusion
+  rw [targetReturn] at matching
+  simp only [compCorrectResult, Option.map_some, compileResult, ne_eq,
+    not_true_eq_false, ↓reduceIte] at matching
+  obtain ⟨returnedRelation, _⟩ := matching
+  have useStack : targetPost.useStack = true := by
+    unfold stateRel at returnedRelation
+    aesop (config := { enableSimp := false })
+  have stackRelation : stackRel k bodyPost.handler bodyPost.stack
+      (targetPost.store.lookup .handler)
+      (targetPost.stack.drop (targetPost.stackSpace + (returned.length - (k - 1))))
+      targetPost.stack.length targetPost.bitmaps (callerFrame :: lens) := by
+    unfold stateRel at returnedRelation
+    aesop (config := { enableSimp := false })
+  rw [sourceFrame] at stackRelation
+  have frameBound := CallReturnSupport.stackRelConsLenNone k bodyPost.handler source.localsSize
+    (sptToAList envs.1) gc tail (targetPost.store.lookup .handler)
+    (targetPost.stack.drop (targetPost.stackSpace + (returned.length - (k - 1))))
+    targetPost.stack.length targetPost.bitmaps callerFrame lens stackRelation
+  rw [List.length_drop] at frameBound
+  exact evaluateReturnCopyFree k callerSize callerFrame values targetPost useStack
+    (by omega) (by rwa [callerSizeEq, countEq])
+
+/-- Case-local source lookup decomposition used by the original normal-return
+restoration proof. It unfolds the actual popped NONE frame and actual `setVars`:
+returned entries take precedence, then restored GC entries, then the saved
+non-GC environment. No distinctness, lookup outcome, or target relation is
+assumed. This is infrastructure factoring inside `comp_correct`, not a separate
+HOL declaration or the completed caller state relation. -/
+theorem restoredCallerLookup {width : Nat} [NeZero width] {C F : Type}
+    (bodyPost : WordSemStateFiniteExact width C F) (size : Nat)
+    (nonGC : Spt (WordLocW width)) (gc : List (Nat × WordLocW width))
+    (tail : List (WordSemStackFrame width))
+    (values : List Nat) (returned : List (WordLocW width)) (key : Nat)
+    (frame : bodyPost.stack = .stackFrame size (sptToAList nonGC) gc none :: tail) :
+    ∃ popped, WordSemStateFiniteExact.popEnv bodyPost = some popped ∧
+      sptLookup key (WordSemStateFiniteExact.setVars values returned popped).locals =
+        match holAlookup (values.zip returned) key with
+        | some result => some result
+        | none => match sptAListLookup key gc with
+          | some result => some result
+          | none => sptLookup key nonGC := by
+  refine ⟨{ bodyPost with
+    locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList nonGC)),
+    stack := tail, localsSize := size }, ?_, ?_⟩
+  · simp only [WordSemStateFiniteExact.popEnv, frame]
+  · have savedLookup : sptAListLookup key (sptToAList nonGC) = sptLookup key nonGC := by
+      rw [← sptLookup_sptFromAList, sptLookup_sptFromAList_sptToAList]
+    simp only [WordSemStateFiniteExact.setVars, lookup_alist_insert_any,
+      sptLookup_sptUnion, sptLookup_sptFromAList, savedLookup]
+    cases holAlookup (values.zip returned) key <;> cases sptAListLookup key gc <;> rfl
 
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning

@@ -5,7 +5,7 @@ import unittest
 ROOT=Path(__file__).resolve().parents[2]
 class Captures(unittest.TestCase):
     def test_exact_and_mutated_captures(self):
-        for family in ("write-pc", "decode-any", "update-pc", "next-step", "next-evaluation", "decode-transport"):
+        for family in ("write-pc", "decode-any", "update-pc", "next-step", "next-evaluation", "decode-transport", "step-bit-rewrites"):
             path=ROOT / f"scripts/hol-probes/check-l3-{family}.py"
             spec=importlib.util.spec_from_file_location(family,path)
             module=importlib.util.module_from_spec(spec)

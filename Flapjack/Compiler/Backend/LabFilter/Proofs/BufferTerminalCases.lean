@@ -34,7 +34,7 @@ theorem filterCorrectLabel {width : Nat} [NeZero width] {C F : Type}
   have he := heval
   conv at he => lhs; rw [evaluate]
   simp only [hc, ↓reduceIte, hfetch] at he
-  
+
   cases he
   have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
   refine ⟨count, {t1 with pc := t1.pc + count}, ?_, ?_⟩
