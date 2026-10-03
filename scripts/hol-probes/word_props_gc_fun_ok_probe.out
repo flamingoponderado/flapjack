@@ -1,0 +1,4 @@
+gc_fun_ok_def=⊢ ∀f. gc_fun_ok f ⇔ ∀wl m d s wl1 m1 s1. Handler ∈ FDOM s ∧ f (wl,m,d,s \\ Handler) = SOME (wl1,m1,s1) ⇒ LENGTH wl = LENGTH wl1 ∧ Handler ∉ FDOM s1 ∧ f (wl,m,d,s) = SOME (wl1,m1,s1⟨Handler ↦ s⟨Handler⟩⟩)
+gc_fun_ok_hypotheses=0
+guarded_handler_lookup=⊢ ∀s. Handler ∈ FDOM s ⇒ FLOOKUP s Handler = SOME s⟨Handler⟩
+always_fail_gc=⊢ gc_fun_ok (λ(wl,m,d,s). NONE)

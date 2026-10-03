@@ -1799,24 +1799,24 @@ def wordClashTreeDeltaInst {α : Type u} : WordInst α → WordClashTree
   | .const destination _ => .delta [destination] []
   | .mem .load destination address
   | .mem .load8 destination address
-  | .mem .load16 destination address
   | .mem .load32 destination address =>
       .delta [destination] [address]
   | .mem .store source address
   | .mem .store8 source address
-  | .mem .store16 source address
   | .mem .store32 source address =>
       .delta [] [source, address]
   | .memOffset .load destination address _
   | .memOffset .load8 destination address _
-  | .memOffset .load16 destination address _
   | .memOffset .load32 destination address _ =>
       .delta [destination] [address]
   | .memOffset .store source address _
   | .memOffset .store8 source address _
-  | .memOffset .store16 source address _
   | .memOffset .store32 source address _ =>
       .delta [] [source, address]
+  -- Literal original get_delta_inst catchall: the 16-bit operators are in
+  -- the instruction carrier but have no explicit source delta clause.
+  | .mem .load16 _ _ | .mem .store16 _ _
+  | .memOffset .load16 _ _ _ | .memOffset .store16 _ _ _ => .delta [] []
 
 def wordClashTreeCallReads (returns : Option
     (List Nat × (List Nat × List Nat) × WordProg α × Nat × Nat))
@@ -1920,8 +1920,8 @@ def wordClashTree : WordProg α → List (List Nat × List Nat) → WordClashTre
       .seq (.delta [] [dataLength, dataBuffer, codeLength, codeBuffer])
         (.seq (.set (wordClashTreeCallSet nonGc gc))
           (.delta [codeBuffer] []))
-  | .codeBufferWrite address value, _ => .delta [] [address, value]
-  | .dataBufferWrite address value, _ => .delta [] [address, value]
+  | .codeBufferWrite address value, _ => .delta [] [value, address]
+  | .dataBufferWrite address value, _ => .delta [] [value, address]
   | .ffi _ configuration configurationLength array arrayLength (nonGc, gc), _ =>
       .seq (.delta [] [configuration, configurationLength, array, arrayLength])
         (.set (wordClashTreeCallSet nonGc gc))

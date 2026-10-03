@@ -6267,3 +6267,50 @@ NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 `stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.
 
 `stack_remove_comp_call_full_probeScript.sml` replays all three original scoped Call proofs and assembles the complete Call constructor across arbitrary return/handler options, using exactly their guarded source IHs. Eight rows capture the three complete branch statements/proof successes and the full assembled statement/proof success; no full `comp_correct` is assumed. The branch source proof tactics remain the reviewed originals; assembly uses direct matching and top-level implication currying rather than proof search.
+
+`stackprops_code_bitmaps_probe.out` captures the complete original existential oracle/code/bitmap theorem and explicitly checks zero theorem hypotheses. The StoreConsts case retains all dispatch guards and primitive errors, deriving count zero from the full preservation theorem. This is source evidence, not runtime parity or full theorem assembly.
+`l3_lrw_probe.out` captures the complete original LR_W definition/type and
+14 whole-state observations. These retain all aq/rl payloads, early virtual
+misalignment residues1/2/3, aligned Sv32 fault, signed32 success, register-zero,
+core255 with totalCore1, RV32/RV128 and Sv39 returned-state PTE3079->3111 reads.
+The reservation is the virtual address on success and remains unchanged on
+fault/misalignment; the other-core reservation and full frame outside the six
+potentially changed fields are observed. No whole atomic/runtime assembly is
+claimed; probes are regression evidence, not cross-language equivalence proofs.
+
+`l3_lrd_probe.out` captures the complete original LR_D definition/type and
+18 whole-state observations. All seven low3 virtual misalignment residues trap
+before translation; RV32 is rejected before address calculation, while RV128
+retains the original word64 model. All order-bit payloads, zero-register behavior,
+core255 with totalCore1, aligned Sv32 faults and Sv39 returned-state PTE3111 reads
+are replayed. Reservation/current-core/other-core and entire frame outside the
+six potentially changed fields are observed. This is the LR_D clause only,
+not full atomic/Run/Next or compiler correctness.
+
+`word_props_gc_fun_ok_probe` captures the complete original higher-order GC contract, zero definition hypotheses, the guarded FLOOKUP/FAPPLY correspondence and the always-failing callback theorem. The Lean predicate keeps all original quantifiers and guards; generic kernel tests reject returned Handler and cover location values. This is definition/guard evidence, not whole initialization or compiler correctness.
+
+`stack_remove_copy_each_probeScript.sml` replays the complete literal original `copy_each_thm` proof (1250–1332), with every original premise and full clock/register/separated-memory conclusion. Two rows capture the complete statement and kernel proof success. Native full source induction derives target execution; no full pass theorem or executed compiler parity is claimed by this proof-only slice.
+`l3_scw_probe.out` captures the complete original SC_W definition/type and
+19 whole-state observations. Missing/mismatched reservations with VM31 leave
+the native exception unchanged, demonstrating that translation is skipped.
+The read-only PTE2 observation intentionally succeeds under original Data/Read;
+this preserves the pinned source instead of substituting modern ISA behavior.
+Four-byte stores preserve the other memory bytes; successful stores clear only
+the current reservation, while faults/misalignment retain it. All order bits,
+rd/rs2 zero, core255 with totalCore1, RV32/RV128 and returned Sv39 walk updates
+are covered. Independent byte-wise expectations and arbitrary-base Lean state
+frames provide regressions only, not whole atomic/runtime correctness.
+
+`l3_scd_probe.out` captures the complete original SC_D definition/type and
+24 whole-state observations: RV32 rejects before address/reservation/VM checks,
+all seven virtual misalignment residues, all order bits, reservation failures
+skipping translation, literal Data/Read on read-only pages, eight-byte stores,
+zero registers, core255/totalCore1, RV128, Sv32 faults and returned Sv39 state.
+Complete unaffected frames and other-core reservations are retained. This is
+source-clause regression evidence, not whole atomic/runtime/compiler correctness.
+`word_alloc_instruction_producer_probe.out` captures four original
+`get_delta_inst` 16-bit memory catchall equations at widths 8/64 and zero/255
+offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
+and executed deltas; the complete accepted-instruction producer relation uses
+the real instruction encoder, retaining every ordered operand. No whole
+allocator or source-program producer correctness is claimed.
