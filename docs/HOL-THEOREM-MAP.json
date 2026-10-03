@@ -69601,5 +69601,56 @@
       "fpRegs",
       "store"
     ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.2 full goal5719-5751/Skip constructor case: fresh complete specialized original goal and literal original case proof replay T/hyp0/closed. All source execution/errorfree/full state relation, post_alloc/flat conventions, perf=false native compile equation, both bitmap bounds/prefix, full get_labels subset loc_check and max_var bound retained; only original constructor specialized. Full target clock/poststate/result existential derived with zero extra clock, never supplied. Untagged compCorrectResult factors complete original conditional conclusion: unmatched Halt Word2/event-prefix/stack-max resource branch; NONE/Break/Continue stateRel; Return full stateRel and all register-or-stack EL placement; Exception original pushed-locals existential/LASTN/source-locals union/register1; remaining-result full FFI and clock equalities. LASTN is drop(length-n) including overlength, total EL uses reviewed unspecified holEl (no chosen default), Nat subtraction and index arithmetic unchanged. Source config Nat#C/target C, shared positive BitVec width/NeZero and F:Type retained. All5 listed canonical original fmap fields use actual imported owners and genuine same-module codec witnesses; Spt locals/code/frames untouched. Evaluator closure inherits reals_as_rational_cuts; structural case only, no numeric FP claim. No extra IH/success/target-run/postrelation premise and no executed compiler changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectBreak",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.2 full goal5719-5751/Break constructor case: fresh complete specialized original goal and literal original case proof replay T/hyp0/closed. All source execution/errorfree/full state relation, post_alloc/flat conventions, perf=false native compile equation, both bitmap bounds/prefix, full get_labels subset loc_check and max_var bound retained; only original constructor specialized. Full target clock/poststate/result existential derived with zero extra clock, never supplied. Untagged compCorrectResult factors complete original conditional conclusion: unmatched Halt Word2/event-prefix/stack-max resource branch; NONE/Break/Continue stateRel; Return full stateRel and all register-or-stack EL placement; Exception original pushed-locals existential/LASTN/source-locals union/register1; remaining-result full FFI and clock equalities. LASTN is drop(length-n) including overlength, total EL uses reviewed unspecified holEl (no chosen default), Nat subtraction and index arithmetic unchanged. Source config Nat#C/target C, shared positive BitVec width/NeZero and F:Type retained. All5 listed canonical original fmap fields use actual imported owners and genuine same-module codec witnesses; Spt locals/code/frames untouched. Evaluator closure inherits reals_as_rational_cuts; structural case only, no numeric FP claim. No extra IH/success/target-run/postrelation premise and no executed compiler changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Control.lean",
+    "lean_name": "compCorrectContinue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.2 full goal5719-5751/Continue constructor case: fresh complete specialized original goal and literal original case proof replay T/hyp0/closed. All source execution/errorfree/full state relation, post_alloc/flat conventions, perf=false native compile equation, both bitmap bounds/prefix, full get_labels subset loc_check and max_var bound retained; only original constructor specialized. Full target clock/poststate/result existential derived with zero extra clock, never supplied. Untagged compCorrectResult factors complete original conditional conclusion: unmatched Halt Word2/event-prefix/stack-max resource branch; NONE/Break/Continue stateRel; Return full stateRel and all register-or-stack EL placement; Exception original pushed-locals existential/LASTN/source-locals union/register1; remaining-result full FFI and clock equalities. LASTN is drop(length-n) including overlength, total EL uses reviewed unspecified holEl (no chosen default), Nat subtraction and index arithmetic unchanged. Source config Nat#C/target C, shared positive BitVec width/NeZero and F:Type retained. All5 listed canonical original fmap fields use actual imported owners and genuine same-module codec witnesses; Spt locals/code/frames untouched. Evaluator closure inherits reals_as_rational_cuts; structural case only, no numeric FP claim. No extra IH/success/target-run/postrelation premise and no executed compiler changes."
   }
 ]

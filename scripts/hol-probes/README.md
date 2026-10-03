@@ -6473,3 +6473,5 @@ These regressions do not establish whole CSR transitions or Run/Next correctness
 
 
 `word_to_stack_comp_results_probe.out` captures complete original `compile_result_def` and `push_locals_def` equations and polymorphic types, and freshly replays the unchanged full `Halt_EQ_compile_result` proof. All three declarations are closed with zero hypotheses. The Lean family preserves all eight results, unconditional Word1 equivalence, good-dimension-guarded Word2 exclusion, and all original pushed-local frame updates. This is a prerequisite of the full native `comp_correct` simulation, not an assembly of that theorem.
+
+`word_to_stack_comp_control_probe.out` freshly replays the unchanged original `comp_correct` Skip/Break/Continue case proofs against the complete constructor-specialized original goal (5719–5751). All premises, the target clock/run existential and every resource/result branch remain in all three captured statements; proof=T and hypotheses=0 with no free variables. The Lean cases prove the complete conclusion factored in `compCorrectResult`, rather than only successful-state preservation. These three cases do not assemble the full pass simulation.
