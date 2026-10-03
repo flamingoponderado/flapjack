@@ -5918,6 +5918,12 @@
       "sha256": "1ea0a6a542aeabca41a3591ba099b1d1f885d97cab17d18ccc18df322705b48d"
     },
     {
+      "bytes": 786,
+      "out": "stack_remove_comp_shmem_probe.out",
+      "rows": 2,
+      "sha256": "08b759fbc6a1b79efae5bad393ce6e99a1a389fe712d7deb547a8267834eee95"
+    },
+    {
       "bytes": 700,
       "out": "stack_remove_comp_store_any_probe.out",
       "rows": 2,
