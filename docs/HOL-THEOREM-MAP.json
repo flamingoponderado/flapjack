@@ -69242,5 +69242,125 @@
     "hol_name": "rec'mimpid_def",
     "statement_status": "reviewed_exact",
     "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "\u00abrec'sip\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'sip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lift_mip_sip",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lift_mip_sip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "\u00abreg'sip\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'sip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "\u00abrec'sie\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'sie_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lift_mie_sie",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lift_mie_sie_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "\u00abreg'sie\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'sie_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "\u00abrec'sstatus\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'sstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "extStatus",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "extStatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lift_mstatus_sstatus",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lift_mstatus_sstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "\u00abreg'sstatus\u00bb",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'sstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "isValidVM",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "isValidVM_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "update_mstatus",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "update_mstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lower_sip_mip",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lower_sip_mip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lower_sie_mie",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lower_sie_mie_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lower_sstatus_mstatus",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lower_sstatus_mstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
   }
 ]

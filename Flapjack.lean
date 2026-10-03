@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.SupervisorCSR
 import Flapjack.RiscV.L3.Defs.MachineCSRCodec
 import Flapjack.RiscV.L3.Defs.CSRAccess
 import Flapjack.Compiler.Backend.LabToTarget.MmioClassification

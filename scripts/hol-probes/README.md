@@ -6435,3 +6435,10 @@ zero, all ones, alternating bits and mixed patterns. Independent calculations
 check both packed words and every decoded field, including discontiguous
 reserved-bit segments. Full CSR transitions and Run/Next remain open.
 
+
+`l3_supervisor_csr_probe.out` captures all 15 complete original supervisor CSR
+codec/lift/lower definitions and 862 independently calculated observations:
+210 codec basis/mixed patterns, 512 VM/status/privilege combinations and 140
+interrupt lift/lower patterns. Original invalid-VM retention, dirty summary,
+reserved-bit framing and supervisor-only interrupt replacement are preserved.
+These regressions do not establish whole CSR transitions or Run/Next correctness.

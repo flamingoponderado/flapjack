@@ -1,3 +1,4 @@
+import Flapjack.Test.L3SupervisorCSRParity
 import Flapjack.Test.L3MachineCSRCodecParity
 import Flapjack.Test.L3CSRAccessParity
 import Flapjack.Test.L3TLBFlushParity
