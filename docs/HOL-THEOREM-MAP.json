@@ -82633,5 +82633,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-canonical-arith-production), word_cseScript.sml:172-189: complete8constructor equations over reviewed HolArith, preserving every destination and fourth carry/overflow field. Binop/Shift use avoid destination for register and immediate; Div/LongMul/LongDiv use ordinary canonicalRegs for original sources; AddCarry/AddOverflow/SubOverflow canonicalize second/third fields with avoid destination and retain fourth. No reordering, rejected native case or extra premise. Exact Knowledge Spt/alist/balanced carriers retained; only standard positive type-indexed word dimension→BitVec width with NeZero width recorded. Actual operation codec transport is separate infrastructure, including diagnostic5registerAddCarry rejection, without outputsuccess/targetrun assumption. FullCSE/productionroute remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/CanonicalFp.lean",
+    "lean_name": "canonicalFp",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalFp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: canonicalFp_def191-225 all16 equations retain first register and canonicalRegs every remaining register, including Fma and both three-register moves. Imported HolFp/WordLangFp matches asm fp97-119 all16 constructor arities and numeric register payloads; original Knowledge and canonicalRegs retained. Native definition only; executed FP route remains tracked separately."
   }
 ]
