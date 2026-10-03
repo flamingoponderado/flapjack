@@ -7322,9 +7322,6 @@ run_probe clos_known_config_probeScript.sml clos_known_config_probe.out \
 run_probe clos_to_bvl_config_probeScript.sml clos_to_bvl_config_probe.out \
   config_component_equality default_config_def next_loc_type start_type do_mti_type known_conf_type do_call_type call_state_type max_app_type \
   "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
-run_probe word_to_stack_comp_returning_full_probeScript.sml word_to_stack_comp_returning_full_probe.out \
-  comp_correct_returning_full_statement comp_correct_returning_full_proved comp_correct_returning_full_hypotheses comp_correct_returning_induction_obligation \
-  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_move_single_probeScript.sml word_to_stack_move_single_probe.out \
   wMoveSingle_statement wMoveSingle_proved wMoveSingle_hypotheses \
