@@ -7355,3 +7355,10 @@ hypotheses, closedness and kernel proofs. Lean uses canonical finite-support
 maps and classical HOL key equality, with no comparison premise; the
 complement-singleton restriction has a checked unconditional literal lookup
 witness. The Dec and DecCall consumers remain separate obligations.
+
+`pan_structs_program_dec_probe` captures the full original program theorem, its
+`Dec v sh e c1` specialization, and the original `evaluate_ind`, with all binder
+types and closed kernel proofs. The Lean piece retains all ten premises/seven
+conclusions and precisely the initializer-SOME/declared-shape guarded body IH
+at the actual updated local state. Source invariants supply body preconditions;
+restoration handles both absent and shadowed caller bindings.
