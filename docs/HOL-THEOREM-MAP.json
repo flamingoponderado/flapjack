@@ -80712,5 +80712,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2636-2725: free registers a t (captured free vars) then forall xs s w frame ys m dm; all eight original conjuncts in order: (word_list w ys * frame) (fun2set (m,dm)), m = s.memory, dm = s.mdomain (Bool domain as its membership predicate), LENGTH ys = LENGTH xs, a <> t, get_var a s = SOME (Word w), t IN FDOM s.regs (lookup <> none on the canonical map), EVERY INR guard as list membership; conclusion exists r1 m1 with (word_list w (MAP (mem_val s.regs) xs) * frame) (fun2set (m1, s.mdomain)) and native stackSem evaluate (store_list_code a t xs, s) = (NONE, s with memory := m1; regs := s.regs |++ [(a, Word (w + bytes_in_word * n2w (LENGTH xs))); (t, r1)]) via updateListEq. Uses accepted storeListCode/mem_val/word_list/write_fun2set ports; no added premise, no supplied run. Inherited assumption: statement mentions the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts IEEE declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Stored theorem captured with zero hypotheses in scripts/hol-probes/stack_remove_store_list_code_probe.out. Proof-only initializer prerequisite of init_code_thm; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkipSafety.lean",
+    "lean_name": "noInstallOrNoShareMemFilterSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "no_install_or_no_share_mem_filter_skip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: original lab_to_targetProofScript10801-10829 full implication no_install_or_no_share_mem code ffi_names => no_install_or_no_share_mem(filter_skip code) ffi_names. Fresh full type confirms independent code:alpha sec list and ffi_names:ffiname list, hyp0/kernel replay. Full native Section/Line/HolAsm/HolAddr/HolRegImm/MlString and FFI-name carriers retained. Both original safety alternatives, original universally quantified ExtCall witnesses, and same original name list are preserved. Source noShareMem alternative uses the accepted exact filter law; noInstall alternative derives actual original fetched Install PC from asmFetchAuxFilterSkip, never assumes an existential source PC or successful compiler. words_as_type_indexed_bitvec records positive BitVec width/NeZero translation only. Fresh original lab_to_target_filter_safety_probe.out. Actual full semantics assembly remains unfinished."
   }
 ]

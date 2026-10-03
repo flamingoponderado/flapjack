@@ -6898,3 +6898,6 @@ run_probe riscv_target_helper_links_probeScript.sml riscv_target_helper_links_pr
 run_probe stack_remove_store_list_code_probeScript.sml stack_remove_store_list_code_probe.out \
   store_list_code_thm_statement store_list_code_thm_hypotheses store_list_code_thm_free_vars \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_filter_safety_probeScript.sml lab_to_target_filter_safety_probe.out \
+  no_install_or_no_share_mem_filter_skip no_install_or_no_share_mem_filter_skip_types no_install_or_no_share_mem_filter_skip_hypotheses no_install_or_no_share_mem_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
