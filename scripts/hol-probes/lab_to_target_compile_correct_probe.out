@@ -1,0 +1,123 @@
+compile_correct=∀s1 res mc_conf s2 code2 labs t1 ms1.
+  oracle_tie mc_conf ms1 s1 ∧ evaluate s1 = (res,s2) ∧ res ≠ Error ∧
+  encoder_correct mc_conf.target ∧ state_rel (mc_conf,code2,labs,p) s1 t1 ms1 ⇒
+  ∃k t2 ms2. evaluate mc_conf s1.ffi (s1.clock + k) ms1 = (res,ms2,s2.ffi)
+compile_correct_types=∀(s1 :(α, config, 'ffi) labSem$state) (res :machine_result)
+    (mc_conf :(α, 'state, β) machine_config)
+    (s2 :(α, config, 'ffi) labSem$state) (code2 :α sec list)
+    (labs :num sptree$num_map sptree$num_map) (t1 :α asm_state)
+    (ms1 :'state).
+  oracle_tie mc_conf ms1 s1 ∧
+  (evaluate s1 :machine_result # (α, config, 'ffi) labSem$state) = (res,s2) ∧
+  res ≠ Error ∧ encoder_correct mc_conf.target ∧
+  (state_rel (mc_conf,code2,labs,(p :α word)) s1 t1 ms1 :bool) ⇒
+  ∃(k :num) (t2 :γ) (ms2 :'state).
+    (evaluate mc_conf s1.ffi (s1.clock + k) ms1 :
+     machine_result # 'state # 'ffi ffi_state) = (res,ms2,s2.ffi)
+lab_evaluate_ind=∀P. (∀s. (∀v25 v47 v50 v51 v62 i s1.
+            s.clock ≠ 0 ∧ asm_fetch s = SOME v25 ∧ v25 = Asm v47 v50 v51 ∧
+            v47 = Asmi v62 ∧ v62 = Inst i ∧ s1 = asm_inst i s ∧ ¬s1.failed ⇒
+            P (inc_pc (dec_clock s1))) ∧
+         (∀v25 v47 v50 v51 v62 r n1 n2 p.
+            s.clock ≠ 0 ∧ asm_fetch s = SOME v25 ∧ v25 = Asm v47 v50 v51 ∧
+            v47 = Asmi v62 ∧ v62 = JumpReg r ∧ read_reg r s = Loc n1 n2 ∧
+            loc_to_pc n1 n2 s.code = SOME p ⇒
+            P (upd_pc p (dec_clock s))) ∧
+         (∀v25 v47 v50 v51 m r ad v v1 s' v3 v4.
+            s.clock ≠ 0 ∧ asm_fetch s = SOME v25 ∧ v25 = Asm v47 v50 v51 ∧
+            v47 = ShareMem m r ad ∧ share_mem_op m r ad s = SOME v ∧
+            v = (v1,s') ∧ v1 = FFI_return v3 v4 ⇒
+            P
+              (s' with
+               <|io_regs := shift_seq 1 s'.io_regs;
+                 io_fp_regs := shift_seq 1 s'.io_fp_regs|>)) ∧
+         (∀v25 v47 v50 v51 r1 r2 v2 v3 w1 w2 new_cb.
+            s.clock ≠ 0 ∧ asm_fetch s = SOME v25 ∧ v25 = Asm v47 v50 v51 ∧
+            v47 = Cbw r1 r2 ∧ (read_reg r1 s,read_reg r2 s) = (v2,v3) ∧
+            v2 = Word w1 ∧ v3 = Word w2 ∧
+            buffer_write s.code_buffer w1 (w2w w2) = SOME new_cb ⇒
+            P (inc_pc (dec_clock (s with code_buffer := new_cb)))) ∧
+         (∀v25 v52 v53 v54 v55 c r'' ri l' v p.
+            s.clock ≠ 0 ∧ asm_fetch s = SOME v25 ∧
+            v25 = LabAsm v52 v53 v54 v55 ∧ v52 = JumpCmp c r'' ri l' ∧
+            word_cmp c (read_reg r'' s) (reg_imm ri s) = SOME v ∧ v ∧
+            get_pc_value l' s = SOME p ⇒
+            P (upd_pc p (dec_clock s))) ∧
+         (∀v25 v52 v53 v54 v55 c r'' ri l' v.
+            s.clock ≠ 0 ∧ asm_fetch s = SOME v25 ∧
+            v25 = LabAsm v52 v53 v54 v55 ∧ v52 = JumpCmp c r'' ri l' ∧
+            word_cmp c (read_reg r'' s) (reg_imm ri s) = SOME v ∧ ¬v ⇒
+            P (inc_pc (dec_clock s))) ∧
+         (∀v25 v52 v53 v54 v55 l'' p k s1.
+            s.clock ≠ 0 ∧ asm_fetch s = SOME v25 ∧
+            v25 = LabAsm v52 v53 v54 v55 ∧ v52 = Call l'' ∧
+            get_pc_value l'' s = SOME p ∧ get_ret_Loc s = SOME k ∧
+            s1 = upd_reg s.link_reg k s ⇒
+            P (upd_pc p (dec_clock s1))) ∧
+         (∀v25 v52 v53 v54 v55 l p.
+            s.clock ≠ 0 ∧ asm_fetch s = SOME v25 ∧
+            v25 = LabAsm v52 v53 v54 v55 ∧ v52 = Jump l ∧
+            get_pc_value l s = SOME p ⇒
+            P (upd_pc p (dec_clock s))) ∧
+         (∀v25 v52 v53 v54 v55 ffi_index v4 v5 w v16 v17 w2 v26 v27 w3 v36
+              v37 n1 n2 w4 v2 v3 bytes v8 v9 bytes2 new_pc new_ffi new_bytes
+              new_io_regs new_io_fp_regs new_m.
+            s.clock ≠ 0 ∧ asm_fetch s = SOME v25 ∧
+            v25 = LabAsm v52 v53 v54 v55 ∧ v52 = CallFFI ffi_index ∧
+            (read_reg s.len_reg s,read_reg s.ptr_reg s,read_reg s.len2_reg s,
+             read_reg s.ptr2_reg s,read_reg s.link_reg s) = (v4,v5) ∧
+            v4 = Word w ∧ v5 = (v16,v17) ∧ v16 = Word w2 ∧ v17 = (v26,v27) ∧
+            v26 = Word w3 ∧ v27 = (v36,v37) ∧ v37 = Loc n1 n2 ∧
+            v36 = Word w4 ∧
+            (read_bytearray w2 (w2n w)
+               (mem_load_byte_aux s.mem s.mem_domain s.be),
+             read_bytearray w4 (w2n w3)
+               (mem_load_byte_aux s.mem s.mem_domain s.be),
+             loc_to_pc n1 n2 s.code) = (v2,v3) ∧ v2 = SOME bytes ∧
+            v3 = (v8,v9) ∧ v8 = SOME bytes2 ∧ v9 = SOME new_pc ∧
+            call_FFI s.ffi (ExtCall ffi_index) bytes bytes2 =
+            FFI_return new_ffi new_bytes ∧
+            new_io_regs = shift_seq 1 s.io_regs ∧
+            new_io_fp_regs = shift_seq 1 s.io_fp_regs ∧
+            new_m = write_bytearray w4 new_bytes s.mem s.mem_domain s.be ⇒
+            P
+              (s with
+               <|mem := new_m; ffi := new_ffi; io_regs := new_io_regs;
+                 io_fp_regs := new_io_fp_regs;
+                 regs :=
+                   (λa.
+                        get_reg_value (s.io_regs 0 (ExtCall ffi_index) a)
+                          (read_reg a s) Word);
+                 fp_regs := (λn. s.io_fp_regs 0 n); pc := new_pc;
+                 clock := s.clock − 1|>)) ∧
+         (∀v25 v52 v53 v54 v55 r' lab s1.
+            s.clock ≠ 0 ∧ asm_fetch s = SOME v25 ∧
+            v25 = LabAsm v52 v53 v54 v55 ∧ v52 = LocValue r' lab ∧
+            get_pc_value lab s ≠ NONE ∧ s1 = upd_reg r' (lab_to_loc lab) s ⇒
+            P (inc_pc (dec_clock s1))) ∧
+         (∀v25 v52 v53 v54 v55 v8 v11 w1 v21 v22 n1 n2 w2 v4 v5 v10 new_pc
+              bytes cb cfg prog new_oracle v2 v3 v6 v7 v9 bytes' cfg' k v17.
+            s.clock ≠ 0 ∧ asm_fetch s = SOME v25 ∧
+            v25 = LabAsm v52 v53 v54 v55 ∧ v52 = Install ∧
+            (read_reg s.ptr_reg s,read_reg s.len_reg s,read_reg s.link_reg s) =
+            (v8,v11) ∧ v8 = Word w1 ∧ v11 = (v21,v22) ∧ v22 = Loc n1 n2 ∧
+            v21 = Word w2 ∧
+            (buffer_flush s.code_buffer w1 w2,loc_to_pc n1 n2 s.code) =
+            (v4,v5) ∧ v4 = SOME v10 ∧ v5 = SOME new_pc ∧ v10 = (bytes,cb) ∧
+            (cfg,prog) = s.compile_oracle 0 ∧
+            new_oracle = shift_seq 1 s.compile_oracle ∧
+            (s.compile cfg prog,prog) = (v2,v3) ∧ v3 = v6::v7 ∧
+            v2 = SOME v9 ∧ v9 = (bytes',cfg') ∧ v6 = Section k v17 ∧
+            bytes = bytes' ∧ FST (new_oracle 0) = cfg' ⇒
+            P
+              (s with
+               <|pc := new_pc; code_buffer := cb; code := s.code ++ prog;
+                 cc_regs := shift_seq 1 s.cc_regs;
+                 cc_fp_regs := shift_seq 1 s.cc_fp_regs;
+                 regs :=
+                   (λa. get_reg_value (s.cc_regs 0 a) (read_reg a s) Word)⦇
+                     s.ptr_reg ↦ Loc k 0
+                   ⦈; fp_regs := (λn. s.cc_fp_regs 0 n);
+                 compile_oracle := new_oracle; clock := s.clock − 1|>)) ⇒
+         P s) ⇒
+    ∀v. P v

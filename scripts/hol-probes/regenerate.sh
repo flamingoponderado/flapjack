@@ -110,12 +110,6 @@ run_probe() {
 run_probe sptree_subspt_union_probeScript.sml sptree_subspt_union_probe.out \
   subspt_def_statement subspt_def_hypotheses subspt_lookup_statement subspt_lookup_hypotheses subspt_trans_statement subspt_trans_hypotheses subspt_union_statement subspt_union_hypotheses subspt_foldl_union_statement subspt_foldl_union_hypotheses \
   "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend/proofs"
-run_probe stack_rawcall_seq_probeScript.sml stack_rawcall_seq_probe.out \
-  seq_full_statement seq_full_hypotheses seq_case64 seq_case80 seq_evaluate_ind_obligation seq_equal64 seq_equal80 seq_less64 seq_less80 seq_greater64 seq_greater80 \
-  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
-run_probe stack_rawcall_seq_standard_probeScript.sml stack_rawcall_seq_standard_probe.out \
-  seq_standard_full_statement seq_standard_full_hypotheses seq_standard_case64 seq_standard_case80 seq_standard_comp64 seq_standard_comp80 \
-  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_install_probeScript.sml stack_rawcall_install_probe.out \
   install_full_statement install_full_hypotheses install_case64 install_case80 install_union_old install_union_new \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4826,6 +4820,14 @@ run_probe lab_to_target_inst_lemma_probeScript.sml lab_to_target_inst_lemma_prob
   Inst_lemma Inst_lemma_types \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_code_helpers_probeScript.sml lab_to_target_code_helpers_probe.out \
+  oracle_tie_shift_gen oracle_tie_shift_gen_types oracle_tie_ccache_residues oracle_tie_ccache_residues_types ffi_entry_pcs_NOT_ccache_OR_halt_pc ffi_entry_pcs_NOT_ccache_OR_halt_pc_types no_share_mem_lemma no_share_mem_lemma_types EL_get_ffi_index_MEM EL_get_ffi_index_MEM_types ffi_name_NOT_Mapped ffi_name_NOT_Mapped_types no_share_mem_APPEND no_share_mem_APPEND_types no_install_APPEND_IMP no_install_APPEND_IMP_types no_share_mem_IMP_get_shmem_info no_share_mem_IMP_get_shmem_info_types IMP_ffi_entry_pcs_disjoint_Asm IMP_ffi_entry_pcs_disjoint_Asm_types IMP_ffi_entry_pcs_disjoint_LabAsm IMP_ffi_entry_pcs_disjoint_LabAsm_types EVEN_add_AND EVEN_add_AND_types word_cmp_lemma word_cmp_lemma_types list_add_if_fresh_thm list_add_if_fresh_thm_types find_ffi_names_append find_ffi_names_append_types loc_to_pc_append loc_to_pc_append_types line_length_MOD_0 line_length_MOD_0_types all_enc_ok_aligned_pos_val all_enc_ok_aligned_pos_val_types \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_compile_correct_probeScript.sml lab_to_target_compile_correct_probe.out \
+  compile_correct compile_correct_types lab_evaluate_ind \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe ssa_loop_semantic_helpers_probeScript.sml ssa_loop_semantic_helpers_probe.out \
   collapse_full empty_cut_full collapse_type_first collapse_type_source collapse_type_after empty_cut_type_names empty_cut_type_locals empty_cut_type_map \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -6386,6 +6388,23 @@ run_probe l3_register_shift_probeScript.sml l3_register_shift_probe.out \
 run_probe word_to_stack_inter_union_left_probeScript.sml word_to_stack_inter_union_left_probe.out \
   inter_union_left_statement inter_union_left_proved inter_union_left_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_initial_entry_contracts_probeScript.sml lab_to_target_initial_entry_contracts_probe.out \
+  init_ok_def init_ok_def_types init_ok_def_hypotheses init_ok_def_proved \
+  oracle_tie_make_init oracle_tie_make_init_types oracle_tie_make_init_hypotheses oracle_tie_make_init_proved \
+  make_init_simp make_init_simp_types make_init_simp_hypotheses make_init_simp_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lprefix_lub_finite_prefix_chain_probeScript.sml lprefix_lub_finite_prefix_chain_probe.out \
+  prefix_chain_def prefix_chain_def_types prefix_chain_def_hypotheses prefix_chain_def_proved \
+  prefix_chain_lprefix_chain prefix_chain_lprefix_chain_types prefix_chain_lprefix_chain_hypotheses prefix_chain_lprefix_chain_proved \
+  prefix_chain_FILTER prefix_chain_FILTER_types prefix_chain_FILTER_hypotheses prefix_chain_FILTER_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_seq_standard_probeScript.sml stack_rawcall_seq_standard_probe.out \
+  seq_standard_full_statement seq_standard_full_hypotheses seq_standard_case64 seq_standard_case80 seq_standard_comp64 seq_standard_comp80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_seq_probeScript.sml stack_rawcall_seq_probe.out \
+  seq_full_statement seq_full_hypotheses seq_case64 seq_case80 seq_evaluate_ind_obligation seq_equal64 seq_equal80 seq_less64 seq_less80 seq_greater64 seq_greater80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_call_tail_probeScript.sml stack_rawcall_call_tail_probe.out \
   call_tail_full_statement call_tail_full_hypotheses call_tail_case64 call_tail_case80 call_tail_evaluate_ind_obligation call_tail_direct64 call_tail_handler64 call_tail_direct80 call_tail_handler80 \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -1874,6 +1874,12 @@
       "sha256": "adb1e2806992e3d0798847f6d2215b7ba79f41128fd20c07e2af983b96b4e10c"
     },
     {
+      "bytes": 12529,
+      "out": "lab_to_target_code_helpers_probe.out",
+      "rows": 36,
+      "sha256": "be4fc904635336d55cdef77879d34e0155e113b44ebbe4996138f908ca941476"
+    },
+    {
       "bytes": 701,
       "out": "lab_to_target_code_label_position_padding_probe.out",
       "rows": 12,
@@ -1896,6 +1902,12 @@
       "out": "lab_to_target_code_safety_transport_probe.out",
       "rows": 11,
       "sha256": "9739ace986f91078ab865c8180b6d029e43e3e28f33203a12ece283dac44e6c9"
+    },
+    {
+      "bytes": 7067,
+      "out": "lab_to_target_compile_correct_probe.out",
+      "rows": 3,
+      "sha256": "9917cd0da85d444e306eb291a3ac19ede13df6c12fbbb1695702c73e2556c1f0"
     },
     {
       "bytes": 1060,
@@ -2010,6 +2022,12 @@
       "out": "lab_to_target_initial_encoding_preconditions_probe.out",
       "rows": 7,
       "sha256": "93feff59d140d2929278342696cc1d26a62f81eb1411bfb801d01beb020db6c4"
+    },
+    {
+      "bytes": 2511,
+      "out": "lab_to_target_initial_entry_contracts_probe.out",
+      "rows": 12,
+      "sha256": "577f2e2dfd519e4527fa6f6d444b370aa7737418a41a9e6b84efdecf4b38f239"
     },
     {
       "bytes": 36091,
@@ -3090,6 +3108,12 @@
       "out": "loop_to_word_take_word_to_bytes_probe.out",
       "rows": 13,
       "sha256": "f00192c0330218ec1ff363d1f9674ba0290808edc3571b26ed7d560d0107251e"
+    },
+    {
+      "bytes": 806,
+      "out": "lprefix_lub_finite_prefix_chain_probe.out",
+      "rows": 12,
+      "sha256": "b2584be9ceece417d80184d5a2fc47de435088c2df4712e632dc3da2d34b343d"
     },
     {
       "bytes": 222,

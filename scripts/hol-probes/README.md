@@ -6730,6 +6730,32 @@ Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_full_relation_probeScr
 hypotheses are captured; this is original HOL evidence, not a cross-assistant
 equivalence theorem. Native counterpart: WordToStack/Proofs/InterUnionLeft.lean.
 
+### Original initializer semantic entry contracts
+
+`lab_to_target_initial_entry_contracts_probeScript.sml` freshly captures all
+three original `init_ok_def`, `oracle_tie_make_init` and `make_init_simp`
+statements, complete variable types, zero hypotheses and kernel proof T.
+The original semantic entry fixes compiler Config, while the two initializer
+theorems keep arbitrary compiler configuration and all twelve inputs.
+Native ports retain the unrestricted code/labels/asm-state witnesses, whole
+relation/oracle tie, four oracle functions and all three field equations.
+The same-module native composition derives actual initOk from full original
+initializer guards with concrete witnesses; it receives no initialized relation
+or desired machine run. Full machine/compile semantics remain open.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initial_entry_contracts_probeScript.sml`.
+
+### Original finite-list prefix-chain prerequisites
+
+`lprefix_lub_finite_prefix_chain_probeScript.sml` loads the original HOL
+lprefix_lub theory and captures the complete generic `prefix_chain_def`,
+`prefix_chain_lprefix_chain` and `prefix_chain_FILTER` statements, all variable
+types, zero hypotheses and kernel proof T (twelve rows). Native List and
+predicate-backed sets preserve all members, and both image predicates retain
+their existential witnesses. This independently supplies the lazy-list image
+chain used by original machine_sem_EQ_sem; full compiler simulation and machine
+semantics remain open. Regenerate with
+`HOL_PROBE_ONLY=lprefix_lub_finite_prefix_chain_probeScript.sml`.
+
 `stack_rawcall_seq_standard_probe` captures the original full comp_correct, zero hypotheses, and full Seq specializations at64/80 plus standard Skip/Skip compiler observations. Five native standard-composition consumers cover arbitrary positive and1/8/64/80 widths; a generic kernel compiler observation and two executable guards replay the concrete rows. The source-local helper retains the actual fixed-source first and NONE-run guarded second induction hypotheses, derives intermediate stackspace equality, and composes added clocks. It has no separate HOL declaration/tag: optimized equal/less/greater frame branches and full Seq assembly remain open. Captures are regression/statement evidence, not cross-language equivalence.
 
 `stack_rawcall_seq_probe` freshly captures the complete original comp_correct, zero hypotheses, full Seq64/80 specializations and the exact closed Seq evaluate_ind obligation, plus all three optimized compiler forms at64/80. Five full paired theorem consumers cover arbitrary positive and1/8/64/80 widths. Three generic kernel compiler fixtures and six axiom-free executable guards independently replay the optimized forms. The full theorem retains only actual first and NONE-run guarded second IH, derives target Call execution, and covers equal/less/greater sizes, zero clock, allocation failure and every body outcome. EmptyEnv retains stackspace; original timeout/HaltWord2 exceptions remain. Greater failure uses no extra clock, successful body execution one extra Tick. Captures are regression evidence, not cross-language equivalence.
