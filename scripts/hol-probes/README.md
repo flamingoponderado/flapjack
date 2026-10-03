@@ -7781,6 +7781,31 @@ forbidden/termination predicate equivalence internally, with the original
 choice/LUB formulas and canonical finite-support/positive-word translations.
 Whole-pass semantics correspondence and production routing remain separate.
 `word_cse_add_to_data_typed_probe.out` captures the fully typed word_cse `add_to_data_def` and the type of `add_to_data` (`knowledge -> num -> α inst -> β inst -> knowledge # β prog`): the adjusted instruction width is independent of the original instruction and output program width (review of #1211). Statement evidence for source review only.
+## Word-to-Stack Move and supporting probes
+
+The following probes capture original HOL results used by the Move and Const
+ports. Local proof replays are distinguished from exported theorem
+specialisations in their scripts. Printed statements without inferred types
+are not sufficient carrier evidence; those scripts still need the missing
+inferred-type captures noted in the PR 1212 review.
+
+| Probe script (all names end in `_probeScript.sml`) | Original result covered |
+| --- | --- |
+| `word_to_stack_comp_move` | `comp_correct` specialised to the complete Move constructor |
+| `word_to_stack_inst_const` | `evaluate_wInst` specialised to Const |
+| `word_to_stack_move_single` | `wMoveSingle_thm` local proof replay |
+| `word_to_stack_move_aux` | `wMoveAux_thm` local proof replay |
+| `word_to_stack_move_aux_seqsem` | `evaluate_wMoveAux_seqsem` local proof replay |
+| `word_to_stack_move_div2` | Move-related division-by-two lemmas |
+| `word_to_stack_comp_returning_full` | Returning Call case of `comp_correct` |
+| `word_to_stack_store_reg1_zero` | Stack-store/register transport at offset zero |
+| `native_alist_insert_reverse` | `alist_insert` reversal with distinct keys and equal lengths |
+
+Regenerate a selected probe with
+`HOL_PROBE_ONLY=<script-name> scripts/hol-probes/regenerate.sh` from the
+repository root. The corresponding `.out` file and `rows.lock.json` record
+the captured output; finite probes do not establish universal equivalence.
+
 ## Native Const instruction decoder evidence
 
 `riscv_const_decode_probeScript.sml` regenerates twenty original HOL boundary EVALs for ORI/XORI/SLLI/OR/XOR. Every register5 and immediate12/shamt6/rs2 field is unrestricted in the five symbolic Lean composition proofs; the finite original probes supplement their kernel checking and literal source comparison. All twenty original rows are `T`, with all sentinel names checked by `check-riscv-const-decode.py`. The full original Const constructor remains a separate open dependency bead.
