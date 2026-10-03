@@ -78208,5 +78208,21 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical state two-way roundtrip infrastructure, no independent HOL original."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/FetchTheorems.lean",
+    "lean_name": "fetch16",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "Fetch16",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c complete source comparison2026-10-03 original step670-702: arbitrary full native riscv_state s, bool list xs and all16 arbitrary source Boolean binders; literal list equality, current-core MCSR VM=0 at word5, all2 exact little-endian byte memory equalities at original wrapping word64 addresses, and original low-bit selection premise. Exact raw constructor/word16 v2w result and complete same-state c_Skip function update to word64 2 at unrestricted word8 procID. No added alignment, core bound, successful translation/fetch or target-run premise. Original bare VM premise derives full translateAddr(some PC,s) and THE elimination; original word_bit_1_0 derives selector, generic all-bit extensionality assembles bytes without restricted payloads. Canonical holV2w follows original testbit/FCP index ordering. Fresh complete universal original proof/type/binder capture and Lean kernel statement/proof checked."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/FetchTheorems.lean",
+    "lean_name": "fetch32",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "Fetch32",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c complete source comparison2026-10-03 original step670-702: arbitrary full native riscv_state s, bool list xs and all32 arbitrary source Boolean binders; literal list equality, current-core MCSR VM=0 at word5, all4 exact little-endian byte memory equalities at original wrapping word64 addresses, and original low-bit selection premise. Exact raw constructor/word32 v2w result and complete same-state c_Skip function update to word64 4 at unrestricted word8 procID. No added alignment, core bound, successful translation/fetch or target-run premise. Original bare VM premise derives full translateAddr(some PC,s) and THE elimination; original word_bit_1_0 derives selector, generic all-bit extensionality assembles bytes without restricted payloads. Canonical holV2w follows original testbit/FCP index ordering. Fresh complete universal original proof/type/binder capture and Lean kernel statement/proof checked."
   }
 ]

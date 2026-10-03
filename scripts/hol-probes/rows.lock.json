@@ -1622,6 +1622,12 @@
       "sha256": "fbc0e648d577585b21a9c29138a91cf2f649177b5ba1c112ccf30f37c8e481ea"
     },
     {
+      "bytes": 1823,
+      "out": "l3_fetch_theorems_probe.out",
+      "rows": 11,
+      "sha256": "66365eacdb6646e9fe3ccabe15937d7529597f5d1e6759f6590addbfe938d0b0"
+    },
+    {
       "bytes": 47168,
       "out": "l3_fp_bits_probe.out",
       "rows": 1920,
