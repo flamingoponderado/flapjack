@@ -83845,5 +83845,23 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Full imported canonical-state two-way roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Loop.lean",
+    "lean_name": "compCorrectLoop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison original7767-7922 and motive5719-5751/comp_correct5756. Complete original guarded body/recursive IHs and every original simulation premise retained. Actual cut/body target witness, mismatch overflow with original trace/resource propagation, continuation timeout, recursive clocks+monotone bitmap/labels, passthrough incl original exception handler, Break0 source exit cut all assembled. No extra target-run or postrelation hypothesis in tagged theorem; internal execution equations consume derived actual IH witnesses only. Canonical fmap_as_finite_support_relation/positive word width translation, inherits reals_as_rational_cuts. Fresh original full guarded obligation and unconditional specialization capture are statement evidence, not literal local-case proof replay.",
+    "hol_line": 5756
   }
 ]
