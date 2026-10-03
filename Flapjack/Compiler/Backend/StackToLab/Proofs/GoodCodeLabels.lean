@@ -300,7 +300,7 @@ theorem mem_getCodeLabels_initCode {width : Nat} [NeZero width] {ggc : Bool} {mh
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "init_stubs_labels"
   (words_as_type_indexed_bitvec)]
 theorem initStubsLabels {width : Nat} [NeZero width] {ggc : Bool} {mh k start : Nat} :
-    ∀ p ∈ (StackRemove.initStubs (width := width) ggc mh k start).map Prod.snd,
+    ∀ p ∈ (StackRemove.initStubs ggc mh k start : List (Nat × HolProg width)).map Prod.snd,
       getCodeLabels p ⊆ {x | x ∈ [(1, 0), (start, 0)]} := by
   intro p hp x hx
   simp only [StackRemove.initStubs, List.map_cons, List.map_nil, List.mem_cons,
@@ -401,7 +401,7 @@ theorem stackRemoveStackGetHandlerLabelsComp {width : Nat} [NeZero width] :
   "stack_remove_init_code_labels" (words_as_type_indexed_bitvec)]
 theorem stackRemoveInitCodeLabels {width : Nat} [NeZero width] {ggc : Bool} {mh sp : Nat}
     {x : Nat × Nat} :
-    x ∈ getCodeLabels (StackRemove.initCode (width := width) ggc mh sp) → x = (1, 0) := by
+    x ∈ getCodeLabels (StackRemove.initCode ggc mh sp : HolProg width) → x = (1, 0) := by
   exact mem_getCodeLabels_initCode
 
 theorem compileHOL_eq {width : Nat} [NeZero width] (jump : Bool)
@@ -580,7 +580,7 @@ decreasing_by all_goals simp_wf <;> omega
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
   "stack_alloc_init_code_labels" (words_as_type_indexed_bitvec)]
 theorem stackAllocInitCodeLabels {width : Nat} [NeZero width] {c : DataToWord.Config} :
-    getCodeLabels (StackAlloc.wordGcCode (width := width) c) = ∅ := by
+    getCodeLabels (StackAlloc.wordGcCode c : HolProg width) = ∅ := by
   unfold StackAlloc.wordGcCode
   split
   · simp [getCodeLabels, listSeqHOL, StackRemove.constInst]
