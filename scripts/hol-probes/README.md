@@ -6568,11 +6568,11 @@ regressions; fullRun/Next/pass correctness remains open.
 ### Complete native CSR instructions
 
 `l3_csr_instruction_probeScript.sml` captures all six literal original
-register/immediate equations and 96 independently stated whole-state fixtures.
+register/immediate equations and 102 independently stated whole-state fixtures.
 `check-l3-csr-instructions.py` requires the full unique label set and `T` for
 every fixture. Kernel counterparts live in `L3CSRInstructionsParity`. Cases
 cover zero/nonzero operands, rd0 and source alias, read-only and privilege
-traps, RV32/64/128, arbitrary prior exceptions and remaining state. The
+traps, selectors0RV32/2RV64/3RV128 and selector1 unspecified, arbitrary prior exceptions and remaining state. The
 literal original CSRRWI zero-immediate path reads and skips writes. These
 checks supplement source review; full Run/Next correctness remains open.
 
