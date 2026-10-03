@@ -74652,5 +74652,82 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRelImpSemantics.lean",
+    "lean_name": "stateRelImpSemanticsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "state_rel_imp_semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.2.x): original pan_simpProofScript.sml:1073-1301: !s t pan_code start. state_rel s t t.code /\\ ALL_DISTINCT (MAP FST (functions pan_code)) /\\ s.code = alist_to_fmap (functions pan_code) /\\ t.code = alist_to_fmap (functions (compile_prog pan_code)) /\\ semantics s start <> Fail ==> semantics t start = semantics s start. alist_to_fmap rendered as HolFiniteMapExact.empty.updateList of the reversed list (accepted pan_to_crep convention), ALL_DISTINCT as List.Nodup, compile_prog as panSimpDeclsHOL. All hypotheses retained. Exact PanSemStateFiniteExact semantics/evaluator; only canonical finite-map and positive BitVec width/Type0 FFI translations; no target-run, trace or post-state hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRelImpSemantics.lean",
+    "lean_name": "stateRelImpEvaluateDeclsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "state_rel_imp_evaluate_decls",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.2.x): original pan_simpProofScript.sml:1303-1332: !s pan_code t s' start. state_rel s t t.code /\\ ALL_DISTINCT (MAP FST (functions pan_code)) /\\ evaluate_decls s pan_code = SOME s' ==> ?t'. evaluate_decls t (compile_prog pan_code) = SOME t' /\\ state_rel s' t' t'.code. The vacuous start binder (absent from the formula) is omitted and documented; evaluate_decls memory decider chosen classically as in the tagged semantics_decls. Exact PanSemStateFiniteExact semantics/evaluator; only canonical finite-map and positive BitVec width/Type0 FFI translations; no target-run, trace or post-state hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRelImpSemantics.lean",
+    "lean_name": "stateRelImpSemanticsDeclsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "state_rel_imp_semantics_decls",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.2.x): original pan_simpProofScript.sml:1343-1370: !s t pan_code start. state_rel s t t.code /\\ ALL_DISTINCT (MAP FST (functions pan_code)) /\\ s.code = FEMPTY /\\ t.code = FEMPTY /\\ semantics_decls s start pan_code <> Fail ==> semantics_decls s start pan_code = semantics_decls t start (compile_prog pan_code). FEMPTY is HolFiniteMapExact.empty; all hypotheses retained. Exact PanSemStateFiniteExact semantics/evaluator; only canonical finite-map and positive BitVec width/Type0 FFI translations; no target-run, trace or post-state hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRelImpSemantics.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRelImpSemantics.lean",
+    "lean_name": "terminationWitnessReduced",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack statement infrastructure eliminating evaluator pair witnesses in the classical termination predicate (as in the accepted pan_globals state_rel_imp_semantics); no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRelImpSemantics.lean",
+    "lean_name": "stateRelImpSemanticsCore",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: semantics agreement from state_rel and source non-Fail only (the hypotheses the source state_rel_imp_semantics proof uses), via compile_correct at every clock; shared by the tagged state_rel_imp_semantics and state_rel_imp_semantics_decls. No HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRelImpSemantics.lean",
+    "lean_name": "evaluateDeclsCodeRel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: evaluate_decls over a code-updated state related by state_rel's code conjuncts, generic in the memory decider, by evaluate_decls recursion; used by the tagged state_rel_imp_evaluate_decls. No HOL original."
   }
 ]
