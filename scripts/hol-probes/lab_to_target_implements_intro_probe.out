@@ -1,0 +1,6 @@
+implements_intro_gen=((b :bool) ∧ (x :behaviour) ≠ Fail ⇒ (y :behaviour -> bool) = {x}) ⇒
+b ⇒
+implements' T y {x}
+implements_intro_gen_types=(y :behaviour -> bool)::behaviour -> bool;(x :behaviour)::behaviour;(b :bool)::bool;
+implements_intro_gen_hypotheses=0
+implements_intro_gen_proved=T

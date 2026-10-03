@@ -6875,3 +6875,7 @@ run_probe lab_filter_clock_ih_probeScript.sml lab_filter_clock_ih_probe.out \
 run_probe lab_to_target_filter_safety_probeScript.sml lab_to_target_filter_safety_probe.out \
   no_install_or_no_share_mem_filter_skip no_install_or_no_share_mem_filter_skip_types no_install_or_no_share_mem_filter_skip_hypotheses no_install_or_no_share_mem_filter_skip_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_implements_intro_probeScript.sml lab_to_target_implements_intro_probe.out \
+  implements_intro_gen implements_intro_gen_types implements_intro_gen_hypotheses implements_intro_gen_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
