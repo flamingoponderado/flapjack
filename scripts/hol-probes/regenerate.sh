@@ -5885,3 +5885,9 @@ run_probe misc_find_index_distinct_probeScript.sml misc_find_index_distinct_prob
   first last offset large_offset missing duplicate_guard empty actual_extracted_pcs \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_shmem_correctness_probeScript.sml lab_to_target_shmem_correctness_probe.out \
+  get_shmem_info_ok_lemma get_shmem_info_ok_lemma_types get_shmem_info_ok_lemma_hypotheses \
+  full_instance first_index last_index prefixed_load_name prefixed_store_name load_record store_record nonshared_intervals \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
