@@ -1,5 +1,7 @@
 import Flapjack.Test.L3WordArithmeticParity
 import Flapjack.Test.L3ImmediateShiftParity
+import Flapjack.Test.L3RegisterShiftParity
+import Flapjack.Test.LabToTargetInitializerFullStateRelParity
 import Flapjack.Test.LabToTargetInitializerDomainParity
 import Flapjack.Test.L3SetLessParity
 import Flapjack.Test.L3ImmediateALUParity
@@ -1151,7 +1153,6 @@ import Flapjack.Test.AsmPropsEncoderCorrectParity
 import Flapjack.Test.MachineIeeeCrossFormatParity
 import Flapjack.Test.L3RiscvCrossFormatParity
 import Flapjack.Test.WordGcFunOkParity
-import Flapjack.Test.L3RegisterShiftParity
 
 
 
