@@ -8080,3 +8080,19 @@ prebuilt original theory cache. This is original theorem regression evidence,
 not a cross-language equivalence proof. `check-riscv-target-const.py` pins the
 full Lean statement, original assertion definition and all four probe rows;
 its mutation tests reject extra premises, false oracle evidence and lost rows.
+
+### Universal native Binop decode prerequisites
+
+`CorrectnessEncoding/DecodeBinop.lean` proves unrestricted ADD/SUB/AND/ANDI
+Encode/DecodeAny roundtrips over original word5 register and word12 immediate
+carriers. These are untagged local compositions with no separately named HOL
+original. Original opcode, function bits, and every reconstructed field are
+source-reviewed; no target-run premise or extra input bound is introduced.
+Full Binop execution and encoder assertions remain open on linked beads.
+
+Fresh `riscv_binop_decode_probe.out` contains sixteen original boundary EVALs,
+plus four source-derived arbitrary Encode clauses with zero stored hypotheses,
+original inferred register/immediate types, and explicitly labeled symbolic
+replay queries. The replay queries are printed statements, not claimed original
+proved theorems. Boundary oracles supplement the universal kernel proofs and
+source comparison; they do not establish cross-language equivalence.

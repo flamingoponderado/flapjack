@@ -5984,6 +5984,12 @@
       "sha256": "d140d2daf5d41250d06f795e36239942e1f05a1a5a0c23656cb8fc283434ce71"
     },
     {
+      "bytes": 1549,
+      "out": "riscv_binop_decode_probe.out",
+      "rows": 32,
+      "sha256": "23d00fd6ff06f1a963d4c97fa6b66d421fe0b42d699c157e9357ca55ea917fbe"
+    },
+    {
       "bytes": 553,
       "out": "riscv_config_probe.out",
       "rows": 19,

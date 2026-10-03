@@ -21,6 +21,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveFull
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
 import Flapjack.Misc.Sptree.AlistInsertReverse
 import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
+import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
 import Flapjack.RiscV.CorrectnessEncoding.Const32
 import Flapjack.Compiler.Backend.Backend
 import Flapjack.RiscV.CorrectnessEncoding.ConstWide
