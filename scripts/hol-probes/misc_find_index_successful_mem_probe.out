@@ -1,0 +1,12 @@
+find_index_is_MEM=∀(x :α) (ls :α list) (n :num) (j :num). find_index x ls n = SOME j ⇒ MEM x ls
+find_index_is_MEM_types=(x :α)::α;(ls :α list)::α list;(n :num)::num;(j :num)::num;
+find_index_is_MEM_hypotheses=0
+first=T
+last=T
+offset=T
+duplicate=T
+large=T
+strings=T
+words=T
+missing_guard=T
+empty_guard=T

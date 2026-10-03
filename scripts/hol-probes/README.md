@@ -6397,3 +6397,4 @@ premises. Two rows record the complete statement and successful original proof;
 list, a domain hole, a wrong byte and a past-end index. The Lean parity module
 checks all observations and twelve applications of the full theorem. These
 fixtures provide regression evidence, not a cross-language equivalence proof.
+`stack_code_bitmaps_callreturn_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Call SOME specialization. Actual callee/link/clock guards and matching return/exception-label execution restrict continuation IHs to the actual clamped poststate; derive full prefix composition, retain all mismatches and terminal outcomes. Full Call/whole evaluator assembly remains open.

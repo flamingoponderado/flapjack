@@ -68658,5 +68658,28 @@
     "hol_name": "find_index_MEM",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 full original source1088 and fresh fulltype0hyp comparison: generic alpha list/target/arbitrary Nat offset, sole membership premise and complete existential find_index success at offset+i, original i<length bound and EL i list=target. DecidableEq supplies same propositional equality; Nonempty exposes intrinsic HOL inhabited carrier for existing bounded EL. No Nodup, extra outer bound, assumed search/target/default or hold change; structural first-match recursion retains duplicates. Fresh original seven complete theorem instances with original membership guards kernel discharged and two missing/empty guard observations allT; generic native full consumer and actual arbitrary machineConfig FFI-entry-PC/word/offset consumer. Every EL remains under original existential bound. Evidence is source comparison/regression, not HOL-to-Lean equivalence or full FFI/initializer/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/CallReturn.lean",
+    "lean_name": "evaluateCodeBitmapsCallReturn",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.10.2: original evaluate_code_bitmaps421-440 Call SOME branch and stackSem returning/exception clause compared. Full literal CodeBitmaps existential oracle shift/code FOLDL left union/bitmap append FLAT retained. Callee IH only actual erased-link find_code success/nonzero clock/native decClock(set_var link Loc source). Return IH only native callee execution Result matching actual return label; exception IH only actual handler and native callee execution Exception matching handler label. Both continuations evaluated at actual min-clamped callee poststate; compose derived callee and continuation prefixes with trans, no arbitrary-state/global IH or target/postfield/count/prefix premise. All label mismatches, absent handler, NONE/Break/Continue/error/timeout/final/halt outcomes preserved. Canonical imported regs/fpRegs/store with local genuine codec witness, positive BitVec/NeZero,C/F Type0,Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numeric alignment/FP correspondence/runtime rewrite claim. Full Call/whole bitmap assembly remains open.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Misc/FindIndex/SuccessfulMembership.lean",
+    "lean_name": "findIndex_isMem",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "find_index_is_MEM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison miscScript.sml1227 and fresh fulltype0hyp: full generic target/list/offset/result, sole successful-search premise and original membership conclusion. Generic alpha retained; DecidableEq supplies propositional equality. No fixed word specialization, Nodup, index bound or HD/EL/default dependency. Fresh original complete theorem instances discharge actual successful-search guards; kernel structural proof and arbitrary MachineConfig.ffiEntryPcs consumer. Source/regression evidence does not establish cross-language equivalence or full FFI/initializer/compiler correctness."
   }
 ]

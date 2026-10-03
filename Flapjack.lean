@@ -1,3 +1,4 @@
+import Flapjack.Misc.FindIndex.SuccessfulMembership
 import Flapjack.Misc.FindIndex.Membership
 import Flapjack.Misc.BytesInMem.Imp
 import Flapjack.Compiler.Backend.LabToTarget.WordSearch
@@ -353,6 +354,7 @@ import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.FFI
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.RawCall
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.JumpLower
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallTail
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallReturn
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp
