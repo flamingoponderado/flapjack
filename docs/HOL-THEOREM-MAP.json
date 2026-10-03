@@ -80530,5 +80530,74 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3225-3837 (captured stored statement): arbitrary gen_gc max_heap k bitmaps data_sp s jump off code coracle; the six original premises in order (accepted init_code_pre, code_rel, compile_oracle = (I ## MAP prog_comp ## I) o coracle as the pointwise triple used by accepted state_rel, oracle reg_bound/stack_num_stubs bound, lookup stack_err_lab = SOME (halt_inst 2w), max_stack_alloc <= max_heap); conclusion is the original case split on the native stackSem evaluate of the actual initCode: SOME branch False, NONE branch the full conjunction: exists w2 w3 w4 with s/t register lookups, byte_aligned, unsigned w2 <+ w4, t.regs k = w4 - bytes_in_word, the conditional (k+1) heap-end equation with literal (w3 + -1w*w2) >>> (shift+1) << (shift+1) + w2 + bytes_in_word * n2w (LENGTH store_list), s.regs 3; state_rel jump off k (init_reduce ... t) t; t.ffi = s.ffi; init_prop gen_gc max_heap data_sp (get_stack_heap_limit max_heap (read_pointers s)) (init_reduce ... t); mdomain and sh_mdomain equalities; fun2set equality on t0.mdomain (Bool domain as membership predicate). Kernel proof uses only propext/Classical.choice/Quot.sound; no target run, post-relation, heap representation or bound assumption. Inherited assumption: the statement mentions the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
+    "lean_name": "evaluateInitCode",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "evaluate_init_code",
+    "words_as_type_indexed_bitvec": true,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3856-3873: premises init_pre, compile_oracle equation, oracle reg_bound/num_stubs bound, lookup stack_err_lab = SOME (halt_inst 2w), code_rel in original order; conclusion case evaluate (init_code ...) of (NONE,t) => exists r. make_init_opt ... s = SOME r and state_rel jump off k r t and t.ffi = s.ffi | _ => F, via the accepted makeInitOpt and the new initCodeThm. State carrier is the imported StackSemStateFiniteExact with same-module re-exported holFmapAsFiniteSupportWitness; HOL num_stubs is stack_num_stubs; compile_oracle equation uses the pointwise triple rendering of (I ## MAP prog_comp ## I) o coracle as in accepted state_rel. Inherited assumption: the statement reaches the native stackSem evaluate (directly or through make_init_opt/semantics) whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_semantics_probe.out. Kernel proof; no target run, relation or semantics assumption. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
+    "lean_name": "initSemantics",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "init_semantics",
+    "words_as_type_indexed_bitvec": true,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3904-3969: premises lookup stack_err_lab, code_rel, init_pre, compile_oracle equation, oracle bound in original order; conclusion case evaluate (init_code ...) of (NONE,t) => semantics 0 s = semantics start t and exists r. make_init_opt ... s = SOME r and state_rel jump off k r t | _ => F, over the accepted native stackSem semantics_def; the clock argument (entry call at k+1 runs init_code clock-neutrally then the start call at k; clock 0 times out) is the Flapjack semanticsAux_shift lemma. State carrier is the imported StackSemStateFiniteExact with same-module re-exported holFmapAsFiniteSupportWitness; HOL num_stubs is stack_num_stubs; compile_oracle equation uses the pointwise triple rendering of (I ## MAP prog_comp ## I) o coracle as in accepted state_rel. Inherited assumption: the statement reaches the native stackSem evaluate (directly or through make_init_opt/semantics) whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_semantics_probe.out. Kernel proof; no target run, relation or semantics assumption. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
+    "lean_name": "makeInitOptSomeSemantics",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_opt_SOME_semantics",
+    "words_as_type_indexed_bitvec": true,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3971-3986: premises init_pre, compile_oracle equation, oracle bound, code_rel, lookup stack_err_lab; conclusion exists s1. make_init_opt ... s2 = SOME s1 and (semantics start s1 <> Fail ==> semantics 0 s2 = semantics start s1), via initSemantics and the accepted compile_semantics port. State carrier is the imported StackSemStateFiniteExact with same-module re-exported holFmapAsFiniteSupportWitness; HOL num_stubs is stack_num_stubs; compile_oracle equation uses the pointwise triple rendering of (I ## MAP prog_comp ## I) o coracle as in accepted state_rel. Inherited assumption: the statement reaches the native stackSem evaluate (directly or through make_init_opt/semantics) whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_semantics_probe.out. Kernel proof; no target run, relation or semantics assumption. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
+    "lean_name": "impCodeRel",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "IMP_code_rel",
+    "words_as_type_indexed_bitvec": true,
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3988-4005 (local, replayed): EVERY (reg_bound p k and num_stubs <= n+1) code1 and code2 = fromAList (compile jump off gen_gc max_heap k start code1) imply code_rel jump off k (fromAList code1) code2; EVERY as list membership quantifier, fromAList as accepted sptFromAList, compile as accepted compileHOL. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_semantics_probe.out. Kernel proof; no target run, relation or semantics assumption. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
+    "lean_name": "makeInitSemantics",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_semantics",
+    "words_as_type_indexed_bitvec": true,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4069-4086: discharge_these jump off gen_gc max_heap k start coracle code s2 and propagate_these s2 bitmaps data_sp imply exists s1. make_init_opt gen_gc max_heap bitmaps data_sp coracle jump off k (fromAList code) s2 = SOME s1 and (semantics start s1 <> Fail ==> semantics 0 s2 = semantics start s1); uses the accepted discharge/propagate definitions, impCodeRel and makeInitOptSomeSemantics. State carrier is the imported StackSemStateFiniteExact with same-module re-exported holFmapAsFiniteSupportWitness; HOL num_stubs is stack_num_stubs; compile_oracle equation uses the pointwise triple rendering of (I ## MAP prog_comp ## I) o coracle as in accepted state_rel. Inherited assumption: the statement reaches the native stackSem evaluate (directly or through make_init_opt/semantics) whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_semantics_probe.out. Kernel proof; no target run, relation or semantics assumption. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
   }
 ]

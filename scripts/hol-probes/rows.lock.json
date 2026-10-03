@@ -7202,6 +7202,12 @@
       "sha256": "18cb6ee33f204b5af80bbda2aa2c64d76a6a304c311a613e8587cf9ab7d99b64"
     },
     {
+      "bytes": 2643,
+      "out": "stack_remove_init_semantics_probe.out",
+      "rows": 10,
+      "sha256": "639fbdca7c1495d62d0f9cdfa3fda479eb03432d7b378840a3e58e3cc35586a1"
+    },
+    {
       "bytes": 2757,
       "out": "stack_remove_inst_arithmetic_probe.out",
       "rows": 18,

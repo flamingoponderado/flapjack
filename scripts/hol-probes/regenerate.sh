@@ -6898,3 +6898,7 @@ run_probe stack_remove_word_list_exists_add_probeScript.sml stack_remove_word_li
 run_probe stack_remove_init_code_thm_probeScript.sml stack_remove_init_code_thm_probe.out \
   init_code_thm_statement init_code_thm_hypotheses \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_semantics_probeScript.sml stack_remove_init_semantics_probe.out \
+  IMP_code_rel_statement IMP_code_rel_hypotheses evaluate_init_code_statement evaluate_init_code_hypotheses init_semantics_statement init_semantics_hypotheses make_init_opt_SOME_semantics_statement make_init_opt_SOME_semantics_hypotheses make_init_semantics_statement make_init_semantics_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
