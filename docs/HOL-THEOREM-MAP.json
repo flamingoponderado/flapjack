@@ -66838,6 +66838,50 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.13: original stack_allocProofScript.sml:6081-6109. Free HOL code oracle s c start implicit. All ten premises in order: ALOOKUP code keys <> gc_stub_location with alloc_arg (sptAListLookup), oracle entries likewise (bound vars i k q), s.use_stack, s.use_store, ~s.use_alloc, s.code = fromAList (compile c code), s.compile_oracle = (I ## MAP prog_comp ## I) o oracle, data-buffer/bitmaps bound, stack bound, ALL_DISTINCT (MAP FST code) as List.Nodup (unused by the proof, as in HOL), semantics start (make_init c (fromAList code) oracle s) <> Fail. Conclusion semantics start s = semantics start (make_init c (fromAList code) oracle s). Proof as HOL: compile_semantics at make_init with compile_rest := s.compile, anything := s.gc_fun, and spt_eq_thm for the code. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported witness; positive BitVec width with NeZero. Inherits reals_as_rational_cuts through semantics/evaluate (SOUNDNESS item 8); this marker does not review untagged dependencies."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "next_lab_EQ_MAX",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Labels.lean",
+    "lean_name": "next_lab_EQ_MAX",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.14: original stack_allocProofScript.sml:6111-6121. !q (n:num) aux. next_lab q aux = MAX aux (next_lab q 0); the vacuous source binder n is retained; next_lab is the tagged nextLabHOL; MAX is Nat max. Proof by the generic nextLab recursion (untagged nextLab_max)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "MAX_SIMP",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Labels.lean",
+    "lean_name": "MAX_SIMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.14: original stack_allocProofScript.sml:6123-6127. MAX n (MAX n m) = MAX n m over num, with n m free (implicit)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "next_lab_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Labels.lean",
+    "lean_name": "next_lab_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.14: original stack_allocProofScript.sml:6129-6154. !p. next_lab p 2 = case p of the eight source arms (Seq, If, Loop, Call NONE _ NONE, Call NONE _ (SOME (_,_,l2)), Call (SOME (p,_,_,l2)) _ NONE, Call (SOME ..) _ (SOME ..), _ => 2), rendered as a Lean match with the same arms in the same order and right-hand sides."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "extract_labels_next_lab",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Labels.lean",
+    "lean_name": "extract_labels_next_lab",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.14: original stack_allocProofScript.sml:6156-6165. !p (aux:num) e. MEM e (extract_labels p) ==> SND e < next_lab p 2; vacuous aux retained; extract_labels is the tagged stackProps extractLabels."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "stack_alloc_lab_pres",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Labels.lean",
+    "lean_name": "stack_alloc_lab_pres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.14: original stack_allocProofScript.sml:6167-6215. !n nl p aux. EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0 ∧ l2 ≠ 1) (extract_labels p) ∧ ALL_DISTINCT (extract_labels p) ∧ next_lab p 2 ≤ nl ==> let (cp,nl') = comp n nl p in the same EVERY and ALL_DISTINCT for cp, every label of cp in extract_labels p or in [nl, nl'), and nl ≤ nl'. EVERY over pairs rendered as bounded quantification with projections, ALL_DISTINCT as List.Nodup, the let destructuring as projections of comp n nl p; vacuous aux retained."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
     "hol_name": "dest_case_def",
     "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
