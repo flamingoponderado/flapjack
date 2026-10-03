@@ -1,0 +1,14 @@
+generic_carrier_1=∀(l1 :(α # β word_loc) list) (l2 :(α # β word_loc) list) (k :α) (v :β word_loc). LIST_REL (λ((ak :α),(av :β word_loc)) ((bk :α),(bv :β word_loc)). ak = bk ∧ (is_gc_word_const av ⇒ bv = av)) l1 l2 ∧ is_gc_word_const v ∧ ALOOKUP l1 k = SOME v ⇒ ALOOKUP l2 k = SOME v
+generic_carrier_1_hypotheses=0
+generic_carrier_2=∀(l1 :(α # β word_loc) list) (l2 :(α # β word_loc) list) (k :α) (v :γ). LIST_REL (λ((ak :α),(av :β word_loc)) ((bk :α),(bv :β word_loc)). ak = bk ∧ (is_gc_word_const av ⇒ bv = av)) l1 l2 ∧ ALOOKUP l1 k = (NONE :β word_loc option) ⇒ ALOOKUP l2 k = (NONE :β word_loc option)
+generic_carrier_2_hypotheses=0
+generic_carrier_3=∀(f :α -> bool) (l' :(β # α) list) (l :(β # α) list) (k :β) (v :α). LIST_REL (λ((ak :β),(av :α)) ((bk :β),(bv :α)). ak = bk ∧ (f av ⇒ bv = av)) l' l ∧ ALOOKUP l' k = SOME v ∧ f v ⇒ ALOOKUP l k = SOME v
+generic_carrier_3_hypotheses=0
+generic_carrier_4=∀(l1 :(α # β) list) (l2 :(α # β) list). ALL_DISTINCT (MAP (FST :α # β -> α) l1) ∧ PERM l1 l2 ⇒ ALOOKUP l1 = ALOOKUP l2
+generic_carrier_4_hypotheses=0
+generic_carrier_5=∀(l1 :(α # β) list) (f :(α # β) list -> (α # β) list) (k :α) (v :β). ALL_DISTINCT (MAP (FST :α # β -> α) l1) ∧ PERM l1 (f l1) ∧ ALOOKUP l1 k = SOME v ⇒ ALOOKUP (f l1) k = SOME v
+generic_carrier_5_hypotheses=0
+generic_carrier_6=∀(moves :(num # α) list) (x :β word_loc list) (s :(β, γ, δ) state) (s' :(β, γ, δ) state) (v :num). set_vars (MAP (FST :num # α -> num) moves) x s = s' ∧ ALOOKUP moves v = (NONE :α option) ⇒ get_var v s' = get_var v s
+generic_carrier_6_hypotheses=0
+generic_carrier_7=∀(n :α sptree$num_map) (m :α sptree$num_map). all_names (n,m) = union n m
+generic_carrier_7_hypotheses=0

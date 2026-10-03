@@ -1,0 +1,10 @@
+load "riscv_stepTheory";
+open HolKernel Parse bossLib Tactical Tactic Conv riscvTheory riscv_stepTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "DecodeAny_type=";print_type(type_of ``riscv_step$DecodeAny``);print "\n");
+val _ = print ("DecodeAny_hypotheses=" ^ Int.toString(length(hyp DecodeAny_def)) ^ "\n");
+fun check label q = let val th = prove(q,SIMP_TAC (srw_ss()) [DecodeAny_def]) in if null(hyp th) andalso aconv (concl th) q then (print(label^"=");print_term(concl th);print "\n") else raise Fail "unexpected hypotheses/equation" end;
+val _ = check "DecodeAny_half_equation" ``!h. riscv_step$DecodeAny (riscv$Half h) = riscv$DecodeRVC h``;
+val _ = print "DecodeAny_half_proof=T\n";
+val _ = check "DecodeAny_word_equation" ``!w. riscv_step$DecodeAny (riscv$Word w) = riscv$Decode w``;
+val _ = print "DecodeAny_word_proof=T\n";

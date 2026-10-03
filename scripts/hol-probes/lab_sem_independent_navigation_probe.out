@@ -1,0 +1,40 @@
+next_label_def=(next_label ([] :β sec list) :α word_loc option) = (NONE :α word_loc option) ∧
+(∀(xs :β sec list) (k :num).
+   (next_label (Section k ([] :β line list)::xs) :α word_loc option) =
+   (next_label xs :α word_loc option)) ∧
+(∀(ys :β line list) (xs :β sec list) (v0 :num) (n2 :num) (n1 :num) (k :num).
+   (next_label (Section k ((Label n1 n2 v0 :β line)::ys)::xs) :
+    α word_loc option) = SOME (Loc n1 n2 :α word_loc)) ∧
+(∀(ys :β line list) (xs :β sec list) (v9 :β asm_or_cbw) (v11 :num)
+     (v10 :word8 list) (k :num).
+   (next_label (Section k (Asm v9 v10 v11::ys)::xs) :α word_loc option) =
+   (next_label (Section k ys::xs) :α word_loc option)) ∧
+∀(ys :β line list) (xs :β sec list) (v15 :num) (v14 :word8 list)
+    (v13 :β word) (v12 :β asm_with_lab) (k :num).
+  (next_label (Section k (LabAsm v12 v13 v14 v15::ys)::xs) :α word_loc option) =
+  (next_label (Section k ys::xs) :α word_loc option)
+next_label_def_types=
+next_label_def_hypotheses=0
+next_label_def_proved=T
+get_lab_after_def=(∀(pos :num).
+   (get_lab_after pos ([] :β sec list) :α word_loc option) =
+   (NONE :α word_loc option)) ∧
+(∀(xs :β sec list) (pos :num) (k :num).
+   (get_lab_after pos (Section k ([] :β line list)::xs) :α word_loc option) =
+   (get_lab_after pos xs :α word_loc option)) ∧
+∀(ys :β line list) (y :β line) (xs :β sec list) (pos :num) (k :num).
+  (get_lab_after pos (Section k (y::ys)::xs) :α word_loc option) =
+  if is_Label y then
+    (get_lab_after pos (Section k ys::xs) :α word_loc option)
+  else if pos = (0 :num) then
+    (next_label (Section k ys::xs) :α word_loc option)
+  else (get_lab_after (pos − (1 :num)) (Section k ys::xs) :α word_loc option)
+get_lab_after_def_types=
+get_lab_after_def_hypotheses=0
+get_lab_after_def_proved=T
+get_ret_Loc_def=∀(s :(β, γ, δ) labSem$state).
+  (get_ret_Loc s :α word_loc option) =
+  (get_lab_after s.pc s.code :α word_loc option)
+get_ret_Loc_def_types=(s :(β, γ, δ) labSem$state)::(β, γ, δ) labSem$state;
+get_ret_Loc_def_hypotheses=0
+get_ret_Loc_def_proved=T
