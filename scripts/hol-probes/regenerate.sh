@@ -6226,3 +6226,13 @@ run_probe wordsem_evaluate_stack_max_probeScript.sml wordsem_evaluate_stack_max_
   option_le_max_right_statement option_le_max_right_hypotheses \
   option_le_def \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordsem_evaluate_consts_probeScript.sml wordsem_evaluate_consts_probe.out \
+  evaluate_consts_statement evaluate_consts_hypotheses \
+  pop_env_code_gc_fun_clock_statement pop_env_code_gc_fun_clock_hypotheses \
+  alloc_code_gc_fun_const_statement alloc_code_gc_fun_const_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordsem_state_laws_probeScript.sml wordsem_state_laws_probe.out \
+  mem_list_rearrange_statement mem_list_rearrange_hypotheses set_var_const_statement set_var_const_hypotheses set_var_with_const_statement set_var_with_const_hypotheses set_store_const_statement set_store_const_hypotheses get_var_set_var_statement get_var_set_var_hypotheses get_vars_length_lemma_statement get_vars_length_lemma_hypotheses stack_size_eq_statement stack_size_eq_hypotheses stack_size_eq2_statement stack_size_eq2_hypotheses s_key_eq_def2_statement s_key_eq_def2_hypotheses LASTN_stack_size_SOME_statement LASTN_stack_size_SOME_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
