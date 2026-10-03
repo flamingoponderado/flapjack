@@ -355,4 +355,106 @@ theorem stackArgumentCount {width : Nat} [NeZero width] {C F : Type}
     simp only [Compiler.Backend.WordToStack.stackArgCount, wordSemAddRetLoc,
       List.length_cons, length]
 
+/-- Flapjack case-local frame bound used before the actual stack move.
+It derives the move's offset bound from the original caller maximum and
+shifted GENLIST argument convention; no target-run assumption is introduced. -/
+theorem stackArgumentFrameBound {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (destinationCode : HolProg width) (destination : Sum Nat Nat)
+    (guards : SourceGuards values names retCode l1 l2 dest args source
+      xs args1 prog ss envs)
+    (related : stateRel ac k f frame source target lens 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args none) < 2 * frame + 2 * k)
+    (compiled : callDestNative dest args (k, f, frame) =
+      (destinationCode, destination)) :
+    Compiler.Backend.WordToStack.stackArgCount destination (args.length + 1) k ≤ f := by
+  have positive := positiveCallerFrame k frame values names retCode l1 l2 dest args
+    source xs args1 prog ss envs guards conventions maximum
+  have shape : if frame = 0 then f = 0 else f = frame + 1 := by
+    unfold stateRel at related
+    aesop (config := { enableSimp := false })
+  rw [if_neg (by omega)] at shape
+  have argsEq := (returningConventions k values names retCode l1 l2 dest args conventions).2.1
+  have argBound : args.length ≤ frame + k := by
+    rcases Nat.eq_zero_or_pos args.length with empty | nonempty
+    · omega
+    · have member : 2 * ((args.length - 1) + 1) ∈ args := by
+        have mapped : 2 * ((args.length - 1) + 1) ∈
+            (List.range args.length).map (fun index => 2 * (index + 1)) :=
+          List.mem_map.mpr ⟨args.length - 1, List.mem_range.mpr (by omega), rfl⟩
+        rwa [← argsEq] at mapped
+      have upper := maxList_ge_of_mem args _ member
+      rw [maxVarHOL] at maximum
+      simp only [Flapjack.WordAlloc.max3Eq] at maximum
+      omega
+  cases destination <;>
+    simp only [Compiler.Backend.WordToStack.stackArgCount] <;> omega
+
+/-- Flapjack case-local execution of StackArgs after the original resource
+split. The offset and memory bounds are the checked caller bounds. This
+lemma proves the actual allocation/move run and retains the stack/register
+observations needed for callee state_rel; it is not the full Call simulation. -/
+theorem evaluateStackArguments {width : Nat} [NeZero width] {C F : Type}
+    (k f frame : Nat) (destination : Sum Nat Nat) (argCount : Nat)
+    (target : StackSemStateFiniteExact width C F)
+    (useStack : target.useStack = true)
+    (frameBound : target.stackSpace + f ≤ target.stack.length)
+    (moveBound : Compiler.Backend.WordToStack.stackArgCount destination argCount k ≤ f)
+    (space : Compiler.Backend.WordToStack.stackArgCount destination argCount k ≤ target.stackSpace) :
+    let count := Compiler.Backend.WordToStack.stackArgCount destination argCount k
+    ∃ (moved : StackSemStateFiniteExact width C F)
+      (stack : List (WordLocW width)) (regs : HolFiniteMapExact Nat (WordLocW width)),
+      StackSemEvaluate.evaluate (stackArgsNative destination argCount (k, f, frame), target) =
+        (none, moved) ∧
+      moved = {target with stackSpace := target.stackSpace - count, stack := stack, regs := regs} ∧
+      (∀ register, register ≠ k →
+        StackSemStateOps.getVar register moved = StackSemStateOps.getVar register target) ∧
+      target.stack.length = stack.length ∧
+      moved.stackSpace = target.stackSpace - count ∧
+      stack.drop (moved.stackSpace + count) = target.stack.drop target.stackSpace ∧
+      (∀ index, index < count →
+        holEl (index + f) (target.stack.drop (target.stackSpace - count)) =
+          holEl index (stack.drop (target.stackSpace - count))) := by
+  dsimp only
+  set count := Compiler.Backend.WordToStack.stackArgCount destination argCount k with countDef
+  let allocated : StackSemStateFiniteExact width C F :=
+    {target with stackSpace := target.stackSpace - count}
+  obtain ⟨moved, run, stack, regs, state, registers, length, movedSpace, tail, slots⟩ :=
+    CallReturnEval.evaluateStackMove k count 0 allocated f
+      ⟨useStack, by dsimp [allocated]; omega, moveBound⟩
+  refine ⟨moved, stack, regs, ?_, state, registers, length, movedSpace, ?_, ?_⟩
+  · rw [stackArgsNative, CallReturnEval.evaluateStackMoveSeq,
+      StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
+      StackSemEvaluate.evaluate_stackAlloc, if_neg (by simp [useStack]), if_neg (by simpa only using Nat.not_lt.mpr space)]
+    simp only
+    exact run
+  · simpa only [allocated, Nat.add_zero, Nat.sub_add_cancel space] using tail
+  · simpa only [movedSpace, allocated, Nat.add_zero] using slots
+
+/-- Flapjack case-local failure equation for the other original StackArgs
+resource branch. It retains the actual Halt 2/empty_env outcome; proving the
+source event-prefix and exceeded-resource conclusion remains part of the
+unfinished full Call case. -/
+theorem evaluateStackArgumentsInsufficient {width : Nat} [NeZero width] {C F : Type}
+    (k f frame : Nat) (destination : Sum Nat Nat) (argCount : Nat)
+    (target : StackSemStateFiniteExact width C F)
+    (useStack : target.useStack = true)
+    (space : target.stackSpace <
+      Compiler.Backend.WordToStack.stackArgCount destination argCount k) :
+    StackSemEvaluate.evaluate (stackArgsNative destination argCount (k, f, frame), target) =
+      (some (.halt (.word (BitVec.ofNat width 2))), StackSemStateOps.emptyEnv target) := by
+  rw [stackArgsNative, CallReturnEval.evaluateStackMoveSeq,
+    StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
+    StackSemEvaluate.evaluate_stackAlloc, if_neg (by simp [useStack]), if_pos space]
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
