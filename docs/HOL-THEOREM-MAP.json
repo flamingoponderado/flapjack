@@ -70139,5 +70139,65 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.5 full original goal5719-5751/Store6405-6408: fresh complete constructor-specialized original statement and literal unchanged source proof T/hyp0/closed. All original arbitrary payload/state/result/bitmap/compiler/frame parameters, native execution/errorfree/stateRel/postalloc/flat convention/perf=false compile equation/both bitmap bounds/prefix/full labelsubset/maxvar bound retained. Full target clock/poststate/result existential and complete compCorrectResult resource/Return/Exception/NONE/Break/Continue/other-result conclusion unchanged. Original flat_exp_conventions_def rejects this native constructor for every payload, so the original flat premise proves contradiction exactly as HOL; no new impossible guard, narrowed evaluator, supplied targetrun/postrelation or successful-run-only result. No actual target-run example is asserted for the unreachable branch. Original source config Nat#C/target C and F:Type, positive word width/NeZero and faithful WordLangExpHOL(BitVec width) payload retained. All5 original fmap fields use actual imported canonical owners/genuine same-module roundtrip witnesses; Spt code/locals unchanged. Evaluator closure inherits reals_as_rational_cuts; no numeric FP assertion. Proof-only, no executable compiler changes or full assembly completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/AsmConsts.lean",
+    "lean_name": "asm_consts",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "asm_consts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.1): original asmPropsScript.sml:391-408 quantifies i w s and states exactly the four conjuncts be, lr, align, mem_domain of asm i w s equal those of s; Lean asm_consts keeps the same binders over native HolAsm/BitVec width/AsmState and the same four conjuncts in source order (HOL bool iff is Bool equality; mem_domain set is the predicate field). Proof cases every asm/inst constructor through reviewed memOp/arithUpd/fpUpd consts; no added premise. Positive word dimension is the only representation translation; inherits reals_as_rational_cuts / docs/SOUNDNESS.md item 8 through fpUpd inside asmUpd. Probe lab_to_target_nop_steps_probe.out captures the original theorem and types."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/AsmConsts.lean",
+    "lean_name": "asm_failed_ignore_new_pc",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "asm_failed_ignore_new_pc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.1): original asmPropsScript.sml:325-330 forall i v w s, (asm i w s).failed <=> (asm i v s).failed; Lean keeps binders i v w s in order and states Bool equality of the failed fields of native asmUpd at w and v. No premise. Positive BitVec width only translation; inherits reals_as_rational_cuts / SOUNDNESS item 8 through fpUpd. Original theorem captured in lab_to_target_nop_steps_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/AsmConsts.lean",
+    "lean_name": "asm_mem_ignore_new_pc",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "asm_mem_ignore_new_pc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.1): original asmPropsScript.sml:332-337 forall i v w s, (asm i w s).mem = (asm i v s).mem; Lean keeps binders and the whole-memory function equality over native asmUpd. No premise. Positive BitVec width only translation; inherits reals_as_rational_cuts / SOUNDNESS item 8 through fpUpd. Original theorem captured in lab_to_target_nop_steps_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NopSteps.lean",
+    "lean_name": "asmStepNop",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_step_nop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.1): original lab_to_targetProofScript.sml:115-123 asm_step_nop bytes c s1 i s2 is the eight conjuncts bytes_in_memory s1.pc bytes s1.mem s1.mem_domain, enc_with_nop c.encode i bytes, link_reg case (NONE => T | SOME r => s1.lr = r), s1.be <=> c.big_endian, s1.align = c.code_alignment, asm i (s1.pc + n2w (LENGTH bytes)) s1 = s2, ~s2.failed, asm_ok i c; Lean asmStepNop keeps the same five parameters (word8 bytes, AsmConfigExact, AsmState, HolAsm, AsmState) and the eight conjuncts in order using reviewed bytesInMemoryHOL, encWithNop, asmUpd and asmOkExact (=true). Positive width only translation; inherits reals_as_rational_cuts / SOUNDNESS item 8 through asmUpd. Definition and types captured in lab_to_target_nop_steps_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NopSteps.lean",
+    "lean_name": "evaluateNopSteps",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "evaluate_nop_steps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.1): original local lab_to_targetProofScript.sml:152-228 forall n s1 ms1 c (io free, hence universal) with the ten hypotheses encoder_correct, prog_addresses = mem_domain, ffi_entry_pcs_disjoint over n * LENGTH(encode (Inst Skip)), interference_ok next_interfer, bytes_in_memory of FLAT (REPLICATE n skip) in s1.mem, link_reg case, be, align, ~failed, target_state_rel; conclusion exists l ms2 forall k with both shifted evaluate/find_next_interference equalities and target_state_rel of upd_pc (s1.pc + n2w (n * LENGTH skip)) s1. Lean evaluateNopSteps binds io explicitly and keeps every hypothesis and the full existential conclusion, with List.flatten/List.replicate for FLAT/REPLICATE; no l<>0 (absent in source) and no assumed target run. Proof by induction on n through reviewed asmStepImpEvaluate. The theorem is local so the probe re-elaborates the unchanged statement text with types (not a theorem replay). Positive BitVec width, sigma Type only translations; inherits reals_as_rational_cuts / SOUNDNESS item 8 through encoderCorrect/asm semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NopSteps.lean",
+    "lean_name": "asmStepImpEvaluateStepNop",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_step_IMP_evaluate_step_nop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.1): original lab_to_targetProofScript.sml:249-264 forall c s1 ms1 io i s2 bytes with nine hypotheses encoder_correct c.target, prog_addresses = s1.mem_domain, ffi_entry_pcs_disjoint c s1 (LENGTH bytes), interference_ok, bytes_in_memory s1.pc bytes s2.mem s1.mem_domain, asm_step_nop bytes c.target.config s1 i s2, s2 = asm i (s1.pc + n2w (LENGTH bytes)) s1, target_state_rel c.target s1 ms1, !x. i <> Call x; conclusion exists l ms2 forall k: shifted evaluate equality, shifted find_next_interference equality, target_state_rel c.target s2 ms2, l <> 0. Lean keeps the binders in order, all nine hypotheses and all four conclusion conjuncts; no target run or post-relation assumed. Proof follows HOL: jump/taken-jumpcmp/jumpreg cases reuse the asm step, other cases append evaluateNopSteps. Positive BitVec width, sigma Type only translations; inherits reals_as_rational_cuts / SOUNDNESS item 8. Original theorem and types captured in lab_to_target_nop_steps_probe.out."
   }
 ]
