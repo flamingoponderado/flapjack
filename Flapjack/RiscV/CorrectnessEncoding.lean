@@ -1,4 +1,5 @@
 import Flapjack.RiscV.Encoding
+import Flapjack.RiscV.CorrectnessEncoding.Arithmetic
 
 /-!
 Correctness properties for the concrete RISC-V artifact boundary.

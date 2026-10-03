@@ -342,6 +342,34 @@ theorem wordListWrap {width : Nat} [NeZero width] {β : Type}
       rw [hTake, hDrop] at split
       exact ⟨x, xs, y, ys, a, split, rfl⟩
 
+/-- Complete original splitting of an existential word list at an arbitrary
+length, for arbitrary payloads and modular addresses. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "word_list_exists_ADD"
+  (words_as_type_indexed_bitvec)]
+theorem wordListExistsAdd {width : Nat} [NeZero width] {β : Type} :
+    ∀ (m n : Nat) (a : BitVec width),
+      Misc.wordListExists (β := β) a (m + n) =
+        SetSep.star (Misc.wordListExists a m)
+          (Misc.wordListExists (a + bytesInWord width * BitVec.ofNat width m) n) := by
+  intro m n a
+  funext heap
+  apply propext
+  constructor
+  · rintro ⟨xs, hxs⟩
+    obtain ⟨listHeap, length⟩ := (WordListExists.starCond _ _ _).mp hxs
+    rw [← List.take_append_drop m xs, StackHeap.wordListAppend] at listHeap
+    rw [List.length_take, Nat.min_eq_left (by omega)] at listHeap
+    obtain ⟨left, right, partition, leftHeap, rightHeap⟩ := listHeap
+    exact ⟨left, right, partition,
+      ⟨xs.take m, (WordListExists.starCond _ _ _).mpr ⟨leftHeap, by simp; omega⟩⟩,
+      ⟨xs.drop m, (WordListExists.starCond _ _ _).mpr ⟨rightHeap, by simp; omega⟩⟩⟩
+  · rintro ⟨left, right, partition, ⟨ys, hys⟩, ⟨zs, hzs⟩⟩
+    obtain ⟨leftHeap, ylen⟩ := (WordListExists.starCond _ _ _).mp hys
+    obtain ⟨rightHeap, zlen⟩ := (WordListExists.starCond _ _ _).mp hzs
+    refine ⟨ys ++ zs, (WordListExists.starCond _ _ _).mpr ⟨?_, by simp [ylen, zlen]⟩⟩
+    rw [StackHeap.wordListAppend, ylen]
+    exact ⟨left, right, partition, leftHeap, rightHeap⟩
+
 private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
 

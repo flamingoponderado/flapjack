@@ -46,8 +46,8 @@ def usage : String :=
   "Usage: lake exe flapjack-compile [--assembly|--pancake|--hex|--sections] " ++
   "[SOURCE.pnk]\nRead Pancake source from SOURCE.pnk or stdin. The default, " ++
   "--assembly, and --pancake modes emit the Pancake-compatible assembly " ++
-  "frame; --hex emits the legacy lowercase byte line; --sections emits " ++
-  "<label> <address> <bytes> lines."
+  "frame; --hex emits that frame's code bytes as one lowercase line; " ++
+  "--sections emits its sections as <label> <address> <bytes> lines."
 
 def parseArguments (arguments : List String) : IO (Option (OutputFormat × Option String)) := do
   match arguments with
@@ -104,29 +104,22 @@ def compileMain (arguments : List String) : IO UInt32 := do
     | .error error =>
         IO.eprintln s!"flapjack-compile: {sourceRiscVImageErrorDescription error}"
         return 1
-  else if outputFormat == .sections then
-    match compileFlapjackRiscVSourceImageChecked (width := 64) .rv64i
+  else
+    -- `--sections` and `--hex` render the same native runtime image as the
+    -- assembly frame: its sections, or its concatenated code bytes.
+    match compileFlapjackRiscVSourceRuntimeImageChecked (width := 64) .rv64i
         riscv64BytesInWord (BitVec.ofInt 64) [] compileRemoveConfig
         "main" source with
     | .ok image =>
         for warning in image.warnings do
           IO.eprintln s!"warning: {repr warning}"
-        printSections image.sections
+        if outputFormat == .sections then
+          printSections image.sections
+        else
+          IO.println (hexBytes (image.sections.flatMap (fun entry => entry.bytes)))
         return 0
     | .error error =>
         IO.eprintln s!"flapjack-compile: {sourceRiscVImageErrorDescription error}"
-        return 1
-  else
-    match compileFlapjackRiscVSourceBytesChecked (width := 64) .rv64i
-        riscv64BytesInWord (BitVec.ofInt 64) [] compileRemoveConfig
-        "main" source with
-    | .ok artifact =>
-        for warning in artifact.warnings do
-          IO.eprintln s!"warning: {repr warning}"
-        IO.println (hexBytes artifact.bytes)
-        return 0
-    | .error error =>
-        IO.eprintln s!"flapjack-compile: {sourceRiscVCompileErrorDescription error}"
         return 1
 
 end Flapjack
