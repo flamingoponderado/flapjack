@@ -98,10 +98,10 @@
       "sha256": "814f36970d25cf9562097638bda0f1bd91a023c11996586e3c567aeb306c129a"
     },
     {
-      "bytes": 1640,
+      "bytes": 1850,
       "out": "asmsem_arithmetic_probe.out",
-      "rows": 52,
-      "sha256": "c4406552396a5b9fa262f53fa969456b1feeb7dd6d0139fd2d846efcce4343e3"
+      "rows": 57,
+      "sha256": "69b7738863a9458f787d05fc8b750123c825e8e9ba929f65ee64e57707cbe271"
     },
     {
       "bytes": 740,
@@ -3020,10 +3020,10 @@
       "sha256": "30fed10f71b22fa917798320409fdfbf755f2b75f8e2f06b786841b60c2ced9d"
     },
     {
-      "bytes": 1166,
+      "bytes": 1312,
       "out": "labsem_arithmetic_probe.out",
-      "rows": 44,
-      "sha256": "26c4d3a5e346398a1ef319877c2f1a2b489f1f3d83b2b1fe78e92e6507388e03"
+      "rows": 49,
+      "sha256": "98fbecfaad6e61ac96ab585480c8305e964265f9f056bfba147a8cd7a2f9ebff"
     },
     {
       "bytes": 1618,
@@ -5010,6 +5010,12 @@
       "out": "pan_structs_program_dec_probe.out",
       "rows": 9,
       "sha256": "a1b4febf0ea831a86065b2aa4898b03ba86382b2dfc2e524a667a6531f76b1ca"
+    },
+    {
+      "bytes": 5934,
+      "out": "pan_structs_program_deccall_probe.out",
+      "rows": 9,
+      "sha256": "70f3106dd326f56d9c384587e0b8d4dec734f914d547e18b6c84b2481253dbc7"
     },
     {
       "bytes": 2484,
@@ -7778,6 +7784,12 @@
       "sha256": "74fe1adcec42b08218314055e1e5d94f154cb49d188c6aac6af6fa6bbee12e88"
     },
     {
+      "bytes": 2845,
+      "out": "stack_to_lab_state_rel_probe.out",
+      "rows": 12,
+      "sha256": "d9ff6dd1721e4c1a55be1e619e4a15a44f37b37eb25da18bdff3131e23aa7092"
+    },
+    {
       "bytes": 2313,
       "out": "stacklang_inst_builders_probe.out",
       "rows": 62,
@@ -9758,6 +9770,12 @@
       "sha256": "cf43dd90b6c8a9f24359b24241f44bd6af033df1cc2a74651823d98f64a270e4"
     },
     {
+      "bytes": 439,
+      "out": "word_to_stack_native_stackstore_probe.out",
+      "rows": 4,
+      "sha256": "816ce7bc501780cac22b820c0043970337ebc42123cf402c1d6392b6944516be"
+    },
+    {
       "bytes": 553,
       "out": "word_to_stack_native_top_probe.out",
       "rows": 24,
@@ -10080,6 +10098,12 @@
       "out": "word_to_stack_state_rel_probe.out",
       "rows": 3,
       "sha256": "9b00ec0c1397fb539f863cc07988721d158d6d296f641d3f06e566319289e9e9"
+    },
+    {
+      "out": "word_to_stack_store_register_probe.out",
+      "sha256": "4ebfb4ed266feefa89a3f171150cd9784e280d3e1e72f4ce1ca0795352a1f155",
+      "bytes": 675,
+      "rows": 6
     },
     {
       "bytes": 227,
