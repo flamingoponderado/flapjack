@@ -58,9 +58,9 @@ example {C F : Type}
 -- Independent original-HOL union observations: collisions retain old entries,
 -- while keys absent from the old tree expose the installed entry.
 example : sptLookup 0 (sptUnion (.ls 7) (.ls 9)) = some (7 : Nat) := by simp [sptLookup_sptUnion, sptLookup]
-example : sptLookup 0 (sptUnion (.ls 7) (.ls 9)) = some (7 : Nat) := by native_decide
+#guard sptLookup 0 (sptUnion (.ls 7) (.ls 9)) = some (7 : Nat)
 example : sptLookup 2 (sptUnion (sptFromAList [(0, 7)])
     (sptFromAList [(2, 9)])) = some (9 : Nat) := by simp [sptLookup_sptUnion, sptLookup_sptFromAList, sptAListLookup]
-example : sptLookup 2 (sptUnion (sptFromAList [(0, 7)])
-    (sptFromAList [(2, 9)])) = some (9 : Nat) := by native_decide
+#guard sptLookup 2 (sptUnion (sptFromAList [(0, 7)])
+    (sptFromAList [(2, 9)])) = some (9 : Nat)
 end Flapjack.Test.StackRawCallInstallParity
