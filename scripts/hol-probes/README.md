@@ -6420,3 +6420,4 @@ actual helper execution and original `sh_mem_op_const`; no preserved field is
 assumed. The native consumer module kernel-checks all 23 generic statements.
 These captures provide source regression evidence, not cross-language equivalence
 or full evaluator/pass/compiler correctness.
+`stack_code_bitmaps_call_probe.out` captures the original full theorem, zero hypotheses and arbitrary-ret Call specialization. The Lean constructor case assembles actual NONE/SOME branch proofs with source-path guarded recursive IHs and all three existential conjuncts. Whole evaluator assembly is separate.

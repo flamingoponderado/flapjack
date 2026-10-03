@@ -69059,5 +69059,20 @@
     "hol_name": "mmio_pcs_min_index_is_SOME",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 full original source7226 and fresh exported fulltype0hyp: all ffi_names and free Nat i retained as explicit native binders; sole optional index=SOME i premise, whole i<=length bound plus universally quantified prefix ExtCall and bounded suffix SharedMem classification. Exact HolFfiName/MlString/shmem_op/List/Nat carriers, no word or representation qualifier needed. Native kernel optional-choice elimination returns complete existing boundary witness, with suffix conjunction preserved in the public statement. Every EL is guarded by original j<i and i<=length, or original j<length, so no past-end arbitrary value is evaluated or relied on and individual total-HD/EL hold/default definition remains unchanged. Full generic and actual arbitrary MachineConfig consumers; fresh original theorem instances discharge optional-success guard using original append law and concrete constructor guards, with complete classification and negative source-bound observations. Source comparison/regression is not HOL-to-Lean equivalence or full FFI/initializer/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Call.lean",
+    "lean_name": "evaluateCodeBitmapsCall",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .17.10.3: original stackProps421-440 full Call constructor, assembling accepted NONE/SOME branch proofs. All ret/dest/handler/state/result variables retained; recursive IHs have actual ret selection, lookup, handler, clock, link and callee/continuation execution guards from evaluate induction. No global arbitrary-state IH, target evaluation or poststate prefix assumption. CodeBitmaps retains all three literal existential conjuncts. Canonical regs/fpRegs/store codec witness re-export reviewed; code remains native sptree; positive word translation and inherited reals_as_rational_cuts retained. This is only a Call induction case, not the assembled whole theorem.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
