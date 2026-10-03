@@ -6701,3 +6701,19 @@ no-wrap facts follow from original guards; no default/EL policy is changed.
 Native fullguard consumers observe valid FFI index/descriptor and all fetched
 nonshared byte exclusions. Full initializer assembly remains open.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_domain_probeScript.sml`.
+
+### Complete original initializer state relation
+
+`lab_to_target_initializer_full_relation_probeScript.sml` captures the whole
+original local `IMP_state_rel_make_init` after Finalise, every variable type,
+zero hypotheses and kernel proof T. It also captures the complete original
+`state_rel_def`, its variable types, zero hypotheses and all53conjunct count.
+Native `makeInit_stateRel` retains all14 original guards/all binders and proves
+the complete actual initialized relation by internally applying all17 checked
+source cases plus original direct configuration/initial-state/removal facts.
+No case proof, target relation or new success/bound/output premise is passed
+by the caller. A native fullguard consumer derives actual compile equality
+and aligned target-memory bytes through the complete relation.
+Machine/compile semantics and end-to-end correctness remain open; inherited
+real-rendering assurance and totalHD/EL holds are unchanged.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_full_relation_probeScript.sml`.
