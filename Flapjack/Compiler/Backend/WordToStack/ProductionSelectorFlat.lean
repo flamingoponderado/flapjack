@@ -68,7 +68,7 @@ theorem productionFlat_wordInstSelectAtom {width : Nat} (temporary : Nat)
   all_goals subst_vars
   all_goals repeat' apply And.intro
   all_goals first
-    | (apply recursive; assumption; simp_all only [sizeOf, WordExp._sizeOf_1] <;> omega)
+    | (apply recursive; assumption; (simp_all only [sizeOf, WordExp._sizeOf_1]; omega))
     | (apply impossibleShift; assumption; assumption; assumption)
 
 /-- The actual expression selector produces a codec-accepted native flat
@@ -85,5 +85,91 @@ theorem wordInstSelectAtom_nativeFlat {width : Nat} [NeZero width]
       refine ⟨native, rfl, ?_⟩
       rw [productionFlat_codec _ native encoded]
       exact productionFlat_wordInstSelectAtom temporary expression
+
+/-- The actual address selector preserves a flat atom prelude in every offset
+case. This is Flapjack-only production API infrastructure. -/
+theorem productionFlat_wordInstSelectAddressAtom {width : Nat} (temporary : Nat)
+    (expression : WordExp (BitVec width)) :
+    productionFlat (wordInstSelectAddressAtom temporary expression).1 = true := by
+  have prelude (e : WordExp (BitVec width)) (t : Nat)
+      (p : WordProg (BitVec width)) (s : WordExp (BitVec width))
+      (equation : wordInstSelectAtom t e = (p, s)) : productionFlat p = true := by
+    simpa only [equation, Prod.fst] using productionFlat_wordInstSelectAtom t e
+  unfold wordInstSelectAddressAtom
+  repeat' split
+  all_goals simp [productionFlat_wordInstSelectAtom]
+  all_goals apply prelude
+  all_goals assumption
+
+/-- The actual Store boundary appends a flat memory instruction in every
+original offset case. Flapjack API infrastructure, with no separate HOL tag. -/
+theorem productionFlat_wordInstSelectStoreCake {width : Nat} (temporary : Nat)
+    (address : WordExp (BitVec width)) (value : Nat) :
+    productionFlat (wordInstSelectStoreCake temporary address value) = true := by
+  unfold wordInstSelectStoreCake
+  dsimp only
+  split <;> (try split) <;>
+    simp [flatSeq, productionFlat, productionFlat_wordInstSelectAtom]
+
+/-- Flapjack-only sequence output-equation transport for the actual selector. -/
+private theorem flatSelectedSeq {α : Type u} (first second result : WordProg α)
+    (equation : wordDeadSelectSeq first second = result)
+    (left : productionFlat first = true) (right : productionFlat second = true) :
+    productionFlat result = true := by
+  rw [← equation, flatSeq, left, right]
+  rfl
+
+set_option maxHeartbeats 800000 in
+/-- Complete flatness of the actual whole-program instruction selector,
+including both optional Call continuations. No source-flat, expression-arity,
+codec-success or target-execution premise is assumed. Flapjack-only production
+API invariant; the separate original native selector theorem is not replaced. -/
+theorem productionFlat_wordInstSelectProgram {width : Nat} (temporary : Nat)
+    (program : WordProg (BitVec width)) :
+    productionFlat (wordInstSelectProgram temporary program) = true := by
+  fun_induction wordApplyColour (fun name => name) program generalizing temporary
+  all_goals try simp only [wordInstSelectProgram]
+  all_goals try dsimp +zetaDelta only
+  all_goals repeat' (split <;>
+    (try dsimp +zetaDelta only) <;>
+    (try simp_all only [wordInstSelectAtom_selected,
+      productionFlat_wordInstSelectAtom,
+      flatSeq, productionFlat, WordInstSelectImmediate.shiftImmediate,
+      Bool.and_true, Bool.false_eq_true]))
+  all_goals try simp_all only [productionFlat, flatSeq, productionFlat_wordInstSelectStoreCake,
+    productionFlat_wordInstSelectAtom, productionFlat_wordInstSelectAddressAtom,
+    wordInstSelectAtom_selected, Bool.and_true]
+  all_goals repeat' split at *
+  all_goals subst_vars
+  all_goals try simp_all
+  all_goals apply flatSelectedSeq
+  all_goals first
+    | assumption
+    | (exact productionFlat_wordInstSelectAtom _ _)
+    | (simp [productionFlat])
+
+/-- Every actual encoded selector output satisfies the original native flat
+convention. Codec rejection remains none, so no success premise is invented
+for arbitrary production extensions. This is Flapjack API infrastructure. -/
+theorem wordInstSelectProgram_nativeFlat_map {width : Nat} (temporary : Nat)
+    (program : WordProg (BitVec width)) :
+    (wordLangProgToHOL (wordInstSelectProgram temporary program)).map flatExpConventions =
+      (wordLangProgToHOL (wordInstSelectProgram temporary program)).map (fun _ => true) := by
+  cases encoded : wordLangProgToHOL (wordInstSelectProgram temporary program) with
+  | none => rfl
+  | some native =>
+      simp only [Option.map_some]
+      exact congrArg some ((productionFlat_codec _ native encoded).trans
+        (productionFlat_wordInstSelectProgram temporary program))
+
+/-- The actual wrapper computes its temporary from the complete source body.
+The native flat observation has no codec-success or target-flat premise.
+Flapjack-only production API specialization, with no independent HOL tag. -/
+theorem wordInstSelectProgramFrom_nativeFlat_map {width : Nat}
+    (program : WordProg (BitVec width)) :
+    (wordLangProgToHOL (wordInstSelectProgramFrom program)).map flatExpConventions =
+      (wordLangProgToHOL (wordInstSelectProgramFrom program)).map (fun _ => true) := by
+  unfold wordInstSelectProgramFrom
+  exact wordInstSelectProgram_nativeFlat_map _ program
 
 end Flapjack

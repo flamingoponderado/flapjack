@@ -6987,12 +6987,40 @@ run_probe word_to_stack_register_update_probeScript.sml word_to_stack_register_u
   register_update_full register_update_hypotheses register_update_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe word_to_stack_const_instruction_probeScript.sml word_to_stack_const_instruction_probe.out \
+  const_full_transport const_full_clock const_transport_closed const_clock_closed \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_shmem_store_probeScript.sml pan_structs_program_shmem_store_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_shmem_store_statement compile_correct_shmem_store_proved compile_correct_full_types compile_correct_shmem_store_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_target_slice_probeScript.sml riscv_target_slice_probe.out \
+  slice_statement slice_types slice_hypotheses slice_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe word_to_stack_register_spill_update_probeScript.sml word_to_stack_register_spill_update_probe.out \
   register_spill_update_full register_spill_update_hypotheses register_spill_update_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_props_alignment_word_memory_probeScript.sml lab_props_alignment_word_memory_probe.out \
+  mem_load_align_dm mem_load_align_dm_types mem_load_align_dm_hypotheses mem_load_align_dm_proved mem_store_align_dm mem_store_align_dm_types mem_store_align_dm_hypotheses mem_store_align_dm_proved \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe word_to_stack_register_write_probeScript.sml word_to_stack_register_write_probe.out \
   register_write_full register_write_hypotheses register_write_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_state_probeScript.sml riscv_target_state_probe.out \
+  riscv_next_statement riscv_next_hypotheses riscv_next_proved riscv_next_type riscv_ok_statement riscv_ok_hypotheses riscv_ok_proved riscv_ok_type riscv_proj_statement riscv_proj_hypotheses riscv_proj_proved riscv_proj_type riscv_target_statement riscv_target_hypotheses riscv_target_proved riscv_target_type riscv_target_fp_field riscv_target_fp_type \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
+run_probe stack_remove_init_semantics_probeScript.sml stack_remove_init_semantics_probe.out \
+  evaluate_init_code_statement evaluate_init_code_hypotheses init_semantics_statement init_semantics_hypotheses make_init_opt_SOME_semantics_statement make_init_opt_SOME_semantics_hypotheses make_init_semantics_statement make_init_semantics_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_ffi_probeScript.sml stack_remove_init_ffi_probe.out \
+  evaluate_init_code_ffi_statement evaluate_init_code_ffi_hypotheses make_init_any_ffi_statement make_init_any_ffi_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_load_clock_probeScript.sml word_to_stack_load_clock_probe.out \
+  load_clock_statement load_clock_proved load_clock_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_comp_get_probeScript.sml word_to_stack_comp_get_probe.out \
@@ -7002,3 +7030,4 @@ run_probe word_to_stack_comp_get_probeScript.sml word_to_stack_comp_get_probe.ou
 run_probe word_to_stack_comp_locvalue_probeScript.sml word_to_stack_comp_locvalue_probe.out \
   comp_correct_locvalue_full_statement comp_correct_locvalue_full_proved comp_correct_locvalue_full_hypotheses comp_correct_locvalue_whole_statement comp_correct_locvalue_whole_proved comp_correct_locvalue_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+

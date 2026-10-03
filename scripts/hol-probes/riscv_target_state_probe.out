@@ -1,0 +1,18 @@
+riscv_next_statement=∀s. riscv_next s = THE (NextRISCV s)
+riscv_next_hypotheses=0
+riscv_next_proved=T
+riscv_next_type=:riscv_state -> riscv_state
+riscv_ok_statement=∀ms. riscv_ok ms ⇔ (ms.c_MCSR ms.procID).mstatus.VM = 0w ∧ (ms.c_MCSR ms.procID).mcpuid.ArchBase = 2w ∧ ms.c_NextFetch ms.procID = NONE ∧ ms.exception = NoException ∧ aligned 2 (ms.c_PC ms.procID)
+riscv_ok_hypotheses=0
+riscv_ok_proved=T
+riscv_ok_type=:riscv_state -> bool
+riscv_proj_statement=∀d s. riscv_proj d s = ((s.c_MCSR s.procID).mstatus.VM,(s.c_MCSR s.procID).mcpuid.ArchBase,s.c_NextFetch s.procID,s.exception,s.c_gpr s.procID,fun2set (s.MEM8,d),s.c_PC s.procID)
+riscv_proj_hypotheses=0
+riscv_proj_proved=T
+riscv_proj_type=:(word64 -> bool) -> riscv_state -> word5 # word2 # TransferControl option # exception # (word5 -> word64) # (word64 # word8 -> bool) # word64
+riscv_target_statement=riscv_target = <|next := riscv_next; config := riscv_config; get_pc := (λs. s.c_PC s.procID); get_reg := (λs. s.c_gpr s.procID ∘ n2w); get_byte := riscv_state_MEM8; state_ok := riscv_ok; proj := riscv_proj|>
+riscv_target_hypotheses=0
+riscv_target_proved=T
+riscv_target_type=:(64, riscv_state, word5 # word2 # TransferControl option # exception # (word5 -> word64) # (word64 # word8 -> bool) # word64) target
+riscv_target_fp_field=ARB.get_fp_reg
+riscv_target_fp_type=:riscv_state -> num -> word64
