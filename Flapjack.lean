@@ -1,3 +1,5 @@
+import Flapjack.AstHOL.BackendOperators
+import Flapjack.Compiler.Backend.BackendCommon.Operators
 import Flapjack.Compiler.Backend.SourceToFlat.Config
 import Flapjack.Compiler.Backend.FlatPattern.Config
 import Flapjack.Compiler.Backend.BackendCommon.Trace

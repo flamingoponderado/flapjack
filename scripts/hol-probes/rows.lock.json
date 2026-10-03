@@ -110,6 +110,18 @@
       "sha256": "68e07e4909950a079b51a7856287746c2b27e57c44e375358ce9fb270a4bb200"
     },
     {
+      "bytes": 1421,
+      "out": "ast_backend_operators_probe.out",
+      "rows": 8,
+      "sha256": "afe7bd2c4731d513374e0468a8833455e6ec00b05d1076092d4c4f424bcb4d31"
+    },
+    {
+      "bytes": 784,
+      "out": "backend_common_operators_probe.out",
+      "rows": 2,
+      "sha256": "5fd56c2f8dffc18281e56f14321721bfbc65b953fc2973338c5680c15c1f92bd"
+    },
+    {
       "bytes": 1297,
       "out": "backend_common_trace_probe.out",
       "rows": 16,

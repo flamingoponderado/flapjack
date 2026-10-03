@@ -84092,5 +84092,45 @@
     "hol_name": "config",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml413, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/BackendOperators.lean",
+    "lean_name": "WordSize",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "word_size",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: astScript43-64 literal word_size datatype, complete constructor order and arity retained. word_size W8/W64; thunk_mode Evaluated/NotEvaluated; thunk_op AllocThunk/UpdateThunk with actual ThunkMode and nullary ForceThunk; test Equal/Compare/AltCompare with imported exact Opb. No expression/evaluation approximation or width parameter."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/BackendOperators.lean",
+    "lean_name": "ThunkMode",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "thunk_mode",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: astScript43-64 literal thunk_mode datatype, complete constructor order and arity retained. word_size W8/W64; thunk_mode Evaluated/NotEvaluated; thunk_op AllocThunk/UpdateThunk with actual ThunkMode and nullary ForceThunk; test Equal/Compare/AltCompare with imported exact Opb. No expression/evaluation approximation or width parameter."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/BackendOperators.lean",
+    "lean_name": "ThunkOp",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "thunk_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: astScript43-64 literal thunk_op datatype, complete constructor order and arity retained. word_size W8/W64; thunk_mode Evaluated/NotEvaluated; thunk_op AllocThunk/UpdateThunk with actual ThunkMode and nullary ForceThunk; test Equal/Compare/AltCompare with imported exact Opb. No expression/evaluation approximation or width parameter."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/BackendOperators.lean",
+    "lean_name": "Test",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "test",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: astScript43-64 literal test datatype, complete constructor order and arity retained. word_size W8/W64; thunk_mode Evaluated/NotEvaluated; thunk_op AllocThunk/UpdateThunk with actual ThunkMode and nullary ForceThunk; test Equal/Compare/AltCompare with imported exact Opb. No expression/evaluation approximation or width parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/Operators.lean",
+    "lean_name": "Opw",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "opw",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: backend_commonScript12-14 literal opw=Andw|Orw|Xor|Add|Sub. Same five nullary constructors in same order; no word carrier or width side condition, no partial enum."
   }
 ]

@@ -7187,3 +7187,11 @@ run_probe flat_pattern_config_probeScript.sml flat_pattern_config_probe.out \
 run_probe source_to_flat_config_probeScript.sml source_to_flat_config_probe.out \
   var_name_shape environment_shape environment_generation_store_shape environment_store_shape next_indices_shape config_shape Glob_type Local_type environment_c_type environment_v_type environment_generation_store_next_type environment_generation_store_generation_type environment_generation_store_envs_type environment_store_next_type environment_store_env_gens_type next_indices_vidx_type next_indices_tidx_type next_indices_eidx_type config_next_type config_mod_env_type config_pattern_cfg_type config_envs_type \
   "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ast_backend_operators_probeScript.sml ast_backend_operators_probe.out \
+  word_size_case_def word_size_nchotomy thunk_mode_case_def thunk_mode_nchotomy thunk_op_case_def thunk_op_nchotomy test_case_def test_nchotomy \
+  "$cake_dir/semantics/astScript.sml" "$cake_dir/semantics"
+
+run_probe backend_common_operators_probeScript.sml backend_common_operators_probe.out \
+  opw_case_def opw_nchotomy \
+  "$cake_dir/compiler/backend/backend_commonScript.sml" "$cake_dir/compiler/backend"
