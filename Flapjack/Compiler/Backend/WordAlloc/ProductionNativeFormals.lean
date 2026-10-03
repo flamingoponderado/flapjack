@@ -8,10 +8,11 @@ list through cleanup and colouring. This is implementation correspondence,
 not an additional HOL theorem or a semantic simulation assumption. -/
 theorem allocatorWithSsa_metadata {α : Type} [OfNat α 0] [WordCseHash α] [BEq α]
     (dead : WordProg α → WordProg α)
+    (unreach : WordProg α → Option (WordProg α))
     (ssa : Nat → WordProg α → Option (WordSsaState × List Nat × WordProg α))
     (label : Nat) (parameters : List Nat) (source : WordProg α)
     (output : CakeAllocationWithColour α)
-    (produced : cakeAllocateWordFunctionAfterDeadWithColourWithSsa dead ssa label parameters source = some output) :
+    (produced : cakeAllocateWordFunctionAfterDeadWithColourWithSsa dead unreach ssa label parameters source = some output) :
     ∃ body, ssa parameters.length source = some (output.ssaState, output.parameters, body) := by
   unfold cakeAllocateWordFunctionAfterDeadWithColourWithSsa at produced
   split at produced <;> simp_all
@@ -39,7 +40,7 @@ theorem nativeAllocator_parameterNames {width : Nat} [NeZero width]
       (List.range parameters.length).map (fun index => 4 * index + limitVar native) := by
   unfold cakeAllocateWordFunctionAfterDeadWithColourNativeSSA at produced
   simp only [encoded, Option.bind_some] at produced
-  obtain ⟨body, metadata⟩ := allocatorWithSsa_metadata _ _ label parameters source output produced
+  obtain ⟨body, metadata⟩ := allocatorWithSsa_metadata _ _ _ label parameters source output produced
   simp only [wordFullSsaCcTransNativeWithStateFromHOL] at metadata
   cases decoded : wordLangProgFromHOL (fullSsaCcTransWithMetadata parameters.length native).program with
   | none => simp [decoded] at metadata

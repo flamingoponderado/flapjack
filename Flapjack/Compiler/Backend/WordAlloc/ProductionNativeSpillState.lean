@@ -9,10 +9,11 @@ own final program and colouring, for any actual SSA and dead-code producers.
 This is implementation correspondence, with no HOL semantic original. -/
 theorem allocatorWithSsa_spillState {α : Type} [OfNat α 0] [WordCseHash α] [BEq α]
     (dead : WordProg α → WordProg α)
+    (unreach : WordProg α → Option (WordProg α))
     (ssa : Nat → WordProg α → Option (WordSsaState × List Nat × WordProg α))
     (label : Nat) (parameters : List Nat) (source : WordProg α)
     (output : CakeAllocationWithColour α)
-    (produced : cakeAllocateWordFunctionAfterDeadWithColourWithSsa dead ssa label parameters source = some output) :
+    (produced : cakeAllocateWordFunctionAfterDeadWithColourWithSsa dead unreach ssa label parameters source = some output) :
     output.allocation = cakeColourWordSpillState cakeRiscVRegisterCount
       parameters output.program output.colouring := by
   unfold cakeAllocateWordFunctionAfterDeadWithColourWithSsa at produced
@@ -40,7 +41,7 @@ theorem nativeAllocator_spillState {width : Nat} [NeZero width]
   | none => simp [encoded] at produced
   | some native =>
     simp only [encoded, Option.bind_some] at produced
-    exact allocatorWithSsa_spillState _ _ label parameters source output produced
+    exact allocatorWithSsa_spillState _ _ _ label parameters source output produced
 
 /-- Every lookup in the actual native SSA allocation uses the producer's own
 original-parameter/final-program domain and total colouring. Absent keys remain

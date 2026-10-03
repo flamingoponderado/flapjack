@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAMetadata
+import Flapjack.Compiler.Backend.WordUnreach.Production
 
 namespace Flapjack.RiscV.CakeRegAlloc
 
@@ -12,6 +13,7 @@ def cakeAllocateWordFunctionAfterDeadWithColourNativeSSA
     Option (CakeAllocationWithColour (BitVec width)) :=
   (wordLangProgToHOL program).bind fun native =>
     cakeAllocateWordFunctionAfterDeadWithColourWithSsa wordRemoveDeadProgramViaHOL
+      wordRemoveUnreachViaHOL?
       (fun count _ => wordFullSsaCcTransNativeWithStateFromHOL count native)
       currentFunction parameters program
 
@@ -36,6 +38,7 @@ def cakeAllocateWordFunctionAfterDeadRoutedSSA
   | none => cakeAllocateWordFunctionAfterDead currentFunction parameters program
   | some native =>
       (cakeAllocateWordFunctionAfterDeadWithColourWithSsa wordRemoveDeadProgramViaHOL
+      wordRemoveUnreachViaHOL?
         (fun count _ => wordFullSsaCcTransNativeWithStateFromHOL count native)
         currentFunction parameters program).map CakeAllocationWithColour.toLegacy
 
