@@ -6490,3 +6490,12 @@ run_probe lab_to_target_filter_skip_probeScript.sml lab_to_target_filter_skip_pr
   IMP_asm_fetch_aux_filter_skip IMP_asm_fetch_aux_filter_skip_types IMP_asm_fetch_aux_filter_skip_hypotheses IMP_asm_fetch_aux_filter_skip_proved \
   no_share_mem_filter_skip no_share_mem_filter_skip_types no_share_mem_filter_skip_hypotheses no_share_mem_filter_skip_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_filter_skip_runs_probeScript.sml lab_filter_skip_runs_probe.out \
+  adjust_pc_def adjust_pc_def_types adjust_pc_def_hypotheses adjust_pc_def_proved \
+  all_skips_def all_skips_def_types all_skips_def_hypotheses all_skips_def_proved \
+  is_Label_not_skip is_Label_not_skip_types is_Label_not_skip_hypotheses is_Label_not_skip_proved \
+  asm_fetch_aux_eq asm_fetch_aux_eq_types asm_fetch_aux_eq_hypotheses asm_fetch_aux_eq_proved \
+  state_rw state_rw_types state_rw_hypotheses state_rw_proved \
+  all_skips_evaluate all_skips_evaluate_types all_skips_evaluate_hypotheses all_skips_evaluate_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"

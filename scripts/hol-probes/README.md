@@ -6855,3 +6855,16 @@ construct actual PCs, and preserve full fetched shared-memory exclusion.
 These supply observational prerequisites of semantics_compile; the whole
 machine/compiler simulation remains open. Regenerate with
 `HOL_PROBE_ONLY=lab_to_target_filter_skip_probeScript.sml`.
+
+### Native skip-run alignment and execution
+
+`lab_filter_skip_runs_probeScript.sml` freshly captures six original
+lab_filterProof declarations, full variable types, zero hypotheses and kernel
+proof T (24 rows). Non-exported local statements and proofs are replayed
+unchanged from original source. Native alignment constructs the skip count,
+all actual fetched Skip witnesses and stopping-position exclusion, retaining
+empty/label/beyond-end behavior. The native full evaluator equality retains
+its original not-failed guard and arbitrary count/state/extra clock binders.
+Evaluator FP closure retains inherited real rendering (SOUNDNESS item8).
+Whole filtering simulation and machine semantics remain open. Regenerate with
+`HOL_PROBE_ONLY=lab_filter_skip_runs_probeScript.sml`.

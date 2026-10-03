@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabFilter.Proofs
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabProps.ClockSupport
