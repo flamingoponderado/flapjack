@@ -1,0 +1,152 @@
+float_add_def=∀(mode :rounding) (x :(τ, χ) float) (y :(τ, χ) float).
+  float_add mode x y =
+  case (float_value x,float_value y) of
+    (Float r1,Float r2) =>
+      (float_round_with_flags mode
+         (if r1 = (0 :real) ∧ r2 = (0 :real) ∧ x.Sign = y.Sign then
+            x.Sign = (1w :word1)
+          else (mode = roundTowardNegative)) (r1 + r2) :flags # (τ, χ) float)
+  | (Float r1,Infinity) => (clear_flags,y)
+  | (Float r1,NaN) =>
+    (check_for_signalling [y],float_some_qnan (FP_Add mode x y))
+  | (Infinity,Float v7) => (clear_flags,x)
+  | (Infinity,Infinity) =>
+    if x.Sign = y.Sign then (clear_flags,x)
+    else (invalidop_flags,float_some_qnan (FP_Add mode x y))
+  | (Infinity,NaN) =>
+    (check_for_signalling [y],float_some_qnan (FP_Add mode x y))
+  | (NaN,v1) =>
+    (check_for_signalling [x; y],float_some_qnan (FP_Add mode x y))
+float_sub_def=∀(mode :rounding) (x :(τ, χ) float) (y :(τ, χ) float).
+  float_sub mode x y =
+  case (float_value x,float_value y) of
+    (Float r1,Float r2) =>
+      (float_round_with_flags mode
+         (if r1 = (0 :real) ∧ r2 = (0 :real) ∧ x.Sign ≠ y.Sign then
+            x.Sign = (1w :word1)
+          else (mode = roundTowardNegative)) (r1 − r2) :flags # (τ, χ) float)
+  | (Float r1,Infinity) => (clear_flags,float_negate y)
+  | (Float r1,NaN) =>
+    (check_for_signalling [y],float_some_qnan (FP_Sub mode x y))
+  | (Infinity,Float v7) => (clear_flags,x)
+  | (Infinity,Infinity) =>
+    if x.Sign = y.Sign then
+      (invalidop_flags,float_some_qnan (FP_Sub mode x y))
+    else (clear_flags,x)
+  | (Infinity,NaN) =>
+    (check_for_signalling [y],float_some_qnan (FP_Sub mode x y))
+  | (NaN,v1) =>
+    (check_for_signalling [x; y],float_some_qnan (FP_Sub mode x y))
+float_mul_def=∀(mode :rounding) (x :(τ, χ) float) (y :(τ, χ) float).
+  float_mul mode x y =
+  case (float_value x,float_value y) of
+    (Float r',Float r2) =>
+      (float_round_with_flags mode (x.Sign ≠ y.Sign) (r' * r2) :
+       flags # (τ, χ) float)
+  | (Float (0 :real),Infinity) =>
+    (invalidop_flags,float_some_qnan (FP_Mul mode x y))
+  | (Float r',Infinity) =>
+    (clear_flags,
+     if x.Sign = y.Sign then float_plus_infinity (:τ # χ)
+     else float_minus_infinity (:τ # χ))
+  | (Float r',NaN) =>
+    (check_for_signalling [y],float_some_qnan (FP_Mul mode x y))
+  | (Infinity,Float (0 :real)) =>
+    (invalidop_flags,float_some_qnan (FP_Mul mode x y))
+  | (Infinity,Float r) =>
+    (clear_flags,
+     if x.Sign = y.Sign then float_plus_infinity (:τ # χ)
+     else float_minus_infinity (:τ # χ))
+  | (Infinity,Infinity) =>
+    (clear_flags,
+     if x.Sign = y.Sign then float_plus_infinity (:τ # χ)
+     else float_minus_infinity (:τ # χ))
+  | (Infinity,NaN) =>
+    (check_for_signalling [y],float_some_qnan (FP_Mul mode x y))
+  | (NaN,v1) =>
+    (check_for_signalling [x; y],float_some_qnan (FP_Mul mode x y))
+float_div_def=∀(mode :rounding) (x :(τ, χ) float) (y :(τ, χ) float).
+  float_div mode x y =
+  case (float_value x,float_value y) of
+    (Float (0 :real),Float (0 :real)) =>
+      (invalidop_flags,float_some_qnan (FP_Div mode x y))
+  | (Float r1,Float (0 :real)) =>
+    (dividezero_flags,
+     if x.Sign = y.Sign then float_plus_infinity (:τ # χ)
+     else float_minus_infinity (:τ # χ))
+  | (Float r1,Float r2) =>
+    (float_round_with_flags mode (x.Sign ≠ y.Sign) (r1 / r2) :
+     flags # (τ, χ) float)
+  | (Float r1,Infinity) =>
+    (clear_flags,if x.Sign = y.Sign then POS0 else NEG0)
+  | (Float r1,NaN) =>
+    (check_for_signalling [y],float_some_qnan (FP_Div mode x y))
+  | (Infinity,Float v7) =>
+    (clear_flags,
+     if x.Sign = y.Sign then float_plus_infinity (:τ # χ)
+     else float_minus_infinity (:τ # χ))
+  | (Infinity,Infinity) =>
+    (invalidop_flags,float_some_qnan (FP_Div mode x y))
+  | (Infinity,NaN) =>
+    (check_for_signalling [y],float_some_qnan (FP_Div mode x y))
+  | (NaN,v1) =>
+    (check_for_signalling [x; y],float_some_qnan (FP_Div mode x y))
+float_mul_add_def=∀(mode :rounding) (x :(τ, χ) float) (y :(τ, χ) float) (z :(τ, χ) float).
+  float_mul_add mode x y z =
+  (let
+     (signP :word1) = x.Sign ⊕ y.Sign;
+     (infP :bool) = (float_is_infinite x ∨ float_is_infinite y)
+   in
+     if float_is_nan x ∨ float_is_nan y ∨ float_is_nan z then
+       (check_for_signalling [x; y; z],float_some_qnan (FP_MulAdd mode x y z))
+     else if
+       float_is_infinite x ∧ float_is_zero y ∨
+       float_is_zero x ∧ float_is_infinite y ∨
+       float_is_infinite z ∧ infP ∧ signP ≠ z.Sign
+     then
+       (invalidop_flags,float_some_qnan (FP_MulAdd mode x y z))
+     else if
+       float_is_infinite z ∧ z.Sign = (0w :word1) ∨
+       infP ∧ signP = (0w :word1)
+     then
+       (clear_flags,float_plus_infinity (:τ # χ))
+     else if
+       float_is_infinite z ∧ z.Sign = (1w :word1) ∨
+       infP ∧ signP = (1w :word1)
+     then
+       (clear_flags,float_minus_infinity (:τ # χ))
+     else
+       (let
+          (r1 :real) = float_to_real x * float_to_real y;
+          (r2 :real) = float_to_real z;
+          (r :real) = r1 + r2
+        in
+          (float_round_with_flags mode
+             (r = (0 :real) ∧
+              (if r1 = (0 :real) ∧ r2 = (0 :real) ∧ signP = z.Sign then
+                 signP = (1w :word1)
+               else mode = roundTowardNegative) ∨ r < (0 :real)) r :
+           flags # (τ, χ) float)))
+float_compare_def=∀(x :(τ, χ) float) (y :(τ, χ) float).
+  float_compare x y =
+  case (float_value x,float_value y) of
+    (Float r1,Float r2) => if r1 < r2 then LT else if r1 = r2 then EQ else GT
+  | (Float r1,Infinity) => if y.Sign = (1w :word1) then GT else LT
+  | (Float r1,NaN) => UN
+  | (Infinity,Float v7) => if x.Sign = (1w :word1) then LT else GT
+  | (Infinity,Infinity) =>
+    if x.Sign = y.Sign then EQ else if x.Sign = (1w :word1) then LT else GT
+  | (Infinity,NaN) => UN
+  | (NaN,v1) => UN
+float_less_than_def=∀(x :(τ, χ) float) (y :(τ, χ) float).
+  float_less_than x y ⇔ float_compare x y = LT
+float_less_equal_def=∀(x :(τ, χ) float) (y :(τ, χ) float).
+  float_less_equal x y ⇔
+  case float_compare x y of LT => T | EQ => T | GT => F | UN => F
+float_greater_than_def=∀(x :(τ, χ) float) (y :(τ, χ) float).
+  float_greater_than x y ⇔ float_compare x y = GT
+float_greater_equal_def=∀(x :(τ, χ) float) (y :(τ, χ) float).
+  float_greater_equal x y ⇔
+  case float_compare x y of LT => F | EQ => T | GT => T | UN => F
+float_equal_def=∀(x :(τ, χ) float) (y :(τ, χ) float).
+  float_equal x y ⇔ float_compare x y = EQ
