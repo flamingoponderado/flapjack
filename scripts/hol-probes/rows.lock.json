@@ -1874,6 +1874,12 @@
       "sha256": "72d95b8104f5737e98827d84eccaa5addceaa5309496c2c24fd07dec38c35d56"
     },
     {
+      "bytes": 300,
+      "out": "l3_update_pc_probe.out",
+      "rows": 6,
+      "sha256": "302c29302b9ae7781acb4acf35cdcb2231e52fbd93b5b88fd6d385a88d003464"
+    },
+    {
       "bytes": 2507,
       "out": "l3_upper_jump_probe.out",
       "rows": 77,

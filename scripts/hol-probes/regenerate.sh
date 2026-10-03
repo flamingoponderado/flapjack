@@ -6641,3 +6641,7 @@ run_probe l3_write_pc_probeScript.sml l3_write_pc_probe.out \
 run_probe l3_decode_any_probeScript.sml l3_decode_any_probe.out \
   DecodeAny_type DecodeAny_hypotheses DecodeAny_half_equation DecodeAny_half_proof DecodeAny_word_equation DecodeAny_word_proof \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+
+run_probe l3_update_pc_probeScript.sml l3_update_pc_probe.out \
+  updatePC_type updatePC_hypotheses updatePC_some_equation updatePC_some_proof updatePC_fullRecord_equation updatePC_fullRecord_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"

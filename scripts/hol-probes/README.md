@@ -7087,3 +7087,7 @@ equivalence or a new representation exception.
 ## Complete native model drift coverage
 
 CI runs `python3 scripts/l3/check-native-model.py`: every `check-l3-*.py` capture checker, decoder fixtures, captured row locks, native checker tests, and `scripts/l3/check-renderings.py`. The rendering gate covers the full delivered Defs tree including MMU, exception, instruction reader and Step files. `scripts/l3/rendering-coverage.json` records six explicit handwritten/export-root exceptions and three computability-only overrides. The original export deliberately contains the NextRISCV/Fetch dependency closure; three unused CSR codecs are pinned separately with source notes and existing original probes. Adding or removing a delivered definition requires reviewing coverage. No gate establishes universal HOL-to-Lean equivalence or whole compiler correctness.
+
+## Native step option PC update
+
+`l3_update_pc_probeScript.sml` proves the original `update_pc` whole option-result and full-record equations for arbitrary word64 targets and full states. `check-l3-update-pc.py` pins all six type/hypothesis/equation/proof rows. Lean uses the complete accepted PC writer; no core bound or successful-run premise is added. The native drift inventory includes this literal declaration and CI discovers its capture checker. Full Next assembly remains separate work.
