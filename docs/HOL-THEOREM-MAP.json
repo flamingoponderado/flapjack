@@ -69321,5 +69321,31 @@
     "hol_name": "rec'mimpid_def",
     "statement_status": "reviewed_exact",
     "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/MapiWf.lean",
+    "lean_name": "sptWfMkBN",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_mk_BN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison completed (2026-10-03), bead flapjack-sola-sptree-mapi-wf. HOL1832: wf t1 /\\ wf t2 ==> wf(mk_BN t1 t2). Same arbitrary payload type, exact Spt children, conjunction and Boolean wf=true translation. Smart constructor empty/empty normalization and all raw child constructors reviewed. Imported Spt/mkBN/mkBS/mapi/wf reviewed constructor-for-constructor, no representation qualifier. No runtime change or full compiler result claim.",
+    "hol_line": 1832
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/MapiWf.lean",
+    "lean_name": "sptWfMkBS",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_mk_BS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison completed (2026-10-03), bead flapjack-sola-sptree-mapi-wf. HOL1838: wf t1 /\\ wf t2 ==> wf(mk_BS t1 a t2). Same arbitrary payload, children/value and conjunction, Boolean wf=true. Both empty children collapse to singleton; no extra nonempty or equality premise. Imported Spt/mkBN/mkBS/mapi/wf reviewed constructor-for-constructor, no representation qualifier. No runtime change or full compiler result claim.",
+    "hol_line": 1838
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/MapiWf.lean",
+    "lean_name": "sptWfMapi",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_mapi",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison completed (2026-10-03), bead flapjack-sola-sptree-mapi-wf. HOL1844: wf(mapi f pt) unconditionally. Arbitrary source and target payload types, function Nat->alpha->beta, arbitrary raw Spt input. No input-wf premise; exact mapi0 smart normalization and numeric index increments retained. HOL proof induction helper sptWfMapi0 is untagged, no separately declared original. Imported Spt/mkBN/mkBS/mapi/wf reviewed constructor-for-constructor, no representation qualifier. No runtime change or full compiler result claim."
   }
 ]
