@@ -6542,3 +6542,7 @@ run_probe lab_to_target_machine_sem_eq_sem_probeScript.sml lab_to_target_machine
 run_probe lab_to_target_semantics_make_init_probeScript.sml lab_to_target_semantics_make_init_probe.out \
   semantics_make_init semantics_make_init_types semantics_make_init_hypotheses semantics_make_init_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe labprops_evaluate_ADD_clock_probeScript.sml labprops_evaluate_ADD_clock_probe.out \
+  evaluate_ADD_clock evaluate_ADD_clock_types evaluate_ADD_clock_hypotheses evaluate_ADD_clock_proved \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"

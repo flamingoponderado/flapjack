@@ -6923,3 +6923,7 @@ The conclusion retains exact initialized source semantics and machine
 behavior equality, with inherited real rendering (SOUNDNESS item8). Whole
 filtering/final-pass composition remains open. Regenerate with
 `HOL_PROBE_ONLY=lab_to_target_semantics_make_init_probeScript.sml`.
+
+### Full native Lab evaluator clock stability
+
+`labprops_evaluate_ADD_clock_probeScript.sml` captures the original full theorem312, all quantified carriers, zero hypotheses and a kernel reproof of its entire statement. Four rows preserve the sole non-TimeOut guard and complete result/poststate clock equality.
