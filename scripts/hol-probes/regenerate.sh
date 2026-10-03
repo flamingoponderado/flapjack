@@ -4566,6 +4566,15 @@ run_probe wordsem_state_const_group_probeScript.sml wordsem_state_const_group_pr
   get_var_set_fp_var_hypotheses get_store_set_store_statement get_store_set_store_hypotheses get_fp_var_set_fp_var_statement get_fp_var_set_fp_var_hypotheses \
   inst_const_statement inst_const_hypotheses get_var_with_const_typed sh_mem_set_var_const_typed \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe word_cse_intersection_acc_probeScript.sml word_cse_intersection_acc_probe.out \
+  bm_inter_eq_acc_thm_statement bm_inter_eq_acc_thm_hypotheses lookup_bm_inter_eq_statement lookup_bm_inter_eq_hypotheses bm_inter_eq_acc_thm_typed \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_knowledge_lemmas_probeScript.sml word_cse_knowledge_lemmas_probe.out \
+  firstRegOfArith_canonicalArith_statement firstRegOfArith_canonicalArith_hypotheses lookup_listCmp_empty_statement lookup_listCmp_empty_hypotheses invariant_listCmp_empty_statement \
+  invariant_listCmp_empty_hypotheses lookup_insert_listCmp_statement lookup_insert_listCmp_hypotheses register_read_simps_statement register_read_simps_hypotheses \
+  register_reads_simps_statement register_reads_simps_hypotheses lookup_register_read_statement lookup_register_read_hypotheses lookup_register_reads_statement \
+  lookup_register_reads_hypotheses lookup_insert_listCmp_typed \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_inst_locals_rel_group_probeScript.sml word_inst_locals_rel_group_probe.out \
   pull_ops_simp_def_statement pull_ops_simp_def_hypotheses binary_branch_exp_def_statement binary_branch_exp_def_hypotheses inst_select_thm_statement \
   inst_select_thm_hypotheses inst_select_Loop_helper_statement inst_select_Loop_helper_hypotheses locals_rel_def_statement locals_rel_def_hypotheses \
@@ -7287,6 +7296,13 @@ run_probe word_to_stack_comp_storeconsts_probeScript.sml word_to_stack_comp_stor
   comp_correct_storeconsts_full_statement comp_correct_storeconsts_full_proved comp_correct_storeconsts_full_hypotheses comp_correct_storeconsts_whole_statement comp_correct_storeconsts_whole_proved comp_correct_storeconsts_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe word_to_stack_comp_returning_full_probeScript.sml word_to_stack_comp_returning_full_probe.out \
+  comp_correct_returning_full_statement comp_correct_returning_full_proved comp_correct_returning_full_hypotheses comp_correct_returning_induction_obligation \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_move_div2_probeScript.sml word_to_stack_move_div2_probe.out \
+  times2_div2_statement times2_div2_proved times2_div2_hypotheses parsem_parmove_div2_statement parsem_parmove_div2_proved parsem_parmove_div2_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe ast_backend_operators_probeScript.sml ast_backend_operators_probe.out \
   word_size_case_def word_size_nchotomy thunk_mode_case_def thunk_mode_nchotomy thunk_op_case_def thunk_op_nchotomy test_case_def test_nchotomy \
   "$cake_dir/semantics/astScript.sml" "$cake_dir/semantics"
@@ -7307,6 +7323,10 @@ run_probe clos_to_bvl_config_probeScript.sml clos_to_bvl_config_probe.out \
   config_component_equality default_config_def next_loc_type start_type do_mti_type known_conf_type do_call_type call_state_type max_app_type \
   "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
 
+run_probe word_to_stack_move_single_probeScript.sml word_to_stack_move_single_probe.out \
+  wMoveSingle_statement wMoveSingle_proved wMoveSingle_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe bvl_syntax_probeScript.sml bvl_syntax_probe.out \
   exp_case_def exp_nchotomy \
   "$cake_dir/compiler/backend/bvlScript.sml" "$cake_dir/compiler/backend"
@@ -7318,3 +7338,13 @@ run_probe bvi_syntax_probeScript.sml bvi_syntax_probe.out \
 run_probe bvl_to_bvi_config_probeScript.sml bvl_to_bvi_config_probe.out \
   config_component_equality inline_size_limit_type exp_cut_type split_main_at_seq_type next_name1_type next_name2_type next_name3_type do_tailrec_type do_tmc_type inlines_type bvi_inlines_type \
   "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+run_probe pan_structs_decls_decl_probeScript.sml pan_structs_decls_decl_probe.out \
+  compile_decls_correct_full_statement compile_decls_correct_full_proved compile_decls_correct_full_types compile_decls_correct_decl_statement compile_decls_correct_decl_proved compile_decls_correct_decl_types evaluate_decls_ind_statement evaluate_decls_ind_proved evaluate_decls_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_compiled_shapes_wf_probeScript.sml pan_structs_compiled_shapes_wf_probe.out \
+  is_wf_shape_compile_shape_statement is_wf_shape_compile_shape_proved is_wf_shape_compile_shape_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe word_to_stack_move_aux_probeScript.sml word_to_stack_move_aux_probe.out \
+  wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

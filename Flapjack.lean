@@ -1,7 +1,11 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAux
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveSingle
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveDiv2
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningFull
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.StoreConsts
 import Flapjack.Compiler.Backend.BvlToBvi.Config
 import Flapjack.Compiler.Backend.Bvi.Syntax
 import Flapjack.Compiler.Backend.Bvl.Syntax
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.StoreConsts
 import Flapjack.Compiler.Backend.ClosToBvl.Config
 import Flapjack.Compiler.Backend.ClosKnown.Config
 import Flapjack.Compiler.Backend.ClosLang.Syntax
@@ -696,6 +700,10 @@ import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
 import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.WellFormedData
+import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionAccumulator
+import Flapjack.Compiler.Backend.WordCse.Proofs.KnowledgeLemmas
+import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
+import Flapjack.Compiler.Backend.WordCse.Proofs.CanonicalRegs
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
@@ -1379,6 +1387,8 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDecCall
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectCall
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExact
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectNilName
+import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectDecl
+import Flapjack.Pancake.Proofs.PanStructs.CompiledShapesWf
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
