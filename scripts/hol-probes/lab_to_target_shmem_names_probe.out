@@ -1,0 +1,16 @@
+get_shmem_info_MappedRead_or_MappedWrite=∀(sec :α sec list) (pos :num) (ffi_names :ffiname list)
+    (info :shmem_info_num list) (new_ffi_names :ffiname list)
+    (new_info :shmem_info_num list).
+  get_shmem_info sec pos ffi_names info = (new_ffi_names,new_info) ⇒
+  ∃(l :ffiname list).
+    new_ffi_names = ffi_names ++ l ∧
+    EVERY (λ(x :ffiname). ∃(op :shmem_op). x = SharedMem op) l
+get_shmem_info_MappedRead_or_MappedWrite_types=(sec :α sec list)::α sec list;(pos :num)::num;(ffi_names :ffiname list)::ffiname list;(info :shmem_info_num list)::shmem_info_num list;(new_ffi_names :ffiname list)::ffiname list;(new_info :shmem_info_num list)::shmem_info_num list;
+get_shmem_info_MappedRead_or_MappedWrite_hypotheses=0
+word8_names=T
+narrow_names=T
+wide_names=T
+extcall_prefix=T
+all_ops=T
+ffi_only=T
+empty=T

@@ -83,6 +83,12 @@ def wordHeuristicAddRhsRegs : List Nat → NatInfoMap WordHeuristicCounts →
   | name :: names, counts =>
       wordHeuristicAddRhsReg name (wordHeuristicAddRhsRegs names counts)
 
+/-- Flapjack list reference for accelerated instruction counter collection.
+Ordinary Load16/Store16 follow the reviewed native getHeuInst catchall.
+Correspondence is proved on the accepted wordLangInstToHOL fragment; the
+extra five-register AddCarry has no native constructor, so this reference
+definition is untagged. Shared-memory instructions follow separate program
+clauses and do count their 16-bit operations. -/
 def wordHeuristicInst {α : Type} : WordInst α → NatInfoMap WordHeuristicCounts →
     NatInfoMap WordHeuristicCounts
   | .arith operation, counts =>
@@ -107,9 +113,9 @@ def wordHeuristicInst {α : Type} : WordInst α → NatInfoMap WordHeuristicCoun
       | .cakeAddCarry destination sourceLeft sourceRight carry =>
           wordHeuristicAddLhsReg carry
             (wordHeuristicAddLhsReg destination
-              (wordHeuristicAddRhsReg sourceRight
-                (wordHeuristicAddRhsReg sourceLeft
-                  (wordHeuristicAddRhsReg carry counts))))
+              (wordHeuristicAddRhsReg carry
+                (wordHeuristicAddRhsReg sourceRight
+                  (wordHeuristicAddRhsReg sourceLeft counts))))
       | .addOverflow d l r flag | .subOverflow d l r flag =>
           wordHeuristicAddLhsReg flag (wordHeuristicAddLhsReg d
             (wordHeuristicAddRhsReg r (wordHeuristicAddRhsReg l counts)))
@@ -122,29 +128,31 @@ def wordHeuristicInst {α : Type} : WordInst α → NatInfoMap WordHeuristicCoun
             match sourceRight with
             | .reg register => wordHeuristicAddRhsReg register
             | .imm _ => id
-          addRight (wordHeuristicAddLhsReg destination
-            (wordHeuristicAddRhsReg sourceLeft counts))
+          wordHeuristicAddLhsReg destination
+            (addRight (wordHeuristicAddRhsReg sourceLeft counts))
       | .shift _ destination sourceLeft sourceRight =>
           let addRight :=
             match sourceRight with
             | .reg register => wordHeuristicAddRhsReg register
             | .imm _ => id
-          addRight (wordHeuristicAddLhsReg destination
-            (wordHeuristicAddRhsReg sourceLeft counts))
+          wordHeuristicAddLhsReg destination
+            (addRight (wordHeuristicAddRhsReg sourceLeft counts))
   | .const destination _, counts =>
       wordHeuristicAddLhsConst destination counts
   | .mem operator destination _, counts =>
       match operator with
-      | .load | .load8 | .load16 | .load32 =>
+      | .load | .load8 | .load32 =>
           wordHeuristicAddLhsMem destination counts
-      | .store | .store8 | .store16 | .store32 =>
+      | .store | .store8 | .store32 =>
           wordHeuristicAddRhsMem destination counts
+      | .load16 | .store16 => counts
   | .memOffset operator destination _ _, counts =>
       match operator with
-      | .load | .load8 | .load16 | .load32 =>
+      | .load | .load8 | .load32 =>
           wordHeuristicAddLhsMem destination counts
-      | .store | .store8 | .store16 | .store32 =>
+      | .store | .store8 | .store32 =>
           wordHeuristicAddRhsMem destination counts
+      | .load16 | .store16 => counts
 
 def wordHeuristicMax (left right : WordHeuristicCounts) : WordHeuristicCounts :=
   { lhsConst := max left.lhsConst right.lhsConst
@@ -367,31 +375,35 @@ def wordHeuristicInstFast {α : Type} : WordInst α → WordHeuristicCountMap �
           ((((counts.addRhsReg sourceLeft).addRhsReg sourceRight).addRhsReg
             carryIn).addLhsReg destination).addLhsReg carry
       | .cakeAddCarry destination sourceLeft sourceRight carry =>
-          ((((counts.addRhsReg carry).addRhsReg sourceLeft).addRhsReg
-            sourceRight).addLhsReg destination).addLhsReg carry
+          ((((counts.addRhsReg sourceLeft).addRhsReg sourceRight).addRhsReg
+            carry).addLhsReg destination).addLhsReg carry
       | .addOverflow d l r flag | .subOverflow d l r flag =>
           (((counts.addRhsReg l).addRhsReg r).addLhsReg d).addLhsReg flag
       | .div destination dividend divisor =>
           ((counts.addRhsReg dividend).addRhsReg divisor).addLhsReg destination
       | .binOp _ destination sourceLeft sourceRight =>
-          let base := (counts.addRhsReg sourceLeft).addLhsReg destination
-          match sourceRight with
-          | .reg register => base.addRhsReg register
-          | .imm _ => base
+          let base := counts.addRhsReg sourceLeft
+          let reads := match sourceRight with
+            | .reg register => base.addRhsReg register
+            | .imm _ => base
+          reads.addLhsReg destination
       | .shift _ destination sourceLeft sourceRight =>
-          let base := (counts.addRhsReg sourceLeft).addLhsReg destination
-          match sourceRight with
-          | .reg register => base.addRhsReg register
-          | .imm _ => base
+          let base := counts.addRhsReg sourceLeft
+          let reads := match sourceRight with
+            | .reg register => base.addRhsReg register
+            | .imm _ => base
+          reads.addLhsReg destination
   | .const destination _, counts => counts.addLhsConst destination
   | .mem operator destination _, counts =>
       match operator with
-      | .load | .load8 | .load16 | .load32 => counts.addLhsMem destination
-      | .store | .store8 | .store16 | .store32 => counts.addRhsMem destination
+      | .load | .load8 | .load32 => counts.addLhsMem destination
+      | .store | .store8 | .store32 => counts.addRhsMem destination
+      | .load16 | .store16 => counts
   | .memOffset operator destination _ _, counts =>
       match operator with
-      | .load | .load8 | .load16 | .load32 => counts.addLhsMem destination
-      | .store | .store8 | .store16 | .store32 => counts.addRhsMem destination
+      | .load | .load8 | .load32 => counts.addLhsMem destination
+      | .store | .store8 | .store32 => counts.addRhsMem destination
+      | .load16 | .store16 => counts
 
 def wordHeuristicAddLhsRegsFast : List Nat → WordHeuristicCountMap →
     WordHeuristicCountMap

@@ -1,0 +1,25 @@
+Inst_lemma=¬(asm_inst i s1).failed ∧ state_rel (mc_conf,code2,labs,p) s1 t1 ms1 ∧
+pos_val (s1.pc + 1) 0 code2 = pos_val s1.pc 0 code2 + LENGTH bytes' ⇒
+¬(inst i t1).failed ∧
+(∀a. a ∉ s1.mem_domain ⇒ (inst i t1).mem a = t1.mem a) ∧
+(target_state_rel mc_conf.target
+   (upd_pc (t1.pc + n2w (LENGTH bytes')) (inst i t1)) ms2 ⇒
+ state_rel (mc_conf,code2,labs,p) (inc_pc (dec_clock (asm_inst i s1)))
+   (upd_pc (t1.pc + n2w (LENGTH bytes')) (inst i t1)) ms2)
+Inst_lemma_types=¬(asm_inst (i :α inst) (s1 :(α, config, γ) labSem$state)).failed ∧
+(state_rel
+   ((mc_conf :(α, 'state, β) machine_config),(code2 :α sec list),
+    (labs :num sptree$num_map sptree$num_map),(p :α word)) s1
+   (t1 :α asm_state) (ms1 :'state) :bool) ∧
+pos_val (s1.pc + (1 :num)) (0 :num) code2 =
+pos_val s1.pc (0 :num) code2 + LENGTH (bytes' :word8 list) ⇒
+¬(inst i t1 :α asm_state).failed ∧
+(∀(a :α word).
+   a ∉ s1.mem_domain ⇒
+   ((inst i t1 :α asm_state).mem a :word8) = (t1.mem a :word8)) ∧
+(target_state_rel mc_conf.target
+   (upd_pc (t1.pc + (n2w (LENGTH bytes') :α word)) (inst i t1 :α asm_state))
+   (ms2 :'state) ⇒
+ (state_rel (mc_conf,code2,labs,p) (inc_pc (dec_clock (asm_inst i s1)))
+    (upd_pc (t1.pc + (n2w (LENGTH bytes') :α word)) (inst i t1 :α asm_state))
+    ms2 :bool))

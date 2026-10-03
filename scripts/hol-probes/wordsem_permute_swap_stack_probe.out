@@ -1,0 +1,19 @@
+permute_swap_lemma2_statement=∀prog st perm stack. (let (res,rst) = evaluate (prog,st) in res ≠ SOME Error ∧ no_alloc_code st.code ∧ no_alloc prog ∧ no_install_code st.code ∧ no_install prog ∧ LIST_REL (λs1 s2. PERM_STACK s1 s2) stack st.stack ⇒ ∃perm' stack'. evaluate (prog,st with <|permute := perm; stack := stack|>) = (res,rst with <|permute := perm'; stack := stack'|>) ∧ LIST_REL (λs1 s2. PERM_STACK s1 s2) stack' rst.stack)
+list_rel_lastn_statement=∀f l1 l2 n. n ≤ LENGTH l1 ∧ LIST_REL f l1 l2 ⇒ LIST_REL f (LASTN n l1) (LASTN n l2)
+PERM_list_rearrange_statement=∀f xs. ALL_DISTINCT xs ⇒ PERM xs (list_rearrange f xs)
+PERM_list_rearrange_hypotheses=0
+ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME_types=∀(y :β) (xs :(α # β) list) (x :α). ALL_DISTINCT (MAP (FST :α # β -> α) xs) ∧ MEM (x,y) xs ⇒ ALOOKUP xs x = SOME y
+ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME_statement=∀y xs x. ALL_DISTINCT (MAP FST xs) ∧ MEM (x,y) xs ⇒ ALOOKUP xs x = SOME y
+ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME_hypotheses=0
+env_to_list_ALL_DISTINCT_statement=∀y vs perm other. env_to_list y perm = (vs,other) ⇒ ALL_DISTINCT (MAP FST vs)
+env_to_list_ALL_DISTINCT_hypotheses=0
+env_to_list_ALL_DISTINCT_FST_statement=∀y perm. ALL_DISTINCT (MAP FST (FST (env_to_list y perm)))
+env_to_list_ALL_DISTINCT_FST_hypotheses=0
+PERM_fromAList_statement=∀l1 l2. PERM l1 l2 ∧ ALL_DISTINCT (MAP FST l1) ⇒ fromAList l1 = fromAList l2
+PERM_fromAList_hypotheses=0
+stack_size_perm_statement=∀l1 l2. LIST_REL (λs1 s2. PERM_STACK s1 s2) l1 l2 ⇒ stack_size l1 = stack_size l2
+stack_size_perm_hypotheses=0
+env_to_list_PERM_statement=∀perm' perm env. PERM (FST (env_to_list env perm)) (FST (env_to_list env perm'))
+env_to_list_PERM_hypotheses=0
+permute_swap_lemma3_statement=∀prog st perm stack. (let (res,rst) = evaluate (prog,st) in res ≠ SOME Error ∧ no_alloc_code st.code ∧ no_alloc prog ∧ no_install_code st.code ∧ no_install prog ∧ EVERY (λst. case st of StackFrame v v1 vs handler => ALL_DISTINCT (MAP FST vs)) st.stack ⇒ ∃perm' stack'. evaluate (prog,st with permute := perm) = (res,rst with <|permute := perm'; stack := stack'|>) ∧ LIST_REL (λs1 s2. PERM_STACK s1 s2) stack' rst.stack)
+permute_swap_lemma3_hypotheses=0

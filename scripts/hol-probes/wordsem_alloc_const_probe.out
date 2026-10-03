@@ -1,0 +1,3 @@
+alloc_const_statement=∀s' s r names c. alloc c names s = (r,s') ⇒ s'.clock = s.clock ∧ s'.ffi = s.ffi ∧ s'.code = s.code ∧ (s'.be ⇔ s.be) ∧ s'.code_buffer = s.code_buffer ∧ s'.data_buffer = s.data_buffer ∧ s'.compile = s.compile ∧ s'.compile_oracle = s.compile_oracle ∧ s'.stack_limit = s.stack_limit ∧ s'.stack_size = s.stack_size
+alloc_const_proved=T
+alloc_const_hypotheses=0

@@ -1,3 +1,12 @@
+import Flapjack.Compiler.Backend.StackProps.EvaluateMono
+import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
+import Flapjack.Misc.BytesInMemory.Domain
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.FFI
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
+import Flapjack.Misc.Sptree.Subspt
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStoreConsts
@@ -108,11 +117,13 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdate
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdateSlices
 import Flapjack.Compiler.Backend.WordToStack.Proofs.TopLabelSafety
+import Flapjack.Compiler.Backend.WordToStack.Proofs.WordExtraction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.WordListLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapFrameUpdates
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapDecode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
@@ -167,8 +178,6 @@ import Flapjack.Compiler.Backend.WordAlloc.LimitVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
-
-
 import Flapjack
 import Flapjack.Compiler.Backend.WordAlloc.Instructions
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
@@ -189,6 +198,8 @@ import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanSem.Primop
 import Flapjack.Pancake.Semantics.PanSemStateEval
 import Flapjack.Pancake.WordLang
+
+
 
 
 

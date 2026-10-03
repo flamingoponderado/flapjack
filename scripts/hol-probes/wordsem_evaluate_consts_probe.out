@@ -1,0 +1,6 @@
+evaluate_consts_statement=∀xs s1 vs s2. evaluate (xs,s1) = (vs,s2) ⇒ s1.gc_fun = s2.gc_fun ∧ s1.mdomain = s2.mdomain ∧ s1.sh_mdomain = s2.sh_mdomain ∧ (s1.be ⇔ s2.be) ∧ s1.compile = s2.compile ∧ s1.stack_limit = s2.stack_limit
+evaluate_consts_hypotheses=0
+pop_env_code_gc_fun_clock_statement=∀x r. pop_env r = SOME x ⇒ r.code = x.code ∧ r.code_buffer = x.code_buffer ∧ r.data_buffer = x.data_buffer ∧ r.gc_fun = x.gc_fun ∧ r.clock = x.clock ∧ (r.be ⇔ x.be) ∧ r.mdomain = x.mdomain ∧ r.sh_mdomain = x.sh_mdomain ∧ r.compile = x.compile ∧ r.compile_oracle = x.compile_oracle ∧ r.stack_limit = x.stack_limit ∧ r.stack_max = x.stack_max ∧ r.stack_size = x.stack_size
+pop_env_code_gc_fun_clock_hypotheses=0
+alloc_code_gc_fun_const_statement=∀x t s res names. alloc x names s = (res,t) ⇒ t.code = s.code ∧ t.code_buffer = s.code_buffer ∧ t.data_buffer = s.data_buffer ∧ t.gc_fun = s.gc_fun ∧ t.mdomain = s.mdomain ∧ t.sh_mdomain = s.sh_mdomain ∧ (t.be ⇔ s.be) ∧ t.compile = s.compile ∧ t.compile_oracle = s.compile_oracle ∧ t.stack_limit = s.stack_limit ∧ t.stack_size = s.stack_size
+alloc_code_gc_fun_const_hypotheses=0

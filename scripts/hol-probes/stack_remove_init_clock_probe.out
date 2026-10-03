@@ -1,0 +1,6 @@
+store_list_neutral_statement=∀xs n k. clock_neutral (store_list_code n k xs)
+store_list_neutral_hypotheses=0
+store_list_neutral_proved=T
+init_clock_statement=∀t s res max_heap k gen_gc c. evaluate (init_code gen_gc max_heap k,s) = (res,t) ⇒ evaluate (init_code gen_gc max_heap k,s with clock := c) = (res,t with clock := c)
+init_clock_hypotheses=0
+init_clock_proved=T

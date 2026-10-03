@@ -1,0 +1,103 @@
+asm_consts=∀i w s.
+  ((asm i w s).be ⇔ s.be) ∧ (asm i w s).lr = s.lr ∧
+  (asm i w s).align = s.align ∧ (asm i w s).mem_domain = s.mem_domain
+asm_consts_types=∀(i :α asm) (w :α word) (s :α asm_state).
+  ((asm i w s).be ⇔ s.be) ∧ (asm i w s).lr = s.lr ∧
+  (asm i w s).align = s.align ∧ (asm i w s).mem_domain = s.mem_domain
+asm_failed_ignore_new_pc=∀i v w s. (asm i w s).failed ⇔ (asm i v s).failed
+asm_failed_ignore_new_pc_types=∀(i :α asm) (v :α word) (w :α word) (s :α asm_state).
+  (asm i w s).failed ⇔ (asm i v s).failed
+asm_mem_ignore_new_pc=∀i v w s. (asm i w s).mem = (asm i v s).mem
+asm_mem_ignore_new_pc_types=∀(i :α asm) (v :α word) (w :α word) (s :α asm_state).
+  (asm i w s).mem = (asm i v s).mem
+asm_step_nop_def=∀bytes c s1 i s2.
+  asm_step_nop bytes c s1 i s2 ⇔
+  bytes_in_memory s1.pc bytes s1.mem s1.mem_domain ∧
+  enc_with_nop c.encode i bytes ∧
+  (case c.link_reg of NONE => T | SOME r => s1.lr = r) ∧
+  (s1.be ⇔ c.big_endian) ∧ s1.align = c.code_alignment ∧
+  asm i (s1.pc + n2w (LENGTH bytes)) s1 = s2 ∧ ¬s2.failed ∧ asm_ok i c
+asm_step_nop_def_types=∀(bytes :word8 list) (c :α asm_config) (s1 :α asm_state) (i :α asm)
+    (s2 :α asm_state).
+  asm_step_nop bytes c s1 i s2 ⇔
+  bytes_in_memory s1.pc bytes s1.mem s1.mem_domain ∧
+  enc_with_nop c.encode i bytes ∧
+  (case c.link_reg of (NONE :num option) => T | SOME r => s1.lr = r) ∧
+  (s1.be ⇔ c.big_endian) ∧ s1.align = c.code_alignment ∧
+  asm i (s1.pc + (n2w (LENGTH bytes) :α word)) s1 = s2 ∧ ¬s2.failed ∧
+  asm_ok i c
+asm_step_IMP_evaluate_step_nop=∀c s1 ms1 io i s2 bytes.
+  encoder_correct c.target ∧ c.prog_addresses = s1.mem_domain ∧
+  ffi_entry_pcs_disjoint c s1 (LENGTH bytes) ∧
+  interference_ok c.next_interfer (c.target.proj s1.mem_domain) ∧
+  bytes_in_memory s1.pc bytes s2.mem s1.mem_domain ∧
+  asm_step_nop bytes c.target.config s1 i s2 ∧
+  s2 = asm i (s1.pc + n2w (LENGTH bytes)) s1 ∧
+  target_state_rel c.target s1 ms1 ∧ (∀x. i ≠ Call x) ⇒
+  ∃l ms2. ∀k.
+    evaluate c io (k + l) ms1 = evaluate (shift_interfer l c) io k ms2 ∧
+    find_next_interference c io (k + l) ms1 =
+    find_next_interference (shift_interfer l c) io k ms2 ∧
+    target_state_rel c.target s2 ms2 ∧ l ≠ 0
+asm_step_IMP_evaluate_step_nop_types=∀(c :(α, 'state, β) machine_config) (s1 :α asm_state) (ms1 :'state)
+    (io :γ ffi_state) (i :α asm) (s2 :α asm_state) (bytes :word8 list).
+  encoder_correct c.target ∧ c.prog_addresses = s1.mem_domain ∧
+  ffi_entry_pcs_disjoint c s1 (LENGTH bytes) ∧
+  interference_ok c.next_interfer (c.target.proj s1.mem_domain) ∧
+  bytes_in_memory s1.pc bytes s2.mem s1.mem_domain ∧
+  asm_step_nop bytes c.target.config s1 i s2 ∧
+  s2 = asm i (s1.pc + (n2w (LENGTH bytes) :α word)) s1 ∧
+  target_state_rel c.target s1 ms1 ∧ (∀(x :α word). i ≠ (Call x :α asm)) ⇒
+  ∃(l :num) (ms2 :'state). ∀(k :num).
+    (evaluate c io (k + l) ms1 :machine_result # 'state # γ ffi_state) =
+    (evaluate (shift_interfer l c) io k ms2 :
+     machine_result # 'state # γ ffi_state) ∧
+    find_next_interference c io (k + l) ms1 =
+    find_next_interference (shift_interfer l c) io k ms2 ∧
+    target_state_rel c.target s2 ms2 ∧ l ≠ (0 :num)
+evaluate_nop_steps_statement=∀n s1 ms1 c.
+  encoder_correct c.target ∧ c.prog_addresses = s1.mem_domain ∧
+  ffi_entry_pcs_disjoint c s1
+    (n * LENGTH (c.target.config.encode (Inst Skip))) ∧
+  interference_ok c.next_interfer (c.target.proj s1.mem_domain) ∧
+  bytes_in_memory s1.pc
+    (FLAT (REPLICATE n (c.target.config.encode (Inst Skip)))) s1.mem
+    s1.mem_domain ∧
+  (case c.target.config.link_reg of NONE => T | SOME r => s1.lr = r) ∧
+  (s1.be ⇔ c.target.config.big_endian) ∧
+  s1.align = c.target.config.code_alignment ∧ ¬s1.failed ∧
+  target_state_rel c.target s1 ms1 ⇒
+  ∃l ms2. ∀k.
+    evaluate c io (k + l) ms1 = evaluate (shift_interfer l c) io k ms2 ∧
+    find_next_interference c io (k + l) ms1 =
+    find_next_interference (shift_interfer l c) io k ms2 ∧
+    target_state_rel c.target
+      (upd_pc (s1.pc + n2w (n * LENGTH (c.target.config.encode (Inst Skip))))
+         s1) ms2
+evaluate_nop_steps_statement_types=∀(n :num) (s1 :α asm_state) (ms1 :'state) (c :(α, 'state, β) machine_config).
+  encoder_correct c.target ∧ c.prog_addresses = s1.mem_domain ∧
+  ffi_entry_pcs_disjoint c s1
+    (n * LENGTH (c.target.config.encode (Inst (Skip :α inst) :α asm))) ∧
+  interference_ok c.next_interfer (c.target.proj s1.mem_domain) ∧
+  bytes_in_memory s1.pc
+    (FLAT (REPLICATE n (c.target.config.encode (Inst (Skip :α inst) :α asm))))
+    s1.mem s1.mem_domain ∧
+  (case c.target.config.link_reg of
+     (NONE :num option) => T
+   | SOME r => s1.lr = r) ∧ (s1.be ⇔ c.target.config.big_endian) ∧
+  s1.align = c.target.config.code_alignment ∧ ¬s1.failed ∧
+  target_state_rel c.target s1 ms1 ⇒
+  ∃(l :num) (ms2 :'state). ∀(k :num).
+    (evaluate c (io :γ ffi_state) (k + l) ms1 :
+     machine_result # 'state # γ ffi_state) =
+    (evaluate (shift_interfer l c) io k ms2 :
+     machine_result # 'state # γ ffi_state) ∧
+    find_next_interference c io (k + l) ms1 =
+    find_next_interference (shift_interfer l c) io k ms2 ∧
+    target_state_rel c.target
+      (upd_pc
+         (s1.pc +
+          (n2w
+             (n *
+              LENGTH (c.target.config.encode (Inst (Skip :α inst) :α asm))) :
+           α word)) s1) ms2

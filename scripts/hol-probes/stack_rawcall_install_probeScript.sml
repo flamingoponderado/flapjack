@@ -1,0 +1,10 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "install_full_statement="; print_term(concl comp_correct));
+val _ = print("install_full_hypotheses=" ^ Int.toString(length(hyp comp_correct)) ^ "\n");
+fun row label theorem = (print(label ^ "="); print_term(concl theorem));
+val _ = row "install_case64" (ISPEC ``stackLang$Install ptr len dptr dlen ret:64 stackLang$prog`` comp_correct);
+val _ = row "install_case80" (ISPEC ``stackLang$Install ptr len dptr dlen ret:80 stackLang$prog`` comp_correct);
+val _ = row "install_union_old" (EVAL ``lookup 0 (union (LS 7) (LS 9)) = SOME (7:num)``);
+val _ = row "install_union_new" (EVAL ``lookup 2 (union (fromAList [(0,7)]) (fromAList [(2,9)])) = SOME (9:num)``);

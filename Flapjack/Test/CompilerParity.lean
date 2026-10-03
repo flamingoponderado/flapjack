@@ -1,7 +1,76 @@
+import Flapjack.Test.LabToTargetInitializerFullStateRelParity
+import Flapjack.Test.LabToTargetInitializerDomainParity
+import Flapjack.Test.L3RegisterShiftParity
+import Flapjack.Test.L3SetLessParity
+import Flapjack.Test.L3ImmediateALUParity
+import Flapjack.Test.L3RegisterALUParity
+import Flapjack.Test.L3ConditionalBranchParity
+import Flapjack.Test.LabToTargetInitializerMemorySeparationParity
+import Flapjack.Test.L3UpperJumpParity
+import Flapjack.Test.L3CSRInstructionsParity
+import Flapjack.Test.LabToTargetInitializerInterferenceParity
+import Flapjack.Test.LabToTargetInitializerBasicCasesParity
+import Flapjack.Test.LabToTargetCodeSafetyTransportParity
+import Flapjack.Test.L3CSRDispatchParity
+import Flapjack.Test.L3CSRCounterParity
+import Flapjack.Test.L3FPCSRParity
+import Flapjack.Test.L3ExtStatusParity
+import Flapjack.Test.L3SupervisorCSRParity
+import Flapjack.Test.L3MachineCSRCodecParity
+import Flapjack.Test.L3CSRAccessParity
+import Flapjack.Test.StackRawCallJumpLowerParity
+import Flapjack.Test.StackRawCallStackAccessParity
+import Flapjack.Test.StackRawCallMemoryFfiParity
+import Flapjack.Test.StackRawCallAllocationStoreParity
+import Flapjack.Test.StackRawCallInstallParity
+import Flapjack.Test.StackRawCallCaseParity
+import Flapjack.Test.StackEvaluateMonoParity
+import Flapjack.Test.StackEvaluateClockNeutralParity
+import Flapjack.Test.L3TLBFlushParity
+import Flapjack.Test.L3SystemSignalsParity
+import Flapjack.Test.StackCodeBitmapsNonrecursiveParity
+import Flapjack.Test.BytesInMemoryDomainParity
+import Flapjack.Test.TargetInitializationContractsParity
+import Flapjack.Test.LabToTargetInitializationContractsParity
+import Flapjack.Test.LabToTargetInitializationParity
+import Flapjack.Test.LabToTargetFfiEntryExclusionParity
+import Flapjack.Test.LabToTargetMmioClassificationParity
+import Flapjack.Test.MiscFindIndexSuccessfulMemParity
+import Flapjack.Test.MiscFindIndexMemParity
+import Flapjack.Test.MiscBytesInMemImpParity
+import Flapjack.Test.LabToTargetWordSearchParity
+import Flapjack.Test.L3AMOSwapParity
+import Flapjack.Test.L3AMOMinMaxParity
+import Flapjack.Test.L3AMOArithmeticParity
+import Flapjack.Test.MiscFindIndexShiftParity
+import Flapjack.Test.LabToTargetShmemEntryMaxParity
+import Flapjack.Test.LabToTargetShmemOffsetParity
+import Flapjack.Test.LabToTargetShmemCorrectnessParity
+import Flapjack.Test.L3SCDParity
+import Flapjack.Test.L3SCWParity
+import Flapjack.Test.L3IntegerStoreParity
+import Flapjack.Test.L3LRDParity
+import Flapjack.Test.L3LRWParity
+import Flapjack.Test.L3IntegerLoadParity
+import Flapjack.Test.L3ReservationParity
+import Flapjack.Test.L3IntegerLoadModeParity
+import Flapjack.Test.L3AddressExceptionParity
+import Flapjack.Test.L3ModelFetchParity
+import Flapjack.Test.LabToTargetByteIntervalDistinctParity
+import Flapjack.Test.LabToTargetLineInfoParity
+import Flapjack.Test.LabToTargetShmemExtractionParity
+import Flapjack.Test.LabToTargetShmemDistinctParity
+import Flapjack.Test.LabToTargetShmemPrefixParity
+import Flapjack.Test.LabToTargetShmemMembershipParity
+import Flapjack.Test.LabToTargetShmemNamesParity
+import Flapjack.Test.LabToTargetMmioShmemParity
+import Flapjack.Test.MiscFindIndexDistinctParity
 import Flapjack.Test.LabToTargetEncodingValidityClosureParity
 import Flapjack.Test.LabToTargetProgramByteLengthsParity
 import Flapjack.Test.LabToTargetPositionExtensionParity
 import Flapjack.Test.LabToTargetFetchSuccessorParity
+import Flapjack.Test.LabToTargetPositionOrderParity
+import Flapjack.Test.LabToTargetMemoryTransportParity
 import Flapjack.Test.LabToTargetRemoveLabelsCorrectnessParity
 import Flapjack.Test.L3FetchPrimitivesParity
 import Flapjack.Test.L3MmuTranslateAddrParity
@@ -171,6 +240,7 @@ import Flapjack.Test.StackSemJumpLowerParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.WordAllocGetDeltaInstParity
+import Flapjack.Test.WordAllocInstructionProducerParity
 import Flapjack.Test.WordAllocGetClashTreeParity
 import Flapjack.Test.LabToTargetLineLenParity
 import Flapjack.Test.LabToTargetSectionLengthParity
@@ -268,7 +338,6 @@ import Flapjack.Test.WordAllocLimitVarParity
 import Flapjack.Test.SSARenamePropertiesParity
 import Flapjack.Test.SSARegisterFlipParity
 import Flapjack.Test.SSAMapExtendParity
-
 import Flapjack.Test.SSAListRenameArithmeticParity
 import Flapjack.Test.AsmPropsAssertionsIterationParity
 import Flapjack.Test.WordAllocMaxVarMaxParity
@@ -291,7 +360,6 @@ import Flapjack.Test.ParmovePreservesMovesParmoveParity
 import Flapjack.Test.ParmoveAllDistinctWrapperParity
 import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
-
 import Flapjack.Test.TargetPropsInterferenceParity
 import Flapjack.Test.LabToTargetFetchValidityParity
 import Flapjack.Test.LabToTargetEncodingValidityParity
@@ -299,7 +367,6 @@ import Flapjack.Test.LabToTargetPositionAppendParity
 import Flapjack.Test.LabToTargetPositionValuesParity
 import Flapjack.Test.LabToTargetNavigationBoundsParity
 import Flapjack.Test.LabToTargetSectionLookupParity
-
 import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.WordToStackNoInstallHelpersParity
@@ -334,6 +401,10 @@ import Flapjack.Test.ListLookupParity
 import Flapjack.Test.WordToStackListUpdateSlicesParity
 import Flapjack.Test.SptreeWfDefinitionParity
 import Flapjack.Test.WordToStackTopLabelSafetyParity
+import Flapjack.Test.WordToStackWordExtractionParity
+import Flapjack.Test.StackRemoveWriteBytearrayParity
+import Flapjack.Test.WordDiagnosticLeaves
+import Flapjack.Test.WordToStackBitmapFrameUpdatesParity
 import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.ParmoveAllDistinctPmovParity
 import Flapjack.Test.ParmoveTempPmovParity
@@ -385,6 +456,7 @@ import Flapjack.Test.RegAllocCarriers
 import Flapjack.Test.HeuMaxParity
 import Flapjack.Test.WordToStackBitmapMixedParity
 import Flapjack.Test.HeuInstParity
+import Flapjack.Test.ActualHeuInstParity
 import Flapjack.Test.SptMapParity
 import Flapjack.Test.WordToStackCutsetMaximumParity
 import Flapjack.Test.RetainedAllocatorColour
@@ -1079,6 +1151,10 @@ import Flapjack.Test.AsmSemStepParity
 import Flapjack.Test.AsmPropsEncoderCorrectParity
 import Flapjack.Test.MachineIeeeCrossFormatParity
 import Flapjack.Test.L3RiscvCrossFormatParity
+import Flapjack.Test.WordGcFunOkParity
+
+
+
 
 
 
@@ -1913,6 +1989,10 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.ListLookupParity.runChecks,
     Flapjack.Test.WordToStackListUpdateSlicesParity.runChecks,
     Flapjack.Test.SptreeWfDefinitionParity.runChecks,
+    Flapjack.Test.WordToStackWordExtractionParity.run,
+    Flapjack.Test.StackRemoveWriteBytearrayParity.run,
+    Flapjack.Test.WordDiagnosticLeaves.run,
+    Flapjack.Test.WordToStackBitmapFrameUpdatesParity.run,
     Flapjack.Test.WordToStackIndexListParity.runChecks,
     Flapjack.Test.WordToStackAbsStackLengthsParity.runChecks,
     Flapjack.Test.WordToStackAbsStackPrefixParity.runChecks,
@@ -2015,6 +2095,9 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.AsmSemFpUpdatesParity.runChecks,
     Flapjack.Test.AsmSemArithmeticParity.runChecks,
     Flapjack.Test.BytesInMemParity.runChecks,
+    Flapjack.Test.StackRawCallJumpLowerParity.runChecks,
+    Flapjack.Test.StackEvaluateMonoParity.runChecks,
+    Flapjack.Test.BytesInMemoryDomainParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
     ].mapM id
   unless results.all id do

@@ -1,0 +1,20 @@
+mmio_pcs_min_index_APPEND_thm=EVERY (λ(x :ffiname). ∀(s :mlstring). x ≠ ExtCall s) (l :ffiname list) ∧
+EVERY (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s) (ffis :ffiname list) ⇒
+mmio_pcs_min_index (ffis ++ l) = SOME (LENGTH ffis)
+mmio_pcs_min_index_APPEND_thm_types=(ffis :ffiname list)::ffiname list;(l :ffiname list)::ffiname list;
+mmio_pcs_min_index_APPEND_thm_hypotheses=0
+mmio_pcs_min_index_get_shmem_info_ok=all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+  (ffis' :ffiname list) (p' :num) (code2 :α sec list) ∧ enc_ok c ∧
+EVERY (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s) (ffis :ffiname list) ∧
+get_shmem_info code2 (p :num) ffis ([] :shmem_info_num list) =
+((new_ffi_names :ffiname list),(new_shmem_info :shmem_info_num list)) ⇒
+mmio_pcs_min_index new_ffi_names = SOME (LENGTH ffis)
+mmio_pcs_min_index_get_shmem_info_ok_types=(new_shmem_info :shmem_info_num list)::shmem_info_num list;(new_ffi_names :ffiname list)::ffiname list;(p :num)::num;(ffis :ffiname list)::ffiname list;(code2 :α sec list)::α sec list;(p' :num)::num;(ffis' :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+mmio_pcs_min_index_get_shmem_info_ok_hypotheses=0
+empty_boundary=T
+external_boundary=T
+shared_boundary=T
+mixed_boundary=T
+suffix_guard=T
+prefix_guard=T
+extraction_boundary=T

@@ -1,0 +1,38 @@
+line_to_info_offset_FST_eq=MAP (FST :ffiname # shmem_info_num -> ffiname)
+  (line_to_info (code :α sec list) (p :num) (accum :num # β line option)) =
+MAP (FST :ffiname # shmem_info_num -> ffiname)
+  (line_to_info code (0 :num) accum)
+line_to_info_offset_FST_eq_types=(accum :num # β line option)::num # β line option;(p :num)::num;(code :α sec list)::α sec list;
+line_to_info_offset_FST_eq_hypotheses=0
+line_to_info_offset_SND_eq=MAP (SND :ffiname # shmem_info_num -> shmem_info_num)
+  (line_to_info (code :α sec list) (p :num) (accum :num # β line option)) =
+MAP
+  (λ(x :ffiname # shmem_info_num).
+       SND x with
+       <|entry_pc := p + (SND x).entry_pc; exit_pc := p + (SND x).exit_pc|>)
+  (line_to_info code (0 :num) accum)
+line_to_info_offset_SND_eq_types=(accum :num # β line option)::num # β line option;(p :num)::num;(code :α sec list)::α sec list;
+line_to_info_offset_SND_eq_hypotheses=0
+get_shmem_info_init_pc_offset=all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+  (ffis :ffiname list) (p' :num) (code :α sec list) ⇒
+FST
+  (get_shmem_info code (0 :num) ([] :ffiname list) ([] :shmem_info_num list)) =
+FST
+  (get_shmem_info code (p :num) ([] :ffiname list) ([] :shmem_info_num list)) ∧
+MAP
+  (λ(rec :shmem_info_num).
+       rec with <|entry_pc := p + rec.entry_pc; exit_pc := p + rec.exit_pc|>)
+  (SND
+     (get_shmem_info code (0 :num) ([] :ffiname list)
+        ([] :shmem_info_num list))) =
+SND (get_shmem_info code p ([] :ffiname list) ([] :shmem_info_num list))
+get_shmem_info_init_pc_offset_types=(p :num)::num;(code :α sec list)::α sec list;(p' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+get_shmem_info_init_pc_offset_hypotheses=0
+independent_names=T
+independent_records=T
+none=T
+empty_offset=T
+actual_names=T
+actual_records=T
+valid_guard=T
+negative_length=T

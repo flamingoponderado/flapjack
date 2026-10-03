@@ -1,0 +1,9 @@
+compile_result_definition=(∀w1 w2. compile_result (Result w1 w2) = Result w1) ∧ (∀w1 w2. compile_result (Exception w1 w2) = Exception w1) ∧ compile_result TimeOut = TimeOut ∧ compile_result NotEnoughSpace = Halt (Word 1w) ∧ (∀f. compile_result (FinalFFI f) = FinalFFI f) ∧ (∀k. compile_result (Break k) = Break k) ∧ (∀k. compile_result (Continue k) = Continue k) ∧ compile_result Error = Error
+compile_result_hypotheses=0
+compile_result_type=:α wordSem$result -> α stackSem$result
+push_locals_definition=∀l0 l s. push_locals l0 l s = s with <|locals := LN; locals_size := SOME 0; stack := StackFrame s.locals_size l0 l NONE::s.stack|>
+push_locals_hypotheses=0
+push_locals_type=:(num # α word_loc) list -> (num # α word_loc) list -> (α, β, γ) state -> (α, β, γ) state
+halt_eq_compile_result_statement=∀z. (Halt (Word 1w) = compile_result z ⇔ z = NotEnoughSpace) ∧ (good_dimindex (:α) ⇒ Halt (Word 2w) ≠ compile_result z)
+halt_eq_compile_result_proved=T
+halt_eq_compile_result_hypotheses=0
