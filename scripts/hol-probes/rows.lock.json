@@ -4946,6 +4946,12 @@
       "sha256": "32ee10f09e3eb0db6515a72a9d2d3e3d152bfde87a91728eb86188b0f43ef1f3"
     },
     {
+      "bytes": 1386,
+      "out": "pan_structs_lookup_code_fields_probe.out",
+      "rows": 3,
+      "sha256": "906487498b5e2bbbd0d0979c977d3b66adfef86a296bf82f361930bc1ed318f3"
+    },
+    {
       "bytes": 580,
       "out": "pan_structs_map_restoration_probe.out",
       "rows": 8,

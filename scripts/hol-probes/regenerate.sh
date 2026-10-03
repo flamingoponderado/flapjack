@@ -7055,3 +7055,7 @@ run_probe lab_props_alignment_sdm_shared_probeScript.sml lab_props_alignment_sdm
 run_probe word_to_stack_comp_set_probeScript.sml word_to_stack_comp_set_probe.out \
   comp_correct_set_full_statement comp_correct_set_full_proved comp_correct_set_full_hypotheses comp_correct_set_whole_statement comp_correct_set_whole_proved comp_correct_set_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_lookup_code_fields_probeScript.sml pan_structs_lookup_code_fields_probe.out \
+  lookup_code_flds_ok_statement lookup_code_flds_ok_proved lookup_code_flds_ok_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

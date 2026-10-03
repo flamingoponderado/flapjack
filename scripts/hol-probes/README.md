@@ -7584,3 +7584,9 @@ Regression evidence rather than cross-language equivalence.
 `word_to_stack_comp_set_probeScript.sml` captures the complete original Set
 induction obligation and whole arbitrary specialization, closed hyp0/T.
 Statement regression evidence, not literal local proof replay or equivalence.
+`pan_structs_lookup_code_fields_probe` replays original source-local
+`lookup_code_flds_ok` and its three local helper proofs unchanged, reuses the
+original reverse shape theorem alias, and captures full closed statement,
+quantified types and kernel truth. The Lean theorem retains ten source
+hypotheses and all five conclusions, including actual target lookup and
+existential original callee parameter context. Call/DecCall remain open.

@@ -82067,5 +82067,45 @@
     "lean_name": "riscv_encoding",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c author full original454-475source comparison2026-10-03: full nativeinstruction carrier/all163constructors, fixednative64ASM full constructor tree. Original length_riscv_encode=4 and originalencode_not_nil retain arbitraryinstruction. Fullriscv_encoding originalQ.prove thenSIMP_RULE unfolds riscvEnc to LIST_BIND nativeAST nativeEncode: exactList.flatMap, fullmod4=0 AND nonempty for EVERY HolAsm64 without asmOK/opcode/targetrun premise. StructuralAST proof includes all sourceconstantconditions/fullnestedconstructors and originalfailinstructions; listfold derives4timesASTlength. Fresh unchanged original3proofs/fullbindertypes/hyp0/T; guardsretain fulluniversalcontract and reject validitypremise/narrowing."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/LookupCodeFields.lean",
+    "lean_name": "lookupCodeFields",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "lookup_code_flds_ok",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "calleeLocals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original914-989: all ten original hypotheses and five conclusions, including existential original parameter context, actual compiled argument eval and converted code lookup with canonical callee-map equality and return shape; argument/callee fieldvalidity and calleeWF retained. Full expression correctness and evalWF derive all successful argument properties. Canonical lookup projection yields original raw code entry, distinct names, length/shape guards and ordered equality-based FUPDATE_LIST. Lawful MlS Boolean update agrees internally with HOL equality, no added equality premise. Original parameter shape guards plus common fm_empty_zip_alist prove callee shapeMap; conversion maps parameter shapes but body uses original parameter context. ShapeOfConvertVRev gives actual compiled lookup guards; ordered map2/update commutation proves raw converted locals and unconditional canonical projection recovers finite target result without assumed target lookup/run/compatibility. Canonical imported whole source-state maps and standalone calleeLocals translated via explicit relation qualifier, full owning-state roundtrip; positive indexed words/Type0 host only. Fresh original theorem and source-local prerequisite proofs replay unchanged, closed kernelT/types. Call/DecCall/full compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/LookupCodeFields.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing with no independent HOL declaration. Full canonical imported-state two-way roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/LookupCodeFields.lean",
+    "lean_name": "evalListEvery",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing with no independent HOL declaration. Internal successful faithful list evaluation membership proof."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/LookupCodeFields.lean",
+    "lean_name": "parameterShapes",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing with no independent HOL declaration. Internal parameter/argument shape guard derives exact ordered ZIP shape list."
   }
 ]
