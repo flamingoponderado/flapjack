@@ -9014,6 +9014,12 @@
       "sha256": "571c35568e1d47bec6088ba5fb53367b52f3d7f6881ae9a615744c28b14fcc21"
     },
     {
+      "bytes": 8711,
+      "out": "word_remove_group_probe.out",
+      "rows": 75,
+      "sha256": "daa2de550c49f890f903ba81dd2574133091ea2d5933359d86d8855755e328c8"
+    },
+    {
       "bytes": 297,
       "out": "word_remove_must_terminate_probe.out",
       "rows": 8,
