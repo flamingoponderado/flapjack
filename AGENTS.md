@@ -283,6 +283,14 @@ infrastructure; delete a declaration only when it is unsalvageable or itself
 implements behavior that must be replaced. Do not merge a known mismatch as a
 claimed HOL port.
 
+Capture the original declaration with inferred types (`show_types` or `type_of`)
+when adding reviewed rows. Check independent type variables inside each conjunct
+and recursive premise, not just the outer state carrier. Do not identify generic
+result widths, input/output payload types, or unrelated instruction widths.
+For local declarations that cannot be exported, record the exact source typing
+and a typed replay where available; untyped printed statements are insufficient
+evidence for claims about inferred carriers.
+
 **Qualify only named list-to-array state fields.** An unqualified tag records a
 statement reviewed as exact and has manifest status `reviewed_exact`. When a
 HOL data structure uses a reviewed *different Lean representation* (for

@@ -11,8 +11,9 @@ fields each wordSem state operation leaves unchanged, and how each operation
 commutes with an update of a field it does not read. Every conjunct of each
 HOL theorem is kept in source order. HOL's record update `s with ffi := f` may
 change the FFI type, so an FFI conjunct binds an independent `OtherF` host type;
-the shared-memory functions return HOL's `'a result`, so their Lean result
-width is fixed to the state's word width.
+the shared-memory functions return an independent HOL `'a result`, represented
+by independently quantified positive result widths, separate from the state
+width and also separate across the permute and clock conjuncts.
 
 Not ported here: `case_eq_thms` is an ML-assembled list of HOL's automatically
 generated `case_eq` rewrites for nine datatypes, not a statement about wordSem
@@ -218,10 +219,10 @@ structure ShMemFrame (f : WordSemStateFiniteExact width C F → WordSemStateFini
     f { s with ffi := x }
   flushState : ∀ b s, flushState b (f s) = f (flushState b s)
 
-theorem shMemSetVar_frame {f : WordSemStateFiniteExact width C F → WordSemStateFiniteExact width C F}
+theorem shMemSetVar_frame {rw : Nat} [NeZero rw] {f : WordSemStateFiniteExact width C F → WordSemStateFiniteExact width C F}
     (hf : ShMemFrame f) (res : Option (HolFfiResult F)) (v : Nat)
     (s : WordSemStateFiniteExact width C F) :
-    Prod.map id f (shMemSetVar (rw := width) res v s) = shMemSetVar (rw := width) res v (f s) := by
+    Prod.map id f (shMemSetVar (rw := rw) res v s) = shMemSetVar (rw := rw) res v (f s) := by
   cases res with
   | none => rfl
   | some r =>
@@ -229,30 +230,30 @@ theorem shMemSetVar_frame {f : WordSemStateFiniteExact width C F → WordSemStat
     · simp only [shMemSetVar, Prod.map, id, hf.setFfi, hf.setVar]
     · simp only [shMemSetVar, Prod.map, id, hf.flushState]
 
-theorem shMemStore_frame {f : WordSemStateFiniteExact width C F → WordSemStateFiniteExact width C F}
+theorem shMemStore_frame {rw : Nat} [NeZero rw] {f : WordSemStateFiniteExact width C F → WordSemStateFiniteExact width C F}
     (hf : ShMemFrame f) (a w : BitVec width) (s : WordSemStateFiniteExact width C F) :
-    Prod.map id f (shMemStore (rw := width) a w s) = shMemStore (rw := width) a w (f s) ∧
-    Prod.map id f (shMemStoreByte (rw := width) a w s) = shMemStoreByte (rw := width) a w (f s) ∧
-    Prod.map id f (shMemStore16 (rw := width) a w s) = shMemStore16 (rw := width) a w (f s) ∧
-    Prod.map id f (shMemStore32 (rw := width) a w s) = shMemStore32 (rw := width) a w (f s) := by
+    Prod.map id f (shMemStore (rw := rw) a w s) = shMemStore (rw := rw) a w (f s) ∧
+    Prod.map id f (shMemStoreByte (rw := rw) a w s) = shMemStoreByte (rw := rw) a w (f s) ∧
+    Prod.map id f (shMemStore16 (rw := rw) a w s) = shMemStore16 (rw := rw) a w (f s) ∧
+    Prod.map id f (shMemStore32 (rw := rw) a w s) = shMemStore32 (rw := rw) a w (f s) := by
   have hsm : ∀ a, (f s).shMdomain a = s.shMdomain a := fun a => by rw [hf.shMdomain]
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
     simp only [shMemStore, shMemStoreByte, shMemStore16, shMemStore32, hsm, hf.ffi] <;>
     split <;> (try split) <;> simp only [Prod.map, id, hf.flushState, hf.setFfi]
 
-theorem shareInst_frame {f : WordSemStateFiniteExact width C F → WordSemStateFiniteExact width C F}
+theorem shareInst_frame {rw : Nat} [NeZero rw] {f : WordSemStateFiniteExact width C F → WordSemStateFiniteExact width C F}
     (hf : ShMemFrame f) (op : WordMemOp) (v : Nat) (ad : BitVec width)
     (s : WordSemStateFiniteExact width C F) :
-    Prod.map id f (shareInst (rw := width) op v ad s) = shareInst (rw := width) op v ad (f s) := by
+    Prod.map id f (shareInst (rw := rw) op v ad s) = shareInst (rw := rw) op v ad (f s) := by
   have gv : getVar v (f s) = getVar v s := by simp only [getVar, hf.locals]
-  have h1 := fun w => (shMemStore_frame hf ad w s).1
-  have h2 := fun w => (shMemStore_frame hf ad w s).2.1
-  have h3 := fun w => (shMemStore_frame hf ad w s).2.2.1
-  have h4 := fun w => (shMemStore_frame hf ad w s).2.2.2
+  have h1 := fun w => (shMemStore_frame (rw := rw) hf ad w s).1
+  have h2 := fun w => (shMemStore_frame (rw := rw) hf ad w s).2.1
+  have h3 := fun w => (shMemStore_frame (rw := rw) hf ad w s).2.2.1
+  have h4 := fun w => (shMemStore_frame (rw := rw) hf ad w s).2.2.2
   have hsm : ∀ a, (f s).shMdomain a = s.shMdomain a := fun a => by rw [hf.shMdomain]
   cases op <;>
     simp only [shareInst, shMemLoad, shMemLoadByte, shMemLoad16, shMemLoad32, hsm,
-      hf.ffi, gv, shMemSetVar_frame hf] <;>
+      hf.ffi, gv, shMemSetVar_frame (rw := rw) hf] <;>
     (try split) <;> first | exact h1 _ | exact h2 _ | exact h3 _ | exact h4 _ | rfl
 
 end Frame
@@ -756,10 +757,10 @@ theorem getVarImmWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     original conjuncts in source order. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_set_var_with_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem shMemSetVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
+theorem shMemSetVarWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (res : Option (HolFfiResult F)) (v : Nat) (s : WordSemStateFiniteExact width C F) (k : Nat) :
-    shMemSetVar (rw := width) res v { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemSetVar (rw := width) res v s) ∧
-    shMemSetVar (rw := width) res v { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shMemSetVar (rw := width) res v s) := by
+    shMemSetVar (rw := rw) res v { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemSetVar (rw := rw) res v s) ∧
+    shMemSetVar (rw := clockRw) res v { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shMemSetVar (rw := clockRw) res v s) := by
   refine ⟨?_, ?_⟩
   all_goals constConj_tac
 
@@ -819,10 +820,10 @@ theorem shMemLoad32WithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     original conjuncts in source order. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store_with_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem shMemStoreWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
+theorem shMemStoreWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (a : BitVec width) (w : BitVec width) (s : WordSemStateFiniteExact width C F) (k : Nat) :
-    shMemStore (rw := width) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStore (rw := width) a w s) ∧
-    shMemStore (rw := width) a w { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shMemStore (rw := width) a w s) := by
+    shMemStore (rw := rw) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStore (rw := rw) a w s) ∧
+    shMemStore (rw := clockRw) a w { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shMemStore (rw := clockRw) a w s) := by
   refine ⟨?_, ?_⟩
   all_goals constConj_tac
 
@@ -830,10 +831,10 @@ theorem shMemStoreWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     original conjuncts in source order. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store_byte_with_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem shMemStoreByteWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
+theorem shMemStoreByteWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (a : BitVec width) (w : BitVec width) (s : WordSemStateFiniteExact width C F) (k : Nat) :
-    shMemStoreByte (rw := width) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStoreByte (rw := width) a w s) ∧
-    shMemStoreByte (rw := width) a w { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shMemStoreByte (rw := width) a w s) := by
+    shMemStoreByte (rw := rw) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStoreByte (rw := rw) a w s) ∧
+    shMemStoreByte (rw := clockRw) a w { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shMemStoreByte (rw := clockRw) a w s) := by
   refine ⟨?_, ?_⟩
   all_goals constConj_tac
 
@@ -841,10 +842,10 @@ theorem shMemStoreByteWithConst {width : Nat} [NeZero width] {C : Type} {F : Typ
     original conjuncts in source order. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store16_with_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem shMemStore16WithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
+theorem shMemStore16WithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (a : BitVec width) (w : BitVec width) (s : WordSemStateFiniteExact width C F) (k : Nat) :
-    shMemStore16 (rw := width) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStore16 (rw := width) a w s) ∧
-    shMemStore16 (rw := width) a w { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shMemStore16 (rw := width) a w s) := by
+    shMemStore16 (rw := rw) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStore16 (rw := rw) a w s) ∧
+    shMemStore16 (rw := clockRw) a w { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shMemStore16 (rw := clockRw) a w s) := by
   refine ⟨?_, ?_⟩
   all_goals constConj_tac
 
@@ -852,10 +853,10 @@ theorem shMemStore16WithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     original conjuncts in source order. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store32_with_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem shMemStore32WithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
+theorem shMemStore32WithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (a : BitVec width) (w : BitVec width) (s : WordSemStateFiniteExact width C F) (k : Nat) :
-    shMemStore32 (rw := width) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStore32 (rw := width) a w s) ∧
-    shMemStore32 (rw := width) a w { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shMemStore32 (rw := width) a w s) := by
+    shMemStore32 (rw := rw) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStore32 (rw := rw) a w s) ∧
+    shMemStore32 (rw := clockRw) a w { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shMemStore32 (rw := clockRw) a w s) := by
   refine ⟨?_, ?_⟩
   all_goals constConj_tac
 
@@ -863,10 +864,10 @@ theorem shMemStore32WithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     original conjuncts in source order. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "share_inst_with_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem shareInstWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
+theorem shareInstWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (op : WordMemOp) (v : Nat) (c : BitVec width) (s : WordSemStateFiniteExact width C F) (k : Nat) :
-    shareInst (rw := width) op v c { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shareInst (rw := width) op v c s) ∧
-    shareInst (rw := width) op v c { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shareInst (rw := width) op v c s) := by
+    shareInst (rw := rw) op v c { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shareInst (rw := rw) op v c s) ∧
+    shareInst (rw := clockRw) op v c { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (shareInst (rw := clockRw) op v c s) := by
   refine ⟨?_, ?_⟩
   all_goals constConj_tac
 
@@ -1143,10 +1144,10 @@ theorem assignConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     22 original conjuncts in source order. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_set_var_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem shMemSetVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
+theorem shMemSetVarConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (r : Option (HolFfiResult F)) (v : Nat) (s s' : WordSemStateFiniteExact width C F)
-    (x : Option (WordSemResult width)) (outcome : HolFinalEvent) (f : HolFfiState F)
-    (l : List (BitVec 8)) (h : shMemSetVar (rw := width) r v s = (x, s')) :
+    (x : Option (WordSemResult rw)) (outcome : HolFinalEvent) (f : HolFfiState F)
+    (l : List (BitVec 8)) (h : shMemSetVar (rw := rw) r v s = (x, s')) :
     s'.clock = s.clock ∧
     s'.compileOracle = s.compileOracle ∧
     s'.compile = s.compile ∧
@@ -1178,9 +1179,9 @@ theorem shMemSetVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     conjuncts in source order. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem shMemStoreConst {width : Nat} [NeZero width] {C : Type} {F : Type}
-    (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
-    (h : shMemStore (rw := width) ad v s = (res, s')) :
+theorem shMemStoreConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
+    (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult rw))
+    (h : shMemStore (rw := rw) ad v s = (res, s')) :
     s'.clock = s.clock ∧
     s'.compileOracle = s.compileOracle ∧
     s'.compile = s.compile ∧
@@ -1214,9 +1215,9 @@ theorem shMemStoreConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     conjuncts in source order. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store_byte_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem shMemStoreByteConst {width : Nat} [NeZero width] {C : Type} {F : Type}
-    (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
-    (h : shMemStoreByte (rw := width) ad v s = (res, s')) :
+theorem shMemStoreByteConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
+    (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult rw))
+    (h : shMemStoreByte (rw := rw) ad v s = (res, s')) :
     s'.clock = s.clock ∧
     s'.compileOracle = s.compileOracle ∧
     s'.compile = s.compile ∧
@@ -1250,9 +1251,9 @@ theorem shMemStoreByteConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     conjuncts in source order. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store16_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem shMemStore16Const {width : Nat} [NeZero width] {C : Type} {F : Type}
-    (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
-    (h : shMemStore16 (rw := width) ad v s = (res, s')) :
+theorem shMemStore16Const {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
+    (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult rw))
+    (h : shMemStore16 (rw := rw) ad v s = (res, s')) :
     s'.clock = s.clock ∧
     s'.compileOracle = s.compileOracle ∧
     s'.compile = s.compile ∧
@@ -1286,9 +1287,9 @@ theorem shMemStore16Const {width : Nat} [NeZero width] {C : Type} {F : Type}
     conjuncts in source order. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store32_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem shMemStore32Const {width : Nat} [NeZero width] {C : Type} {F : Type}
-    (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
-    (h : shMemStore32 (rw := width) ad v s = (res, s')) :
+theorem shMemStore32Const {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
+    (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult rw))
+    (h : shMemStore32 (rw := rw) ad v s = (res, s')) :
     s'.clock = s.clock ∧
     s'.compileOracle = s.compileOracle ∧
     s'.compile = s.compile ∧
