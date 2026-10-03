@@ -83813,5 +83813,14 @@
     "hol_name": "next_n_oracle_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 complete source comparison word_to_wordScript15-19/43-49: Config retains exactly reg_alg:num and col_oracle:(num sptree$num_map) option list, represented by Nat and literal List(Option(Spt Nat)); num_map is the accepted constructor-for-constructor sptree, not a HOL finite map or generic carrier. next_n_oracle retains both explicit Nat/list binders, inclusive n<=length guard, exact TAKE/DROP pair and insufficient-oracle REPLICATE n NONE plus empty remainder. No prefix padding/substitution, fallback encoder or scope change. Inline source convention proof uses returned prefix length; untagged helper proves it independently for all n/lists, no target premise. Fresh original full typed definition/hyp0/kernelT and concrete field projection types plus zero/equal/short/long oracle observations captured. Native whole pipeline/production/compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/ProductionSet.lean",
+    "lean_name": "destVar",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "dest_Var_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: dest_Var_def481-485 returns SOME v exactly for Var v and NONE for every other exp constructor. Original wordLang exp15-20 has Const word, Var num, Lookup store_name, Load exp, Op binop list exp, Shift shift exp exp; imported WordLangExpHOL matches all six and full WordStoreHOL retains fixed5bit Temp and all named stores. Positive-width BitVec width records only standard word translation. No added success/evaluation hypothesis; full Set/CSE definition and semantics remain separate open work."
   }
 ]
