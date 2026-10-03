@@ -1,0 +1,10 @@
+filter_correct=∀(s1 :(α, γ, 'ffi) labSem$state) (t1 :(α, γ, 'ffi) labSem$state)
+    (res :machine_result) (s2 :(α, γ, 'ffi) labSem$state).
+  (evaluate s1 :machine_result # (α, γ, 'ffi) labSem$state) = (res,s2) ∧
+  state_rel s1 t1 ∧ ¬t1.failed ⇒
+  ∃(k :num) (t2 :(α, γ, 'ffi) labSem$state).
+    (evaluate (t1 with clock := s1.clock + k) :
+     machine_result # (α, γ, 'ffi) labSem$state) = (res,t2) ∧ s2.ffi = t2.ffi
+filter_correct_types=(s1 :(α, γ, 'ffi) labSem$state)::(α, γ, 'ffi) labSem$state;(t1 :(α, γ, 'ffi) labSem$state)::(α, γ, 'ffi) labSem$state;(res :machine_result)::machine_result;(s2 :(α, γ, 'ffi) labSem$state)::(α, γ, 'ffi) labSem$state;
+filter_correct_hypotheses=0
+filter_correct_proved=T

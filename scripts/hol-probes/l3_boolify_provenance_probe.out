@@ -1,0 +1,12 @@
+boolify8_definition=∀w. boolify8 w = (word_bit 7 w,word_bit 6 w,word_bit 5 w,word_bit 4 w,word_bit 3 w,word_bit 2 w,word_bit 1 w,word_bit 0 w)
+boolify8_type=:word8 -> bool # bool # bool # bool # bool # bool # bool # bool
+boolify8_hypotheses=0
+boolify8_full_equation=T
+boolify16_definition=∀w. boolify16 w = (word_bit 15 w,word_bit 14 w,word_bit 13 w,word_bit 12 w,word_bit 11 w,word_bit 10 w,word_bit 9 w,word_bit 8 w,word_bit 7 w,word_bit 6 w,word_bit 5 w,word_bit 4 w,word_bit 3 w,word_bit 2 w,word_bit 1 w,word_bit 0 w)
+boolify16_type=:word16 -> bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool
+boolify16_hypotheses=0
+boolify16_full_equation=T
+boolify32_definition=∀w. boolify32 w = (word_bit 31 w,word_bit 30 w,word_bit 29 w,word_bit 28 w,word_bit 27 w,word_bit 26 w,word_bit 25 w,word_bit 24 w,word_bit 23 w,word_bit 22 w,word_bit 21 w,word_bit 20 w,word_bit 19 w,word_bit 18 w,word_bit 17 w,word_bit 16 w,word_bit 15 w,word_bit 14 w,word_bit 13 w,word_bit 12 w,word_bit 11 w,word_bit 10 w,word_bit 9 w,word_bit 8 w,word_bit 7 w,word_bit 6 w,word_bit 5 w,word_bit 4 w,word_bit 3 w,word_bit 2 w,word_bit 1 w,word_bit 0 w)
+boolify32_type=:word32 -> bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool
+boolify32_hypotheses=0
+boolify32_full_equation=T

@@ -1,0 +1,10 @@
+load "preamble";
+load "pan_structsProofTheory";
+open HolKernel Parse bossLib preamble pan_structsTheory pan_structsProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "convert_state_definition="; print_term(concl convert_s_def); print "\n");
+val _ = (print "convert_state_type="; print_type(type_of ``convert_s``); print "\n");
+val _ = print("convert_state_hypotheses=" ^ Int.toString(length(hyp convert_s_def)) ^ "\n");
+val _ = (print "convert_value_definition="; print_term(concl convert_v_def); print "\n");
+val _ = (print "convert_value_type="; print_type(type_of ``convert_v``); print "\n");
+val _ = print("convert_value_hypotheses=" ^ Int.toString(length(hyp convert_v_def)) ^ "\n");

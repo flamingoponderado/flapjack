@@ -1,0 +1,7 @@
+shape_map_definition=∀s. alist_to_fmap s = FOLDR (λ(k,v) f. f⟨k ↦ v⟩) FEMPTY s
+shape_map_lookup_statement=∀al. FLOOKUP (alist_to_fmap al) = ALOOKUP al
+shape_map_lookup_hypotheses=0
+shape_map_first_binding=SOME (Comb [One; One])
+shape_map_other_binding=SOME One
+shape_map_missing=NONE
+shape_map_empty=NONE

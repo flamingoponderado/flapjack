@@ -1,0 +1,56 @@
+map_map2_fst_lemma=∀(xs :α list) (ys :β list).
+  MAP (FST :α # β -> α) (MAP2 (λ(x :α) (y :β). (x,y)) xs ys :(α # β) list) =
+  TAKE (MIN (LENGTH xs) (LENGTH ys)) xs
+exp_ids_nested_seq=∀(ps :α panLang$prog list).
+  exp_ids (nested_seq ps) =
+  FLAT (MAP (exp_ids :α panLang$prog -> mlstring list) ps)
+exp_ids_compile_globals=∀(ctxt :α pan_globals$context) (p :α panLang$prog).
+  exp_ids (compile ctxt p :α panLang$prog) = exp_ids p
+exp_ids_fperm=∀(f :mlstring) (g :mlstring) (p :α panLang$prog).
+  exp_ids (fperm f g p) = exp_ids p
+compile_decs_exp_ids=∀(ctxt :α pan_globals$context) (pan_code :α decl list).
+  MAP
+    ((exp_ids :α panLang$prog -> mlstring list) ∘
+     (FST :α panLang$prog # shape -> α panLang$prog) ∘
+     (SND :(mlstring # shape) list # α panLang$prog # shape ->
+           α panLang$prog # shape) ∘
+     (SND :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+           (mlstring # shape) list # α panLang$prog # shape))
+    (functions
+       (FST
+          (SND
+             (compile_decs ctxt pan_code :
+              α panLang$prog list #
+              α decl list # α decl list # α pan_globals$context)))) =
+  MAP
+    ((exp_ids :α panLang$prog -> mlstring list) ∘
+     (FST :α panLang$prog # shape -> α panLang$prog) ∘
+     (SND :(mlstring # shape) list # α panLang$prog # shape ->
+           α panLang$prog # shape) ∘
+     (SND :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+           (mlstring # shape) list # α panLang$prog # shape))
+    (functions pan_code)
+fperm_exp_ids=∀(f :mlstring) (g :mlstring) (pan_code :α decl list).
+  MAP
+    ((exp_ids :α panLang$prog -> mlstring list) ∘
+     (FST :α panLang$prog # shape -> α panLang$prog) ∘
+     (SND :(mlstring # shape) list # α panLang$prog # shape ->
+           α panLang$prog # shape) ∘
+     (SND :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+           (mlstring # shape) list # α panLang$prog # shape))
+    (functions (fperm_decs f g pan_code)) =
+  MAP
+    ((exp_ids :α panLang$prog -> mlstring list) ∘
+     (FST :α panLang$prog # shape -> α panLang$prog) ∘
+     (SND :(mlstring # shape) list # α panLang$prog # shape ->
+           α panLang$prog # shape) ∘
+     (SND :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+           (mlstring # shape) list # α panLang$prog # shape))
+    (functions pan_code)
+compile_decs_no_exp_ids_main=∀(ctxt :α pan_globals$context) (prog :α decl list).
+  EVERY (λ(x :α panLang$prog). exp_ids x = ([] :mlstring list))
+    (FST
+       (compile_decs ctxt prog :
+        α panLang$prog list #
+        α decl list # α decl list # α pan_globals$context))
+functions_resort_decls=functions (resort_decls (xs :α decl list)) = functions xs

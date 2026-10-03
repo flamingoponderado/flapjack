@@ -1,0 +1,8 @@
+decodeWord_binders=w::word32;i::instruction;
+decodeWord_statement=∀w i. Decode w = i ⇒ DecodeAny (Word w) = i
+decodeWord_hypotheses=0
+decodeWord_proof=T
+decodeHalf_binders=h::word16;i::instruction;
+decodeHalf_statement=∀h i. DecodeRVC h = i ⇒ DecodeAny (Half h) = i
+decodeHalf_hypotheses=0
+decodeHalf_proof=T

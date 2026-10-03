@@ -86,43 +86,49 @@ def getPcValue {width : Nat} [NeZero width] {C F : Type}
   match label with
   | .lab sectionId labelId => locToPc sectionId labelId state.code
 
+/-- The original result word dimension is independent of the code/state dimension.
+Native evaluator calls select their state dimension through the expected result type. -/
 @[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "next_label_def"
   (words_as_type_indexed_bitvec)]
-def nextLabel {width : Nat} [NeZero width]
+def nextLabel {width : Nat} [NeZero width] {resultWidth : Nat} [NeZero resultWidth]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
-    Option (WordLocW width) :=
+    Option (WordLocW resultWidth) :=
   match code with
   | [] => none
-  | ⟨_, []⟩ :: rest => nextLabel rest
+  | ⟨_, []⟩ :: rest => nextLabel (resultWidth := resultWidth) rest
   | ⟨sectionId, line :: lines⟩ :: rest =>
       match line with
       | .label ownSection ownLabel _ => some (.loc ownSection ownLabel)
-      | _ => nextLabel (⟨sectionId, lines⟩ :: rest)
+      | _ => nextLabel (resultWidth := resultWidth) (⟨sectionId, lines⟩ :: rest)
 termination_by navigationSize code
 decreasing_by all_goals simp_wf; simp_all [navigationSize] <;> omega
 
+/-- The original result word dimension is independent of the code/state dimension.
+Native evaluator calls select their state dimension through the expected result type. -/
 @[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "get_lab_after_def"
   (words_as_type_indexed_bitvec)]
-def getLabAfter {width : Nat} [NeZero width] (position : Nat)
+def getLabAfter {width : Nat} [NeZero width] {resultWidth : Nat} [NeZero resultWidth] (position : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
-    Option (WordLocW width) :=
+    Option (WordLocW resultWidth) :=
   match code with
   | [] => none
-  | ⟨_, []⟩ :: rest => getLabAfter position rest
+  | ⟨_, []⟩ :: rest => getLabAfter (resultWidth := resultWidth) position rest
   | ⟨sectionId, line :: lines⟩ :: rest =>
-      if isLabelHOL line then getLabAfter position (⟨sectionId, lines⟩ :: rest)
-      else if position = 0 then nextLabel (⟨sectionId, lines⟩ :: rest)
-      else getLabAfter (position - 1) (⟨sectionId, lines⟩ :: rest)
+      if isLabelHOL line then getLabAfter (resultWidth := resultWidth) position (⟨sectionId, lines⟩ :: rest)
+      else if position = 0 then nextLabel (resultWidth := resultWidth) (⟨sectionId, lines⟩ :: rest)
+      else getLabAfter (resultWidth := resultWidth) (position - 1) (⟨sectionId, lines⟩ :: rest)
 termination_by navigationSize code
 decreasing_by all_goals simp_wf; simp_all [navigationSize] <;> omega
 
+/-- The original result word dimension is independent of the code/state dimension.
+Native evaluator calls select their state dimension through the expected result type. -/
 @[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "get_ret_Loc_def"
   (words_as_type_indexed_bitvec)]
-def getRetLoc {width : Nat} [NeZero width] {C F : Type}
-    (state : Flapjack.Compiler.Backend.LabSem.State width C F) : Option (WordLocW width) :=
-  getLabAfter state.pc state.code
+def getRetLoc {width : Nat} [NeZero width] {resultWidth : Nat} [NeZero resultWidth] {C F : Type}
+    (state : Flapjack.Compiler.Backend.LabSem.State width C F) : Option (WordLocW resultWidth) :=
+  getLabAfter (resultWidth := resultWidth) state.pc state.code
 
 /-- Internal induction form of the source fetch-position bound. -/
 private theorem asmFetchAuxBound {width : Nat} [NeZero width]
