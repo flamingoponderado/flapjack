@@ -9,19 +9,18 @@ open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm Flapjack.M
 all original binders/fourteen guards and the whole actual stateRel conclusion.
 No target relation or case proof is supplied by the caller. The original
 independent gamma value type occurs only in the literal empty goodCode label
-tree; its two domains are empty and the value type is vacuous. It is normalized
-to Nat here; Initialization/Semantics.lean proves the complete guard
-independent of that empty-tree value type, retaining generic G in the consumer. -/
+tree; its two domains are empty. The statement retains that arbitrary type G;
+the proof specializes only its internal empty-tree support lemmas to Nat. -/
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_state_rel_make_init" (words_as_type_indexed_bitvec)]
-theorem makeInit_stateRel {width : Nat} [NeZero width] {S Q : Type} {F : Type}
+theorem makeInit_stateRel {width : Nat} [NeZero width] {S Q G : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms : S) (ffi : HolFfiState F)
     (code code2 : LabProgHOL width) (labs : Spt (Spt Nat))
     (clock i cbspace : Nat) (t : AsmState width)
     (m : BitVec width → WordLocW width) (dm sdm : BitVec width → Bool)
     (coracle : Nat → Config × LabProgHOL width)
     (newFfiNames : List HolFfiName) (shmemInfo newShmemInfo : List ShmemInfoNum) :
-    goodCode mc.target.config (.ln : Spt (Spt Nat)) code ∧ mcConfOk mc ∧
+    goodCode mc.target.config (.ln : Spt (Spt G)) code ∧ mcConfOk mc ∧
     (noShareMemInst code → compilerOracleOk coracle labs (progToBytes code2).length
       mc.target.config mc.ffiNames) ∧
     listSubset ((findFfiNames code).filter (fun x => match x with
@@ -45,6 +44,13 @@ theorem makeInit_stateRel {width : Nat} [NeZero width] {S Q : Type} {F : Type}
       (mc.target.getPc ms + BitVec.ofNat width (progToBytes code2).length) cbspace coracle
     stateRel (mc,code2,labs,mc.target.getPc ms) initial t ms := by
   intro h
+  have hgoodNat : goodCode mc.target.config (.ln : Spt (Spt Nat)) code := by
+    have hd : Set.ofPred (sptDomain (.ln : Spt (Spt G))) =
+        Set.ofPred (sptDomain (.ln : Spt (Spt Nat))) := by
+      ext key
+      simp [sptDomain, sptLookup]
+    simpa only [goodCode, labsDomain_ln, hd] using h.1
+  have h := And.intro hgoodNat h.2
   have hb := makeInit_stateRel_basicCases mc ms ffi code code2 labs clock i cbspace t m dm sdm coracle newFfiNames shmemInfo newShmemInfo h
   have hf := makeInit_stateRel_interferenceCases mc ms ffi code code2 labs clock i cbspace t m dm sdm coracle newFfiNames shmemInfo newShmemInfo h
   have hm := makeInit_stateRel_memorySeparationCases mc ms ffi code code2 labs clock i cbspace t m dm sdm coracle newFfiNames shmemInfo newShmemInfo h
