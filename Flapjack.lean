@@ -276,6 +276,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
+import Flapjack.Compiler.Backend.DataToWord.ConfOk
 import Flapjack.Compiler.Backend.StackToLab.InitializedProduction
 import Flapjack.Compiler.Backend.StackRemove.InitCode
 import Flapjack.Compiler.Backend.StackRemove.InitStubs
@@ -595,6 +596,8 @@ import Flapjack.Compiler.Encoders.AsmProps.AsmConsts
 import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
 import Flapjack.Compiler.Backend.Parmove.StepMapInj
+import Flapjack.Compiler.Backend.Parmove.MapInj
+import Flapjack.Compiler.Backend.Parmove.PathLemmas
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
 import Flapjack.Pancake.WordConvs.NameMonotonicity
 import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
