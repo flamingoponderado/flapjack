@@ -7122,3 +7122,12 @@ run_probe word_to_stack_comp_opcurrheap_probeScript.sml word_to_stack_comp_opcur
 run_probe word_to_stack_cut_state_probeScript.sml word_to_stack_cut_state_probe.out \
   cut_state_full cut_state_hypotheses cut_state_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_to_lab_flatten_helpers_probeScript.sml stack_to_lab_flatten_helpers_probe.out \
+  flatten_leq_statement no_ret_correct_statement compile_jump_correct_statement result_view_nchotomy_statement result_view_def_statement halt_word_view_def_statement halt_view_def_statement stack_to_lab_lab_pres_statement stack_to_lab_lab_pres_T_statement flatten_T_F_statement prog_to_section_labels_ok_statement NOT_MEM_find_lab_IMP_statement is_some_loc_to_pc_prefix_statement every_is_some_loc_to_pc_prefix_statement NOT_bad_fun_return_IMP_SOME_statement next_lab_non_zero_1022_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe riscv_target_immediate_probeScript.sml riscv_target_immediate_probe.out \
+  lem4_statement lem4_types lem4_hypotheses lem4_proved lem12b_statement lem12b_types lem12b_hypotheses lem12b_proved lem12b_intermediate_types \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe lab_to_target_semantics_compile_final_probeScript.sml lab_to_target_semantics_compile_final_probe.out \
+  semantics_compile semantics_compile_types semantics_compile_hypotheses semantics_compile_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

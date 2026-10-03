@@ -7,6 +7,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
 import Flapjack.Compiler.Backend.WordToStack.NativeStackStore
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmEvaluate
 import Flapjack.RiscV.CorrectnessEncoding.TargetOk
+import Flapjack.RiscV.CorrectnessEncoding.Immediate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmShared
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmNavigation
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmMemory
@@ -23,6 +24,7 @@ import Flapjack.Compiler.Backend.LabProps.DomainAlignmentOperations
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentPrimitives
 import Flapjack.Compiler.Backend.LabProps.DomainAlignment
 import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompile
+import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompileFinal
 import Flapjack.Compiler.Backend.LabToTarget.ImplementsIntro
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkipSafety
 import Flapjack.Compiler.Backend.LabToTarget.ListSubset
@@ -681,6 +683,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
 import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 import Flapjack.Compiler.Backend.StackToLab.Proofs.StateRel
 import Flapjack.Compiler.Backend.StackToLab.Proofs.InstCorrect
+import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers

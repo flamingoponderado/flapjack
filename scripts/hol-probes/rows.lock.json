@@ -2816,6 +2816,12 @@
       "sha256": "756a35331f2d70e3a600d5d3704f0962fffd1f9cfcedc874d8e1abae6e422c85"
     },
     {
+      "bytes": 2451,
+      "out": "lab_to_target_semantics_compile_final_probe.out",
+      "rows": 4,
+      "sha256": "5f8ef044d74dfe572d717bfb090acf3095ad91d4273d295ac1931af387913e51"
+    },
+    {
       "bytes": 5113,
       "out": "lab_to_target_semantics_compile_probe.out",
       "rows": 8,
@@ -5816,6 +5822,12 @@
       "sha256": "571d37e96f2f6a61d4ed5b3bfdaf430d635696f9253dd00c915b87798a59d915"
     },
     {
+      "bytes": 817,
+      "out": "riscv_target_immediate_probe.out",
+      "rows": 9,
+      "sha256": "f4e7721d55979f49f2f44dca9f95a24ae9489b586734ee624bda1ebaf070f859"
+    },
+    {
       "bytes": 556,
       "out": "riscv_target_length_probe.out",
       "rows": 12,
@@ -7776,6 +7788,12 @@
       "out": "stack_to_lab_flatten_base_probe.out",
       "rows": 3,
       "sha256": "aeea4502ca09f79e85e30a969b27fef9ebd4ac6f2e742efadab6a0d2f9e83370"
+    },
+    {
+      "bytes": 3685,
+      "out": "stack_to_lab_flatten_helpers_probe.out",
+      "rows": 16,
+      "sha256": "67b5b3b67705251bf5fe34ea0ae35a01c2495e780cc163224d9b2ef26b106df7"
     },
     {
       "bytes": 262,
