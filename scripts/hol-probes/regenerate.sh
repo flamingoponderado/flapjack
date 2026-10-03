@@ -6572,3 +6572,7 @@ run_probe lab_to_target_semantics_make_init_probeScript.sml lab_to_target_semant
 run_probe pan_structs_compile_decs_structs_probeScript.sml pan_structs_compile_decs_structs_probe.out \
   compile_decs_structs_statement compile_decs_structs_proved compile_decs_structs_hypotheses \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_decs_stcnames_compile_decs_probeScript.sml pan_structs_decs_stcnames_compile_decs_probe.out \
+  decs_stcnames_compile_decs_statement decs_stcnames_compile_decs_proved decs_stcnames_compile_decs_hypotheses \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

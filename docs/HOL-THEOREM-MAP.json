@@ -75410,5 +75410,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source review 2026-10-03: original local theorem1346-1355 compared with full CompileDeclsExact/ContextExact and DeclHOL carriers. Arbitrary initial/final contexts and source/compiled declaration lists; sole original compiled-pair equality premise, identical struct-list equality conclusion. Exact MlS names, List fields, positive word-indexed declaration syntax. Induction generalizes initial context: Decl modifies globals only, Function/Exn recurse unchanged, Name drops without changing structs. No target run, extra relation, bounded width or production default. Original unchanged HOL induction proof kernel-replayed by pan_structs_compile_decs_structs_probe. This prerequisite does not close whole declaration or top-level semantic correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "decs_stcnames_compile_decs",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/DecsStcnamesCompileDecls.lean",
+    "lean_name": "decsStcnamesCompileDecls",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source review 2026-10-03: original1435-1444 entire theorem compared with exact CompileDeclsExact/decsStcnamesHOLExact. Arbitrary compile context, source declarations and initial struct-info accumulator (original free acc universally closed); no premises or declaration-kind assumptions. Name constructors removed by compiler; other compiled constructors skipped by faithful scan. MlS identifiers, exact List/StructInfoHOLExact/ContextExact, positive word-indexed DeclHOL only translation. Original unchanged compile_decs_ind proof kernel-replayed, full closed theorem/T/hyp0 captured. Direct prerequisite for whole compile_top_semantics_decls; that parent remains open."
   }
 ]

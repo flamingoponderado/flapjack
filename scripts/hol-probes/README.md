@@ -6975,3 +6975,7 @@ filtering/final-pass composition remains open. Regenerate with
 `pan_structs_compile_decs_structs_probe` replays the complete original local
 `compile_decs_structs` theorem and unchanged induction proof, recording its full
 statement, closed kernel proof, and zero hypotheses.
+
+`pan_structs_decs_stcnames_compile_decs_probe` replays the whole original theorem
+and unchanged induction proof. It universally closes the source's free accumulator
+and records the closed statement, kernel proof and zero hypotheses.
