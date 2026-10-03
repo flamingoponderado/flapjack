@@ -2883,6 +2883,10 @@ run_probe word_alloc_get_writes_inst_probeScript.sml word_alloc_get_writes_inst_
   writes_const writes_add_carry writes_long_div writes_load16_catchall writes_fp_move64 writes_fp_move32 writes_fp_from_reg_catchall \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe word_alloc_instruction_producer_probeScript.sml word_alloc_instruction_producer_probe.out \
+  gdi_load16_zero gdi_store16_zero gdi_load16_offset gdi_store16_offset \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_alloc_get_delta_inst_probeScript.sml word_alloc_get_delta_inst_probe.out \
   gdi_skip gdi_const gdi_binop_reg gdi_binop_imm gdi_shift_reg gdi_shift_imm gdi_div gdi_addcarry gdi_addoverflow gdi_suboverflow gdi_longmul gdi_longdiv gdi_load gdi_store gdi_load32 gdi_store32 gdi_load8 gdi_store8 gdi_fpless gdi_fpmovtoreg64 gdi_fpmovtoreg32 gdi_fpmovfromreg64 gdi_fpmovfromreg32 gdi_fpneg_catchall \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -5872,6 +5876,27 @@ run_probe l3_lrw_probeScript.sml l3_lrw_probe.out \
 run_probe l3_lrd_probeScript.sml l3_lrd_probe.out \
   lrd_definition lrd_type lrd_negative lrd_positive lrd_rd_zero lrd_core_wrap lrd_fault_sv32 lrd_rv32_mode lrd_rv128_mode lrd_walk_returned_state lrd_misaligned_1 lrd_misaligned_2 lrd_misaligned_3 lrd_order_0_1 lrd_order_1_0 lrd_order_1_1 lrd_misaligned_4 lrd_misaligned_5 lrd_misaligned_6 lrd_misaligned_7 \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe word_props_gc_fun_ok_probeScript.sml word_props_gc_fun_ok_probe.out \
+  gc_fun_ok_def gc_fun_ok_hypotheses guarded_handler_lookup always_fail_gc \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+run_probe stack_remove_copy_each_probeScript.sml stack_remove_copy_each_probe.out \
+  copy_each_statement copy_each_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe l3_scw_probeScript.sml l3_scw_probe.out \
   scw_definition scw_type scw_negative scw_positive scw_rd_zero scw_core_wrap scw_fault_sv32 scw_rv32_mode scw_rv128_mode scw_walk_returned_state scw_misaligned_1 scw_misaligned_2 scw_misaligned_3 scw_order_0_1 scw_order_1_0 scw_order_1_1 scw_reservation_mismatch scw_reservation_none scw_read_only_page scw_rs2_zero scw_address_four \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe l3_scd_probeScript.sml l3_scd_probe.out \
+  scd_definition scd_type scd_negative scd_positive scd_rd_zero scd_core_wrap scd_fault_sv32 scd_rv32_mode scd_rv128_mode scd_walk_returned_state scd_misaligned_1 scd_misaligned_2 scd_misaligned_3 scd_order_0_1 scd_order_1_0 scd_order_1_1 scd_reservation_mismatch scd_reservation_none scd_read_only_page scd_rs2_zero scd_address_four scd_misaligned_4 scd_misaligned_5 scd_misaligned_6 scd_misaligned_7 scd_rv32_before_misalignment_reservation_vm \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe misc_find_index_distinct_probeScript.sml misc_find_index_distinct_probe.out \
+  find_index_ALL_DISTINCT_EL_eq find_index_ALL_DISTINCT_EL_eq_types find_index_ALL_DISTINCT_EL_eq_hypotheses \
+  first last offset large_offset missing duplicate_guard empty actual_extracted_pcs \
+  "$cake_dir/misc/miscScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe l3_integer_store_probeScript.sml l3_integer_store_probe.out \
+  sw_definition sw_type sh_definition sh_type sb_definition sb_type sd_definition sd_type sw_aligned sw_positive_memory sw_rs2_zero sw_negative_offset_cross sw_offset_wrap sw_address_wrap sw_core_wrap sw_fault_sv32_unaligned sw_rv32_mode sw_rv128_mode sw_write_walk_returned_state sw_read_only_page_fault sw_invalid_pte_fault sw_positive_offset sw_rs1_zero sh_aligned sh_positive_memory sh_rs2_zero sh_negative_offset_cross sh_offset_wrap sh_address_wrap sh_core_wrap sh_fault_sv32_unaligned sh_rv32_mode sh_rv128_mode sh_write_walk_returned_state sh_read_only_page_fault sh_invalid_pte_fault sh_positive_offset sh_rs1_zero sb_aligned sb_positive_memory sb_rs2_zero sb_negative_offset_cross sb_offset_wrap sb_address_wrap sb_core_wrap sb_fault_sv32_unaligned sb_rv32_mode sb_rv128_mode sb_write_walk_returned_state sb_read_only_page_fault sb_invalid_pte_fault sb_positive_offset sb_rs1_zero sd_aligned sd_positive_memory sd_rs2_zero sd_negative_offset_cross sd_offset_wrap sd_address_wrap sd_core_wrap sd_fault_sv32_unaligned sd_rv32_mode sd_rv128_mode sd_write_walk_returned_state sd_read_only_page_fault sd_invalid_pte_fault sd_positive_offset sd_rs1_zero \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
