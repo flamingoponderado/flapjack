@@ -1,0 +1,2 @@
+good_code_def_statement=∀sp code. good_code sp code ⇔ ALL_DISTINCT (MAP FST code) ∧ EVERY (λ(k,prog). stack_num_stubs ≤ k ∧ alloc_arg prog) code ∧ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND code) ∧ EVERY (λp. reg_bound p sp) (MAP SND code) ∧ EVERY (λ(n,p). EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0 ∧ l2 ≠ 1) (extract_labels p) ∧ ALL_DISTINCT (extract_labels p)) code
+contain_def_statement=∀b. contain b ⇔ Abbrev b
