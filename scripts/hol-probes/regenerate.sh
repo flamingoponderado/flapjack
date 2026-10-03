@@ -6859,3 +6859,8 @@ run_probe lab_to_target_list_subset_probeScript.sml lab_to_target_list_subset_pr
   list_subset_trans list_subset_trans_types list_subset_trans_hypotheses list_subset_trans_proved \
   list_subset_refl list_subset_refl_types list_subset_refl_hypotheses list_subset_refl_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_filter_clock_ih_probeScript.sml lab_filter_clock_ih_probe.out \
+  evaluate_ind evaluate_ind_types evaluate_ind_hypotheses evaluate_ind_proved \
+  filter_correct filter_correct_types filter_correct_hypotheses filter_correct_proved \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/proofs"

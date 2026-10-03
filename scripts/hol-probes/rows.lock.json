@@ -1976,6 +1976,12 @@
       "sha256": "e31c9294f0730336f1427bea37142eddc3d953a75c2beaca41d9749b2bfc71d0"
     },
     {
+      "bytes": 10197,
+      "out": "lab_filter_clock_ih_probe.out",
+      "rows": 8,
+      "sha256": "f0f71d3e0dd3200802dbeb475f2284373e273f7f75460d6546df7ffaac4ef569"
+    },
+    {
       "bytes": 742,
       "out": "lab_filter_full_simulation_probe.out",
       "rows": 4,

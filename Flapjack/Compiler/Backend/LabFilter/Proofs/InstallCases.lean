@@ -46,7 +46,8 @@ private theorem relatedInstallReturn {width : Nat} [NeZero width] {C : Type} {F 
 
 /-- Full original Install evaluator constructor. Compiler/oracle, buffer,
 locator, nonempty-program and byte/config guards remain actual source choices;
-the only IH simulates the literal successful installed source successor. -/
+the only IH simulates the literal successful installed source successor.
+The IH includes the original evaluator's nonzero source-clock path guard. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
   (words_as_type_indexed_bitvec)]
 theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -56,7 +57,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
     (heval : evaluate s1 = (res, s2)) (hrel : stateRel s1 t1)
     (hfailed : t1.failed = false)
     (hfetch : asmFetch s1 = some (.labAsm .install position encoded len))
-    (ih : ∀ (program : LabProgHOL width) (installedSection pc : Nat) (buffer : WordSemBuffer width 8),
+    (ih : s1.clock ≠ 0 → ∀ (program : LabProgHOL width) (installedSection pc : Nat) (buffer : WordSemBuffer width 8),
       (∃ (start finish : BitVec width) (sectionId labelId : Nat) (bytes compiledBytes : List (BitVec 8))
           (configuration nextConfiguration : C),
         s1.regs s1.ptrReg = .word start ∧ s1.regs s1.lenReg = .word finish ∧
@@ -221,7 +222,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
                       · simp only [hs, ho]
                       · exact ⟨lines.filter notSkip, filterSkip rest, rfl⟩
                       · simpa only [hs, holShiftSeq] using hv.2
-                    obtain ⟨extra, t2, hrun, hffi⟩ := ih (filterSkip (⟨installedSection, lines⟩ :: rest)) installedSection pc buffer
+                    obtain ⟨extra, t2, hrun, hffi⟩ := ih hc (filterSkip (⟨installedSection, lines⟩ :: rest)) installedSection pc buffer
                       hpath _ res s2 he hn hn.2
                     have hskipRun := allSkipsEvaluate count {t1 with clock := t1.clock + extra} ⟨hskips, hfailed⟩ 0
                     refine ⟨extra + count, t2, ?_, hffi⟩
