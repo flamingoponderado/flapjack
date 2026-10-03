@@ -4,7 +4,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.LocalsRel
 /-!
 # `word_instProof`: correctness of instruction selection
 
-Counterpart of `cakeml/compiler/backend/proofs/word_instProofScript.sml:426-749`:
+Counterpart of `cakeml/compiler/backend/proofs/word_instProofScript.sml:426-1131`:
 `inst_select_exp_thm`, `locals_rm` and `inst_select_thm`, over the exact wordSem
 evaluator and the tagged `inst_select_exp`/`inst_select` definitions.
 -/

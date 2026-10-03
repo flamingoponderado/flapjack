@@ -1,3 +1,5 @@
+`bvl_to_bvi_default_probe.out` captures the complete original ten-field default initializer, both BVL stub/namespace definitions, the zero-hypothesis namespace-alignment theorem, full default type and original evaluated counts/counters. The native default uses the checked shared data-stub chain and distinct literal BVL/BVI inline trees. This support group does not establish whole compiler correctness or production routing of the backend configuration.
+
 `stack_rawcall_if_case_probe.out` captures complete generic comp_correct, zero open assumptions and its genuine If specialization. The capture also extracts the original evaluate_ind If obligation. Native recursive case uses the two subprogram comp-component induction hypotheses at the fixed source, guarded by successful operand reads and selected comparison; actual guard transport derives branch selection/target evaluation and full paired existential conclusions. Full theorem assembly and runtime correctness remain open.
 
 `stack_rawcall_basic_cases_probe.out` captures the full original comp_correct theorem, zero open assumptions and all six Skip/Halt/Get/Set/OpCurrHeap/Tick specialized paired conclusions. Native positive-width kernel cases keep every source premise and derive complete target execution/postrelation, including Tick timeout. This is a six-case slice; recursive/pass/production correctness remains open.
@@ -7745,7 +7747,16 @@ and every existential context/state conjunct over all five source constructors,
 without public induction or target/post-state premises. Executed production
 routing remains separately tracked.
 
-### Native Const instruction decoder evidence
+`pan_props_semantics_wrapper_probe` captures the full generic PanProps wrapper
+equation, quantified function type and closed kernel truth. Lean retains the
+original distinct result datatype, arbitrary clock-indexed function,
+error/complete/incomplete observations, SOME-choice and chain-free generic LUB
+formula. No supplied LUB or chain premise is required. Standard choice
+translation leaves independently unspecified selections outside the
+cross-language agreement claim. Wrapper equality and PanSem correspondence
+remain separately tracked proof obligations.
+
+## Native Const instruction decoder evidence
 
 `riscv_const_decode_probeScript.sml` regenerates twenty original HOL boundary EVALs for ORI/XORI/SLLI/OR/XOR. Every register5 and immediate12/shamt6/rs2 field is unrestricted in the five symbolic Lean composition proofs; the finite original probes supplement their kernel checking and literal source comparison. All twenty original rows are `T`, with all sentinel names checked by `check-riscv-const-decode.py`. The full original Const constructor remains a separate open dependency bead.
 
