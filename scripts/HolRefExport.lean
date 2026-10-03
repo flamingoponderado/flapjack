@@ -171,8 +171,6 @@ import Flapjack.Compiler.Backend.WordAlloc.LimitVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
-
-
 import Flapjack
 import Flapjack.Compiler.Backend.WordAlloc.Instructions
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
@@ -193,6 +191,8 @@ import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanSem.Primop
 import Flapjack.Pancake.Semantics.PanSemStateEval
 import Flapjack.Pancake.WordLang
+
+
 
 
 
