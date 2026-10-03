@@ -1,11 +1,161 @@
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnHandler
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallTail
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnStackMoveClock
 
 namespace Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
+open Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.WordToStack.Native
 open CallReturnHandler
+
+/-- Handler-case source guard elimination from the actual non-error source run.
+The guards precede handler selection in the original evaluator. This is
+Flapjack infrastructure, with no separate HOL declaration or target-run premise. -/
+theorem sourceGuardsOfNotErrorWithHandler {width : Nat} [NeZero width] {C F : Type}
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
+    (result : Option (WordSemResult width))
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args handler) source =
+      (result, sourcePost)) (notError : result ≠ some .error) :
+    ∃ xs args1 prog ss envs,
+      CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs := by
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  rcases hget : WordSemStateFiniteExact.getVars args source with _ | xs
+  · simp only [hget, Prod.mk.injEq] at execution
+    exact absurd execution.1.symm notError
+  simp only [hget] at execution
+  by_cases hbad : wordSemBadDestArgs dest args = true
+  · simp only [hbad, if_true, Prod.mk.injEq] at execution
+    exact absurd execution.1.symm notError
+  simp only [hbad, Bool.false_eq_true, if_false] at execution
+  rcases hfind : wordSemFindCode dest
+      (wordSemAddRetLoc (some (values, names, retCode, l1, l2)) xs)
+      source.code source.stackSize with _ | ⟨args1, prog, ss⟩
+  · simp only [hfind, Prod.mk.injEq] at execution
+    exact absurd execution.1.symm notError
+  simp only [hfind] at execution
+  by_cases invalid : sptDomainEmpty names.1 ∨ ¬ values.Nodup
+  · simp only [invalid, if_true, Prod.mk.injEq] at execution
+    exact absurd execution.1.symm notError
+  simp only [invalid, if_false] at execution
+  rcases hcut : wordSemCutEnvs names source.locals with _ | envs
+  · simp only [hcut, Prod.mk.injEq] at execution
+    exact absurd execution.1.symm notError
+  exact ⟨xs, args1, prog, ss, envs, hget, hbad, hfind, invalid, hcut⟩
+
+/-- Removing the exception continuation preserves all returning-call
+conventions. This is Flapjack factoring of the original setup checks, not a
+new HOL theorem or a strengthened simulation premise. -/
+theorem conventionsWithoutHandler {width : Nat} [NeZero width]
+    (k : Nat) (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args handler) = true) :
+    postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true := by
+  cases handler with
+  | none => exact conventions
+  | some handler =>
+    rcases handler with ⟨handlerVar, body, h1, h2⟩
+    simp only [postAllocConventionsHOL, everyVarHOL, everyStackVarHOL,
+      callArgConventionHOL, Bool.and_eq_true, Bool.and_true] at conventions ⊢
+    aesop (config := { enableSimp := false })
+
+/-- The original handler call conventions force the exception handlerVar to
+register two and establish the handler body's conventions. This support has
+no separate HOL original and does not assume a restored target relation. -/
+theorem handlerConventions {width : Nat} [NeZero width]
+    (k : Nat) (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width))
+    (l1 l2 h1 h2 handlerVar : Nat) (dest : Option Nat) (args : List Nat)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args
+        (some (handlerVar, handlerCode, h1, h2))) = true) :
+    handlerVar = 2 ∧ postAllocConventionsHOL k handlerCode = true := by
+  simp only [postAllocConventionsHOL, everyVarHOL, everyStackVarHOL,
+    callArgConventionHOL, Bool.and_eq_true, beq_iff_eq] at conventions
+  simp only [postAllocConventionsHOL, Bool.and_eq_true]
+  aesop (config := { enableSimp := false })
+
+/-- The caller maximum remains valid when the handler continuation is
+removed for the shared setup lemmas. This follows the literal max_var call
+clause and has no separate HOL original. -/
+theorem maximumWithoutHandler {width : Nat} [NeZero width]
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)) :
+    maxVarHOL (.call (some (values, names, retCode, l1, l2)) dest args none) ≤
+      maxVarHOL (.call (some (values, names, retCode, l1, l2)) dest args handler) := by
+  cases handler with
+  | none => exact Nat.le_refl _
+  | some handler =>
+    rcases handler with ⟨handlerVar, body, h1, h2⟩
+    simp only [maxVarHOL, Flapjack.WordAlloc.max3Eq]
+    omega
+
+/-- Actual destination and saved-frame prelude for a returning handler call,
+using the original handler-call conventions and maximum. The shared setup
+executes before PushHandler; its temporary no-handler source frame is the
+actual evaluate_wLive relation. This is Flapjack case infrastructure, not
+an assembled comp_correct theorem or a supplied target run. -/
+theorem evaluateHandlerPrelude {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (bs savedBitmaps finalBitmaps : AppList (BitVec width))
+    (n savedIndex finalIndex : Nat) (destinationCode savedCode returnCode : HolProg width)
+    (destination : Sum Nat Nat)
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source
+      xs args1 prog ss envs)
+    (related : stateRel ac k f frame source target lens 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args handler) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args handler) < 2 * frame + 2 * k)
+    (destinationCompile : callDestNative dest args (k, f, frame) = (destinationCode, destination))
+    (savedCompile : wLiveNative names (bs, n) (k, f, frame) =
+      (savedCode, (savedBitmaps, savedIndex)))
+    (returnCompile : compNative ac false retCode (savedBitmaps, savedIndex) (k, f, frame) =
+      (returnCode, (finalBitmaps, finalIndex)))
+    (lengthBound : (appListAppend bs).length ≤ n)
+    (bitmapBound : n - (appListAppend bs).length ≤ target.bitmaps.length)
+    (bitmapPrefix : (appListAppend finalBitmaps).IsPrefix
+      (target.bitmaps.drop (n - (appListAppend bs).length))) :
+    ∃ savedTarget : StackSemStateFiniteExact width C F,
+      (∀ extra : Nat,
+        StackSemEvaluate.evaluate (.seq destinationCode savedCode,
+          {target with clock := target.clock + extra}) =
+          (none, {savedTarget with clock := savedTarget.clock + extra})) ∧
+      stateRel ac k 0 0
+        {WordSemStateFiniteExact.pushEnv envs none source with
+          locals := .ln, localsSize := some 0}
+        savedTarget (frame :: lens) 0 ∧
+      stateRel ac k f frame source savedTarget lens 0 ∧
+      savedTarget.stack.length = target.stack.length ∧
+      savedTarget.stackSpace = target.stackSpace := by
+  have plainConventions := conventionsWithoutHandler k values names retCode l1 l2
+    dest args handler conventions
+  have plainMaximum := lt_of_le_of_lt
+    (maximumWithoutHandler values names retCode l1 l2 dest args handler) maximum
+  exact CallReturning.evaluatePrelude ac k f frame values names retCode l1 l2 dest args
+    source target lens xs args1 prog ss envs bs savedBitmaps finalBitmaps n savedIndex
+    finalIndex destinationCode savedCode returnCode destination guards related
+    plainConventions plainMaximum destinationCompile savedCompile returnCompile
+    lengthBound bitmapBound bitmapPrefix
 
 /-- Actual native restoration state after reading the saved handler slot,
 setting the handler store and freeing precisely the three header words.
