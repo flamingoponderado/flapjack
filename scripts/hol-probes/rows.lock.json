@@ -8042,6 +8042,12 @@
       "sha256": "e7b441b17671ce6b63eb6c478b30cf7d56a149d8bb6e09818a40d615487ff738"
     },
     {
+      "bytes": 1731,
+      "out": "stack_to_lab_encoding_init_state_probe.out",
+      "rows": 6,
+      "sha256": "e4b8ce2bf1be55a600c2bfa0d75f9ea41e47540bf1f084c4b6225980b6a1c81a"
+    },
+    {
       "bytes": 718,
       "out": "stack_to_lab_executed_codec_probe.out",
       "rows": 9,
@@ -9342,6 +9348,12 @@
       "out": "word_cse_wf_data_preservation_probe.out",
       "rows": 27,
       "sha256": "0a43512ef74c87542e249fe0ec2a7a001a11efd7ad57b13ea3183e21a2eb2682"
+    },
+    {
+      "bytes": 15975,
+      "out": "word_gc_functions_has_fp_ops_probe.out",
+      "rows": 63,
+      "sha256": "e220eb6ced34b0339d264b959455db5c2eafda675e0be2533f216bd2481af2a0"
     },
     {
       "bytes": 1029,
