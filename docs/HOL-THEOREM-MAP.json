@@ -80143,5 +80143,25 @@
     "hol_name": "implements_intro_gen",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison original10620-10625: full Boolean b, canonical HolBehaviour x and predicate behavior-set y; both implications and precise true flag retained. HOL Boolean truth guard translates to b=true. No extra outer non-Fail premise: non-Fail is derived from the original implements guard. Singleton membership is equality. Fresh original full statement/types/hyp0/kernel ACCEPT_TAC replay in lab_to_target_implements_intro_probe.out. No word or representation qualifier needed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SemanticsCompile.lean",
+    "lean_name": "semanticsCompileLemmaPrime",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "semantics_compile_lemma'",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison original11012-11171: full original prime sixteen guards and machine_sem equality, and derived nonprime fifteen guards/implements-prime T conclusion. Original independent alpha word, beta machine state, gamma projection, delta empty-label value and epsilon FFI types preserved as positive width and S/Q/G/F; generic LN remains Spt(Spt G). Native exact config, code/compile, all oracle/non-sharing, initial-state, MMIO entry/exit/address tuples, boundary, strict whole-buffer bound and provided ExtCall classification retained verbatim. No target execution/result or simulation premise. Actual compile success is decomposed through both FFI choices, removeLabels and shared-info recursion; accepted filtering/initializer proof supplies semantics equality. Last buffer guard derived via bounded native list-search entries and modular arithmetic, no total EL/LEAST adoption. Final implements lift internally discharges non-Fail; no extra outer premise. words_as_type_indexed_bitvec records only standard positive word/Type0 host translation. Imported semantic real operations inherit reals_as_rational_cuts assumption, SOUNDNESS section8 rational-cut assurance; no full real closure or cross-language equivalence claim. Fresh mechanically extracted verbatim original prime proof and original nonprime REWRITE_RULE/MATCH_MP chain kernel replay/fulltypes/hyp0 in lab_to_target_semantics_compile_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SemanticsCompile.lean",
+    "lean_name": "semanticsCompileLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "semantics_compile_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison original11012-11171: full original prime sixteen guards and machine_sem equality, and derived nonprime fifteen guards/implements-prime T conclusion. Original independent alpha word, beta machine state, gamma projection, delta empty-label value and epsilon FFI types preserved as positive width and S/Q/G/F; generic LN remains Spt(Spt G). Native exact config, code/compile, all oracle/non-sharing, initial-state, MMIO entry/exit/address tuples, boundary, strict whole-buffer bound and provided ExtCall classification retained verbatim. No target execution/result or simulation premise. Actual compile success is decomposed through both FFI choices, removeLabels and shared-info recursion; accepted filtering/initializer proof supplies semantics equality. Last buffer guard derived via bounded native list-search entries and modular arithmetic, no total EL/LEAST adoption. Final implements lift internally discharges non-Fail; no extra outer premise. words_as_type_indexed_bitvec records only standard positive word/Type0 host translation. Imported semantic real operations inherit reals_as_rational_cuts assumption, SOUNDNESS section8 rational-cut assurance; no full real closure or cross-language equivalence claim. Fresh mechanically extracted verbatim original prime proof and original nonprime REWRITE_RULE/MATCH_MP chain kernel replay/fulltypes/hyp0 in lab_to_target_semantics_compile_probe.out."
   }
 ]

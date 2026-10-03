@@ -6879,3 +6879,7 @@ run_probe lab_to_target_filter_safety_probeScript.sml lab_to_target_filter_safet
 run_probe lab_to_target_implements_intro_probeScript.sml lab_to_target_implements_intro_probe.out \
   implements_intro_gen implements_intro_gen_types implements_intro_gen_hypotheses implements_intro_gen_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_semantics_compile_probeScript.sml lab_to_target_semantics_compile_probe.out \
+  semantics_compile_lemma_prime semantics_compile_lemma_prime_types semantics_compile_lemma_prime_hypotheses semantics_compile_lemma_prime_proved semantics_compile_lemma semantics_compile_lemma_types semantics_compile_lemma_hypotheses semantics_compile_lemma_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
