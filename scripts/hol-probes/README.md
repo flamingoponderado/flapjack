@@ -7533,3 +7533,14 @@ stack use and out-of-range failures. The whole evaluation pair is retained;
 the kernel theorem has zero open hypotheses and its EQT_INTRO result is T.
 This is original-source evidence, not cross-assistant equivalence or full
 compiler correctness.
+
+## Universal native encoding contract
+
+`riscv_target_length_probeScript.sml` replays all three literal original
+proofs: native instruction length four, nonempty native instruction encoding,
+and nonempty multiple-of-four output for every ASM instruction. Twelve rows
+retain complete statements, instruction/ASM binders, zero hypotheses and
+kernel proof truth. The final source Q.prove and SIMP_RULE are unchanged.
+Lean proves full native AST nonemptiness structurally, including original
+fail encodings; no asm_ok or accepted-opcode premise is introduced.
+This is regression evidence, not whole target/encoder correctness.

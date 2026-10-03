@@ -7030,3 +7030,7 @@ run_probe stack_remove_init_ffi_probeScript.sml stack_remove_init_ffi_probe.out 
 run_probe word_to_stack_load_clock_probeScript.sml word_to_stack_load_clock_probe.out \
   load_clock_statement load_clock_proved load_clock_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_length_probeScript.sml riscv_target_length_probe.out \
+  length_riscv_encode_statement length_riscv_encode_types length_riscv_encode_hypotheses length_riscv_encode_proved riscv_encode_not_nil_statement riscv_encode_not_nil_types riscv_encode_not_nil_hypotheses riscv_encode_not_nil_proved riscv_encoding_statement riscv_encoding_types riscv_encoding_hypotheses riscv_encoding_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
