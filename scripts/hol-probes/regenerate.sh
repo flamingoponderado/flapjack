@@ -6020,3 +6020,8 @@ run_probe misc_find_index_successful_mem_probeScript.sml misc_find_index_success
   find_index_is_MEM find_index_is_MEM_types find_index_is_MEM_hypotheses \
   first last offset duplicate large strings words missing_guard empty_guard \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_mmio_classification_probeScript.sml lab_to_target_mmio_classification_probe.out \
+  mmio_pcs_min_index_is_SOME mmio_pcs_min_index_is_SOME_types mmio_pcs_min_index_is_SOME_hypotheses \
+  empty external read write mixed duplicate four_external length_guard prefix_guard \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

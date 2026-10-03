@@ -1982,6 +1982,12 @@
       "sha256": "3d1d29d006980b3ffb68ba73105bac352f29987d0fb7f240f73d633d801dc7eb"
     },
     {
+      "bytes": 554,
+      "out": "lab_to_target_mmio_classification_probe.out",
+      "rows": 12,
+      "sha256": "2edef4a2481bdd7d74374ae7b3db5327916a54772ed44939df263bbea01fd159"
+    },
+    {
       "bytes": 1409,
       "out": "lab_to_target_mmio_shmem_probe.out",
       "rows": 13,

@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetMmioClassificationParity
 import Flapjack.Test.MiscFindIndexSuccessfulMemParity
 import Flapjack.Test.MiscFindIndexMemParity
 import Flapjack.Test.MiscBytesInMemImpParity

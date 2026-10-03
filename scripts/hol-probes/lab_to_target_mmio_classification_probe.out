@@ -1,0 +1,18 @@
+mmio_pcs_min_index_is_SOME=∀(ffi_names :ffiname list).
+  mmio_pcs_min_index ffi_names = SOME (i :num) ⇒
+  i ≤ LENGTH ffi_names ∧
+  (∀(j :num). j < i ⇒ ∃(s :mlstring). ffi_names❲j❳ = ExtCall s) ∧
+  ∀(j :num).
+    i ≤ j ∧ j < LENGTH ffi_names ⇒
+    ∃(op :shmem_op). ffi_names❲j❳ = SharedMem op
+mmio_pcs_min_index_is_SOME_types=(ffi_names :ffiname list)::ffiname list;(i :num)::num;
+mmio_pcs_min_index_is_SOME_hypotheses=0
+empty=T
+external=T
+read=T
+write=T
+mixed=T
+duplicate=T
+four_external=T
+length_guard=T
+prefix_guard=T
