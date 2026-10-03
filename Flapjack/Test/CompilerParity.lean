@@ -4,6 +4,7 @@ import Flapjack.Test.L3MachineCSRCodecParity
 import Flapjack.Test.L3CSRAccessParity
 import Flapjack.Test.StackRawCallStackAccessParity
 import Flapjack.Test.StackRawCallMemoryFfiParity
+import Flapjack.Test.StackRawCallAllocationStoreParity
 import Flapjack.Test.StackRawCallCaseParity
 import Flapjack.Test.StackEvaluateMonoParity
 import Flapjack.Test.StackEvaluateClockNeutralParity

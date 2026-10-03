@@ -70025,5 +70025,35 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 original541-560/full135-149 Ffi: original actual source evaluation/nonError/stateRel three premises and full paired compTop/comp existential added-clock/target/poststackspace guard. Actual unconditional native code-update transport derives target run and postrelation. Eight native memory operations retain word expression/address arithmetic, zero-clock emptyEnv timeout, decremented clock, mapped FFI final/return events, byte/16/32/full-width operations, invalid access and operand errors. Buffer clauses retain original read order, byte truncation, useStack and miss errors. FFI uses native MlString, exact byte reads/writeback, final unchanged state, return register restriction/fp clearing/new FFI. No target run/postrelation/extra successful-pass premise. Canonical owning finite maps with local real roundtrip, exact Spt/List carriers, arbitrary positive words and Type0 hosts. Inherits reals_as_rational_cuts SOUNDNESS8; no local numerical real operation or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/AllocationStore.lean",
+    "lean_name": "compCorrectAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original153-163/full135-149 Alloc: full paired compTop/comp simulations, original actual source evaluation/nonError/stateRel three premises, original existential added clock/target/poststackspace guard. Actual gc/alloc code transport preserves input stack bounds, encoding, original four GC inputs, decoding failure, post-GC lookup/space errors, Halt Word1 and emptyEnv. Native storeConstSem transport retains register uniqueness/reads/copy failure, memory update and unset register0. StoreConsts nonError source execution derives useStore/useAlloc/optional stub guards; actual target stub lookup follows stateRel per-entry compTop compilation of Seq(StoreConsts NONE)(Return0). No arbitrary-code guard invariance, supplied target execution/postrelation or extra success hypothesis. Canonical owning regs/fpRegs/store with local real roundtrip; exact List/Spt carriers; arbitrary positive words and Type0 configuration/FFI. Inherits reals_as_rational_cuts SOUNDNESS8; no local numerical real operation, new assumption, default/individual HOLD change or equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/AllocationStore.lean",
+    "lean_name": "compCorrectStoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original153-163/full135-149 StoreConsts: full paired compTop/comp simulations, original actual source evaluation/nonError/stateRel three premises, original existential added clock/target/poststackspace guard. Actual gc/alloc code transport preserves input stack bounds, encoding, original four GC inputs, decoding failure, post-GC lookup/space errors, Halt Word1 and emptyEnv. Native storeConstSem transport retains register uniqueness/reads/copy failure, memory update and unset register0. StoreConsts nonError source execution derives useStore/useAlloc/optional stub guards; actual target stub lookup follows stateRel per-entry compTop compilation of Seq(StoreConsts NONE)(Return0). No arbitrary-code guard invariance, supplied target execution/postrelation or extra success hypothesis. Canonical owning regs/fpRegs/store with local real roundtrip; exact List/Spt carriers; arbitrary positive words and Type0 configuration/FFI. Inherits reals_as_rational_cuts SOUNDNESS8; no local numerical real operation, new assumption, default/individual HOLD change or equivalence claim."
   }
 ]
