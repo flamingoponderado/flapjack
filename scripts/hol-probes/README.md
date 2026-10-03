@@ -6995,3 +6995,23 @@ inherit the documented SOUNDNESS item 8 real-rendering assumption.
 
 Regenerate with `HOL_PROBE_ONLY=l3_run_dispatch_probeScript.sml` through
 `regenerate.sh`, then run the strict checker.
+
+## Complete native Decode and DecodeRVC
+
+`l3_decode_probeScript.sml` registers the complete original decoder equations,
+evaluates inputs chosen from every feasible original guard leaf, and normalizes
+all word payloads using original `bitstringLib.v2w_n2w_CONV`. The capture stores
+complete original instruction terms, including every register/immediate field.
+`scripts/l3/check-decode-fixtures.py` reconstructs the Boolean literal guard
+paths from the pinned native export, selects varied unguarded payload bits,
+rejects missing/extra rows, changed types/hypotheses, unreduced decoder calls
+and nonnumeric payload helpers, and reproduces the Lean kernel fixtures.
+
+There are 482 word32 observations across all164 feasible leaves and139 word16
+observations across49 feasible leaves. Three compressed paths are unsatisfiable
+in the sampling solver; their original branches remain in the full decoder.
+The solver is a regression-input generator, not a formal unreachable-case
+proof or universal word32 equivalence. Kernel fixture equality includes full
+constructor and numeric payloads. No instruction/mode acceptance assumption
+is added to the definitions. Regenerate with `HOL_PROBE_ONLY=l3_decode_probeScript.sml`
+through `regenerate.sh`, then run `python3 scripts/l3/check-decode-fixtures.py`.

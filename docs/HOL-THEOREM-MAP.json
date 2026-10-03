@@ -75455,5 +75455,21 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c 2026-10-03 complete source comparison riscvScript10755: full exact instruction/riscv_state function; every original nested constructor dispatches its complete unchanged payload to same named dfn handler; FENCE/FENCE_I/WFI identity, UnknownInstruction original handler. Full carrier constructors/payload widths reviewed. Arbitrary payload/state clause checks cover all163 constructors. Calls real-dependent FP handlers, inherits reals_as_rational_cuts external SOUNDNESS item 8 assumption through those handlers; no extra premise on Run, no direct real-rendering call. Source dependency group review remains separately tracked."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Decode.lean",
+    "lean_name": "Decode",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Decode_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c complete source/body comparison2026-10-03 riscvScript12171: whole fixedword32->exact instruction, all nested 163 Boolean source guards and full ISA constructor payloads retained. Source Boolean variables b-prime-i map to b_i via complete boolify32 MSB-to-LSB product; negation/conjunction/nested if order unchanged. Bitstring v2w rendered by reviewed MSB list/testbit helper, concatenation/replication/three immediate codecs preserve original widths and tuple order; no architecture/accepted-opcode premise, reserved and UnknownInstruction branches preserved including redundant compressed paths. Complete original declared type/zero hypotheses and621 full numeric instruction observations across all213 feasible source leaves captured/replayed in Lean kernel; original v2w payloads independently normalized to numerals with bitstringLib.v2w_n2w_CONV. Finite observations and sampling solver are regression evidence, not universal cross-language equivalence or end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Decode.lean",
+    "lean_name": "DecodeRVC",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "DecodeRVC_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c complete source/body comparison2026-10-03 riscvScript20502: whole fixedword16->exact instruction, all nested 51 Boolean source guards and full ISA constructor payloads retained. Source Boolean variables b-prime-i map to b_i via complete boolify16 MSB-to-LSB product; negation/conjunction/nested if order unchanged. Bitstring v2w rendered by reviewed MSB list/testbit helper, concatenation/replication/three immediate codecs preserve original widths and tuple order; no architecture/accepted-opcode premise, reserved and UnknownInstruction branches preserved including redundant compressed paths. Complete original declared type/zero hypotheses and621 full numeric instruction observations across all213 feasible source leaves captured/replayed in Lean kernel; original v2w payloads independently normalized to numerals with bitstringLib.v2w_n2w_CONV. Finite observations and sampling solver are regression evidence, not universal cross-language equivalence or end-to-end correctness."
   }
 ]
