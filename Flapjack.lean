@@ -818,6 +818,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionUnreachMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorCleanupMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeAllocatorCaller
 import Flapjack.Pancake.LoopToWord.ProductionAllocatorMemoryImage
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeColouringOk
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeColouringContract
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeFormals
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeSpillState
