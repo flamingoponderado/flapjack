@@ -1,3 +1,4 @@
+import Flapjack.Misc.BytesInMemory.Domain
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.FFI
 import Flapjack.Compiler.Backend.LabToTarget.ShmemOffset
 import Flapjack.RiscV.L3.Defs.AMOSwap

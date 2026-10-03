@@ -386,6 +386,12 @@
       "sha256": "aef4113ab38533177acbfc7924d7bcb3aaea556c90a5c8497e5f662f7fe1d037"
     },
     {
+      "bytes": 518,
+      "out": "bytes_in_memory_domain_probe.out",
+      "rows": 18,
+      "sha256": "2ddc222c6e810780abcb0e21828411578df91db896bf2824dc39fb499a289c17"
+    },
+    {
       "bytes": 307,
       "out": "cake_ssa_temp_probe.out",
       "rows": 6,

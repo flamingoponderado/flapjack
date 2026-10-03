@@ -6353,3 +6353,12 @@ do not claim full Run/Next or compiler correctness.
 
 
 `stack_code_bitmaps_loop_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Loop specialization. Native source-path body/reentry IHs derive strict clamped-clock descent; timeout emptyEnv and exit preserve fields, reentry composes all original prefixes. Whole evaluator assembly remains open.
+
+`bytes_in_memory_domain_probeScript.sml` replays the full original
+`bytes_in_memory_in_domain` proof (miscScript.sml:4238–4248), including its
+arbitrary address width, fixed word8 memory and bytes, and sole predicate/index
+premises. Two rows record the complete statement and successful original proof;
+16 independent observations cover widths 1/8/64/80, wrapped addresses, an empty
+list, a domain hole, a wrong byte and a past-end index. The Lean parity module
+checks all observations and twelve applications of the full theorem. These
+fixtures provide regression evidence, not a cross-language equivalence proof.

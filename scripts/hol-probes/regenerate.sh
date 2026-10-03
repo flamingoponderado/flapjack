@@ -5736,6 +5736,12 @@ run_probe stack_remove_comp_ffi_probeScript.sml stack_remove_comp_ffi_probe.out 
   cc_ffi_statement cc_ffi_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe bytes_in_memory_domain_probeScript.sml bytes_in_memory_domain_probe.out \
+  domain_full_statement domain_full_proved domain_w1_k0 domain_w1_k1 domain_w1_k2 \
+  domain_w8_k0 domain_w8_k1 domain_w8_k2 domain_w64_k0 domain_w64_k1 domain_w64_k2 \
+  domain_w80_k0 domain_w80_k1 domain_w80_k2 domain_empty domain_hole domain_wrong_byte domain_past_end \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
+
 run_probe word_to_stack_top_label_safety_probeScript.sml word_to_stack_top_label_safety_probe.out \
   top_full_word_to_stack_good_code_labels top_full_word_to_stack_good_handler_labels top_empty top_self top_missing top_external top_duplicates top_owned top_wrong_owner top_tail_missing top_threaded top_width_one top_raise_owned top_store_owned \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

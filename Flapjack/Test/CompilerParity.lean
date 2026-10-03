@@ -1,3 +1,4 @@
+import Flapjack.Test.BytesInMemoryDomainParity
 import Flapjack.Test.L3AMOSwapParity
 import Flapjack.Test.L3IntegerStoreParity
 import Flapjack.Test.L3SCDParity
@@ -2052,6 +2053,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.AsmSemFpUpdatesParity.runChecks,
     Flapjack.Test.AsmSemArithmeticParity.runChecks,
     Flapjack.Test.BytesInMemParity.runChecks,
+    Flapjack.Test.BytesInMemoryDomainParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
     ].mapM id
   unless results.all id do
