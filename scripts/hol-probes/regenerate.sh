@@ -6590,3 +6590,10 @@ run_probe word_to_stack_call_return_handler_probeScript.sml word_to_stack_call_r
 run_probe labprops_evaluate_ADD_clock_probeScript.sml labprops_evaluate_ADD_clock_probe.out \
   evaluate_ADD_clock evaluate_ADD_clock_types evaluate_ADD_clock_hypotheses evaluate_ADD_clock_proved \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe pan_structs_convert_eshapes_probeScript.sml pan_structs_convert_eshapes_probe.out \
+  convert_eshapes_definition convert_eshapes_type convert_eshapes_hypotheses convert_eshapes_lookup_statement convert_eshapes_lookup_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_shape_field_polymorphism_probeScript.sml pan_structs_shape_field_polymorphism_probe.out \
+  compile_shape_definition compile_shape_type compile_shapes_type compile_shape_hypotheses compile_shapes_eq_map_statement compile_shapes_eq_map_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

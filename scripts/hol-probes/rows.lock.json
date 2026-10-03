@@ -4538,6 +4538,12 @@
       "sha256": "62581396cd4a28f9d7de1d3e16d7c896726625b65ffba0bf09c12210f2dc7a7e"
     },
     {
+      "bytes": 425,
+      "out": "pan_structs_convert_eshapes_probe.out",
+      "rows": 5,
+      "sha256": "bf1c79db1ba7aa6b4f53586b2ac6392667a2ae02c0b6996a693fe3e98a76974d"
+    },
+    {
       "bytes": 191,
       "out": "pan_structs_decs_stcnames_compile_decs_probe.out",
       "rows": 3,
@@ -4572,6 +4578,12 @@
       "out": "pan_structs_shape_context_drop_probe.out",
       "rows": 3,
       "sha256": "f690dcb7814ac9d94fdf393e624941da70fdc7f461357cbd256f07df46d8e935"
+    },
+    {
+      "bytes": 804,
+      "out": "pan_structs_shape_field_polymorphism_probe.out",
+      "rows": 6,
+      "sha256": "2782ae36f09b979fc5320793779fd1c17533e82a2db5a4a2dfd89a6fd1fa82d5"
     },
     {
       "bytes": 411,
