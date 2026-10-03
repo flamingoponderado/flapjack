@@ -75727,5 +75727,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:10470-10481: original loopSetup producer equation, ssa_map_ok and allocation-class premises imply output class, output map invariant and source counter bound. Literal two rename stages and original list_next_var_rename_props/list_next_var_rename_move_props discharge all conclusions; no extra freshness or target invariant premise. words_as_type_indexed_bitvec records only positive HOL word dimension. Original List/Spt/WordLang carriers retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "everyName_def2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "every_name_def2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source review word_allocProofScript.sml:10413-10418: arbitrary Boolean predicate and native cutset pair; exact equality every_name with EVERY P over MAP FST toAList of union. Literal unrestricted Spt domains, native List and Boolean reflection, no extra hypothesis or representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "union_applyNummapsKey",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "union_apply_nummaps_key",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source review word_allocProofScript.sml:10420-10432: arbitrary renaming and pair of unrestricted same-payload native Spt maps; exact domain equality between union of both renamed components and renaming of their union. Full arbitrary key collisions retained, no injectivity or tree validity premise; derived from original apply_nummap_key_domain and domain_union."
   }
 ]

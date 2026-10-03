@@ -2,6 +2,8 @@ import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
 import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
+import Flapjack.Misc.Sptree.ToAList
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.Pancake.WordConvs
 
 /-! Original SSA reconciliation convention group from word_allocProof. -/
@@ -147,5 +149,38 @@ theorem loopSetup_propsLocal {width : Nat} [NeZero width]
   simp only [Prod.mk.injEq] at setup
   rcases setup with ⟨_, rfl, rfl⟩
   exact ⟨second.2.1 (first.2.1 allocated), second.2.2.2, Nat.le_trans first.1 second.1⟩
+
+/-- Original Boolean cutset predicate equals the predicate over union keys.
+The native Spt union and list key enumeration retain the HOL carriers. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "every_name_def2"]
+theorem everyName_def2 (P : Nat → Bool) (t : WordLangCutsetsHOL) :
+    everyNameHOL P t = ((sptToAList (sptUnion t.1 t.2)).map Prod.fst).all P := by
+  apply Bool.eq_iff_iff.mpr
+  simp only [everyNameHOL, Bool.and_eq_true, List.all_eq_true,
+    sptMemMapFstToAList, sptDomain_sptUnion]
+  constructor
+  · rintro ⟨left, right⟩ key (member | member)
+    · exact left key member
+    · exact right key member
+  · intro all
+    exact ⟨fun key member => all key (Or.inl member),
+      fun key member => all key (Or.inr member)⟩
+
+/-- Original union domain transport for arbitrary key renaming, including
+collisions. Both component maps retain the same unrestricted HOL payload. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "union_apply_nummaps_key"]
+theorem union_applyNummapsKey {α : Type} (f : Nat → Nat) (p : Spt α × Spt α) :
+    sptDomain (sptUnion (applyNummapsKey f p).1 (applyNummapsKey f p).2) =
+      sptDomain (applyNummapKey f (sptUnion p.1 p.2)) := by
+  funext key
+  apply propext
+  simp only [applyNummapsKey, sptDomain_sptUnion, applyNummapKeyDomain]
+  constructor
+  · rintro (⟨source, member, equal⟩ | ⟨source, member, equal⟩)
+    · exact ⟨source, Or.inl member, equal⟩
+    · exact ⟨source, Or.inr member, equal⟩
+  · rintro ⟨source, (member | member), equal⟩
+    · exact Or.inl ⟨source, member, equal⟩
+    · exact Or.inr ⟨source, member, equal⟩
 
 end Flapjack.WordAlloc
