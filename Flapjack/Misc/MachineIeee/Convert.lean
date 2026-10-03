@@ -11,6 +11,12 @@ rational rounding rendering (SOUNDNESS item 8); this does not establish HOL-to-L
 real-number equivalence. The NaN branch retains arbitrary NaN choice, including
 signalling output NaNs, rather than using `float_some_qnan`.
 
+`convert` and the `real_to_fp32/64_with_flags` wrappers take `Rat` here, which
+restricts HOL's arbitrary-real domain, so they are untagged; their tagged
+arbitrary-real ports, and premise-free proofs that the tagged cross-format
+converters below equal the real-carrier `convert`, are in
+`Flapjack.Misc.MachineIeee.ConvertReal`.
+
 Source/carrier review is tracked on bead flapjack-pxn.18.5.13.8.2.7.1.
 Full family acceptance remains open pending the complete gates and coordinator review.
 -/
@@ -30,8 +36,11 @@ def holFloatToFp32 (a : HolFloat 23 8) : BitVec 32 :=
 
 /-- Full `convert_def` branches, with its independently typed input/output
 codecs and supplied finite-real/flags converter. The arbitrary choice is exactly
-`@fp. float_is_nan fp`; imposing a quiet-NaN condition would change the source. -/
-@[hol "HOL/src/floating-point/machine_ieeeScript.sml" "convert_def" (reals_as_rational_cuts) (words_as_type_indexed_bitvec)]
+`@fp. float_is_nan fp`; imposing a quiet-NaN condition would change the source.
+Untagged: the supplied converter takes `Rat` where HOL's takes an arbitrary
+`real`. The tagged arbitrary-real port is `holMachineConvertR`
+(`Flapjack.Misc.MachineIeee.ConvertReal`), with which this agrees whenever
+the converters agree at rationals (`holMachineConvert_eq_holMachineConvertR`). -/
 noncomputable def holMachineConvert {a : Nat} {b : Nat} {c : Nat} {d : Nat} {e : Nat} {f : Nat}
     [NeZero a] [NeZero b] [NeZero c] [NeZero d] [NeZero e] [NeZero f]
     (toFloat : BitVec a → HolFloat b c)
@@ -48,16 +57,19 @@ noncomputable def holMachineConvert {a : Nat} {b : Nat} {c : Nat} {d : Nat} {e :
                  else holFloatMinusInfinity d e))
 
 /-- Fixed binary32 real conversion with the literal mode-dependent zero sign
-and all six original flag fields; no flags are discarded in this helper. -/
-@[hol "HOL/src/floating-point/machine_ieeeScript.sml" "real_to_fp32_with_flags_def" 15 (reals_as_rational_cuts)]
+and all six original flag fields; no flags are discarded in this helper.
+Untagged: HOL `real_to_fp32_with_flags` takes an arbitrary real, this takes
+`Rat`. The tagged port is `holRealToFp32WithFlagsR`, equal to this at every
+rational (`holRealToFp32WithFlagsR_ratCast`). -/
 noncomputable def holRealToFp32WithFlags (mode : HolRounding) (r : Rat) :
     HolFloatFlags × BitVec 32 :=
   let result : HolFloatFlags × HolFloat 23 8 :=
     holFloatRoundWithFlags mode (decide (mode = .roundTowardNegative)) r
   (result.1, holFloatToFp32 result.2)
 
-/-- Fixed binary64 version of the same original generated encoding wrapper. -/
-@[hol "HOL/src/floating-point/machine_ieeeScript.sml" "real_to_fp64_with_flags_def" 16 (reals_as_rational_cuts)]
+/-- Fixed binary64 version of the same original generated encoding wrapper.
+Untagged for the same `Rat`-domain reason; the tagged port is
+`holRealToFp64WithFlagsR` (`holRealToFp64WithFlagsR_ratCast`). -/
 noncomputable def holRealToFp64WithFlags (mode : HolRounding) (r : Rat) :
     HolFloatFlags × BitVec 64 :=
   let result : HolFloatFlags × HolFloat 52 11 :=

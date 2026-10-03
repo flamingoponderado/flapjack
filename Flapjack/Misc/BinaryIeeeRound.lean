@@ -15,8 +15,9 @@ Tagged (source-reviewed against the pinned HOL): the float constants, `flags`,
 `check_for_signalling`.  Deliberately untagged:
 * `is_closest`, `closest_such`, `closest`, `round`, `float_round` and
   `float_round_with_flags` take a HOL `real` argument, rendered here by `Rat`.
-  That restricts HOL's arbitrary-real domain to rationals (the same open gap as
-  `real_to_float`, bead `flapjack-h29l.6.3.1.1`), so they are not exact ports.
+  That restricts HOL's arbitrary-real domain to rationals, so they are not
+  exact ports.  Their tagged arbitrary-real ports over Mathlib `ℝ` are in
+  `Flapjack.Misc.BinaryIeeeSqrt.RealCarrier`.
 * `largest` and `threshold` are word-free reals indexed by two HOL type
   dimensions; no reviewed qualifier covers a two-dimension numeric use.
 * `float_some_qnan`'s NaN choice is outside `reals_as_rational_cuts`.

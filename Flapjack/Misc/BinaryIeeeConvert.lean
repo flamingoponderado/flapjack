@@ -37,9 +37,10 @@ def holFloatToInt {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
 
 /-- HOL `real_to_float_def` (`binary_ieeeScript.sml:539-541`):
     `real_to_float m = float_round m (m = roundTowardNegative)`, restricted to
-    rational inputs.  HOL's `real_to_float` accepts an arbitrary real.  Lean
-    has no general-real version, so this is not an exact port of the full HOL
-    definition; its only use here is `int_to_fp64`, whose argument
+    rational inputs.  HOL's `real_to_float` accepts an arbitrary real; the
+    tagged general-real port is `holRealToFloatR`
+    (`Flapjack.Misc.BinaryIeeeSqrt.RealCarrier`).  This `Rat` restriction is
+    not an exact port; its only use here is `int_to_fp64`, whose argument
     `real_of_int a` is an integer and so lies in the covered domain. -/
 noncomputable def holRealToFloat {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (r : Rat) : HolFloat t w :=
   holFloatRound mode (decide (mode = .roundTowardNegative)) r
