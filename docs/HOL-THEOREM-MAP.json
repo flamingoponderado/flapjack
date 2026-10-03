@@ -87519,5 +87519,282 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5209-5221. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "all_distinct_map_fst_filter",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "ALL_DISTINCT_MAP_FST_FILTER",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL ALL_DISTINCT_MAP_FST_FILTER (word_cseProof:640). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "empty_data_loads_wipe",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "empty_data_loads_wipe",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL empty_data_loads_wipe (word_cseProof:1056). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "lookup_empty_data",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "lookup_empty_data",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL lookup_empty_data (word_cseProof:1062). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "lookup_invalidate_regs_mono",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "lookup_invalidate_regs_mono",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL lookup_invalidate_regs_mono (word_cseProof:1086). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "lookup_invalidate_regs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "lookup_invalidate_regs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL lookup_invalidate_regs (word_cseProof:1096). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_merge_l",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_merge_l",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_merge_l (word_cseProof:649). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_merge_r",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_merge_r",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_merge_r (word_cseProof:708). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_insert_to_canonical",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_to_canonical",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_insert_to_canonical (word_cseProof:829). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_insert_to_latest",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_to_latest",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_insert_to_latest (word_cseProof:879). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_insert_gets",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_gets",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_insert_gets (word_cseProof:922). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_filter_gets",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_filter_gets",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_filter_gets (word_cseProof:980). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_cons_gets",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_cons_gets",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_cons_gets (word_cseProof:996). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_set_store",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_set_store",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_set_store (word_cseProof:1016). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_reinsert_canonical",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_reinsert_canonical",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_reinsert_canonical (word_cseProof:1039). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_register_read",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_register_read",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_register_read (word_cseProof:1068). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_register_reads",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_register_reads",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_register_reads (word_cseProof:1077). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_invalidate_regs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_invalidate_regs",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_invalidate_regs (word_cseProof:1107). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_set_fp_var",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_set_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_set_fp_var (word_cseProof:1117). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "with_locals_insert",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "with_locals_insert",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL with_locals_insert (word_cseProof:1127). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_alist_insert_locals",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_alist_insert_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_alist_insert_locals (word_cseProof:1133). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_set_vars",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_set_vars",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_set_vars (word_cseProof:1145). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "evaluate_Move1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_Move1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL evaluate_Move1 (word_cseProof:1154). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
