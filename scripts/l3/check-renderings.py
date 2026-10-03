@@ -67,7 +67,7 @@ def rendered_for(key, generated):
         return None
     body, nc = entry
     # The combined export disambiguates the two Fetch roots by theory.
-    if name == "Fetch":
+    if thy == "riscv_step" or name == "Fetch":
         body = body.replace(thy + "_Fetch", "Fetch")
     return body, nc
 

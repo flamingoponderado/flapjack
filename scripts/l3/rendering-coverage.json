@@ -294,7 +294,9 @@
     "Flapjack/RiscV/L3/Defs/WordArithmetic.lean:«dfn'SUBW»",
     "Flapjack/RiscV/L3/Defs/WritePC.lean:«write'PC»",
     "Flapjack/RiscV/L3/Step/DecodeAny.lean:DecodeAny",
-    "Flapjack/RiscV/L3/Step/Fetch.lean:Fetch"
+    "Flapjack/RiscV/L3/Step/Fetch.lean:Fetch",
+    "Flapjack/RiscV/L3/Step/Next.lean:NextRISCV",
+    "Flapjack/RiscV/L3/Step/UpdatePC.lean:update_pc"
   ],
   "exceptions": {
     "Flapjack/RiscV/L3/Defs/CSRDispatch.lean:«write'rec'FPCSR»": {
@@ -349,10 +351,12 @@
     "scripts/hol-probes/check-l3-immediate-alu.py",
     "scripts/hol-probes/check-l3-immediate-shift.py",
     "scripts/hol-probes/check-l3-multiply.py",
+    "scripts/hol-probes/check-l3-next-step.py",
     "scripts/hol-probes/check-l3-register-alu.py",
     "scripts/hol-probes/check-l3-register-shift.py",
     "scripts/hol-probes/check-l3-run-dispatch.py",
     "scripts/hol-probes/check-l3-set-less.py",
+    "scripts/hol-probes/check-l3-update-pc.py",
     "scripts/hol-probes/check-l3-upper-jump.py",
     "scripts/hol-probes/check-l3-word-arithmetic.py",
     "scripts/hol-probes/check-l3-write-pc.py"
