@@ -1,0 +1,238 @@
+oracle_tie_shift_gen=∀mc_conf mc2 ms1 s1 ms2 l.
+  oracle_tie mc_conf ms1 s1 ∧
+  (∀k. find_next_interference mc_conf s1.ffi (k + l) ms1 =
+       find_next_interference mc2 s1.ffi k ms2) ∧
+  mc2.target = mc_conf.target ∧
+  mc2.callee_saved_regs = mc_conf.callee_saved_regs ∧
+  mc2.ptr_reg = mc_conf.ptr_reg ⇒
+  oracle_tie mc2 ms2 s1
+oracle_tie_shift_gen_types=∀(mc_conf :(α, β, δ) machine_config) (mc2 :(α, β, δ) machine_config) (ms1 :β)
+    (s1 :(α, γ, 'ffi) labSem$state) (ms2 :β) (l :num).
+  oracle_tie mc_conf ms1 s1 ∧
+  (∀(k :num).
+     find_next_interference mc_conf s1.ffi (k + l) ms1 =
+     find_next_interference mc2 s1.ffi k ms2) ∧ mc2.target = mc_conf.target ∧
+  mc2.callee_saved_regs = mc_conf.callee_saved_regs ∧
+  mc2.ptr_reg = mc_conf.ptr_reg ⇒
+  oracle_tie mc2 ms2 s1
+oracle_tie_ccache_residues=∀mc_conf mc2 ms1 s1 ms2 l t1.
+  oracle_tie mc_conf ms1 s1 ∧
+  (∀k. find_next_interference mc_conf s1.ffi (k + l) ms1 =
+       find_next_interference mc2 s1.ffi k ms2) ∧
+  mc2.target = mc_conf.target ∧ mc2.ptr_reg = mc_conf.ptr_reg ∧
+  mc2.len_reg = mc_conf.len_reg ∧
+  mc2.ccache_interfer = mc_conf.ccache_interfer ∧
+  mc2.target.get_pc ms2 ∉ mc2.prog_addresses DIFF set mc2.ffi_entry_pcs ∧
+  mc2.target.get_pc ms2 ≠ mc2.halt_pc ∧ mc2.target.get_pc ms2 = mc2.ccache_pc ⇒
+  (λa. get_reg_value (s1.cc_regs 0 a) (t1.regs a) I) =
+  (λa.
+       if
+         MEM a mc_conf.callee_saved_regs ∨ a = mc_conf.ptr_reg ∨
+         ¬(a < mc_conf.target.config.reg_count) ∨
+         MEM a mc_conf.target.config.avoid_regs
+       then
+         t1.regs a
+       else
+         mc_conf.target.get_reg
+           (mc_conf.ccache_interfer 0
+              (mc_conf.target.get_reg ms2 mc_conf.ptr_reg,
+               mc_conf.target.get_reg ms2 mc_conf.len_reg,ms2)) a) ∧
+  (λn. s1.cc_fp_regs 0 n) =
+  (λn.
+       mc_conf.target.get_fp_reg
+         (mc_conf.ccache_interfer 0
+            (mc_conf.target.get_reg ms2 mc_conf.ptr_reg,
+             mc_conf.target.get_reg ms2 mc_conf.len_reg,ms2)) n)
+oracle_tie_ccache_residues_types=∀(mc_conf :(α, β, δ) machine_config) (mc2 :(α, β, δ) machine_config) (ms1 :β)
+    (s1 :(α, γ, 'ffi) labSem$state) (ms2 :β) (l :num) (t1 :α asm_state).
+  oracle_tie mc_conf ms1 s1 ∧
+  (∀(k :num).
+     find_next_interference mc_conf s1.ffi (k + l) ms1 =
+     find_next_interference mc2 s1.ffi k ms2) ∧ mc2.target = mc_conf.target ∧
+  mc2.ptr_reg = mc_conf.ptr_reg ∧ mc2.len_reg = mc_conf.len_reg ∧
+  mc2.ccache_interfer = mc_conf.ccache_interfer ∧
+  mc2.target.get_pc ms2 ∉ mc2.prog_addresses DIFF set mc2.ffi_entry_pcs ∧
+  mc2.target.get_pc ms2 ≠ mc2.halt_pc ∧ mc2.target.get_pc ms2 = mc2.ccache_pc ⇒
+  (λ(a :num).
+       get_reg_value (s1.cc_regs (0 :num) a) (t1.regs a :α word)
+         (I :α word -> α word)) =
+  (λ(a :num).
+       if
+         MEM a mc_conf.callee_saved_regs ∨ a = mc_conf.ptr_reg ∨
+         ¬(a < mc_conf.target.config.reg_count) ∨
+         MEM a mc_conf.target.config.avoid_regs
+       then
+         (t1.regs a :α word)
+       else
+         mc_conf.target.get_reg
+           (mc_conf.ccache_interfer (0 :num)
+              (mc_conf.target.get_reg ms2 mc_conf.ptr_reg,
+               mc_conf.target.get_reg ms2 mc_conf.len_reg,ms2)) a) ∧
+  (λ(n :num). s1.cc_fp_regs (0 :num) n) =
+  (λ(n :num).
+       mc_conf.target.get_fp_reg
+         (mc_conf.ccache_interfer (0 :num)
+            (mc_conf.target.get_reg ms2 mc_conf.ptr_reg,
+             mc_conf.target.get_reg ms2 mc_conf.len_reg,ms2)) n)
+ffi_entry_pcs_NOT_ccache_OR_halt_pc=find_index pc mc_conf.ffi_entry_pcs 0 = SOME index ∧
+mc_conf.halt_pc ≠ mc_conf.ffi_entry_pcs❲index❳ ∧
+mc_conf.ccache_pc ≠ mc_conf.ffi_entry_pcs❲index❳ ⇒
+pc ≠ mc_conf.ccache_pc ∧ pc ≠ mc_conf.halt_pc
+ffi_entry_pcs_NOT_ccache_OR_halt_pc_types=find_index (pc :α word) (mc_conf :(α, β, γ) machine_config).ffi_entry_pcs
+  (0 :num) = SOME (index :num) ∧
+mc_conf.halt_pc ≠ mc_conf.ffi_entry_pcs❲index❳ ∧
+mc_conf.ccache_pc ≠ mc_conf.ffi_entry_pcs❲index❳ ⇒
+pc ≠ mc_conf.ccache_pc ∧ pc ≠ mc_conf.halt_pc
+no_share_mem_lemma=mmio_pcs_min_index ffi_names = SOME i ∧
+asm_fetch_aux pc code = SOME (LabAsm Install c l n) ∧
+no_install_or_no_share_mem code ffi_names ⇒
+i = LENGTH ffi_names
+no_share_mem_lemma_types=mmio_pcs_min_index (ffi_names :ffiname list) = SOME (i :num) ∧
+asm_fetch_aux (pc :num) (code :α sec list) =
+SOME (LabAsm (Install :α asm_with_lab) (c :α word) (l :word8 list) (n :num)) ∧
+no_install_or_no_share_mem code ffi_names ⇒
+i = LENGTH ffi_names
+EL_get_ffi_index_MEM=MEM s ls ⇒ ls❲get_ffi_index ls s❳ = s
+EL_get_ffi_index_MEM_types=MEM (s :α) (ls :α list) ⇒ ls❲get_ffi_index ls s❳ = s
+ffi_name_NOT_Mapped=mmio_pcs_min_index ffi_names = SOME i ∧ (∃str. s = ExtCall str) ∧
+MEM s ffi_names ⇒
+get_ffi_index ffi_names s < i
+ffi_name_NOT_Mapped_types=mmio_pcs_min_index (ffi_names :ffiname list) = SOME (i :num) ∧
+(∃(str :mlstring). (s :ffiname) = ExtCall str) ∧ MEM s ffi_names ⇒
+get_ffi_index ffi_names s < i
+no_share_mem_APPEND=no_share_mem_inst code ∧ no_share_mem_inst secs ⇒
+no_share_mem_inst (code ++ secs)
+no_share_mem_APPEND_types=no_share_mem_inst (code :α sec list) ∧ no_share_mem_inst (secs :α sec list) ⇒
+no_share_mem_inst (code ++ secs)
+no_install_APPEND_IMP=no_install (code ++ secs) ⇒ no_install code ∧ no_install secs
+no_install_APPEND_IMP_types=no_install ((code :α sec list) ++ (secs :α sec list)) ⇒
+no_install code ∧ no_install secs
+no_share_mem_IMP_get_shmem_info=∀code p ffi_names shmem_info.
+  no_share_mem_inst code ⇒
+  get_shmem_info code p ffi_names shmem_info = (ffi_names,shmem_info)
+no_share_mem_IMP_get_shmem_info_types=∀(code :α sec list) (p :num) (ffi_names :ffiname list)
+    (shmem_info :shmem_info_num list).
+  no_share_mem_inst code ⇒
+  get_shmem_info code p ffi_names shmem_info = (ffi_names,shmem_info)
+IMP_ffi_entry_pcs_disjoint_Asm=∀s1 mc_conf.
+  code_similar s1.code code2 ∧
+  all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+  asm_fetch_aux s1.pc s1.code = SOME (Asm instr _bytes _len) ∧
+  (∀op re a. instr ≠ ShareMem op re a) ∧
+  share_mem_domain_code_rel mc_conf p code2 s1.shared_mem_domain ∧
+  bytes_in_mem (p + n2w (pos_val s1.pc 0 code2)) bytes' t1.mem t1.mem_domain
+    s1.mem_domain ∧
+  pos_val (s1.pc + 1) 0 code2 = LENGTH bytes' + pos_val s1.pc 0 code2 ∧
+  t1.pc = p + n2w (pos_val s1.pc 0 code2) ⇒
+  ffi_entry_pcs_disjoint mc_conf t1 (LENGTH bytes')
+IMP_ffi_entry_pcs_disjoint_Asm_types=∀(s1 :(α, config, 'ffi) labSem$state)
+    (mc_conf :(α, 'state, β) machine_config).
+  code_similar s1.code (code2 :α sec list) ∧
+  all_enc_ok mc_conf.target.config (labs :num sptree$num_map sptree$num_map)
+    (ffi_names :ffiname list) (0 :num) code2 ∧
+  asm_fetch_aux s1.pc s1.code =
+  SOME (Asm (instr :α asm_or_cbw) (_bytes :word8 list) (_len :num)) ∧
+  (∀(op :memop) (re :num) (a :α addr). instr ≠ ShareMem op re a) ∧
+  share_mem_domain_code_rel mc_conf (p :α word) code2 s1.shared_mem_domain ∧
+  bytes_in_mem (p + (n2w (pos_val s1.pc (0 :num) code2) :α word))
+    (bytes' :word8 list) (t1 :α asm_state).mem t1.mem_domain s1.mem_domain ∧
+  pos_val (s1.pc + (1 :num)) (0 :num) code2 =
+  LENGTH bytes' + pos_val s1.pc (0 :num) code2 ∧
+  t1.pc = p + (n2w (pos_val s1.pc (0 :num) code2) :α word) ⇒
+  ffi_entry_pcs_disjoint mc_conf t1 (LENGTH bytes')
+IMP_ffi_entry_pcs_disjoint_LabAsm=∀s1 mc_conf.
+  code_similar s1.code code2 ∧
+  all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+  asm_fetch_aux s1.pc s1.code = SOME (LabAsm instr _pos _bytes _len) ∧
+  share_mem_domain_code_rel mc_conf p code2 s1.shared_mem_domain ∧
+  bytes_in_mem (p + n2w (pos_val s1.pc 0 code2)) bytes' t1.mem t1.mem_domain
+    s1.mem_domain ∧
+  pos_val (s1.pc + 1) 0 code2 = LENGTH bytes' + pos_val s1.pc 0 code2 ∧
+  t1.pc = p + n2w (pos_val s1.pc 0 code2) ⇒
+  ffi_entry_pcs_disjoint mc_conf t1 (LENGTH bytes')
+IMP_ffi_entry_pcs_disjoint_LabAsm_types=∀(s1 :(α, config, 'ffi) labSem$state)
+    (mc_conf :(α, 'state, β) machine_config).
+  code_similar s1.code (code2 :α sec list) ∧
+  all_enc_ok mc_conf.target.config (labs :num sptree$num_map sptree$num_map)
+    (ffi_names :ffiname list) (0 :num) code2 ∧
+  asm_fetch_aux s1.pc s1.code =
+  SOME
+    (LabAsm (instr :α asm_with_lab) (_pos :α word) (_bytes :word8 list)
+       (_len :num)) ∧
+  share_mem_domain_code_rel mc_conf (p :α word) code2 s1.shared_mem_domain ∧
+  bytes_in_mem (p + (n2w (pos_val s1.pc (0 :num) code2) :α word))
+    (bytes' :word8 list) (t1 :α asm_state).mem t1.mem_domain s1.mem_domain ∧
+  pos_val (s1.pc + (1 :num)) (0 :num) code2 =
+  LENGTH bytes' + pos_val s1.pc (0 :num) code2 ∧
+  t1.pc = p + (n2w (pos_val s1.pc (0 :num) code2) :α word) ⇒
+  ffi_entry_pcs_disjoint mc_conf t1 (LENGTH bytes')
+EVEN_add_AND=1w && p = 0w ∧ EVEN x ⇒ 1w && p + n2w x = 0w
+EVEN_add_AND_types=(1w :α word) && (p :α word) = (0w :α word) ∧ EVEN (x :num) ⇒
+(1w :α word) && p + (n2w x :α word) = (0w :α word)
+word_cmp_lemma=state_rel (mc_conf,code2,labs,p) s1 t1 ms1 ∧
+word_cmp cmp (read_reg rr s1) (reg_imm ri s1) = SOME x ⇒
+(x ⇔ word_cmp cmp (read_reg rr t1) (reg_imm ri t1))
+word_cmp_lemma_types=(state_rel
+   ((mc_conf :(α, β, γ) machine_config),(code2 :α sec list),
+    (labs :num sptree$num_map sptree$num_map),(p :α word))
+   (s1 :(α, config, δ) labSem$state) (t1 :α asm_state) (ms1 :β) :bool) ∧
+(word_cmp (cmp :cmp) (read_reg (rr :num) s1 :α word_loc)
+   (reg_imm (ri :α reg_imm) s1 :α word_loc) :bool option) = SOME (x :bool) ⇒
+(x ⇔ (word_cmp cmp (read_reg rr t1 :α word) (reg_imm ri t1 :α word) :bool))
+list_add_if_fresh_thm=list_add_if_fresh s l = if MEM s l then l else l ++ [s]
+list_add_if_fresh_thm_types=list_add_if_fresh (s :α) (l :α list) = if MEM s l then l else l ++ [s]
+find_ffi_names_append=∀l1 l2.
+  find_ffi_names (l1 ++ l2) =
+  find_ffi_names l2 ++
+  FILTER (λn. ¬MEM n (find_ffi_names l2)) (find_ffi_names l1)
+find_ffi_names_append_types=∀(l1 :α sec list) (l2 :α sec list).
+  find_ffi_names (l1 ++ l2) =
+  find_ffi_names l2 ++
+  FILTER (λ(n :ffiname). ¬MEM n (find_ffi_names l2)) (find_ffi_names l1)
+loc_to_pc_append=∀l1 l2 c1 c2 conf labs ffis pos.
+  EVERY sec_labels_ok (c1 ++ c2) ⇒
+  loc_to_pc l1 l2 (c1 ++ c2) =
+  case loc_to_pc l1 l2 c1 of
+    NONE =>
+      (case loc_to_pc l1 l2 c2 of
+         NONE => NONE
+       | SOME x => SOME (x + SUM (MAP (len_no_lab ∘ Section_lines) c1)))
+  | SOME x => SOME x
+loc_to_pc_append_types=∀(l1 :num) (l2 :num) (c1 :α sec list) (c2 :α sec list) (conf :β) (labs :γ)
+    (ffis :δ) (pos :ε).
+  EVERY (sec_labels_ok :α sec -> bool) (c1 ++ c2) ⇒
+  loc_to_pc l1 l2 (c1 ++ c2) =
+  case loc_to_pc l1 l2 c1 of
+    (NONE :num option) =>
+      (case loc_to_pc l1 l2 c2 of
+         (NONE :num option) => (NONE :num option)
+       | SOME x =>
+         SOME
+           (x +
+            (SUM
+               (MAP
+                  ((len_no_lab :α line list -> num) ∘
+                   (Section_lines :α sec -> α line list)) c1) :num)))
+  | SOME x => SOME x
+line_length_MOD_0=encoder_correct mc_conf.target ∧
+(¬EVEN p ⇒ mc_conf.target.config.code_alignment = 0) ∧
+line_ok mc_conf.target.config labs ffi_names p h ⇒
+line_length h MOD 2 ** mc_conf.target.config.code_alignment = 0
+line_length_MOD_0_types=encoder_correct (mc_conf :(α, β, γ) machine_config).target ∧
+(¬EVEN (p :num) ⇒ mc_conf.target.config.code_alignment = (0 :num)) ∧
+line_ok mc_conf.target.config (labs :num sptree$num_map sptree$num_map)
+  (ffi_names :ffiname list) p (h :α line) ⇒
+line_length h MOD (2 :num) ** mc_conf.target.config.code_alignment = (0 :num)
+all_enc_ok_aligned_pos_val=∀mc_conf labs code2 pc ffi_names.
+  all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+  (has_odd_inst code2 ⇒ mc_conf.target.config.code_alignment = 0) ∧
+  encoder_correct mc_conf.target ⇒
+  aligned mc_conf.target.config.code_alignment (n2w (pos_val pc 0 code2))
+all_enc_ok_aligned_pos_val_types=∀(mc_conf :(α, β, γ) machine_config)
+    (labs :num sptree$num_map sptree$num_map) (code2 :α sec list) (pc :num)
+    (ffi_names :ffiname list).
+  all_enc_ok mc_conf.target.config labs ffi_names (0 :num) code2 ∧
+  (has_odd_inst code2 ⇒ mc_conf.target.config.code_alignment = (0 :num)) ∧
+  encoder_correct mc_conf.target ⇒
+  aligned mc_conf.target.config.code_alignment
+    (n2w (pos_val pc (0 :num) code2) :α word)
