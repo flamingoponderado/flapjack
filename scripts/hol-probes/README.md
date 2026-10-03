@@ -7159,3 +7159,8 @@ preservation of memory/domain/byte order, using only the original child IH.
 Load32 specialization and eval_ind. Native case retains all seven hypotheses
 and three conclusions with only the original child IH, deriving the32-bit load
 through actual memory/domain/byte-order preservation.
+
+`pan_structs_exp_bytes_in_word_faithful_probe` captures the original full theorem,
+BytesInWord specialization and eval_ind. The faithful native case retains all
+seven hypotheses and three conclusions, including the actual converted target
+evaluation, at every positive word width without an extra byte-size condition.

@@ -77188,5 +77188,28 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack imported canonical state two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpBytesInWord.lean",
+    "lean_name": "compileExpCorrectBytesInWord",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original686-791 BytesInWord case: all seven source hypotheses and three conclusions, no recursive IH. Actual faithful eval yields Word(bytesInWordHOL width); old shape One and field validity follow, actual compileExpExact retains BytesInWord and converted target evaluates to the same word. Positive width is the standard word translation; no byte-multiple, minimum-eight, range, target-run or compatibility premise. Imported canonical state owner with full two-way local roundtrip and four-map qualifier. Full original theorem/BytesInWord specialization/eval_ind kernel captured. Whole expression/compiler assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpBytesInWord.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack imported canonical state two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]
