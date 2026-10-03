@@ -95,7 +95,7 @@ HOL's free variables are explicit; the target handler word has its own
 dimension, as in `stack_rel_def`. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "stack_rel_cons_LEN_NONE"
   (words_as_type_indexed_bitvec)]
-theorem stackRelConsLenNone {width handlerWidth : Nat} [NeZero width] [NeZero handlerWidth]
+theorem stackRelConsLenNone {width : Nat} {handlerWidth : Nat} [NeZero width] [NeZero handlerWidth]
     (k whandler : Nat) (n : Option Nat) (l0 l : List (Nat × WordLocW width))
     (wstack : List (WordSemStackFrame width)) (shandler : Option (WordLocW handlerWidth))
     (sstack : List (WordLocW width)) (len : Nat) (bs : List (BitVec width)) (f' : Nat)
@@ -112,7 +112,7 @@ theorem stackRelConsLenNone {width handlerWidth : Nat} [NeZero width] [NeZero ha
 HOL `the (f' + 1) n` is `n.getD (f' + 1)`; the head frame's handler is arbitrary. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "stack_rel_cons_locals_size"
   (words_as_type_indexed_bitvec)]
-theorem stackRelConsLocalsSize {width handlerWidth : Nat} [NeZero width] [NeZero handlerWidth]
+theorem stackRelConsLocalsSize {width : Nat} {handlerWidth : Nat} [NeZero width] [NeZero handlerWidth]
     (k whandler : Nat) (n : Option Nat) (l0 l : List (Nat × WordLocW width))
     (opt : Option (Nat × Nat × Nat)) (t'' : List (WordSemStackFrame width))
     (shandler : Option (WordLocW handlerWidth)) (restOfStack : List (WordLocW width))
@@ -153,7 +153,7 @@ theorem stackRelConsLocalsSize {width handlerWidth : Nat} [NeZero width] [NeZero
 /-- Exact HOL `stack_rel_DROP_NONE` (`word_to_stackProofScript.sml:5368-5396`). -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "stack_rel_DROP_NONE"
   (words_as_type_indexed_bitvec)]
-theorem stackRelDropNone {width handlerWidth : Nat} [NeZero width] [NeZero handlerWidth]
+theorem stackRelDropNone {width : Nat} {handlerWidth : Nat} [NeZero width] [NeZero handlerWidth]
     (k whandler : Nat) (n : Option Nat) (l0 l : List (Nat × WordLocW width))
     (wstack : List (WordSemStackFrame width)) (shandler : Option (WordLocW handlerWidth))
     (sstack : List (WordLocW width)) (len : Nat) (bs : List (BitVec width)) (f' : Nat)
