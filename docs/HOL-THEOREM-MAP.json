@@ -74483,5 +74483,13 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 7643-7704: for all k f n t with use_stack, f <> 0, f <= LENGTH stack - (stack_space + n): exists t' with evaluate (copy_ret_aux k f n, t) = (NONE, t') and t' = t with <|stack; regs|>, equal length and stack_space, unchanged suffix from f+n+stack_space, registers except k preserved, unchanged slots m < f - n above n, and copied slots EL (x+f) stack' = EL x stack for x < n. HOL total EL is holEl (all uses in range). Over the native StackSem evaluator and native compiler helpers; imported canonical regs/fpRegs/store translation with same-module witness; positive BitVec width. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "lastGenlistEvens",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LAST_GENLIST_evens",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5398-5407: n <> 0 implies, for reg = LAST (GENLIST (λx. 2 * (x+1)) n), reg <> 0 and EVEN reg; GENLIST as (List.range n).map, LAST as the corrected holLast port (independent opaque nil, only cons equations used since the list is nonempty), EVEN as % 2 = 0."
   }
 ]

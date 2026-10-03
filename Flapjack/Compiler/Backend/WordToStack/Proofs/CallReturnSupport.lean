@@ -179,4 +179,27 @@ theorem stackRelDropNone {width : Nat} {handlerWidth : Nat} [NeZero width] [NeZe
     rw [show ys.length + 1 - (whandler + 1) = (ys.length - (whandler + 1)) + 1 by omega,
       List.drop_succ_cons]
 
+theorem holLast_mem {α : Type} [Nonempty α] : ∀ l : List α, l ≠ [] → holLast l ∈ l
+  | [], h => absurd rfl h
+  | [x], _ => by simp [holLast]
+  | x :: y :: z, _ => by
+      rw [holLastCons.2]
+      exact List.mem_cons_of_mem x (holLast_mem (y :: z) (by simp))
+
+/-- Exact HOL `LAST_GENLIST_evens` (`word_to_stackProofScript.sml:5398-5407`). HOL
+`GENLIST f n` is `(List.range n).map f`, `LAST` is the `holLast` port and `EVEN`
+is `% 2 = 0`. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "LAST_GENLIST_evens"]
+theorem lastGenlistEvens (n : Nat) :
+    n ≠ 0 →
+      let reg := holLast ((List.range n).map (fun x => 2 * (x + 1)))
+      reg ≠ 0 ∧ reg % 2 = 0 := by
+  intro hn
+  have hne : (List.range n).map (fun x => 2 * (x + 1)) ≠ [] := by
+    simp [List.range_eq_nil, hn]
+  obtain ⟨x, -, hx⟩ := List.mem_map.mp (holLast_mem _ hne)
+  simp only
+  rw [← hx]
+  omega
+
 end Flapjack.WordToStackProofs.CallReturnSupport
