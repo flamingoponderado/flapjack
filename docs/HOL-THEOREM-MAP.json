@@ -76319,5 +76319,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:10763-10775: full original unconditional pre_alloc_conventions of full_ssa_cc_trans for arbitrary count/program. Literal fullSsaCcTrans, original limit_var_props and setup_ssa_props_2 derive the recursive SSA input hypotheses, complete original ssa_cc_trans_pre_alloc_conventions supplies the body result, and literal entry Seq establishes all predicates. No target-run, convention, support or successful-pass premise. Native WordLang/Spt/List carriers unchanged; words_as_type_indexed_bitvec records only positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/InstructionValidity.lean",
+    "lean_name": "fakeSeq_fullInstOkLess",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_seq_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10449-10454: original full_inst_ok_less instruction-validity helper, arbitrary native assembler config/source list/maps/counters. fake_seq is unconditional; loop_setup retains only actual producer equality. Literal original fake const and Move/Seq clauses establish the complete predicate; no register bound, target-run or convention premise. Native AsmConfigExact/WordLang/Spt/List carriers retained; words_as_type_indexed_bitvec records only positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/InstructionValidity.lean",
+    "lean_name": "loopSetup_fullInstOkLess",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "loop_setup_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10495-10505: original full_inst_ok_less instruction-validity helper, arbitrary native assembler config/source list/maps/counters. fake_seq is unconditional; loop_setup retains only actual producer equality. Literal original fake const and Move/Seq clauses establish the complete predicate; no register bound, target-run or convention premise. Native AsmConfigExact/WordLang/Spt/List carriers retained; words_as_type_indexed_bitvec records only positive HOL word dimension."
   }
 ]
