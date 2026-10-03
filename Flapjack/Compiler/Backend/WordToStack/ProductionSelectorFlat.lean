@@ -87,4 +87,3 @@ theorem wordInstSelectAtom_nativeFlat {width : Nat} [NeZero width]
       exact productionFlat_wordInstSelectAtom temporary expression
 
 end Flapjack
-
