@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Step.FetchTheorems
 import Flapjack.RiscV.L3.Step.BitRewrites
 import Flapjack.RiscV.L3.Step.DecoderTransport
 import Flapjack.RiscV.L3.Step.Evaluation
@@ -1234,6 +1235,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpNStruct
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpMmapHelper
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpOperators
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoadByte
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad32
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction

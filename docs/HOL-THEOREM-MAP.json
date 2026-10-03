@@ -78208,5 +78208,44 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical state two-way roundtrip infrastructure, no independent HOL original."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/FetchTheorems.lean",
+    "lean_name": "fetch16",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "Fetch16",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c complete source comparison2026-10-03 original step670-702: arbitrary full native riscv_state s, bool list xs and all16 arbitrary source Boolean binders; literal list equality, current-core MCSR VM=0 at word5, all2 exact little-endian byte memory equalities at original wrapping word64 addresses, and original low-bit selection premise. Exact raw constructor/word16 v2w result and complete same-state c_Skip function update to word64 2 at unrestricted word8 procID. No added alignment, core bound, successful translation/fetch or target-run premise. Original bare VM premise derives full translateAddr(some PC,s) and THE elimination; original word_bit_1_0 derives selector, generic all-bit extensionality assembles bytes without restricted payloads. Canonical holV2w follows original testbit/FCP index ordering. Fresh complete universal original proof/type/binder capture and Lean kernel statement/proof checked."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/FetchTheorems.lean",
+    "lean_name": "fetch32",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "Fetch32",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c complete source comparison2026-10-03 original step670-702: arbitrary full native riscv_state s, bool list xs and all32 arbitrary source Boolean binders; literal list equality, current-core MCSR VM=0 at word5, all4 exact little-endian byte memory equalities at original wrapping word64 addresses, and original low-bit selection premise. Exact raw constructor/word32 v2w result and complete same-state c_Skip function update to word64 4 at unrestricted word8 procID. No added alignment, core bound, successful translation/fetch or target-run premise. Original bare VM premise derives full translateAddr(some PC,s) and THE elimination; original word_bit_1_0 derives selector, generic all-bit extensionality assembles bytes without restricted payloads. Canonical holV2w follows original testbit/FCP index ordering. Fresh complete universal original proof/type/binder capture and Lean kernel statement/proof checked."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpLoad32.lean",
+    "lean_name": "compileExpCorrectLoad32",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original686-791 Load32 case: all seven original source hypotheses and three conclusions; only original full child IH. Actual source success derives word address and original panMemLoad32HOL result. Child IH derives converted address evaluation; actual convertStateExact preserves memory/domain/be, Option.map congruence derives identical 32-bit-to-word result and target evaluation. No adapter, bounds, compatibility, target-run, or resource premise added. Actual imported canonical owner/full local roundtrip, four-map/positive-width Type0 qualifiers. Original full theorem/Load32 specialization/eval_ind kernel captured. Full expression/compiler assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpLoad32.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack imported canonical state two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]
