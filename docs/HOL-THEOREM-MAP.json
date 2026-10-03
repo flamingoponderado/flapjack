@@ -83797,5 +83797,21 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Internal updated-map validity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/word_to_wordScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison word_to_wordScript15-19/43-49: Config retains exactly reg_alg:num and col_oracle:(num sptree$num_map) option list, represented by Nat and literal List(Option(Spt Nat)); num_map is the accepted constructor-for-constructor sptree, not a HOL finite map or generic carrier. next_n_oracle retains both explicit Nat/list binders, inclusive n<=length guard, exact TAKE/DROP pair and insufficient-oracle REPLICATE n NONE plus empty remainder. No prefix padding/substitution, fallback encoder or scope change. Inline source convention proof uses returned prefix length; untagged helper proves it independently for all n/lists, no target premise. Fresh original full typed definition/hyp0/kernelT and concrete field projection types plus zero/equal/short/long oracle observations captured. Native whole pipeline/production/compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Config.lean",
+    "lean_name": "nextNOracle",
+    "hol_path": "cakeml/compiler/backend/word_to_wordScript.sml",
+    "hol_name": "next_n_oracle_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison word_to_wordScript15-19/43-49: Config retains exactly reg_alg:num and col_oracle:(num sptree$num_map) option list, represented by Nat and literal List(Option(Spt Nat)); num_map is the accepted constructor-for-constructor sptree, not a HOL finite map or generic carrier. next_n_oracle retains both explicit Nat/list binders, inclusive n<=length guard, exact TAKE/DROP pair and insufficient-oracle REPLICATE n NONE plus empty remainder. No prefix padding/substitution, fallback encoder or scope change. Inline source convention proof uses returned prefix length; untagged helper proves it independently for all n/lists, no target premise. Fresh original full typed definition/hyp0/kernelT and concrete field projection types plus zero/equal/short/long oracle observations captured. Native whole pipeline/production/compiler composition remains open."
   }
 ]
