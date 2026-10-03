@@ -7098,3 +7098,6 @@ CI runs `python3 scripts/l3/check-native-model.py`: every `check-l3-*.py` captur
 ## Native step option PC update
 
 `l3_update_pc_probeScript.sml` proves the original `update_pc` whole option-result and full-record equations for arbitrary word64 targets and full states. `check-l3-update-pc.py` pins all six type/hypothesis/equation/proof rows. Lean uses the complete accepted PC writer; no core bound or successful-run premise is added. The native drift inventory includes this literal declaration and CI discovers its capture checker. Full Next assembly remains separate work.
+`pan_structs_exp_var_faithful_probe` captures the whole original expression theorem
+and its genuine generic Var specialization, including both Local and Global kinds.
+All seven hypotheses and three conclusions remain intact, with zero open assumptions.

@@ -76190,5 +76190,44 @@
     "hol_name": "update_pc_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_stepScript34-35: full fixedword64/native-state update_pc v s=SOME(writePC v s); entire Option result and original complete function-valued PC update retained. No current-core bounds, target-run assumption or chosen defaults. Generic whole option and full-record equations kernel checked and original HOL proofs captured with zero hypotheses."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpVar.lean",
+    "lean_name": "compileExpCorrectVar",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source review2026-10-03: genuine original686-791 Var case, arbitrary Local/Global kind and exact MlS name; same ALL7sourcehyp/ALL3conclusions. Actual finite-map evalHOLFinite/ContextExact/ExpHOL/ValueHOL and full convertStateExact, canonical first-binding context shape maps equal original FMAP_MAP2 shape_of, structs map exact info.fields, FEVERY locals/globals and structInfosOk. Source success gives actual source lookup; shape equality follows canonical context map via unconditional first-match codec law; source FEVERY yields result fields validity; target success derived from actual converted locals/globals map2. No target evaluation, compatibility/memory adapter/range/resource premise or IH for this leaf. Lawful helper typeclasses apply only to generic infrastructure, not case signature; exact MlS canonical equality instances discharge them. Actual imported owner PanSemStateFiniteExact, no local duplicate; local genuine two-way roundtrip. Four canonical map field and positive-word/Type0 FFI qualifiers only. Original whole theorem + Var specialization source kernel closed/hyp0 captured; whole assembly remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpVar.lean",
+    "lean_name": "alistToFmap_findSome",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack first-match/canonical carrier representation infrastructure for the faithful Var case, not an independent CakeML declaration. Unconditional lookup laws or genuine imported state roundtrip; helper lawful-equality typeclasses are discharged at exact MlS and are not public HOL-case assumptions."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpVar.lean",
+    "lean_name": "shapeMap_lookup_findSome",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack first-match/canonical carrier representation infrastructure for the faithful Var case, not an independent CakeML declaration. Unconditional lookup laws or genuine imported state roundtrip; helper lawful-equality typeclasses are discharged at exact MlS and are not public HOL-case assumptions."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpVar.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack first-match/canonical carrier representation infrastructure for the faithful Var case, not an independent CakeML declaration. Unconditional lookup laws or genuine imported state roundtrip; helper lawful-equality typeclasses are discharged at exact MlS and are not public HOL-case assumptions."
   }
 ]
