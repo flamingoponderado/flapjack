@@ -69570,5 +69570,36 @@
     ],
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.2: literal original10116-10121/10135-10151 proofs freshly replayed with full GEN_ALL statements, zero hypotheses/free variables and T. Full arbitrary source/target states, destination/arguments/handler/results retained. Clock helper preserves all relation conjuncts at frames0/0 and arbitrary lens/extra. Call results prove both universally quantified Break/Continue exclusions from sole actual native evaluator equality, including error/timeout/bad-return branches; no successful-run/callee IH/target-run assumption added. Positive type-indexed words and universe0 FFI/config carriers retained. Listed original finite-map fields use actual imported canonical owners and genuine broad/finite codec witnesses; tree maps stay Spt. Evaluator closure inherits reals_as_rational_cuts; structural result exclusion only, no numerical FP correspondence asserted. No executed compiler changes.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Results.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "compileResult",
+    "hol_name": "compile_result_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.1 original2411-2437: fresh complete GEN_ALL equations/types/hyp0, literal full original Halt proof replay T with no free variables. All eight source constructors map in original equation order; Result and Exception retain first WordLoc payload and discard only original second payload; NotEnoughSpace maps precisely Halt Word1, FinalFFI retains exact HolFinalEvent. Full original polymorphic type alpha wordSem result -> alpha stackSem result preserved. Imported native constructor payloads and universe0 arbitrary configuration/FFI carriers compared; word alpha translates positive BitVec width/NeZero. No executable evaluator/compiler change, no numerical FP semantics assertion or target-run/postrelation assumption."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Results.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "haltEqCompileResult",
+    "hol_name": "Halt_EQ_compile_result",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.1 original2411-2437: fresh complete GEN_ALL equations/types/hyp0, literal full original Halt proof replay T with no free variables. Full conjunction: unconditional Halt Word1 equivalence to NotEnoughSpace and exactly good_dimindex-guarded Halt Word2 exclusion. Arbitrary result at positive width; original 32/64 guard unfolded only in proof, no strengthened width/result premise or missing conjunct. Imported native constructor payloads and universe0 arbitrary configuration/FFI carriers compared; word alpha translates positive BitVec width/NeZero. No executable evaluator/compiler change, no numerical FP semantics assertion or target-run/postrelation assumption."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Results.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "pushLocals",
+    "hol_name": "push_locals_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.1 original2411-2437: fresh complete GEN_ALL equations/types/hyp0, literal full original Halt proof replay T with no free variables. Full original type (num#alpha word_loc) list -> same list -> (alpha,beta,gamma) state -> same state. Both cutsets arbitrary, old locals_size retained in pushed StackFrame, absent handler; locals LN and locals_size SOME0 updated with frame cons, all other fields preserved. Actual imported WordSemStateFiniteExact owner uses canonical fpRegs/store maps and exact Spt locals; genuine same-module broad/finite roundtrip witness, no duplicate state carrier or tree-map qualifier. Imported native constructor payloads and universe0 arbitrary configuration/FFI carriers compared; word alpha translates positive BitVec width/NeZero. No executable evaluator/compiler change, no numerical FP semantics assertion or target-run/postrelation assumption.",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ]
   }
 ]

@@ -303,6 +303,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InitializationStateRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.SemanticsHelpers
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
