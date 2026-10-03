@@ -6428,3 +6428,9 @@ Original signed word12 range comparisons, unsigned privilege comparison, MPRV,
 ignored rs1 and returned states are preserved. Arbitrary architecture remains
 arbitrary. These regressions do not establish whole Run/Next/compiler correctness.
 
+
+`l3_machine_csr_codec_probe.out` captures all 14 original machine CSR rec/reg
+codec definitions and 490 observations over every single-bit basis vector,
+zero, all ones, alternating bits and mixed patterns. Independent calculations
+check both packed words and every decoded field, including discontiguous
+reserved-bit segments. Full CSR transitions and Run/Next remain open.
