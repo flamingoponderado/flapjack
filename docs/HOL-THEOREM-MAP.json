@@ -86836,5 +86836,111 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL can_mem_arith_ODD_reads (word_cseProof:1511-1516). can_mem_arith a implies EVERY ODD (arithReads a), with EVERY as a forall-over-membership and ODD as % 2 = 1, over the HolArith width carrier. HOL local, so there is no probe capture; it was compared against the source text. Kernel-checked.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "canonicalArith_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalArith_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL canonicalArith_correct (word_cseProof:118). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "data_inv_locals",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL data_inv_locals (word_cseProof:160). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "wf_data_untracked",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_untracked",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL wf_data_untracked (word_cseProof:289). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "data_inv_set_var",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL data_inv_set_var (word_cseProof:314). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "data_inv_unset_var",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_unset_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL data_inv_unset_var (word_cseProof:402). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "not_seen_data_inv_alist_insert",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "not_seen_data_inv_alist_insert",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL not_seen_data_inv_alist_insert (word_cseProof:423). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "data_inv_memory",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL data_inv_memory (word_cseProof:507). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "data_inv_state_agree",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_state_agree",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL data_inv_state_agree (word_cseProof:555). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
