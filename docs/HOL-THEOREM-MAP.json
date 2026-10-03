@@ -76229,5 +76229,32 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack first-match/canonical carrier representation infrastructure for the faithful Var case, not an independent CakeML declaration. Unconditional lookup laws or genuine imported state roundtrip; helper lawful-equality typeclasses are discharged at exact MlS and are not public HOL-case assumptions."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Allocation.lean",
+    "lean_name": "ssaCcTrans_preAllocAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10547-10623, original Alloc case. Same is_alloc_var next and ssa_map_ok next ssa premises; complete pre_alloc_conventions actual native compiler-output conclusion. Entire translated cutset stack class derived from actual list_next_var_rename_move equality, unconditional native Spt key distinctness, original renaming arithmetic/lookup and original union/every_name lemmas. No target cutset/convention, map validity or execution premise added. Native WordLang/Spt/List carriers retained, including original FFI mlstring via native Basis.Pure.MlString.MlString rather than String or Nat. words_as_type_indexed_bitvec is the sole positive-word-dimension translation. Full recursive theorem assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Allocation.lean",
+    "lean_name": "ssaCcTrans_preAllocInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10547-10623, original Install case. Same is_alloc_var next and ssa_map_ok next ssa premises; complete pre_alloc_conventions actual native compiler-output conclusion. Entire translated cutset stack class derived from actual list_next_var_rename_move equality, unconditional native Spt key distinctness, original renaming arithmetic/lookup and original union/every_name lemmas. No target cutset/convention, map validity or execution premise added. Native WordLang/Spt/List carriers retained, including original FFI mlstring via native Basis.Pure.MlString.MlString rather than String or Nat. words_as_type_indexed_bitvec is the sole positive-word-dimension translation. Full recursive theorem assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Allocation.lean",
+    "lean_name": "ssaCcTrans_preAllocFFI",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10547-10623, original FFI case. Same is_alloc_var next and ssa_map_ok next ssa premises; complete pre_alloc_conventions actual native compiler-output conclusion. Entire translated cutset stack class derived from actual list_next_var_rename_move equality, unconditional native Spt key distinctness, original renaming arithmetic/lookup and original union/every_name lemmas. No target cutset/convention, map validity or execution premise added. Native WordLang/Spt/List carriers retained, including original FFI mlstring via native Basis.Pure.MlString.MlString rather than String or Nat. words_as_type_indexed_bitvec is the sole positive-word-dimension translation. Full recursive theorem assembly remains open."
   }
 ]
