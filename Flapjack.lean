@@ -2296,6 +2296,7 @@ import Flapjack.Misc.BalancedMap.Membership
 import Flapjack.Misc.BalancedMap.BalanceArithmetic
 import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
 import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorFlat
+import Flapjack.Compiler.Backend.WordToStack.ProductionSourceFlat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
 
 -- Tagged modules required by the HOL reference coverage gate.
